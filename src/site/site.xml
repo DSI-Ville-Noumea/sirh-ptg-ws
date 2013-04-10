@@ -1,0 +1,38 @@
+
+<project name="SIRH-PTG-WS">	
+	<bannerLeft>
+		<name>DSI - Mairie de Nouméa</name>
+		<src>img/DSI-logo-blason-or.png</src>
+		<href>http://svpsp/dsi/Pages/Accueil.aspx</href>
+		<alt>http://svpsp/dsi/Pages/Accueil.aspx</alt>
+	</bannerLeft>
+	
+    <publishDate position="right"/>
+    <version position="right"/>
+	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-stylus-skin</artifactId>
+		<version>1.4</version>
+	  </skin>
+    <body> 
+		<links>
+		  <item name="Accueil DSI" target="_new" href="http://svpsp/dsi/Pages/accueil.aspx"/>
+		  <item name="EasyVista > Demandes d'Interventions" target="_new" href="http://easyvista.ville-noumea.nc"/>
+		  <item name="apt Reference" target="_new" href="http://maven.apache.org/doxia/references/apt-format.html"/>
+		</links>
+
+        <breadcrumbs>	
+			<item name="Accueil" href="home.html" /> 
+			<item href="http://ws-qual.sirh.site-mairie.noumea.nc/sirh-ptg-ws" name="URL PTG WS Recette" />
+			<item href="http://ws.sirh.site-mairie.noumea.nc/sirh-ptg-ws" name="URL PTG WS Prod" />
+		</breadcrumbs>
+		
+		<menu name="Exploitation">
+        	<item name="Releases" href="exploitation/releases.html"/>
+        	<item name="WebApp Context" href="exploitation/context.html"/>
+        </menu>
+        <menu ref="reports"/>
+    </body>
+</project>
+
+
