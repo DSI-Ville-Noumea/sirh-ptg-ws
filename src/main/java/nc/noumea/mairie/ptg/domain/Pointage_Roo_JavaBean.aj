@@ -3,6 +3,7 @@
 
 package nc.noumea.mairie.ptg.domain;
 
+import java.util.Date;
 import java.util.Set;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
@@ -26,12 +27,44 @@ privileged aspect Pointage_Roo_JavaBean {
         this.etats = etats;
     }
     
+    public Date Pointage.getDateLundi() {
+        return this.dateLundi;
+    }
+    
+    public void Pointage.setDateLundi(Date dateLundi) {
+        this.dateLundi = dateLundi;
+    }
+    
+    public Date Pointage.getDateDebut() {
+        return this.dateDebut;
+    }
+    
+    public void Pointage.setDateDebut(Date dateDebut) {
+        this.dateDebut = dateDebut;
+    }
+    
+    public Date Pointage.getDateFin() {
+        return this.dateFin;
+    }
+    
+    public void Pointage.setDateFin(Date dateFin) {
+        this.dateFin = dateFin;
+    }
+    
     public Integer Pointage.getQuantite() {
         return this.quantite;
     }
     
     public void Pointage.setQuantite(Integer quantite) {
         this.quantite = quantite;
+    }
+    
+    public Pointage Pointage.getPointageParent() {
+        return this.pointageParent;
+    }
+    
+    public void Pointage.setPointageParent(Pointage pointageParent) {
+        this.pointageParent = pointageParent;
     }
     
 }
