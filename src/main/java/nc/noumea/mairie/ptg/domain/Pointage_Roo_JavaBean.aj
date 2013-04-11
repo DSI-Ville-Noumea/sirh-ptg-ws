@@ -11,6 +11,14 @@ import nc.noumea.mairie.ptg.domain.TypePointage;
 
 privileged aspect Pointage_Roo_JavaBean {
     
+    public Integer Pointage.getIdAgent() {
+        return this.idAgent;
+    }
+    
+    public void Pointage.setIdAgent(Integer idAgent) {
+        this.idAgent = idAgent;
+    }
+    
     public TypePointage Pointage.getType() {
         return this.type;
     }

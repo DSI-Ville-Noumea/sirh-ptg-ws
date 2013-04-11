@@ -33,6 +33,7 @@ grant select on PTG_S_POINTAGE to R_PTG_USR;
 create table PTG_POINTAGE
 (
     ID_POINTAGE NUMBER(38,0) not null,
+    ID_AGENT NUMBER(7,0) not null,
     ID_TYPE_POINTAGE NUMBER(38,0) not null,
     DATE_LUNDI DATE not null,
     DATE_DEBUT DATE not null,

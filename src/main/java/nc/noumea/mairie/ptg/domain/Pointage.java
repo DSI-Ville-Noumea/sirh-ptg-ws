@@ -21,6 +21,9 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_POINTAGE", identifierField = "idPointage", identifierType = Integer.class, table = "PTG_POINTAGE", sequenceName = "PTG_S_POINTAGE")
 public class Pointage {
 
+	@Column(name = "ID_AGENT")
+	private Integer idAgent;
+	
 	@OneToOne(optional = false)
 	@JoinColumn(name = "ID_TYPE_POINTAGE")
 	private TypePointage type;
