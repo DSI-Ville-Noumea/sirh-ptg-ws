@@ -24,6 +24,9 @@ public class DroitsAgent {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 	
+	@Column(name = "ID_AGENT_APPROBATEUR")
+	private Integer idAgentApprobateur;
+	
 	@Column(name = "CODE_SERVICE")
 	private String codeService;
 	

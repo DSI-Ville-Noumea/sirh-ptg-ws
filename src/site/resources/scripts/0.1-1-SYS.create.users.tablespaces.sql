@@ -22,7 +22,15 @@ grant R_PTG_READ to PTG_READ;
 
 
 ----------------------------------------------------------------
--- Creation des tablespaces : finaliser les nomns de fichiers par le SIE
+-- Creation des tablespaces
+-- /!\ LES NOMS DE FICHIERS SONT A DEFINIR PAR LE SIE /!\
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+-- ATTENTION, BIEN RENOMMER LE NOM DU DATAFILE AFIN
+--  QU'IL SOIT COHERENT AVEC LA BASE (eg :
+-- RECETTE : ORADEV_TS_DEV.dbf -> SIRHR_TS_PARAM.dbf
+-- PROD : ORADEV_TS_DEV.dbf -> SIRHP_TS_PARAM.dbf
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+----------------------------------------------------------------
 
 -- petit, prevoir des extends de 20 Mo, initial 20 Mo
 CREATE TABLESPACE TS_PTG_PARAM DATAFILE

@@ -124,8 +124,9 @@ create table PTG_DROITS_AGENT
 (
    ID_DROITS_AGENT NUMBER(38,0) not null,
    ID_AGENT NUMBER(7,0) not null,
-   CODE_SERVICE varchar2(10) not null,
+   CODE_SERVICE varchar2(10),
    DATE_MODIFICATION DATE not null, 
+   ID_AGENT_APPROBATEUR NUMBER(7,0),
    ID_DROITS_PROFIL NUMBER(38,0) not null,
    VERSION NUMBER default 0 not null,
    constraint PK_PTG_DROITS_AGENT

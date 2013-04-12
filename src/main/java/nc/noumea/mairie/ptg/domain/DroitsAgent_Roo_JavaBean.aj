@@ -17,6 +17,14 @@ privileged aspect DroitsAgent_Roo_JavaBean {
         this.idAgent = idAgent;
     }
     
+    public Integer DroitsAgent.getIdAgentApprobateur() {
+        return this.idAgentApprobateur;
+    }
+    
+    public void DroitsAgent.setIdAgentApprobateur(Integer idAgentApprobateur) {
+        this.idAgentApprobateur = idAgentApprobateur;
+    }
+    
     public String DroitsAgent.getCodeService() {
         return this.codeService;
     }

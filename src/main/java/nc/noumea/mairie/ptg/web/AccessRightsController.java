@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.web;
 
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
+import nc.noumea.mairie.ptg.dto.DelegatorAndInputtersDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.sirh.domain.Agent;
@@ -34,7 +35,7 @@ public class AccessRightsController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> listAgentAccessRights(@RequestParam("idAgent") Integer idAgent) {
 		
-		logger.debug("entered listAgentAccessRights with parameter idAgent = {}", idAgent);
+		logger.debug("entered [listeDroitsAgent] => listAgentAccessRights with parameter idAgent = {}", idAgent);
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
@@ -43,7 +44,24 @@ public class AccessRightsController {
 
 		AccessRightsDto result = accessRightService.getAgentAccessRights(convertedIdAgent);
 		
-		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.NOT_FOUND);
+		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "delegataireSaisisseurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getDelegateAndInputter(@RequestParam("idAgent") Integer idAgent)
+	{
+		logger.debug("entered [delegataireSaisisseurs] => getDelegateAndInputter with parameter idAgent = {}", idAgent);
+		
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		if (Agent.findAgent(convertedIdAgent) == null)
+			throw new NotFoundException();
+		
+		DelegatorAndInputtersDto result = accessRightService.getDelegatorAndInputters(convertedIdAgent);
+
+		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
 	}
 	
 }

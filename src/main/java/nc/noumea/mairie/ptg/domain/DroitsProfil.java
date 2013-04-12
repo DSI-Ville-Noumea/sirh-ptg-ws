@@ -17,21 +17,21 @@ public class DroitsProfil {
 	
 	@Column(name = "IS_EDITION", nullable = false)
     @Type(type="boolean")
-    private boolean isEdition;
+    private boolean edition;
 	
 	@Column(name = "IS_SAISIE", nullable = false)
     @Type(type="boolean")
-    private boolean isSaisie;
+    private boolean saisie;
 	
 	@Column(name = "IS_VISUALISATION", nullable = false)
     @Type(type="boolean")
-    private boolean isVisualisation;
+    private boolean visualisation;
 	
 	@Column(name = "IS_APPROBATION", nullable = false)
     @Type(type="boolean")
-    private boolean isApprobation;
+    private boolean approbation;
 	
 	@Column(name = "IS_GRANTOR", nullable = false)
     @Type(type="boolean")
-    private boolean isGrantor;
+    private boolean grantor;
 }

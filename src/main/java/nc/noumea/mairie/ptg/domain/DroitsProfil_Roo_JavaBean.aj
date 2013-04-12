@@ -15,44 +15,44 @@ privileged aspect DroitsProfil_Roo_JavaBean {
         this.label = label;
     }
     
-    public boolean DroitsProfil.isIsEdition() {
-        return this.isEdition;
+    public boolean DroitsProfil.isEdition() {
+        return this.edition;
     }
     
-    public void DroitsProfil.setIsEdition(boolean isEdition) {
-        this.isEdition = isEdition;
+    public void DroitsProfil.setEdition(boolean edition) {
+        this.edition = edition;
     }
     
-    public boolean DroitsProfil.isIsSaisie() {
-        return this.isSaisie;
+    public boolean DroitsProfil.isSaisie() {
+        return this.saisie;
     }
     
-    public void DroitsProfil.setIsSaisie(boolean isSaisie) {
-        this.isSaisie = isSaisie;
+    public void DroitsProfil.setSaisie(boolean saisie) {
+        this.saisie = saisie;
     }
     
-    public boolean DroitsProfil.isIsVisualisation() {
-        return this.isVisualisation;
+    public boolean DroitsProfil.isVisualisation() {
+        return this.visualisation;
     }
     
-    public void DroitsProfil.setIsVisualisation(boolean isVisualisation) {
-        this.isVisualisation = isVisualisation;
+    public void DroitsProfil.setVisualisation(boolean visualisation) {
+        this.visualisation = visualisation;
     }
     
-    public boolean DroitsProfil.isIsApprobation() {
-        return this.isApprobation;
+    public boolean DroitsProfil.isApprobation() {
+        return this.approbation;
     }
     
-    public void DroitsProfil.setIsApprobation(boolean isApprobation) {
-        this.isApprobation = isApprobation;
+    public void DroitsProfil.setApprobation(boolean approbation) {
+        this.approbation = approbation;
     }
     
-    public boolean DroitsProfil.isIsGrantor() {
-        return this.isGrantor;
+    public boolean DroitsProfil.isGrantor() {
+        return this.grantor;
     }
     
-    public void DroitsProfil.setIsGrantor(boolean isGrantor) {
-        this.isGrantor = isGrantor;
+    public void DroitsProfil.setGrantor(boolean grantor) {
+        this.grantor = grantor;
     }
     
 }

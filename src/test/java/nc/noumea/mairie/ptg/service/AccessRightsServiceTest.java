@@ -55,11 +55,11 @@ public class AccessRightsServiceTest {
 		Integer idAgent = 906543;
 		DroitsAgent da = new DroitsAgent();
 		da.setProfil(new DroitsProfil());
-		da.getProfil().setIsSaisie(true);
-		da.getProfil().setIsEdition(true);
-		da.getProfil().setIsVisualisation(true);
-		da.getProfil().setIsApprobation(true);
-		da.getProfil().setIsGrantor(true);
+		da.getProfil().setSaisie(true);
+		da.getProfil().setEdition(true);
+		da.getProfil().setVisualisation(true);
+		da.getProfil().setApprobation(true);
+		da.getProfil().setGrantor(true);
 		List<DroitsAgent> droits = Arrays.asList(da);
 		
 		@SuppressWarnings("unchecked")
@@ -90,18 +90,18 @@ public class AccessRightsServiceTest {
 		Integer idAgent = 906543;
 		DroitsAgent da = new DroitsAgent();
 		da.setProfil(new DroitsProfil());
-		da.getProfil().setIsSaisie(false);
-		da.getProfil().setIsEdition(true);
-		da.getProfil().setIsVisualisation(false);
-		da.getProfil().setIsApprobation(true);
-		da.getProfil().setIsGrantor(false);
+		da.getProfil().setSaisie(false);
+		da.getProfil().setEdition(true);
+		da.getProfil().setVisualisation(false);
+		da.getProfil().setApprobation(true);
+		da.getProfil().setGrantor(false);
 		DroitsAgent da2 = new DroitsAgent();
 		da2.setProfil(new DroitsProfil());
-		da2.getProfil().setIsSaisie(true);
-		da2.getProfil().setIsEdition(false);
-		da2.getProfil().setIsVisualisation(true);
-		da2.getProfil().setIsApprobation(false);
-		da2.getProfil().setIsGrantor(false);
+		da2.getProfil().setSaisie(true);
+		da2.getProfil().setEdition(false);
+		da2.getProfil().setVisualisation(true);
+		da2.getProfil().setApprobation(false);
+		da2.getProfil().setGrantor(false);
 		List<DroitsAgent> droits = Arrays.asList(da, da2);
 		
 		@SuppressWarnings("unchecked")
