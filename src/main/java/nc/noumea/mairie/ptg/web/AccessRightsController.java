@@ -1,9 +1,13 @@
 package nc.noumea.mairie.ptg.web;
 
+import nc.noumea.mairie.ptg.dto.AccessRightsDto;
+import nc.noumea.mairie.ptg.service.IAccessRightsService;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,16 +23,27 @@ public class AccessRightsController {
 
 	private Logger logger = LoggerFactory.getLogger(AccessRightsController.class);
 	
+	@Autowired
+	private IAccessRightsService accessRightService;
+	
+	@Autowired
+	private IAgentMatriculeConverterService converterService;
+	
 	@ResponseBody
-	@RequestMapping(value = "test", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@RequestMapping(value = "listeDroitsAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> test(@RequestParam("idAgent") int idAgent) {
+	public ResponseEntity<String> listAgentAccessRights(@RequestParam("idAgent") Integer idAgent) {
 		
-		logger.info("entered test controller");
-		Agent ag = Agent.findAgent(idAgent);
-		if (ag != null)
-			return new ResponseEntity<String>("{ \"prenom\" : \"" + ag.getDisplayPrenom() + "\" }", HttpStatus.OK);
-		else
-			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		logger.debug("entered listAgentAccessRights with parameter idAgent = {}", idAgent);
+		
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		if (Agent.findAgent(convertedIdAgent) == null)
+			throw new NotFoundException();
+
+		AccessRightsDto result = accessRightService.getAgentAccessRights(convertedIdAgent);
+		
+		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.NOT_FOUND);
 	}
+	
 }

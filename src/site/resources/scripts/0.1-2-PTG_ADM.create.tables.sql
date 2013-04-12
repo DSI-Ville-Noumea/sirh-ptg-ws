@@ -76,3 +76,66 @@ TABLESPACE TS_PTG_DATA;
 create public synonym PTG_ETAT_POINTAGE for PTG_ETAT_POINTAGE;
 grant select, insert, update, delete on PTG_ETAT_POINTAGE to R_PTG_USR;
 grant select on PTG_ETAT_POINTAGE to R_PTG_READ;
+
+
+--==============================================================
+-- Table: PTG_DROITS_PROFIL
+--==============================================================
+create sequence PTG_S_DROITS_PROFIL
+start with 1 
+increment by 1 
+nomaxvalue;
+
+create public synonym PTG_S_DROITS_PROFIL for PTG_S_DROITS_PROFIL;
+grant select on PTG_S_DROITS_PROFIL to R_PTG_USR;
+
+create table PTG_DROITS_PROFIL
+(
+   ID_DROITS_PROFIL NUMBER(38,0) not null,
+   LABEL varchar2(25) not null,
+   IS_EDITION NUMBER(1,0) default 0 not null,
+   IS_SAISIE NUMBER(1,0) default 0 not null,
+   IS_VISUALISATION NUMBER(1,0) default 0 not null,
+   IS_APPROBATION NUMBER(1,0) default 0 not null,
+   IS_GRANTOR NUMBER(1,0) default 0 not null,
+   VERSION NUMBER default 0 not null,
+   constraint PK_PTG_DROITS_PROFIL
+   primary key (ID_DROITS_PROFIL)
+)
+TABLESPACE TS_PTG_DATA;
+
+create public synonym PTG_DROITS_PROFIL for PTG_DROITS_PROFIL;
+grant select, insert, update, delete on PTG_DROITS_PROFIL to R_PTG_USR;
+grant select on PTG_DROITS_PROFIL to R_PTG_READ;
+
+
+--==============================================================
+-- Table: PTG_DROITS_AGENT
+--==============================================================
+create sequence PTG_S_DROITS_AGENT
+start with 1 
+increment by 1 
+nomaxvalue;
+
+create public synonym PTG_S_DROITS_AGENT for PTG_S_DROITS_AGENT;
+grant select on PTG_S_DROITS_AGENT to R_PTG_USR;
+
+create table PTG_DROITS_AGENT
+(
+   ID_DROITS_AGENT NUMBER(38,0) not null,
+   ID_AGENT NUMBER(7,0) not null,
+   CODE_SERVICE varchar2(10) not null,
+   DATE_MODIFICATION DATE not null, 
+   ID_DROITS_PROFIL NUMBER(38,0) not null,
+   VERSION NUMBER default 0 not null,
+   constraint PK_PTG_DROITS_AGENT
+   primary key (ID_DROITS_AGENT),
+   constraint FK_PTG_DROITS_PROFIL
+   foreign key (ID_DROITS_PROFIL)
+   references PTG_DROITS_PROFIL (ID_DROITS_PROFIL)
+)
+TABLESPACE TS_PTG_DATA;
+
+create public synonym PTG_DROITS_AGENT for PTG_DROITS_AGENT;
+grant select, insert, update, delete on PTG_DROITS_AGENT to R_PTG_USR;
+grant select on PTG_DROITS_AGENT to R_PTG_READ;
