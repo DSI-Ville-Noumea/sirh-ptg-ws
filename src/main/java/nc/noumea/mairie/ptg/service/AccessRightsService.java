@@ -26,6 +26,9 @@ public class AccessRightsService implements IAccessRightsService {
 	@PersistenceContext(unitName = "sirhPersistenceUnit")
 	private EntityManager sirhEntityManager;
 	
+	@PersistenceContext(unitName = "ptgPersistenceUnit")
+	private EntityManager ptgEntityManager;
+	
 	@Autowired
 	private HelperService helperService;
 	
@@ -66,12 +69,12 @@ public class AccessRightsService implements IAccessRightsService {
 		// build the dto with it
 		for (DroitsAgent d : droits) {
 			
-			if (d.isApprobateur() && d.getIdAgent() != idAgent)
+			if (d.isApprobateur() && !d.getIdAgent().equals(idAgent))
 				throw new AccessRightsServiceException("");
 			
 			Agent ag = sirhEntityManager.find(Agent.class, d.getIdAgent());
 			AgentDto agDto = new AgentDto(ag);
-			agDto.setCodeService(siserv.getSigle());
+			agDto.setCodeService(siserv.getServi());
 			agDto.setService(siserv.getLiServ().trim());
 			
 			if (d.isDelegataire())
@@ -117,12 +120,13 @@ public class AccessRightsService implements IAccessRightsService {
 				delegataire.setDelegataire(true);
 			}
 	
-			if (delegataire.getIdAgent() == null || delegataire.getIdAgent() != dto.getDelegataire().getIdAgent()) {
+			if (delegataire.getIdAgent() == null || !delegataire.getIdAgent().equals(dto.getDelegataire().getIdAgent())) {
 				delegataire.setDateModification(helperService.getCurrentDate());
 			}
 			
 			delegataire.setIdAgent(dto.getDelegataire().getIdAgent());
 			delegataire.setCodeService(siserv.getServi());
+			ptgEntityManager.persist(delegataire);
 			newDroits.add(delegataire);
 		}
 		
@@ -140,20 +144,20 @@ public class AccessRightsService implements IAccessRightsService {
 			DroitsAgent operator = null;
 			if (operators.containsKey(newOperator.getIdAgent())) {
 				operator = operators.get(newOperator.getIdAgent());
-				operators.remove(operator);
+				operators.remove(operator.getIdAgent());
 			}
 			else {
 				operator = new DroitsAgent();
 				operator.setOperateur(true);
 			}
 			
-			if (operator.getIdAgent() == null || operator.getIdAgent() != newOperator.getIdAgent()) {
+			if (operator.getIdAgent() == null || !operator.getIdAgent().equals(newOperator.getIdAgent())) {
 				operator.setDateModification(helperService.getCurrentDate());
 			}
 			
 			operator.setIdAgent(newOperator.getIdAgent());
 			operator.setCodeService(siserv.getServi());
-			
+			ptgEntityManager.persist(operator);
 			newDroits.add(operator);
 		}
 		

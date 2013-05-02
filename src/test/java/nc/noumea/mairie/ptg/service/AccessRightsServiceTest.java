@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.times;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -187,9 +188,9 @@ public class AccessRightsServiceTest {
 		
 		// Then
 		assertNotNull(dto.getDelegataire());
-		assertEquals(9007654, dto.getDelegataire().getIdAgent());
+		assertEquals(9007654, (int)dto.getDelegataire().getIdAgent());
 		assertEquals(1, dto.getSaisisseurs().size());
-		assertEquals(9007655, dto.getSaisisseurs().get(0).getIdAgent());
+		assertEquals(9007655, (int)dto.getSaisisseurs().get(0).getIdAgent());
 	}
 	
 	@Test
@@ -222,10 +223,13 @@ public class AccessRightsServiceTest {
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
 		
+		EntityManager ptgEMMock = Mockito.mock(EntityManager.class);
+		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "siservService", siMock);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		ReflectionTestUtils.setField(service, "ptgEntityManager", ptgEMMock);
 		
 		
 		// When
@@ -238,6 +242,54 @@ public class AccessRightsServiceTest {
 		assertTrue(actualList.get(0).isDelegataire());
 		assertFalse(actualList.get(0).isOperateur());
 		assertFalse(actualList.get(0).isApprobateur());
+		
+		Mockito.verify(ptgEMMock, times(1)).persist(da1);
+	}
+	
+	@Test
+	public void setDelegatorAndOperators_removeDelegator_deleteIt() {
+		
+		// Given
+		int idAgent = 9008765;
+		
+		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
+		
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setDelegataire(true);
+		da1.setIdAgent(idAgent);
+		da1.setCodeService("SERV1");
+		
+		FichePoste fp = new FichePoste();
+		fp.setCodeService("SERVICE");
+		Siserv siserv = new Siserv();
+		siserv.setLiServ("SERVICE LIB");
+		siserv.setServi("SERVICE");
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(Arrays.asList(da1));
+
+		ISiservService siMock = Mockito.mock(ISiservService.class);
+		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+		
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
+		
+		EntityManager ptgEMMock = Mockito.mock(EntityManager.class);
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "siservService", siMock);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		ReflectionTestUtils.setField(service, "ptgEntityManager", ptgEMMock);
+		
+		
+		// When
+		List<DroitsAgent> actualList = service.setDelegatorAndOperators(idAgent, dto);
+		
+		// Then
+		assertEquals(0, actualList.size());
+		
+		Mockito.verify(arRepo, times(1)).removeDroitsAgent(da1);
 	}
 	
 	@Test
@@ -265,10 +317,13 @@ public class AccessRightsServiceTest {
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
 		
+		EntityManager ptgEMMock = Mockito.mock(EntityManager.class);
+		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "siservService", siMock);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		ReflectionTestUtils.setField(service, "ptgEntityManager", ptgEMMock);
 		
 		// When
 		List<DroitsAgent> actualList = service.setDelegatorAndOperators(idAgent, dto);
@@ -281,6 +336,8 @@ public class AccessRightsServiceTest {
 		assertTrue(actualList.get(0).isDelegataire());
 		assertFalse(actualList.get(0).isOperateur());
 		assertFalse(actualList.get(0).isApprobateur());
+		
+		Mockito.verify(ptgEMMock, times(1)).persist(Mockito.any(DroitsAgent.class));
 	}
 	
 	@Test
@@ -320,10 +377,13 @@ public class AccessRightsServiceTest {
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
 		
+		EntityManager ptgEMMock = Mockito.mock(EntityManager.class);
+		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "siservService", siMock);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		ReflectionTestUtils.setField(service, "ptgEntityManager", ptgEMMock);
 		
 		
 		// When
@@ -343,5 +403,8 @@ public class AccessRightsServiceTest {
 		assertFalse(actualList.get(1).isDelegataire());
 		assertTrue(actualList.get(1).isOperateur());
 		assertFalse(actualList.get(1).isApprobateur());
+		
+		Mockito.verify(arRepo, times(1)).removeDroitsAgent(da2);
+		Mockito.verify(ptgEMMock, times(1)).persist(da1);
 	}
 }

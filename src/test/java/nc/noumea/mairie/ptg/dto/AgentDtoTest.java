@@ -22,6 +22,6 @@ public class AgentDtoTest {
 		// Then
 		assertEquals("RAYNAUD", result.getNom());
 		assertEquals("Nicolas", result.getPrenom());
-		assertEquals(9006765, result.getIdAgent());
+		assertEquals(9006765, (int)result.getIdAgent());
 	}
 }

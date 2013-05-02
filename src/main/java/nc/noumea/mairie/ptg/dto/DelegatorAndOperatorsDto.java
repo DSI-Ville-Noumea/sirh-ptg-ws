@@ -24,6 +24,11 @@ public class DelegatorAndOperatorsDto implements IJSONSerialize, IJSONDeserializ
 			.serialize(this);
 	}
 
+	@Override
+	public DelegatorAndOperatorsDto deserializeFromJSON(String json) {
+		return new JSONDeserializer<DelegatorAndOperatorsDto>().deserializeInto(json, this);
+	}
+
 	public AgentDto getDelegataire() {
 		return delegataire;
 	}
@@ -40,8 +45,5 @@ public class DelegatorAndOperatorsDto implements IJSONSerialize, IJSONDeserializ
 		this.saisisseurs = saisisseurs;
 	}
 
-	@Override
-	public DelegatorAndOperatorsDto deserializeFromJSON(String json) {
-		return new JSONDeserializer<DelegatorAndOperatorsDto>().deserialize(json);
-	}
+	
 }
