@@ -167,4 +167,10 @@ public class AccessRightsService implements IAccessRightsService {
 		
 		return newDroits;
 	}
+
+	
+	@Override
+	public boolean canAccessAccessRights(Integer idAgent) {
+		return accessRightsRepository.isUserApprobator(idAgent);
+	}
 }

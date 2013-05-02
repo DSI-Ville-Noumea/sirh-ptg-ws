@@ -57,6 +57,9 @@ public class AccessRightsController {
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
+		if (!accessRightService.canAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+		
 		if (Agent.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 		
@@ -73,6 +76,9 @@ public class AccessRightsController {
 		logger.debug("entered POST [delegataireSaisisseurs] => setDelegateAndInputter with parameter idAgent = {}", idAgent);
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		if (!accessRightService.canAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
 		
 		if (Agent.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();

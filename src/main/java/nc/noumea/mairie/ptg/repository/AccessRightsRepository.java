@@ -38,5 +38,17 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public void removeDroitsAgent(DroitsAgent droitsAgent) {
 		ptgEntityManager.remove(droitsAgent);
 	}
+
+	@Override
+	public boolean isUserApprobator(Integer idAgent) {
+		
+		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
+				"select sum(da.approbateur) from DroitsAgent da where da.idAgent = :idAgent", Boolean.class);
+		q.setParameter("idAgent", idAgent);
+		
+		Boolean result = q.getSingleResult();
+		
+		return (result != null && result);
+	}
 	
 }
