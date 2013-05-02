@@ -3,6 +3,8 @@ package nc.noumea.mairie.ptg.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import flexjson.JSONSerializer;
+
 public class DelegatorAndInputtersDto implements IJSONSerialize {
 
 	private AgentDto delegataire;
@@ -14,8 +16,11 @@ public class DelegatorAndInputtersDto implements IJSONSerialize {
 	
 	@Override
 	public String serializeInJSON() {
-		// TODO Auto-generated method stub
-		return null;
+		return new JSONSerializer()
+			.include("delegataire")
+			.include("saisisseurs.*")
+			.exclude("*.class")
+			.serialize(this);
 	}
 
 	public AgentDto getDelegataire() {

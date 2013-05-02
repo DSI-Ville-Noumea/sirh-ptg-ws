@@ -10,7 +10,6 @@
         <class>nc.noumea.mairie.ptg.domain.Pointage</class>
         <class>nc.noumea.mairie.ptg.domain.EtatPointage</class>
         <class>nc.noumea.mairie.ptg.domain.DroitsAgent</class>
-        <class>nc.noumea.mairie.ptg.domain.DroitsProfil</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
@@ -28,6 +27,9 @@
 	<persistence-unit name="sirhPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <class>nc.noumea.mairie.sirh.domain.Agent</class>
+        <class>nc.noumea.mairie.sirh.domain.FichePoste</class>
+        <class>nc.noumea.mairie.sirh.domain.Affectation</class>
+        <class>nc.noumea.mairie.sirh.domain.Siserv</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.DB2400Dialect"/>

@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,7 +36,7 @@ public class AccessRightsController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> listAgentAccessRights(@RequestParam("idAgent") Integer idAgent) {
 		
-		logger.debug("entered [listeDroitsAgent] => listAgentAccessRights with parameter idAgent = {}", idAgent);
+		logger.debug("entered GET [listeDroitsAgent] => listAgentAccessRights with parameter idAgent = {}", idAgent);
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
@@ -52,7 +53,7 @@ public class AccessRightsController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getDelegateAndInputter(@RequestParam("idAgent") Integer idAgent)
 	{
-		logger.debug("entered [delegataireSaisisseurs] => getDelegateAndInputter with parameter idAgent = {}", idAgent);
+		logger.debug("entered GET [delegataireSaisisseurs] => getDelegateAndInputter with parameter idAgent = {}", idAgent);
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
@@ -62,6 +63,23 @@ public class AccessRightsController {
 		DelegatorAndInputtersDto result = accessRightService.getDelegatorAndInputters(convertedIdAgent);
 
 		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "delegataireSaisisseurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "ptgTransactionManager")
+	public ResponseEntity<String> setDelegateAndInputter(@RequestParam("idAgent") Integer idAgent, @RequestBody String delegatorAndInputtersDto)
+	{
+		logger.debug("entered POST [delegataireSaisisseurs] => setDelegateAndInputter with parameter idAgent = {}", idAgent);
+		
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		if (Agent.findAgent(convertedIdAgent) == null)
+			throw new NotFoundException();
+		
+		accessRightService.setDelegatorAndInputters(idAgent, null);
+
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 	
 }

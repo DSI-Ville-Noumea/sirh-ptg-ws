@@ -7,4 +7,5 @@ public interface IAccessRightsService {
 
 	AccessRightsDto getAgentAccessRights(Integer idAgent);
 	DelegatorAndInputtersDto getDelegatorAndInputters(Integer idAgent);
+	void setDelegatorAndInputters(Integer idAgent, DelegatorAndInputtersDto dto);
 }
