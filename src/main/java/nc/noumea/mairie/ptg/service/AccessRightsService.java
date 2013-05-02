@@ -1,19 +1,21 @@
 package nc.noumea.mairie.ptg.service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
-import nc.noumea.mairie.ptg.dto.DelegatorAndInputtersDto;
+import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
-import nc.noumea.mairie.sirh.domain.FichePoste;
 import nc.noumea.mairie.sirh.domain.Siserv;
+import nc.noumea.mairie.sirh.service.ISiservService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,9 @@ public class AccessRightsService implements IAccessRightsService {
 	
 	@Autowired
 	private HelperService helperService;
+	
+	@Autowired
+	private ISiservService siservService;
 	
 	@Autowired
 	private IAccessRightsRepository accessRightsRepository;
@@ -48,29 +53,15 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 	
 	@Override
-	public DelegatorAndInputtersDto getDelegatorAndInputters(Integer idAgent) {
+	public DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent) {
 		
-		DelegatorAndInputtersDto result = new DelegatorAndInputtersDto();
+		DelegatorAndOperatorsDto result = new DelegatorAndOperatorsDto();
 
 		// Retrieve service of agent (through FichePoste) by affectation
-		TypedQuery<FichePoste> q = sirhEntityManager.createNamedQuery("getCurrentAffectation", FichePoste.class);
-		q.setParameter("idAgent", idAgent);
-		q.setParameter("today", helperService.getCurrentDate());
-		
-		List<FichePoste> fichePostes = q.getResultList();
-		
-		if (fichePostes.size() != 1)
-			throw new AccessRightsServiceException(String.format("L'agent donné a 0 ou plus d'une affectation courante [%s].", idAgent));
-		
-		String codeService = fichePostes.get(0).getCodeService();
-		
-		Siserv siserv = sirhEntityManager.find(Siserv.class, codeService);
-		
-		if (siserv == null)
-			throw new AccessRightsServiceException(String.format("Impossible de trouver le service de l'agent [%s].", codeService));
+		Siserv siserv = siservService.getAgentService(idAgent);
 		
 		// search through accessRightRepo to retrieve all agents and their rights
-		List<DroitsAgent> droits = accessRightsRepository.getAllDroitsForService(codeService);
+		List<DroitsAgent> droits = accessRightsRepository.getAllDroitsForService(siserv.getServi());
 		
 		// build the dto with it
 		for (DroitsAgent d : droits) {
@@ -94,10 +85,82 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 	
 	@Override
-	public void setDelegatorAndInputters(Integer idAgent, DelegatorAndInputtersDto dto) {
+	public List<DroitsAgent> setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto) {
 		
-		//TODO: save delegator and inputters
+		// Retrieve service of agent (through FichePoste) by affectation
+		Siserv siserv = siservService.getAgentService(idAgent);
 		
-	}
+		// get all DroitsAgent for service
+		List<DroitsAgent> droits = accessRightsRepository.getAllDroitsForService(siserv.getServi());
+		
+		// initializinf list of new access rights
+		List<DroitsAgent> newDroits = new ArrayList<DroitsAgent>();
+		
+		
+		// changing delegataire
+		DroitsAgent delegataire = null;
+		
+		for (DroitsAgent d : droits) {
+			if (d.isDelegataire()){
+				delegataire = d;
+				break;
+			}
+		}
+
+		if (dto.getDelegataire() == null) {
+			if (delegataire != null)
+				accessRightsRepository.removeDroitsAgent(delegataire);
+		}
+		else {
+			if (delegataire == null) {
+				delegataire = new DroitsAgent();
+				delegataire.setDelegataire(true);
+			}
 	
+			if (delegataire.getIdAgent() == null || delegataire.getIdAgent() != dto.getDelegataire().getIdAgent()) {
+				delegataire.setDateModification(helperService.getCurrentDate());
+			}
+			
+			delegataire.setIdAgent(dto.getDelegataire().getIdAgent());
+			delegataire.setCodeService(siserv.getServi());
+			newDroits.add(delegataire);
+		}
+		
+		
+		// changing operators
+		Map<Integer, DroitsAgent> operators = new HashMap<Integer, DroitsAgent>();
+		
+		for (DroitsAgent d : droits) {
+			if (d.isOperateur())
+				operators.put(d.getIdAgent(), d);
+		}
+		
+		for (AgentDto newOperator : dto.getSaisisseurs()) {
+			
+			DroitsAgent operator = null;
+			if (operators.containsKey(newOperator.getIdAgent())) {
+				operator = operators.get(newOperator.getIdAgent());
+				operators.remove(operator);
+			}
+			else {
+				operator = new DroitsAgent();
+				operator.setOperateur(true);
+			}
+			
+			if (operator.getIdAgent() == null || operator.getIdAgent() != newOperator.getIdAgent()) {
+				operator.setDateModification(helperService.getCurrentDate());
+			}
+			
+			operator.setIdAgent(newOperator.getIdAgent());
+			operator.setCodeService(siserv.getServi());
+			
+			newDroits.add(operator);
+		}
+		
+		// remove the remaining operators from persistence
+		for (DroitsAgent da : operators.values())
+			accessRightsRepository.removeDroitsAgent(da);
+		
+		return newDroits;
+	}
 }

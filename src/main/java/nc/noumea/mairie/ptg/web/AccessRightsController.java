@@ -1,7 +1,7 @@
 package nc.noumea.mairie.ptg.web;
 
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
-import nc.noumea.mairie.ptg.dto.DelegatorAndInputtersDto;
+import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.sirh.domain.Agent;
@@ -51,7 +51,7 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "delegataireSaisisseurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getDelegateAndInputter(@RequestParam("idAgent") Integer idAgent)
+	public ResponseEntity<String> getDelegateAndOperator(@RequestParam("idAgent") Integer idAgent)
 	{
 		logger.debug("entered GET [delegataireSaisisseurs] => getDelegateAndInputter with parameter idAgent = {}", idAgent);
 		
@@ -60,7 +60,7 @@ public class AccessRightsController {
 		if (Agent.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 		
-		DelegatorAndInputtersDto result = accessRightService.getDelegatorAndInputters(convertedIdAgent);
+		DelegatorAndOperatorsDto result = accessRightService.getDelegatorAndOperators(convertedIdAgent);
 
 		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
 	}
@@ -68,7 +68,7 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "delegataireSaisisseurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
-	public ResponseEntity<String> setDelegateAndInputter(@RequestParam("idAgent") Integer idAgent, @RequestBody String delegatorAndInputtersDto)
+	public ResponseEntity<String> setDelegateAndOperator(@RequestParam("idAgent") Integer idAgent, @RequestBody String delegatorAndOperatorsDtoJson)
 	{
 		logger.debug("entered POST [delegataireSaisisseurs] => setDelegateAndInputter with parameter idAgent = {}", idAgent);
 		
@@ -77,7 +77,7 @@ public class AccessRightsController {
 		if (Agent.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 		
-		accessRightService.setDelegatorAndInputters(idAgent, null);
+		accessRightService.setDelegatorAndOperators(idAgent, new DelegatorAndOperatorsDto().deserializeFromJSON(delegatorAndOperatorsDtoJson));
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}

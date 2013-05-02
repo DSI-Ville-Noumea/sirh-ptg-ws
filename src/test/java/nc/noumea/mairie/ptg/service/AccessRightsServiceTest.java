@@ -11,15 +11,16 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
-import nc.noumea.mairie.ptg.dto.DelegatorAndInputtersDto;
+import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.sirh.domain.FichePoste;
 import nc.noumea.mairie.sirh.domain.Siserv;
+import nc.noumea.mairie.sirh.service.ISiservService;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -114,43 +115,28 @@ public class AccessRightsServiceTest {
 		// Given
 		int idAgent = 9007754;
 		
-		FichePoste fp = new FichePoste();
-		fp.setCodeService("SERVICE");
-		
 		Siserv siserv = new Siserv();
 		siserv.setServi("SERVICE");
 		siserv.setLiServ("LIB SERVICE");
 		
 		List<DroitsAgent> droits = new ArrayList<DroitsAgent>();
 		
-		@SuppressWarnings("unchecked")
-		TypedQuery<FichePoste> mockQ = Mockito.mock(TypedQuery.class);
-		Mockito.when(mockQ.getResultList()).thenReturn(Arrays.asList(fp));
-		
-		EntityManager emMock = Mockito.mock(EntityManager.class);
-		Mockito.when(emMock.createNamedQuery("getCurrentAffectation", FichePoste.class)).thenReturn(mockQ);
-		Mockito.when(emMock.find(Siserv.class, "SERVICE")).thenReturn(siserv);
+		ISiservService siMock = Mockito.mock(ISiservService.class);
+		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAllDroitsForService(fp.getCodeService())).thenReturn(droits);
-		
-		HelperService hSMock = Mockito.mock(HelperService.class);
-		Mockito.when(hSMock.getCurrentDate()).thenReturn(new DateTime(2012, 04, 19, 0, 0, 0).toDate());
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(droits);
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhEntityManager", emMock);
-		ReflectionTestUtils.setField(service, "helperService", hSMock);
+		ReflectionTestUtils.setField(service, "siservService", siMock);
 		
 		// When
-		DelegatorAndInputtersDto dto = service.getDelegatorAndInputters(idAgent);
+		DelegatorAndOperatorsDto dto = service.getDelegatorAndOperators(idAgent);
 		
 		// Then
 		assertNull(dto.getDelegataire());
 		assertEquals(0, dto.getSaisisseurs().size());
-
-		Mockito.verify(mockQ).setParameter("today", new DateTime(2012, 04, 19, 0, 0, 0).toDate());
-		Mockito.verify(mockQ).setParameter("idAgent", idAgent);
 	}
 	
 	@Test
@@ -159,8 +145,6 @@ public class AccessRightsServiceTest {
 		// Given
 		int idAgent = 9007754;
 		
-		FichePoste fp = new FichePoste();
-		fp.setCodeService("SERVICE");
 		Siserv siserv = new Siserv();
 		siserv.setLiServ("SERVICE LIB");
 		siserv.setServi("SERVICE");
@@ -178,14 +162,8 @@ public class AccessRightsServiceTest {
 		da2.setIdDroitsAgent(10);
 		da2.setOperateur(true);
 		droits.add(da2);
-		
-		@SuppressWarnings("unchecked")
-		TypedQuery<FichePoste> mockQ = Mockito.mock(TypedQuery.class);
-		Mockito.when(mockQ.getResultList()).thenReturn(Arrays.asList(fp));
-		
+
 		EntityManager emMock = Mockito.mock(EntityManager.class);
-		Mockito.when(emMock.createNamedQuery("getCurrentAffectation", FichePoste.class)).thenReturn(mockQ);
-		Mockito.when(emMock.find(Siserv.class, "SERVICE")).thenReturn(siserv);
 		Agent ag9007654 = new Agent();
 		ag9007654.setIdAgent(9007654);
 		Mockito.when(emMock.find(Agent.class, 9007654)).thenReturn(ag9007654);
@@ -194,26 +172,176 @@ public class AccessRightsServiceTest {
 		Mockito.when(emMock.find(Agent.class, 9007655)).thenReturn(ag9007655);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAllDroitsForService(fp.getCodeService())).thenReturn(droits);
-		
-		HelperService hSMock = Mockito.mock(HelperService.class);
-		Mockito.when(hSMock.getCurrentDate()).thenReturn(new DateTime(2012, 04, 19, 0, 0, 0).toDate());
-		
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(droits);
+
+		ISiservService siMock = Mockito.mock(ISiservService.class);
+		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhEntityManager", emMock);
-		ReflectionTestUtils.setField(service, "helperService", hSMock);
+		ReflectionTestUtils.setField(service, "siservService", siMock);
 		
 		// When
-		DelegatorAndInputtersDto dto = service.getDelegatorAndInputters(idAgent);
+		DelegatorAndOperatorsDto dto = service.getDelegatorAndOperators(idAgent);
 		
 		// Then
 		assertNotNull(dto.getDelegataire());
 		assertEquals(9007654, dto.getDelegataire().getIdAgent());
 		assertEquals(1, dto.getSaisisseurs().size());
 		assertEquals(9007655, dto.getSaisisseurs().get(0).getIdAgent());
+	}
+	
+	@Test
+	public void setDelegatorAndOperators_delegatorExist_replaceIt() {
 		
-		Mockito.verify(mockQ).setParameter("today", new DateTime(2012, 04, 19, 0, 0, 0).toDate());
-		Mockito.verify(mockQ).setParameter("idAgent", idAgent);
+		// Given
+		int idAgent = 9008765;
+		
+		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
+		dto.setDelegataire(new AgentDto());
+		dto.getDelegataire().setIdAgent(9008888);
+		
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setDelegataire(true);
+		da1.setIdAgent(idAgent);
+		da1.setCodeService("SERV1");
+		
+		FichePoste fp = new FichePoste();
+		fp.setCodeService("SERVICE");
+		Siserv siserv = new Siserv();
+		siserv.setLiServ("SERVICE LIB");
+		siserv.setServi("SERVICE");
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(Arrays.asList(da1));
+
+		ISiservService siMock = Mockito.mock(ISiservService.class);
+		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+		
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "siservService", siMock);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		
+		
+		// When
+		List<DroitsAgent> actualList = service.setDelegatorAndOperators(idAgent, dto);
+		
+		// Then
+		assertEquals(1, actualList.size());
+		assertEquals(new Integer(9008888), actualList.get(0).getIdAgent());
+		assertEquals(new DateTime(2013, 04, 19, 14, 5, 9).toDate(), actualList.get(0).getDateModification());
+		assertTrue(actualList.get(0).isDelegataire());
+		assertFalse(actualList.get(0).isOperateur());
+		assertFalse(actualList.get(0).isApprobateur());
+	}
+	
+	@Test
+	public void setDelegatorAndOperators_delegatorDoesNotExist_createIt() {
+		
+		// Given
+		int idAgent = 9008765;
+		
+		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
+		dto.setDelegataire(new AgentDto());
+		dto.getDelegataire().setIdAgent(9008888);
+		
+		FichePoste fp = new FichePoste();
+		fp.setCodeService("SERVICE");
+		Siserv siserv = new Siserv();
+		siserv.setLiServ("SERVICE LIB");
+		siserv.setServi("SERVICE");
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(new ArrayList<DroitsAgent>());
+
+		ISiservService siMock = Mockito.mock(ISiservService.class);
+		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+		
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "siservService", siMock);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		
+		// When
+		List<DroitsAgent> actualList = service.setDelegatorAndOperators(idAgent, dto);
+		
+		// Then
+		assertEquals(1, actualList.size());
+		assertEquals(new Integer(9008888), actualList.get(0).getIdAgent());
+		assertEquals("SERVICE", actualList.get(0).getCodeService());
+		assertEquals(new DateTime(2013, 04, 19, 14, 5, 9).toDate(), actualList.get(0).getDateModification());
+		assertTrue(actualList.get(0).isDelegataire());
+		assertFalse(actualList.get(0).isOperateur());
+		assertFalse(actualList.get(0).isApprobateur());
+	}
+	
+	@Test
+	public void setDelegatorAndOperators_2operatorsExist_keep1AndreplaceOne() {
+		
+		// Given
+		int idAgent = 9008765;
+		
+		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
+		dto.getSaisisseurs().add(new AgentDto());
+		dto.getSaisisseurs().get(0).setIdAgent(9008888);
+		dto.getSaisisseurs().add(new AgentDto());
+		dto.getSaisisseurs().get(1).setIdAgent(9008887);
+		
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setOperateur(true);
+		da1.setIdAgent(9008888);
+		da1.setCodeService("SERV1");
+		
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setOperateur(true);
+		da2.setIdAgent(901);
+		da2.setCodeService("SERV1");
+		
+		FichePoste fp = new FichePoste();
+		fp.setCodeService("SERVICE");
+		Siserv siserv = new Siserv();
+		siserv.setLiServ("SERVICE LIB");
+		siserv.setServi("SERVICE");
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(Arrays.asList(da1, da2));
+
+		ISiservService siMock = Mockito.mock(ISiservService.class);
+		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+		
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "siservService", siMock);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		
+		
+		// When
+		List<DroitsAgent> actualList = service.setDelegatorAndOperators(idAgent, dto);
+		
+		// Then
+		assertEquals(2, actualList.size());
+		
+		assertEquals(new Integer(9008888), actualList.get(0).getIdAgent());
+		assertNull(actualList.get(0).getDateModification());
+		assertFalse(actualList.get(0).isDelegataire());
+		assertTrue(actualList.get(0).isOperateur());
+		assertFalse(actualList.get(0).isApprobateur());
+		
+		assertEquals(new Integer(9008887), actualList.get(1).getIdAgent());
+		assertEquals(new DateTime(2013, 04, 19, 14, 5, 9).toDate(), actualList.get(1).getDateModification());
+		assertFalse(actualList.get(1).isDelegataire());
+		assertTrue(actualList.get(1).isOperateur());
+		assertFalse(actualList.get(1).isApprobateur());
 	}
 }

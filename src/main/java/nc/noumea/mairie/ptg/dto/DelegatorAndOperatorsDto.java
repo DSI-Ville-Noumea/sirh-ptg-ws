@@ -3,14 +3,15 @@ package nc.noumea.mairie.ptg.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 
-public class DelegatorAndInputtersDto implements IJSONSerialize {
+public class DelegatorAndOperatorsDto implements IJSONSerialize, IJSONDeserialize<DelegatorAndOperatorsDto> {
 
 	private AgentDto delegataire;
 	private List<AgentDto> saisisseurs;
 	
-	public DelegatorAndInputtersDto() {
+	public DelegatorAndOperatorsDto() {
 		saisisseurs = new ArrayList<AgentDto>();
 	}
 	
@@ -37,5 +38,10 @@ public class DelegatorAndInputtersDto implements IJSONSerialize {
 
 	public void setSaisisseurs(List<AgentDto> saisisseurs) {
 		this.saisisseurs = saisisseurs;
+	}
+
+	@Override
+	public DelegatorAndOperatorsDto deserializeFromJSON(String json) {
+		return new JSONDeserializer<DelegatorAndOperatorsDto>().deserialize(json);
 	}
 }
