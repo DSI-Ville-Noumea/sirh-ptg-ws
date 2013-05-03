@@ -176,8 +176,20 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	public List<AgentDto> listAgentsToAssign(Integer idAgent) {
-		// TODO Auto-generated method stub
-		return new ArrayList<AgentDto>();
+		
+		// Retrieve division service of agent
+		ServiceDto service = sirhWSConsumer.getAgentDivision(idAgent);
+		
+		List<Integer> agentIds = sirhWSConsumer.getServicesAgent(service.getService());
+
+		List<AgentDto> agentDtos = new ArrayList<AgentDto>();
+		
+		for(Integer agentId : agentIds) {
+			Agent ag = sirhEntityManager.find(Agent.class, agentId);
+			agentDtos.add(new AgentDto(ag));
+		}
+		
+		return agentDtos;
 	}
 	
 }

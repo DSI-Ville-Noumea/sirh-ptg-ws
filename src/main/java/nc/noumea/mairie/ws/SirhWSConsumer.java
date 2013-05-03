@@ -1,5 +1,10 @@
 package nc.noumea.mairie.ws;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -21,32 +26,62 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 	private String sirhWsBaseUrl;
 	
 	private static final String sirhAgentDivisionsUrl = "agents/direction";
+	private static final String sirhAgentsServiceUrl = "agents/serviceAgents";
 
 	@Override
 	public ServiceDto getAgentDivision(Integer idAgent) {
+		
 		String url = String.format(sirhWsBaseUrl + sirhAgentDivisionsUrl);
-		ClientResponse res = createAndFireRequest(idAgent, url);
-		return readResponse(ServiceDto.class, res, idAgent, url);
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		
+		ClientResponse res = createAndFireRequest(parameters, url);
+		
+		return readResponse(ServiceDto.class, res, url);
 	}
 	
-	public ClientResponse createAndFireRequest(Integer agentId, String url) {
+	@Override
+	public List<Integer> getServicesAgent(String rootService) {
+		
+		String url = String.format(sirhWsBaseUrl + sirhAgentsServiceUrl);
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("codeService", rootService);
+
+		ClientResponse res = createAndFireRequest(parameters, url);
+		
+		List<Integer> result = new ArrayList<Integer>();
+		
+		// We need this loop for converting Long to Integer because flexjson automatically
+		// deserialize numbers into long values when in tables
+		for(Long l : readResponseAsList(Long.class, res, url))
+			result.add(l.intValue());
+		
+		return result;
+	}
+	
+	public ClientResponse createAndFireRequest(Map<String, String> parameters, String url) {
 
 		Client client = Client.create();
-
-		WebResource webResource = client.resource(url).queryParam("idAgent", String.valueOf(agentId));
-
+		WebResource webResource = client.resource(url);
+		
+		for (String key : parameters.keySet()) {
+			webResource = webResource.queryParam(key, parameters.get(key));
+		}
+		
 		ClientResponse response = null;
 
 		try {
 			response = webResource.accept(MediaType.APPLICATION_JSON_VALUE).get(ClientResponse.class);
 		} catch (ClientHandlerException ex) {
-			throw new SirhWSConsumerException(String.format("An error occured when querying '%s' with agentId '%d'.", url, agentId), ex);
+			throw new SirhWSConsumerException(String.format("An error occured when querying '%s'.", url), ex);
 		}
 
 		return response;
 	}
 
-	public <T> T readResponse(Class<T> targetClass, ClientResponse response, int agentId, String url) {
+	public <T> T readResponse(Class<T> targetClass, ClientResponse response, String url) {
 
 		T result = null;
 		
@@ -63,13 +98,35 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 		}
 
 		if (response.getStatus() != HttpStatus.OK.value()) {
-			throw new SirhWSConsumerException(String.format("An error occured when querying '%s' with agentId '%d'. Return code is : %s", url,
-					agentId, response.getStatus()));
+			throw new SirhWSConsumerException(String.format("An error occured when querying '%s'. Return code is : %s", url,
+					response.getStatus()));
 		}
 
 		String output = response.getEntity(String.class);
 
 		result = new JSONDeserializer<T>().deserializeInto(output, result);
+
+		return result;
+	}
+	
+	public <T> List<T> readResponseAsList(Class<T> targetClass, ClientResponse response, String url) {
+
+		List<T> result = null;
+		
+		result = new ArrayList<T>();
+		
+		if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
+			return null;
+		}
+
+		if (response.getStatus() != HttpStatus.OK.value()) {
+			throw new SirhWSConsumerException(String.format("An error occured when querying '%s'. Return code is : %s", url,
+					response.getStatus()));
+		}
+
+		String output = response.getEntity(String.class);
+
+		result = new JSONDeserializer<List<T>>().deserialize(output);
 
 		return result;
 	}
