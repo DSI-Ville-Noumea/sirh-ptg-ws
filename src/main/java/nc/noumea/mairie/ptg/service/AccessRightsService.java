@@ -14,8 +14,8 @@ import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
-import nc.noumea.mairie.sirh.domain.Siserv;
-import nc.noumea.mairie.sirh.service.ISiservService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
+import nc.noumea.mairie.ws.ServiceDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,10 +33,10 @@ public class AccessRightsService implements IAccessRightsService {
 	private HelperService helperService;
 	
 	@Autowired
-	private ISiservService siservService;
+	private IAccessRightsRepository accessRightsRepository;
 	
 	@Autowired
-	private IAccessRightsRepository accessRightsRepository;
+	private ISirhWSConsumer sirhWSConsumer;
 	
 	@Override
 	public AccessRightsDto getAgentAccessRights(Integer idAgent) {
@@ -60,11 +60,11 @@ public class AccessRightsService implements IAccessRightsService {
 		
 		DelegatorAndOperatorsDto result = new DelegatorAndOperatorsDto();
 
-		// Retrieve service of agent (through FichePoste) by affectation
-		Siserv siserv = siservService.getAgentService(idAgent);
+		// Retrieve division service of agent
+		ServiceDto service = sirhWSConsumer.getAgentDivision(idAgent);
 		
 		// search through accessRightRepo to retrieve all agents and their rights
-		List<DroitsAgent> droits = accessRightsRepository.getAllDroitsForService(siserv.getServi());
+		List<DroitsAgent> droits = accessRightsRepository.getAllDroitsForService(service.getService());
 		
 		// build the dto with it
 		for (DroitsAgent d : droits) {
@@ -74,8 +74,8 @@ public class AccessRightsService implements IAccessRightsService {
 			
 			Agent ag = sirhEntityManager.find(Agent.class, d.getIdAgent());
 			AgentDto agDto = new AgentDto(ag);
-			agDto.setCodeService(siserv.getServi());
-			agDto.setService(siserv.getLiServ().trim());
+			agDto.setCodeService(service.getService());
+			agDto.setService(service.getServiceLibelle());
 			
 			if (d.isDelegataire())
 				result.setDelegataire(agDto);
@@ -90,11 +90,11 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public List<DroitsAgent> setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto) {
 		
-		// Retrieve service of agent (through FichePoste) by affectation
-		Siserv siserv = siservService.getAgentService(idAgent);
+		// Retrieve division service of agent
+		ServiceDto service = sirhWSConsumer.getAgentDivision(idAgent);
 		
 		// get all DroitsAgent for service
-		List<DroitsAgent> droits = accessRightsRepository.getAllDroitsForService(siserv.getServi());
+		List<DroitsAgent> droits = accessRightsRepository.getAllDroitsForService(service.getService());
 		
 		// initializinf list of new access rights
 		List<DroitsAgent> newDroits = new ArrayList<DroitsAgent>();
@@ -125,7 +125,7 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 			
 			delegataire.setIdAgent(dto.getDelegataire().getIdAgent());
-			delegataire.setCodeService(siserv.getServi());
+			delegataire.setCodeService(service.getService());
 			ptgEntityManager.persist(delegataire);
 			newDroits.add(delegataire);
 		}
@@ -156,7 +156,7 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 			
 			operator.setIdAgent(newOperator.getIdAgent());
-			operator.setCodeService(siserv.getServi());
+			operator.setCodeService(service.getService());
 			ptgEntityManager.persist(operator);
 			newDroits.add(operator);
 		}
@@ -170,7 +170,14 @@ public class AccessRightsService implements IAccessRightsService {
 
 	
 	@Override
-	public boolean canAccessAccessRights(Integer idAgent) {
+	public boolean canUserAccessAccessRights(Integer idAgent) {
 		return accessRightsRepository.isUserApprobator(idAgent);
 	}
+
+	@Override
+	public List<AgentDto> listAgentsToAssign(Integer idAgent) {
+		// TODO Auto-generated method stub
+		return new ArrayList<AgentDto>();
+	}
+	
 }

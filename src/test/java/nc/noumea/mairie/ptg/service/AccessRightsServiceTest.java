@@ -20,8 +20,8 @@ import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.sirh.domain.FichePoste;
-import nc.noumea.mairie.sirh.domain.Siserv;
-import nc.noumea.mairie.sirh.service.ISiservService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
+import nc.noumea.mairie.ws.ServiceDto;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -116,21 +116,21 @@ public class AccessRightsServiceTest {
 		// Given
 		int idAgent = 9007754;
 		
-		Siserv siserv = new Siserv();
-		siserv.setServi("SERVICE");
-		siserv.setLiServ("LIB SERVICE");
+		ServiceDto siserv = new ServiceDto();
+		siserv.setService("SERVICE");
+		siserv.setServiceLibelle("LIB SERVICE");
 		
 		List<DroitsAgent> droits = new ArrayList<DroitsAgent>();
 		
-		ISiservService siMock = Mockito.mock(ISiservService.class);
-		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(droits);
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(droits);
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "siservService", siMock);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		
 		// When
 		DelegatorAndOperatorsDto dto = service.getDelegatorAndOperators(idAgent);
@@ -146,9 +146,9 @@ public class AccessRightsServiceTest {
 		// Given
 		int idAgent = 9007754;
 		
-		Siserv siserv = new Siserv();
-		siserv.setLiServ("SERVICE LIB");
-		siserv.setServi("SERVICE");
+		ServiceDto siserv = new ServiceDto();
+		siserv.setService("SERVICE");
+		siserv.setServiceLibelle("LIB SERVICE");
 		
 		List<DroitsAgent> droits = new ArrayList<DroitsAgent>();
 		DroitsAgent da = new DroitsAgent();
@@ -173,15 +173,15 @@ public class AccessRightsServiceTest {
 		Mockito.when(emMock.find(Agent.class, 9007655)).thenReturn(ag9007655);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(droits);
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(droits);
 
-		ISiservService siMock = Mockito.mock(ISiservService.class);
-		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhEntityManager", emMock);
-		ReflectionTestUtils.setField(service, "siservService", siMock);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		
 		// When
 		DelegatorAndOperatorsDto dto = service.getDelegatorAndOperators(idAgent);
@@ -210,15 +210,15 @@ public class AccessRightsServiceTest {
 		
 		FichePoste fp = new FichePoste();
 		fp.setCodeService("SERVICE");
-		Siserv siserv = new Siserv();
-		siserv.setLiServ("SERVICE LIB");
-		siserv.setServi("SERVICE");
+		ServiceDto siserv = new ServiceDto();
+		siserv.setService("SERVICE");
+		siserv.setServiceLibelle("LIB SERVICE");
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(Arrays.asList(da1));
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(Arrays.asList(da1));
 
-		ISiservService siMock = Mockito.mock(ISiservService.class);
-		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
@@ -227,7 +227,7 @@ public class AccessRightsServiceTest {
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "siservService", siMock);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
 		ReflectionTestUtils.setField(service, "ptgEntityManager", ptgEMMock);
 		
@@ -261,15 +261,15 @@ public class AccessRightsServiceTest {
 		
 		FichePoste fp = new FichePoste();
 		fp.setCodeService("SERVICE");
-		Siserv siserv = new Siserv();
-		siserv.setLiServ("SERVICE LIB");
-		siserv.setServi("SERVICE");
+		ServiceDto siserv = new ServiceDto();
+		siserv.setService("SERVICE");
+		siserv.setServiceLibelle("LIB SERVICE");
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(Arrays.asList(da1));
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(Arrays.asList(da1));
 
-		ISiservService siMock = Mockito.mock(ISiservService.class);
-		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
@@ -278,7 +278,7 @@ public class AccessRightsServiceTest {
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "siservService", siMock);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
 		ReflectionTestUtils.setField(service, "ptgEntityManager", ptgEMMock);
 		
@@ -304,15 +304,15 @@ public class AccessRightsServiceTest {
 		
 		FichePoste fp = new FichePoste();
 		fp.setCodeService("SERVICE");
-		Siserv siserv = new Siserv();
-		siserv.setLiServ("SERVICE LIB");
-		siserv.setServi("SERVICE");
+		ServiceDto siserv = new ServiceDto();
+		siserv.setService("SERVICE");
+		siserv.setServiceLibelle("LIB SERVICE");
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(new ArrayList<DroitsAgent>());
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(new ArrayList<DroitsAgent>());
 
-		ISiservService siMock = Mockito.mock(ISiservService.class);
-		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
@@ -321,7 +321,7 @@ public class AccessRightsServiceTest {
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "siservService", siMock);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
 		ReflectionTestUtils.setField(service, "ptgEntityManager", ptgEMMock);
 		
@@ -364,15 +364,15 @@ public class AccessRightsServiceTest {
 		
 		FichePoste fp = new FichePoste();
 		fp.setCodeService("SERVICE");
-		Siserv siserv = new Siserv();
-		siserv.setLiServ("SERVICE LIB");
-		siserv.setServi("SERVICE");
+		ServiceDto siserv = new ServiceDto();
+		siserv.setService("SERVICE");
+		siserv.setServiceLibelle("LIB SERVICE");
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAllDroitsForService(siserv.getServi())).thenReturn(Arrays.asList(da1, da2));
+		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(Arrays.asList(da1, da2));
 
-		ISiservService siMock = Mockito.mock(ISiservService.class);
-		Mockito.when(siMock.getAgentService(idAgent)).thenReturn(siserv);
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
@@ -381,7 +381,7 @@ public class AccessRightsServiceTest {
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "siservService", siMock);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
 		ReflectionTestUtils.setField(service, "ptgEntityManager", ptgEMMock);
 		

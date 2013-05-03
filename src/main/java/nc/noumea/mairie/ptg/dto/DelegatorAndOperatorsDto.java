@@ -18,9 +18,9 @@ public class DelegatorAndOperatorsDto implements IJSONSerialize, IJSONDeserializ
 	@Override
 	public String serializeInJSON() {
 		return new JSONSerializer()
+			.exclude("*.class")
 			.include("delegataire")
 			.include("saisisseurs.*")
-			.exclude("*.class")
 			.serialize(this);
 	}
 

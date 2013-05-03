@@ -47,4 +47,8 @@
 		jmxEnabled="true" username="adminwas" password="planet"
 		driverClassName="com.ibm.as400.access.AS400JDBCDriver" url="jdbc:as400://oldmea" />
 
+	<Environment name="PTG_SIRH_WS_BASE_URL" type="java.lang.String"
+		description="SIRH WS endpoint url" value="http://172.16.24.131:8085/sirhws/"
+		override="false" />
+		
 </Context>

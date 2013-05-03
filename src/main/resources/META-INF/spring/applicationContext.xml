@@ -81,5 +81,6 @@
 		<property name="dataSource" ref="sirhDb400DataSource" />
 	</bean>
 	
+	<jee:jndi-lookup id="sirhWsBaseUrl" jndi-name="PTG_SIRH_WS_BASE_URL" expected-type="java.lang.String"/>
 	
 </beans>
