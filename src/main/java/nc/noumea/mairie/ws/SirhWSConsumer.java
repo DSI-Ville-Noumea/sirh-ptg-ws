@@ -1,10 +1,13 @@
 package nc.noumea.mairie.ws;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 	
 	private static final String sirhAgentDivisionsUrl = "agents/direction";
 	private static final String sirhAgentsServiceUrl = "services/agents";
+	private static final String sirhAgentServiceUrl = "services/agent";
 	private static final String sirhSousServicesUrl = "services/sousServices";
 
 	@Override
@@ -45,23 +49,39 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 	}
 	
 	@Override
-	public List<Integer> getServicesAgent(String rootService) {
+	public AgentDto getAgentService(Integer idAgent, Date date) {
+		
+		String url = String.format(sirhWsBaseUrl + sirhAgentServiceUrl);
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		
+		if (date != null) {
+			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+			parameters.put("date", sf.format(date));
+		}
+		
+		ClientResponse res = createAndFireRequest(parameters, url);
+		
+		return readResponse(AgentDto.class, res, url);
+	}
+	
+	@Override
+	public List<AgentDto> getServicesAgent(String rootService, Date date) {
 		
 		String url = String.format(sirhWsBaseUrl + sirhAgentsServiceUrl);
 		
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("codeService", rootService);
-
+		
+		if (date != null) {
+			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+			parameters.put("date", sf.format(date));
+		}
+		
 		ClientResponse res = createAndFireRequest(parameters, url);
 		
-		List<Integer> result = new ArrayList<Integer>();
-		
-		// We need this loop for converting Long to Integer because flexjson automatically
-		// deserialize numbers into long values when in tables
-		for(Long l : readResponseAsList(Long.class, res, url))
-			result.add(l.intValue());
-		
-		return result;
+		return readResponseAsList(AgentDto.class, res, url);
 	}
 	
 	@Override
@@ -134,7 +154,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 		result = new ArrayList<T>();
 		
 		if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
-			return null;
+			return result;
 		}
 
 		if (response.getStatus() != HttpStatus.OK.value()) {
@@ -144,8 +164,11 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 
 		String output = response.getEntity(String.class);
 
-		result = new JSONDeserializer<List<T>>().deserialize(output);
-
+		result = new JSONDeserializer<List<T>>()
+				.use(null, ArrayList.class)
+				.use("values", targetClass)
+				.deserialize(output);
+		
 		return result;
 	}
 }

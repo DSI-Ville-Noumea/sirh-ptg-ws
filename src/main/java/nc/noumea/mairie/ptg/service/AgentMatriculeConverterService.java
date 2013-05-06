@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 public class AgentMatriculeConverterService implements IAgentMatriculeConverterService {
 
 	@Override
-	public int fromADIdAgentToSIRHIdAgent(Integer adIdAgent) throws AgentMatriculeConverterServiceException {
+	public Integer fromADIdAgentToSIRHIdAgent(Integer adIdAgent) throws AgentMatriculeConverterServiceException {
 		
 		if (adIdAgent.toString().length() != 6)
 			throw new AgentMatriculeConverterServiceException(String.format("Impossible de convertir le matricule '%d' en matricule SIRH.", adIdAgent));
@@ -15,15 +15,15 @@ public class AgentMatriculeConverterService implements IAgentMatriculeConverterS
 	}
 
 	@Override
-	public int tryConvertFromADIdAgentToSIRHIdAgent(Integer adIdAgent) {
+	public Integer tryConvertFromADIdAgentToSIRHIdAgent(Integer adIdAgent) {
 
-		if (adIdAgent.toString().length() != 6)
+		if (adIdAgent == null || adIdAgent.toString().length() != 6)
 			return adIdAgent;
 		
 		return addMissingDigit(adIdAgent);
 	}
 
-	private int addMissingDigit(Integer adIdAgent) {
+	private Integer addMissingDigit(Integer adIdAgent) {
 		
 		StringBuilder newIdSb = new StringBuilder();
 		newIdSb.append(adIdAgent.toString().substring(0, 2));

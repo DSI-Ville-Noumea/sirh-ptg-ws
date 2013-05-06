@@ -51,4 +51,16 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		return (result != null && result);
 	}
 	
+	@Override
+	public boolean isUserOperator(Integer idAgent) {
+		
+		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
+				"select sum(da.operateur) from DroitsAgent da where da.idAgent = :idAgent", Boolean.class);
+		q.setParameter("idAgent", idAgent);
+		
+		Boolean result = q.getSingleResult();
+		
+		return (result != null && result);
+	}
+	
 }

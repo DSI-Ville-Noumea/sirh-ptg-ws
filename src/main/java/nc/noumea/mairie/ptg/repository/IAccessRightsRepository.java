@@ -10,4 +10,5 @@ public interface IAccessRightsRepository {
 	List<DroitsAgent> getAllDroitsForService(String codeService);
 	void removeDroitsAgent(DroitsAgent droitsAgent); 
 	boolean isUserApprobator(Integer idAgent);
+	boolean isUserOperator(Integer idAgent);
 }

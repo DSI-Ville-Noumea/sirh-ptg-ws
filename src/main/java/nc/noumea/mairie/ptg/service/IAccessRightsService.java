@@ -15,4 +15,5 @@ public interface IAccessRightsService {
 	List<AgentDto> listAgentsToAssign(Integer idAgent);
 
 	boolean canUserAccessAccessRights(Integer idAgent);
+	boolean canUserAccessPrint(Integer idAgent);
 }

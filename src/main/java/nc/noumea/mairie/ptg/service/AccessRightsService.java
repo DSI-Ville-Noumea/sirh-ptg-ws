@@ -175,19 +175,17 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
+	public boolean canUserAccessPrint(Integer idAgent) {
+		return accessRightsRepository.isUserOperator(idAgent);
+	}
+	
+	@Override
 	public List<AgentDto> listAgentsToAssign(Integer idAgent) {
 		
 		// Retrieve division service of agent
 		ServiceDto service = sirhWSConsumer.getAgentDirection(idAgent);
 		
-		List<Integer> agentIds = sirhWSConsumer.getServicesAgent(service.getService());
-
-		List<AgentDto> agentDtos = new ArrayList<AgentDto>();
-		
-		for(Integer agentId : agentIds) {
-			Agent ag = sirhEntityManager.find(Agent.class, agentId);
-			agentDtos.add(new AgentDto(ag));
-		}
+		List<AgentDto> agentDtos = sirhWSConsumer.getServicesAgent(service.getService(), null);
 		
 		return agentDtos;
 	}
