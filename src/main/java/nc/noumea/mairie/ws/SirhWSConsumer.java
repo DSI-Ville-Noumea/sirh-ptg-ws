@@ -32,7 +32,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 	private static final String sirhSousServicesUrl = "services/sousServices";
 
 	@Override
-	public ServiceDto getAgentDivision(Integer idAgent) {
+	public ServiceDto getAgentDirection(Integer idAgent) {
 		
 		String url = String.format(sirhWsBaseUrl + sirhAgentDivisionsUrl);
 		

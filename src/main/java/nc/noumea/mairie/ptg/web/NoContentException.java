@@ -3,12 +3,13 @@ package nc.noumea.mairie.ptg.web;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
-public class NotFoundException extends RuntimeException {
+
+@ResponseStatus(HttpStatus.NO_CONTENT)
+public class NoContentException extends RuntimeException {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -7734659556601851331L;
+	private static final long serialVersionUID = -7291138785335378491L;
 
 }

@@ -61,7 +61,7 @@ public class AccessRightsService implements IAccessRightsService {
 		DelegatorAndOperatorsDto result = new DelegatorAndOperatorsDto();
 
 		// Retrieve division service of agent
-		ServiceDto service = sirhWSConsumer.getAgentDivision(idAgent);
+		ServiceDto service = sirhWSConsumer.getAgentDirection(idAgent);
 		
 		// search through accessRightRepo to retrieve all agents and their rights
 		List<DroitsAgent> droits = accessRightsRepository.getAllDroitsForService(service.getService());
@@ -91,7 +91,7 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<DroitsAgent> setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto) {
 		
 		// Retrieve division service of agent
-		ServiceDto service = sirhWSConsumer.getAgentDivision(idAgent);
+		ServiceDto service = sirhWSConsumer.getAgentDirection(idAgent);
 		
 		// get all DroitsAgent for service
 		List<DroitsAgent> droits = accessRightsRepository.getAllDroitsForService(service.getService());
@@ -178,7 +178,7 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<AgentDto> listAgentsToAssign(Integer idAgent) {
 		
 		// Retrieve division service of agent
-		ServiceDto service = sirhWSConsumer.getAgentDivision(idAgent);
+		ServiceDto service = sirhWSConsumer.getAgentDirection(idAgent);
 		
 		List<Integer> agentIds = sirhWSConsumer.getServicesAgent(service.getService());
 

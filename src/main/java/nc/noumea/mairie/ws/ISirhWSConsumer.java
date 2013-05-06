@@ -7,7 +7,7 @@ import nc.noumea.mairie.ptg.dto.ServiceDto;
 
 public interface ISirhWSConsumer {
 
-	ServiceDto getAgentDivision(Integer idAgent);
+	ServiceDto getAgentDirection(Integer idAgent);
 
 	List<Integer> getServicesAgent(String rootService);
 	

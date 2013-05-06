@@ -123,7 +123,7 @@ public class AccessRightsServiceTest {
 		List<DroitsAgent> droits = new ArrayList<DroitsAgent>();
 		
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent)).thenReturn(siserv);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(droits);
@@ -176,7 +176,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(droits);
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent)).thenReturn(siserv);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -218,7 +218,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(Arrays.asList(da1));
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent)).thenReturn(siserv);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
@@ -269,7 +269,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(Arrays.asList(da1));
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent)).thenReturn(siserv);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
@@ -312,7 +312,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(new ArrayList<DroitsAgent>());
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent)).thenReturn(siserv);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
@@ -372,7 +372,7 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getAllDroitsForService(siserv.getService())).thenReturn(Arrays.asList(da1, da2));
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDivision(idAgent)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent)).thenReturn(siserv);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getCurrentDate()).thenReturn(new DateTime(2013, 04, 19, 14, 5, 9).toDate());
