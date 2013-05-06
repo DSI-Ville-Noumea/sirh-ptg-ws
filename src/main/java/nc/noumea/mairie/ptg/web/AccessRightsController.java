@@ -41,7 +41,7 @@ public class AccessRightsController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> listAgentAccessRights(@RequestParam("idAgent") Integer idAgent) {
 		
-		logger.debug("entered GET [listeDroitsAgent] => listAgentAccessRights with parameter idAgent = {}", idAgent);
+		logger.debug("entered GET [droits/listeDroitsAgent] => listAgentAccessRights with parameter idAgent = {}", idAgent);
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
@@ -58,7 +58,7 @@ public class AccessRightsController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getDelegateAndOperator(@RequestParam("idAgent") Integer idAgent)
 	{
-		logger.debug("entered GET [delegataireSaisisseurs] => getDelegateAndInputter with parameter idAgent = {}", idAgent);
+		logger.debug("entered GET [droits/delegataireSaisisseurs] => getDelegateAndInputter with parameter idAgent = {}", idAgent);
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
@@ -78,7 +78,7 @@ public class AccessRightsController {
 	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> setDelegateAndOperator(@RequestParam("idAgent") Integer idAgent, @RequestBody String delegatorAndOperatorsDtoJson)
 	{
-		logger.debug("entered POST [delegataireSaisisseurs] => setDelegateAndInputter with parameter idAgent = {}", idAgent);
+		logger.debug("entered POST [droits/delegataireSaisisseurs] => setDelegateAndInputter with parameter idAgent = {}", idAgent);
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
@@ -98,7 +98,7 @@ public class AccessRightsController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> listAgents(@RequestParam("idAgent") Integer idAgent)
 	{
-		logger.debug("entered POST [listeAgents] => listAgents with parameter idAgent = {}", idAgent);
+		logger.debug("entered POST [droits/listeAgents] => listAgents with parameter idAgent = {}", idAgent);
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		

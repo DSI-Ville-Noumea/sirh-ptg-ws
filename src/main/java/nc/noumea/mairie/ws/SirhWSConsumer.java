@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.noumea.mairie.ptg.dto.ServiceDto;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -26,7 +28,8 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 	private String sirhWsBaseUrl;
 	
 	private static final String sirhAgentDivisionsUrl = "agents/direction";
-	private static final String sirhAgentsServiceUrl = "agents/serviceAgents";
+	private static final String sirhAgentsServiceUrl = "services/agents";
+	private static final String sirhSousServicesUrl = "services/sousServices";
 
 	@Override
 	public ServiceDto getAgentDivision(Integer idAgent) {
@@ -59,6 +62,21 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 			result.add(l.intValue());
 		
 		return result;
+	}
+	
+	@Override
+	public List<ServiceDto> getSousServices(String rootService) {
+
+		String url = String.format(sirhWsBaseUrl + sirhSousServicesUrl);
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("codeService", rootService);
+
+		ClientResponse res = createAndFireRequest(parameters, url);
+		
+		List<ServiceDto> services = readResponseAsList(ServiceDto.class, res, url);
+		
+		return services;
 	}
 	
 	public ClientResponse createAndFireRequest(Map<String, String> parameters, String url) {
@@ -130,5 +148,4 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 
 		return result;
 	}
-
 }

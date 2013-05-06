@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ws;
+package nc.noumea.mairie.ptg.dto;
 
 public class ServiceDto {
 
