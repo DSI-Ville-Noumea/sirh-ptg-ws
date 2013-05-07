@@ -10,4 +10,20 @@
          Also registers default Formatters and Validators for use across all @Controllers -->
     <mvc:annotation-driven/>
     
+    <bean id="jaxbMarshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+		<property name="classesToBeBound">
+			<list>
+				<value>nc.noumea.mairie.ptg.dto.FichePointageDto</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="xmlView"
+		class="org.springframework.web.servlet.view.xml.MarshallingView">
+		<constructor-arg ref="jaxbMarshaller" />
+	</bean>
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.BeanNameViewResolver" />
+    
 </beans>

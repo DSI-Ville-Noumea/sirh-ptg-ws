@@ -3,7 +3,9 @@
 
 package nc.noumea.mairie.sirh.domain;
 
+import java.util.Set;
 import nc.noumea.mairie.sirh.domain.FichePoste;
+import nc.noumea.mairie.sirh.domain.PrimePointage;
 
 privileged aspect FichePoste_Roo_JavaBean {
     
@@ -21,6 +23,14 @@ privileged aspect FichePoste_Roo_JavaBean {
     
     public void FichePoste.setResponsable(FichePoste responsable) {
         this.responsable = responsable;
+    }
+    
+    public Set<PrimePointage> FichePoste.getPrimePointages() {
+        return this.primePointages;
+    }
+    
+    public void FichePoste.setPrimePointages(Set<PrimePointage> primePointages) {
+        this.primePointages = primePointages;
     }
     
 }

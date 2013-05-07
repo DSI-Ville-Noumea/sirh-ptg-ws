@@ -30,6 +30,7 @@
         <class>nc.noumea.mairie.sirh.domain.FichePoste</class>
         <class>nc.noumea.mairie.sirh.domain.Affectation</class>
         <class>nc.noumea.mairie.sirh.domain.Siserv</class>
+        <class>nc.noumea.mairie.sirh.domain.PrimePointage</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.DB2400Dialect"/>

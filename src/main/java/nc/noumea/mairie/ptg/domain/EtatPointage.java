@@ -17,10 +17,10 @@ public class EtatPointage {
 
 	@EmbeddedId
 	private EtatPointagePK etatPointagePk;
-	
+
 	@Column(name = "ETAT")
-	private char Etat;
-	
+	private char etat;
+
 	@ManyToOne()
 	@MapsId("idPointage")
 	@JoinColumn(name = "ID_POINTAGE", referencedColumnName = "ID_POINTAGE")

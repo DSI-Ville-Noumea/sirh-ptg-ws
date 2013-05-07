@@ -18,11 +18,11 @@ privileged aspect EtatPointage_Roo_JavaBean {
     }
     
     public char EtatPointage.getEtat() {
-        return this.Etat;
+        return this.etat;
     }
     
-    public void EtatPointage.setEtat(char Etat) {
-        this.Etat = Etat;
+    public void EtatPointage.setEtat(char etat) {
+        this.etat = etat;
     }
     
     public Pointage EtatPointage.getPointage() {

@@ -5,7 +5,7 @@
 <title>SIRH-PTG-WS Not Found</title>
 </head>
 <body>
-	<h1>SIRH-EAE-WS - 404 - Not Found</h1>
+	<h1>SIRH-PTG-WS - 404 - Not Found</h1>
 	<h3>La page ou la ressource demandée n'est pas disponible</h3>
 </body>
 </html>

@@ -29,7 +29,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 	@Autowired
 	@Qualifier("sirhWsBaseUrl")
 	private String sirhWsBaseUrl;
-	
+
 	private static final String sirhAgentDivisionsUrl = "agents/direction";
 	private static final String sirhAgentsServiceUrl = "services/agents";
 	private static final String sirhAgentServiceUrl = "services/agent";
@@ -37,77 +37,77 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 
 	@Override
 	public ServiceDto getAgentDirection(Integer idAgent) {
-		
+
 		String url = String.format(sirhWsBaseUrl + sirhAgentDivisionsUrl);
-		
+
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
-		
+
 		ClientResponse res = createAndFireRequest(parameters, url);
-		
+
 		return readResponse(ServiceDto.class, res, url);
 	}
-	
+
 	@Override
 	public AgentDto getAgentService(Integer idAgent, Date date) {
-		
+
 		String url = String.format(sirhWsBaseUrl + sirhAgentServiceUrl);
-		
+
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
-		
+
 		if (date != null) {
 			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
 			parameters.put("date", sf.format(date));
 		}
-		
+
 		ClientResponse res = createAndFireRequest(parameters, url);
-		
+
 		return readResponse(AgentDto.class, res, url);
 	}
-	
+
 	@Override
 	public List<AgentDto> getServicesAgent(String rootService, Date date) {
-		
+
 		String url = String.format(sirhWsBaseUrl + sirhAgentsServiceUrl);
-		
+
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("codeService", rootService);
-		
+
 		if (date != null) {
 			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
 			parameters.put("date", sf.format(date));
 		}
-		
+
 		ClientResponse res = createAndFireRequest(parameters, url);
-		
+
 		return readResponseAsList(AgentDto.class, res, url);
 	}
-	
+
 	@Override
 	public List<ServiceDto> getSousServices(String rootService) {
 
 		String url = String.format(sirhWsBaseUrl + sirhSousServicesUrl);
-		
+
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("codeService", rootService);
 
 		ClientResponse res = createAndFireRequest(parameters, url);
-		
+
 		List<ServiceDto> services = readResponseAsList(ServiceDto.class, res, url);
-		
+
 		return services;
 	}
-	
+
 	public ClientResponse createAndFireRequest(Map<String, String> parameters, String url) {
 
 		Client client = Client.create();
 		WebResource webResource = client.resource(url);
-		
+
 		for (String key : parameters.keySet()) {
 			webResource = webResource.queryParam(key, parameters.get(key));
 		}
-		
+
 		ClientResponse response = null;
 
 		try {
@@ -122,22 +122,21 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 	public <T> T readResponse(Class<T> targetClass, ClientResponse response, String url) {
 
 		T result = null;
-		
+
 		try {
-			
+
 			result = targetClass.newInstance();
 
 		} catch (Exception ex) {
 			throw new SirhWSConsumerException("An error occured when instantiating return type when deserializing JSON from SIRH WS request.", ex);
 		}
-		
+
 		if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
 			return null;
 		}
 
 		if (response.getStatus() != HttpStatus.OK.value()) {
-			throw new SirhWSConsumerException(String.format("An error occured when querying '%s'. Return code is : %s", url,
-					response.getStatus()));
+			throw new SirhWSConsumerException(String.format("An error occured when querying '%s'. Return code is : %s", url, response.getStatus()));
 		}
 
 		String output = response.getEntity(String.class);
@@ -146,29 +145,25 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 
 		return result;
 	}
-	
+
 	public <T> List<T> readResponseAsList(Class<T> targetClass, ClientResponse response, String url) {
 
 		List<T> result = null;
-		
+
 		result = new ArrayList<T>();
-		
+
 		if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
 			return result;
 		}
 
 		if (response.getStatus() != HttpStatus.OK.value()) {
-			throw new SirhWSConsumerException(String.format("An error occured when querying '%s'. Return code is : %s", url,
-					response.getStatus()));
+			throw new SirhWSConsumerException(String.format("An error occured when querying '%s'. Return code is : %s", url, response.getStatus()));
 		}
 
 		String output = response.getEntity(String.class);
 
-		result = new JSONDeserializer<List<T>>()
-				.use(null, ArrayList.class)
-				.use("values", targetClass)
-				.deserialize(output);
-		
+		result = new JSONDeserializer<List<T>>().use(null, ArrayList.class).use("values", targetClass).deserialize(output);
+
 		return result;
 	}
 }
