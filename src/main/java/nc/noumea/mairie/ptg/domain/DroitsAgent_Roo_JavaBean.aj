@@ -32,20 +32,20 @@ privileged aspect DroitsAgent_Roo_JavaBean {
         this.dateModification = dateModification;
     }
     
+    public Integer DroitsAgent.getIdDelegataire() {
+        return this.idDelegataire;
+    }
+    
+    public void DroitsAgent.setIdDelegataire(Integer idDelegataire) {
+        this.idDelegataire = idDelegataire;
+    }
+    
     public boolean DroitsAgent.isApprobateur() {
         return this.approbateur;
     }
     
     public void DroitsAgent.setApprobateur(boolean approbateur) {
         this.approbateur = approbateur;
-    }
-    
-    public boolean DroitsAgent.isDelegataire() {
-        return this.delegataire;
-    }
-    
-    public void DroitsAgent.setDelegataire(boolean delegataire) {
-        this.delegataire = delegataire;
     }
     
     public boolean DroitsAgent.isOperateur() {

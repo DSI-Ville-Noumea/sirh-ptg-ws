@@ -46,10 +46,10 @@ public class AccessRightsService implements IAccessRightsService {
 		for (DroitsAgent da : accessRightsRepository.getAgentAccessRights(idAgent)) {
 
 			result.setFiches(result.isFiches() || da.isApprobateur() || da.isOperateur());
-			result.setSaisie(result.isSaisie() || da.isApprobateur() || da.isDelegataire() || da.isOperateur());
-			result.setVisualisation(result.isVisualisation() || da.isApprobateur() || da.isDelegataire() || da.isOperateur());
-			result.setApprobation(result.isApprobation() || da.isApprobateur() || da.isDelegataire());
-			result.setGestionDroitsAcces(result.isGestionDroitsAcces() || da.isApprobateur());
+			result.setSaisie(result.isSaisie() || da.isApprobateur() || da.isOperateur());
+			result.setVisualisation(result.isVisualisation() || da.isApprobateur() || da.isOperateur());
+			result.setApprobation(result.isApprobation() || da.isApprobateur());
+			result.setGestionDroitsAcces(result.isGestionDroitsAcces() || (da.getIdAgent().equals(idAgent) && da.isApprobateur()));
 		}
 		
 		return result;
@@ -72,13 +72,20 @@ public class AccessRightsService implements IAccessRightsService {
 			if (d.isApprobateur() && !d.getIdAgent().equals(idAgent))
 				throw new AccessRightsServiceException("");
 			
-			Agent ag = sirhEntityManager.find(Agent.class, d.getIdAgent());
-			AgentDto agDto = new AgentDto(ag);
-			agDto.setCodeService(service.getService());
-			agDto.setService(service.getServiceLibelle());
+			AgentDto agDto = null;
 			
-			if (d.isDelegataire())
+			if (d.getIdDelegataire() != null) {
+				Agent agDelegataire = sirhEntityManager.find(Agent.class, d.getIdDelegataire());
+				agDto = new AgentDto(agDelegataire);
+				agDto.setCodeService(service.getService());
+				agDto.setService(service.getServiceLibelle());
 				result.setDelegataire(agDto);
+			} else {
+				Agent ag = sirhEntityManager.find(Agent.class, d.getIdAgent());
+				agDto = new AgentDto(ag);
+				agDto.setCodeService(service.getService());
+				agDto.setService(service.getServiceLibelle());
+			}
 			
 			if (d.isOperateur())
 				result.getSaisisseurs().add(agDto);
@@ -104,32 +111,30 @@ public class AccessRightsService implements IAccessRightsService {
 		DroitsAgent delegataire = null;
 		
 		for (DroitsAgent d : droits) {
-			if (d.isDelegataire()){
+			if (d.isApprobateur()){
 				delegataire = d;
 				break;
 			}
 		}
 
-		if (dto.getDelegataire() == null) {
-			if (delegataire != null)
-				accessRightsRepository.removeDroitsAgent(delegataire);
-		}
-		else {
-			if (delegataire == null) {
-				delegataire = new DroitsAgent();
-				delegataire.setDelegataire(true);
-			}
-	
-			if (delegataire.getIdAgent() == null || !delegataire.getIdAgent().equals(dto.getDelegataire().getIdAgent())) {
+		// If there is no more delegataire
+		if (dto.getDelegataire() == null && delegataire.getIdDelegataire() != null) {
 				delegataire.setDateModification(helperService.getCurrentDate());
-			}
+				delegataire.setIdDelegataire(null);
+				ptgEntityManager.persist(delegataire);
 			
-			delegataire.setIdAgent(dto.getDelegataire().getIdAgent());
-			delegataire.setCodeService(service.getService());
+		} 
+		
+		// if delegataire has changed to a new value
+		if (dto.getDelegataire() != null 
+				&& (delegataire.getIdDelegataire() == null
+				|| !delegataire.getIdDelegataire().equals(dto.getDelegataire().getIdAgent()))) {
+			delegataire.setDateModification(helperService.getCurrentDate());
+			delegataire.setIdDelegataire(dto.getDelegataire().getIdAgent());
 			ptgEntityManager.persist(delegataire);
-			newDroits.add(delegataire);
 		}
 		
+		newDroits.add(delegataire);
 		
 		// changing operators
 		Map<Integer, DroitsAgent> operators = new HashMap<Integer, DroitsAgent>();

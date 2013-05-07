@@ -127,7 +127,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 			
 			result = targetClass.newInstance();
 
-		} catch (InstantiationException | IllegalAccessException ex) {
+		} catch (Exception ex) {
 			throw new SirhWSConsumerException("An error occured when instantiating return type when deserializing JSON from SIRH WS request.", ex);
 		}
 		
