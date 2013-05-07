@@ -15,14 +15,19 @@ public class JourPointageDto {
 	private List<AbsenceDto> absences;
 
 	public JourPointageDto() {
+		primes = new ArrayList<PrimeDto>();
+		heuresSup = new ArrayList<HeureSupDto>();
+		absences = new ArrayList<AbsenceDto>();
 	}
 
 	public JourPointageDto(JourPointageDto jourPointageTemplate) {
-		// TODO Auto-generated constructor stub
+		primes = jourPointageTemplate.getPrimes();
+		heuresSup = jourPointageTemplate.getHeuresSup();
+		absences = jourPointageTemplate.getAbsences();
 	}
 
 	public List<PrimeDto> getPrimes() {
-		return primes == null ? new ArrayList<PrimeDto>() : primes;
+		return primes;
 	}
 
 	public void setPrimes(List<PrimeDto> primes) {
@@ -30,7 +35,7 @@ public class JourPointageDto {
 	}
 
 	public List<HeureSupDto> getHeuresSup() {
-		return heuresSup == null ? new ArrayList<HeureSupDto>() : heuresSup;
+		return heuresSup;
 	}
 
 	public void setHeuresSup(List<HeureSupDto> heuresSup) {
@@ -38,7 +43,7 @@ public class JourPointageDto {
 	}
 
 	public List<AbsenceDto> getAbsences() {
-		return absences == null ? new ArrayList<AbsenceDto>() : absences;
+		return absences;
 	}
 
 	public void setAbsences(List<AbsenceDto> absences) {

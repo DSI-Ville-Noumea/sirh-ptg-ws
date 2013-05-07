@@ -25,7 +25,7 @@ public class PrimeDto {
 	}
 
 	public PrimeDto(PrimePointage pp, Sprubr rubrique) {
-		titre = rubrique.getLiRubr();
+		titre = rubrique.getLiRubr()==null ? "" : rubrique.getLiRubr().trim();
 		typePrime = "";
 	}
 

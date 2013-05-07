@@ -15,6 +15,7 @@ public class FichePointageDto {
 	List<JourPointageDto> saisies;
 
 	public FichePointageDto() {
+		saisies = new ArrayList<JourPointageDto>();
 	}
 
 	public Date getDateLundi() {
@@ -42,7 +43,7 @@ public class FichePointageDto {
 	}
 
 	public List<JourPointageDto> getSaisies() {
-		return saisies == null ? new ArrayList<JourPointageDto>() : saisies;
+		return saisies;
 	}
 
 	public void setSaisies(List<JourPointageDto> saisies) {
