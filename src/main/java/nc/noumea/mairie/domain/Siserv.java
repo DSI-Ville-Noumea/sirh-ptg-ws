@@ -1,4 +1,4 @@
-package nc.noumea.mairie.sirh.domain;
+package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
