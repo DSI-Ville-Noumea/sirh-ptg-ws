@@ -6,10 +6,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.domain.Siserv;
 import nc.noumea.mairie.ptg.service.AccessRightsServiceException;
 import nc.noumea.mairie.ptg.service.HelperService;
 import nc.noumea.mairie.sirh.domain.FichePoste;
-import nc.noumea.mairie.sirh.domain.Siserv;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

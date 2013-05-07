@@ -1,6 +1,6 @@
 package nc.noumea.mairie.sirh.service;
 
-import nc.noumea.mairie.sirh.domain.Siserv;
+import nc.noumea.mairie.domain.Siserv;
 
 public interface ISiservService {
 

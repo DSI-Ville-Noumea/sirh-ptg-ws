@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import nc.noumea.mairie.domain.Sprubr;
 import nc.noumea.mairie.sirh.domain.PrimePointage;
 
 @XmlRootElement
@@ -23,8 +24,8 @@ public class PrimeDto {
 	public PrimeDto() {
 	}
 
-	public PrimeDto(PrimePointage pp) {
-		titre = "";
+	public PrimeDto(PrimePointage pp, Sprubr rubrique) {
+		titre = rubrique.getLiRubr();
 		typePrime = "";
 	}
 
