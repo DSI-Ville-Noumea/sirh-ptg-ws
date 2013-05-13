@@ -9,6 +9,8 @@ public class AgentDto {
 	private Integer idAgent;
 	private String service;
 	private String codeService;
+	private String statut;
+	
 	
 	public AgentDto() {
 		
@@ -58,5 +60,13 @@ public class AgentDto {
 
 	public void setCodeService(String codeService) {
 		this.codeService = codeService;
+	}
+
+	public String getStatut() {
+		return statut;
+	}
+
+	public void setStatut(String statut) {
+		this.statut = statut;
 	}	
 }

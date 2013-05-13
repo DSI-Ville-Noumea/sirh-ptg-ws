@@ -41,6 +41,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 		String url = String.format(sirhWsBaseUrl + sirhAgentDivisionsUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
+		
 		parameters.put("idAgent", String.valueOf(idAgent));
 
 		ClientResponse res = createAndFireRequest(parameters, url);

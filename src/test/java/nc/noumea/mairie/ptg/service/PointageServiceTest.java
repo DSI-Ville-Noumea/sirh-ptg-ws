@@ -40,7 +40,7 @@ public class PointageServiceTest {
 		Agent agent = new Agent();
 		agent.setIdAgent(9007654);
 		AgentDto ag = new AgentDto(agent);
-		List<JourPointageDto> listeJour = new ArrayList<>();
+		List<JourPointageDto> listeJour = new ArrayList<JourPointageDto>();
 		JourPointageDto jpdto = new JourPointageDto();
 		List<PrimeDto> pp = new ArrayList<PrimeDto>();
 		PrimeDto p1 = new PrimeDto();
