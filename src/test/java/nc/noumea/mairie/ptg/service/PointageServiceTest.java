@@ -1,7 +1,6 @@
 package nc.noumea.mairie.ptg.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

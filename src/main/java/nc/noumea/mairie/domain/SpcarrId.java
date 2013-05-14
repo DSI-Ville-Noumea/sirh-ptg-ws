@@ -14,6 +14,11 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJson
 @Embeddable
 public class SpcarrId implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	@Override
 	public int hashCode() {
 		return super.hashCode();
