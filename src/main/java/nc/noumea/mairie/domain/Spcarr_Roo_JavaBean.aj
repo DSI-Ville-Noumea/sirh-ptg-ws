@@ -32,8 +32,4 @@ privileged aspect Spcarr_Roo_JavaBean {
         this.cdcate = cdcate;
     }
     
-    public void Spcarr.setStatutCarriere(String statutCarriere) {
-        this.statutCarriere = statutCarriere;
-    }
-    
 }

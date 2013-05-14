@@ -37,32 +37,23 @@ public class Spcarr {
 	private Integer cdcate;
 
 	@Transient
-	private String statutCarriere;
-
 	public String getStatutCarriere() {
 		switch (cdcate) {
-		case 1:
-			return "F";
-		case 2:
-			return "F";
-		case 4:
-			return "C";
-		case 6:
-			return "F";
-		case 7:
-			return "CC";
-		case 16:
-			return "F";
-		case 17:
-			return "F";
-		case 18:
-			return "F";
-		case 19:
-			return "F";
-		case 20:
-			return "F";
-		default:
-			return "A";
+			case 1:
+			case 2:
+			case 6:
+			case 16:
+			case 17:
+			case 18:
+			case 19:
+			case 20:
+				return "F";
+			case 4:
+				return "C";
+			case 7:
+				return "CC";
+			default:
+				return "A";
 		}
 	}
 }

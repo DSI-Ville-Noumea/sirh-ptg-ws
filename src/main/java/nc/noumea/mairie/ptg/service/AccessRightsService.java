@@ -122,8 +122,7 @@ public class AccessRightsService implements IAccessRightsService {
 				delegataire.setDateModification(helperService.getCurrentDate());
 				delegataire.setIdDelegataire(null);
 				ptgEntityManager.persist(delegataire);
-			
-		} 
+		}
 		
 		// if delegataire has changed to a new value
 		if (dto.getDelegataire() != null 
