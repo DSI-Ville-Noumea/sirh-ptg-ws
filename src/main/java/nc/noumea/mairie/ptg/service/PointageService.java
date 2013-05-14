@@ -45,7 +45,7 @@ public class PointageService implements IPointageService {
 		AgentDto agentDto = new AgentDto(agent);
 		agentDto.setCodeService(service.getService());
 		agentDto.setService(service.getServiceLibelle());
-		// on recherche sa carriere pour avoir son statut
+		// on recherche sa carriere pour avoir son statut (Fonctionnaire, contractuel,convention coll
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		int dateFormatMairie = Integer.valueOf(sdf.format(new DateTime().toDate()));
 		TypedQuery<Spcarr> qCarr = sirhEntityManager.createNamedQuery("getCurrentCarriere", Spcarr.class);
