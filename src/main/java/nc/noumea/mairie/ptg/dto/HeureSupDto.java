@@ -1,12 +1,9 @@
 package nc.noumea.mairie.ptg.dto;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
 
 @XmlRootElement
@@ -20,10 +17,9 @@ public class HeureSupDto {
 	private Date heureFin;
 	private String motif;
 	private String commentaire;
-	private List<EtatPointage> etatsPointage;
+	private String etatPointage;
 
 	public HeureSupDto() {
-		etatsPointage = new ArrayList<EtatPointage>();
 	}
 
 	public HeureSupDto(Pointage p) {
@@ -36,7 +32,8 @@ public class HeureSupDto {
 		this.heureFin = p.getDateFin();
 		this.motif = "";
 		this.commentaire = "";
-		this.etatsPointage.addAll(p.getEtats());
+		// this.etatPointage = p.getEtats().
+		// this.etatsPointage.addAll(p.getEtats());
 	}
 
 	public Integer getIdPointage() {
@@ -103,11 +100,11 @@ public class HeureSupDto {
 		this.commentaire = commentaire;
 	}
 
-	public List<EtatPointage> getEtatsPointage() {
-		return etatsPointage;
+	public String getEtatPointage() {
+		return etatPointage;
 	}
 
-	public void setEtatsPointage(List<EtatPointage> etatsPointage) {
-		this.etatsPointage = etatsPointage;
+	public void setEtatPointage(String etatPointage) {
+		this.etatPointage = etatPointage;
 	}
 }
