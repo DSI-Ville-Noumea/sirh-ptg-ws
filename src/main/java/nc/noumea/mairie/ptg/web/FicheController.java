@@ -28,7 +28,6 @@ import flexjson.JSONSerializer;
 @RequestMapping("/fiches")
 public class FicheController {
 
-
 	@Autowired
 	private IPointageRepository pointageRepository;
 

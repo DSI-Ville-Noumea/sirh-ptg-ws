@@ -51,4 +51,12 @@
 		description="SIRH WS endpoint url" value="http://172.16.24.131:8085/sirhws/"
 		override="false" />
 		
+	<Environment name="REPORTING_SERVER_SIRH_PTG_REPORT_PATH" type="java.lang.String"
+		description="SIRH reports path on Birt"
+		value="report/sirh-ptg-reports/" override="false" />
+
+	<Environment name="REPORTING_BASE_URL" type="java.lang.String"
+		description="BIRT report viewer base URL for SIRH reporting"
+		value="http://172.16.24.131:8085/birt/" override="false" />
+		
 </Context>
