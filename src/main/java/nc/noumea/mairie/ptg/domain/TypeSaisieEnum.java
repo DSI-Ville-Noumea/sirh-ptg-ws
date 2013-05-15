@@ -7,10 +7,7 @@ public enum TypeSaisieEnum {
 	NB_INDEMNITES(3),
 	PERIODE_HEURES(4);
 	
-	private int saisie;
-	
 	private TypeSaisieEnum(int _saisie) {
-		this.saisie = _saisie;
 	}
 	
 	@Override
