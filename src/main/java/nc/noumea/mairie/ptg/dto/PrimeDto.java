@@ -4,8 +4,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import nc.noumea.mairie.domain.Sprubr;
-import nc.noumea.mairie.sirh.domain.PrimePointage;
+import nc.noumea.mairie.ptg.domain.RefPrime;
 
 @XmlRootElement
 public class PrimeDto {
@@ -24,11 +23,11 @@ public class PrimeDto {
 	public PrimeDto() {
 	}
 
-	public PrimeDto(PrimePointage pp, Sprubr rubrique) {
-		titre = rubrique.getLiRubr()==null ? "" : rubrique.getLiRubr().trim();
-		typePrime = "";
+	public PrimeDto(RefPrime prime) {
+		titre = prime.getLibelle();
+		// TODO: compelte ctor
 	}
-
+	
 	public Integer getIdPointage() {
 		return idPointage;
 	}

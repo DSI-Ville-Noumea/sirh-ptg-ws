@@ -8,5 +8,4 @@ import nc.noumea.mairie.sirh.domain.Agent;
 public interface IMairieRepository {
 
 	Spcarr getAgentCurrentCarriere(Agent aAgent, Date asOfDate);
-	
 }

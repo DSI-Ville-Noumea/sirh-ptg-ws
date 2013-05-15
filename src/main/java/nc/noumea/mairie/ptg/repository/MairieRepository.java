@@ -31,6 +31,5 @@ public class MairieRepository implements IMairieRepository {
 		Spcarr carr = qCarr.getSingleResult();
 		
 		return carr;
-	}
-	
+	}	
 }

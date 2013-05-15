@@ -1,10 +1,12 @@
 package nc.noumea.mairie.ptg.service;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.domain.Spcarr;
-import nc.noumea.mairie.domain.Sprubr;
+import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
@@ -56,11 +58,17 @@ public class PointageService implements IPointageService {
 
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
-		for (PrimePointage pp : pointageRepository.getPrimePointagesByAgent(agent.getIdAgent(), date)) {
-			Sprubr rubrique = Sprubr.findSprubr(pp.getNumRubrique());
-			PrimeDto prime = new PrimeDto(pp, rubrique);
-			jourPointageTemplate.getPrimes().add(prime);
+		List<PrimePointage> pps = pointageRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		
+		List<Integer> rubriques = new ArrayList<Integer>();
+		for (PrimePointage pp : pps)
+			rubriques.add(pp.getNumRubrique());
+		List<RefPrime> refPrimes = pointageRepository.getRefPrimes(rubriques);
+		
+		for (RefPrime prime : refPrimes) {
+			jourPointageTemplate.getPrimes().add(new PrimeDto(prime));
 		}
+		
 		result.getSaisies().add(jourPointageTemplate);
 
 		// tu as un jour de la semaine type avec toutes les primes

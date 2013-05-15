@@ -6,8 +6,10 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.sirh.domain.PrimePointage;
 
 import org.springframework.stereotype.Repository;
@@ -52,6 +54,15 @@ public class PointageRepository implements IPointageRepository {
 		List<PrimePointage> result = q.getResultList();
 
 		return result;
+	}
+
+	@Override
+	public List<RefPrime> getRefPrimes(List<Integer> noRubrList) {
+
+		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getRefPrimes", RefPrime.class);
+		query.setParameter("noRubrList", noRubrList);
+		
+		return query.getResultList();
 	}
 
 }
