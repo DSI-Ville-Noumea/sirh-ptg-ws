@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -33,7 +34,8 @@ public class Pointage {
 	@JoinColumn(name = "ID_TYPE_POINTAGE")
 	private TypePointage type;
 	
-	@OneToMany(mappedBy = "pointage", fetch = FetchType.LAZY, orphanRemoval = true)
+	@OneToMany(mappedBy = "pointage", fetch = FetchType.EAGER, orphanRemoval = true)
+	@OrderBy("dateEtat desc")
 	private Set<EtatPointage> etats = new HashSet<EtatPointage>();
 	
 	@Column(name = "DATE_LUNDI")
@@ -62,5 +64,10 @@ public class Pointage {
 	@Transient
 	public TypePointageEnum getTypePointageEnum() {
 		return TypePointageEnum.getTypePointageEnum(type.getIdTypePointage());
+	}
+	
+	@Transient
+	public EtatPointage getLatestEtatPointage() {
+		return etats.iterator().next();
 	}
 }
