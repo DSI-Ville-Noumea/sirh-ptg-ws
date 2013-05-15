@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.sirh.domain.PrimePointage;
@@ -57,10 +58,11 @@ public class PointageRepository implements IPointageRepository {
 	}
 
 	@Override
-	public List<RefPrime> getRefPrimes(List<Integer> noRubrList) {
+	public List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut) {
 
 		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getRefPrimes", RefPrime.class);
 		query.setParameter("noRubrList", noRubrList);
+		query.setParameter("statut", statut);
 		
 		return query.getResultList();
 	}

@@ -28,9 +28,9 @@ privileged aspect RefPrime_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM RefPrime o", RefPrime.class).getResultList();
     }
     
-    public static RefPrime RefPrime.findRefPrime(Integer noRubr) {
-        if (noRubr == null) return null;
-        return entityManager().find(RefPrime.class, noRubr);
+    public static RefPrime RefPrime.findRefPrime(Integer idRefPrime) {
+        if (idRefPrime == null) return null;
+        return entityManager().find(RefPrime.class, idRefPrime);
     }
     
     public static List<RefPrime> RefPrime.findRefPrimeEntries(int firstResult, int maxResults) {
@@ -49,7 +49,7 @@ privileged aspect RefPrime_Roo_Jpa_ActiveRecord {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            RefPrime attached = RefPrime.findRefPrime(this.noRubr);
+            RefPrime attached = RefPrime.findRefPrime(this.idRefPrime);
             this.entityManager.remove(attached);
         }
     }

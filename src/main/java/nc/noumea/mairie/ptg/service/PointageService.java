@@ -49,7 +49,7 @@ public class PointageService implements IPointageService {
 		
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire, contractuel,convention coll
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(agent, helperService.getCurrentDate());
-		agentDto.setStatut(carr.getStatutCarriere());
+		agentDto.setStatut(carr.getStatutCarriere().name());
 		
 		// on construit le DTO de jourPointage
 		FichePointageDto result = new FichePointageDto();
@@ -63,7 +63,7 @@ public class PointageService implements IPointageService {
 		List<Integer> rubriques = new ArrayList<Integer>();
 		for (PrimePointage pp : pps)
 			rubriques.add(pp.getNumRubrique());
-		List<RefPrime> refPrimes = pointageRepository.getRefPrimes(rubriques);
+		List<RefPrime> refPrimes = pointageRepository.getRefPrimes(rubriques, carr.getStatutCarriere());
 		
 		for (RefPrime prime : refPrimes) {
 			jourPointageTemplate.getPrimes().add(new PrimeDto(prime));

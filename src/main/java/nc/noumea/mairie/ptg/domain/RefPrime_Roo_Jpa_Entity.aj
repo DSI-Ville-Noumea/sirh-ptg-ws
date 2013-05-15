@@ -5,8 +5,11 @@ package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Version;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 
 privileged aspect RefPrime_Roo_Jpa_Entity {
@@ -15,16 +18,18 @@ privileged aspect RefPrime_Roo_Jpa_Entity {
     
     declare @type: RefPrime: @Table(name = "PTG_REF_PRIME");
     
-    @Version
-    @Column(name = "version")
-    private Integer RefPrime.version;
+    @Id
+    @SequenceGenerator(name = "refPrimeGen", sequenceName = "PTG_S_REF_PRIME")
+    @GeneratedValue(strategy = GenerationType.AUTO, generator = "refPrimeGen")
+    @Column(name = "ID_REF_PRIME")
+    private Integer RefPrime.idRefPrime;
     
-    public Integer RefPrime.getVersion() {
-        return this.version;
+    public Integer RefPrime.getIdRefPrime() {
+        return this.idRefPrime;
     }
     
-    public void RefPrime.setVersion(Integer version) {
-        this.version = version;
+    public void RefPrime.setIdRefPrime(Integer id) {
+        this.idRefPrime = id;
     }
     
 }

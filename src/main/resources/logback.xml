@@ -7,8 +7,12 @@
 		</layout>
 	</appender>
 
-	<logger name="nc.noumea.mairie.radi" level="TRACE" />
-
+<!-- 	<logger name="org.hibernate.type" level="TRACE" additivity="false"> -->
+<!-- 	  <appender-ref ref="STDOUT" /> -->
+<!-- 	</logger> -->
+<!-- 	<logger name="org.hibernate" level="DEBUG"> -->
+<!-- 		<appender-ref ref="STDOUT" /> -->
+<!-- 	</logger> -->
 
 	<root level="info">
 		<appender-ref ref="STDOUT" />

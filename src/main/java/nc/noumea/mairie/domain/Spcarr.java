@@ -37,7 +37,7 @@ public class Spcarr {
 	private Integer cdcate;
 
 	@Transient
-	public String getStatutCarriere() {
+	public AgentStatutEnum getStatutCarriere() {
 		switch (cdcate) {
 			case 1:
 			case 2:
@@ -47,13 +47,13 @@ public class Spcarr {
 			case 18:
 			case 19:
 			case 20:
-				return "F";
+				return AgentStatutEnum.F;
 			case 4:
-				return "C";
+				return AgentStatutEnum.C;
 			case 7:
-				return "CC";
+				return AgentStatutEnum.CC;
 			default:
-				return "A";
+				return null;
 		}
 	}
 }
