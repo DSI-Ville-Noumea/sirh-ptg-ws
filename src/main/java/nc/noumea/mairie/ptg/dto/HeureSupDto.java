@@ -1,9 +1,12 @@
 package nc.noumea.mairie.ptg.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
 
 @XmlRootElement
@@ -17,21 +20,23 @@ public class HeureSupDto {
 	private Date heureFin;
 	private String motif;
 	private String commentaire;
-	private String etatPointage;
+	private List<EtatPointage> etatsPointage;
 
 	public HeureSupDto() {
+		etatsPointage = new ArrayList<EtatPointage>();
 	}
 
 	public HeureSupDto(Pointage p) {
-		idPointage = p.getIdPointage();
-		titrePointage = "";
-		typePrime = p.getType().getLabel();
-		quantite = p.getQuantite();
-		heureDebut = p.getDateDebut();
-		heureFin = p.getDateFin();
-		motif = "";
-		commentaire = "";
-		etatPointage = "";
+		this();
+		this.idPointage = p.getIdPointage();
+		this.titrePointage = "";
+		this.typePrime = p.getType().getLabel();
+		this.quantite = p.getQuantite();
+		this.heureDebut = p.getDateDebut();
+		this.heureFin = p.getDateFin();
+		this.motif = "";
+		this.commentaire = "";
+		this.etatsPointage.addAll(p.getEtats());
 	}
 
 	public Integer getIdPointage() {
@@ -98,11 +103,11 @@ public class HeureSupDto {
 		this.commentaire = commentaire;
 	}
 
-	public String getEtatPointage() {
-		return etatPointage;
+	public List<EtatPointage> getEtatsPointage() {
+		return etatsPointage;
 	}
 
-	public void setEtatPointage(String etatPointage) {
-		this.etatPointage = etatPointage;
+	public void setEtatsPointage(List<EtatPointage> etatsPointage) {
+		this.etatsPointage = etatsPointage;
 	}
 }
