@@ -83,4 +83,5 @@ public class PointageServiceTest {
 		assertEquals(9007654, (int) dto.getAgent().getIdAgent());
 		assertEquals(7126, (int) dto.getSaisies().get(0).getPrimes().get(1).getNumRubrique());
 	}
+	
 }

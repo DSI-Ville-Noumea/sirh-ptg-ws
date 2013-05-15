@@ -84,4 +84,9 @@ public class PointageService implements IPointageService {
 
 		return result;
 	}
+	
+	@Override
+	public FichePointageDto getFilledFichePointageForAgent(Agent agent, Date dateLundi) {
+		return null;
+	}
 }

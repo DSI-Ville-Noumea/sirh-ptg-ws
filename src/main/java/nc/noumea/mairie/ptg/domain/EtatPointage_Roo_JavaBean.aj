@@ -4,6 +4,7 @@
 package nc.noumea.mairie.ptg.domain;
 
 import nc.noumea.mairie.ptg.domain.EtatPointage;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 
@@ -17,11 +18,11 @@ privileged aspect EtatPointage_Roo_JavaBean {
         this.etatPointagePk = etatPointagePk;
     }
     
-    public char EtatPointage.getEtat() {
+    public EtatPointageEnum EtatPointage.getEtat() {
         return this.etat;
     }
     
-    public void EtatPointage.setEtat(char etat) {
+    public void EtatPointage.setEtat(EtatPointageEnum etat) {
         this.etat = etat;
     }
     
