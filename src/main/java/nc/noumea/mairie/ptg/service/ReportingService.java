@@ -2,6 +2,8 @@ package nc.noumea.mairie.ptg.service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,11 +34,12 @@ public class ReportingService implements IReportingService {
 	private static final String PARAM_LOCALE = "__locale";
 
 	@Override
-	public byte[] getFichePointageReportAsByteArray(int idAgent, String date) throws Exception {
+	public byte[] getFichePointageReportAsByteArray(int idAgent, Date date) throws Exception {
 
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("idAgent", String.valueOf(idAgent));
-		map.put("date", date);
+		map.put("date", sdf.format(date));
 
 		ClientResponse response = createAndFireRequest(map, "fichePointage.rptdesign", "PDF");
 

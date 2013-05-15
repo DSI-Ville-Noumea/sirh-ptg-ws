@@ -24,13 +24,13 @@ public class HeureSupDto {
 
 	public HeureSupDto(Pointage p) {
 		idPointage = p.getIdPointage();
-		titrePointage="";
-		typePrime=p.getType().getLabel();
+		titrePointage = "";
+		typePrime = p.getType().getLabel();
 		quantite = p.getQuantite();
-		heureDebut=p.getDateDebut();
-		heureFin=p.getDateFin();
-		motif="";
-		commentaire ="" ;
+		heureDebut = p.getDateDebut();
+		heureFin = p.getDateFin();
+		motif = "";
+		commentaire = "";
 		etatPointage = "";
 	}
 

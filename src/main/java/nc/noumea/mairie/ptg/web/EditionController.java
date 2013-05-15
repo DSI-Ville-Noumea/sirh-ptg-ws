@@ -1,7 +1,5 @@
 package nc.noumea.mairie.ptg.web;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -77,19 +75,18 @@ public class EditionController {
 	@ResponseBody
 	@RequestMapping(value = "/downloadFichePointage", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<byte[]> downloadTableauAvancements(@RequestParam("idAgent") int idAgent,
-			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date) throws ParseException {
+	public ResponseEntity<byte[]> downloadFichePointage(@RequestParam("idAgent") int idAgent,
+			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date) {
 
 		Integer convertedId = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		Agent ag = Agent.findAgent(convertedId);
 		if (ag == null)
-			return new ResponseEntity<byte[]>(HttpStatus.NOT_FOUND);
+			throw new NotFoundException();
 
 		byte[] responseData = null;
 
 		try {
-			SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
-			responseData = reportingService.getFichePointageReportAsByteArray(idAgent, sdf.format(date));
+			responseData = reportingService.getFichePointageReportAsByteArray(idAgent, date);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);

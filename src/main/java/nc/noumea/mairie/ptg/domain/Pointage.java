@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -31,7 +32,7 @@ public class Pointage {
 	private TypePointage type;
 	
 	@OneToMany(mappedBy = "pointage", fetch = FetchType.LAZY, orphanRemoval = true)
-	private Set<EtatPointage> etats;
+	private Set<EtatPointage> etats = new HashSet<EtatPointage>();
 	
 	@Column(name = "DATE_LUNDI")
 	@Temporal(TemporalType.TIMESTAMP)
