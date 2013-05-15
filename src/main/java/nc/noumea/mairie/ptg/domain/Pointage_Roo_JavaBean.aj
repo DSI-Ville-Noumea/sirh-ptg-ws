@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Set;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.TypePointage;
 
 privileged aspect Pointage_Roo_JavaBean {
@@ -73,6 +74,14 @@ privileged aspect Pointage_Roo_JavaBean {
     
     public void Pointage.setPointageParent(Pointage pointageParent) {
         this.pointageParent = pointageParent;
+    }
+    
+    public RefPrime Pointage.getRefPrime() {
+        return this.refPrime;
+    }
+    
+    public void Pointage.setRefPrime(RefPrime refPrime) {
+        this.refPrime = refPrime;
     }
     
 }
