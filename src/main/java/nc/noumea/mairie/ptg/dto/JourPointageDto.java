@@ -21,9 +21,11 @@ public class JourPointageDto {
 	}
 
 	public JourPointageDto(JourPointageDto jourPointageTemplate) {
-		primes = jourPointageTemplate.getPrimes();
-		heuresSup = jourPointageTemplate.getHeuresSup();
-		absences = jourPointageTemplate.getAbsences();
+		this();
+		
+		// copy all primes every day
+		for (PrimeDto prime : jourPointageTemplate.getPrimes())
+			primes.add(new PrimeDto(prime));
 	}
 
 	public List<PrimeDto> getPrimes() {

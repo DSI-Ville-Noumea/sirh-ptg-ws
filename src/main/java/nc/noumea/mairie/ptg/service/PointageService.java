@@ -6,9 +6,13 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
+import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.dto.AbsenceDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
+import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
@@ -18,12 +22,17 @@ import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.sirh.domain.PrimePointage;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PointageService implements IPointageService {
 
+	private Logger logger = LoggerFactory.getLogger(PointageService.class);
+	
 	@Autowired
 	private IPointageRepository pointageRepository;
 
@@ -86,7 +95,51 @@ public class PointageService implements IPointageService {
 	}
 	
 	@Override
-	public FichePointageDto getFilledFichePointageForAgent(Agent agent, Date dateLundi) {
-		return null;
+	public FichePointageDto getFilledFichePointageForAgent(int idAgent, Date dateLundi) {
+		
+		Agent agent = Agent.findAgent(idAgent);
+		
+		FichePointageDto ficheDto = getFichePointageForAgent(agent, dateLundi);
+		
+		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDate(idAgent, dateLundi);
+		
+		for (Pointage ptg : agentPointages) {
+		
+			for(EtatPointage etp : ptg.getEtats()) {
+				logger.debug("etat {} - {} at {}", etp.getEtat().name(), etp.getEtat() ,etp.getEtatPointagePk().getDateEtat());
+			}
+			
+			JourPointageDto jour = ficheDto.getSaisies().get(getWeekDayFromDateBase0(ptg.getDateDebut()));
+			
+			switch(ptg.getTypePointageEnum()) {
+				case ABSENCE:
+					AbsenceDto abs = new AbsenceDto(ptg);
+					jour.getAbsences().add(abs);
+					break;
+					
+				case H_SUP:
+					HeureSupDto hsup = new HeureSupDto(ptg);
+					jour.getHeuresSup().add(hsup);
+					break;
+					
+				case PRIME:
+					// Retrieve related primeDto in JourPointageDto and update it with value from Pointage
+					PrimeDto thePrimeToUpdate = null;
+					for(PrimeDto pDto : jour.getPrimes()) {
+						if (pDto.getNumRubrique().equals(ptg.getRefPrime().getNoRubr()))
+							thePrimeToUpdate = pDto;
+					}
+					
+					thePrimeToUpdate.updateWithPointage(ptg);
+					
+					break;
+			}
+		}
+		
+		return ficheDto;
+	}
+	
+	private int getWeekDayFromDateBase0(Date date) {
+		return new DateTime(date).dayOfWeek().get() - 1;
 	}
 }

@@ -8,6 +8,6 @@ import nc.noumea.mairie.sirh.domain.Agent;
 public interface IPointageService {
 
 	public FichePointageDto getFichePointageForAgent(Agent agent, Date date);
-	public FichePointageDto getFilledFichePointageForAgent(Agent agent, Date dateLundi);
+	public FichePointageDto getFilledFichePointageForAgent(int idAgent, Date dateLundi);
 
 }

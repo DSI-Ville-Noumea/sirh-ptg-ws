@@ -10,62 +10,34 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 public class HeureSupDto {
 
 	private Integer idPointage;
-	private String titrePointage;
-	private String typePrime;
-	private Integer quantite;
 	private Date heureDebut;
 	private Date heureFin;
+	private Boolean payee;
 	private String motif;
 	private String commentaire;
-	private String etatPointage;
+	private String etat;
 
 	public HeureSupDto() {
+	
 	}
-
+	
 	public HeureSupDto(Pointage p) {
 		this();
 		this.idPointage = p.getIdPointage();
-		this.titrePointage = "";
-		this.typePrime = p.getType().getLabel();
-		this.quantite = p.getQuantite();
 		this.heureDebut = p.getDateDebut();
 		this.heureFin = p.getDateFin();
+		this.payee = p.getHeureSupPayee();
 		this.motif = "";
 		this.commentaire = "";
-		// this.etatPointage = p.getEtats().
-		// this.etatsPointage.addAll(p.getEtats());
+		this.etat = p.getLatestEtatPointage().getEtat().name();
 	}
-
+	
 	public Integer getIdPointage() {
 		return idPointage;
 	}
 
 	public void setIdPointage(Integer idPointage) {
 		this.idPointage = idPointage;
-	}
-
-	public String getTitrePointage() {
-		return titrePointage;
-	}
-
-	public void setTitrePointage(String titrePointage) {
-		this.titrePointage = titrePointage;
-	}
-
-	public String getTypePrime() {
-		return typePrime;
-	}
-
-	public void setTypePrime(String typePrime) {
-		this.typePrime = typePrime;
-	}
-
-	public Integer getQuantite() {
-		return quantite;
-	}
-
-	public void setQuantite(Integer quantite) {
-		this.quantite = quantite;
 	}
 
 	public Date getHeureDebut() {
@@ -82,6 +54,14 @@ public class HeureSupDto {
 
 	public void setHeureFin(Date heureFin) {
 		this.heureFin = heureFin;
+	}
+	
+	public Boolean getPayee() {
+		return payee;
+	}
+
+	public void setPayee(Boolean payee) {
+		this.payee = payee;
 	}
 
 	public String getMotif() {
@@ -100,11 +80,11 @@ public class HeureSupDto {
 		this.commentaire = commentaire;
 	}
 
-	public String getEtatPointage() {
-		return etatPointage;
+	public String getEtat() {
+		return etat;
 	}
 
-	public void setEtatPointage(String etatPointage) {
-		this.etatPointage = etatPointage;
+	public void setEtat(String etat) {
+		this.etat = etat;
 	}
 }

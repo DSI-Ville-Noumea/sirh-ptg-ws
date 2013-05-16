@@ -184,6 +184,13 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 	
 	@Override
+	public boolean canUserAccessSaisie(Integer idAgent, Integer agentViewed) {
+//		boolean isOperator = accessRightsRepository.isUserOperator(idAgent);
+//		List<AgentDto> agents
+		return true;
+	}
+	
+	@Override
 	public List<AgentDto> listAgentsToAssign(Integer idAgent) {
 		
 		// Retrieve division service of agent
@@ -193,5 +200,7 @@ public class AccessRightsService implements IAccessRightsService {
 		
 		return agentDtos;
 	}
+
+	
 	
 }

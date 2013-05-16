@@ -10,14 +10,12 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 public class AbsenceDto {
 
 	private Integer idPointage;
-	private String titrePointage;
-	private String typePrime;
-	private Integer quantite;
 	private Date heureDebut;
 	private Date heureFin;
+	private Boolean nonConcertee;
 	private String motif;
 	private String commentaire;
-	private String etatPointage;
+	private String etat;
 
 	public AbsenceDto() {
 	}
@@ -25,14 +23,12 @@ public class AbsenceDto {
 	public AbsenceDto(Pointage p) {
 		this();
 		this.idPointage = p.getIdPointage();
-		this.titrePointage = "";
-		this.typePrime = p.getType().getLabel();
-		this.quantite = p.getQuantite();
 		this.heureDebut = p.getDateDebut();
 		this.heureFin = p.getDateFin();
 		this.motif = "";
 		this.commentaire = "";
-		// this.etatsPointage.addAll(p.getEtats());
+		this.etat = p.getLatestEtatPointage().getEtat().name();
+		this.nonConcertee = p.getAbsenceNonConcertee();
 	}
 
 	public Integer getIdPointage() {
@@ -41,30 +37,6 @@ public class AbsenceDto {
 
 	public void setIdPointage(Integer idPointage) {
 		this.idPointage = idPointage;
-	}
-
-	public String getTitrePointage() {
-		return titrePointage;
-	}
-
-	public void setTitrePointage(String titrePointage) {
-		this.titrePointage = titrePointage;
-	}
-
-	public String getTypePrime() {
-		return typePrime;
-	}
-
-	public void setTypePrime(String typePrime) {
-		this.typePrime = typePrime;
-	}
-
-	public Integer getQuantite() {
-		return quantite;
-	}
-
-	public void setQuantite(Integer quantite) {
-		this.quantite = quantite;
 	}
 
 	public Date getHeureDebut() {
@@ -81,6 +53,14 @@ public class AbsenceDto {
 
 	public void setHeureFin(Date heureFin) {
 		this.heureFin = heureFin;
+	}
+	
+	public Boolean getNonConcertee() {
+		return nonConcertee;
+	}
+
+	public void setNonConcertee(Boolean nonConcertee) {
+		this.nonConcertee = nonConcertee;
 	}
 
 	public String getMotif() {
@@ -99,11 +79,11 @@ public class AbsenceDto {
 		this.commentaire = commentaire;
 	}
 
-	public String getEtatPointage() {
-		return etatPointage;
+	public String getEtat() {
+		return etat;
 	}
 
-	public void setEtatPointage(String etatPointage) {
-		this.etatPointage = etatPointage;
+	public void setEtat(String etat) {
+		this.etat = etat;
 	}
 }

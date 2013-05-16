@@ -67,4 +67,13 @@ public class PointageRepository implements IPointageRepository {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<Pointage> getPointagesForAgentAndDate(int idAgent, Date dateLundi) {
+		
+		TypedQuery<Pointage> query = ptgEntityManager.createNamedQuery("getPointageForAgentAndDateLundi", Pointage.class);
+		query.setParameter("idAgent", idAgent);
+		query.setParameter("dateLundi", dateLundi);
+		
+		return query.getResultList();
+	}
 }

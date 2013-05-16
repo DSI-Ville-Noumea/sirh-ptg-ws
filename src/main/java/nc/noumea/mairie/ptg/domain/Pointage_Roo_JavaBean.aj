@@ -84,4 +84,20 @@ privileged aspect Pointage_Roo_JavaBean {
         this.refPrime = refPrime;
     }
     
+    public Boolean Pointage.getHeureSupPayee() {
+        return this.heureSupPayee;
+    }
+    
+    public void Pointage.setHeureSupPayee(Boolean heureSupPayee) {
+        this.heureSupPayee = heureSupPayee;
+    }
+    
+    public Boolean Pointage.getAbsenceNonConcertee() {
+        return this.absenceNonConcertee;
+    }
+    
+    public void Pointage.setAbsenceNonConcertee(Boolean absenceNonConcertee) {
+        this.absenceNonConcertee = absenceNonConcertee;
+    }
+    
 }

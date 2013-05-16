@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 
 @XmlRootElement
@@ -17,7 +18,7 @@ public class PrimeDto {
 	private Date heureFin;
 	private String motif;
 	private String commentaire;
-	private String etatPointage;
+	private String etat;
 	private Integer numRubrique;
 
 	public PrimeDto() {
@@ -26,6 +27,27 @@ public class PrimeDto {
 	public PrimeDto(RefPrime prime) {
 		titre = prime.getLibelle();
 		// TODO: compelte ctor
+	}
+	
+	public PrimeDto(PrimeDto primeDto) {
+		this();
+		this.idPointage = primeDto.idPointage;
+		this.titre = primeDto.titre;
+		this.typePrime = primeDto.typePrime;
+		this.quantite = primeDto.quantite;
+		this.heureDebut = primeDto.heureDebut;
+		this.heureFin = primeDto.heureFin;
+		this.motif = primeDto.motif;
+		this.commentaire = primeDto.commentaire;
+		this.etat = primeDto.etat;
+		this.numRubrique = primeDto.numRubrique;
+	}
+
+	public void updateWithPointage(Pointage ptg) {
+		this.quantite = ptg.getQuantite();
+		this.heureDebut = ptg.getDateDebut();
+		this.heureFin = ptg.getDateDebut();
+		this.etat = ptg.getLatestEtatPointage().getEtat().name();
 	}
 	
 	public Integer getIdPointage() {
@@ -92,12 +114,12 @@ public class PrimeDto {
 		this.commentaire = commentaire;
 	}
 
-	public String getEtatPointage() {
-		return etatPointage;
+	public String getEtat() {
+		return etat;
 	}
 
-	public void setEtatPointage(String etatPointage) {
-		this.etatPointage = etatPointage;
+	public void setEtat(String etat) {
+		this.etat = etat;
 	}
 
 	public Integer getNumRubrique() {

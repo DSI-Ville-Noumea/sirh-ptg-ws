@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
@@ -16,6 +17,7 @@ import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 import org.springframework.roo.addon.tostring.RooToString;
@@ -24,6 +26,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_POINTAGE", identifierField = "idPointage", identifierType = Integer.class, table = "PTG_POINTAGE", sequenceName = "PTG_S_POINTAGE")
+@NamedQuery(name = "getPointageForAgentAndDateLundi", query = "from Pointage ptg where ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi")
 public class Pointage {
 
 	@NotNull
@@ -35,7 +38,7 @@ public class Pointage {
 	private TypePointage type;
 	
 	@OneToMany(mappedBy = "pointage", fetch = FetchType.EAGER, orphanRemoval = true)
-	@OrderBy("dateEtat desc")
+	@OrderBy("etatPointagePk.dateEtat desc")
 	private Set<EtatPointage> etats = new HashSet<EtatPointage>();
 	
 	@Column(name = "DATE_LUNDI")
@@ -60,6 +63,14 @@ public class Pointage {
 	@ManyToOne
 	@JoinColumn(name = "ID_REF_PRIME", referencedColumnName = "ID_REF_PRIME")
 	private RefPrime refPrime;
+	
+	@Column(name = "IS_HSUP_PAYEE")
+	@Type(type = "boolean")
+	private Boolean heureSupPayee;
+	
+	@Column(name = "IS_ABS_NON_CONCERTEE")
+	@Type(type = "boolean")
+	private Boolean absenceNonConcertee;
 	
 	@Transient
 	public TypePointageEnum getTypePointageEnum() {

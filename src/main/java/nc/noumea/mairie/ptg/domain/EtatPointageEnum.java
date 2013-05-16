@@ -2,9 +2,9 @@ package nc.noumea.mairie.ptg.domain;
 
 public enum EtatPointageEnum {
 
-	SAISI(1),
-	APPROUVE(2),
-	REFUSE(3),
+	SAISI(0),
+	APPROUVE(1),
+	REFUSE(2),
 	REFUSE_DEFINITIVEMENT(3),
 	VENTILE(4),
 	REJETE(5),
@@ -23,4 +23,8 @@ public enum EtatPointageEnum {
 		return codeEtat;
 	}
 	
+	@Override
+	public String toString() {
+		return String.valueOf(codeEtat);
+	}
 }

@@ -25,6 +25,7 @@ public class JourPointageDtoTest {
 
 	@Test
 	public void ctor_withJourPointageDto() {
+		
 		AbsenceDto abs = new AbsenceDto();
 		abs.setCommentaire("toto");
 		List<AbsenceDto> listAbs = new ArrayList<AbsenceDto>();
@@ -47,11 +48,9 @@ public class JourPointageDtoTest {
 		JourPointageDto result = new JourPointageDto(jour);
 
 		// Then
-		assertEquals(1, result.getAbsences().size());
-		assertEquals(1, result.getHeuresSup().size());
+		assertEquals(0, result.getAbsences().size());
+		assertEquals(0, result.getHeuresSup().size());
 		assertEquals(1, result.getPrimes().size());
 		assertEquals("toto", result.getPrimes().get(0).getCommentaire());
-		assertEquals("toto", result.getHeuresSup().get(0).getCommentaire());
-		assertEquals("toto", result.getAbsences().get(0).getCommentaire());
 	}
 }

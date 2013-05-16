@@ -20,7 +20,7 @@ public class EtatPointage {
 
 	@EmbeddedId
 	private EtatPointagePK etatPointagePk;
-
+	
 	@NotNull
 	@Column(name = "ETAT")
 	@Enumerated(EnumType.ORDINAL)
