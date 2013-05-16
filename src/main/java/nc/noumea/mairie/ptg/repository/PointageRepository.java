@@ -68,9 +68,9 @@ public class PointageRepository implements IPointageRepository {
 	}
 
 	@Override
-	public List<Pointage> getPointagesForAgentAndDate(int idAgent, Date dateLundi) {
+	public List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi) {
 		
-		TypedQuery<Pointage> query = ptgEntityManager.createNamedQuery("getPointageForAgentAndDateLundi", Pointage.class);
+		TypedQuery<Pointage> query = ptgEntityManager.createNamedQuery("getPointageForAgentAndDateLundiByIdDesc", Pointage.class);
 		query.setParameter("idAgent", idAgent);
 		query.setParameter("dateLundi", dateLundi);
 		

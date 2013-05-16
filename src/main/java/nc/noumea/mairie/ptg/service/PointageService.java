@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spcarr;
-import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
@@ -101,12 +100,17 @@ public class PointageService implements IPointageService {
 		
 		FichePointageDto ficheDto = getFichePointageForAgent(agent, dateLundi);
 		
-		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDate(idAgent, dateLundi);
+		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi);
+		
+		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
 		
 		for (Pointage ptg : agentPointages) {
 		
-			for(EtatPointage etp : ptg.getEtats()) {
-				logger.debug("etat {} - {} at {}", etp.getEtat().name(), etp.getEtat() ,etp.getEtatPointagePk().getDateEtat());
+			if (oldPointagesToAvoid.contains(ptg.getIdPointage()))
+				continue;
+			
+			if (ptg.getPointageParent() != null) {
+				oldPointagesToAvoid.add(ptg.getPointageParent().getIdPointage());
 			}
 			
 			JourPointageDto jour = ficheDto.getSaisies().get(getWeekDayFromDateBase0(ptg.getDateDebut()));
