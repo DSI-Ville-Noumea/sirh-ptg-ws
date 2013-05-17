@@ -68,9 +68,9 @@ public class Pointage {
 	@Type(type = "boolean")
 	private Boolean heureSupPayee;
 	
-	@Column(name = "IS_ABS_NON_CONCERTEE")
+	@Column(name = "IS_ABS_CONCERTEE")
 	@Type(type = "boolean")
-	private Boolean absenceNonConcertee;
+	private Boolean absenceConcertee;
 	
 	@Transient
 	public TypePointageEnum getTypePointageEnum() {

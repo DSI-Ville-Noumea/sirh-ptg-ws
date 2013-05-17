@@ -12,7 +12,7 @@ public class PrimeDto {
 
 	private Integer idPointage;
 	private String titre;
-	private String typePrime;
+	private String typeSaisie;
 	private Integer quantite;
 	private Date heureDebut;
 	private Date heureFin;
@@ -20,20 +20,23 @@ public class PrimeDto {
 	private String commentaire;
 	private String etat;
 	private Integer numRubrique;
+	private Integer idRefPrime;
 
 	public PrimeDto() {
 	}
 
 	public PrimeDto(RefPrime prime) {
-		titre = prime.getLibelle();
-		// TODO: compelte ctor
+		this.titre = prime.getLibelle();
+		this.idRefPrime = prime.getIdRefPrime();
+		this.numRubrique = prime.getNoRubr();
+		this.typeSaisie = prime.getTypeSaisie().name();
 	}
 	
 	public PrimeDto(PrimeDto primeDto) {
 		this();
 		this.idPointage = primeDto.idPointage;
 		this.titre = primeDto.titre;
-		this.typePrime = primeDto.typePrime;
+		this.typeSaisie = primeDto.typeSaisie;
 		this.quantite = primeDto.quantite;
 		this.heureDebut = primeDto.heureDebut;
 		this.heureFin = primeDto.heureFin;
@@ -41,13 +44,24 @@ public class PrimeDto {
 		this.commentaire = primeDto.commentaire;
 		this.etat = primeDto.etat;
 		this.numRubrique = primeDto.numRubrique;
+		this.idRefPrime = primeDto.idPointage;
 	}
 
 	public void updateWithPointage(Pointage ptg) {
-		this.quantite = ptg.getQuantite();
-		this.heureDebut = ptg.getDateDebut();
-		this.heureFin = ptg.getDateDebut();
+		this.idPointage = ptg.getIdPointage();
 		this.etat = ptg.getLatestEtatPointage().getEtat().name();
+
+		switch(ptg.getRefPrime().getTypeSaisie()) {
+			case CASE_A_COCHER:
+			case NB_HEURES:
+			case NB_INDEMNITES:
+				this.quantite = ptg.getQuantite();
+				break;
+			case PERIODE_HEURES:
+				this.heureDebut = ptg.getDateDebut();
+				this.heureFin = ptg.getDateFin();
+				break;
+		}
 	}
 	
 	public Integer getIdPointage() {
@@ -66,12 +80,12 @@ public class PrimeDto {
 		this.titre = titre;
 	}
 
-	public String getTypePrime() {
-		return typePrime;
+	public String getTypeSaisie() {
+		return typeSaisie;
 	}
 
-	public void setTypePrime(String typePrime) {
-		this.typePrime = typePrime;
+	public void setTypeSaisie(String typeSaisie) {
+		this.typeSaisie = typeSaisie;
 	}
 
 	public Integer getQuantite() {
@@ -128,5 +142,13 @@ public class PrimeDto {
 
 	public void setNumRubrique(Integer numRubrique) {
 		this.numRubrique = numRubrique;
+	}
+
+	public Integer getIdRefPrime() {
+		return idRefPrime;
+	}
+
+	public void setIdRefPrime(Integer idRefPrime) {
+		this.idRefPrime = idRefPrime;
 	}
 }

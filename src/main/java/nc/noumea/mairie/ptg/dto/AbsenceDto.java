@@ -12,7 +12,7 @@ public class AbsenceDto {
 	private Integer idPointage;
 	private Date heureDebut;
 	private Date heureFin;
-	private Boolean nonConcertee;
+	private Boolean concertee;
 	private String motif;
 	private String commentaire;
 	private String etat;
@@ -28,7 +28,7 @@ public class AbsenceDto {
 		this.motif = "";
 		this.commentaire = "";
 		this.etat = p.getLatestEtatPointage().getEtat().name();
-		this.nonConcertee = p.getAbsenceNonConcertee();
+		this.concertee = p.getAbsenceConcertee();
 	}
 
 	public Integer getIdPointage() {
@@ -55,12 +55,12 @@ public class AbsenceDto {
 		this.heureFin = heureFin;
 	}
 	
-	public Boolean getNonConcertee() {
-		return nonConcertee;
+	public Boolean getConcertee() {
+		return concertee;
 	}
 
-	public void setNonConcertee(Boolean nonConcertee) {
-		this.nonConcertee = nonConcertee;
+	public void setConcertee(Boolean concertee) {
+		this.concertee = concertee;
 	}
 
 	public String getMotif() {

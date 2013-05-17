@@ -24,7 +24,7 @@ public class AbsenceDtoTest {
 		p.setDateFin(new DateTime(2013, 5, 19, 0, 0, 0, 0).toDate());
 		p.setDateLundi(new DateTime(2013, 4, 19, 0, 0, 0, 0).toDate());
 		p.setType(tp);
-		p.setAbsenceNonConcertee(true);
+		p.setAbsenceConcertee(true);
 		EtatPointage ep1 = new EtatPointage();
 		ep1.setEtat(EtatPointageEnum.APPROUVE);
 		ep1.setPointage(p);
@@ -35,7 +35,7 @@ public class AbsenceDtoTest {
 
 		// Then
 		assertEquals(new Integer(10), result.getIdPointage());
-		assertEquals(true, result.getNonConcertee());
+		assertEquals(true, result.getConcertee());
 		assertEquals("APPROUVE", result.getEtat());
 		assertEquals(p.getDateDebut(), result.getHeureDebut());
 		assertEquals(p.getDateFin(), result.getHeureFin());

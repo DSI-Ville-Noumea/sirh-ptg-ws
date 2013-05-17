@@ -31,5 +31,10 @@ public class MairieRepository implements IMairieRepository {
 		Spcarr carr = qCarr.getSingleResult();
 		
 		return carr;
+	}
+
+	@Override
+	public Agent getAgent(int idAgent) {
+		return sirhEntityManager.getReference(Agent.class, idAgent);
 	}	
 }

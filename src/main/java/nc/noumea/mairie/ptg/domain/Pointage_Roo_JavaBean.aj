@@ -92,12 +92,12 @@ privileged aspect Pointage_Roo_JavaBean {
         this.heureSupPayee = heureSupPayee;
     }
     
-    public Boolean Pointage.getAbsenceNonConcertee() {
-        return this.absenceNonConcertee;
+    public Boolean Pointage.getAbsenceConcertee() {
+        return this.absenceConcertee;
     }
     
-    public void Pointage.setAbsenceNonConcertee(Boolean absenceNonConcertee) {
-        this.absenceNonConcertee = absenceNonConcertee;
+    public void Pointage.setAbsenceConcertee(Boolean absenceConcertee) {
+        this.absenceConcertee = absenceConcertee;
     }
     
 }

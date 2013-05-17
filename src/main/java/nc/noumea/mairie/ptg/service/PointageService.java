@@ -21,7 +21,6 @@ import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.sirh.domain.PrimePointage;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,24 +95,29 @@ public class PointageService implements IPointageService {
 	@Override
 	public FichePointageDto getFilledFichePointageForAgent(int idAgent, Date dateLundi) {
 		
-		Agent agent = Agent.findAgent(idAgent);
+		Agent agent = mairieRepository.getAgent(idAgent);
 		
 		FichePointageDto ficheDto = getFichePointageForAgent(agent, dateLundi);
 		
 		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi);
 		
+		logger.debug("Found {} Pointage for agent {} and monday date {}", agentPointages.size(), idAgent, dateLundi);
+		
 		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
 		
 		for (Pointage ptg : agentPointages) {
 		
-			if (oldPointagesToAvoid.contains(ptg.getIdPointage()))
+			if (oldPointagesToAvoid.contains(ptg.getIdPointage())) {
+				logger.debug("Not taking Pointage {} because not the latest.", ptg.getIdPointage());
 				continue;
-			
-			if (ptg.getPointageParent() != null) {
-				oldPointagesToAvoid.add(ptg.getPointageParent().getIdPointage());
 			}
 			
-			JourPointageDto jour = ficheDto.getSaisies().get(getWeekDayFromDateBase0(ptg.getDateDebut()));
+			if (ptg.getPointageParent() != null) {
+				logger.debug("Pointage {} has a parent {}, adding it to avoid list.", ptg.getIdPointage(), ptg.getPointageParent().getIdPointage());
+				oldPointagesToAvoid.add(ptg.getPointageParent().getIdPointage());
+			}
+						
+			JourPointageDto jour = ficheDto.getSaisies().get(helperService.getWeekDayFromDateBase0(ptg.getDateDebut()));
 			
 			switch(ptg.getTypePointageEnum()) {
 				case ABSENCE:
@@ -141,9 +145,5 @@ public class PointageService implements IPointageService {
 		}
 		
 		return ficheDto;
-	}
-	
-	private int getWeekDayFromDateBase0(Date date) {
-		return new DateTime(date).dayOfWeek().get() - 1;
 	}
 }
