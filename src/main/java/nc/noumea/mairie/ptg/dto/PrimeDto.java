@@ -44,7 +44,7 @@ public class PrimeDto {
 		this.commentaire = primeDto.commentaire;
 		this.etat = primeDto.etat;
 		this.numRubrique = primeDto.numRubrique;
-		this.idRefPrime = primeDto.idPointage;
+		this.idRefPrime = primeDto.idRefPrime;
 	}
 
 	public void updateWithPointage(Pointage ptg) {
