@@ -27,7 +27,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_POINTAGE", identifierField = "idPointage", identifierType = Integer.class, table = "PTG_POINTAGE", sequenceName = "PTG_S_POINTAGE")
-@NamedQuery(name = "getPointageForAgentAndDateLundiByIdDesc", query = "select ptg from Pointage ptg JOIN FETCH ptg.motif JOIN FETCH ptg.commentaire where ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi order by ptg.idPointage desc")
+@NamedQuery(name = "getPointageForAgentAndDateLundiByIdDesc", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire where ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi order by ptg.idPointage desc")
 public class Pointage {
 
 	@NotNull
