@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.Set;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.TypePointage;
 
@@ -98,6 +99,22 @@ privileged aspect Pointage_Roo_JavaBean {
     
     public void Pointage.setAbsenceConcertee(Boolean absenceConcertee) {
         this.absenceConcertee = absenceConcertee;
+    }
+    
+    public PtgComment Pointage.getMotif() {
+        return this.motif;
+    }
+    
+    public void Pointage.setMotif(PtgComment motif) {
+        this.motif = motif;
+    }
+    
+    public PtgComment Pointage.getCommentaire() {
+        return this.commentaire;
+    }
+    
+    public void Pointage.setCommentaire(PtgComment commentaire) {
+        this.commentaire = commentaire;
     }
     
 }

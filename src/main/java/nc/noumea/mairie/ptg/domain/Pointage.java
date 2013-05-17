@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -26,7 +27,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_POINTAGE", identifierField = "idPointage", identifierType = Integer.class, table = "PTG_POINTAGE", sequenceName = "PTG_S_POINTAGE")
-@NamedQuery(name = "getPointageForAgentAndDateLundiByIdDesc", query = "from Pointage ptg where ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi order by idPointage desc")
+@NamedQuery(name = "getPointageForAgentAndDateLundiByIdDesc", query = "select ptg from Pointage ptg JOIN FETCH ptg.motif JOIN FETCH ptg.commentaire where ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi order by ptg.idPointage desc")
 public class Pointage {
 
 	@NotNull
@@ -71,6 +72,14 @@ public class Pointage {
 	@Column(name = "IS_ABS_CONCERTEE")
 	@Type(type = "boolean")
 	private Boolean absenceConcertee;
+	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true, optional = true)
+	@JoinColumn(name = "ID_COMMENT_MOTIF")
+	private PtgComment motif;
+	
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true, optional = true)
+	@JoinColumn(name = "ID_COMMENT_COMMENTAIRE")
+	private PtgComment commentaire;
 	
 	@Transient
 	public TypePointageEnum getTypePointageEnum() {

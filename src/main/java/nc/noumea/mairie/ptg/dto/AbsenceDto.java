@@ -21,7 +21,6 @@ public class AbsenceDto {
 	}
 
 	public AbsenceDto(Pointage p) {
-		this();
 		this.idPointage = p.getIdPointage();
 		this.heureDebut = p.getDateDebut();
 		this.heureFin = p.getDateFin();

@@ -22,7 +22,6 @@ public class HeureSupDto {
 	}
 	
 	public HeureSupDto(Pointage p) {
-		this();
 		this.idPointage = p.getIdPointage();
 		this.heureDebut = p.getDateDebut();
 		this.heureFin = p.getDateFin();

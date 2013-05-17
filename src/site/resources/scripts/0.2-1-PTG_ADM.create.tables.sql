@@ -1,6 +1,10 @@
 ----------------------------------------------------------------
 -- connecte en PTG_ADM
 ----------------------------------------------------------------
+
+----------------------------------------------------------------
+-- connecte en PTG_REF_PRIME
+----------------------------------------------------------------
 create sequence PTG_S_REF_PRIME 
 start with 1 
 increment by 1 
@@ -27,3 +31,28 @@ TABLESPACE TS_PTG_DATA;
 create public synonym PTG_REF_PRIME for PTG_REF_PRIME;
 grant select on PTG_REF_PRIME to R_PTG_USR;
 grant select on PTG_REF_PRIME to R_PTG_READ;
+
+----------------------------------------------------------------
+-- connecte en PTG_COMMENT
+----------------------------------------------------------------
+create sequence PTG_S_COMMENT 
+start with 1 
+increment by 1 
+nomaxvalue;
+
+create public synonym PTG_S_COMMENT for PTG_S_COMMENT;
+grant select on PTG_S_COMMENT to R_PTG_USR;
+
+create table PTG_COMMENT
+(
+  ID_COMMENT NUMBER(38,0) not null,
+  TEXT CLOB,
+  VERSION NUMBER(38,0) DEFAULT 0 NOT NULL,
+  constraint PK_PTG_COMMENT
+  primary key (ID_COMMENT)
+)
+TABLESPACE TS_PTG_COMMENT;
+
+create public synonym PTG_COMMENT for PTG_COMMENT;
+grant select on PTG_COMMENT to R_PTG_USR;
+grant select on PTG_COMMENT to R_PTG_READ;
