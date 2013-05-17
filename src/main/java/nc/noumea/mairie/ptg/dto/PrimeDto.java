@@ -50,7 +50,9 @@ public class PrimeDto {
 	public void updateWithPointage(Pointage ptg) {
 		this.idPointage = ptg.getIdPointage();
 		this.etat = ptg.getLatestEtatPointage().getEtat().name();
-
+		this.motif = ptg.getMotif() == null ? "" : ptg.getMotif().getText();
+		this.commentaire = ptg.getCommentaire() == null ? "" : ptg.getCommentaire().getText();
+		
 		switch(ptg.getRefPrime().getTypeSaisie()) {
 			case CASE_A_COCHER:
 			case NB_HEURES:

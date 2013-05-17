@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.TypePointage;
 
 import org.joda.time.DateTime;
@@ -30,7 +31,13 @@ public class HeureSupDtoTest {
 		ep1.setEtat(EtatPointageEnum.SAISI);
 		ep1.setPointage(p);
 		p.getEtats().add(ep1);
-
+		PtgComment m = new PtgComment();
+		m.setText("blabla");
+		p.setMotif(m);
+		PtgComment c = new PtgComment();
+		c.setText("blibli");
+		p.setCommentaire(c);
+		
 		// When
 		HeureSupDto result = new HeureSupDto(p);
 
@@ -40,5 +47,7 @@ public class HeureSupDtoTest {
 		assertEquals("SAISI", result.getEtat());
 		assertEquals(p.getDateDebut(), result.getHeureDebut());
 		assertEquals(p.getDateFin(), result.getHeureFin());
+		assertEquals("blabla", result.getMotif());
+		assertEquals("blibli", result.getCommentaire());
 	}
 }

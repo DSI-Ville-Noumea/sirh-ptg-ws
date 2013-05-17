@@ -26,8 +26,8 @@ public class HeureSupDto {
 		this.heureDebut = p.getDateDebut();
 		this.heureFin = p.getDateFin();
 		this.payee = p.getHeureSupPayee();
-		this.motif = "";
-		this.commentaire = "";
+		this.motif = p.getMotif() == null ? "" : p.getMotif().getText();
+		this.commentaire = p.getCommentaire() == null ? "" : p.getCommentaire().getText();
 		this.etat = p.getLatestEtatPointage().getEtat().name();
 	}
 	

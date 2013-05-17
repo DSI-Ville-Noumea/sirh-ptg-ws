@@ -6,6 +6,7 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 
@@ -51,6 +52,12 @@ public class PrimeDtoTest {
 		p.setDateFin(new DateTime().toDate());
 		p.setRefPrime(new RefPrime());
 		p.getRefPrime().setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+		PtgComment m = new PtgComment();
+		m.setText("blabla");
+		p.setMotif(m);
+		PtgComment c = new PtgComment();
+		c.setText("blibli");
+		p.setCommentaire(c);
 		
 		// When
 		result.updateWithPointage(p);
@@ -61,6 +68,8 @@ public class PrimeDtoTest {
 		assertEquals(p.getLatestEtatPointage().getEtat().name(), result.getEtat());
 		assertEquals(p.getDateDebut(), result.getHeureDebut());
 		assertEquals(p.getDateFin(), result.getHeureFin());
+		assertEquals("blabla", result.getMotif());
+		assertEquals("blibli", result.getCommentaire());
 	}
 	
 	@Test
@@ -77,6 +86,12 @@ public class PrimeDtoTest {
 		p.setDateDebut(new DateTime().toDate());
 		p.setRefPrime(new RefPrime());
 		p.getRefPrime().setTypeSaisie(TypeSaisieEnum.CASE_A_COCHER);
+		PtgComment m = new PtgComment();
+		m.setText("blabla");
+		p.setMotif(m);
+		PtgComment c = new PtgComment();
+		c.setText("blibli");
+		p.setCommentaire(c);
 		
 		// When
 		result.updateWithPointage(p);
@@ -87,6 +102,8 @@ public class PrimeDtoTest {
 		assertEquals(p.getLatestEtatPointage().getEtat().name(), result.getEtat());
 		assertNull(result.getHeureDebut());
 		assertNull(result.getHeureFin());
+		assertEquals("blabla", result.getMotif());
+		assertEquals("blibli", result.getCommentaire());
 	}
 	
 	@Test
@@ -103,6 +120,12 @@ public class PrimeDtoTest {
 		p.setDateDebut(new DateTime().toDate());
 		p.setRefPrime(new RefPrime());
 		p.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		PtgComment m = new PtgComment();
+		m.setText("blabla");
+		p.setMotif(m);
+		PtgComment c = new PtgComment();
+		c.setText("blibli");
+		p.setCommentaire(c);
 		
 		// When
 		result.updateWithPointage(p);
@@ -113,6 +136,8 @@ public class PrimeDtoTest {
 		assertEquals(p.getLatestEtatPointage().getEtat().name(), result.getEtat());
 		assertNull(result.getHeureDebut());
 		assertNull(result.getHeureFin());
+		assertEquals("blabla", result.getMotif());
+		assertEquals("blibli", result.getCommentaire());
 	}
 	
 	@Test
@@ -129,6 +154,12 @@ public class PrimeDtoTest {
 		p.setDateDebut(new DateTime().toDate());
 		p.setRefPrime(new RefPrime());
 		p.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		PtgComment m = new PtgComment();
+		m.setText("blabla");
+		p.setMotif(m);
+		PtgComment c = new PtgComment();
+		c.setText("blibli");
+		p.setCommentaire(c);
 		
 		// When
 		result.updateWithPointage(p);
@@ -139,5 +170,7 @@ public class PrimeDtoTest {
 		assertEquals(p.getLatestEtatPointage().getEtat().name(), result.getEtat());
 		assertNull(result.getHeureDebut());
 		assertNull(result.getHeureFin());
+		assertEquals("blabla", result.getMotif());
+		assertEquals("blibli", result.getCommentaire());
 	}
 }

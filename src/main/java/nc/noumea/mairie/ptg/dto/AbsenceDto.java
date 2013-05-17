@@ -24,8 +24,8 @@ public class AbsenceDto {
 		this.idPointage = p.getIdPointage();
 		this.heureDebut = p.getDateDebut();
 		this.heureFin = p.getDateFin();
-		this.motif = "";
-		this.commentaire = "";
+		this.motif = p.getMotif() == null ? "" : p.getMotif().getText();
+		this.commentaire = p.getCommentaire() == null ? "" : p.getCommentaire().getText();
 		this.etat = p.getLatestEtatPointage().getEtat().name();
 		this.concertee = p.getAbsenceConcertee();
 	}
