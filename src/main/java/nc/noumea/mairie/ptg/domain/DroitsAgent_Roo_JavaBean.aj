@@ -4,9 +4,18 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
+import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 
 privileged aspect DroitsAgent_Roo_JavaBean {
+    
+    public Droit DroitsAgent.getDroit() {
+        return this.droit;
+    }
+    
+    public void DroitsAgent.setDroit(Droit droit) {
+        this.droit = droit;
+    }
     
     public Integer DroitsAgent.getIdAgent() {
         return this.idAgent;
@@ -24,36 +33,20 @@ privileged aspect DroitsAgent_Roo_JavaBean {
         this.codeService = codeService;
     }
     
+    public String DroitsAgent.getLibelleService() {
+        return this.libelleService;
+    }
+    
+    public void DroitsAgent.setLibelleService(String libelleService) {
+        this.libelleService = libelleService;
+    }
+    
     public Date DroitsAgent.getDateModification() {
         return this.dateModification;
     }
     
     public void DroitsAgent.setDateModification(Date dateModification) {
         this.dateModification = dateModification;
-    }
-    
-    public Integer DroitsAgent.getIdDelegataire() {
-        return this.idDelegataire;
-    }
-    
-    public void DroitsAgent.setIdDelegataire(Integer idDelegataire) {
-        this.idDelegataire = idDelegataire;
-    }
-    
-    public boolean DroitsAgent.isApprobateur() {
-        return this.approbateur;
-    }
-    
-    public void DroitsAgent.setApprobateur(boolean approbateur) {
-        this.approbateur = approbateur;
-    }
-    
-    public boolean DroitsAgent.isOperateur() {
-        return this.operateur;
-    }
-    
-    public void DroitsAgent.setOperateur(boolean operateur) {
-        this.operateur = operateur;
     }
     
 }

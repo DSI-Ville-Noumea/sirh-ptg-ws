@@ -9,6 +9,7 @@
         <class>nc.noumea.mairie.ptg.domain.RefTypePointage</class>
         <class>nc.noumea.mairie.ptg.domain.Pointage</class>
         <class>nc.noumea.mairie.ptg.domain.EtatPointage</class>
+        <class>nc.noumea.mairie.ptg.domain.Droit</class>
         <class>nc.noumea.mairie.ptg.domain.DroitsAgent</class>
         <class>nc.noumea.mairie.ptg.domain.RefPrime</class>
         <class>nc.noumea.mairie.ptg.domain.PtgComment</class>

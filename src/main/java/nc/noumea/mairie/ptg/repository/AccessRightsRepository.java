@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 
 import org.springframework.stereotype.Repository;
@@ -17,18 +18,18 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	private EntityManager ptgEntityManager;
 	
 	@Override
-	public List<DroitsAgent> getAgentAccessRights(int idAgent) {
+	public List<Droit> getAgentAccessRights(int idAgent) {
 		
-		TypedQuery<DroitsAgent> q = ptgEntityManager.createNamedQuery("getAgentAccessRights", DroitsAgent.class);
+		TypedQuery<Droit> q = ptgEntityManager.createNamedQuery("getAgentAccessRights", Droit.class);
 		q.setParameter("idAgent", idAgent);
 		
 		return q.getResultList();
 	}
 
 	@Override
-	public List<DroitsAgent> getAllDroitsForService(String codeService) {
+	public List<Droit> getAllDroitsForService(String codeService) {
 		
-		TypedQuery<DroitsAgent> q = ptgEntityManager.createNamedQuery("getAllDroitsAgentForService", DroitsAgent.class);
+		TypedQuery<Droit> q = ptgEntityManager.createNamedQuery("getAllDroitsAgentForService", Droit.class);
 		q.setParameter("codeService", codeService);
 		
 		return q.getResultList();
