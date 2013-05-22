@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.web;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
+import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.service.IPointageService;
 
 import org.slf4j.Logger;
@@ -37,6 +38,20 @@ public class FiltreController {
 		List<RefEtatDto> etats = pointageService.getRefEtats();
 
 		String json = new JSONSerializer().exclude("*.class").serialize(etats);
+
+		return new ResponseEntity<String>(json, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getTypes", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getTypes() {
+
+		logger.debug("entered GET [filtres/getTypes] => getTypes");
+
+		List<RefTypePointageDto> types = pointageService.getRefTypesPointage();
+
+		String json = new JSONSerializer().exclude("*.class").serialize(types);
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}

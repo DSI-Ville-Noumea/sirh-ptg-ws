@@ -11,6 +11,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
@@ -19,6 +20,7 @@ import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
+import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -216,6 +218,17 @@ public class PointageService implements IPointageService {
 		List<RefEtat> refEtats = RefEtat.findAllRefEtats();
 		for (RefEtat etat : refEtats) {
 			RefEtatDto dto = new RefEtatDto(etat);
+			res.add(dto);
+		}
+		return res;
+	}
+
+	@Override
+	public List<RefTypePointageDto> getRefTypesPointage() {
+		List<RefTypePointageDto> res = new ArrayList<RefTypePointageDto>();
+		List<RefTypePointage> refTypePointage = RefTypePointage.findAllRefTypePointages();
+		for (RefTypePointage type : refTypePointage) {
+			RefTypePointageDto dto = new RefTypePointageDto(type);
 			res.add(dto);
 		}
 		return res;
