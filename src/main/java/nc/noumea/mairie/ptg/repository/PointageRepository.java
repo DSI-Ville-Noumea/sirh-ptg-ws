@@ -76,4 +76,9 @@ public class PointageRepository implements IPointageRepository {
 
 		return query.getResultList();
 	}
+
+	@Override
+	public void savePointage(Pointage ptg) {
+		ptgEntityManager.merge(ptg);
+	}
 }

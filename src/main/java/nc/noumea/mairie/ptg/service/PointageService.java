@@ -6,9 +6,12 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
@@ -48,6 +51,9 @@ public class PointageService implements IPointageService {
 	@Override
 	public FichePointageDto getFichePointageForAgent(Agent agent, Date date) {
 
+		if (!helperService.isDateAMonday(date))
+			throw new NotAMondayException();
+		
 		// Retrieve division service of agent
 		ServiceDto service = sirhWSConsumer.getAgentDirection(agent.getIdAgent());
 
@@ -63,8 +69,9 @@ public class PointageService implements IPointageService {
 
 		// on construit le DTO de jourPointage
 		FichePointageDto result = new FichePointageDto();
+		result.setDateLundi(date);
 		result.setAgent(agentDto);
-		result.setSemaine("semaine test");
+		result.setSemaine(helperService.getWeekStringFromDate(date));
 
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
@@ -149,6 +156,58 @@ public class PointageService implements IPointageService {
 		}
 
 		return ficheDto;
+	}
+
+	@Override
+	public void saveFichePointage(FichePointageDto fichePointageDto) {
+
+		Integer idAgent = fichePointageDto.getAgent().getIdAgent();
+		Date dateLundi = fichePointageDto.getDateLundi();
+		
+		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(
+				idAgent, dateLundi);
+		
+		for (JourPointageDto jourDto : fichePointageDto.getSaisies()) {
+			
+			for (AbsenceDto abs : jourDto.getAbsences()) {
+				Pointage ptg = new Pointage();
+				ptg.setIdAgent(idAgent);
+				ptg.setDateLundi(dateLundi);
+				
+				ptg.setAbsenceConcertee(abs.getConcertee());
+				ptg.setDateDebut(abs.getHeureDebut());
+				ptg.setDateFin(abs.getHeureFin());
+				ptg.setType(RefTypePointageEnum.ABSENCE.getRefTypePointage());
+				
+//				EtatPointagePK pk = new EtatPointagePK();
+				
+				
+				EtatPointage ep = new EtatPointage();
+				ep.setEtat(EtatPointageEnum.SAISI);
+				ep.setPointage(ptg);
+				
+				ptg.getEtats().add(ep);
+				pointageRepository.savePointage(ptg);
+			}
+			
+//			for (HeureSupDto hs : jourDto.getHeuresSup()) {
+//				Pointage ptg = new Pointage();
+//				ptg.setIdAgent(idAgent);
+//				ptg.setDateLundi(dateLundi);
+//				
+//				ptg.setHeureSupPayee(hs.getPayee());
+//				ptg.setDateDebut(hs.getHeureDebut());
+//				ptg.setDateFin(hs.getHeureFin());
+//				ptg.setType(RefTypePointageEnum.H_SUP.getRefTypePointage());
+//				pointageRepository.savePointage(ptg);
+//			}
+//			
+//			for (PrimeDto pr : jourDto.getPrimes()) {
+//				
+//			}
+			
+		}
+		
 	}
 
 	@Override

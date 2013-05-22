@@ -37,7 +37,7 @@ public class Pointage {
 	@JoinColumn(name = "ID_TYPE_POINTAGE")
 	private RefTypePointage type;
 
-	@OneToMany(mappedBy = "pointage", fetch = FetchType.EAGER, orphanRemoval = true)
+	@OneToMany(mappedBy = "pointage", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
 	@OrderBy("etatPointagePk.dateEtat desc")
 	private Set<EtatPointage> etats = new HashSet<EtatPointage>();
 

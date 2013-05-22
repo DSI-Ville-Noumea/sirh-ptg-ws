@@ -11,6 +11,7 @@ public interface IPointageService {
 
 	public FichePointageDto getFichePointageForAgent(Agent agent, Date date);
 	public FichePointageDto getFilledFichePointageForAgent(int idAgent, Date dateLundi);
+	public void saveFichePointage(FichePointageDto fichePointageDto);
 	
 	public List<RefEtatDto> getRefEtats();
 
