@@ -125,13 +125,13 @@ public class PointageServiceTest {
 
 	@Test
 	public void getFilledFichePointageForAgent_Agentwith3PointagesHSUPandABS_Return2latest() {
-		
+
 		// Given
 		int idAgent = 9006543;
 		Agent ag = new Agent();
 		ag.setIdAgent(9006543);
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		
+
 		FichePointageDto dto = new FichePointageDto();
 		dto.setAgent(new AgentDto());
 		dto.setDateLundi(dateLundi);
@@ -143,7 +143,7 @@ public class PointageServiceTest {
 		dto.getSaisies().add(new JourPointageDto());
 		dto.getSaisies().add(new JourPointageDto());
 		dto.getSaisies().add(new JourPointageDto());
-		
+
 		Pointage p1 = new Pointage();
 		p1.setIdPointage(1);
 		RefTypePointage t1 = new RefTypePointage();
@@ -157,7 +157,7 @@ public class PointageServiceTest {
 		EtatPointage e1 = new EtatPointage();
 		e1.setEtat(EtatPointageEnum.REFUSE);
 		p1.getEtats().add(e1);
-		
+
 		Pointage p1new = new Pointage();
 		p1new.setIdPointage(3);
 		p1new.setPointageParent(p1);
@@ -169,7 +169,7 @@ public class PointageServiceTest {
 		EtatPointage e1new = new EtatPointage();
 		e1new.setEtat(EtatPointageEnum.SAISI);
 		p1new.getEtats().add(e1new);
-		
+
 		Pointage p2 = new Pointage();
 		p2.setIdPointage(2);
 		RefTypePointage t2 = new RefTypePointage();
@@ -183,27 +183,27 @@ public class PointageServiceTest {
 		EtatPointage e2 = new EtatPointage();
 		e2.setEtat(EtatPointageEnum.APPROUVE);
 		p2.getEtats().add(e2);
-		
+
 		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(Arrays.asList(p1new, p2, p1));
-		
+
 		HelperService helperMock = Mockito.mock(HelperService.class);
 		Mockito.when(helperMock.getWeekDayFromDateBase0(p1new.getDateDebut())).thenReturn(1);
 		Mockito.when(helperMock.getWeekDayFromDateBase0(p2.getDateDebut())).thenReturn(3);
-		
+
 		PointageService service = Mockito.spy(new PointageService());
 		Mockito.doReturn(dto).when(service).getFichePointageForAgent(ag, dateLundi);
 
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
-		
+
 		// When
 		FichePointageDto result = service.getFilledFichePointageForAgent(idAgent, dateLundi);
-		
+
 		// Then
 		assertEquals(1, result.getSaisies().get(1).getAbsences().size());
 		assertEquals(true, result.getSaisies().get(1).getAbsences().get(0).getConcertee());
@@ -211,7 +211,7 @@ public class PointageServiceTest {
 		assertEquals(new DateTime(2013, 05, 14, 9, 0, 0).toDate(), result.getSaisies().get(1).getAbsences().get(0).getHeureDebut());
 		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getAbsences().get(0).getHeureFin());
 		assertEquals(new Integer(3), result.getSaisies().get(1).getAbsences().get(0).getIdPointage());
-		
+
 		assertEquals(1, result.getSaisies().get(3).getHeuresSup().size());
 		assertEquals(true, result.getSaisies().get(3).getHeuresSup().get(0).getPayee());
 		assertEquals("APPROUVE", result.getSaisies().get(3).getHeuresSup().get(0).getEtat());
@@ -219,16 +219,16 @@ public class PointageServiceTest {
 		assertEquals(new DateTime(2013, 05, 16, 16, 0, 0).toDate(), result.getSaisies().get(3).getHeuresSup().get(0).getHeureFin());
 		assertEquals(new Integer(2), result.getSaisies().get(3).getHeuresSup().get(0).getIdPointage());
 	}
-	
+
 	@Test
 	public void getFilledFichePointageForAgent_Agentwith2PointagesPrimes_Return2Primes() {
-		
+
 		// Given
 		int idAgent = 9006543;
 		Agent ag = new Agent();
 		ag.setIdAgent(9006543);
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		
+
 		FichePointageDto dto = new FichePointageDto();
 		dto.setAgent(new AgentDto());
 		dto.setDateLundi(dateLundi);
@@ -250,7 +250,7 @@ public class PointageServiceTest {
 		pr2.setNumRubrique(2222);
 		pr2.setIdRefPrime(22);
 		dto.getSaisies().get(3).getPrimes().add(pr2);
-		
+
 		Pointage p1 = new Pointage();
 		p1.setIdPointage(1);
 		p1.setRefPrime(new RefPrime());
@@ -267,7 +267,7 @@ public class PointageServiceTest {
 		EtatPointage e1 = new EtatPointage();
 		e1.setEtat(EtatPointageEnum.REFUSE);
 		p1.getEtats().add(e1);
-		
+
 		Pointage p2 = new Pointage();
 		p2.setIdPointage(2);
 		p2.setRefPrime(new RefPrime());
@@ -281,27 +281,27 @@ public class PointageServiceTest {
 		EtatPointage e2 = new EtatPointage();
 		e2.setEtat(EtatPointageEnum.APPROUVE);
 		p2.getEtats().add(e2);
-		
+
 		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(Arrays.asList(p2, p1));
-		
+
 		HelperService helperMock = Mockito.mock(HelperService.class);
 		Mockito.when(helperMock.getWeekDayFromDateBase0(p1.getDateDebut())).thenReturn(1);
 		Mockito.when(helperMock.getWeekDayFromDateBase0(p2.getDateDebut())).thenReturn(3);
-		
+
 		PointageService service = Mockito.spy(new PointageService());
 		Mockito.doReturn(dto).when(service).getFichePointageForAgent(ag, dateLundi);
 
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
-		
+
 		// When
 		FichePointageDto result = service.getFilledFichePointageForAgent(idAgent, dateLundi);
-		
+
 		// Then
 		assertEquals(1, result.getSaisies().get(1).getPrimes().size());
 		assertNull(result.getSaisies().get(1).getPrimes().get(0).getQuantite());
@@ -311,7 +311,7 @@ public class PointageServiceTest {
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureDebut());
 		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureFin());
 		assertEquals(new Integer(1), result.getSaisies().get(1).getPrimes().get(0).getIdPointage());
-		
+
 		assertEquals(1, result.getSaisies().get(3).getPrimes().size());
 		assertEquals(new Integer(1), result.getSaisies().get(3).getPrimes().get(0).getQuantite());
 		assertEquals(new Integer(2222), result.getSaisies().get(3).getPrimes().get(0).getNumRubrique());
