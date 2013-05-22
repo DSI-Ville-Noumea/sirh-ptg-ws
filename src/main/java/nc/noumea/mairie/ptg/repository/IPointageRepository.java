@@ -17,4 +17,5 @@ public interface IPointageRepository {
 	List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut);
 	
 	List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
+
 }

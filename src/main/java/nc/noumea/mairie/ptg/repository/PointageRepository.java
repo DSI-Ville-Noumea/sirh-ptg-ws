@@ -63,17 +63,17 @@ public class PointageRepository implements IPointageRepository {
 		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getRefPrimesNotCalculated", RefPrime.class);
 		query.setParameter("noRubrList", noRubrList);
 		query.setParameter("statut", statut);
-		
+
 		return query.getResultList();
 	}
 
 	@Override
 	public List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi) {
-		
+
 		TypedQuery<Pointage> query = ptgEntityManager.createNamedQuery("getPointageForAgentAndDateLundiByIdDesc", Pointage.class);
 		query.setParameter("idAgent", idAgent);
 		query.setParameter("dateLundi", dateLundi);
-		
+
 		return query.getResultList();
 	}
 }

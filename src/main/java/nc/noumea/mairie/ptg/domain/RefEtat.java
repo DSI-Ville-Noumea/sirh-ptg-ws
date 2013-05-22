@@ -21,4 +21,5 @@ public class RefEtat {
 
 	@Column(name = "LABEL", columnDefinition = "NVARCHAR2")
 	private String label;
+	
 }
