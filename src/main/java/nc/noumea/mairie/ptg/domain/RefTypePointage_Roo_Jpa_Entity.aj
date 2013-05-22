@@ -5,12 +5,12 @@ package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import nc.noumea.mairie.ptg.domain.TypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
 
-privileged aspect TypePointage_Roo_Jpa_Entity {
+privileged aspect RefTypePointage_Roo_Jpa_Entity {
     
-    declare @type: TypePointage: @Entity;
+    declare @type: RefTypePointage: @Entity;
     
-    declare @type: TypePointage: @Table(name = "PTG_TYPE_POINTAGE");
+    declare @type: RefTypePointage: @Table(name = "PTG_REF_TYPE_POINTAGE");
     
 }

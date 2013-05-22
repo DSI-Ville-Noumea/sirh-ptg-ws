@@ -56,3 +56,19 @@ TABLESPACE TS_PTG_COMMENT;
 create public synonym PTG_COMMENT for PTG_COMMENT;
 grant select on PTG_COMMENT to R_PTG_USR;
 grant select on PTG_COMMENT to R_PTG_READ;
+
+--==============================================================
+-- Table: PTG_REF_ETAT
+--==============================================================
+create table PTG_REF_ETAT
+(
+  ID_REF_ETAT NUMBER(38,0) not null,
+  LABEL nvarchar2(25),
+  constraint PK_PTG_REF_ETAT
+  primary key (ID_REF_ETAT)
+)
+TABLESPACE TS_PTG_DATA;
+
+create public synonym PTG_REF_ETAT for PTG_REF_ETAT;
+grant select on PTG_REF_ETAT to R_PTG_USR;
+grant select on PTG_REF_ETAT to R_PTG_READ;

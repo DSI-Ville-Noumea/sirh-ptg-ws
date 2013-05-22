@@ -5,7 +5,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
-import nc.noumea.mairie.ptg.domain.TypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -16,8 +16,8 @@ public class HeureSupDtoTest {
 	public void ctor_withpointage() {
 
 		// Given
-		TypePointage tp = new TypePointage();
-		tp.setIdTypePointage(1);
+		RefTypePointage tp = new RefTypePointage();
+		tp.setIdRefTypePointage(1);
 		tp.setLabel("LABEL DE TEST");
 		Pointage p = new Pointage();
 		p.setIdPointage(9);

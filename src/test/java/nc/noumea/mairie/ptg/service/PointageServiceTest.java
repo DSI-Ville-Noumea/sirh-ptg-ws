@@ -16,7 +16,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
-import nc.noumea.mairie.ptg.domain.TypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
@@ -132,8 +132,8 @@ public class PointageServiceTest {
 		
 		Pointage p1 = new Pointage();
 		p1.setIdPointage(1);
-		TypePointage t1 = new TypePointage();
-		t1.setIdTypePointage(1);
+		RefTypePointage t1 = new RefTypePointage();
+		t1.setIdRefTypePointage(1);
 		t1.setLabel("ABSENCE");
 		p1.setType(t1);
 		p1.setAbsenceConcertee(true);
@@ -158,8 +158,8 @@ public class PointageServiceTest {
 		
 		Pointage p2 = new Pointage();
 		p2.setIdPointage(2);
-		TypePointage t2 = new TypePointage();
-		t2.setIdTypePointage(2);
+		RefTypePointage t2 = new RefTypePointage();
+		t2.setIdRefTypePointage(2);
 		t2.setLabel("H_SUP");
 		p2.setType(t2);
 		p2.setHeureSupPayee(true);
@@ -243,8 +243,8 @@ public class PointageServiceTest {
 		p1.getRefPrime().setNoRubr(1111);
 		p1.getRefPrime().setIdRefPrime(11);
 		p1.getRefPrime().setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
-		TypePointage t3 = new TypePointage();
-		t3.setIdTypePointage(3);
+		RefTypePointage t3 = new RefTypePointage();
+		t3.setIdRefTypePointage(3);
 		t3.setLabel("PRIME");
 		p1.setType(t3);
 		p1.setDateDebut(new DateTime(2013, 05, 14, 8, 0, 0).toDate());

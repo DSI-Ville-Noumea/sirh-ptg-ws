@@ -3,13 +3,13 @@
 
 package nc.noumea.mairie.ptg.domain;
 
-import nc.noumea.mairie.ptg.domain.TypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-privileged aspect TypePointage_Roo_ToString {
+privileged aspect RefTypePointage_Roo_ToString {
     
-    public String TypePointage.toString() {
+    public String RefTypePointage.toString() {
         return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
     

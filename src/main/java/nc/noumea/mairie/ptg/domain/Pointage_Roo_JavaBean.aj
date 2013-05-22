@@ -9,7 +9,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
-import nc.noumea.mairie.ptg.domain.TypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
 
 privileged aspect Pointage_Roo_JavaBean {
     
@@ -21,11 +21,11 @@ privileged aspect Pointage_Roo_JavaBean {
         this.idAgent = idAgent;
     }
     
-    public TypePointage Pointage.getType() {
+    public RefTypePointage Pointage.getType() {
         return this.type;
     }
     
-    public void Pointage.setType(TypePointage type) {
+    public void Pointage.setType(RefTypePointage type) {
         this.type = type;
     }
     

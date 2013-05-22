@@ -3,11 +3,11 @@
 
 package nc.noumea.mairie.ptg.domain;
 
-import nc.noumea.mairie.ptg.domain.TypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import org.springframework.beans.factory.annotation.Configurable;
 
-privileged aspect TypePointage_Roo_Configurable {
+privileged aspect RefTypePointage_Roo_Configurable {
     
-    declare @type: TypePointage: @Configurable;
+    declare @type: RefTypePointage: @Configurable;
     
 }
