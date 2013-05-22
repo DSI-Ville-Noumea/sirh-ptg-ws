@@ -12,15 +12,15 @@ public class HelperService {
 	public Date getCurrentDate() {
 		return new Date();
 	}
-	
+
 	public int getWeekDayFromDateBase0(final Date date) {
 		return new DateTime(date).dayOfWeek().get() - 1;
 	}
-	
+
 	public boolean isDateAMonday(final Date date) {
 		return new DateTime(date).dayOfWeek().get() == 1;
 	}
-	
+
 	public String getWeekStringFromDate(final Date date) {
 		DateTime d = new DateTime(date);
 		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/YYYY");

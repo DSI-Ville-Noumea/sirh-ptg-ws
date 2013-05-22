@@ -19,4 +19,5 @@ public interface IPointageRepository {
 	List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
 
 	void savePointage(Pointage ptg);
+	
 }
