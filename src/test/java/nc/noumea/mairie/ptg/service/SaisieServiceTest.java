@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -271,8 +272,9 @@ public class SaisieServiceTest {
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(p, p2));
 
-		SaisieService service = new SaisieService();
-
+		SaisieService service = Mockito.spy(new SaisieService());
+		Mockito.doNothing().when(service).deletePointages(Arrays.asList(p, p2));
+		
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		
@@ -280,8 +282,60 @@ public class SaisieServiceTest {
 		service.saveFichePointage(dto);
 		
 		// Then
-		Mockito.verify(p, Mockito.times(1)).remove();
-		Mockito.verify(p2, Mockito.never()).remove();
+		Mockito.verify(service, Mockito.times(1)).deletePointages(Arrays.asList(p, p2));
+	}
+	
+	@Test
+	public void deletePointages_1PointageSaisi_RemoveIt() {
+		
+		// Given
+		Pointage p1 = Mockito.spy(new Pointage());
+		Mockito.doNothing().when(p1).remove();
+		EtatPointage e1 = new EtatPointage();
+		e1.setEtat(EtatPointageEnum.SAISI);
+		p1.getEtats().add(e1);
+		
+		List<Pointage> ptgToDelete = Arrays.asList(p1);
+		SaisieService service = new SaisieService();
+		
+		// When
+		service.deletePointages(ptgToDelete);
+		
+		// Then
+		Mockito.verify(p1, Mockito.times(1)).remove();
+	}
+	
+	@Test
+	public void deletePointages_1PointageNotSaisi_createANewOneToSave() {
+		
+		// Given
+		Pointage p1 = Mockito.spy(new Pointage());
+		Mockito.doNothing().when(p1).remove();
+		EtatPointage e1 = new EtatPointage();
+		e1.setEtat(EtatPointageEnum.VENTILE);
+		p1.getEtats().add(e1);
+		
+		Pointage p1bis = new Pointage();
+		p1bis.setPointageParent(p1);
+		EtatPointage e2 = new EtatPointage();
+		e2.setEtat(EtatPointageEnum.SAISI);
+		p1bis.getEtats().add(e2);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		
+		IPointageService pService = Mockito.mock(IPointageService.class);
+		Mockito.when(pService.getOrCreateNewPointage(p1)).thenReturn(p1bis);
+		
+		List<Pointage> ptgToDelete = Arrays.asList(p1);
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "pointageService", pService);
+		
+		// When
+		service.deletePointages(ptgToDelete);
+		
+		// Then
+		Mockito.verify(pRepo, Mockito.times(1)).savePointage(p1bis);
 	}
 	
 }

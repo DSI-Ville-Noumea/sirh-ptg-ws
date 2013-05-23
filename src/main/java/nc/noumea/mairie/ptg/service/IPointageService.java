@@ -18,7 +18,8 @@ public interface IPointageService {
 	public List<RefEtatDto> getRefEtats();
 
 	public List<RefTypePointageDto> getRefTypesPointage();
-	
+
+	public Pointage getOrCreateNewPointage(Pointage pointage);
 	public Pointage getOrCreateNewPointage(Integer idPointage);
 	public Pointage getOrCreateNewPointage(Integer idPointage, Integer idAgent, Date dateLundi);
 	public Pointage getOrCreateNewPointage(Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime);

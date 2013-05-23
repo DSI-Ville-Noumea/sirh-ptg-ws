@@ -75,14 +75,10 @@ public class SaisieService implements ISaisieService {
 
 			for (PrimeDto prime : jourDto.getPrimes()) {
 				
+				// if the new pointage has null qte, null datedebut and datefin, leave it (it is a template)
 				if (prime.getHeureDebut() == null 
 					&& prime.getHeureFin() == null 
 					&& (prime.getQuantite() == null || prime.getQuantite().equals(0))) {
-					
-//					if (prime.getIdPointage() != null && !prime.getIdPointage().equals(0)) {
-//						Pointage ptg = getOrCreateNewPointage(prime.getIdPointage());
-//						
-//					}
 					
 					continue;
 				}
@@ -113,8 +109,17 @@ public class SaisieService implements ISaisieService {
 		// Delete anything that was not updated from the saving process
 		for (Pointage pointageToDelete : pointagesToDelete) {
 			
+			// If the Pointage was SAISI, simply remove it
 			if (pointageToDelete.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI)
+			{
 				pointageToDelete.remove();
+				continue;
+			}
+			
+			// Otherwise, create a new record of the Pointage with values set to 0 (in order to keep track of deletion)
+			Pointage pbis = pointageService.getOrCreateNewPointage(pointageToDelete);
+			pointageRepository.savePointage(pbis);
+			
 		}
 	}
 	

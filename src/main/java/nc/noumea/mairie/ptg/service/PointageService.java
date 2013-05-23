@@ -180,6 +180,9 @@ public class PointageService implements IPointageService {
 	 * @param dateLundi
 	 * @return
 	 */
+	public Pointage getOrCreateNewPointage(Pointage pointage) {
+		return getOrCreateNewPointage(pointage.getIdPointage(), pointage.getIdAgent(), pointage.getDateLundi(), pointage.getRefPrime().getIdRefPrime());
+	}
 	public Pointage getOrCreateNewPointage(Integer idPointage) {
 		return getOrCreateNewPointage(idPointage, null, null, null);
 	}
