@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -16,23 +18,24 @@ public class EtatPointagePK implements Serializable {
 	 */
 	private static final long serialVersionUID = -6230713751220384509L;
 
-	@Column(name = "ID_POINTAGE")
-	private Integer idPointage;
-
+	@ManyToOne()
+	@JoinColumn(name = "ID_POINTAGE", referencedColumnName = "ID_POINTAGE")
+	private Pointage pointage;
+	
     @Column(name = "DATE_ETAT", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateEtat;
 
-	public Integer getIdPointage() {
-		return idPointage;
-	}
-
-	public void setIdPointage(Integer idPointage) {
-		this.idPointage = idPointage;
-	}
-
 	public Date getDateEtat() {
 		return dateEtat;
+	}
+
+	public Pointage getPointage() {
+		return pointage;
+	}
+
+	public void setPointage(Pointage pointage) {
+		this.pointage = pointage;
 	}
 
 	public void setDateEtat(Date dateEtat) {

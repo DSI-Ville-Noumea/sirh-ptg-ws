@@ -94,6 +94,8 @@ public class SaisieController {
 		if (!accessRightService.canUserAccessSaisie(convertedIdAgent, convertedagent))
 			throw new AccessForbiddenException();
 		
+		pointageService.saveFichePointage(dto);
+		
 //		FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(agent, date);
 //		String response = new JSONSerializer().exclude("*.class").deepSerialize(fichePointageAgent);
 		

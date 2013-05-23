@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.dto;
 import static org.junit.Assert.assertEquals;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
@@ -29,7 +30,9 @@ public class HeureSupDtoTest {
 		p.setHeureSupPayee(true);
 		EtatPointage ep1 = new EtatPointage(); 
 		ep1.setEtat(EtatPointageEnum.SAISI);
-		ep1.setPointage(p);
+		EtatPointagePK pk = new EtatPointagePK();
+		pk.setPointage(p);
+		ep1.setEtatPointagePk(pk);
 		p.getEtats().add(ep1);
 		PtgComment m = new PtgComment();
 		m.setText("blabla");

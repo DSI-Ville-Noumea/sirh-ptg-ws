@@ -36,7 +36,7 @@ grant select on PTG_DROIT to R_PTG_USR;
 grant select on PTG_DROIT to R_PTG_READ;
 
 ----------------------------------------------------------------
--- PTG_DROITS_AGENT;
+-- PTG_DROITS_AGENT
 ----------------------------------------------------------------
 -- drop existing table to recreate it
 drop table PTG_DROITS_AGENT;

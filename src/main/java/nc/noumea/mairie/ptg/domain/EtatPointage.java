@@ -4,9 +4,6 @@ import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -25,9 +22,4 @@ public class EtatPointage {
 	@Column(name = "ETAT")
 	@Enumerated(EnumType.ORDINAL)
 	private EtatPointageEnum etat;
-
-	@ManyToOne()
-	@MapsId("idPointage")
-	@JoinColumn(name = "ID_POINTAGE", referencedColumnName = "ID_POINTAGE")
-	private Pointage pointage;
 }

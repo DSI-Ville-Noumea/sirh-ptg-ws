@@ -8,7 +8,9 @@ import java.util.List;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
@@ -166,50 +168,154 @@ public class PointageService implements IPointageService {
 		Integer idAgent = fichePointageDto.getAgent().getIdAgent();
 		Date dateLundi = fichePointageDto.getDateLundi();
 		
-		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(
-				idAgent, dateLundi);
+		if (!helperService.isDateAMonday(dateLundi))
+			throw new NotAMondayException();
+		
+//		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi);
 		
 		for (JourPointageDto jourDto : fichePointageDto.getSaisies()) {
 			
 			for (AbsenceDto abs : jourDto.getAbsences()) {
-				Pointage ptg = new Pointage();
-				ptg.setIdAgent(idAgent);
-				ptg.setDateLundi(dateLundi);
+				
+				Pointage ptg = getOrCreateNewPointage(abs.getIdPointage(), idAgent, dateLundi);
 				
 				ptg.setAbsenceConcertee(abs.getConcertee());
 				ptg.setDateDebut(abs.getHeureDebut());
 				ptg.setDateFin(abs.getHeureFin());
-				ptg.setType(RefTypePointageEnum.ABSENCE.getRefTypePointage());
+				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.ABSENCE.getValue()));
 				
-//				EtatPointagePK pk = new EtatPointagePK();
+				crudComments(ptg, abs.getMotif(), abs.getCommentaire());
+				addEtatPointage(ptg, EtatPointageEnum.SAISI);
 				
-				
-				EtatPointage ep = new EtatPointage();
-				ep.setEtat(EtatPointageEnum.SAISI);
-				ep.setPointage(ptg);
-				
-				ptg.getEtats().add(ep);
 				pointageRepository.savePointage(ptg);
 			}
 			
-//			for (HeureSupDto hs : jourDto.getHeuresSup()) {
-//				Pointage ptg = new Pointage();
-//				ptg.setIdAgent(idAgent);
-//				ptg.setDateLundi(dateLundi);
-//				
-//				ptg.setHeureSupPayee(hs.getPayee());
-//				ptg.setDateDebut(hs.getHeureDebut());
-//				ptg.setDateFin(hs.getHeureFin());
-//				ptg.setType(RefTypePointageEnum.H_SUP.getRefTypePointage());
-//				pointageRepository.savePointage(ptg);
-//			}
-//			
-//			for (PrimeDto pr : jourDto.getPrimes()) {
-//				
-//			}
+			for (HeureSupDto hs : jourDto.getHeuresSup()) {
+				
+				Pointage ptg = getOrCreateNewPointage(hs.getIdPointage(), idAgent, dateLundi);
+				
+				ptg.setHeureSupPayee(hs.getPayee());
+				ptg.setDateDebut(hs.getHeureDebut());
+				ptg.setDateFin(hs.getHeureFin());
+				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.H_SUP.getValue()));
+
+				crudComments(ptg, hs.getMotif(), hs.getCommentaire());
+				addEtatPointage(ptg, EtatPointageEnum.SAISI);
+
+				pointageRepository.savePointage(ptg);
+			}
+
+			for (PrimeDto prime : jourDto.getPrimes()) {
+				
+				if (prime.getHeureDebut() == null 
+					&& prime.getHeureFin() == null 
+					&& (prime.getQuantite() == null || prime.getQuantite().equals(0))) {
+					
+//					if (prime.getIdPointage() != null && !prime.getIdPointage().equals(0)) {
+//						Pointage ptg = getOrCreateNewPointage(prime.getIdPointage());
+//						
+//					}
+					
+					continue;
+				}
+				
+				Pointage ptg = getOrCreateNewPointage(prime.getIdPointage(), idAgent, dateLundi, prime.getIdRefPrime());
+
+				ptg.setDateDebut(prime.getHeureDebut());
+				ptg.setDateFin(prime.getHeureFin());
+				ptg.setQuantite(prime.getQuantite());
+				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME.getValue()));
+				
+				crudComments(ptg, prime.getMotif(), prime.getCommentaire());
+				addEtatPointage(ptg, EtatPointageEnum.SAISI);
+				
+				pointageRepository.savePointage(ptg);
+			}
 			
 		}
 		
+	}
+
+	
+	protected Pointage getPointageBasedOnEtatPointage() {
+		return null;
+	}
+	
+	/**
+	 * Based on the user input, this code retrieves a Pointage if existing, creates a new one if not.
+	 * @param idPointage
+	 * @param idAgent
+	 * @param dateLundi
+	 * @return
+	 */
+	protected Pointage getOrCreateNewPointage(Integer idPointage) {
+		return getOrCreateNewPointage(idPointage, null, null, null);
+	}
+	protected Pointage getOrCreateNewPointage(Integer idPointage, Integer idAgent, Date dateLundi) {
+		return getOrCreateNewPointage(idPointage, idAgent, dateLundi, null);
+	}
+	protected Pointage getOrCreateNewPointage(Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime) {
+		
+		Pointage ptg = null;
+		
+		if (idPointage != null && !idPointage.equals(0))
+			ptg = pointageRepository.getEntity(Pointage.class, idPointage);
+		else {
+			ptg = new Pointage();
+			ptg.setIdAgent(idAgent);
+			ptg.setDateLundi(dateLundi);
+			
+			if (idRefPrime != null)
+				ptg.setRefPrime(pointageRepository.getEntity(RefPrime.class, idRefPrime));
+		}
+		
+		return ptg;
+	}
+
+	/**
+	 * Responsible for creating / updating / deleting comments based on what a user entered
+	 * @param ptg
+	 * @param motif
+	 * @param commentaire
+	 */
+	protected void crudComments(Pointage ptg, String motif, String commentaire) {
+		
+		PtgComment motifPtgComment = ptg.getMotif();
+		if (motif != null && !motif.equals("")) {
+			if (motifPtgComment != null)
+				motifPtgComment.setText(motif);
+			else
+				ptg.setMotif(new PtgComment(motif));
+		} else if (motifPtgComment != null) {
+			motifPtgComment.remove();
+			ptg.setMotif(null);
+		}
+
+		PtgComment commentPtgComment = ptg.getCommentaire();
+		if (commentaire != null && !commentaire.equals("")) {
+			if (commentPtgComment != null)
+				commentPtgComment.setText(motif);
+			else
+				ptg.setCommentaire(new PtgComment(commentaire));
+		} else if (commentPtgComment != null) {
+			commentPtgComment.remove();
+			ptg.setCommentaire(null);
+		}
+	}
+	
+	/**
+	 * Adds an EtatPointage state to a given Pointage
+	 * @param ptg
+	 * @param etat
+	 */
+	protected void addEtatPointage(Pointage ptg, EtatPointageEnum etat) {
+		EtatPointagePK pk = new EtatPointagePK();
+		pk.setDateEtat(helperService.getCurrentDate());
+		pk.setPointage(ptg);
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(etat);
+		ep.setEtatPointagePk(pk);
+		ptg.getEtats().add(ep);
 	}
 
 	@Override

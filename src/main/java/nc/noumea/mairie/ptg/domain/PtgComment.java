@@ -15,4 +15,12 @@ public class PtgComment {
 	@Column(name = "TEXT")
 	@Lob
 	private String text;
+	
+	public PtgComment() {
+		
+	}
+	
+	public PtgComment(String comment) {
+		this.text = comment;
+	}
 }

@@ -26,9 +26,4 @@ public enum RefTypePointageEnum {
 			return null;
 		}
 	}
-		
-	public RefTypePointage getRefTypePointage() {
-		return RefTypePointage.findRefTypePointage(this.getValue());
-	}
-
 }

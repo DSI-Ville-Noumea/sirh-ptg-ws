@@ -37,7 +37,7 @@ public class Pointage {
 	@JoinColumn(name = "ID_TYPE_POINTAGE")
 	private RefTypePointage type;
 
-	@OneToMany(mappedBy = "pointage", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "etatPointagePk.pointage", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
 	@OrderBy("etatPointagePk.dateEtat desc")
 	private Set<EtatPointage> etats = new HashSet<EtatPointage>();
 
@@ -72,11 +72,11 @@ public class Pointage {
 	@Type(type = "boolean")
 	private Boolean absenceConcertee;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true, optional = true)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(name = "ID_COMMENT_MOTIF")
 	private PtgComment motif;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true, optional = true)
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(name = "ID_COMMENT_COMMENTAIRE")
 	private PtgComment commentaire;
 
