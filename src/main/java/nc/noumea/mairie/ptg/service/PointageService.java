@@ -171,13 +171,14 @@ public class PointageService implements IPointageService {
 		if (!helperService.isDateAMonday(dateLundi))
 			throw new NotAMondayException();
 		
-//		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi);
+		List<Pointage> originalAgentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi);
 		
 		for (JourPointageDto jourDto : fichePointageDto.getSaisies()) {
 			
 			for (AbsenceDto abs : jourDto.getAbsences()) {
 				
 				Pointage ptg = getOrCreateNewPointage(abs.getIdPointage(), idAgent, dateLundi);
+				originalAgentPointages.remove(ptg);
 				
 				ptg.setAbsenceConcertee(abs.getConcertee());
 				ptg.setDateDebut(abs.getHeureDebut());
@@ -193,6 +194,7 @@ public class PointageService implements IPointageService {
 			for (HeureSupDto hs : jourDto.getHeuresSup()) {
 				
 				Pointage ptg = getOrCreateNewPointage(hs.getIdPointage(), idAgent, dateLundi);
+				originalAgentPointages.remove(ptg);
 				
 				ptg.setHeureSupPayee(hs.getPayee());
 				ptg.setDateDebut(hs.getHeureDebut());
@@ -220,6 +222,7 @@ public class PointageService implements IPointageService {
 				}
 				
 				Pointage ptg = getOrCreateNewPointage(prime.getIdPointage(), idAgent, dateLundi, prime.getIdRefPrime());
+				originalAgentPointages.remove(ptg);
 
 				ptg.setDateDebut(prime.getHeureDebut());
 				ptg.setDateFin(prime.getHeureFin());
@@ -232,6 +235,16 @@ public class PointageService implements IPointageService {
 				pointageRepository.savePointage(ptg);
 			}
 			
+		}
+		
+		// Delete anything that was not updated from the saving process
+		for (Pointage pointageToDelete : originalAgentPointages) {
+			
+			// leave a historized pointage untouched
+			if (pointageToDelete.getPointageParent() != null)
+				continue;
+			
+			pointageToDelete.remove();
 		}
 		
 	}

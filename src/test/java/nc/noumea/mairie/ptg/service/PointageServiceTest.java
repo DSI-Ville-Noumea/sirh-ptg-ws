@@ -355,6 +355,7 @@ public class PointageServiceTest {
 		RefTypePointage absRef = new RefTypePointage();
 		absRef.setIdRefTypePointage(1);
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(agent.getIdAgent(), lundi)).thenReturn(new ArrayList<Pointage>());
 		Mockito.when(pRepo.getEntity(RefTypePointage.class, 1)).thenReturn(absRef);
 		
 		PointageService service = new PointageService();
@@ -416,6 +417,7 @@ public class PointageServiceTest {
 		RefTypePointage absRef = new RefTypePointage();
 		absRef.setIdRefTypePointage(2);
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(agent.getIdAgent(), lundi)).thenReturn(new ArrayList<Pointage>());
 		Mockito.when(pRepo.getEntity(RefTypePointage.class, 2)).thenReturn(absRef);
 		
 		PointageService service = new PointageService();
@@ -484,6 +486,7 @@ public class PointageServiceTest {
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 05, 22, 9, 8, 00).toDate());
 		
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(agent.getIdAgent(), lundi)).thenReturn(new ArrayList<Pointage>());
 		
 		RefTypePointage primTypeRef = new RefTypePointage();
 		primTypeRef.setIdRefTypePointage(3);
@@ -524,5 +527,42 @@ public class PointageServiceTest {
 		assertNull(argument.getValue().getHeureSupPayee());
 		assertNull(argument.getValue().getAbsenceConcertee());
 		assertNull(argument.getValue().getPointageParent());
+	}
+	
+	@Test
+	public void saveFichePointage_deletedPointageFromDto_delete1PointageKeep1BecauseOldVersion() {
+		
+		// Given
+		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		AgentDto agent = new AgentDto();
+		agent.setIdAgent(9007654);
+		
+		FichePointageDto dto = new FichePointageDto();
+		dto.setDateLundi(lundi);
+		dto.setAgent(agent);
+		dto.setSaisies(Arrays.asList(new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.isDateAMonday(lundi)).thenReturn(true);
+
+		Pointage p = Mockito.spy(new Pointage());
+		Mockito.doNothing().when(p).remove();
+		Pointage p2 = Mockito.spy(new Pointage());
+		p2.setPointageParent(new Pointage());
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(p, p2));
+		
+		PointageService service = new PointageService();
+
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		
+		// When
+		service.saveFichePointage(dto);
+		
+		// Then
+		Mockito.verify(p, Mockito.times(1)).remove();
+		Mockito.verify(p2, Mockito.never()).remove();
 	}
 }
