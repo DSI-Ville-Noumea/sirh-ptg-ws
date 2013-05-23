@@ -130,6 +130,12 @@ public class PointageService implements IPointageService {
 				logger.debug("Pointage {} has a parent {}, adding it to avoid list.", ptg.getIdPointage(), ptg.getPointageParent().getIdPointage());
 				oldPointagesToAvoid.add(ptg.getPointageParent().getIdPointage());
 			}
+			
+			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.REFUSE_DEFINITIVEMENT
+				|| ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.REJETE_DEFINITIVEMENT) {
+				logger.debug("Pointage {} is {}, not retrieving it.", ptg.getIdPointage(), ptg.getLatestEtatPointage().getEtat().name());
+				continue;
+			}
 
 			JourPointageDto jour = ficheDto.getSaisies().get(helperService.getWeekDayFromDateBase0(ptg.getDateDebut()));
 

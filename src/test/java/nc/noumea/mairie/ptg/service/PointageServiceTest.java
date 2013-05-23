@@ -328,6 +328,131 @@ public class PointageServiceTest {
 	}
 
 	@Test
+	public void getFilledFichePointageForAgent_Agentwith3PointagesPrimes_1isRefusedefinitivement_1isrejetedef_Return1Prime() {
+
+		// Given
+		int idAgent = 9006543;
+		Agent ag = new Agent();
+		ag.setIdAgent(9006543);
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+
+		FichePointageDto dto = new FichePointageDto();
+		dto.setAgent(new AgentDto());
+		dto.setDateLundi(dateLundi);
+		dto.setSemaine("SEMAINE");
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+
+		PrimeDto pr1 = new PrimeDto();
+		pr1.setNumRubrique(1111);
+		pr1.setIdRefPrime(11);
+		dto.getSaisies().get(1).getPrimes().add(pr1);
+
+		PrimeDto pr2 = new PrimeDto();
+		pr2.setNumRubrique(2222);
+		pr2.setIdRefPrime(22);
+		dto.getSaisies().get(3).getPrimes().add(pr2);
+		
+		PrimeDto pr3 = new PrimeDto();
+		pr3.setNumRubrique(2222);
+		pr3.setIdRefPrime(22);
+		dto.getSaisies().get(4).getPrimes().add(pr3);
+
+		Pointage p1 = new Pointage();
+		p1.setIdPointage(1);
+		p1.setRefPrime(new RefPrime());
+		p1.getRefPrime().setNoRubr(1111);
+		p1.getRefPrime().setIdRefPrime(11);
+		p1.getRefPrime().setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+		RefTypePointage t3 = new RefTypePointage();
+		t3.setIdRefTypePointage(3);
+		t3.setLabel("PRIME");
+		p1.setType(t3);
+		p1.setDateDebut(new DateTime(2013, 05, 14, 8, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 14, 12, 0, 0).toDate());
+		p1.setDateLundi(dateLundi);
+		EtatPointage e1 = new EtatPointage();
+		e1.setEtat(EtatPointageEnum.REFUSE);
+		p1.getEtats().add(e1);
+
+		Pointage p2 = new Pointage();
+		p2.setIdPointage(2);
+		p2.setRefPrime(new RefPrime());
+		p2.getRefPrime().setNoRubr(2222);
+		p2.getRefPrime().setIdRefPrime(22);
+		p2.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		p2.setType(t3);
+		p2.setQuantite(1);
+		p2.setDateDebut(new DateTime(2013, 05, 16, 0, 0, 0).toDate());
+		p2.setDateLundi(dateLundi);
+		EtatPointage e2 = new EtatPointage();
+		e2.setEtat(EtatPointageEnum.REJETE_DEFINITIVEMENT);
+		p2.getEtats().add(e2);
+		
+		Pointage p3 = new Pointage();
+		p3.setIdPointage(3);
+		p3.setRefPrime(new RefPrime());
+		p3.getRefPrime().setNoRubr(2222);
+		p3.getRefPrime().setIdRefPrime(22);
+		p3.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		p3.setType(t3);
+		p3.setQuantite(1);
+		p3.setDateDebut(new DateTime(2013, 05, 17, 0, 0, 0).toDate());
+		p3.setDateLundi(dateLundi);
+		EtatPointage e3 = new EtatPointage();
+		e3.setEtat(EtatPointageEnum.REFUSE_DEFINITIVEMENT);
+		p3.getEtats().add(e3);
+
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(Arrays.asList(p2, p1, p3));
+
+		HelperService helperMock = Mockito.mock(HelperService.class);
+		Mockito.when(helperMock.getWeekDayFromDateBase0(p1.getDateDebut())).thenReturn(1);
+		Mockito.when(helperMock.getWeekDayFromDateBase0(p2.getDateDebut())).thenReturn(3);
+		Mockito.when(helperMock.getWeekDayFromDateBase0(p3.getDateDebut())).thenReturn(4);
+
+		PointageService service = Mockito.spy(new PointageService());
+		Mockito.doReturn(dto).when(service).getFichePointageForAgent(ag, dateLundi);
+
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", helperMock);
+
+		// When
+		FichePointageDto result = service.getFilledFichePointageForAgent(idAgent, dateLundi);
+
+		// Then
+		assertEquals(1, result.getSaisies().get(1).getPrimes().size());
+		assertNull(result.getSaisies().get(1).getPrimes().get(0).getQuantite());
+		assertEquals(new Integer(1111), result.getSaisies().get(1).getPrimes().get(0).getNumRubrique());
+		assertEquals(new Integer(11), result.getSaisies().get(1).getPrimes().get(0).getIdRefPrime());
+		assertEquals("REFUSE", result.getSaisies().get(1).getPrimes().get(0).getEtat());
+		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureDebut());
+		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureFin());
+		assertEquals(new Integer(1), result.getSaisies().get(1).getPrimes().get(0).getIdPointage());
+
+		assertEquals(1, result.getSaisies().get(3).getPrimes().size());
+		assertNull(result.getSaisies().get(3).getPrimes().get(0).getIdPointage());
+		assertNull(result.getSaisies().get(3).getPrimes().get(0).getQuantite());
+		assertNull(result.getSaisies().get(3).getPrimes().get(0).getHeureDebut());
+		assertNull(result.getSaisies().get(3).getPrimes().get(0).getHeureFin());
+		
+		assertEquals(1, result.getSaisies().get(4).getPrimes().size());
+		assertNull(result.getSaisies().get(4).getPrimes().get(0).getIdPointage());
+		assertNull(result.getSaisies().get(4).getPrimes().get(0).getQuantite());
+		assertNull(result.getSaisies().get(4).getPrimes().get(0).getHeureDebut());
+		assertNull(result.getSaisies().get(4).getPrimes().get(0).getHeureFin());
+	}
+	
+	@Test
 	public void saveFichePointage_noExistingPointage_saveNewAbsence() {
 		
 		// Given
