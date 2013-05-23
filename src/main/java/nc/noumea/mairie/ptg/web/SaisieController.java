@@ -6,6 +6,7 @@ import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
+import nc.noumea.mairie.ptg.service.ISaisieService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 import nc.noumea.mairie.sirh.domain.Agent;
 
@@ -37,6 +38,9 @@ public class SaisieController {
 
 	@Autowired
 	private IPointageService pointageService;
+	
+	@Autowired
+	private ISaisieService saisieService;
 	
 	@Autowired
 	private IAccessRightsService accessRightService;
@@ -94,7 +98,7 @@ public class SaisieController {
 		if (!accessRightService.canUserAccessSaisie(convertedIdAgent, convertedagent))
 			throw new AccessForbiddenException();
 		
-		pointageService.saveFichePointage(dto);
+		saisieService.saveFichePointage(dto);
 		
 //		FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(agent, date);
 //		String response = new JSONSerializer().exclude("*.class").deepSerialize(fichePointageAgent);
