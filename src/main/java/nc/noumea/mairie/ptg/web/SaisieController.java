@@ -100,9 +100,6 @@ public class SaisieController {
 		
 		saisieService.saveFichePointage(dto);
 		
-//		FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(agent, date);
-//		String response = new JSONSerializer().exclude("*.class").deepSerialize(fichePointageAgent);
-		
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 	

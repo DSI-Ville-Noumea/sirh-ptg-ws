@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,6 +33,30 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class SaisieServiceTest {
 
+	@Test
+	public void saveFichePointage_dateIsNotAMonday_throwException() {
+		// Given
+		Date notAMonday = new DateTime(2013, 05, 14, 0, 0, 0).toDate();
+		FichePointageDto fichePointageDto = new FichePointageDto();
+		fichePointageDto.setDateLundi(notAMonday);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.isDateAMonday(notAMonday)).thenReturn(false);
+		
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		
+		// When
+		try {
+			service.saveFichePointage(fichePointageDto);
+		} catch (NotAMondayException ex) {
+			return;
+		}
+		
+		fail("Should have thrown a NotAMondayException");
+	}
+	
 	@Test
 	public void saveFichePointage_noExistingPointage_saveNewAbsence() {
 		

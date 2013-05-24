@@ -33,11 +33,12 @@ public class SaisieService implements ISaisieService {
 	@Override
 	public void saveFichePointage(FichePointageDto fichePointageDto) {
 
-		Integer idAgent = fichePointageDto.getAgent().getIdAgent();
 		Date dateLundi = fichePointageDto.getDateLundi();
 		
 		if (!helperService.isDateAMonday(dateLundi))
 			throw new NotAMondayException();
+		
+		Integer idAgent = fichePointageDto.getAgent().getIdAgent();
 		
 		List<Pointage> originalAgentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi);
 		
@@ -119,7 +120,6 @@ public class SaisieService implements ISaisieService {
 			// Otherwise, create a new record of the Pointage with values set to 0 (in order to keep track of deletion)
 			Pointage pbis = pointageService.getOrCreateNewPointage(pointageToDelete);
 			pointageRepository.savePointage(pbis);
-			
 		}
 	}
 	
@@ -145,7 +145,7 @@ public class SaisieService implements ISaisieService {
 		PtgComment commentPtgComment = ptg.getCommentaire();
 		if (commentaire != null && !commentaire.equals("")) {
 			if (commentPtgComment != null)
-				commentPtgComment.setText(motif);
+				commentPtgComment.setText(commentaire);
 			else
 				ptg.setCommentaire(new PtgComment(commentaire));
 		} else if (commentPtgComment != null) {
