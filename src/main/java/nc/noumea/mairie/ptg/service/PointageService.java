@@ -77,7 +77,7 @@ public class PointageService implements IPointageService {
 
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
-		List<PrimePointage> pps = pointageRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		List<PrimePointage> pps = mairieRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
 
 		List<Integer> rubriques = new ArrayList<Integer>();
 		for (PrimePointage pp : pps)

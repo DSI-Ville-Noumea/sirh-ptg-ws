@@ -9,11 +9,12 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 
 @RooJavaBean
 @Embeddable
-public class SpcarrId implements Serializable {
+public class SprircId implements Serializable {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1664614049474696555L;
 
 	@Override
 	public int hashCode() {
@@ -25,12 +26,13 @@ public class SpcarrId implements Serializable {
 		return super.equals(obj);
 	}
 
-	public SpcarrId() {
+	public SprircId() {
 	}
 
-	public SpcarrId(Integer nomatr, Integer datdeb) {
+	public SprircId(Integer nomatr, Integer datdeb, Integer codem1) {
 		this.nomatr = nomatr;
 		this.datdeb = datdeb;
+		this.codem1 = codem1;
 	}
 
 	@Column(name = "NOMATR", insertable = false, updatable = false, columnDefinition = "numeric")
@@ -38,4 +40,8 @@ public class SpcarrId implements Serializable {
 
 	@Column(name = "DATDEB", insertable = false, updatable = false, columnDefinition = "numeric")
 	private Integer datdeb;
+
+	@Column(name = "CODEM1", insertable = false, updatable = false, columnDefinition = "numeric")
+	private Integer codem1;
+
 }

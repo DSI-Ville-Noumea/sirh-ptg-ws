@@ -9,28 +9,21 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 
 @RooJavaBean
 @Embeddable
-public class SpcarrId implements Serializable {
+public class SpcongId implements Serializable {
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1026029305053411438L;
 
-	@Override
-	public int hashCode() {
-		return super.hashCode();
+	public SpcongId() {
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		return super.equals(obj);
-	}
-
-	public SpcarrId() {
-	}
-
-	public SpcarrId(Integer nomatr, Integer datdeb) {
+	public SpcongId(Integer nomatr, Integer datdeb, Integer type2, Integer rang) {
 		this.nomatr = nomatr;
 		this.datdeb = datdeb;
+		this.type2 = type2;
+		this.rang = rang;
 	}
 
 	@Column(name = "NOMATR", insertable = false, updatable = false, columnDefinition = "numeric")
@@ -38,4 +31,10 @@ public class SpcarrId implements Serializable {
 
 	@Column(name = "DATDEB", insertable = false, updatable = false, columnDefinition = "numeric")
 	private Integer datdeb;
+
+	@Column(name = "TYPE2", insertable = false, updatable = false, columnDefinition = "numeric")
+	private Integer type2;
+	
+	@Column(name = "RANG", insertable = false, updatable = false, columnDefinition = "numeric")
+	private Integer rang;
 }

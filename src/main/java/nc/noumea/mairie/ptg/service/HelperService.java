@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -25,5 +26,17 @@ public class HelperService {
 		DateTime d = new DateTime(date);
 		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/YYYY");
 		return String.format("S%s - %s au %s", d.getWeekOfWeekyear(), sf.format(date), sf.format(d.plusDays(7).toDate()));
+	}
+	
+	private static SimpleDateFormat mairieDateFormat = new SimpleDateFormat("yyyMMdd");
+	
+	public Date getDateFromMairieInteger(Integer dateAsInteger) throws ParseException {
+		if (dateAsInteger == null || dateAsInteger.equals(0))
+			return null;
+		return mairieDateFormat.parse(String.valueOf(dateAsInteger));
+	}
+	
+	public Integer getIntegerDateMairieFromDate(Date date) throws ParseException {
+		return date == null ? 0 : Integer.parseInt(mairieDateFormat.format(date));
 	}
 }
