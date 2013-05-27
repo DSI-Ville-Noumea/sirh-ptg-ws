@@ -10,11 +10,20 @@ import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 public interface IAccessRightsService {
 
 	AccessRightsDto getAgentAccessRights(Integer idAgent);
+
 	DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent);
+
 	List<DroitsAgent> setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto);
+
 	List<AgentDto> listAgentsToAssign(Integer idAgent);
 
 	boolean canUserAccessAccessRights(Integer idAgent);
+
 	boolean canUserAccessPrint(Integer idAgent);
+
 	boolean canUserAccessSaisie(Integer idAgent, Integer agentViewed);
+
+	List<AgentDto> listAgentsApprobateurs();
+
+	void setApprobateurs(AgentDto dto);
 }

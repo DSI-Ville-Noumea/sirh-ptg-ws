@@ -63,5 +63,13 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		
 		return (result != null && result);
 	}
+
+	@Override
+	public List<Droit> getAgentsApprobateurs() {
+		
+		TypedQuery<Droit> q = ptgEntityManager.createNamedQuery("getAgentsApprobateurs", Droit.class);
+		
+		return q.getResultList();
+	}
 	
 }
