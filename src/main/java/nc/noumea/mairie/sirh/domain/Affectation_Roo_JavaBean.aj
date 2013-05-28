@@ -4,11 +4,9 @@
 package nc.noumea.mairie.sirh.domain;
 
 import java.util.Date;
-import java.util.Set;
 import nc.noumea.mairie.sirh.domain.Affectation;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.sirh.domain.FichePoste;
-import nc.noumea.mairie.sirh.domain.PrimePointage;
 
 privileged aspect Affectation_Roo_JavaBean {
     
@@ -58,14 +56,6 @@ privileged aspect Affectation_Roo_JavaBean {
     
     public void Affectation.setFichePosteSecondaire(FichePoste fichePosteSecondaire) {
         this.fichePosteSecondaire = fichePosteSecondaire;
-    }
-    
-    public Set<PrimePointage> Affectation.getPrimePointages() {
-        return this.primePointages;
-    }
-    
-    public void Affectation.setPrimePointages(Set<PrimePointage> primePointages) {
-        this.primePointages = primePointages;
     }
     
 }

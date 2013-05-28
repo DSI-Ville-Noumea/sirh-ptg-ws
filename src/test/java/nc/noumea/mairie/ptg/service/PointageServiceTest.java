@@ -26,7 +26,6 @@ import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
-import nc.noumea.mairie.sirh.domain.PrimePointage;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -57,15 +56,11 @@ public class PointageServiceTest {
 
 		Agent agent = new Agent();
 		agent.setIdAgent(9007654);
-		
-		List<PrimePointage> listePrimePointage = new ArrayList<PrimePointage>();
-		PrimePointage po = new PrimePointage();
-		po.setNumRubrique(7058);
-		PrimePointage po2 = new PrimePointage();
-		po2.setNumRubrique(7059);
 
-		listePrimePointage.add(po);
-		listePrimePointage.add(po2);
+		List<Integer> listePrimePointage = new ArrayList<Integer>();
+
+		listePrimePointage.add(7058);
+		listePrimePointage.add(7059);
 
 		RefPrime rp1 = new RefPrime();
 		rp1.setNoRubr(7058);
@@ -75,7 +70,7 @@ public class PointageServiceTest {
 		rp2.setNoRubr(7059);
 		rp2.setIdRefPrime(2222);
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
-		
+
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
@@ -353,7 +348,7 @@ public class PointageServiceTest {
 		pr2.setNumRubrique(2222);
 		pr2.setIdRefPrime(22);
 		dto.getSaisies().get(3).getPrimes().add(pr2);
-		
+
 		PrimeDto pr3 = new PrimeDto();
 		pr3.setNumRubrique(2222);
 		pr3.setIdRefPrime(22);

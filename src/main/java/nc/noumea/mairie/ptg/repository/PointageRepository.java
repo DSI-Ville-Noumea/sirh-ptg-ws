@@ -34,6 +34,28 @@ public class PointageRepository implements IPointageRepository {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
+	public List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select paff.num_rubrique from sirh.affectation aff ");
+		sb.append("inner join sirh.prime_pointage_aff paff on aff.id_affectation=paff.id_affectation ");
+		sb.append("where aff.id_agent = :idAgent and aff.date_Debut_Aff <= :date and (aff.date_Fin_Aff = '01/01/0001' or aff.date_Fin_Aff is null or aff.date_Fin_Aff >= :date) ");
+		sb.append(" union ");
+		sb.append("select pfp.num_rubrique from sirh.affectation aff ");
+		sb.append("inner join sirh.fiche_poste fp on fp.id_fiche_poste=aff.id_fiche_poste ");
+		sb.append("inner join sirh.prime_pointage_fp pfp on fp.id_fiche_poste=pfp.id_fiche_poste ");
+		sb.append("where aff.id_agent = :idAgent and aff.date_Debut_Aff <= :date and (aff.date_Fin_Aff = '01/01/0001' or aff.date_Fin_Aff is null or aff.date_Fin_Aff >= :date) ");
+
+		Query q = sirhEntityManager.createNativeQuery(sb.toString());
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("date", date);
+
+		List<Integer> result = q.getResultList();
+
+		return result;
+	}
+
+	@Override
 	public List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut) {
 
 		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getRefPrimesNotCalculated", RefPrime.class);

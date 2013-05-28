@@ -25,7 +25,6 @@ import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
-import nc.noumea.mairie.sirh.domain.PrimePointage;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -55,7 +54,7 @@ public class PointageService implements IPointageService {
 
 		if (!helperService.isDateAMonday(date))
 			throw new NotAMondayException();
-		
+
 		// Retrieve division service of agent
 		ServiceDto service = sirhWSConsumer.getAgentDirection(agent.getIdAgent());
 
@@ -77,15 +76,13 @@ public class PointageService implements IPointageService {
 
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
-		List<PrimePointage> pps = mairieRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		List<Integer> pps = pointageRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		if (pps.size() > 0) {
+			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
 
-		List<Integer> rubriques = new ArrayList<Integer>();
-		for (PrimePointage pp : pps)
-			rubriques.add(pp.getNumRubrique());
-		List<RefPrime> refPrimes = pointageRepository.getRefPrimes(rubriques, carr.getStatutCarriere());
-
-		for (RefPrime prime : refPrimes) {
-			jourPointageTemplate.getPrimes().add(new PrimeDto(prime));
+			for (RefPrime prime : refPrimes) {
+				jourPointageTemplate.getPrimes().add(new PrimeDto(prime));
+			}
 		}
 
 		result.getSaisies().add(jourPointageTemplate);
@@ -198,7 +195,7 @@ public class PointageService implements IPointageService {
 		if (idPointage != null && !idPointage.equals(0))
 		{
 			ptg = pointageRepository.getEntity(Pointage.class, idPointage);
-			
+
 			// if its state is SAISI, return it, otherwise create a new one with this one as parent
 			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI) {
 				ptg.getLatestEtatPointage().getEtatPointagePk().setDateEtat(helperService.getCurrentDate());
@@ -206,7 +203,7 @@ public class PointageService implements IPointageService {
 			}
 			parentPointage = ptg;
 		}
-		
+
 		ptg = new Pointage();
 		ptg.setPointageParent(parentPointage);
 		ptg.setIdAgent(idAgent);

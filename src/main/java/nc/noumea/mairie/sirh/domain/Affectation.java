@@ -1,13 +1,9 @@
 package nc.noumea.mairie.sirh.domain;
 
 import java.util.Date;
-import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -51,8 +47,4 @@ public class Affectation {
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_FICHE_POSTE_SECONDAIRE", referencedColumnName = "ID_FICHE_POSTE")
 	private FichePoste fichePosteSecondaire;
-
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(schema = "SIRH", name = "PRIME_POINTAGE_AFF", joinColumns = { @javax.persistence.JoinColumn(name = "ID_AFFECTATION") }, inverseJoinColumns = @javax.persistence.JoinColumn(name = "ID_PRIME_POINTAGE"))
-	private Set<PrimePointage> primePointages;
 }
