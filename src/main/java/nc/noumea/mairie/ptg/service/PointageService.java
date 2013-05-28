@@ -76,7 +76,7 @@ public class PointageService implements IPointageService {
 
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
-		List<Integer> pps = pointageRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		List<Integer> pps = mairieRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
 		if (pps.size() > 0) {
 			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
 
@@ -125,9 +125,9 @@ public class PointageService implements IPointageService {
 				logger.debug("Pointage {} has a parent {}, adding it to avoid list.", ptg.getIdPointage(), ptg.getPointageParent().getIdPointage());
 				oldPointagesToAvoid.add(ptg.getPointageParent().getIdPointage());
 			}
-			
+
 			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.REFUSE_DEFINITIVEMENT
-				|| ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.REJETE_DEFINITIVEMENT) {
+					|| ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.REJETE_DEFINITIVEMENT) {
 				logger.debug("Pointage {} is {}, not retrieving it.", ptg.getIdPointage(), ptg.getLatestEtatPointage().getEtat().name());
 				continue;
 			}
@@ -163,40 +163,43 @@ public class PointageService implements IPointageService {
 		return ficheDto;
 	}
 
-	
-
-	
 	protected Pointage getPointageBasedOnEtatPointage() {
 		return null;
 	}
-	
+
 	/**
-	 * Based on the user input, this code retrieves a Pointage if existing, creates a new one if not.
+	 * Based on the user input, this code retrieves a Pointage if existing,
+	 * creates a new one if not.
+	 * 
 	 * @param idPointage
 	 * @param idAgent
 	 * @param dateLundi
 	 * @return
 	 */
 	public Pointage getOrCreateNewPointage(Pointage pointage) {
-		return getOrCreateNewPointage(pointage.getIdPointage(), pointage.getIdAgent(), pointage.getDateLundi(), pointage.getRefPrime().getIdRefPrime());
+		return getOrCreateNewPointage(pointage.getIdPointage(), pointage.getIdAgent(), pointage.getDateLundi(), pointage.getRefPrime()
+				.getIdRefPrime());
 	}
+
 	public Pointage getOrCreateNewPointage(Integer idPointage) {
 		return getOrCreateNewPointage(idPointage, null, null, null);
 	}
+
 	public Pointage getOrCreateNewPointage(Integer idPointage, Integer idAgent, Date dateLundi) {
 		return getOrCreateNewPointage(idPointage, idAgent, dateLundi, null);
 	}
+
 	public Pointage getOrCreateNewPointage(Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime) {
-		
+
 		Pointage ptg = null;
 		Pointage parentPointage = null;
-		
+
 		// if the pointage already exists, fetch it
-		if (idPointage != null && !idPointage.equals(0))
-		{
+		if (idPointage != null && !idPointage.equals(0)) {
 			ptg = pointageRepository.getEntity(Pointage.class, idPointage);
 
-			// if its state is SAISI, return it, otherwise create a new one with this one as parent
+			// if its state is SAISI, return it, otherwise create a new one with
+			// this one as parent
 			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI) {
 				ptg.getLatestEtatPointage().getEtatPointagePk().setDateEtat(helperService.getCurrentDate());
 				return ptg;
@@ -209,16 +212,17 @@ public class PointageService implements IPointageService {
 		ptg.setIdAgent(idAgent);
 		ptg.setDateLundi(dateLundi);
 		addEtatPointage(ptg, EtatPointageEnum.SAISI);
-		
+
 		// if this is a Prime kind of Pointage, fetch its RefPrime
 		if (idRefPrime != null)
 			ptg.setRefPrime(pointageRepository.getEntity(RefPrime.class, idRefPrime));
-		
+
 		return ptg;
 	}
 
 	/**
 	 * Adds an EtatPointage state to a given Pointage
+	 * 
 	 * @param ptg
 	 * @param etat
 	 */

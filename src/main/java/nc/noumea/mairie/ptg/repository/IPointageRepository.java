@@ -11,10 +11,11 @@ public interface IPointageRepository {
 
 	List<Integer> getIdPointagesParents(Pointage pointage);
 
-	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date);
-	
 	List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut);
+
 	List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
-	void savePointage(Pointage ptg);	
+
+	void savePointage(Pointage ptg);
+
 	<T> T getEntity(Class<T> Tclass, Object Id);
 }
