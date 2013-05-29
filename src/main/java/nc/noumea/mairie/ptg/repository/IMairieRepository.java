@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.repository;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
@@ -16,4 +17,5 @@ public interface IMairieRepository {
 	
 	List<Sprirc> getListRecuperationBetween(Integer idAgent, Date start, Date end);
 	List<Spcong> getListCongeBetween(Integer idAgent, Date start, Date end);
+	List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end);
 }

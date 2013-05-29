@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +46,8 @@ public class SaisieService implements ISaisieService {
 		
 		List<Pointage> originalAgentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi);
 		
+		List<Pointage> finalPointages = new ArrayList<Pointage>();
+		
 		for (JourPointageDto jourDto : fichePointageDto.getSaisies()) {
 			
 			for (AbsenceDto abs : jourDto.getAbsences()) {
@@ -59,7 +62,7 @@ public class SaisieService implements ISaisieService {
 				
 				crudComments(ptg, abs.getMotif(), abs.getCommentaire());
 				
-				pointageRepository.savePointage(ptg);
+				finalPointages.add(ptg);
 			}
 			
 			for (HeureSupDto hs : jourDto.getHeuresSup()) {
@@ -74,7 +77,7 @@ public class SaisieService implements ISaisieService {
 
 				crudComments(ptg, hs.getMotif(), hs.getCommentaire());
 
-				pointageRepository.savePointage(ptg);
+				finalPointages.add(ptg);
 			}
 
 			for (PrimeDto prime : jourDto.getPrimes()) {
@@ -96,15 +99,29 @@ public class SaisieService implements ISaisieService {
 				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME.getValue()));
 				
 				crudComments(ptg, prime.getMotif(), prime.getCommentaire());
-				
-				pointageRepository.savePointage(ptg);
+
+				finalPointages.add(ptg);
 			}
 			
 		}
+
+		// calling data consistency
+		List<String> errors = new ArrayList<String>();
+		ptgDataCosistencyRules.checkSprircRecuperation(errors, idAgent, dateLundi, finalPointages);
+		ptgDataCosistencyRules.checkSpcongConge(errors, idAgent, dateLundi, finalPointages);
 		
+		if (errors.size() != 0)
+			return;
+		
+		savePointages(finalPointages);
 		deletePointages(originalAgentPointages);
 	}
 	
+	private void savePointages(List<Pointage> finalPointages) {
+		for (Pointage ptg : finalPointages)
+			pointageRepository.savePointage(ptg);
+	}
+
 	/**
 	 * Given a list of Pointage, delete each of them when in SAISI
 	 * @param pointagesToDelete

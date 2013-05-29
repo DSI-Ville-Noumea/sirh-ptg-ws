@@ -9,7 +9,9 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @RooJavaBean
 @RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", schema = "MAIRIE", table = "SPRIRC", versionField = "")
-@NamedQuery(name = "getSprircForAgentAndPeriod", query = "from Sprirc sp where sp.id.nomatr = :nomatr and sp.cdvali = 'V' and sp.id.datdeb >= :start and sp.datfin <= :end")
+@NamedQuery(
+		name = "getSprircForAgentAndPeriod", 
+		query = "from Sprirc sp where sp.id.nomatr = :nomatr and sp.cdvali = 'V' and (sp.id.datdeb <= :start and sp.datfin >= :start or sp.id.datdeb <= :end and sp.datfin >= :end)")
 public class Sprirc {
 
 	@EmbeddedId

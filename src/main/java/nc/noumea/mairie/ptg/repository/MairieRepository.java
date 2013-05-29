@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
@@ -84,6 +85,17 @@ public class MairieRepository implements IMairieRepository {
 	public List<Spcong> getListCongeBetween(Integer idAgent, Date start, Date end) {
 		
 		TypedQuery<Spcong> query = sirhEntityManager.createNamedQuery("getSpcongForAgentAndPeriod", Spcong.class);
+		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
+		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
+		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
+		
+		return query.getResultList();
+	}
+	
+	@Override
+	public List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end) {
+		
+		TypedQuery<Spabsen> query = sirhEntityManager.createNamedQuery("getSpabsenForAgentAndPeriod", Spabsen.class);
 		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
 		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
 		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
