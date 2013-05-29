@@ -24,12 +24,12 @@ privileged aspect Sprirc_Roo_JavaBean {
         this.cdvali = cdvali;
     }
     
-    public Integer Sprirc.getDatFin() {
-        return this.datFin;
+    public Integer Sprirc.getDatfin() {
+        return this.datfin;
     }
     
-    public void Sprirc.setDatFin(Integer datFin) {
-        this.datFin = datFin;
+    public void Sprirc.setDatfin(Integer datfin) {
+        this.datfin = datfin;
     }
     
     public Integer Sprirc.getCodem2() {

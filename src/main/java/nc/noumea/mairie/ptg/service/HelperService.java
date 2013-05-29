@@ -30,13 +30,25 @@ public class HelperService {
 	
 	private static SimpleDateFormat mairieDateFormat = new SimpleDateFormat("yyyMMdd");
 	
-	public Date getDateFromMairieInteger(Integer dateAsInteger) throws ParseException {
+	public Date getDateFromMairieInteger(Integer dateAsInteger) {
 		if (dateAsInteger == null || dateAsInteger.equals(0))
 			return null;
-		return mairieDateFormat.parse(String.valueOf(dateAsInteger));
+		
+		try {
+			return mairieDateFormat.parse(String.valueOf(dateAsInteger));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 	
-	public Integer getIntegerDateMairieFromDate(Date date) throws ParseException {
+	public Integer getIntegerDateMairieFromDate(Date date) {
 		return date == null ? 0 : Integer.parseInt(mairieDateFormat.format(date));
+	}
+	
+	public Integer getMairieMatrFromIdAgent(Integer idAgent) {
+		return idAgent - 900000;
 	}
 }

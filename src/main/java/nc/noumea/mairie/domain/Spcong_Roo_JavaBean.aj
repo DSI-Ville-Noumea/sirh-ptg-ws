@@ -16,4 +16,36 @@ privileged aspect Spcong_Roo_JavaBean {
         this.id = id;
     }
     
+    public String Spcong.getCdvali() {
+        return this.cdvali;
+    }
+    
+    public void Spcong.setCdvali(String cdvali) {
+        this.cdvali = cdvali;
+    }
+    
+    public Integer Spcong.getDatfin() {
+        return this.datfin;
+    }
+    
+    public void Spcong.setDatfin(Integer datfin) {
+        this.datfin = datfin;
+    }
+    
+    public Integer Spcong.getCodem1() {
+        return this.codem1;
+    }
+    
+    public void Spcong.setCodem1(Integer codem1) {
+        this.codem1 = codem1;
+    }
+    
+    public Integer Spcong.getCodem2() {
+        return this.codem2;
+    }
+    
+    public void Spcong.setCodem2(Integer codem2) {
+        this.codem2 = codem2;
+    }
+    
 }

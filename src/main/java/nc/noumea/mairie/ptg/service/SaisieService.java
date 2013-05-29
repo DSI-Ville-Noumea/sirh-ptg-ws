@@ -30,6 +30,9 @@ public class SaisieService implements ISaisieService {
 	@Autowired
 	private HelperService helperService;
 	
+	@Autowired
+	private IPointageDataConsistencyRules ptgDataCosistencyRules;
+	
 	@Override
 	public void saveFichePointage(FichePointageDto fichePointageDto) {
 

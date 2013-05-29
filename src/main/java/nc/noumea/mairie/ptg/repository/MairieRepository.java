@@ -10,6 +10,8 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Spcong;
+import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.ptg.service.HelperService;
 import nc.noumea.mairie.sirh.domain.Agent;
 
@@ -65,5 +67,27 @@ public class MairieRepository implements IMairieRepository {
 		List<Integer> result = q.getResultList();
 
 		return result;
+	}
+	
+	@Override
+	public List<Sprirc> getListRecuperationBetween(Integer idAgent, Date start, Date end) {
+		
+		TypedQuery<Sprirc> query = sirhEntityManager.createNamedQuery("getSprircForAgentAndPeriod", Sprirc.class);
+		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
+		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
+		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
+		
+		return query.getResultList();
+	}
+	
+	@Override
+	public List<Spcong> getListCongeBetween(Integer idAgent, Date start, Date end) {
+		
+		TypedQuery<Spcong> query = sirhEntityManager.createNamedQuery("getSpcongForAgentAndPeriod", Spcong.class);
+		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
+		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
+		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
+		
+		return query.getResultList();
 	}
 }
