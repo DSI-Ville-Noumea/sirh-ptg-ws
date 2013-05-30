@@ -14,6 +14,7 @@ import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	@Autowired
 	private HelperService helperService;
 
+	private static final String RECUP_MSG = "%s : L'agent est en récupération sur cette période.";
+	private static final String CONGE_MSG = "%s : L'agent est en congés payés sur cette période.";
+	private static final String MALADIE_MSG = "%s : L'agent est en maladie sur cette période.";
+	
 	@Override
 	public SaisieReturnMessageDto checkMaxAbsenceHebdo(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
@@ -63,22 +68,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		List<Sprirc> recups = mairieRepository.getListRecuperationBetween(idAgent, dateLundi, end);
 		
 		for (Sprirc recup : recups) {
-
-			DateTime recupDateDeb = GetDateDebut(recup.getId().getDatdeb(), recup.getId().getCodem1());
-			DateTime recupDateFin = GetDateFin(recup.getDatfin(), recup.getCodem2());
-			
-			for (Pointage ptg : pointages) {
-				DateTime ptgTime = new DateTime(ptg.getDateDebut());
-				DateTime ptgTimeEnd = new DateTime(ptg.getDateFin());
-				
-				if (ptgTime.isAfter(recupDateDeb) && ptgTime.isBefore(recupDateFin))
-					srm.getInfos().add(String.format("%s : L'agent est en récupération sur cette période.", 
-							ptgTime.toString("dd/MM/yyyy HH:mm")));
-				else if (ptgTimeEnd.isAfter(recupDateDeb) && ptgTimeEnd.isBefore(recupDateFin)) {
-					srm.getInfos().add(String.format("%s : L'agent est en récupération sur cette période.", 
-							ptgTimeEnd.toString("dd/MM/yyyy HH:mm")));
-				}
-			}
+			checkInterval(srm, RECUP_MSG, recup.getId().getDatdeb(), recup
+					.getId().getCodem1(), recup.getDatfin(), recup.getCodem2(),
+					pointages);
 		}
 		
 		return srm;
@@ -92,22 +84,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		List<Spcong> conges = mairieRepository.getListCongeBetween(idAgent, dateLundi, end);
 		
 		for (Spcong cg : conges) {
-
-			DateTime recupDateDeb = GetDateDebut(cg.getId().getDatdeb(), cg.getCodem1());
-			DateTime recupDateFin = GetDateFin(cg.getDatfin(), cg.getCodem2());
-			
-			for (Pointage ptg : pointages) {
-				DateTime ptgTime = new DateTime(ptg.getDateDebut());
-				DateTime ptgTimeEnd = new DateTime(ptg.getDateFin());
-				
-				if (ptgTime.isAfter(recupDateDeb) && ptgTime.isBefore(recupDateFin))
-					srm.getInfos().add(String.format("%s : L'agent est en congés payés sur cette période.", 
-							ptgTime.toString("dd/MM/yyyy HH:mm")));
-				else if (ptgTimeEnd.isAfter(recupDateDeb) && ptgTimeEnd.isBefore(recupDateFin)) {
-					srm.getInfos().add(String.format("%s : L'agent est en congés payés sur cette période.", 
-							ptgTimeEnd.toString("dd/MM/yyyy HH:mm")));
-				}
-			}
+			checkInterval(srm, CONGE_MSG, cg.getId().getDatdeb(), cg.getCodem1(), cg.getDatfin(), cg.getCodem2(), pointages);
 		}
 		
 		return srm;
@@ -121,27 +98,13 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		List<Spabsen> maladies = mairieRepository.getListMaladieBetween(idAgent, dateLundi, end);
 		
 		for (Spabsen mal : maladies) {
-
-			DateTime recupDateDeb = GetDateDebut(mal.getId().getDatdeb(), null);
-			DateTime recupDateFin = GetDateFin(mal.getDatfin(), null);
-			
-			for (Pointage ptg : pointages) {
-				DateTime ptgTime = new DateTime(ptg.getDateDebut());
-				DateTime ptgTimeEnd = new DateTime(ptg.getDateFin());
-				
-				if (ptgTime.isAfter(recupDateDeb) && ptgTime.isBefore(recupDateFin))
-					srm.getInfos().add(String.format("%s : L'agent est en maladie sur cette période.", 
-							ptgTime.toString("dd/MM/yyyy")));
-				else if (ptgTimeEnd.isAfter(recupDateDeb) && ptgTimeEnd.isBefore(recupDateFin)) {
-					srm.getInfos().add(String.format("%s : L'agent est en maladie sur cette période.", 
-							ptgTimeEnd.toString("dd/MM/yyyy")));
-				}
-			}
+			checkInterval(srm, MALADIE_MSG, mal.getId().getDatdeb(), null, mal.getDatfin(), null, pointages);
 		}
 		
 		return srm;
 	}
 	
+	@Override
 	public SaisieReturnMessageDto checkAgentINAAndHSup(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		Agent ag = mairieRepository.getAgent(idAgent);
@@ -165,29 +128,91 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		return srm;
 	}
 	
-	protected DateTime GetDateDebut(Integer dateDeb, Integer codem1) {
+	@Override
+	public SaisieReturnMessageDto checkAgentInactivity(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	//-- Helpers --//
+	
+	protected DateTime getDateDebut(Integer dateDeb, Integer codem1) {
 		DateTime recupDateDeb = new DateTime(helperService.getDateFromMairieInteger(dateDeb));
 		
-		if (codem1 == null)
-			return recupDateDeb;
+		if (codem1 != null && codem1.equals(2))
+			recupDateDeb = recupDateDeb.plusHours(12); // 12h00
 		
-		if (codem1.equals(1))
-			recupDateDeb = recupDateDeb.plusMinutes(434); // 7h14
-		else
-			recupDateDeb = recupDateDeb.plusMinutes(719); // 11h59
 		return recupDateDeb;
 	}
 
-	protected DateTime GetDateFin(Integer dateFin, Integer codem2) {
+	protected DateTime getDateFin(Integer dateFin, Integer codem2) {
 		DateTime recupDateFin = new DateTime(helperService.getDateFromMairieInteger(dateFin));
 		
-		if (codem2 == null)
-			return recupDateFin.plusDays(1);
+		if (codem2 == null ||  codem2.equals(2))
+			return recupDateFin.plusDays(1); // 00h00 D+1
 		
-		if (codem2.equals(1))
-			recupDateFin = recupDateFin.plusMinutes(691); // 11h31
-		else
-			recupDateFin = recupDateFin.plusMinutes(931); // 15h31
+		recupDateFin = recupDateFin.plusMinutes(691); // 12h00
+
 		return recupDateFin;
 	}
+
+	/**
+	 * This methods checks whether a list of pointages are being 
+	 * input in a given period. This period can start or end 
+	 * by full or half a day. 
+	 * @param srm The structure to return the INFO or ERROR messages
+	 * @param message The message format to return
+	 * @param start The start day of the given period
+	 * @param codem1 Whether the start day is a full day or a half day (1, 2)
+	 * @param end The end day of the given period
+	 * @param codem2 Whether the end day is a full day or a half day (1, 2)
+	 * @param pointages The list of pointages to test the period against
+	 * @return The structure containing the INFO or ERROR messages
+	 */
+	protected SaisieReturnMessageDto checkInterval(
+			SaisieReturnMessageDto srm, 
+			String message, 
+			Integer start, 
+			Integer codem1, 
+			Integer end, 
+			Integer codem2, 
+			List<Pointage> pointages) {
+		
+		DateTime recupDateDeb = getDateDebut(start, codem1);
+		DateTime recupDateFin = getDateFin(end, codem2);
+		
+		int dayOfYearDeb = new DateTime(recupDateDeb).getDayOfYear();
+		int dayOfYearFin = new DateTime(recupDateFin).getDayOfYear();
+		boolean partialDayDeb = recupDateDeb.getHourOfDay() != 0;
+		boolean partialDayFin = recupDateFin.getHourOfDay() != 0;
+		
+		DateTime recupDateDebFull = getDateDebut(start, null);
+		DateTime recupDateFinFull = getDateFin(end, null);
+		
+		Interval rInterval = new Interval(recupDateDebFull, recupDateFinFull);
+		
+		for (Pointage ptg : pointages) {
+
+			DateTime ptgTimeStart = new DateTime(ptg.getDateDebut());
+			DateTime ptgTimeEnd = new DateTime(ptg.getDateFin() == null ? ptg.getDateDebut() : ptg.getDateFin());
+			
+			Interval pInterval = new Interval(ptgTimeStart, ptgTimeEnd);
+			
+			if (rInterval.overlaps(pInterval)) {
+				
+				String msg = String.format(message, ptgTimeStart.toString("dd/MM/yyyy HH:mm"));
+				
+				if (ptgTimeStart.dayOfYear().get() == dayOfYearDeb && partialDayDeb
+					|| ptgTimeStart.dayOfYear().get() == dayOfYearFin && partialDayFin
+					|| ptgTimeEnd.dayOfYear().get() == dayOfYearDeb && partialDayDeb
+					|| ptgTimeEnd.dayOfYear().get() == dayOfYearFin && partialDayFin)
+					srm.getInfos().add(msg);
+				else
+					srm.getErrors().add(msg);
+			}
+		}
+		
+		return srm;
+	}
+
 }

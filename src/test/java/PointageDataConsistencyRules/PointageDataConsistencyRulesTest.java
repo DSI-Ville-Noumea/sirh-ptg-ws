@@ -87,7 +87,7 @@ public class PointageDataConsistencyRulesTest {
 	}
 	
 	@Test
-	public void checkSprircRecuperation_1Sprirc_1PointageThatDay_ReturnError() {
+	public void checkSprircRecuperation_1Sprirc_1PointageThatMorning_ReturnInfo() {
 		
 		// Given
 		Integer idAgent = 9005138;
@@ -123,11 +123,51 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(0, result.getErrors().size());
 		assertEquals(1, result.getInfos().size());
-		assertEquals("21/05/2013 09:00 : L'agent est en récupération sur cette période.", result.getInfos().get(0));
+		assertEquals("21/05/2013 07:00 : L'agent est en récupération sur cette période.", result.getInfos().get(0));
 	}
 	
 	@Test
-	public void checkSprircRecuperation_1Sprirc_1PointageThatDayBeforeRecup_ReturnNoError() {
+	public void checkSprircRecuperation_1Sprirc_1PointageThatDay_ReturnError() {
+		
+		// Given
+		Integer idAgent = 9005138;
+		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(dateLundi);
+		p1.setDateDebut(new DateTime(2013, 5, 21, 7, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 5, 21, 9, 0, 0).toDate());
+		p1.setType(new RefTypePointage());
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		List<Pointage> ptgs = Arrays.asList(p1);
+		
+		// en recup le matin du 21/05/2013
+		Sprirc sp = new Sprirc();
+		sp.setId(new SprircId(5138, 20130521, 1));
+		sp.setDatfin(20130521);
+		sp.setCodem2(2);
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getListRecuperationBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate())).thenReturn(Arrays.asList(sp));
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("21/05/2013 07:00 : L'agent est en récupération sur cette période.", result.getErrors().get(0));
+	}
+	
+	@Test
+	public void checkSprircRecuperation_1Sprirc_1PointageThatDayBeforeRecup_ReturnInfo() {
 		
 		// Given
 		Integer idAgent = 9005138;
@@ -143,9 +183,9 @@ public class PointageDataConsistencyRulesTest {
 		
 		// en recup le matin du 21/05/2013
 		Sprirc sp = new Sprirc();
-		sp.setId(new SprircId(5138, 20130521, 1));
+		sp.setId(new SprircId(5138, 20130521, 2));
 		sp.setDatfin(20130521);
-		sp.setCodem2(1);
+		sp.setCodem2(2);
 		
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListRecuperationBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate())).thenReturn(Arrays.asList(sp));
@@ -162,7 +202,49 @@ public class PointageDataConsistencyRulesTest {
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("21/05/2013 04:00 : L'agent est en récupération sur cette période.", result.getInfos().get(0));
+	}
+	
+	@Test
+	public void checkSprircRecuperation_1Sprirc_1PointageAtEndOfPeriod_ReturnInfo() {
+		
+		// Given
+		Integer idAgent = 9005138;
+		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(dateLundi);
+		p1.setDateDebut(new DateTime(2013, 5, 21, 4, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 5, 21, 5, 0, 0).toDate());
+		p1.setType(new RefTypePointage());
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		List<Pointage> ptgs = Arrays.asList(p1);
+		
+		// en recup le matin du 21/05/2013
+		Sprirc sp = new Sprirc();
+		sp.setId(new SprircId(5138, 20130515, 2));
+		sp.setDatfin(20130521);
+		sp.setCodem2(1);
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getListRecuperationBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate())).thenReturn(Arrays.asList(sp));
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getDateFromMairieInteger(20130515)).thenReturn(new DateTime(2013, 5, 15, 0, 0, 0).toDate());
+		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("21/05/2013 04:00 : L'agent est en récupération sur cette période.", result.getInfos().get(0));
 	}
 	
 	@Test
@@ -201,9 +283,9 @@ public class PointageDataConsistencyRulesTest {
 		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(1, result.getInfos().size());
-		assertEquals("22/05/2013 11:00 : L'agent est en récupération sur cette période.", result.getInfos().get(0));
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("22/05/2013 11:00 : L'agent est en récupération sur cette période.", result.getErrors().get(0));
 	}
 	
 	@Test
@@ -280,7 +362,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setId(new SpcongId(5138, 20130521, 0, 0));
 		sp.setCodem1(1);
 		sp.setDatfin(20130521);
-		sp.setCodem2(1);
+		sp.setCodem2(2);
 		
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListCongeBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate())).thenReturn(Arrays.asList(sp));
@@ -296,13 +378,13 @@ public class PointageDataConsistencyRulesTest {
 		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(1, result.getInfos().size());
-		assertEquals("21/05/2013 09:00 : L'agent est en congés payés sur cette période.", result.getInfos().get(0));
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("21/05/2013 07:00 : L'agent est en congés payés sur cette période.", result.getErrors().get(0));
 	}
 	
 	@Test
-	public void checkSpcongConge_1Spcong_1PointageThatDayBeforeRecup_ReturnNoError() {
+	public void checkSpcongConge_1Spcong_1PointageThatDayBeforeRecup_ReturnInfo() {
 		
 		// Given
 		Integer idAgent = 9005138;
@@ -338,7 +420,8 @@ public class PointageDataConsistencyRulesTest {
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("21/05/2013 04:00 : L'agent est en congés payés sur cette période.", result.getInfos().get(0));
 	}
 	
 	@Test
@@ -350,8 +433,8 @@ public class PointageDataConsistencyRulesTest {
 		
 		Pointage p1 = new Pointage();
 		p1.setDateLundi(dateLundi);
-		p1.setDateDebut(new DateTime(2013, 5, 22, 11, 0, 0).toDate());
-		p1.setDateFin(new DateTime(2013, 5, 22, 12, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2013, 5, 21, 11, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 5, 21, 12, 0, 0).toDate());
 		p1.setType(new RefTypePointage());
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 		List<Pointage> ptgs = Arrays.asList(p1);
@@ -378,9 +461,9 @@ public class PointageDataConsistencyRulesTest {
 		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(1, result.getInfos().size());
-		assertEquals("22/05/2013 11:00 : L'agent est en congés payés sur cette période.", result.getInfos().get(0));
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("21/05/2013 11:00 : L'agent est en congés payés sur cette période.", result.getErrors().get(0));
 	}
 	
 	@Test
@@ -470,9 +553,9 @@ public class PointageDataConsistencyRulesTest {
 		SaisieReturnMessageDto result = service.checkSpabsenMaladie(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(1, result.getInfos().size());
-		assertEquals("21/05/2013 : L'agent est en maladie sur cette période.", result.getInfos().get(0));
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("21/05/2013 07:00 : L'agent est en maladie sur cette période.", result.getErrors().get(0));
 	}
 	
 	@Test
@@ -510,9 +593,9 @@ public class PointageDataConsistencyRulesTest {
 		SaisieReturnMessageDto result = service.checkSpabsenMaladie(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(1, result.getInfos().size());
-		assertEquals("22/05/2013 : L'agent est en maladie sur cette période.", result.getInfos().get(0));
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("22/05/2013 11:00 : L'agent est en maladie sur cette période.", result.getErrors().get(0));
 	}
 	
 	@Test
