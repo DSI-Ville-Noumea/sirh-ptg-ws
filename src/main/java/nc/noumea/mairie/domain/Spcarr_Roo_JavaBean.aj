@@ -3,6 +3,9 @@
 
 package nc.noumea.mairie.domain;
 
+import nc.noumea.mairie.domain.Spbarem;
+import nc.noumea.mairie.domain.Spbase;
+import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.SpcarrId;
 
@@ -30,6 +33,30 @@ privileged aspect Spcarr_Roo_JavaBean {
     
     public void Spcarr.setCdcate(Integer cdcate) {
         this.cdcate = cdcate;
+    }
+    
+    public Spbhor Spcarr.getSpbhor() {
+        return this.spbhor;
+    }
+    
+    public void Spcarr.setSpbhor(Spbhor spbhor) {
+        this.spbhor = spbhor;
+    }
+    
+    public Spbarem Spcarr.getSpbarem() {
+        return this.spbarem;
+    }
+    
+    public void Spcarr.setSpbarem(Spbarem spbarem) {
+        this.spbarem = spbarem;
+    }
+    
+    public Spbase Spcarr.getSpbase() {
+        return this.spbase;
+    }
+    
+    public void Spcarr.setSpbase(Spbase spbase) {
+        this.spbase = spbase;
     }
     
 }

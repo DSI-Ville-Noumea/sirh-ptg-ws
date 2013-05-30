@@ -40,6 +40,8 @@
         <class>nc.noumea.mairie.domain.Spcong</class>
         <class>nc.noumea.mairie.domain.Spbase</class>
         <class>nc.noumea.mairie.domain.Spabsen</class>
+        <class>nc.noumea.mairie.domain.Spbhor</class>
+        <class>nc.noumea.mairie.domain.Spbarem</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.DB2400Dialect"/>

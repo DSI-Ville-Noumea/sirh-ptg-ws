@@ -107,8 +107,10 @@ public class SaisieService implements ISaisieService {
 
 		// calling data consistency
 		List<String> errors = new ArrayList<String>();
-		ptgDataCosistencyRules.checkSprircRecuperation(errors, idAgent, dateLundi, finalPointages);
-		ptgDataCosistencyRules.checkSpcongConge(errors, idAgent, dateLundi, finalPointages);
+//		ptgDataCosistencyRules.checkSprircRecuperation(errors, idAgent, dateLundi, finalPointages);
+//		ptgDataCosistencyRules.checkSpcongConge(errors, idAgent, dateLundi, finalPointages);
+//		ptgDataCosistencyRules.checkSpabsenMaladie(errors, idAgent, dateLundi, finalPointages);
+//		ptgDataCosistencyRules.checkMaxAbsenceHebdo(errors, idAgent, dateLundi, finalPointages);
 		
 		if (errors.size() != 0)
 			return;

@@ -4,12 +4,16 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spabsen;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
+import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +25,35 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	
 	@Autowired
 	private HelperService helperService;
+
+	@Override
+	public List<String> checkMaxAbsenceHebdo(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+
+		double nbHours = 0;
+		
+		for (Pointage ptg : pointages) {
+			if (ptg.getTypePointageEnum() != RefTypePointageEnum.ABSENCE)
+				continue;
+
+			DateTime deb = new DateTime(ptg.getDateDebut());
+			DateTime fin = new DateTime(ptg.getDateFin());
+			
+			nbHours += (Minutes.minutesBetween(deb, fin).getMinutes() / 60.0);
+		}
+		
+		if (nbHours == 0)
+			return errors;
+		
+		Agent ag = mairieRepository.getAgent(idAgent);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
+		
+		double agentMaxHours = carr.getSpbhor().getTaux() * carr.getSpbase().getNbashh();
+		
+		if (nbHours > agentMaxHours)
+			errors.add("L'agent dépasse sa base horaire");
+		
+		return errors;
+	}
 	
 	public List<String> checkSprircRecuperation(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 		

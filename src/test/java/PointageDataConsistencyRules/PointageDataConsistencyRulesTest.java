@@ -9,6 +9,9 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
+import nc.noumea.mairie.domain.Spbase;
+import nc.noumea.mairie.domain.Spbhor;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.SpcongId;
 import nc.noumea.mairie.domain.Sprirc;
@@ -19,6 +22,7 @@ import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.service.HelperService;
 import nc.noumea.mairie.ptg.service.PointageDataConsistencyRules;
+import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -493,5 +497,116 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals("22/05/2013 : L'agent est en maladie sur cette période.", result.get(0));
+	}
+	
+	@Test
+	public void checkMaxAbsenceHebdo_Noabsences_ReturnNoError() {
+		
+		// Given
+		Agent ag = new Agent();
+		Integer idAgent = 9008765;
+		Date dateLundi = new DateTime(2013, 05, 17, 0, 0, 0).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setType(new RefTypePointage());
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		Pointage p2 = new Pointage();
+		p2.setType(new RefTypePointage());
+		p2.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		List<String> result = service.checkMaxAbsenceHebdo(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1, p2));
+		
+		// Then
+		assertEquals(0, result.size());
+	}
+	
+	@Test
+	public void checkMaxAbsenceHebdo_2absences_NbHeureDepasse_returnError() {
+		
+		// Given
+		Agent ag = new Agent();
+		Integer idAgent = 9008765;
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setType(new RefTypePointage());
+		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		Pointage p2 = new Pointage();
+		p2.setDateDebut(new DateTime(2013, 05, 18, 10, 15, 0).toDate());
+		p2.setDateFin(new DateTime(2013, 05, 18, 18, 0, 0).toDate()); // 7h45
+		p2.setType(new RefTypePointage());
+		p2.getType().setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		
+		Spbhor hor = new Spbhor();
+		hor.setTaux(0.5);
+		Spbase bas = new Spbase();
+		bas.setNbashh(32);
+		Spcarr car = new Spcarr();
+		car.setSpbhor(hor);
+		car.setSpbase(bas);
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
+		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		List<String> result = service.checkMaxAbsenceHebdo(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1, p2));
+		
+		// Then
+		assertEquals(1, result.size());
+		assertEquals("L'agent dépasse sa base horaire", result.get(0));
+	}
+	
+	@Test
+	public void checkMaxAbsenceHebdo_2absences_NbHeureNonDepasse_returnError() {
+		
+		// Given
+		Agent ag = new Agent();
+		Integer idAgent = 9008765;
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setType(new RefTypePointage());
+		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		Pointage p2 = new Pointage();
+		p2.setDateDebut(new DateTime(2013, 05, 18, 10, 15, 0).toDate());
+		p2.setDateFin(new DateTime(2013, 05, 18, 17, 0, 0).toDate()); // 7h
+		p2.setType(new RefTypePointage());
+		p2.getType().setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		
+		Spbhor hor = new Spbhor();
+		hor.setTaux(0.5);
+		Spbase bas = new Spbase();
+		bas.setNbashh(32);
+		Spcarr car = new Spcarr();
+		car.setSpbhor(hor);
+		car.setSpbase(bas);
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
+		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		List<String> result = service.checkMaxAbsenceHebdo(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1, p2));
+		
+		// Then
+		assertEquals(0, result.size());
 	}
 }

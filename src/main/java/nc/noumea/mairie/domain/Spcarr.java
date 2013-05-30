@@ -2,6 +2,9 @@ package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -36,6 +39,18 @@ public class Spcarr {
 	@Column(name = "CDCATE", columnDefinition = "numeric")
 	private Integer cdcate;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "CDBHOR2", referencedColumnName = "CDTHOR", columnDefinition = "decimal")
+	private Spbhor spbhor;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "IBAN", referencedColumnName = "IBAN", columnDefinition = "char")
+	private Spbarem spbarem;
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "CDBASE", referencedColumnName = "CDBASE", columnDefinition = "char")
+	private Spbase spbase;
+	
 	@Transient
 	public AgentStatutEnum getStatutCarriere() {
 		switch (cdcate) {
