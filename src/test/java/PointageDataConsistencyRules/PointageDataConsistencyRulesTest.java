@@ -9,6 +9,7 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
+import nc.noumea.mairie.domain.Spbarem;
 import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
@@ -608,5 +609,105 @@ public class PointageDataConsistencyRulesTest {
 		
 		// Then
 		assertEquals(0, result.size());
+	}
+	
+	@Test
+	public void checkAgentINAAndHSup_INALessThan315_NoError() {
+		
+		// Given
+		Agent ag = new Agent();
+		Integer idAgent = 9008765;
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		
+		Spbarem barem = new Spbarem();
+		barem.setIna(205);
+		Spcarr car = new Spcarr();
+		car.setSpbarem(barem);
+		
+		Pointage p1 = new Pointage();
+		p1.setType(new RefTypePointage());
+		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
+		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		List<String> result = service.checkAgentINAAndHSup(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1));
+		
+		// Then
+		assertEquals(0, result.size());
+	}
+	
+	@Test
+	public void checkAgentINAAndHSup_INAEq315_NoError() {
+		
+		// Given
+		Agent ag = new Agent();
+		Integer idAgent = 9008765;
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		
+		Spbarem barem = new Spbarem();
+		barem.setIna(315);
+		Spcarr car = new Spcarr();
+		car.setSpbarem(barem);
+		
+		Pointage p1 = new Pointage();
+		p1.setType(new RefTypePointage());
+		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
+		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		List<String> result = service.checkAgentINAAndHSup(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1));
+		
+		// Then
+		assertEquals(0, result.size());
+	}
+	
+	@Test
+	public void checkAgentINAAndHSup_INASupTo315_NoError() {
+		
+		// Given
+		Agent ag = new Agent();
+		Integer idAgent = 9008765;
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		
+		Spbarem barem = new Spbarem();
+		barem.setIna(316);
+		Spcarr car = new Spcarr();
+		car.setSpbarem(barem);
+		
+		Pointage p1 = new Pointage();
+		p1.setType(new RefTypePointage());
+		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
+		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		List<String> result = service.checkAgentINAAndHSup(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1));
+		
+		// Then
+		assertEquals(1, result.size());
+		assertEquals("L'agent n'a pas droit aux HS sur la période (INA > 315)", result.get(0));
 	}
 }

@@ -141,6 +141,24 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		return errors;
 	}
 	
+	public List<String> checkAgentINAAndHSup(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+
+		Agent ag = mairieRepository.getAgent(idAgent);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
+		
+		if (carr.getSpbarem().getIna() <= 315)
+			return errors;
+
+		for (Pointage ptg : pointages) {
+			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
+				errors.add("L'agent n'a pas droit aux HS sur la période (INA > 315)");
+				break;
+			}
+		}
+		
+		return errors;
+	}
+	
 	protected DateTime GetDateDebut(Integer dateDeb, Integer codem1) {
 		DateTime recupDateDeb = new DateTime(helperService.getDateFromMairieInteger(dateDeb));
 		

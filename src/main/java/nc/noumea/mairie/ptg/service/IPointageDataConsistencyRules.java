@@ -11,4 +11,5 @@ public interface IPointageDataConsistencyRules {
 	List<String> checkSprircRecuperation(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 	List<String> checkSpcongConge(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 	List<String> checkSpabsenMaladie(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages);
+	List<String> checkAgentINAAndHSup(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 }
