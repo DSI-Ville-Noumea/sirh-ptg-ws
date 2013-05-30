@@ -20,6 +20,7 @@ import nc.noumea.mairie.domain.SprircId;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.service.HelperService;
 import nc.noumea.mairie.ptg.service.PointageDataConsistencyRules;
@@ -47,10 +48,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		
 		// When
-		List<String> result = service.checkSprircRecuperation(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -77,10 +79,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSprircRecuperation(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -115,11 +118,12 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSprircRecuperation(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(1, result.size());
-		assertEquals("21/05/2013 09:00 : L'agent est en récupération sur cette période.", result.get(0));
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("21/05/2013 09:00 : L'agent est en récupération sur cette période.", result.getInfos().get(0));
 	}
 	
 	@Test
@@ -154,10 +158,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSprircRecuperation(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -193,11 +198,12 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSprircRecuperation(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(1, result.size());
-		assertEquals("22/05/2013 11:00 : L'agent est en récupération sur cette période.", result.get(0));
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("22/05/2013 11:00 : L'agent est en récupération sur cette période.", result.getInfos().get(0));
 	}
 	
 	@Test
@@ -215,10 +221,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		
 		// When
-		List<String> result = service.checkSpcongConge(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -246,10 +253,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSpcongConge(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -285,11 +293,12 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSpcongConge(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(1, result.size());
-		assertEquals("21/05/2013 09:00 : L'agent est en congés payés sur cette période.", result.get(0));
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("21/05/2013 09:00 : L'agent est en congés payés sur cette période.", result.getInfos().get(0));
 	}
 	
 	@Test
@@ -325,10 +334,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSpcongConge(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -365,11 +375,12 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSpcongConge(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(1, result.size());
-		assertEquals("22/05/2013 11:00 : L'agent est en congés payés sur cette période.", result.get(0));
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("22/05/2013 11:00 : L'agent est en congés payés sur cette période.", result.getInfos().get(0));
 	}
 	
 	@Test
@@ -387,10 +398,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		
 		// When
-		List<String> result = service.checkSpabsenMaladie(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSpabsenMaladie(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -417,10 +429,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSpabsenMaladie(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSpabsenMaladie(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -454,11 +467,12 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSpabsenMaladie(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSpabsenMaladie(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(1, result.size());
-		assertEquals("21/05/2013 : L'agent est en maladie sur cette période.", result.get(0));
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("21/05/2013 : L'agent est en maladie sur cette période.", result.getInfos().get(0));
 	}
 	
 	@Test
@@ -493,11 +507,12 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		List<String> result = service.checkSpabsenMaladie(new ArrayList<String>(), idAgent, dateLundi, ptgs);
+		SaisieReturnMessageDto result = service.checkSpabsenMaladie(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
-		assertEquals(1, result.size());
-		assertEquals("22/05/2013 : L'agent est en maladie sur cette période.", result.get(0));
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("22/05/2013 : L'agent est en maladie sur cette période.", result.getInfos().get(0));
 	}
 	
 	@Test
@@ -522,10 +537,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		
 		// When
-		List<String> result = service.checkMaxAbsenceHebdo(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1, p2));
+		SaisieReturnMessageDto result = service.checkMaxAbsenceHebdo(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2));
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -563,11 +579,12 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		
 		// When
-		List<String> result = service.checkMaxAbsenceHebdo(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1, p2));
+		SaisieReturnMessageDto result = service.checkMaxAbsenceHebdo(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2));
 		
 		// Then
-		assertEquals(1, result.size());
-		assertEquals("L'agent dépasse sa base horaire", result.get(0));
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("L'agent dépasse sa base horaire", result.getErrors().get(0));
 	}
 	
 	@Test
@@ -605,10 +622,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		
 		// When
-		List<String> result = service.checkMaxAbsenceHebdo(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1, p2));
+		SaisieReturnMessageDto result = service.checkMaxAbsenceHebdo(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2));
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -641,10 +659,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		
 		// When
-		List<String> result = service.checkAgentINAAndHSup(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1));
+		SaisieReturnMessageDto result = service.checkAgentINAAndHSup(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -677,10 +696,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		
 		// When
-		List<String> result = service.checkAgentINAAndHSup(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1));
+		SaisieReturnMessageDto result = service.checkAgentINAAndHSup(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
 		
 		// Then
-		assertEquals(0, result.size());
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 	
 	@Test
@@ -713,11 +733,12 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		
 		// When
-		List<String> result = service.checkAgentINAAndHSup(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1));
+		SaisieReturnMessageDto result = service.checkAgentINAAndHSup(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
 		
 		// Then
-		assertEquals(1, result.size());
-		assertEquals("L'agent n'a pas droit aux HS sur la période (INA > 315)", result.get(0));
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("L'agent n'a pas droit aux HS sur la période (INA > 315)", result.getErrors().get(0));
 	}
 	
 	@Test
@@ -750,10 +771,11 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		
 		// When
-		List<String> result = service.checkAgentINAAndHSup(new ArrayList<String>(), idAgent, dateLundi, Arrays.asList(p1));
+		SaisieReturnMessageDto result = service.checkAgentINAAndHSup(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
 		
 		// Then
-		assertEquals(1, result.size());
-		assertEquals("L'agent est en base horaire \"Z\" sur la période", result.get(0));
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("L'agent est en base horaire \"Z\" sur la période", result.getErrors().get(0));
 	}
 }

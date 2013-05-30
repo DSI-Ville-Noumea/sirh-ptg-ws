@@ -14,6 +14,7 @@ import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
+import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class SaisieService implements ISaisieService {
 	private IPointageDataConsistencyRules ptgDataCosistencyRules;
 	
 	@Override
-	public void saveFichePointage(FichePointageDto fichePointageDto) {
+	public SaisieReturnMessageDto saveFichePointage(FichePointageDto fichePointageDto) {
 
 		Date dateLundi = fichePointageDto.getDateLundi();
 		
@@ -105,18 +106,22 @@ public class SaisieService implements ISaisieService {
 			
 		}
 
+		SaisieReturnMessageDto result = new SaisieReturnMessageDto();
+		
 		// calling data consistency
 		List<String> errors = new ArrayList<String>();
-//		ptgDataCosistencyRules.checkSprircRecuperation(errors, idAgent, dateLundi, finalPointages);
-//		ptgDataCosistencyRules.checkSpcongConge(errors, idAgent, dateLundi, finalPointages);
-//		ptgDataCosistencyRules.checkSpabsenMaladie(errors, idAgent, dateLundi, finalPointages);
-//		ptgDataCosistencyRules.checkMaxAbsenceHebdo(errors, idAgent, dateLundi, finalPointages);
+//		ptgDataCosistencyRules.checkSprircRecuperation(result, idAgent, dateLundi, finalPointages);
+//		ptgDataCosistencyRules.checkSpcongConge(result, idAgent, dateLundi, finalPointages);
+//		ptgDataCosistencyRules.checkSpabsenMaladie(result, idAgent, dateLundi, finalPointages);
+//		ptgDataCosistencyRules.checkMaxAbsenceHebdo(result, idAgent, dateLundi, finalPointages);
 		
 		if (errors.size() != 0)
-			return;
+			return result;
 		
 		savePointages(finalPointages);
 		deletePointages(originalAgentPointages);
+		
+		return result;
 	}
 	
 	private void savePointages(List<Pointage> finalPointages) {

@@ -9,6 +9,7 @@ import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
 
@@ -27,7 +28,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	private HelperService helperService;
 
 	@Override
-	public List<String> checkMaxAbsenceHebdo(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public SaisieReturnMessageDto checkMaxAbsenceHebdo(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		double nbHours = 0;
 		
@@ -42,7 +43,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		}
 		
 		if (nbHours == 0)
-			return errors;
+			return srm;
 		
 		Agent ag = mairieRepository.getAgent(idAgent);
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
@@ -50,12 +51,12 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		double agentMaxHours = carr.getSpbhor().getTaux() * carr.getSpbase().getNbashh();
 		
 		if (nbHours > agentMaxHours)
-			errors.add("L'agent dépasse sa base horaire");
+			srm.getErrors().add("L'agent dépasse sa base horaire");
 		
-		return errors;
+		return srm;
 	}
 	
-	public List<String> checkSprircRecuperation(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public SaisieReturnMessageDto checkSprircRecuperation(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 		
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
 		
@@ -71,20 +72,20 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				DateTime ptgTimeEnd = new DateTime(ptg.getDateFin());
 				
 				if (ptgTime.isAfter(recupDateDeb) && ptgTime.isBefore(recupDateFin))
-					errors.add(String.format("%s : L'agent est en récupération sur cette période.", 
+					srm.getInfos().add(String.format("%s : L'agent est en récupération sur cette période.", 
 							ptgTime.toString("dd/MM/yyyy HH:mm")));
 				else if (ptgTimeEnd.isAfter(recupDateDeb) && ptgTimeEnd.isBefore(recupDateFin)) {
-					errors.add(String.format("%s : L'agent est en récupération sur cette période.", 
+					srm.getInfos().add(String.format("%s : L'agent est en récupération sur cette période.", 
 							ptgTimeEnd.toString("dd/MM/yyyy HH:mm")));
 				}
 			}
 		}
 		
-		return errors;
+		return srm;
 	}
 
 	@Override
-	public List<String> checkSpcongConge(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public SaisieReturnMessageDto checkSpcongConge(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 		
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
 		
@@ -100,20 +101,20 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				DateTime ptgTimeEnd = new DateTime(ptg.getDateFin());
 				
 				if (ptgTime.isAfter(recupDateDeb) && ptgTime.isBefore(recupDateFin))
-					errors.add(String.format("%s : L'agent est en congés payés sur cette période.", 
+					srm.getInfos().add(String.format("%s : L'agent est en congés payés sur cette période.", 
 							ptgTime.toString("dd/MM/yyyy HH:mm")));
 				else if (ptgTimeEnd.isAfter(recupDateDeb) && ptgTimeEnd.isBefore(recupDateFin)) {
-					errors.add(String.format("%s : L'agent est en congés payés sur cette période.", 
+					srm.getInfos().add(String.format("%s : L'agent est en congés payés sur cette période.", 
 							ptgTimeEnd.toString("dd/MM/yyyy HH:mm")));
 				}
 			}
 		}
 		
-		return errors;
+		return srm;
 	}
 	
 	@Override
-	public List<String> checkSpabsenMaladie(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public SaisieReturnMessageDto checkSpabsenMaladie(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 		
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
 		
@@ -129,41 +130,40 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				DateTime ptgTimeEnd = new DateTime(ptg.getDateFin());
 				
 				if (ptgTime.isAfter(recupDateDeb) && ptgTime.isBefore(recupDateFin))
-					errors.add(String.format("%s : L'agent est en maladie sur cette période.", 
+					srm.getInfos().add(String.format("%s : L'agent est en maladie sur cette période.", 
 							ptgTime.toString("dd/MM/yyyy")));
 				else if (ptgTimeEnd.isAfter(recupDateDeb) && ptgTimeEnd.isBefore(recupDateFin)) {
-					errors.add(String.format("%s : L'agent est en maladie sur cette période.", 
+					srm.getInfos().add(String.format("%s : L'agent est en maladie sur cette période.", 
 							ptgTimeEnd.toString("dd/MM/yyyy")));
 				}
 			}
 		}
 		
-		return errors;
+		return srm;
 	}
 	
-	public List<String> checkAgentINAAndHSup(List<String> errors, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public SaisieReturnMessageDto checkAgentINAAndHSup(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		Agent ag = mairieRepository.getAgent(idAgent);
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
 		
 		if (carr.getSpbarem().getIna() <= 315 && !carr.getSpbase().getCdBase().equals("Z"))
-			return errors;
+			return srm;
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
 				
 				if (carr.getSpbarem().getIna() > 315)
-					errors.add("L'agent n'a pas droit aux HS sur la période (INA > 315)");
+					srm.getErrors().add("L'agent n'a pas droit aux HS sur la période (INA > 315)");
 				else
-					errors.add("L'agent est en base horaire \"Z\" sur la période");
+					srm.getErrors().add("L'agent est en base horaire \"Z\" sur la période");
 				
 				break;
 			}
 		}
 		
-		return errors;
+		return srm;
 	}
-	
 	
 	protected DateTime GetDateDebut(Integer dateDeb, Integer codem1) {
 		DateTime recupDateDeb = new DateTime(helperService.getDateFromMairieInteger(dateDeb));
