@@ -146,18 +146,24 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		Agent ag = mairieRepository.getAgent(idAgent);
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
 		
-		if (carr.getSpbarem().getIna() <= 315)
+		if (carr.getSpbarem().getIna() <= 315 && !carr.getSpbase().getCdBase().equals("Z"))
 			return errors;
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
-				errors.add("L'agent n'a pas droit aux HS sur la période (INA > 315)");
+				
+				if (carr.getSpbarem().getIna() > 315)
+					errors.add("L'agent n'a pas droit aux HS sur la période (INA > 315)");
+				else
+					errors.add("L'agent est en base horaire \"Z\" sur la période");
+				
 				break;
 			}
 		}
 		
 		return errors;
 	}
+	
 	
 	protected DateTime GetDateDebut(Integer dateDeb, Integer codem1) {
 		DateTime recupDateDeb = new DateTime(helperService.getDateFromMairieInteger(dateDeb));
