@@ -18,4 +18,5 @@ public interface IAccessRightsRepository {
 	boolean isUserOperator(Integer idAgent);
 
 	List<Droit> getAgentsApprobateurs();
+
 }
