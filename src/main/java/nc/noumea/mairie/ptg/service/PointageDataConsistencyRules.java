@@ -1,9 +1,11 @@
 package nc.noumea.mairie.ptg.service;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spabsen;
+import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
@@ -28,9 +30,16 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	@Autowired
 	private HelperService helperService;
 
+	//-- MESSAGES --//
+	private static final String BASE_HOR_MAX = "L'agent dépasse sa base horaire";
 	private static final String RECUP_MSG = "%s : L'agent est en récupération sur cette période.";
 	private static final String CONGE_MSG = "%s : L'agent est en congés payés sur cette période.";
 	private static final String MALADIE_MSG = "%s : L'agent est en maladie sur cette période.";
+	private static final String HS_INA_315_MSG = "L'agent n'a pas droit aux HS sur la période (INA > 315)";
+	private static final String BASE_HOR_Z_MSG = "L'agent est en base horaire \"Z\" sur la période";
+	private static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
+	
+	private static final List<String> INACTIVITE_CODES = Arrays.asList("01", "02", "03", "04");
 	
 	@Override
 	public SaisieReturnMessageDto checkMaxAbsenceHebdo(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
@@ -56,11 +65,12 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		double agentMaxHours = carr.getSpbhor().getTaux() * carr.getSpbase().getNbashh();
 		
 		if (nbHours > agentMaxHours)
-			srm.getErrors().add("L'agent dépasse sa base horaire");
+			srm.getErrors().add(BASE_HOR_MAX);
 		
 		return srm;
 	}
 	
+	@Override
 	public SaisieReturnMessageDto checkSprircRecuperation(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 		
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
@@ -117,9 +127,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
 				
 				if (carr.getSpbarem().getIna() > 315)
-					srm.getErrors().add("L'agent n'a pas droit aux HS sur la période (INA > 315)");
+					srm.getErrors().add(HS_INA_315_MSG);
 				else
-					srm.getErrors().add("L'agent est en base horaire \"Z\" sur la période");
+					srm.getErrors().add(BASE_HOR_Z_MSG);
 				
 				break;
 			}
@@ -130,8 +140,14 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	
 	@Override
 	public SaisieReturnMessageDto checkAgentInactivity(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
-		// TODO Auto-generated method stub
-		return null;
+
+		Agent ag = mairieRepository.getAgent(idAgent);
+		Spadmn adm = mairieRepository.getAgentCurrentPosition(ag, dateLundi);
+		
+		if (INACTIVITE_CODES.contains(adm.getCdpadm()))
+			srm.getErrors().add(INACTIVITE_MSG);
+
+		return srm;
 	}
 	
 	//-- Helpers --//

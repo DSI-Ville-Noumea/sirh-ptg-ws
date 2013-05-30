@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.Spabsen;
+import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
@@ -101,5 +102,20 @@ public class MairieRepository implements IMairieRepository {
 		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
 		
 		return query.getResultList();
+	}
+
+	@Override
+	public Spadmn getAgentCurrentPosition(Agent agent, Date asOfDate) {
+		
+		TypedQuery<Spadmn> qSpadmn = sirhEntityManager.createNamedQuery("getAgentSpadmnAsOfDate", Spadmn.class);
+		qSpadmn.setParameter("nomatr", agent.getNomatr());
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		int dateFormatMairie = Integer.valueOf(sdf.format(asOfDate));
+		qSpadmn.setParameter("dateFormatMairie", dateFormatMairie);
+
+		Spadmn adm = qSpadmn.getSingleResult();
+
+		return adm;
 	}
 }

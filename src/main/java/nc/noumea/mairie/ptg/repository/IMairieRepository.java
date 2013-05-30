@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spabsen;
+import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
@@ -14,6 +15,7 @@ public interface IMairieRepository {
 	Agent getAgent(int idAgent);
 	Spcarr getAgentCurrentCarriere(Agent aAgent, Date asOfDate);
 	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date);
+	Spadmn getAgentCurrentPosition(Agent ag, Date asOfDate);
 	
 	List<Sprirc> getListRecuperationBetween(Integer idAgent, Date start, Date end);
 	List<Spcong> getListCongeBetween(Integer idAgent, Date start, Date end);

@@ -9,6 +9,7 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
+import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spbarem;
 import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spbhor;
@@ -860,5 +861,58 @@ public class PointageDataConsistencyRulesTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertEquals("L'agent est en base horaire \"Z\" sur la période", result.getErrors().get(0));
+	}
+
+	@Test
+	public void checkAgentInactivity_AgentIsActive_ReturnNothing() {
+		
+		// Given
+		Agent ag = new Agent();
+		ag.setIdAgent(9007865);
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		
+		Spadmn sp = new Spadmn();
+		sp.setCdpadm("99");
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(9007865)).thenReturn(ag);
+		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateLundi)).thenReturn(sp);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		SaisieReturnMessageDto result = service.checkAgentInactivity(new SaisieReturnMessageDto(), 9007865, dateLundi, null);
+		
+		// Then
+		assertEquals(0, result.getInfos().size());
+		assertEquals(0, result.getErrors().size());
+	}
+	
+	@Test
+	public void checkAgentInactivity_AgentIsInActive_ReturnError() {
+		
+		// Given
+		Agent ag = new Agent();
+		ag.setIdAgent(9007865);
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		
+		Spadmn sp = new Spadmn();
+		sp.setCdpadm("01");
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(9007865)).thenReturn(ag);
+		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateLundi)).thenReturn(sp);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		SaisieReturnMessageDto result = service.checkAgentInactivity(new SaisieReturnMessageDto(), 9007865, dateLundi, null);
+		
+		// Then
+		assertEquals(0, result.getInfos().size());
+		assertEquals(1, result.getErrors().size());
+		assertEquals("L'agent n'est pas en activité sur cette période.", result.getErrors().get(0));
 	}
 }
