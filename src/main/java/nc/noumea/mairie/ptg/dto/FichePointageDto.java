@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class FichePointageDto {
 
 	private Date dateLundi;
-	private AgentDto agent;
+	private AgentWithServiceDto agent;
 	private String semaine;
 	List<JourPointageDto> saisies;
 
@@ -34,11 +34,11 @@ public class FichePointageDto {
 		this.semaine = semaine;
 	}
 
-	public AgentDto getAgent() {
+	public AgentWithServiceDto getAgent() {
 		return agent;
 	}
 
-	public void setAgent(AgentDto agent) {
+	public void setAgent(AgentWithServiceDto agent) {
 		this.agent = agent;
 	}
 

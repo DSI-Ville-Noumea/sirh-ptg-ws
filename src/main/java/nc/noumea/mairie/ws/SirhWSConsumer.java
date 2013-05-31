@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public AgentDto getAgentService(Integer idAgent, Date date) {
+	public AgentWithServiceDto getAgentService(Integer idAgent, Date date) {
 
 		String url = String.format(sirhWsBaseUrl + sirhAgentServiceUrl);
 
@@ -64,11 +64,11 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 
 		ClientResponse res = createAndFireRequest(parameters, url);
 
-		return readResponse(AgentDto.class, res, url);
+		return readResponse(AgentWithServiceDto.class, res, url);
 	}
 
 	@Override
-	public List<AgentDto> getServicesAgent(String rootService, Date date) {
+	public List<AgentWithServiceDto> getServicesAgent(String rootService, Date date) {
 
 		String url = String.format(sirhWsBaseUrl + sirhAgentsServiceUrl);
 
@@ -82,7 +82,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 
 		ClientResponse res = createAndFireRequest(parameters, url);
 
-		return readResponseAsList(AgentDto.class, res, url);
+		return readResponseAsList(AgentWithServiceDto.class, res, url);
 	}
 
 	@Override

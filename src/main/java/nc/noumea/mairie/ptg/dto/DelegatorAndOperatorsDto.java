@@ -8,11 +8,11 @@ import flexjson.JSONSerializer;
 
 public class DelegatorAndOperatorsDto implements IJSONSerialize, IJSONDeserialize<DelegatorAndOperatorsDto> {
 
-	private AgentDto delegataire;
-	private List<AgentDto> saisisseurs;
+	private AgentWithServiceDto delegataire;
+	private List<AgentWithServiceDto> saisisseurs;
 	
 	public DelegatorAndOperatorsDto() {
-		saisisseurs = new ArrayList<AgentDto>();
+		saisisseurs = new ArrayList<AgentWithServiceDto>();
 	}
 	
 	@Override
@@ -29,19 +29,19 @@ public class DelegatorAndOperatorsDto implements IJSONSerialize, IJSONDeserializ
 		return new JSONDeserializer<DelegatorAndOperatorsDto>().deserializeInto(json, this);
 	}
 
-	public AgentDto getDelegataire() {
+	public AgentWithServiceDto getDelegataire() {
 		return delegataire;
 	}
 
-	public void setDelegataire(AgentDto delegataire) {
+	public void setDelegataire(AgentWithServiceDto delegataire) {
 		this.delegataire = delegataire;
 	}
 
-	public List<AgentDto> getSaisisseurs() {
+	public List<AgentWithServiceDto> getSaisisseurs() {
 		return saisisseurs;
 	}
 
-	public void setSaisisseurs(List<AgentDto> saisisseurs) {
+	public void setSaisisseurs(List<AgentWithServiceDto> saisisseurs) {
 		this.saisisseurs = saisisseurs;
 	}
 

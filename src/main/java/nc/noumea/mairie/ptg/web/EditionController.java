@@ -3,7 +3,7 @@ package nc.noumea.mairie.ptg.web;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IFichesService;
@@ -65,7 +65,7 @@ public class EditionController {
 
 		Integer convertedIdAgent2 = converterService.tryConvertFromADIdAgentToSIRHIdAgent(agent);
 
-		List<AgentDto> agents = ficheService.listAgentsFichesToPrint(convertedIdAgent, date, codeService, convertedIdAgent2);
+		List<AgentWithServiceDto> agents = ficheService.listAgentsFichesToPrint(convertedIdAgent, date, codeService, convertedIdAgent2);
 
 		String json = new JSONSerializer().exclude("*.class").serialize(agents);
 

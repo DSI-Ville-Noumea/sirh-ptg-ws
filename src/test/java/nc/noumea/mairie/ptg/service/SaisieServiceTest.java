@@ -18,7 +18,7 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
-import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
@@ -65,7 +65,7 @@ public class SaisieServiceTest {
 		
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		AgentDto agent = new AgentDto();
+		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 		
 		FichePointageDto dto = new FichePointageDto();
@@ -133,7 +133,7 @@ public class SaisieServiceTest {
 		
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		AgentDto agent = new AgentDto();
+		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 		
 		FichePointageDto dto = new FichePointageDto();
@@ -201,7 +201,7 @@ public class SaisieServiceTest {
 		
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		AgentDto agent = new AgentDto();
+		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 		
 		FichePointageDto dto = new FichePointageDto();
@@ -286,7 +286,7 @@ public class SaisieServiceTest {
 		
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		AgentDto agent = new AgentDto();
+		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 		
 		FichePointageDto dto = new FichePointageDto();
@@ -350,7 +350,7 @@ public class SaisieServiceTest {
 		
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		AgentDto agent = new AgentDto();
+		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 		
 		FichePointageDto dto = new FichePointageDto();

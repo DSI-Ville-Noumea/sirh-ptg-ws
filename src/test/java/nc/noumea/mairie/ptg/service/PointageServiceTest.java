@@ -18,7 +18,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
-import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
@@ -129,7 +129,7 @@ public class PointageServiceTest {
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
 		FichePointageDto dto = new FichePointageDto();
-		dto.setAgent(new AgentDto());
+		dto.setAgent(new AgentWithServiceDto());
 		dto.setDateLundi(dateLundi);
 		dto.setSemaine("SEMAINE");
 		dto.getSaisies().add(new JourPointageDto());
@@ -226,7 +226,7 @@ public class PointageServiceTest {
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
 		FichePointageDto dto = new FichePointageDto();
-		dto.setAgent(new AgentDto());
+		dto.setAgent(new AgentWithServiceDto());
 		dto.setDateLundi(dateLundi);
 		dto.setSemaine("SEMAINE");
 		dto.getSaisies().add(new JourPointageDto());
@@ -328,7 +328,7 @@ public class PointageServiceTest {
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
 		FichePointageDto dto = new FichePointageDto();
-		dto.setAgent(new AgentDto());
+		dto.setAgent(new AgentWithServiceDto());
 		dto.setDateLundi(dateLundi);
 		dto.setSemaine("SEMAINE");
 		dto.getSaisies().add(new JourPointageDto());

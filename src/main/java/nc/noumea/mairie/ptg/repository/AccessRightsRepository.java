@@ -27,15 +27,6 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public List<Droit> getAllDroitsForService(String codeService) {
-		
-		TypedQuery<Droit> q = ptgEntityManager.createNamedQuery("getAllDroitsAgentForService", Droit.class);
-		q.setParameter("codeService", codeService);
-		
-		return q.getResultList();
-	}
-
-	@Override
 	public void removeDroitsAgent(DroitsAgent droitsAgent) {
 		ptgEntityManager.remove(droitsAgent);
 	}

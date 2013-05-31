@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -18,12 +18,12 @@ public class FichesService implements IFichesService {
 	private ISirhWSConsumer sirhWSConsumer;
 	
 	@Override
-	public List<AgentDto> listAgentsFichesToPrint(Integer idAgent, Date mondayDate, String codeService, Integer agent) {
+	public List<AgentWithServiceDto> listAgentsFichesToPrint(Integer idAgent, Date mondayDate, String codeService, Integer agent) {
 		
-		List<AgentDto> result = null;
+		List<AgentWithServiceDto> result = null;
 		
 		if (agent != null && agent != 0) {
-			AgentDto r = sirhWSConsumer.getAgentService(agent, mondayDate);
+			AgentWithServiceDto r = sirhWSConsumer.getAgentService(agent, mondayDate);
 			return Arrays.asList(r);
 		}
 		

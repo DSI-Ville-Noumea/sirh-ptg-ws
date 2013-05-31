@@ -17,7 +17,7 @@ public class AgentDtoTest {
 		ag.setIdAgent(9006765);
 		
 		// When
-		AgentDto result = new AgentDto(ag);
+		AgentWithServiceDto result = new AgentWithServiceDto(ag);
 		
 		// Then
 		assertEquals("RAYNAUD", result.getNom());

@@ -14,7 +14,7 @@ import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
-import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
@@ -59,7 +59,7 @@ public class PointageService implements IPointageService {
 		ServiceDto service = sirhWSConsumer.getAgentDirection(agent.getIdAgent());
 
 		// on construit le dto de l'agent
-		AgentDto agentDto = new AgentDto(agent);
+		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);
 		agentDto.setCodeService(service.getService());
 		agentDto.setService(service.getServiceLibelle());
 

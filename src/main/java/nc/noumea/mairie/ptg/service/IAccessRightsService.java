@@ -2,20 +2,17 @@ package nc.noumea.mairie.ptg.service;
 
 import java.util.List;
 
-import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
-import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 
 public interface IAccessRightsService {
 
 	AccessRightsDto getAgentAccessRights(Integer idAgent);
 
-	DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent);
-
-	List<DroitsAgent> setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto);
-
-	List<AgentDto> listAgentsToAssign(Integer idAgent);
+//	DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent);
+//
+//	List<DroitsAgent> setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto);
 
 	boolean canUserAccessAccessRights(Integer idAgent);
 
@@ -23,7 +20,11 @@ public interface IAccessRightsService {
 
 	boolean canUserAccessSaisie(Integer idAgent, Integer agentViewed);
 
-	List<AgentDto> listAgentsApprobateurs();
+	List<AgentWithServiceDto> listAgentsApprobateurs();
 
-	void setApprobateurs(AgentDto dto);
+	void setApprobateurs(AgentWithServiceDto dto);
+	
+	List<AgentDto> getAgentsToApprove(Integer idAgent);
+	
+	void setAgentsToApprove(Integer idAgent, List<AgentDto> agents);
 }
