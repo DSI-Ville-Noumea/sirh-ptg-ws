@@ -39,7 +39,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	private static final String BASE_HOR_Z_MSG = "L'agent est en base horaire \"Z\" sur la période";
 	private static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
 	
-	private static final List<String> INACTIVITE_CODES = Arrays.asList("01", "02", "03", "04");
+	private static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
 	
 	@Override
 	public SaisieReturnMessageDto checkMaxAbsenceHebdo(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
@@ -144,7 +144,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		Agent ag = mairieRepository.getAgent(idAgent);
 		Spadmn adm = mairieRepository.getAgentCurrentPosition(ag, dateLundi);
 		
-		if (INACTIVITE_CODES.contains(adm.getCdpadm()))
+		if (!ACTIVITE_CODES.contains(adm.getCdpadm()))
 			srm.getErrors().add(INACTIVITE_MSG);
 
 		return srm;

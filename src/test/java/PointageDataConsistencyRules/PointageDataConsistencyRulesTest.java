@@ -872,7 +872,7 @@ public class PointageDataConsistencyRulesTest {
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		
 		Spadmn sp = new Spadmn();
-		sp.setCdpadm("99");
+		sp.setCdpadm("01");
 		
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(9007865)).thenReturn(ag);
@@ -898,7 +898,7 @@ public class PointageDataConsistencyRulesTest {
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		
 		Spadmn sp = new Spadmn();
-		sp.setCdpadm("01");
+		sp.setCdpadm("99");
 		
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(9007865)).thenReturn(ag);
