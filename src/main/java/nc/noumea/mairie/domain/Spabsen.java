@@ -11,7 +11,7 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", schema = "MAIRIE", table = "SPABSEN", versionField = "")
 @NamedQuery(
 		name = "getSpabsenForAgentAndPeriod", 
-		query = "from Spabsen sp where sp.id.nomatr = :nomatr and (sp.id.datdeb <= :start and sp.datfin >= :start or sp.id.datdeb <= :end and sp.datfin >= :end)")
+		query = "from Spabsen sp where sp.id.nomatr = :nomatr and (sp.id.datdeb <= :start and sp.datfin >= :start or sp.id.datdeb >= :start and sp.id.datdeb <= :end)")
 public class Spabsen {
 
 	@EmbeddedId

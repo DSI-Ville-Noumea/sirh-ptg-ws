@@ -23,12 +23,15 @@ import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
+import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class SaisieServiceTest {
@@ -94,11 +97,14 @@ public class SaisieServiceTest {
 		IPointageService pService = Mockito.mock(IPointageService.class);
 		Mockito.when(pService.getOrCreateNewPointage(null, agent.getIdAgent(), lundi)).thenReturn(newAbsPointage);
 		
+		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+		
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		
 		// When
 		service.saveFichePointage(dto);
@@ -159,11 +165,14 @@ public class SaisieServiceTest {
 		IPointageService pService = Mockito.mock(IPointageService.class);
 		Mockito.when(pService.getOrCreateNewPointage(null, agent.getIdAgent(), lundi)).thenReturn(newHsPointage);
 		
+		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+		
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		
 		// When
 		service.saveFichePointage(dto);
@@ -239,11 +248,14 @@ public class SaisieServiceTest {
 		IPointageService pService = Mockito.mock(IPointageService.class);
 		Mockito.when(pService.getOrCreateNewPointage(null, agent.getIdAgent(), lundi, 22)).thenReturn(newPrimePointage);
 		
+		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+		
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		
 		// When
 		service.saveFichePointage(dto);
@@ -266,6 +278,71 @@ public class SaisieServiceTest {
 		assertNull(argument.getValue().getHeureSupPayee());
 		assertNull(argument.getValue().getAbsenceConcertee());
 		assertNull(argument.getValue().getPointageParent());
+	}
+	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Test
+	public void saveFichePointage_saveNewAbsence_ErrorInConsistency_saveNothingAndReturnMessage() {
+		
+		// Given
+		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		AgentDto agent = new AgentDto();
+		agent.setIdAgent(9007654);
+		
+		FichePointageDto dto = new FichePointageDto();
+		dto.setDateLundi(lundi);
+		dto.setAgent(agent);
+		
+		// prime
+		AbsenceDto abs = new AbsenceDto();
+		abs.setConcertee(true);
+		abs.setHeureDebut(new DateTime(2013, 05, 13, 12, 0, 0).toDate());
+		abs.setHeureFin(new DateTime(2013, 05, 13, 18, 0, 0).toDate());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().get(0).getAbsences().add(abs);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.isDateAMonday(lundi)).thenReturn(true);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 05, 22, 9, 8, 00).toDate());
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(agent.getIdAgent(), lundi)).thenReturn(new ArrayList<Pointage>());
+		
+		Pointage newAbsPointage = new Pointage();
+		newAbsPointage.setIdAgent(agent.getIdAgent());
+		newAbsPointage.setDateLundi(lundi);
+		
+		IPointageService pService = Mockito.mock(IPointageService.class);
+		Mockito.when(pService.getOrCreateNewPointage(null, agent.getIdAgent(), lundi)).thenReturn(newAbsPointage);
+		
+		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.doAnswer(
+				new Answer() {
+					  public Object answer(InvocationOnMock invocation) {
+					      Object[] args = invocation.getArguments();
+					      SaisieReturnMessageDto result = (SaisieReturnMessageDto)args[0];
+					      result.getErrors().add("message d'erreur");
+					      return null;
+					  }}
+			).when(dcMock).processDataConsistency(
+				Mockito.any(SaisieReturnMessageDto.class), Mockito.eq(agent.getIdAgent()), Mockito.eq(lundi), Mockito.anyList());
+		
+		SaisieService service = new SaisieService();
+
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "pointageService", pService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
+		
+		// When
+		SaisieReturnMessageDto res = service.saveFichePointage(dto);
+		
+		// Then
+		Mockito.verify(pRepo, Mockito.never()).savePointage(newAbsPointage);
+
+		assertEquals(1, res.getErrors().size());
+		assertEquals(0, res.getInfos().size());
+		assertEquals("message d'erreur", res.getErrors().get(0));
 	}
 	
 	@Test
@@ -297,11 +374,14 @@ public class SaisieServiceTest {
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(p, p2));
 
+		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+		
 		SaisieService service = Mockito.spy(new SaisieService());
 		Mockito.doNothing().when(service).deletePointages(Arrays.asList(p, p2));
 		
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		
 		// When
 		service.saveFichePointage(dto);

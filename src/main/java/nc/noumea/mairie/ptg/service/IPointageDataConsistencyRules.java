@@ -8,6 +8,8 @@ import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 
 public interface IPointageDataConsistencyRules {
 
+	void processDataConsistency(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
+	
 	SaisieReturnMessageDto checkMaxAbsenceHebdo(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 	SaisieReturnMessageDto checkSprircRecuperation(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 	SaisieReturnMessageDto checkSpcongConge(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);

@@ -28,7 +28,7 @@ public class HelperService {
 		return String.format("S%s - %s au %s", d.getWeekOfWeekyear(), sf.format(date), sf.format(d.plusDays(7).toDate()));
 	}
 	
-	private static SimpleDateFormat mairieDateFormat = new SimpleDateFormat("yyyMMdd");
+	private static SimpleDateFormat mairieDateFormat = new SimpleDateFormat("yyyyMMdd");
 	
 	public Date getDateFromMairieInteger(Integer dateAsInteger) {
 		if (dateAsInteger == null || dateAsInteger.equals(0))

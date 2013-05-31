@@ -109,13 +109,10 @@ public class SaisieService implements ISaisieService {
 		SaisieReturnMessageDto result = new SaisieReturnMessageDto();
 		
 		// calling data consistency
-		List<String> errors = new ArrayList<String>();
-//		ptgDataCosistencyRules.checkSprircRecuperation(result, idAgent, dateLundi, finalPointages);
-//		ptgDataCosistencyRules.checkSpcongConge(result, idAgent, dateLundi, finalPointages);
-//		ptgDataCosistencyRules.checkSpabsenMaladie(result, idAgent, dateLundi, finalPointages);
-//		ptgDataCosistencyRules.checkMaxAbsenceHebdo(result, idAgent, dateLundi, finalPointages);
+		ptgDataCosistencyRules.processDataConsistency(result, idAgent, dateLundi, finalPointages);
 		
-		if (errors.size() != 0)
+		// If any blocking error, return the list of problems and do not save
+		if (result.getErrors().size() != 0)
 			return result;
 		
 		savePointages(finalPointages);

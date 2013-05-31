@@ -231,4 +231,18 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		return srm;
 	}
 
+	/**
+	 * Processes the data consistency of a set of Pointages being input by a user.
+	 * It will check the different business rules in order to make sure they're consistent
+	 */
+	@Override
+	public void processDataConsistency(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+		checkSprircRecuperation(srm, idAgent, dateLundi, pointages);
+		checkSpcongConge(srm, idAgent, dateLundi, pointages);
+		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
+		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages);
+		checkAgentINAAndHSup(srm, idAgent, dateLundi, pointages);
+		checkAgentInactivity(srm, idAgent, dateLundi, pointages);
+	}
+
 }

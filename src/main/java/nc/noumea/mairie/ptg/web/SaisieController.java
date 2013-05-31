@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.web;
 import java.util.Date;
 
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
+import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
@@ -98,9 +99,14 @@ public class SaisieController {
 		if (!accessRightService.canUserAccessSaisie(convertedIdAgent, convertedagent))
 			throw new AccessForbiddenException();
 		
-		saisieService.saveFichePointage(dto);
+		SaisieReturnMessageDto srm = saisieService.saveFichePointage(dto);
 		
-		return new ResponseEntity<String>(HttpStatus.OK);
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
+		
+		if (srm.getErrors().size() != 0)
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+		else
+			return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 	
 }
