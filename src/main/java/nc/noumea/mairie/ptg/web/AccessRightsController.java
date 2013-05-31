@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.web;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
+import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
@@ -120,9 +121,16 @@ public class AccessRightsController {
 		
 		logger.debug("entered GET [droits/agentsApprouves] => getApprovedAgents with parameter idAgent = {}", idAgent);
 
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
+		List<AgentDto> result = accessRightService.getAgentsToApprove(convertedIdAgent);
 		
-		return null;
+		if (result.size() == 0)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		
+		String response = new JSONSerializer().exclude("*.class").serialize(result);
+		
+		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 	
 	@ResponseBody

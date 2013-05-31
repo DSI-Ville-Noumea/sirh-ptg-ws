@@ -1,12 +1,17 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -20,7 +25,6 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_DROIT", identifierField = "idDroit", identifierType = Integer.class, table = "PTG_DROIT", sequenceName = "PTG_S_DROIT")
 @NamedQueries({
-//	@NamedQuery(name = "getAgentsToApprove", query = "from Droit d LEFT JOIN FETCH d."),
 	@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
 	@NamedQuery(name = "getAgentsApprobateurs", query = "from Droit d where d.approbateur = true"),
 	@NamedQuery(name = "getAllDroitsAgentForService", query = "from Droit d where d.codeService = :codeService")
@@ -52,4 +56,7 @@ public class Droit {
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_DROIT_APPROBATEUR", referencedColumnName = "ID_DROIT")
 	private Droit droitApprobateur;
+	
+	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+	private Set<DroitsAgent> agents = new HashSet<DroitsAgent>();
 }

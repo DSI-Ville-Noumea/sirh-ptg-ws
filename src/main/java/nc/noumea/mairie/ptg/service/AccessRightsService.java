@@ -7,11 +7,13 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.ptg.domain.Droit;
+import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
+import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -24,14 +26,15 @@ public class AccessRightsService implements IAccessRightsService {
 	@PersistenceContext(unitName = "sirhPersistenceUnit")
 	private EntityManager sirhEntityManager;
 
-	@PersistenceContext(unitName = "ptgPersistenceUnit")
-	private EntityManager ptgEntityManager;
-
 	@Autowired
 	private HelperService helperService;
 
 	@Autowired
 	private IAccessRightsRepository accessRightsRepository;
+	
+
+	@Autowired
+	private IMairieRepository mairieRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
@@ -229,7 +232,19 @@ public class AccessRightsService implements IAccessRightsService {
 		
 		List<AgentDto> result = new ArrayList<AgentDto>();
 		
+		Droit droit = accessRightsRepository.getAgentDroit(idAgent);
 		
+		if (droit == null)
+			return result;
+		
+		for (DroitsAgent da : droit.getAgents()){
+			AgentDto agDto = new AgentDto();
+			Agent ag = mairieRepository.getAgent(da.getIdAgent());
+			agDto.setIdAgent(da.getIdAgent());
+			agDto.setNom(ag.getDisplayNom());
+			agDto.setPrenom(ag.getDisplayPrenom());
+			result.add(agDto);
+		}
 		
 		return result;
 	}

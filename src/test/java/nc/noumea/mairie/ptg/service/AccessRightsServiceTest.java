@@ -11,10 +11,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 
 import nc.noumea.mairie.ptg.domain.Droit;
+import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
+import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
+import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -176,5 +179,64 @@ public class AccessRightsServiceTest {
 		assertEquals("SERVICE", dto.get(0).getCodeService());
 		assertEquals("SERVICE2", dto.get(1).getCodeService());
 	}
+	
+	@Test
+	public void getAgentsToApprove_NoAgents_ReturnEmptyList() {
+		
+		// Given
+		Integer idAgent = 9007654;
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentDroit(idAgent)).thenReturn(null);
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		
+		// When
+		List<AgentDto> result = service.getAgentsToApprove(idAgent);
+		
+		// Then
+		assertEquals(0, result.size());
+	}
 
+	@Test
+	public void getAgentsToApprove_2Agents_ReturnListOf2() {
+		
+		// Given
+		Integer idAgent = 9007654;
+
+		Agent a1 = new Agent();
+		a1.setIdAgent(1);
+		Agent a2 = new Agent();
+		a2.setIdAgent(2);
+		
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(1);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(2);
+		
+		Droit d = new Droit();
+		d.getAgents().add(da1);
+		d.getAgents().add(da2);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentDroit(idAgent)).thenReturn(d);
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(1)).thenReturn(a1);
+		Mockito.when(mRepo.getAgent(2)).thenReturn(a2);
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		List<AgentDto> result = service.getAgentsToApprove(idAgent);
+		
+		// Then
+		assertEquals(2, result.size());
+		assertEquals(2, (int) result.get(0).getIdAgent());
+		assertEquals(1, (int) result.get(1).getIdAgent());
+	}
+	
 }

@@ -4,7 +4,9 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
+import java.util.Set;
 import nc.noumea.mairie.ptg.domain.Droit;
+import nc.noumea.mairie.ptg.domain.DroitsAgent;
 
 privileged aspect Droit_Roo_JavaBean {
     
@@ -62,6 +64,14 @@ privileged aspect Droit_Roo_JavaBean {
     
     public void Droit.setDroitApprobateur(Droit droitApprobateur) {
         this.droitApprobateur = droitApprobateur;
+    }
+    
+    public Set<DroitsAgent> Droit.getAgents() {
+        return this.agents;
+    }
+    
+    public void Droit.setAgents(Set<DroitsAgent> agents) {
+        this.agents = agents;
     }
     
 }

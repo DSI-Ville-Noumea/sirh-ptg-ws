@@ -17,4 +17,5 @@ public interface IAccessRightsRepository {
 
 	List<Droit> getAgentsApprobateurs();
 
+	Droit getAgentDroit(Integer idAgent);
 }
