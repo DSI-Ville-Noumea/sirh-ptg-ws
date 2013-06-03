@@ -19,43 +19,35 @@ public class Agent {
 	@NotNull
 	@Column(name = "NOMATR")
 	private Integer nomatr;
-	
-	@Column(name = "NOM_MARITAL")
-    private String nomMarital;
 
-    @NotNull
-    @Column(name = "NOM_PATRONYMIQUE")
-    private String nomPatronymique;
-    
-    @Column(name = "NOM_USAGE")
-    private String nomUsage;
-    
-    @NotNull
-    @Column(name = "PRENOM")
-    private String prenom;
-    
-    @NotNull
-    @Column(name = "PRENOM_USAGE")
-    private String prenomUsage;
-    
-    @NotNull
-    @Column(name = "DATE_NAISSANCE")
-    @Temporal(TemporalType.DATE)
-    private Date dateNaissance;
-    
-    public String getDisplayPrenom() {
-    	if (getPrenomUsage() != null && !getPrenomUsage().isEmpty())
-    		return getPrenomUsage();
-    	else
-    		return getPrenom();
-    }
-    
-    public String getDisplayNom() {
-    	if (getNomMarital() != null && !getNomMarital().isEmpty())
-    		return getNomMarital();
-    	else if (getNomUsage() != null && !getNomUsage().isEmpty())
-    		return getNomUsage();
-    	else
-    		return getNomPatronymique();
-    }
+	@Column(name = "NOM_MARITAL")
+	private String nomMarital;
+
+	@NotNull
+	@Column(name = "NOM_PATRONYMIQUE")
+	private String nomPatronymique;
+
+	@Column(name = "NOM_USAGE")
+	private String nomUsage;
+
+	@NotNull
+	@Column(name = "PRENOM")
+	private String prenom;
+
+	@NotNull
+	@Column(name = "PRENOM_USAGE")
+	private String prenomUsage;
+
+	@NotNull
+	@Column(name = "DATE_NAISSANCE")
+	@Temporal(TemporalType.DATE)
+	private Date dateNaissance;
+
+	public String getDisplayPrenom() {
+		return getPrenomUsage();
+	}
+
+	public String getDisplayNom() {
+		return getNomUsage();
+	}
 }
