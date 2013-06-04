@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
@@ -31,15 +32,16 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	private HelperService helperService;
 
 	//-- MESSAGES --//
-	private static final String BASE_HOR_MAX = "L'agent dépasse sa base horaire";
-	private static final String RECUP_MSG = "%s : L'agent est en récupération sur cette période.";
-	private static final String CONGE_MSG = "%s : L'agent est en congés payés sur cette période.";
-	private static final String MALADIE_MSG = "%s : L'agent est en maladie sur cette période.";
-	private static final String HS_INA_315_MSG = "L'agent n'a pas droit aux HS sur la période (INA > 315)";
-	private static final String BASE_HOR_Z_MSG = "L'agent est en base horaire \"Z\" sur la période";
-	private static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
+	public static final String BASE_HOR_MAX = "L'agent dépasse sa base horaire";
+	public static final String RECUP_MSG = "%s : L'agent est en récupération sur cette période.";
+	public static final String CONGE_MSG = "%s : L'agent est en congés payés sur cette période.";
+	public static final String MALADIE_MSG = "%s : L'agent est en maladie sur cette période.";
+	public static final String HS_INA_315_MSG = "L'agent n'a pas droit aux HS sur la période (INA > 315)";
+	public static final String BASE_HOR_Z_MSG = "L'agent est en base horaire \"Z\" sur la période";
+	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
+	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez saisi des primes et/ou heures supplémentaires sur des périodes où l’agent était absent.";
 	
-	private static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
+	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
 	
 	@Override
 	public SaisieReturnMessageDto checkMaxAbsenceHebdo(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
@@ -120,7 +122,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		Agent ag = mairieRepository.getAgent(idAgent);
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
 		
-		if (carr.getSpbarem().getIna() <= 315 && !carr.getSpbase().getCdBase().equals("Z"))
+		if ((carr.getStatutCarriere() != AgentStatutEnum.F || carr.getSpbarem().getIna() <= 315)
+				&& !carr.getSpbase().getCdBase().equals("Z"))
 			return srm;
 
 		for (Pointage ptg : pointages) {
@@ -221,8 +224,11 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				if (ptgTimeStart.dayOfYear().get() == dayOfYearDeb && partialDayDeb
 					|| ptgTimeStart.dayOfYear().get() == dayOfYearFin && partialDayFin
 					|| ptgTimeEnd.dayOfYear().get() == dayOfYearDeb && partialDayDeb
-					|| ptgTimeEnd.dayOfYear().get() == dayOfYearFin && partialDayFin)
-					srm.getInfos().add(msg);
+					|| ptgTimeEnd.dayOfYear().get() == dayOfYearFin && partialDayFin) {
+					if (!srm.getInfos().contains(AVERT_MESSAGE_ABS)) {
+						srm.getInfos().add(AVERT_MESSAGE_ABS);
+					}
+				}
 				else
 					srm.getErrors().add(msg);
 			}
