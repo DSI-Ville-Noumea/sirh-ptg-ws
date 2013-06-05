@@ -25,8 +25,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_DROIT", identifierField = "idDroit", identifierType = Integer.class, table = "PTG_DROIT", sequenceName = "PTG_S_DROIT")
 @NamedQueries({
 	@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
-	@NamedQuery(name = "getAgentsApprobateurs", query = "from Droit d where d.approbateur = true"),
-	@NamedQuery(name = "getAllDroitsAgentForService", query = "from Droit d where d.codeService = :codeService")
+	@NamedQuery(name = "getAgentsApprobateurs", query = "from Droit d where d.approbateur = true")
 })
 public class Droit {
 
