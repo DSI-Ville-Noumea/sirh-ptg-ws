@@ -18,14 +18,6 @@ privileged aspect Droit_Roo_JavaBean {
         this.idAgent = idAgent;
     }
     
-    public String Droit.getCodeService() {
-        return this.codeService;
-    }
-    
-    public void Droit.setCodeService(String codeService) {
-        this.codeService = codeService;
-    }
-    
     public Date Droit.getDateModification() {
         return this.dateModification;
     }

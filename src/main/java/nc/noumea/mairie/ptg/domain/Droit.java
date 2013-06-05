@@ -34,9 +34,6 @@ public class Droit {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 	
-	@Column(name = "CODE_SERVICE")
-	private String codeService;
-	
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;

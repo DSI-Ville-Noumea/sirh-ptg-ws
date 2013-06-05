@@ -8,6 +8,7 @@ public class AgentWithServiceDtoComparator implements Comparator<AgentWithServic
 
 	@Override
 	public int compare(AgentWithServiceDto o1, AgentWithServiceDto o2) {
+		//tri par nom d'usage
 		return o1.getNom().toUpperCase().compareTo(o2.getNom().toUpperCase());
 	}
 

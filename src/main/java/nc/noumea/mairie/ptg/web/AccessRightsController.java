@@ -108,11 +108,20 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
-	public ResponseEntity<String> setApprobateur(@RequestBody String agentDtoJson) {
+	public ResponseEntity<String> setApprobateur(@RequestBody String agentsDtoJson) {
 		logger.debug("entered POST [droits/approbateur] => setApprobateur ");
 
-		accessRightService.setApprobateurs(new AgentWithServiceDto().deserializeFromJSON(agentDtoJson));
-
+		List<AgentWithServiceDto> agDtos = new JSONDeserializer<List<AgentWithServiceDto>>()
+				.use(null, ArrayList.class)
+				.use("values", AgentWithServiceDto.class)
+				.deserialize(agentsDtoJson);
+		
+		try {
+			accessRightService.setApprobateurs(agDtos);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+		}
+		
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 	

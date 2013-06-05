@@ -11,9 +11,10 @@ public interface IAccessRightsService {
 
 	AccessRightsDto getAgentAccessRights(Integer idAgent);
 
-//	DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent);
-//
-//	List<DroitsAgent> setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto);
+	// DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent);
+	//
+	// List<DroitsAgent> setDelegatorAndOperators(Integer idAgent,
+	// DelegatorAndOperatorsDto dto);
 
 	boolean canUserAccessAccessRights(Integer idAgent);
 
@@ -23,9 +24,9 @@ public interface IAccessRightsService {
 
 	List<AgentWithServiceDto> listAgentsApprobateurs();
 
-	void setApprobateurs(AgentWithServiceDto dto);
-	
+	void setApprobateurs(List<AgentWithServiceDto> dto);
+
 	List<AgentDto> getAgentsToApprove(Integer idAgent);
-	
+
 	Droit setAgentsToApprove(Integer idAgent, List<AgentDto> agents);
 }

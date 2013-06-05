@@ -12,7 +12,6 @@ import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
-import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;
@@ -208,12 +207,7 @@ public class AccessRightsService implements IAccessRightsService {
 		List<AgentWithServiceDto> agentDtos = new ArrayList<AgentWithServiceDto>();
 		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
 			// Retrieve division service of agent
-			ServiceDto service = sirhWSConsumer.getAgentDirection(da.getIdAgent());
-			Agent ag = sirhEntityManager.find(Agent.class, da.getIdAgent());
-			AgentWithServiceDto agentDto = new AgentWithServiceDto(ag);
-			agentDto.setCodeService(service.getService());
-			agentDto.setService(service.getServiceLibelle());
-
+			AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(da.getIdAgent(), helperService.getCurrentDate());
 			agentDtos.add(agentDto);
 		}
 		Collections.sort(agentDtos, new AgentWithServiceDtoComparator());
@@ -221,13 +215,55 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public void setApprobateurs(AgentWithServiceDto dto) {
-		Droit d = new Droit();
-		d.setApprobateur(true);
-		d.setDateModification(helperService.getCurrentDate());
-		d.setCodeService(dto.getCodeService());
-		d.setIdAgent(dto.getIdAgent());
-		d.persist();
+	public void setApprobateurs(List<AgentWithServiceDto> listeDto) {
+
+		List<Droit> listeAgentAppro = accessRightsRepository.getAgentsApprobateurs();
+
+		List<Droit> droitsToDelete = new ArrayList<Droit>(listeAgentAppro);
+
+		for (AgentWithServiceDto agentDto : listeDto) {
+
+			Droit d = null;
+
+			for (Droit existingDroit : listeAgentAppro) {
+				if (existingDroit.getIdAgent().equals(agentDto.getIdAgent())) {
+					d = existingDroit;
+					break;
+				}
+			}
+
+			if (d != null) {
+				droitsToDelete.remove(d);
+				continue;
+			}
+
+			d = new Droit();
+			d.setApprobateur(true);
+			d.setDateModification(helperService.getCurrentDate());
+			d.setIdAgent(agentDto.getIdAgent());
+			accessRightsRepository.persisEntity(d);
+		}
+
+		for (Droit droitToDelete : droitsToDelete) {
+			droitToDelete.remove();
+		}
+		// idem que
+		// for (Droit d : listeAgentAppro) {
+		//
+		// AgentWithServiceDto existingItem = null;
+		//
+		// for (AgentWithServiceDto agentDto : listeDto) {
+		// if (agentDto.getIdAgent().equals(d.getIdAgent())) {
+		// existingItem = agentDto;
+		// break;
+		// }
+		// }
+		//
+		// if (existingItem == null)
+		// d.remove();
+		// }
+		//
+
 	}
 
 	/**
@@ -262,43 +298,43 @@ public class AccessRightsService implements IAccessRightsService {
 	public Droit setAgentsToApprove(Integer idAgent, List<AgentDto> agents) {
 
 		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateur(idAgent);
-		
+
 		List<DroitsAgent> agentsToDelete = new ArrayList<DroitsAgent>(droit.getAgents());
-		
+
 		for (AgentDto ag : agents) {
-			
+
 			DroitsAgent existingAgent = null;
-			
-			for(DroitsAgent da : droit.getAgents()) {
+
+			for (DroitsAgent da : droit.getAgents()) {
 				if (da.getIdAgent().equals(ag.getIdAgent())) {
 					existingAgent = da;
 					break;
 				}
 			}
-			
+
 			if (existingAgent == null) {
-				
+
 				AgentWithServiceDto dto = sirhWSConsumer.getAgentService(ag.getIdAgent(), helperService.getCurrentDate());
 				if (dto == null)
 					continue;
-				
-				existingAgent= new DroitsAgent();
+
+				existingAgent = new DroitsAgent();
 				existingAgent.setIdAgent(ag.getIdAgent());
 				existingAgent.setDroit(droit);
 				existingAgent.setCodeService(dto.getCodeService());
 				existingAgent.setLibelleService(dto.getService());
 				droit.getAgents().add(existingAgent);
 			}
-			
+
 			existingAgent.setDateModification(helperService.getCurrentDate());
 			agentsToDelete.remove(existingAgent);
 			accessRightsRepository.persisEntity(existingAgent);
 		}
-		
+
 		for (DroitsAgent agToDelete : agentsToDelete) {
 			droit.getAgents().remove(agToDelete);
 		}
-		
+
 		return droit;
 	}
 
