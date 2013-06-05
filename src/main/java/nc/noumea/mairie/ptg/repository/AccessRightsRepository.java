@@ -64,7 +64,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 	
 	@Override
-	public Droit getAgentDroit(Integer idAgent) {
+	public Droit getAgentDroitApprobateurOrOperateur(Integer idAgent) {
 		
 		TypedQuery<Droit> q = ptgEntityManager.createQuery(
 				"from Droit d LEFT JOIN FETCH d.agents where d.idAgent = :idAgent", Droit.class);
@@ -76,6 +76,11 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			return null;
 		
 		return r.get(0);
+	}
+
+	@Override
+	public void persisEntity(Object obj) {
+		ptgEntityManager.persist(obj);
 	}
 	
 }

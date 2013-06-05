@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -21,8 +22,11 @@ import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.mock.staticmock.MockStaticEntityMethods;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -187,7 +191,7 @@ public class AccessRightsServiceTest {
 		Integer idAgent = 9007654;
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroit(idAgent)).thenReturn(null);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateur(idAgent)).thenReturn(null);
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -220,7 +224,7 @@ public class AccessRightsServiceTest {
 		d.getAgents().add(da2);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroit(idAgent)).thenReturn(d);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateur(idAgent)).thenReturn(d);
 		
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(1)).thenReturn(a1);
@@ -239,4 +243,135 @@ public class AccessRightsServiceTest {
 		assertEquals(1, (int) result.get(1).getIdAgent());
 	}
 	
+	@SuppressWarnings("rawtypes")
+	@Test
+	public void setAgentsToApprove_1NewAgent_CreateAndCallSirhWs() {
+		
+		// Given
+		AgentDto ag = new AgentDto();
+		ag.setIdAgent(9008765);
+		List<AgentDto> agsDto = Arrays.asList(ag);
+		
+		final Date currentDate = new DateTime(2013, 4, 9, 12, 9, 34).toDate();
+		
+		final Droit droit = new Droit();
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateur(777)).thenReturn(droit);
+		Mockito.doAnswer(new Answer() {
+			 public Object answer(InvocationOnMock invocation) {
+			     Object[] args = invocation.getArguments();
+			     DroitsAgent obj = (DroitsAgent)args[0];
+
+			     assertEquals(9008765, (int)obj.getIdAgent());
+			     assertEquals("CODE", obj.getCodeService());
+			     assertEquals("service", obj.getLibelleService());
+			     assertEquals(droit, obj.getDroit());
+			     assertEquals(currentDate, obj.getDateModification());
+			     
+			     return true;
+			     
+			     }}).when(arRepo).persisEntity(Mockito.any(DroitsAgent.class));
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+		
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9008765);
+		agDto.setService("service");
+		agDto.setCodeService("CODE");
+		
+		ISirhWSConsumer ws = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(ws.getAgentService(9008765, currentDate)).thenReturn(agDto);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", ws);
+		
+		// When
+		service.setAgentsToApprove(777, agsDto);
+		
+		// Then
+		// see callback for persisEntity
+	}
+	
+	@SuppressWarnings("rawtypes")
+	@Test
+	public void setAgentsToApprove_1ExistingAgent_UpdateModificationDate() {
+		
+		// Given
+		AgentDto ag = new AgentDto();
+		ag.setIdAgent(9008765);
+		List<AgentDto> agsDto = Arrays.asList(ag);
+		
+		final Date currentDate = new DateTime(2013, 4, 9, 12, 9, 34).toDate();
+		final DroitsAgent fda = new DroitsAgent();
+		fda.setIdAgent(9008765);
+		fda.setCodeService("CODE");
+		fda.setLibelleService("service");
+		final Droit droit = new Droit();
+		droit.getAgents().add(fda);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateur(777)).thenReturn(droit);
+		Mockito.doAnswer(new Answer() {
+			 public Object answer(InvocationOnMock invocation) {
+			     Object[] args = invocation.getArguments();
+			     DroitsAgent obj = (DroitsAgent)args[0];
+
+			     assertEquals(fda, obj);
+			     assertEquals(currentDate, obj.getDateModification());
+			     
+			     return true;
+			     
+			     }}).when(arRepo).persisEntity(Mockito.any(DroitsAgent.class));
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+		
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9008765);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		Droit result = service.setAgentsToApprove(777, agsDto);
+		
+		// Then
+		// see callback for persisEntity
+		assertEquals(fda, result.getAgents().iterator().next());
+	}
+	
+	@Test
+	public void setAgentsToApprove_1RemovedAgent_RemoveFromDB() {
+		
+		// Given
+		List<AgentDto> agsDto = new ArrayList<AgentDto>();
+		
+		DroitsAgent fda = new DroitsAgent();
+		fda.setIdAgent(9008765);
+		fda.setCodeService("CODE");
+		fda.setLibelleService("service");
+		Droit droit = new Droit();
+		droit.getAgents().add(fda);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateur(777)).thenReturn(droit);
+		
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9008765);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		
+		// When
+		Droit result = service.setAgentsToApprove(777, agsDto);
+				
+		// Then
+		assertEquals(0, result.getAgents().size());
+	
+	}
 }

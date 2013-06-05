@@ -238,7 +238,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		Droit droit = accessRightsRepository.getAgentDroit(idAgent);
+		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateur(idAgent);
 
 		if (droit == null)
 			return result;
@@ -259,8 +259,47 @@ public class AccessRightsService implements IAccessRightsService {
 	 * Sets the agents an approbator is set to Approve
 	 */
 	@Override
-	public void setAgentsToApprove(Integer idAgent, List<AgentDto> agents) {
+	public Droit setAgentsToApprove(Integer idAgent, List<AgentDto> agents) {
 
+		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateur(idAgent);
+		
+		List<DroitsAgent> agentsToDelete = new ArrayList<DroitsAgent>(droit.getAgents());
+		
+		for (AgentDto ag : agents) {
+			
+			DroitsAgent existingAgent = null;
+			
+			for(DroitsAgent da : droit.getAgents()) {
+				if (da.getIdAgent().equals(ag.getIdAgent())) {
+					existingAgent = da;
+					break;
+				}
+			}
+			
+			if (existingAgent == null) {
+				
+				AgentWithServiceDto dto = sirhWSConsumer.getAgentService(ag.getIdAgent(), helperService.getCurrentDate());
+				if (dto == null)
+					continue;
+				
+				existingAgent= new DroitsAgent();
+				existingAgent.setIdAgent(ag.getIdAgent());
+				existingAgent.setDroit(droit);
+				existingAgent.setCodeService(dto.getCodeService());
+				existingAgent.setLibelleService(dto.getService());
+				droit.getAgents().add(existingAgent);
+			}
+			
+			existingAgent.setDateModification(helperService.getCurrentDate());
+			agentsToDelete.remove(existingAgent);
+			accessRightsRepository.persisEntity(existingAgent);
+		}
+		
+		for (DroitsAgent agToDelete : agentsToDelete) {
+			droit.getAgents().remove(agToDelete);
+		}
+		
+		return droit;
 	}
 
 }

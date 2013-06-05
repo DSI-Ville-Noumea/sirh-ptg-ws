@@ -18,7 +18,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_DROITS_AGENT", identifierField = "idDroitsAgent", identifierType = Integer.class, table = "PTG_DROITS_AGENT", sequenceName = "PTG_S_DROITS_AGENT")
 public class DroitsAgent {
 
-	@ManyToOne(optional = true)
+	@ManyToOne
 	@JoinColumn(name = "ID_DROIT", referencedColumnName = "ID_DROIT")
 	private Droit droit;
 	

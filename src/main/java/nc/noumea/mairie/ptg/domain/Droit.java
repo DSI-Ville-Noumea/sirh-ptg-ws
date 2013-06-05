@@ -6,7 +6,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -57,6 +56,6 @@ public class Droit {
 	@JoinColumn(name = "ID_DROIT_APPROBATEUR", referencedColumnName = "ID_DROIT")
 	private Droit droitApprobateur;
 	
-	@OneToMany(mappedBy = "droit", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "droit", orphanRemoval = true, cascade = CascadeType.ALL)
 	private Set<DroitsAgent> agents = new HashSet<DroitsAgent>();
 }

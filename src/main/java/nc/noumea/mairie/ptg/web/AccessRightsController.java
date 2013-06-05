@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 
 @Controller
@@ -135,13 +137,24 @@ public class AccessRightsController {
 	
 	@ResponseBody
 	@RequestMapping(value = "agentsApprouves", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional(readOnly = true)
+	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> setApprovedAgents(@RequestParam("idAgent") Integer idAgent, @RequestBody String agentsApprouvesJson) {
 		
 		logger.debug("entered POST [droits/agentsApprouves] => setApprovedAgents with parameter idAgent = {}", idAgent);
 
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
+		List<AgentDto> agDtos = new JSONDeserializer<List<AgentDto>>()
+				.use(null, ArrayList.class)
+				.use("values", AgentDto.class)
+				.deserialize(agentsApprouvesJson);
 		
-		return null;
+		try {
+			accessRightService.setAgentsToApprove(convertedIdAgent, agDtos);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+		}
+		
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 }
