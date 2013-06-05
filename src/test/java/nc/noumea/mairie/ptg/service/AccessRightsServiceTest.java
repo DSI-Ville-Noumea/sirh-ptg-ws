@@ -239,8 +239,6 @@ public class AccessRightsServiceTest {
 		
 		// Then
 		assertEquals(2, result.size());
-		assertEquals(2, (int) result.get(0).getIdAgent());
-		assertEquals(1, (int) result.get(1).getIdAgent());
 	}
 	
 	@SuppressWarnings("rawtypes")
