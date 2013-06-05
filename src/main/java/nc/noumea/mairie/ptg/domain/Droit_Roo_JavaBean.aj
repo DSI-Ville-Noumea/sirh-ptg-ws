@@ -58,6 +58,14 @@ privileged aspect Droit_Roo_JavaBean {
         this.droitApprobateur = droitApprobateur;
     }
     
+    public Set<Droit> Droit.getOperateurs() {
+        return this.operateurs;
+    }
+    
+    public void Droit.setOperateurs(Set<Droit> operateurs) {
+        this.operateurs = operateurs;
+    }
+    
     public Set<DroitsAgent> Droit.getAgents() {
         return this.agents;
     }

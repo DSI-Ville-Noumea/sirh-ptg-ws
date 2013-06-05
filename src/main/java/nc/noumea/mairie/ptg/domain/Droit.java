@@ -52,6 +52,9 @@ public class Droit {
 	@JoinColumn(name = "ID_DROIT_APPROBATEUR", referencedColumnName = "ID_DROIT")
 	private Droit droitApprobateur;
 	
+	@OneToMany(mappedBy = "droitApprobateur", orphanRemoval = true, cascade = CascadeType.ALL)
+	private Set<Droit> operateurs = new HashSet<Droit>();
+	
 	@OneToMany(mappedBy = "droit", orphanRemoval = true, cascade = CascadeType.ALL)
 	private Set<DroitsAgent> agents = new HashSet<DroitsAgent>();
 }

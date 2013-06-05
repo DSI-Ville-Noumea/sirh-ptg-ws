@@ -247,6 +247,7 @@ public class AccessRightsService implements IAccessRightsService {
 		for (Droit droitToDelete : droitsToDelete) {
 			droitToDelete.remove();
 		}
+		
 		// idem que
 		// for (Droit d : listeAgentAppro) {
 		//
