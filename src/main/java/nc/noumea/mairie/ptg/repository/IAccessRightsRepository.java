@@ -18,6 +18,8 @@ public interface IAccessRightsRepository {
 	List<Droit> getAgentsApprobateurs();
 
 	Droit getAgentDroitApprobateurOrOperateur(Integer idAgent);
+
+	Droit getApprobateurAndOperateurs(Integer idAgentApprobateur);
 	
 	void persisEntity(Object obj);
 }

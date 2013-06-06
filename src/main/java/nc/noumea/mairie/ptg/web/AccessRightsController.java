@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.sirh.domain.Agent;
@@ -55,24 +56,21 @@ public class AccessRightsController {
 		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
 	}
 
-//	@ResponseBody
-//	@RequestMapping(value = "delegataireOperateurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-//	@Transactional(readOnly = true)
-//	public ResponseEntity<String> getDelegateAndOperator(@RequestParam("idAgent") Integer idAgent) {
-//		logger.debug("entered GET [droits/delegataireOperateurs] => getDelegateAndInputter with parameter idAgent = {}", idAgent);
-//
-//		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-//
-//		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
-//			throw new AccessForbiddenException();
-//
-//		if (Agent.findAgent(convertedIdAgent) == null)
-//			throw new NotFoundException();
-//
-//		DelegatorAndOperatorsDto result = accessRightService.getDelegatorAndOperators(convertedIdAgent);
-//
-//		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
-//	}
+	@ResponseBody
+	@RequestMapping(value = "delegataireOperateurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getDelegateAndOperator(@RequestParam("idAgent") Integer idAgent) {
+		logger.debug("entered GET [droits/delegataireOperateurs] => getDelegateAndInputter with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
+			throw new AccessForbiddenException();
+
+		DelegatorAndOperatorsDto result = accessRightService.getDelegatorAndOperators(convertedIdAgent);
+
+		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
+	}
 //
 //	@ResponseBody
 //	@RequestMapping(value = "delegataireOperateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)

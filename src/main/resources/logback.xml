@@ -2,10 +2,10 @@
 <configuration>
 
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-		<layout>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
 			<Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
 			</Pattern>
-		</layout>
+		</encoder>
 	</appender>
 
 	<logger name="nc.noumea.mairie.ptg" level="DEBUG" additivity="false">
@@ -15,9 +15,9 @@
 <!-- 	<logger name="org.hibernate.type" level="TRACE" additivity="false"> -->
 <!-- 	<appender-ref ref="STDOUT" /> -->
 <!-- 	</logger> -->
-	<logger name="org.hibernate" level="DEBUG">
-		<appender-ref ref="STDOUT" />
-	</logger>
+<!-- 	<logger name="org.hibernate" level="DEBUG"> -->
+<!-- 		<appender-ref ref="STDOUT" /> -->
+<!-- 	</logger> -->
 
 <!-- 	<root level="info"> -->
 <!-- 		<appender-ref ref="STDOUT" /> -->

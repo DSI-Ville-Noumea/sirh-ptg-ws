@@ -2,6 +2,7 @@ package nc.noumea.mairie.ptg.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
@@ -527,5 +529,88 @@ public class AccessRightsServiceTest {
 		// Then
 		assertEquals(0, result.getAgents().size());
 
+	}
+	
+	@Test
+	public void getDelegatorAndOperators_NoAgents_ReturnEmptyDto() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(null);
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		
+		// When
+		DelegatorAndOperatorsDto result = service.getDelegatorAndOperators(idAgent);
+		
+		// Then
+		assertNull(result.getDelegataire());
+		assertEquals(0, result.getSaisisseurs().size());
+	}
+	
+	@Test
+	public void getDelegatorAndOperators_1Delegataire_ReturnDto() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		
+		Agent delegataire = new Agent();
+		delegataire.setIdAgent(9008778);
+		
+		Droit droit = new Droit();
+		droit.setIdAgentDelegataire(delegataire.getIdAgent());
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(droit);
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(9008778)).thenReturn(delegataire);
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		DelegatorAndOperatorsDto result = service.getDelegatorAndOperators(idAgent);
+		
+		// Then
+		assertEquals(9008778, (int) result.getDelegataire().getIdAgent());
+		assertEquals(0, result.getSaisisseurs().size());
+	}
+	
+	@Test
+	public void getDelegatorAndOperators_1Operateur_ReturnDto() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		
+		Agent ope = new Agent();
+		ope.setIdAgent(9008778);
+		
+		Droit opeDroit = new Droit();
+		opeDroit.setIdAgent(9008778);
+		Droit droit = new Droit();
+		droit.getOperateurs().add(opeDroit);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(droit);
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgent(9008778)).thenReturn(ope);
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		DelegatorAndOperatorsDto result = service.getDelegatorAndOperators(idAgent);
+		
+		// Then
+		assertNull(result.getDelegataire());
+		assertEquals(1, result.getSaisisseurs().size());
+		assertEquals(9008778, (int) result.getSaisisseurs().get(0).getIdAgent());
 	}
 }

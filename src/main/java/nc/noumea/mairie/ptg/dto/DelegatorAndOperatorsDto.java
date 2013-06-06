@@ -6,15 +6,16 @@ import java.util.List;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 
-public class DelegatorAndOperatorsDto implements IJSONSerialize, IJSONDeserialize<DelegatorAndOperatorsDto> {
+public class DelegatorAndOperatorsDto implements IJSONSerialize,
+		IJSONDeserialize<DelegatorAndOperatorsDto> {
 
-	private AgentWithServiceDto delegataire;
-	private List<AgentWithServiceDto> saisisseurs;
-	
+	private AgentDto delegataire;
+	private List<AgentDto> saisisseurs;
+
 	public DelegatorAndOperatorsDto() {
-		saisisseurs = new ArrayList<AgentWithServiceDto>();
+		saisisseurs = new ArrayList<AgentDto>();
 	}
-	
+
 	@Override
 	public String serializeInJSON() {
 		return new JSONSerializer()
@@ -26,24 +27,23 @@ public class DelegatorAndOperatorsDto implements IJSONSerialize, IJSONDeserializ
 
 	@Override
 	public DelegatorAndOperatorsDto deserializeFromJSON(String json) {
-		return new JSONDeserializer<DelegatorAndOperatorsDto>().deserializeInto(json, this);
+		return new JSONDeserializer<DelegatorAndOperatorsDto>()
+				.deserializeInto(json, this);
 	}
 
-	public AgentWithServiceDto getDelegataire() {
+	public AgentDto getDelegataire() {
 		return delegataire;
 	}
 
-	public void setDelegataire(AgentWithServiceDto delegataire) {
+	public void setDelegataire(AgentDto delegataire) {
 		this.delegataire = delegataire;
 	}
 
-	public List<AgentWithServiceDto> getSaisisseurs() {
+	public List<AgentDto> getSaisisseurs() {
 		return saisisseurs;
 	}
 
-	public void setSaisisseurs(List<AgentWithServiceDto> saisisseurs) {
+	public void setSaisisseurs(List<AgentDto> saisisseurs) {
 		this.saisisseurs = saisisseurs;
 	}
-
-	
 }

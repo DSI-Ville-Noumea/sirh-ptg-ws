@@ -4,29 +4,28 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AccessRightsService implements IAccessRightsService {
 
-	@PersistenceContext(unitName = "sirhPersistenceUnit")
-	private EntityManager sirhEntityManager;
-
+	private Logger logger = LoggerFactory.getLogger(AccessRightsService.class);
+	
 	@Autowired
 	private HelperService helperService;
 
@@ -56,49 +55,38 @@ public class AccessRightsService implements IAccessRightsService {
 		return result;
 	}
 
-	// @Override
-	// public DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent)
-	// {
-	//
-	// DelegatorAndOperatorsDto result = new DelegatorAndOperatorsDto();
-	//
-	// // Retrieve division service of agent
-	// ServiceDto service = sirhWSConsumer.getAgentDirection(idAgent);
-	//
-	// // search through accessRightRepo to retrieve all agents and their
-	// // rights
-	// List<Droit> droits =
-	// accessRightsRepository.getAllDroitsForService(service.getService());
-	//
-	// // build the dto with it
-	// for (Droit d : droits) {
-	//
-	// if (d.isApprobateur() && !d.getIdAgent().equals(idAgent))
-	// throw new AccessRightsServiceException("");
-	//
-	// AgentWithServiceDto agDto = null;
-	//
-	// if (d.getIdAgentDelegataire() != null) {
-	// Agent agDelegataire = sirhEntityManager.find(Agent.class,
-	// d.getIdAgentDelegataire());
-	// agDto = new AgentWithServiceDto(agDelegataire);
-	// agDto.setCodeService(service.getService());
-	// agDto.setService(service.getServiceLibelle());
-	// result.setDelegataire(agDto);
-	// } else {
-	// Agent ag = sirhEntityManager.find(Agent.class, d.getIdAgent());
-	// agDto = new AgentWithServiceDto(ag);
-	// agDto.setCodeService(service.getService());
-	// agDto.setService(service.getServiceLibelle());
-	// }
-	//
-	// if (d.isOperateur())
-	// result.getSaisisseurs().add(agDto);
-	// }
-	//
-	// return result;
-	// }
-	//
+	@Override
+	public DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent) {
+
+		DelegatorAndOperatorsDto result = new DelegatorAndOperatorsDto();
+
+		Droit droit = accessRightsRepository.getApprobateurAndOperateurs(idAgent);
+		
+		if (droit == null) {
+			logger.warn("L'agent {} n'est pas approbateur.", idAgent);
+			return result;
+		}
+		
+		if (droit.getIdAgentDelegataire() != null) {
+			Agent delegataire = mairieRepository.getAgent(droit.getIdAgentDelegataire());
+			
+			if (delegataire == null)
+				logger.warn("L'agent délégataire {} n'existe pas.", droit.getIdAgentDelegataire());
+			else
+				result.setDelegataire(new AgentDto(delegataire));
+		}
+		
+		for (Droit operateur : droit.getOperateurs()) {
+			Agent ope = mairieRepository.getAgent(operateur.getIdAgent());
+			if (ope == null)
+				logger.warn("L'agent opérateur {} n'existe pas.", operateur.getIdAgent());
+			else
+				result.getSaisisseurs().add(new AgentDto(ope));
+		}
+		
+		return result;
+	}
+	
 	// @Override
 	// public List<DroitsAgent> setDelegatorAndOperators(Integer idAgent,
 	// DelegatorAndOperatorsDto dto) {

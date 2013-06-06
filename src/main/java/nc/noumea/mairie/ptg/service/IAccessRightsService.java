@@ -6,12 +6,14 @@ import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 
 public interface IAccessRightsService {
 
 	AccessRightsDto getAgentAccessRights(Integer idAgent);
 
-	// DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent);
+	DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent);
+
 	//
 	// List<DroitsAgent> setDelegatorAndOperators(Integer idAgent,
 	// DelegatorAndOperatorsDto dto);

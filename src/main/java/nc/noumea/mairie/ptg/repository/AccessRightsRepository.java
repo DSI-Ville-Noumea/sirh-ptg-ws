@@ -35,7 +35,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public boolean isUserApprobator(Integer idAgent) {
 		
 		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
-				"select sum(da.approbateur) from DroitsAgent da where da.idAgent = :idAgent", Boolean.class);
+				"select sum(d.approbateur) from Droit d where d.idAgent = :idAgent", Boolean.class);
 		q.setParameter("idAgent", idAgent);
 		
 		Boolean result = q.getSingleResult();
@@ -47,7 +47,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public boolean isUserOperator(Integer idAgent) {
 		
 		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
-				"select sum(da.operateur) from DroitsAgent da where da.idAgent = :idAgent", Boolean.class);
+				"select sum(d.operateur) from Droit d where d.idAgent = :idAgent", Boolean.class);
 		q.setParameter("idAgent", idAgent);
 		
 		Boolean result = q.getSingleResult();
@@ -81,6 +81,21 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public void persisEntity(Object obj) {
 		ptgEntityManager.persist(obj);
+	}
+
+	@Override
+	public Droit getApprobateurAndOperateurs(Integer idAgentApprobateur) {
+		
+		TypedQuery<Droit> q = ptgEntityManager.createQuery(
+				"from Droit d LEFT JOIN FETCH d.operateurs where d.idAgent = :idAgent and d.approbateur = 1", Droit.class);
+		q.setParameter("idAgent", idAgentApprobateur);
+		
+		List<Droit> r = q.getResultList();
+		
+		if (r.size() == 0)
+			return null;
+		
+		return r.get(0);
 	}
 	
 }
