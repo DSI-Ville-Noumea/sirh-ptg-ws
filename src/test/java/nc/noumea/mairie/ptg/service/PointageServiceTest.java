@@ -203,14 +203,14 @@ public class PointageServiceTest {
 		// Then
 		assertEquals(1, result.getSaisies().get(1).getAbsences().size());
 		assertEquals(true, result.getSaisies().get(1).getAbsences().get(0).getConcertee());
-		assertEquals("SAISI", result.getSaisies().get(1).getAbsences().get(0).getEtat());
+		assertEquals(0, (int) result.getSaisies().get(1).getAbsences().get(0).getIdRefEtat());
 		assertEquals(new DateTime(2013, 05, 14, 9, 0, 0).toDate(), result.getSaisies().get(1).getAbsences().get(0).getHeureDebut());
 		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getAbsences().get(0).getHeureFin());
 		assertEquals(new Integer(3), result.getSaisies().get(1).getAbsences().get(0).getIdPointage());
 
 		assertEquals(1, result.getSaisies().get(3).getHeuresSup().size());
 		assertEquals(true, result.getSaisies().get(3).getHeuresSup().get(0).getPayee());
-		assertEquals("APPROUVE", result.getSaisies().get(3).getHeuresSup().get(0).getEtat());
+		assertEquals(1, (int) result.getSaisies().get(3).getHeuresSup().get(0).getIdRefEtat());
 		assertEquals(new DateTime(2013, 05, 16, 14, 0, 0).toDate(), result.getSaisies().get(3).getHeuresSup().get(0).getHeureDebut());
 		assertEquals(new DateTime(2013, 05, 16, 16, 0, 0).toDate(), result.getSaisies().get(3).getHeuresSup().get(0).getHeureFin());
 		assertEquals(new Integer(2), result.getSaisies().get(3).getHeuresSup().get(0).getIdPointage());
@@ -303,7 +303,7 @@ public class PointageServiceTest {
 		assertNull(result.getSaisies().get(1).getPrimes().get(0).getQuantite());
 		assertEquals(new Integer(1111), result.getSaisies().get(1).getPrimes().get(0).getNumRubrique());
 		assertEquals(new Integer(11), result.getSaisies().get(1).getPrimes().get(0).getIdRefPrime());
-		assertEquals("REFUSE", result.getSaisies().get(1).getPrimes().get(0).getEtat());
+		assertEquals(2, (int) result.getSaisies().get(1).getPrimes().get(0).getIdRefEtat());
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureDebut());
 		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureFin());
 		assertEquals(new Integer(1), result.getSaisies().get(1).getPrimes().get(0).getIdPointage());
@@ -312,7 +312,7 @@ public class PointageServiceTest {
 		assertEquals(new Integer(1), result.getSaisies().get(3).getPrimes().get(0).getQuantite());
 		assertEquals(new Integer(2222), result.getSaisies().get(3).getPrimes().get(0).getNumRubrique());
 		assertEquals(new Integer(22), result.getSaisies().get(3).getPrimes().get(0).getIdRefPrime());
-		assertEquals("APPROUVE", result.getSaisies().get(3).getPrimes().get(0).getEtat());
+		assertEquals(1, (int) result.getSaisies().get(3).getPrimes().get(0).getIdRefEtat());
 		assertNull(result.getSaisies().get(3).getPrimes().get(0).getHeureDebut());
 		assertNull(result.getSaisies().get(3).getPrimes().get(0).getHeureFin());
 		assertEquals(new Integer(2), result.getSaisies().get(3).getPrimes().get(0).getIdPointage());
@@ -425,7 +425,7 @@ public class PointageServiceTest {
 		assertNull(result.getSaisies().get(1).getPrimes().get(0).getQuantite());
 		assertEquals(new Integer(1111), result.getSaisies().get(1).getPrimes().get(0).getNumRubrique());
 		assertEquals(new Integer(11), result.getSaisies().get(1).getPrimes().get(0).getIdRefPrime());
-		assertEquals("REFUSE", result.getSaisies().get(1).getPrimes().get(0).getEtat());
+		assertEquals(2, (int) result.getSaisies().get(1).getPrimes().get(0).getIdRefEtat());
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureDebut());
 		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureFin());
 		assertEquals(new Integer(1), result.getSaisies().get(1).getPrimes().get(0).getIdPointage());

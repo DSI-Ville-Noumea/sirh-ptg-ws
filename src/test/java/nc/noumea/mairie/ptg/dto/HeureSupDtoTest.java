@@ -47,7 +47,7 @@ public class HeureSupDtoTest {
 		// Then
 		assertEquals(new Integer(9), result.getIdPointage());
 		assertEquals(true, result.getPayee());
-		assertEquals("SAISI", result.getEtat());
+		assertEquals(0, (int) result.getIdRefEtat());
 		assertEquals(p.getDateDebut(), result.getHeureDebut());
 		assertEquals(p.getDateFin(), result.getHeureFin());
 		assertEquals("blabla", result.getMotif());

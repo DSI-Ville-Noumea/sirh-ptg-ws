@@ -65,7 +65,7 @@ public class PrimeDtoTest {
 		// Then
 		assertEquals(p.getIdPointage(), result.getIdPointage());
 		assertNull(result.getQuantite());
-		assertEquals(p.getLatestEtatPointage().getEtat().name(), result.getEtat());
+		assertEquals(p.getLatestEtatPointage().getEtat().getCodeEtat(), (int) result.getIdRefEtat());
 		assertEquals(p.getDateDebut(), result.getHeureDebut());
 		assertEquals(p.getDateFin(), result.getHeureFin());
 		assertEquals("blabla", result.getMotif());
@@ -99,7 +99,7 @@ public class PrimeDtoTest {
 		// Then
 		assertEquals(p.getIdPointage(), result.getIdPointage());
 		assertEquals(p.getQuantite(), result.getQuantite());
-		assertEquals(p.getLatestEtatPointage().getEtat().name(), result.getEtat());
+		assertEquals(p.getLatestEtatPointage().getEtat().getCodeEtat(), (int) result.getIdRefEtat());
 		assertNull(result.getHeureDebut());
 		assertNull(result.getHeureFin());
 		assertEquals("blabla", result.getMotif());
@@ -133,7 +133,7 @@ public class PrimeDtoTest {
 		// Then
 		assertEquals(p.getIdPointage(), result.getIdPointage());
 		assertEquals(p.getQuantite(), result.getQuantite());
-		assertEquals(p.getLatestEtatPointage().getEtat().name(), result.getEtat());
+		assertEquals(p.getLatestEtatPointage().getEtat().getCodeEtat(), (int) result.getIdRefEtat());
 		assertNull(result.getHeureDebut());
 		assertNull(result.getHeureFin());
 		assertEquals("blabla", result.getMotif());
@@ -167,7 +167,7 @@ public class PrimeDtoTest {
 		// Then
 		assertEquals(p.getIdPointage(), result.getIdPointage());
 		assertEquals(p.getQuantite(), result.getQuantite());
-		assertEquals(p.getLatestEtatPointage().getEtat().name(), result.getEtat());
+		assertEquals(p.getLatestEtatPointage().getEtat().getCodeEtat(), (int) result.getIdRefEtat());
 		assertNull(result.getHeureDebut());
 		assertNull(result.getHeureFin());
 		assertEquals("blabla", result.getMotif());

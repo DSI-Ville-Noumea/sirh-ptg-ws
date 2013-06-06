@@ -14,9 +14,7 @@ public interface IAccessRightsService {
 
 	DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent);
 
-	//
-	// List<DroitsAgent> setDelegatorAndOperators(Integer idAgent,
-	// DelegatorAndOperatorsDto dto);
+	void setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto);
 
 	boolean canUserAccessAccessRights(Integer idAgent);
 

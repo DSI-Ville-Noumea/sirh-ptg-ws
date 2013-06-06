@@ -11,7 +11,7 @@ public abstract class PointageDto {
 	private Date heureFin;
 	private String motif;
 	private String commentaire;
-	private String etat;
+	private Integer idRefEtat;
 
 	public PointageDto() {
 		
@@ -23,7 +23,7 @@ public abstract class PointageDto {
 		this.heureFin = p.getDateFin();
 		this.motif = p.getMotif() == null ? "" : p.getMotif().getText();
 		this.commentaire = p.getCommentaire() == null ? "" : p.getCommentaire().getText();
-		this.etat = p.getLatestEtatPointage().getEtat().name();
+		this.idRefEtat = p.getLatestEtatPointage().getEtat().getCodeEtat();
 	}
 	
 	public PointageDto(PointageDto pointageDto) {
@@ -32,7 +32,7 @@ public abstract class PointageDto {
 		this.heureFin = pointageDto.heureFin;
 		this.motif = pointageDto.motif;
 		this.commentaire = pointageDto.commentaire;
-		this.etat = pointageDto.etat;
+		this.idRefEtat = pointageDto.idRefEtat;
 	}
 	
 	public Integer getIdPointage() {
@@ -75,11 +75,11 @@ public abstract class PointageDto {
 		this.commentaire = commentaire;
 	}
 
-	public String getEtat() {
-		return etat;
+	public Integer getIdRefEtat() {
+		return idRefEtat;
 	}
 
-	public void setEtat(String etat) {
-		this.etat = etat;
+	public void setIdRefEtat(Integer idRefEtat) {
+		this.idRefEtat = idRefEtat;
 	}
 }

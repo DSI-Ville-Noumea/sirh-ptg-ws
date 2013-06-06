@@ -36,7 +36,7 @@ public class PrimeDto extends PointageDto  {
 
 	public void updateWithPointage(Pointage ptg) {
 		this.setIdPointage(ptg.getIdPointage());
-		this.setEtat(ptg.getLatestEtatPointage().getEtat().name());
+		this.setIdRefEtat(ptg.getLatestEtatPointage().getEtat().getCodeEtat());
 		this.setMotif(ptg.getMotif() == null ? "" : ptg.getMotif().getText());
 		this.setCommentaire(ptg.getCommentaire() == null ? "" : ptg.getCommentaire().getText());
 		

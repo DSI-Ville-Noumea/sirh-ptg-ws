@@ -87,91 +87,47 @@ public class AccessRightsService implements IAccessRightsService {
 		return result;
 	}
 	
-	// @Override
-	// public List<DroitsAgent> setDelegatorAndOperators(Integer idAgent,
-	// DelegatorAndOperatorsDto dto) {
-	// return null;
-	// // // Retrieve division service of agent
-	// // ServiceDto service = sirhWSConsumer.getAgentDirection(idAgent);
-	// //
-	// // // get all DroitsAgent for service
-	// // List<DroitsAgent> droits =
-	// // accessRightsRepository.getAllDroitsForService(service.getService());
-	// //
-	// // // initializinf list of new access rights
-	// // List<DroitsAgent> newDroits = new ArrayList<DroitsAgent>();
-	// //
-	// //
-	// // // changing delegataire
-	// // DroitsAgent delegataire = null;
-	// //
-	// // for (DroitsAgent d : droits) {
-	// // if (d.isApprobateur()){
-	// // delegataire = d;
-	// // break;
-	// // }
-	// // }
-	// //
-	// // // If there is no more delegataire
-	// // if (dto.getDelegataire() == null && delegataire.getIdDelegataire() !=
-	// // null) {
-	// // delegataire.setDateModification(helperService.getCurrentDate());
-	// // delegataire.setIdDelegataire(null);
-	// // ptgEntityManager.persist(delegataire);
-	// // }
-	// //
-	// // // if delegataire has changed to a new value
-	// // if (dto.getDelegataire() != null
-	// // && (delegataire.getIdDelegataire() == null
-	// // ||
-	// //
-	// !delegataire.getIdDelegataire().equals(dto.getDelegataire().getIdAgent())))
-	// // {
-	// // delegataire.setDateModification(helperService.getCurrentDate());
-	// // delegataire.setIdDelegataire(dto.getDelegataire().getIdAgent());
-	// // ptgEntityManager.persist(delegataire);
-	// // }
-	// //
-	// // newDroits.add(delegataire);
-	// //
-	// // // changing operators
-	// // Map<Integer, DroitsAgent> operators = new HashMap<Integer,
-	// // DroitsAgent>();
-	// //
-	// // for (DroitsAgent d : droits) {
-	// // if (d.isOperateur())
-	// // operators.put(d.getIdAgent(), d);
-	// // }
-	// //
-	// // for (AgentDto newOperator : dto.getSaisisseurs()) {
-	// //
-	// // DroitsAgent operator = null;
-	// // if (operators.containsKey(newOperator.getIdAgent())) {
-	// // operator = operators.get(newOperator.getIdAgent());
-	// // operators.remove(operator.getIdAgent());
-	// // }
-	// // else {
-	// // operator = new DroitsAgent();
-	// // operator.setOperateur(true);
-	// // }
-	// //
-	// // if (operator.getIdAgent() == null ||
-	// // !operator.getIdAgent().equals(newOperator.getIdAgent())) {
-	// // operator.setDateModification(helperService.getCurrentDate());
-	// // }
-	// //
-	// // operator.setIdAgent(newOperator.getIdAgent());
-	// // operator.setCodeService(service.getService());
-	// // ptgEntityManager.persist(operator);
-	// // newDroits.add(operator);
-	// // }
-	// //
-	// // // remove the remaining operators from persistence
-	// // for (DroitsAgent da : operators.values())
-	// // accessRightsRepository.removeDroitsAgent(da);
-	// //
-	// // return newDroits;
-	// }
+	@Override
+	public void setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto) {
+
+		Droit droitApprobateur = accessRightsRepository.getApprobateurAndOperateurs(idAgent);
+
+		List<Droit> originalOperateurs = new ArrayList<Droit>(droitApprobateur.getOperateurs());
+
+		if (dto.getDelegataire() != null) {
+			droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
+		} else {
+			droitApprobateur.setIdAgentDelegataire(null);
+		}
+		
+		for (AgentDto operateurDto : dto.getSaisisseurs()) {
+			
+			Droit existingOperateur = null;
+			
+			for(Droit operateur : droitApprobateur.getOperateurs()) {
+				if (operateur.getIdAgent().equals(operateurDto.getIdAgent())) {
+					existingOperateur = operateur;
+					originalOperateurs.remove(existingOperateur);
+					break;
+				}
+			}
+			
+			if (existingOperateur != null)
+				continue;
+				
+			existingOperateur = new Droit();
+			existingOperateur.setDroitApprobateur(droitApprobateur);
+			existingOperateur.setOperateur(true);
+			existingOperateur.setIdAgent(operateurDto.getIdAgent());
+			existingOperateur.setDateModification(helperService.getCurrentDate());
+			droitApprobateur.getOperateurs().add(existingOperateur);
+		}
+		
+		for (Droit droitToDelete : originalOperateurs) {
+			boolean bb = droitApprobateur.getOperateurs().remove(droitToDelete);
+			droitToDelete.remove();
+		}
+	}
 
 	@Override
 	public boolean canUserAccessAccessRights(Integer idAgent) {
