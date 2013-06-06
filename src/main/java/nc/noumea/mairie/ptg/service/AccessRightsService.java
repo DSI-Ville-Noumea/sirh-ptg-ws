@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
 public class AccessRightsService implements IAccessRightsService {
 
 	private Logger logger = LoggerFactory.getLogger(AccessRightsService.class);
-	
+
 	@Autowired
 	private HelperService helperService;
 
@@ -62,21 +62,21 @@ public class AccessRightsService implements IAccessRightsService {
 		DelegatorAndOperatorsDto result = new DelegatorAndOperatorsDto();
 
 		Droit droit = accessRightsRepository.getApprobateurFetchOperateurs(idAgent);
-		
+
 		if (droit == null) {
 			logger.warn("L'agent {} n'est pas approbateur.", idAgent);
 			return result;
 		}
-		
+
 		if (droit.getIdAgentDelegataire() != null) {
 			Agent delegataire = mairieRepository.getAgent(droit.getIdAgentDelegataire());
-			
+
 			if (delegataire == null)
 				logger.warn("L'agent délégataire {} n'existe pas.", droit.getIdAgentDelegataire());
 			else
 				result.setDelegataire(new AgentDto(delegataire));
 		}
-		
+
 		for (Droit operateur : droit.getOperateurs()) {
 			Agent ope = mairieRepository.getAgent(operateur.getIdAgent());
 			if (ope == null)
@@ -84,10 +84,10 @@ public class AccessRightsService implements IAccessRightsService {
 			else
 				result.getSaisisseurs().add(new AgentDto(ope));
 		}
-		
+
 		return result;
 	}
-	
+
 	@Override
 	public void setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto) {
 
@@ -100,22 +100,22 @@ public class AccessRightsService implements IAccessRightsService {
 		} else {
 			droitApprobateur.setIdAgentDelegataire(null);
 		}
-		
+
 		for (AgentDto operateurDto : dto.getSaisisseurs()) {
-			
+
 			Droit existingOperateur = null;
-			
-			for(Droit operateur : droitApprobateur.getOperateurs()) {
+
+			for (Droit operateur : droitApprobateur.getOperateurs()) {
 				if (operateur.getIdAgent().equals(operateurDto.getIdAgent())) {
 					existingOperateur = operateur;
 					originalOperateurs.remove(existingOperateur);
 					break;
 				}
 			}
-			
+
 			if (existingOperateur != null)
 				continue;
-				
+
 			existingOperateur = new Droit();
 			existingOperateur.setDroitApprobateur(droitApprobateur);
 			existingOperateur.setOperateur(true);
@@ -123,7 +123,7 @@ public class AccessRightsService implements IAccessRightsService {
 			existingOperateur.setDateModification(helperService.getCurrentDate());
 			droitApprobateur.getOperateurs().add(existingOperateur);
 		}
-		
+
 		for (Droit droitOperateurToDelete : originalOperateurs) {
 			droitApprobateur.getOperateurs().remove(droitOperateurToDelete);
 			droitOperateurToDelete.remove();
@@ -160,13 +160,29 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public void setApprobateurs(List<AgentWithServiceDto> listeDto) {
-
+	public List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> listeDto) {
 		List<Droit> listeAgentAppro = accessRightsRepository.getAgentsApprobateurs();
+		List<Droit> listeAgentOperateur = accessRightsRepository.getAgentsOperateurs();
 
 		List<Droit> droitsToDelete = new ArrayList<Droit>(listeAgentAppro);
 
+		List<AgentWithServiceDto> listeAgentErreur = new ArrayList<AgentWithServiceDto>();
+		List<AgentWithServiceDto> listeSansOperateur = new ArrayList<AgentWithServiceDto>();
+		// on ne peut ajouter un approbateur si il est operateur
 		for (AgentWithServiceDto agentDto : listeDto) {
+			boolean exist = false;
+			for (Droit existingDroitOperateur : listeAgentOperateur) {
+				if (existingDroitOperateur.getIdAgent().equals(agentDto.getIdAgent())) {
+					listeAgentErreur.add(agentDto);
+					exist = true;
+					break;
+				}
+			}
+			if (!exist)
+				listeSansOperateur.add(agentDto);
+		}
+
+		for (AgentWithServiceDto agentDto : listeSansOperateur) {
 
 			Droit d = null;
 
@@ -191,7 +207,8 @@ public class AccessRightsService implements IAccessRightsService {
 
 		for (Droit droitToDelete : droitsToDelete) {
 			// First, we remove all the agents this approbateur was approving
-			// this will also delete all the agents its operateurs were filling in for
+			// this will also delete all the agents its operateurs were filling
+			// in for
 			for (DroitsAgent agentSaisiToDelete : droitToDelete.getAgents()) {
 				agentSaisiToDelete.getDroits().clear();
 				agentSaisiToDelete.remove();
@@ -199,7 +216,8 @@ public class AccessRightsService implements IAccessRightsService {
 			// Then we delete the approbateur
 			droitToDelete.remove();
 		}
-		
+		return listeAgentErreur;
+
 		// idem que
 		// for (Droit d : listeAgentAppro) {
 		//
@@ -267,7 +285,7 @@ public class AccessRightsService implements IAccessRightsService {
 				}
 			}
 
-			if (existingAgent != null) 
+			if (existingAgent != null)
 				continue;
 
 			AgentWithServiceDto dto = sirhWSConsumer.getAgentService(ag.getIdAgent(), helperService.getCurrentDate());

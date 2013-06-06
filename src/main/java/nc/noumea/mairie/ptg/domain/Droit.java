@@ -25,42 +25,39 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_DROIT", identifierField = "idDroit", identifierType = Integer.class, table = "PTG_DROIT", sequenceName = "PTG_S_DROIT")
-@NamedQueries({
-	@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
-	@NamedQuery(name = "getAgentsApprobateurs", query = "from Droit d where d.approbateur = true")
-})
+@NamedQueries({ 
+		@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
+		@NamedQuery(name = "getAgentsApprobateurs", query = "from Droit d where d.approbateur = true"),
+		@NamedQuery(name = "getAgentsOperateurs", query = "from Droit d where d.operateur = true") })
 public class Droit {
 
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
-	
+
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
-	
+
 	@Column(name = "IS_APPROBATEUR", nullable = false)
-    @Type(type="boolean")
-    private boolean approbateur;
-	
+	@Type(type = "boolean")
+	private boolean approbateur;
+
 	@Column(name = "IS_OPERATEUR", nullable = false)
-    @Type(type="boolean")
-    private boolean operateur;
-	
+	@Type(type = "boolean")
+	private boolean operateur;
+
 	@Column(name = "ID_AGENT_DELEGATAIRE")
-    private Integer idAgentDelegataire;
-	
+	private Integer idAgentDelegataire;
+
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ID_DROIT_APPROBATEUR", referencedColumnName = "ID_DROIT")
 	private Droit droitApprobateur;
-	
+
 	@OneToMany(mappedBy = "droitApprobateur", orphanRemoval = true, cascade = CascadeType.ALL)
 	private Set<Droit> operateurs = new HashSet<Droit>();
-	
+
 	@ManyToMany
-	@JoinTable(
-			name = "PTG_DROIT_DROITS_AGENT", 
-			joinColumns = @JoinColumn(name = "ID_DROIT"), 
-			inverseJoinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
+	@JoinTable(name = "PTG_DROIT_DROITS_AGENT", joinColumns = @JoinColumn(name = "ID_DROIT"), inverseJoinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
 	private Set<DroitsAgent> agents = new HashSet<DroitsAgent>();
 }

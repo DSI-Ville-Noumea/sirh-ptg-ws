@@ -62,6 +62,14 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		
 		return q.getResultList();
 	}
+
+	@Override
+	public List<Droit> getAgentsOperateurs() {
+		
+		TypedQuery<Droit> q = ptgEntityManager.createNamedQuery("getAgentsOperateurs", Droit.class);
+		
+		return q.getResultList();
+	}
 	
 	@Override
 	public Droit getAgentDroitApprobateurOrOperateurFetchAgents(Integer idAgent) {
