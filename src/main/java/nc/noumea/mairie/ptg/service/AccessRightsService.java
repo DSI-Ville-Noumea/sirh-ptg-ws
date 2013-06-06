@@ -189,6 +189,13 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		for (Droit droitToDelete : droitsToDelete) {
+			// First, we remove all the agents this approbateur was approving
+			// this will also delete all the agents its operateurs were filling in for
+			for (DroitsAgent agentSaisiToDelete : droitToDelete.getAgents()) {
+				agentSaisiToDelete.getDroits().clear();
+				agentSaisiToDelete.remove();
+			}
+			// Then we delete the approbateur
 			droitToDelete.remove();
 		}
 		
