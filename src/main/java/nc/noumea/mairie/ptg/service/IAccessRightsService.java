@@ -15,17 +15,20 @@ public interface IAccessRightsService {
 
 	void setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto);
 
+	List<AgentWithServiceDto> listAgentsApprobateurs();
+
+	void setApprobateurs(List<AgentWithServiceDto> dto);
+
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent);
+
+	void setAgentsToApprove(Integer idAgent, List<AgentDto> agents);
+
+	void setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents);	
+
 	boolean canUserAccessAccessRights(Integer idAgent);
 
 	boolean canUserAccessPrint(Integer idAgent);
 
 	boolean canUserAccessSaisie(Integer idAgent, Integer agentViewed);
 
-	List<AgentWithServiceDto> listAgentsApprobateurs();
-
-	void setApprobateurs(List<AgentWithServiceDto> dto);
-
-	List<AgentDto> getAgentsToApprove(Integer idAgent);
-
-	void setAgentsToApprove(Integer idAgent, List<AgentDto> agents);
 }

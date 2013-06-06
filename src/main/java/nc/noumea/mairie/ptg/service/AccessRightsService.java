@@ -12,6 +12,7 @@ import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -220,9 +221,10 @@ public class AccessRightsService implements IAccessRightsService {
 
 	/**
 	 * Retrieves the agent an approbator is set to Approve
+	 * or an Operator is set to Input
 	 */
 	@Override
-	public List<AgentDto> getAgentsToApprove(Integer idAgent) {
+	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
@@ -285,6 +287,45 @@ public class AccessRightsService implements IAccessRightsService {
 		for (DroitsAgent agToDelete : agentsToDelete) {
 			agToDelete.getDroits().clear();
 			agToDelete.remove();
+		}
+	}
+
+	@Override
+	public void setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents) {
+
+		Droit droitApprobateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgentApprobateur);
+		Droit droitOperateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgentOperateur);
+
+		if (!droitApprobateur.getOperateurs().contains(droitOperateur)) {
+			logger.warn("Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est pas un opérateur de l'agent {}.", idAgentApprobateur, idAgentOperateur);
+			throw new AccessForbiddenException();
+		}
+		
+		List<DroitsAgent> agentsToUnlink = new ArrayList<DroitsAgent>(droitOperateur.getAgents());
+
+		for (AgentDto ag : agents) {
+
+			for (DroitsAgent daInAppro : droitApprobateur.getAgents()) {
+				
+				// if this is not the agent we're currently looking for, continue
+				if (!daInAppro.getIdAgent().equals(ag.getIdAgent()))
+					continue;
+				
+				// once found, if this agent is not in the operator list, add it
+				if (!droitOperateur.getAgents().contains(daInAppro)) {
+					daInAppro.getDroits().add(droitOperateur);
+				}
+
+				// remove this agent from the list of agents to be unlinked
+				agentsToUnlink.remove(daInAppro);
+				
+				// we're done with the list for now
+				break;
+			}
+		}
+
+		for (DroitsAgent agToUnlink : agentsToUnlink) {
+			agToUnlink.getDroits().remove(droitOperateur);
 		}
 	}
 
