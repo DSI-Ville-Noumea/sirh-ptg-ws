@@ -17,7 +17,7 @@ public interface IAccessRightsService {
 
 	List<AgentWithServiceDto> listAgentsApprobateurs();
 
-	void setApprobateurs(List<AgentWithServiceDto> dto);
+	List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> dto);
 
 	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent);
 
