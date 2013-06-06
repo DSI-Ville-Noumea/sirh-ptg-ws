@@ -2,7 +2,6 @@ package nc.noumea.mairie.ptg.service;
 
 import java.util.List;
 
-import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
@@ -28,5 +27,5 @@ public interface IAccessRightsService {
 
 	List<AgentDto> getAgentsToApprove(Integer idAgent);
 
-	Droit setAgentsToApprove(Integer idAgent, List<AgentDto> agents);
+	void setAgentsToApprove(Integer idAgent, List<AgentDto> agents);
 }

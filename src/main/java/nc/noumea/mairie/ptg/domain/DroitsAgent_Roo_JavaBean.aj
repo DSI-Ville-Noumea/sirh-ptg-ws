@@ -4,18 +4,11 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
+import java.util.Set;
 import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 
 privileged aspect DroitsAgent_Roo_JavaBean {
-    
-    public Droit DroitsAgent.getDroit() {
-        return this.droit;
-    }
-    
-    public void DroitsAgent.setDroit(Droit droit) {
-        this.droit = droit;
-    }
     
     public Integer DroitsAgent.getIdAgent() {
         return this.idAgent;
@@ -47,6 +40,14 @@ privileged aspect DroitsAgent_Roo_JavaBean {
     
     public void DroitsAgent.setDateModification(Date dateModification) {
         this.dateModification = dateModification;
+    }
+    
+    public Set<Droit> DroitsAgent.getDroits() {
+        return this.droits;
+    }
+    
+    public void DroitsAgent.setDroits(Set<Droit> droits) {
+        this.droits = droits;
     }
     
 }

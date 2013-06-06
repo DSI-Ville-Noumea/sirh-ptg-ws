@@ -347,7 +347,7 @@ public class AccessRightsServiceTest {
 		Integer idAgent = 9007654;
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateur(idAgent)).thenReturn(null);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent)).thenReturn(null);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -380,7 +380,7 @@ public class AccessRightsServiceTest {
 		d.getAgents().add(da2);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateur(idAgent)).thenReturn(d);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent)).thenReturn(d);
 
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(1)).thenReturn(a1);
@@ -411,7 +411,7 @@ public class AccessRightsServiceTest {
 		final Droit droit = new Droit();
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateur(777)).thenReturn(droit);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(777)).thenReturn(droit);
 		Mockito.doAnswer(new Answer() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
@@ -420,7 +420,7 @@ public class AccessRightsServiceTest {
 				assertEquals(9008765, (int) obj.getIdAgent());
 				assertEquals("CODE", obj.getCodeService());
 				assertEquals("service", obj.getLibelleService());
-				assertEquals(droit, obj.getDroit());
+				assertEquals(droit, obj.getDroits().iterator().next());
 				assertEquals(currentDate, obj.getDateModification());
 
 				return true;
@@ -453,7 +453,7 @@ public class AccessRightsServiceTest {
 
 	@SuppressWarnings("rawtypes")
 	@Test
-	public void setAgentsToApprove_1ExistingAgent_UpdateModificationDate() {
+	public void setAgentsToApprove_1ExistingAgent_DoNothing() {
 
 		// Given
 		AgentDto ag = new AgentDto();
@@ -467,21 +467,10 @@ public class AccessRightsServiceTest {
 		fda.setLibelleService("service");
 		final Droit droit = new Droit();
 		droit.getAgents().add(fda);
-
+		fda.getDroits().add(droit);
+		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateur(777)).thenReturn(droit);
-		Mockito.doAnswer(new Answer() {
-			public Object answer(InvocationOnMock invocation) {
-				Object[] args = invocation.getArguments();
-				DroitsAgent obj = (DroitsAgent) args[0];
-
-				assertEquals(fda, obj);
-				assertEquals(currentDate, obj.getDateModification());
-
-				return true;
-
-			}
-		}).when(arRepo).persisEntity(Mockito.any(DroitsAgent.class));
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(777)).thenReturn(droit);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
@@ -494,11 +483,15 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		Droit result = service.setAgentsToApprove(777, agsDto);
+		service.setAgentsToApprove(777, agsDto);
 
 		// Then
 		// see callback for persisEntity
-		assertEquals(fda, result.getAgents().iterator().next());
+		assertEquals(fda, droit.getAgents().iterator().next());
+		assertEquals(droit, fda.getDroits().iterator().next());
+
+		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.any(DroitsAgent.class));
+		Mockito.verify(arRepo, Mockito.times(0)).persisEntity(Mockito.any(Droit.class));
 	}
 
 	@Test
@@ -507,15 +500,17 @@ public class AccessRightsServiceTest {
 		// Given
 		List<AgentDto> agsDto = new ArrayList<AgentDto>();
 
-		DroitsAgent fda = new DroitsAgent();
+		DroitsAgent fda = Mockito.spy(new DroitsAgent());
 		fda.setIdAgent(9008765);
 		fda.setCodeService("CODE");
 		fda.setLibelleService("service");
+		Mockito.doNothing().when(fda).remove();
+		
 		Droit droit = new Droit();
 		droit.getAgents().add(fda);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateur(777)).thenReturn(droit);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(777)).thenReturn(droit);
 
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setIdAgent(9008765);
@@ -524,10 +519,11 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		Droit result = service.setAgentsToApprove(777, agsDto);
+		service.setAgentsToApprove(777, agsDto);
 
 		// Then
-		assertEquals(0, result.getAgents().size());
+		assertEquals(0, fda.getDroits().size());
+		Mockito.verify(fda, Mockito.times(1)).remove();
 
 	}
 	
@@ -538,7 +534,7 @@ public class AccessRightsServiceTest {
 		Integer idAgent = 9008765;
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(null);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(null);
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -564,7 +560,7 @@ public class AccessRightsServiceTest {
 		droit.setIdAgentDelegataire(delegataire.getIdAgent());
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(droit);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droit);
 		
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(9008778)).thenReturn(delegataire);
@@ -596,7 +592,7 @@ public class AccessRightsServiceTest {
 		droit.getOperateurs().add(opeDroit);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(droit);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droit);
 		
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(9008778)).thenReturn(ope);
@@ -623,7 +619,7 @@ public class AccessRightsServiceTest {
 		Droit droitAppro = new Droit();
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -649,7 +645,7 @@ public class AccessRightsServiceTest {
 		droitAppro.setIdAgentDelegataire(9009999);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -675,7 +671,7 @@ public class AccessRightsServiceTest {
 		droitAppro.setIdAgentDelegataire(9009999);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -699,7 +695,7 @@ public class AccessRightsServiceTest {
 		Droit droitAppro = new Droit();
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
@@ -738,7 +734,7 @@ public class AccessRightsServiceTest {
 		droitAppro.getOperateurs().add(droitOpe);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -775,7 +771,7 @@ public class AccessRightsServiceTest {
 		Mockito.doNothing().when(droitOpe).remove();
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurAndOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
 		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);

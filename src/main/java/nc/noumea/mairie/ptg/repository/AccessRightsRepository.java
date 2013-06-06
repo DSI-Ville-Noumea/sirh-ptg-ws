@@ -64,7 +64,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 	
 	@Override
-	public Droit getAgentDroitApprobateurOrOperateur(Integer idAgent) {
+	public Droit getAgentDroitApprobateurOrOperateurFetchAgents(Integer idAgent) {
 		
 		TypedQuery<Droit> q = ptgEntityManager.createQuery(
 				"from Droit d LEFT JOIN FETCH d.agents where d.idAgent = :idAgent", Droit.class);
@@ -84,10 +84,10 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public Droit getApprobateurAndOperateurs(Integer idAgentApprobateur) {
+	public Droit getApprobateurFetchOperateurs(Integer idAgentApprobateur) {
 		
 		TypedQuery<Droit> q = ptgEntityManager.createQuery(
-				"from Droit d LEFT JOIN FETCH d.operateurs where d.idAgent = :idAgent and d.approbateur = 1", Droit.class);
+				"from Droit d LEFT JOIN FETCH d.operateurs where d.idAgent = :idAgent and d.approbateur = true", Droit.class);
 		q.setParameter("idAgent", idAgentApprobateur);
 		
 		List<Droit> r = q.getResultList();

@@ -60,7 +60,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		DelegatorAndOperatorsDto result = new DelegatorAndOperatorsDto();
 
-		Droit droit = accessRightsRepository.getApprobateurAndOperateurs(idAgent);
+		Droit droit = accessRightsRepository.getApprobateurFetchOperateurs(idAgent);
 		
 		if (droit == null) {
 			logger.warn("L'agent {} n'est pas approbateur.", idAgent);
@@ -90,7 +90,7 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public void setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto) {
 
-		Droit droitApprobateur = accessRightsRepository.getApprobateurAndOperateurs(idAgent);
+		Droit droitApprobateur = accessRightsRepository.getApprobateurFetchOperateurs(idAgent);
 
 		List<Droit> originalOperateurs = new ArrayList<Droit>(droitApprobateur.getOperateurs());
 
@@ -123,9 +123,9 @@ public class AccessRightsService implements IAccessRightsService {
 			droitApprobateur.getOperateurs().add(existingOperateur);
 		}
 		
-		for (Droit droitToDelete : originalOperateurs) {
-			boolean bb = droitApprobateur.getOperateurs().remove(droitToDelete);
-			droitToDelete.remove();
+		for (Droit droitOperateurToDelete : originalOperateurs) {
+			droitApprobateur.getOperateurs().remove(droitOperateurToDelete);
+			droitOperateurToDelete.remove();
 		}
 	}
 
@@ -219,7 +219,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateur(idAgent);
+		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent);
 
 		if (droit == null)
 			return result;
@@ -240,47 +240,45 @@ public class AccessRightsService implements IAccessRightsService {
 	 * Sets the agents an approbator is set to Approve
 	 */
 	@Override
-	public Droit setAgentsToApprove(Integer idAgent, List<AgentDto> agents) {
+	public void setAgentsToApprove(Integer idAgent, List<AgentDto> agents) {
 
-		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateur(idAgent);
+		Droit droitApprobateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent);
 
-		List<DroitsAgent> agentsToDelete = new ArrayList<DroitsAgent>(droit.getAgents());
+		List<DroitsAgent> agentsToDelete = new ArrayList<DroitsAgent>(droitApprobateur.getAgents());
 
 		for (AgentDto ag : agents) {
 
 			DroitsAgent existingAgent = null;
 
-			for (DroitsAgent da : droit.getAgents()) {
+			for (DroitsAgent da : droitApprobateur.getAgents()) {
 				if (da.getIdAgent().equals(ag.getIdAgent())) {
 					existingAgent = da;
+					agentsToDelete.remove(existingAgent);
 					break;
 				}
 			}
 
-			if (existingAgent == null) {
+			if (existingAgent != null) 
+				continue;
 
-				AgentWithServiceDto dto = sirhWSConsumer.getAgentService(ag.getIdAgent(), helperService.getCurrentDate());
-				if (dto == null)
-					continue;
+			AgentWithServiceDto dto = sirhWSConsumer.getAgentService(ag.getIdAgent(), helperService.getCurrentDate());
+			if (dto == null)
+				continue;
 
-				existingAgent = new DroitsAgent();
-				existingAgent.setIdAgent(ag.getIdAgent());
-				existingAgent.setDroit(droit);
-				existingAgent.setCodeService(dto.getCodeService());
-				existingAgent.setLibelleService(dto.getService());
-				droit.getAgents().add(existingAgent);
-			}
+			existingAgent = new DroitsAgent();
+			existingAgent.setIdAgent(ag.getIdAgent());
+			existingAgent.getDroits().add(droitApprobateur);
+			existingAgent.setCodeService(dto.getCodeService());
+			existingAgent.setLibelleService(dto.getService());
 
 			existingAgent.setDateModification(helperService.getCurrentDate());
-			agentsToDelete.remove(existingAgent);
 			accessRightsRepository.persisEntity(existingAgent);
 		}
 
 		for (DroitsAgent agToDelete : agentsToDelete) {
-			droit.getAgents().remove(agToDelete);
+			agToDelete.getDroits().clear();
+			agToDelete.remove();
 		}
-
-		return droit;
 	}
 
 }

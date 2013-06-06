@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -55,6 +57,10 @@ public class Droit {
 	@OneToMany(mappedBy = "droitApprobateur", orphanRemoval = true, cascade = CascadeType.ALL)
 	private Set<Droit> operateurs = new HashSet<Droit>();
 	
-	@OneToMany(mappedBy = "droit", orphanRemoval = true, cascade = CascadeType.ALL)
+	@ManyToMany
+	@JoinTable(
+			name = "PTG_DROIT_DROITS_AGENT", 
+			joinColumns = @JoinColumn(name = "ID_DROIT"), 
+			inverseJoinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
 	private Set<DroitsAgent> agents = new HashSet<DroitsAgent>();
 }
