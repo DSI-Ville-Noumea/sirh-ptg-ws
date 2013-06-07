@@ -138,13 +138,13 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	public boolean canUserAccessPrint(Integer idAgent) {
-		return accessRightsRepository.isUserOperator(idAgent);
+		return accessRightsRepository.isUserApprobatorOrOperatorOrDelegataire(idAgent);
 	}
-
+	
 	@Override
-	public boolean canUserAccessSaisie(Integer idAgent, Integer agentViewed) {
-		// boolean isOperator = accessRightsRepository.isUserOperator(idAgent);
-		// List<AgentDto> agents
+	public boolean canUserAccessInput(Integer idAgent, Integer agentViewed) {
+//		 boolean isOperator = accessRightsRepository.isUserOperator(idAgent);
+//		 List<AgentDto> agents
 		return true;
 	}
 
@@ -152,7 +152,6 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<AgentWithServiceDto> listAgentsApprobateurs() {
 		List<AgentWithServiceDto> agentDtos = new ArrayList<AgentWithServiceDto>();
 		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
-			// Retrieve division service of agent
 			AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(da.getIdAgent(), helperService.getCurrentDate());
 			agentDtos.add(agentDto);
 		}

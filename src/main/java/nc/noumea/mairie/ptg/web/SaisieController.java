@@ -64,7 +64,7 @@ public class SaisieController {
 		if (Agent.findAgent(convertedagent) == null)
 			throw new NotFoundException();
 		
-		if (!accessRightService.canUserAccessSaisie(convertedIdAgent, convertedagent))
+		if (!accessRightService.canUserAccessInput(convertedIdAgent, convertedagent))
 			throw new AccessForbiddenException();
 		
 		FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(agent, date);
@@ -96,7 +96,7 @@ public class SaisieController {
 		if (Agent.findAgent(convertedagent) == null)
 			throw new NotFoundException();
 		
-		if (!accessRightService.canUserAccessSaisie(convertedIdAgent, convertedagent))
+		if (!accessRightService.canUserAccessInput(convertedIdAgent, convertedagent))
 			throw new AccessForbiddenException();
 		
 		SaisieReturnMessageDto srm = saisieService.saveFichePointage(dto);

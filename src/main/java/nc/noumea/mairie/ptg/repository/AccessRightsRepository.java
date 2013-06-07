@@ -44,10 +44,34 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 	
 	@Override
+	public boolean isUserApprobatorOrDelegataire(Integer idAgent) {
+		
+		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
+				"select sum(d.approbateur) from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent", Boolean.class);
+		q.setParameter("idAgent", idAgent);
+		
+		Boolean result = q.getSingleResult();
+		
+		return (result != null && result);
+	}
+	
+	@Override
 	public boolean isUserOperator(Integer idAgent) {
 		
 		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
 				"select sum(d.operateur) from Droit d where d.idAgent = :idAgent", Boolean.class);
+		q.setParameter("idAgent", idAgent);
+		
+		Boolean result = q.getSingleResult();
+		
+		return (result != null && result);
+	}
+	
+	@Override
+	public boolean isUserApprobatorOrOperatorOrDelegataire(Integer idAgent) {
+		
+		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
+				"select sum(d.operateur) + sum(d.approbateur) from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent", Boolean.class);
 		q.setParameter("idAgent", idAgent);
 		
 		Boolean result = q.getSingleResult();

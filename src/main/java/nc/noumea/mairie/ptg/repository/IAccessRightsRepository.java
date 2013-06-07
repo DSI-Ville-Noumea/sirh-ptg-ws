@@ -13,8 +13,12 @@ public interface IAccessRightsRepository {
 
 	boolean isUserApprobator(Integer idAgent);
 
+	boolean isUserApprobatorOrDelegataire(Integer idAgent);
+	
 	boolean isUserOperator(Integer idAgent);
 
+	boolean isUserApprobatorOrOperatorOrDelegataire(Integer idAgent);
+	 
 	List<Droit> getAgentsApprobateurs();
 
 	List<Droit> getAgentsOperateurs();

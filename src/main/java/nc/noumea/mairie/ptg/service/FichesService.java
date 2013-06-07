@@ -1,12 +1,14 @@
 package nc.noumea.mairie.ptg.service;
 
-import java.util.Arrays;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
-import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
-import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
-import nc.noumea.mairie.ws.ISirhWSConsumer;
+import nc.noumea.mairie.ptg.domain.Droit;
+import nc.noumea.mairie.ptg.domain.DroitsAgent;
+import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
+import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,24 +17,30 @@ import org.springframework.stereotype.Service;
 public class FichesService implements IFichesService {
 	
 	@Autowired
-	private ISirhWSConsumer sirhWSConsumer;
+	private IMairieRepository mairieRepository;
+
+	@Autowired
+	private IAccessRightsRepository accessRightsRepository;
 	
 	@Override
-	public List<AgentWithServiceDto> listAgentsFichesToPrint(Integer idAgent, Date mondayDate, String codeService, Integer agent) {
+	public List<AgentDto> listAgentsFichesToPrint(Integer idAgent, String codeService) {
 		
-		List<AgentWithServiceDto> result = null;
+		List<AgentDto> result = new ArrayList<AgentDto>();
 		
-		if (agent != null && agent != 0) {
-			AgentWithServiceDto r = sirhWSConsumer.getAgentService(agent, mondayDate);
-			return Arrays.asList(r);
+		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent);
+		
+		for (DroitsAgent da : droit.getAgents()) {
+			
+			if (codeService != null && !codeService.equals(da.getCodeService()))
+				continue;
+			
+			Agent ag = mairieRepository.getAgent(da.getIdAgent());
+			AgentDto agDto = new AgentDto();
+			agDto.setIdAgent(da.getIdAgent());
+			agDto.setNom(ag.getDisplayNom());
+			agDto.setPrenom(ag.getDisplayPrenom());
+			result.add(agDto);
 		}
-		
-		if (codeService == null) {
-			SirhWsServiceDto serviceDto = sirhWSConsumer.getAgentDirection(idAgent);
-			codeService = serviceDto.getService();
-		}
-		
-		result = sirhWSConsumer.getServicesAgent(codeService, mondayDate);
 		
 		return result;
 	}

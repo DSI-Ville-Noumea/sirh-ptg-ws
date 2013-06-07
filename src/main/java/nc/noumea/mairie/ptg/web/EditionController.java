@@ -3,7 +3,7 @@ package nc.noumea.mairie.ptg.web;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IFichesService;
@@ -48,24 +48,18 @@ public class EditionController {
 	@RequestMapping(value = "listeFiches", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getFichesToPrint(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date,
-			@RequestParam(value = "codeService", required = false) String codeService, @RequestParam(value = "agent", required = false) Integer agent) {
+			@RequestParam(value = "codeService", required = false) String codeService) {
 
 		logger.debug(
-				"entered GET [edition/listeFiches] => getFichesToPrint with parameters idAgent = {}, date = {}, codeService = {} and agent = {}",
-				idAgent, date, codeService, agent);
+				"entered GET [edition/listeFiches] => getFichesToPrint with parameters idAgent = {}, codeService = {}",
+				idAgent, codeService);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		if (!accessRightService.canUserAccessPrint(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		if (Agent.findAgent(convertedIdAgent) == null)
-			throw new NotFoundException();
-
-		Integer convertedIdAgent2 = converterService.tryConvertFromADIdAgentToSIRHIdAgent(agent);
-
-		List<AgentWithServiceDto> agents = ficheService.listAgentsFichesToPrint(convertedIdAgent, date, codeService, convertedIdAgent2);
+		List<AgentDto> agents = ficheService.listAgentsFichesToPrint(convertedIdAgent, codeService);
 
 		String json = new JSONSerializer().exclude("*.class").serialize(agents);
 
