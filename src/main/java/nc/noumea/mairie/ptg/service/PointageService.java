@@ -21,7 +21,7 @@ import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
-import nc.noumea.mairie.ptg.dto.ServiceDto;
+import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
@@ -56,7 +56,7 @@ public class PointageService implements IPointageService {
 			throw new NotAMondayException();
 
 		// Retrieve division service of agent
-		ServiceDto service = sirhWSConsumer.getAgentDirection(agent.getIdAgent());
+		SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(agent.getIdAgent());
 
 		// on construit le dto de l'agent
 		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);

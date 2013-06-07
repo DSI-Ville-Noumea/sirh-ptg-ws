@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
-import nc.noumea.mairie.ptg.dto.ServiceDto;
+import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -36,7 +36,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 	private static final String sirhSousServicesUrl = "services/sousServices";
 
 	@Override
-	public ServiceDto getAgentDirection(Integer idAgent) {
+	public SirhWsServiceDto getAgentDirection(Integer idAgent) {
 
 		String url = String.format(sirhWsBaseUrl + sirhAgentDivisionsUrl);
 
@@ -46,7 +46,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 
 		ClientResponse res = createAndFireRequest(parameters, url);
 
-		return readResponse(ServiceDto.class, res, url);
+		return readResponse(SirhWsServiceDto.class, res, url);
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public List<ServiceDto> getSousServices(String rootService) {
+	public List<SirhWsServiceDto> getSousServices(String rootService) {
 
 		String url = String.format(sirhWsBaseUrl + sirhSousServicesUrl);
 
@@ -95,7 +95,7 @@ public class SirhWSConsumer implements ISirhWSConsumer {
 
 		ClientResponse res = createAndFireRequest(parameters, url);
 
-		List<ServiceDto> services = readResponseAsList(ServiceDto.class, res, url);
+		List<SirhWsServiceDto> services = readResponseAsList(SirhWsServiceDto.class, res, url);
 
 		return services;
 	}

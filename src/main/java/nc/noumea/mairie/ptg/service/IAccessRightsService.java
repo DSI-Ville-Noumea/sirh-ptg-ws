@@ -6,6 +6,7 @@ import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
+import nc.noumea.mairie.ptg.dto.ServiceDto;
 
 public interface IAccessRightsService {
 
@@ -21,6 +22,8 @@ public interface IAccessRightsService {
 
 	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent);
 
+	List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent);
+	
 	void setAgentsToApprove(Integer idAgent, List<AgentDto> agents);
 
 	void setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents);	

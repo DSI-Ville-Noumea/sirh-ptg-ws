@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
-import nc.noumea.mairie.ptg.dto.ServiceDto;
+import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class FichesService implements IFichesService {
 		}
 		
 		if (codeService == null) {
-			ServiceDto serviceDto = sirhWSConsumer.getAgentDirection(idAgent);
+			SirhWsServiceDto serviceDto = sirhWSConsumer.getAgentDirection(idAgent);
 			codeService = serviceDto.getService();
 		}
 		

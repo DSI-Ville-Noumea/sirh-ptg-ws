@@ -75,7 +75,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public Droit getAgentDroitApprobateurOrOperateurFetchAgents(Integer idAgent) {
 		
 		TypedQuery<Droit> q = ptgEntityManager.createQuery(
-				"from Droit d LEFT JOIN FETCH d.agents where d.idAgent = :idAgent", Droit.class);
+				"from Droit d LEFT JOIN FETCH d.agents where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent", Droit.class);
 		q.setParameter("idAgent", idAgent);
 		
 		List<Droit> r = q.getResultList();

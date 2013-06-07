@@ -17,6 +17,7 @@ import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
+import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
@@ -939,5 +940,65 @@ public class AccessRightsServiceTest {
 
 		// Then
 		assertEquals(1, da1.getDroits().size());
+	}
+	
+	@Test
+	public void getAgentsServicesToApproveOrInput_2agents_return2Dtos() {
+	
+		// Given
+		Droit droit = new Droit();
+		DroitsAgent d1 = new DroitsAgent();
+		d1.setCodeService("S1");
+		d1.setLibelleService("Service 1");
+		DroitsAgent d2 = new DroitsAgent();
+		d2.setCodeService("S2");
+		d2.setLibelleService("Service 2");
+		droit.getAgents().add(d1);
+		droit.getAgents().add(d2);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(9008888)).thenReturn(droit);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		
+		// When
+		List<ServiceDto> result = service.getAgentsServicesToApproveOrInput(9008888);
+		
+		// Then
+		assertEquals(2, result.size());
+		assertEquals(d1.getCodeService(), result.get(0).getCodeService());
+		assertEquals(d1.getLibelleService(), result.get(0).getService());
+		assertEquals(d2.getCodeService(), result.get(1).getCodeService());
+		assertEquals(d2.getLibelleService(), result.get(1).getService());
+	}
+	
+	@Test
+	public void getAgentsServicesToApproveOrInput_2agentsSameService_return1Dtos() {
+	
+		// Given
+		Droit droit = new Droit();
+		DroitsAgent d1 = new DroitsAgent();
+		d1.setCodeService("S1");
+		d1.setLibelleService("Service 1");
+		DroitsAgent d2 = new DroitsAgent();
+		d2.setCodeService("S1");
+		d2.setLibelleService("Service 1");
+		droit.getAgents().add(d1);
+		droit.getAgents().add(d2);
+		
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(9008888)).thenReturn(droit);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		
+		// When
+		List<ServiceDto> result = service.getAgentsServicesToApproveOrInput(9008888);
+		
+		// Then
+		assertEquals(1, result.size());
+		assertEquals(d1.getCodeService(), result.get(0).getCodeService());
+		assertEquals(d1.getLibelleService(), result.get(0).getService());
 	}
 }

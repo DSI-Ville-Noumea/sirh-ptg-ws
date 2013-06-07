@@ -22,7 +22,7 @@ import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
-import nc.noumea.mairie.ptg.dto.ServiceDto;
+import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
@@ -43,7 +43,7 @@ public class PointageServiceTest {
 		// Given
 		Integer idAgent = 9007654;
 
-		ServiceDto siserv = new ServiceDto();
+		SirhWsServiceDto siserv = new SirhWsServiceDto();
 		siserv.setService("SERVICE");
 		siserv.setServiceLibelle("LIB SERVICE");
 

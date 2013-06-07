@@ -10,6 +10,7 @@ import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
+import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
@@ -338,4 +339,30 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 	}
 
+	@Override
+	public List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
+		
+		List<ServiceDto> result = new ArrayList<ServiceDto>();
+
+		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent);
+
+		if (droit == null)
+			return result;
+
+		List<String> codeServices = new ArrayList<String>();
+		
+		for (DroitsAgent da : droit.getAgents()) {
+			
+			if (codeServices.contains(da.getCodeService()))
+				continue;
+			
+			codeServices.add(da.getCodeService());
+			ServiceDto svDto = new ServiceDto();
+			svDto.setCodeService(da.getCodeService());
+			svDto.setService(da.getLibelleService());
+			result.add(svDto);
+		}
+
+		return result;
+	}
 }
