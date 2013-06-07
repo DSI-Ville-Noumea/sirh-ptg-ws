@@ -147,6 +147,11 @@ public class AccessRightsService implements IAccessRightsService {
 //		 List<AgentDto> agents
 		return true;
 	}
+	
+	@Override
+	public boolean canUserAccessAppro(Integer idAgent) {
+		return accessRightsRepository.isUserApprobatorOrDelegataire(idAgent);
+	}
 
 	@Override
 	public List<AgentWithServiceDto> listAgentsApprobateurs() {
@@ -232,15 +237,19 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	@Override
 	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent) {
+		return getAgentsToApproveOrInput(idAgent, null);
+	}
+	
+	/**
+	 * Retrieves the agent an approbator is set to Approve or an Operator is set
+	 * to Input. This service also filters by service
+	 */
+	@Override
+	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent);
-
-		if (droit == null)
-			return result;
-
-		for (DroitsAgent da : droit.getAgents()) {
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
 			AgentDto agDto = new AgentDto();
 			Agent ag = mairieRepository.getAgent(da.getIdAgent());
 			agDto.setIdAgent(da.getIdAgent());
@@ -250,6 +259,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		return result;
+		
 	}
 
 	/**
@@ -338,19 +348,18 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 	}
 
+	/**
+	 * Returns the list of distinct services approved/input agents have
+	 * Used to build the filters (by service)
+	 */
 	@Override
 	public List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
 		
 		List<ServiceDto> result = new ArrayList<ServiceDto>();
 
-		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent);
-
-		if (droit == null)
-			return result;
-
 		List<String> codeServices = new ArrayList<String>();
 		
-		for (DroitsAgent da : droit.getAgents()) {
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent)) {
 			
 			if (codeServices.contains(da.getCodeService()))
 				continue;

@@ -61,6 +61,9 @@ public class EditionController {
 
 		List<AgentDto> agents = ficheService.listAgentsFichesToPrint(convertedIdAgent, codeService);
 
+		if (agents.size() == 0)
+			throw new NoContentException();
+		
 		String json = new JSONSerializer().exclude("*.class").serialize(agents);
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);

@@ -2,6 +2,7 @@ package nc.noumea.mairie.ptg.web;
 
 import java.util.List;
 
+import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
@@ -69,13 +70,32 @@ public class FiltreController {
 	@ResponseBody
 	@RequestMapping(value = "/services", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> geServices(@RequestParam("idAgent") Integer idAgent) {
+	public ResponseEntity<String> getServices(@RequestParam("idAgent") Integer idAgent) {
 
-		logger.debug("entered GET [filtres/services] => geServices with parameter idAgent = {}", idAgent);
+		logger.debug("entered GET [filtres/services] => getServices with parameter idAgent = {}", idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
 		List<ServiceDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent);
+
+		if (services.size() == 0)
+			throw new NoContentException();
+		
+		String json = new JSONSerializer().exclude("*.class").serialize(services);
+
+		return new ResponseEntity<String>(json, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/agents", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getAgents(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "codeService", required = false) String codeService) {
+
+		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and codeService = {}", idAgent, codeService);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, codeService);
 
 		if (services.size() == 0)
 			throw new NoContentException();

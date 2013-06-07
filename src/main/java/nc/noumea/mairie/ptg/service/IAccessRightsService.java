@@ -21,6 +21,8 @@ public interface IAccessRightsService {
 	List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> dto);
 
 	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent);
+	
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService);
 
 	List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent);
 	
@@ -33,5 +35,7 @@ public interface IAccessRightsService {
 	boolean canUserAccessPrint(Integer idAgent);
 
 	boolean canUserAccessInput(Integer idAgent, Integer agentViewed);
+	
+	boolean canUserAccessAppro(Integer idAgent);
 
 }

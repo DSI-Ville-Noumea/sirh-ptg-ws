@@ -409,7 +409,7 @@ public class AccessRightsServiceTest {
 		d.getAgents().add(da2);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent)).thenReturn(d);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
 
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(1)).thenReturn(a1);
@@ -946,18 +946,15 @@ public class AccessRightsServiceTest {
 	public void getAgentsServicesToApproveOrInput_2agents_return2Dtos() {
 	
 		// Given
-		Droit droit = new Droit();
 		DroitsAgent d1 = new DroitsAgent();
 		d1.setCodeService("S1");
 		d1.setLibelleService("Service 1");
 		DroitsAgent d2 = new DroitsAgent();
 		d2.setCodeService("S2");
 		d2.setLibelleService("Service 2");
-		droit.getAgents().add(d1);
-		droit.getAgents().add(d2);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(9008888)).thenReturn(droit);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9008888)).thenReturn(Arrays.asList(d1, d2));
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -967,28 +964,25 @@ public class AccessRightsServiceTest {
 		
 		// Then
 		assertEquals(2, result.size());
-		assertEquals(d2.getCodeService(), result.get(0).getCodeService());
-		assertEquals(d2.getLibelleService(), result.get(0).getService());
-		assertEquals(d1.getCodeService(), result.get(1).getCodeService());
-		assertEquals(d1.getLibelleService(), result.get(1).getService());
+		assertEquals(d1.getCodeService(), result.get(0).getCodeService());
+		assertEquals(d1.getLibelleService(), result.get(0).getService());
+		assertEquals(d2.getCodeService(), result.get(1).getCodeService());
+		assertEquals(d2.getLibelleService(), result.get(1).getService());
 	}
 	
 	@Test
 	public void getAgentsServicesToApproveOrInput_2agentsSameService_return1Dtos() {
 	
 		// Given
-		Droit droit = new Droit();
 		DroitsAgent d1 = new DroitsAgent();
 		d1.setCodeService("S1");
 		d1.setLibelleService("Service 1");
 		DroitsAgent d2 = new DroitsAgent();
 		d2.setCodeService("S1");
 		d2.setLibelleService("Service 1");
-		droit.getAgents().add(d1);
-		droit.getAgents().add(d2);
 		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(9008888)).thenReturn(droit);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9008888)).thenReturn(Arrays.asList(d1, d2));
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);

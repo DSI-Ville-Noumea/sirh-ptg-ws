@@ -129,5 +129,24 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		
 		return r.get(0);
 	}
+
+	@Override
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent) {
+		return getListOfAgentsToInputOrApprove(idAgent, null);
+	}
+	
+	@Override
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService) {
+
+		TypedQuery<DroitsAgent> q = ptgEntityManager.createNamedQuery(
+				codeService == null ? "getListOfAgentsToInputOrApprove" : "getListOfAgentsToInputOrApproveByService", DroitsAgent.class);
+		
+		q.setParameter("idAgent", idAgent);
+		
+		if (codeService != null)
+			q.setParameter("codeService", codeService);
+		
+		return q.getResultList();
+	}
 	
 }

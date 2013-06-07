@@ -28,4 +28,8 @@ public interface IAccessRightsRepository {
 	Droit getApprobateurFetchOperateurs(Integer idAgentApprobateur);
 	
 	void persisEntity(Object obj);
+
+	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent);
+	
+	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
 }

@@ -3,7 +3,6 @@ package nc.noumea.mairie.ptg.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
@@ -27,13 +26,7 @@ public class FichesService implements IFichesService {
 		
 		List<AgentDto> result = new ArrayList<AgentDto>();
 		
-		Droit droit = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent);
-		
-		for (DroitsAgent da : droit.getAgents()) {
-			
-			if (codeService != null && !codeService.equals(da.getCodeService()))
-				continue;
-			
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
 			Agent ag = mairieRepository.getAgent(da.getIdAgent());
 			AgentDto agDto = new AgentDto();
 			agDto.setIdAgent(da.getIdAgent());
