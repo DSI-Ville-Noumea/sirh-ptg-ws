@@ -967,10 +967,10 @@ public class AccessRightsServiceTest {
 		
 		// Then
 		assertEquals(2, result.size());
-		assertEquals(d1.getCodeService(), result.get(0).getCodeService());
-		assertEquals(d1.getLibelleService(), result.get(0).getService());
-		assertEquals(d2.getCodeService(), result.get(1).getCodeService());
-		assertEquals(d2.getLibelleService(), result.get(1).getService());
+		assertEquals(d2.getCodeService(), result.get(0).getCodeService());
+		assertEquals(d2.getLibelleService(), result.get(0).getService());
+		assertEquals(d1.getCodeService(), result.get(1).getCodeService());
+		assertEquals(d1.getLibelleService(), result.get(1).getService());
 	}
 	
 	@Test
