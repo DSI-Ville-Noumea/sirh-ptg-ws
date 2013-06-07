@@ -162,27 +162,16 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> listeDto) {
 		List<Droit> listeAgentAppro = accessRightsRepository.getAgentsApprobateurs();
-		List<Droit> listeAgentOperateur = accessRightsRepository.getAgentsOperateurs();
 
 		List<Droit> droitsToDelete = new ArrayList<Droit>(listeAgentAppro);
 
 		List<AgentWithServiceDto> listeAgentErreur = new ArrayList<AgentWithServiceDto>();
-		List<AgentWithServiceDto> listeSansOperateur = new ArrayList<AgentWithServiceDto>();
-		// on ne peut ajouter un approbateur si il est operateur
-		for (AgentWithServiceDto agentDto : listeDto) {
-			boolean exist = false;
-			for (Droit existingDroitOperateur : listeAgentOperateur) {
-				if (existingDroitOperateur.getIdAgent().equals(agentDto.getIdAgent())) {
-					listeAgentErreur.add(agentDto);
-					exist = true;
-					break;
-				}
-			}
-			if (!exist)
-				listeSansOperateur.add(agentDto);
-		}
 
-		for (AgentWithServiceDto agentDto : listeSansOperateur) {
+		for (AgentWithServiceDto agentDto : listeDto) {
+			if (accessRightsRepository.isUserOperator(agentDto.getIdAgent())) {
+				listeAgentErreur.add(agentDto);
+				break;
+			}
 
 			Droit d = null;
 
@@ -238,8 +227,8 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	/**
-	 * Retrieves the agent an approbator is set to Approve
-	 * or an Operator is set to Input
+	 * Retrieves the agent an approbator is set to Approve or an Operator is set
+	 * to Input
 	 */
 	@Override
 	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent) {
@@ -315,20 +304,22 @@ public class AccessRightsService implements IAccessRightsService {
 		Droit droitOperateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgentOperateur);
 
 		if (!droitApprobateur.getOperateurs().contains(droitOperateur)) {
-			logger.warn("Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est pas un opérateur de l'agent {}.", idAgentApprobateur, idAgentOperateur);
+			logger.warn("Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est pas un opérateur de l'agent {}.",
+					idAgentApprobateur, idAgentOperateur);
 			throw new AccessForbiddenException();
 		}
-		
+
 		List<DroitsAgent> agentsToUnlink = new ArrayList<DroitsAgent>(droitOperateur.getAgents());
 
 		for (AgentDto ag : agents) {
 
 			for (DroitsAgent daInAppro : droitApprobateur.getAgents()) {
-				
-				// if this is not the agent we're currently looking for, continue
+
+				// if this is not the agent we're currently looking for,
+				// continue
 				if (!daInAppro.getIdAgent().equals(ag.getIdAgent()))
 					continue;
-				
+
 				// once found, if this agent is not in the operator list, add it
 				if (!droitOperateur.getAgents().contains(daInAppro)) {
 					daInAppro.getDroits().add(droitOperateur);
@@ -336,7 +327,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 				// remove this agent from the list of agents to be unlinked
 				agentsToUnlink.remove(daInAppro);
-				
+
 				// we're done with the list for now
 				break;
 			}
