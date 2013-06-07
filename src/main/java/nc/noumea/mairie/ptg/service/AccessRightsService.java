@@ -171,7 +171,7 @@ public class AccessRightsService implements IAccessRightsService {
 		for (AgentWithServiceDto agentDto : listeDto) {
 			if (accessRightsRepository.isUserOperator(agentDto.getIdAgent())) {
 				listeAgentErreur.add(agentDto);
-				break;
+				continue;
 			}
 
 			Droit d = null;
