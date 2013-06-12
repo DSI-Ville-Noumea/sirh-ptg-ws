@@ -3,6 +3,8 @@ package nc.noumea.mairie.ptg.web;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
@@ -62,6 +64,9 @@ public class VisualisationController {
 			throw new AccessForbiddenException();
 		
 		List<ConsultPointageDto> result = approbationService.getPointages(convertedIdAgent, fromDate, toDate, codeService, convertedAgent, idRefEtat, idRefType);
+		
+		if (result.size() == 0)
+			throw new NoResultException();
 		
 		String response = new JSONSerializer().exclude("*.class")
 				.transform(new MSDateTransformer(), Date.class)
