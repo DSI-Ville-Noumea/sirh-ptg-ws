@@ -35,6 +35,8 @@ public interface IAccessRightsService {
 	boolean canUserAccessPrint(Integer idAgent);
 
 	boolean canUserAccessInput(Integer idAgent, Integer agentViewed);
+
+	boolean canUserAccessVisualisation(Integer idAgent);
 	
 	boolean canUserAccessAppro(Integer idAgent);
 

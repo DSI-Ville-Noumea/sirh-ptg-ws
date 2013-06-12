@@ -54,6 +54,26 @@ public class PointageRepository implements IPointageRepository {
 	}
 
 	@Override
+	public List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
+
+		String queryName = "";
+		if (idRefType != null)
+			queryName = "getListPointageByAgentsTypeAndDate";
+		else
+			queryName = "getListPointageByAgentsAndDate";
+		
+		TypedQuery<Pointage> query = ptgEntityManager.createNamedQuery(queryName, Pointage.class);
+		query.setParameter("idAgents", idAgents.size() == 0 ? null : idAgents);
+		query.setParameter("fromDate", fromDate);
+		query.setParameter("toDate", toDate);
+
+		if (idRefType != null)
+			query.setParameter("idRefTypePointage", idRefType);
+		
+		return query.getResultList();
+	}
+	
+	@Override
 	public void savePointage(Pointage ptg) {
 		if (ptg.getIdPointage() == null || ptg.getIdPointage().equals(0))
 			ptgEntityManager.persist(ptg);

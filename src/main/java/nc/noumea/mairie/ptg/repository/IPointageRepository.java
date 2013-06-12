@@ -15,6 +15,8 @@ public interface IPointageRepository {
 
 	List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
 
+	List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
+	
 	void savePointage(Pointage ptg);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);

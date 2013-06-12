@@ -152,6 +152,11 @@ public class AccessRightsService implements IAccessRightsService {
 	public boolean canUserAccessAppro(Integer idAgent) {
 		return accessRightsRepository.isUserApprobatorOrDelegataire(idAgent);
 	}
+	
+	@Override
+	public boolean canUserAccessVisualisation(Integer idAgent) {
+		return accessRightsRepository.isUserApprobatorOrOperatorOrDelegataire(idAgent);
+	}
 
 	@Override
 	public List<AgentWithServiceDto> listAgentsApprobateurs() {
