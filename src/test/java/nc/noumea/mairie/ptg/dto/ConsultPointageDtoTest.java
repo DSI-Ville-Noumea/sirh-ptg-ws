@@ -54,10 +54,8 @@ public class ConsultPointageDtoTest {
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDate());
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDebut());
 		assertEquals(new DateTime(2013, 05, 14, 10, 45, 0).toDate(), dto.getFin());
-		assertEquals(new DateTime(2013, 05, 24, 7, 56, 0).toDate(), dto.getDateSaisie());
 		assertEquals("motif", dto.getMotif());
 		assertEquals("commentaire", dto.getCommentaire());
-		assertEquals(EtatPointageEnum.APPROUVE.getCodeEtat(), (int) dto.getIdRefEtat());
 		assertEquals("2h45m", dto.getQuantite());
 	}
 	
@@ -98,10 +96,8 @@ public class ConsultPointageDtoTest {
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDate());
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDebut());
 		assertEquals(new DateTime(2013, 05, 14, 8, 45, 0).toDate(), dto.getFin());
-		assertEquals(new DateTime(2013, 05, 24, 7, 56, 0).toDate(), dto.getDateSaisie());
 		assertEquals("motif", dto.getMotif());
 		assertEquals("commentaire", dto.getCommentaire());
-		assertEquals(EtatPointageEnum.APPROUVE.getCodeEtat(), (int) dto.getIdRefEtat());
 		assertEquals("45m", dto.getQuantite());
 	}
 	
@@ -144,10 +140,8 @@ public class ConsultPointageDtoTest {
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDate());
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDebut());
 		assertNull(dto.getFin());
-		assertEquals(new DateTime(2013, 05, 24, 7, 56, 0).toDate(), dto.getDateSaisie());
 		assertEquals("motif", dto.getMotif());
 		assertEquals("commentaire", dto.getCommentaire());
-		assertEquals(EtatPointageEnum.APPROUVE.getCodeEtat(), (int) dto.getIdRefEtat());
 		assertEquals("2h", dto.getQuantite());
 	}
 	
@@ -190,10 +184,26 @@ public class ConsultPointageDtoTest {
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDate());
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDebut());
 		assertNull(dto.getFin());
-		assertEquals(new DateTime(2013, 05, 24, 7, 56, 0).toDate(), dto.getDateSaisie());
 		assertEquals("motif", dto.getMotif());
 		assertEquals("commentaire", dto.getCommentaire());
-		assertEquals(EtatPointageEnum.APPROUVE.getCodeEtat(), (int) dto.getIdRefEtat());
 		assertEquals("1", dto.getQuantite());
+	}
+	
+	@Test
+	public void updateEtat() {
+
+		// Given
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		etat.setEtatPointagePk(new EtatPointagePK());
+		etat.getEtatPointagePk().setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
+		
+		// When
+		ConsultPointageDto dto = new ConsultPointageDto();
+		dto.updateEtat(etat);
+		
+		// Then
+		assertEquals(new DateTime(2013, 05, 24, 7, 56, 0).toDate(), dto.getDateSaisie());
+		assertEquals(EtatPointageEnum.APPROUVE.getCodeEtat(), (int) dto.getIdRefEtat());
 	}
 }

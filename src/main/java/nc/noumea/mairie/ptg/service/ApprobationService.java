@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
@@ -87,8 +88,32 @@ public class ApprobationService implements IApprobationService {
 			
 			AgentDto agDto = new AgentDto(mairieRepository.getAgent(ptg.getIdAgent()));
 			ConsultPointageDto dto = new ConsultPointageDto(ptg);
+			dto.updateEtat(ptg.getLatestEtatPointage());
 			dto.setAgent(agDto);
 			result.add(dto);
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<ConsultPointageDto> getPointagesArchives(Integer idAgent,
+			Integer idPointage) {
+
+		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
+		
+		List<Pointage> list = pointageRepository.getPointageArchives(idPointage);
+		
+		for (Pointage ptg : list) {
+			
+			for(EtatPointage etat : ptg.getEtats()) {
+				AgentDto agDto = new AgentDto(mairieRepository.getAgent(etat.getIdAgent()));
+				ConsultPointageDto dto = new ConsultPointageDto(ptg);
+				dto.updateEtat(etat);
+				dto.setAgent(agDto);
+				result.add(dto);
+			}
+			
 		}
 		
 		return result;

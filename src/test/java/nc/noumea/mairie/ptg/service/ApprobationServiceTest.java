@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
@@ -13,6 +14,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.repository.AccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
@@ -311,5 +313,71 @@ public class ApprobationServiceTest {
 		
 		// Then
 		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void getPointagesArchives_1PointageWithSeveralEtats() {
+		
+		// Given
+		Pointage ptg1 = new Pointage();
+		ptg1.setIdPointage(123);
+		ptg1.setType(new RefTypePointage());
+		ptg1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		EtatPointage etat1 = new EtatPointage();
+		EtatPointagePK etat1pk = new EtatPointagePK();
+		etat1pk.setDateEtat(new DateTime(2013, 04, 28, 8, 10, 0).toDate());
+		etat1pk.setPointage(ptg1);
+		etat1.setEtatPointagePk(etat1pk);
+		etat1.setEtat(EtatPointageEnum.SAISI);
+		etat1.setIdAgent(9007861);
+		
+		EtatPointage etat2 = new EtatPointage();
+		EtatPointagePK etat2pk = new EtatPointagePK();
+		etat2pk.setDateEtat(new DateTime(2013, 04, 29, 10, 20, 0).toDate());
+		etat2pk.setPointage(ptg1);
+		etat2.setEtatPointagePk(etat2pk);
+		etat2.setEtat(EtatPointageEnum.REFUSE);
+		etat2.setIdAgent(9007860);
+		
+		EtatPointage etat3 = new EtatPointage();
+		EtatPointagePK etat3pk = new EtatPointagePK();
+		etat3pk.setDateEtat(new DateTime(2013, 04, 29, 10, 30, 0).toDate());
+		etat3pk.setPointage(ptg1);
+		etat3.setEtatPointagePk(etat3pk);
+		etat3.setEtat(EtatPointageEnum.SAISI);
+		etat3.setIdAgent(9007861);
+		
+		ptg1.setEtats(new HashSet<EtatPointage>(Arrays.asList(etat3, etat2, etat1)));
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointageArchives(123)).thenReturn(Arrays.asList(ptg1));
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Agent ag9007860 = new Agent();
+		ag9007860.setIdAgent(9007860);
+		Mockito.when(mRepo.getAgent(9007860)).thenReturn(ag9007860);
+		Agent ag9007861 = new Agent();
+		ag9007861.setIdAgent(9007861);
+		Mockito.when(mRepo.getAgent(9007861)).thenReturn(ag9007861);
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+
+		// When
+		List<ConsultPointageDto> result = service.getPointagesArchives(9001234, 123);
+		
+		// Then
+		assertEquals(3, result.size());
+		assertEquals(EtatPointageEnum.SAISI.getCodeEtat(), (int) result.get(0).getIdRefEtat());
+		assertEquals(new DateTime(2013, 04, 28, 8, 10, 0).toDate(), result.get(0).getDateSaisie());
+		assertEquals(9007861, (int) result.get(0).getAgent().getIdAgent());
+		assertEquals(EtatPointageEnum.REFUSE.getCodeEtat(), (int) result.get(1).getIdRefEtat());
+		assertEquals(new DateTime(2013, 04, 29, 10, 20, 0).toDate(), result.get(1).getDateSaisie());
+		assertEquals(9007860, (int) result.get(1).getAgent().getIdAgent());
+		assertEquals(EtatPointageEnum.SAISI.getCodeEtat(), (int) result.get(2).getIdRefEtat());
+		assertEquals(new DateTime(2013, 04, 29, 10, 30, 0).toDate(), result.get(2).getDateSaisie());
+		assertEquals(9007861, (int) result.get(2).getAgent().getIdAgent());
 	}
 }

@@ -3,8 +3,6 @@ package nc.noumea.mairie.ptg.web;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.NoResultException;
-
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
@@ -66,7 +64,34 @@ public class VisualisationController {
 		List<ConsultPointageDto> result = approbationService.getPointages(convertedIdAgent, fromDate, toDate, codeService, convertedAgent, idRefEtat, idRefType);
 		
 		if (result.size() == 0)
-			throw new NoResultException();
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		
+		String response = new JSONSerializer().exclude("*.class")
+				.transform(new MSDateTransformer(), Date.class)
+				.deepSerialize(result);
+		
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/historique", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getPointageArchives(
+			@RequestParam("idAgent") int idAgent,
+			@RequestParam("idPointage") Integer idPointage) {
+
+		logger.debug(
+				"entered GET [visualisation/historique] => getPointageArchives with parameters idAgent = {} and idPointage = {}", idAgent, idPointage);
+
+		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		if (!accessRightService.canUserAccessVisualisation(convertedIdAgent))
+			throw new AccessForbiddenException();
+		
+		List<ConsultPointageDto> result = approbationService.getPointagesArchives(idAgent, idPointage);
+
+		if (result.size() == 0)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 		
 		String response = new JSONSerializer().exclude("*.class")
 				.transform(new MSDateTransformer(), Date.class)

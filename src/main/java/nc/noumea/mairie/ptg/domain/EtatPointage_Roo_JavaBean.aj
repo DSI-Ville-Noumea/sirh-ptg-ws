@@ -25,4 +25,12 @@ privileged aspect EtatPointage_Roo_JavaBean {
         this.etat = etat;
     }
     
+    public Integer EtatPointage.getIdAgent() {
+        return this.idAgent;
+    }
+    
+    public void EtatPointage.setIdAgent(Integer idAgent) {
+        this.idAgent = idAgent;
+    }
+    
 }

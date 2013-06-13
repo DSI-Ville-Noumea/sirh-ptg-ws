@@ -46,28 +46,24 @@ public class ConsultPointageDto {
 		commentaire = ptg.getCommentaire() == null ? "" : ptg.getCommentaire()
 				.getText();
 		
-		EtatPointage etat = ptg.getLatestEtatPointage();
-		idRefEtat = etat.getEtat().getCodeEtat();
-		dateSaisie = etat.getEtatPointagePk().getDateEtat();
-
 		switch (ptg.getTypePointageEnum()) {
-		case ABSENCE:
-		case H_SUP:
-			quantite = formatHourInterval(debut, fin);
-			break;
-		case PRIME:
-			switch (ptg.getRefPrime().getTypeSaisie()) {
-			case CASE_A_COCHER:
-			case NB_INDEMNITES:
-				quantite = formatNumberOf(ptg.getQuantite(), "");
-				break;
-			case NB_HEURES:
-				quantite = formatNumberOf(ptg.getQuantite(), "h");
-				break;
-			case PERIODE_HEURES:
+			case ABSENCE:
+			case H_SUP:
 				quantite = formatHourInterval(debut, fin);
 				break;
-			}
+			case PRIME:
+				switch (ptg.getRefPrime().getTypeSaisie()) {
+				case CASE_A_COCHER:
+				case NB_INDEMNITES:
+					quantite = formatNumberOf(ptg.getQuantite(), "");
+					break;
+				case NB_HEURES:
+					quantite = formatNumberOf(ptg.getQuantite(), "h");
+					break;
+				case PERIODE_HEURES:
+					quantite = formatHourInterval(debut, fin);
+					break;
+				}
 		}
 
 	}
@@ -83,6 +79,11 @@ public class ConsultPointageDto {
 		return String.format("%s", quantite);
 	}
 
+	public void updateEtat(EtatPointage etat) {
+		idRefEtat = etat.getEtat().getCodeEtat();
+		dateSaisie = etat.getEtatPointagePk().getDateEtat();
+	}
+	
 	public Integer getIdPointage() {
 		return idPointage;
 	}
