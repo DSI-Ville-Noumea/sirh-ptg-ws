@@ -1,9 +1,12 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
+import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
+import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IApprobationService;
@@ -17,11 +20,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 
 @Controller
@@ -96,6 +101,36 @@ public class VisualisationController {
 		String response = new JSONSerializer().exclude("*.class")
 				.transform(new MSDateTransformer(), Date.class)
 				.deepSerialize(result);
+		
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/changerEtats", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
+	@Transactional(value = "ptgTransactionManager")
+	public ResponseEntity<String> setPointagesEtat(
+			@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) String pointagesEtatChangeDtoString) {
+
+		logger.debug(
+				"entered GET [visualisation/changerEtats] => setPointagesEtat with parameters idAgent = {}", idAgent);
+
+		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		if (!accessRightService.canUserAccessAppro(convertedIdAgent))
+			throw new AccessForbiddenException();
+		
+		List<PointagesEtatChangeDto> dto = new JSONDeserializer<List<PointagesEtatChangeDto>>()
+				.use(null, ArrayList.class).use("values", PointagesEtatChangeDto.class)
+				.deserialize(pointagesEtatChangeDtoString);
+			
+		SaisieReturnMessageDto result = approbationService.setPointagesEtat(idAgent, dto);
+
+		String response = new JSONSerializer().exclude("*.class")
+				.deepSerialize(result);
+
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
 		
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}

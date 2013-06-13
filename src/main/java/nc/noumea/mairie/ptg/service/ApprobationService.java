@@ -6,9 +6,13 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
+import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
+import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -31,6 +35,9 @@ public class ApprobationService implements IApprobationService {
 
 	@Autowired
 	private IMairieRepository mairieRepository;
+	
+	@Autowired
+	private HelperService helperService;
 	
 	@Override
 	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate,
@@ -114,6 +121,64 @@ public class ApprobationService implements IApprobationService {
 				result.add(dto);
 			}
 			
+		}
+		
+		return result;
+	}
+
+	@Override
+	public SaisieReturnMessageDto setPointagesEtat(Integer idAgent,
+			List<PointagesEtatChangeDto> etatsDto) {
+
+		SaisieReturnMessageDto result = new SaisieReturnMessageDto();
+		
+		List<DroitsAgent> droitsAgents = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent);
+		List<Integer> droitsAgentsIds = new ArrayList<Integer>();
+		
+		for (DroitsAgent da : droitsAgents)
+			droitsAgentsIds.add(da.getIdAgent());
+		
+		for (PointagesEtatChangeDto dto : etatsDto) {
+
+			Pointage ptg = pointageRepository.getEntity(Pointage.class, dto.getIdPointage());
+			
+			if (ptg == null) {
+				result.getErrors().add(String.format("Le pointage %s n'existe pas.", dto.getIdPointage()));
+				continue;
+			}
+			
+			if (!droitsAgentsIds.contains(ptg.getIdAgent())) {
+				result.getErrors().add(String.format("L'agent %s n'a pas le droit de mettre à jour le pointage %s de l'agent %s.", idAgent, ptg.getIdPointage(), ptg.getIdAgent()));
+				continue;
+			}
+			
+			EtatPointage currentEtat = ptg.getLatestEtatPointage();
+			
+			if (currentEtat.getEtat() != EtatPointageEnum.SAISI) {
+				result.getErrors().add(String.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.", ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.getEtat().name()));
+				continue;
+			}
+			
+			EtatPointageEnum targetEtat = EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat());
+			
+			if (targetEtat != EtatPointageEnum.APPROUVE
+					&& targetEtat != EtatPointageEnum.REFUSE
+					&& targetEtat != EtatPointageEnum.EN_ATTENTE) {
+					result.getErrors().add(
+							String.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s.", 
+								ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
+					continue;
+			}
+			
+			EtatPointage etat = new EtatPointage();
+			EtatPointagePK etatPk = new EtatPointagePK();
+			etatPk.setDateEtat(helperService.getCurrentDate());
+			etatPk.setPointage(ptg);
+			etat.setEtatPointagePk(etatPk);
+			etat.setIdAgent(idAgent);
+			etat.setEtat(targetEtat);
+			
+			ptg.getEtats().add(etat);
 		}
 		
 		return result;

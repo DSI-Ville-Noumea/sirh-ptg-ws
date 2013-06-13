@@ -77,7 +77,7 @@ public class SaisieController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/fiche", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
-	@Transactional
+	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> setFichePointage(
 			@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String fichePointage) {

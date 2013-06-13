@@ -95,6 +95,6 @@ public class PointageRepository implements IPointageRepository {
 
 	@Override
 	public <T> T getEntity(Class<T> Tclass, Object Id) {
-		return ptgEntityManager.getReference(Tclass, Id);
+		return ptgEntityManager.find(Tclass, Id);
 	}
 }
