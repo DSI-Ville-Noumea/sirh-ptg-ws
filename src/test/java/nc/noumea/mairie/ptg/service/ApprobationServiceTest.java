@@ -5,7 +5,6 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
@@ -16,6 +15,8 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
+import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
+import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.AccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
@@ -41,7 +42,6 @@ public class ApprobationServiceTest {
 		Integer idRefEtat = null;
 		Integer idRefType = 1;
 		
-		List<Integer> idAgents = Arrays.asList(9001234);
 		List<DroitsAgent> das = new ArrayList<DroitsAgent>();
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9001234);
@@ -106,10 +106,8 @@ public class ApprobationServiceTest {
 		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
 		String codeService = null;
 		Integer agent = null;
-		Integer idRefEtat = null;
 		Integer idRefType = 1;
 		
-		List<Integer> idAgents = Arrays.asList(9001234);
 		List<DroitsAgent> das = new ArrayList<DroitsAgent>();
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9001234);
@@ -172,7 +170,6 @@ public class ApprobationServiceTest {
 		Integer idRefEtat = null;
 		Integer idRefType = null;
 		
-		List<Integer> idAgents = Arrays.asList(9001234);
 		List<DroitsAgent> das = new ArrayList<DroitsAgent>();
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9001234);
@@ -236,7 +233,6 @@ public class ApprobationServiceTest {
 		Integer idRefEtat = null;
 		Integer idRefType = null;
 		
-		List<Integer> idAgents = Arrays.asList(9001234);
 		List<DroitsAgent> das = new ArrayList<DroitsAgent>();
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9001234);
@@ -348,7 +344,7 @@ public class ApprobationServiceTest {
 		etat3.setEtat(EtatPointageEnum.SAISI);
 		etat3.setIdAgent(9007861);
 		
-		ptg1.setEtats(new HashSet<EtatPointage>(Arrays.asList(etat3, etat2, etat1)));
+		ptg1.setEtats(Arrays.asList(etat3, etat2, etat1));
 		
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getPointageArchives(123)).thenReturn(Arrays.asList(ptg1));
@@ -371,13 +367,179 @@ public class ApprobationServiceTest {
 		// Then
 		assertEquals(3, result.size());
 		assertEquals(EtatPointageEnum.SAISI.getCodeEtat(), (int) result.get(0).getIdRefEtat());
-		assertEquals(new DateTime(2013, 04, 28, 8, 10, 0).toDate(), result.get(0).getDateSaisie());
+		assertEquals(new DateTime(2013, 04, 29, 10, 30, 0).toDate(), result.get(0).getDateSaisie());
 		assertEquals(9007861, (int) result.get(0).getAgent().getIdAgent());
 		assertEquals(EtatPointageEnum.REFUSE.getCodeEtat(), (int) result.get(1).getIdRefEtat());
 		assertEquals(new DateTime(2013, 04, 29, 10, 20, 0).toDate(), result.get(1).getDateSaisie());
 		assertEquals(9007860, (int) result.get(1).getAgent().getIdAgent());
 		assertEquals(EtatPointageEnum.SAISI.getCodeEtat(), (int) result.get(2).getIdRefEtat());
-		assertEquals(new DateTime(2013, 04, 29, 10, 30, 0).toDate(), result.get(2).getDateSaisie());
+		assertEquals(new DateTime(2013, 04, 28, 8, 10, 0).toDate(), result.get(2).getDateSaisie());
 		assertEquals(9007861, (int) result.get(2).getAgent().getIdAgent());
+	}
+	
+	@Test
+	public void setPointagesEtat_PointageDoesNotExist_returnError() {
+		
+		// Given
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(Pointage.class, 123)).thenReturn(null);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(new ArrayList<DroitsAgent>());
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
+		etatDto.setIdPointage(123);
+		
+		// When
+		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+				
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Le pointage 123 n'existe pas.", result.getErrors().get(0));
+	}
+	
+	@Test
+	public void setPointagesEtat_UserDoesNotHaveRights_returnError() {
+		
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005678);
+		ptg.setIdPointage(9);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(Pointage.class, 123)).thenReturn(ptg);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(new ArrayList<DroitsAgent>());
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
+		etatDto.setIdPointage(123);
+		
+		// When
+		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+				
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals("L'agent 9001234 n'a pas le droit de mettre à jour le pointage 9 de l'agent 9005678.", result.getErrors().get(0));
+	}
+	
+	@Test
+	public void setPointagesEtat_PointageIsNotSAISI_returnError() {
+		
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005678);
+		ptg.setIdPointage(9);
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.REFUSE);
+		ptg.getEtats().add(etat);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(Pointage.class, 123)).thenReturn(ptg);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005678);
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(Arrays.asList(da));
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
+		etatDto.setIdPointage(123);
+		
+		// When
+		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+				
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals(1,  ptg.getEtats().size());
+		assertEquals("Impossible de mettre à jour le pointage 9 de l'agent 9005678 car celui-ci est à l'état REFUSE.", result.getErrors().get(0));
+	}
+	
+	@Test
+	public void setPointagesEtat_TargetEtatIsNotAuthorized_returnError() {
+		
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005678);
+		ptg.setIdPointage(9);
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(etat);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(Pointage.class, 123)).thenReturn(ptg);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005678);
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(Arrays.asList(da));
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+
+		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
+		etatDto.setIdPointage(123);
+		etatDto.setIdRefEtat(5);
+		
+		// When
+		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+				
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals(1,  ptg.getEtats().size());
+		assertEquals("Impossible de mettre à jour le pointage 9 de l'agent 9005678 à l'état REJETE. Seuls APPROUVE, REFUSE ou EN_ATTENTE sont acceptés.", result.getErrors().get(0));
+	}
+	
+	@Test
+	public void setPointagesEtat_AddNewEtatPointage() {
+		
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005678);
+		ptg.setIdPointage(9);
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(etat);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(Pointage.class, 123)).thenReturn(ptg);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005678);
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(Arrays.asList(da));
+		
+		HelperService hService = Mockito.mock(HelperService.class);
+		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hService);
+
+		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
+		etatDto.setIdPointage(123);
+		etatDto.setIdRefEtat(1);
+		
+		// When
+		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+				
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(2,  ptg.getEtats().size());
+		assertEquals(EtatPointageEnum.SAISI, ptg.getEtats().get(0).getEtat());
+		assertEquals(EtatPointageEnum.APPROUVE, ptg.getEtats().get(1).getEtat());
 	}
 }

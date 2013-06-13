@@ -4,7 +4,7 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
@@ -29,11 +29,11 @@ privileged aspect Pointage_Roo_JavaBean {
         this.type = type;
     }
     
-    public Set<EtatPointage> Pointage.getEtats() {
+    public List<EtatPointage> Pointage.getEtats() {
         return this.etats;
     }
     
-    public void Pointage.setEtats(Set<EtatPointage> etats) {
+    public void Pointage.setEtats(List<EtatPointage> etats) {
         this.etats = etats;
     }
     

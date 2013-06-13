@@ -142,34 +142,38 @@ public class ApprobationService implements IApprobationService {
 
 			Pointage ptg = pointageRepository.getEntity(Pointage.class, dto.getIdPointage());
 			
+			// check whether the Pointage exists
 			if (ptg == null) {
 				result.getErrors().add(String.format("Le pointage %s n'existe pas.", dto.getIdPointage()));
 				continue;
 			}
 			
+			// Check whether the user has sufficient rights to update this Pointage
 			if (!droitsAgentsIds.contains(ptg.getIdAgent())) {
 				result.getErrors().add(String.format("L'agent %s n'a pas le droit de mettre à jour le pointage %s de l'agent %s.", idAgent, ptg.getIdPointage(), ptg.getIdAgent()));
 				continue;
 			}
 			
+			// Check whether the current target and if it can be updated
 			EtatPointage currentEtat = ptg.getLatestEtatPointage();
-			
 			if (currentEtat.getEtat() != EtatPointageEnum.SAISI) {
 				result.getErrors().add(String.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.", ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.getEtat().name()));
 				continue;
 			}
 			
+			// Check whether the target EtatPointage is authorized
 			EtatPointageEnum targetEtat = EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat());
 			
 			if (targetEtat != EtatPointageEnum.APPROUVE
 					&& targetEtat != EtatPointageEnum.REFUSE
 					&& targetEtat != EtatPointageEnum.EN_ATTENTE) {
 					result.getErrors().add(
-							String.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s.", 
+							String.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou EN_ATTENTE sont acceptés.", 
 								ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
 					continue;
 			}
 			
+			// at last, create and add the new EtatPointage
 			EtatPointage etat = new EtatPointage();
 			EtatPointagePK etatPk = new EtatPointagePK();
 			etatPk.setDateEtat(helperService.getCurrentDate());

@@ -1,8 +1,8 @@
 package nc.noumea.mairie.ptg.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -44,7 +44,7 @@ public class Pointage {
 
 	@OneToMany(mappedBy = "etatPointagePk.pointage", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
 	@OrderBy("etatPointagePk.dateEtat desc")
-	private Set<EtatPointage> etats = new HashSet<EtatPointage>();
+	private List<EtatPointage> etats = new ArrayList<EtatPointage>();
 
 	@Column(name = "DATE_LUNDI")
 	@Temporal(TemporalType.TIMESTAMP)

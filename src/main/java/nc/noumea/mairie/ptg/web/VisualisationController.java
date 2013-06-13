@@ -130,7 +130,7 @@ public class VisualisationController {
 				.deepSerialize(result);
 
 		if (result.getErrors().size() != 0)
-			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+			return new ResponseEntity<String>(response,  HttpStatus.CONFLICT);
 		
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
