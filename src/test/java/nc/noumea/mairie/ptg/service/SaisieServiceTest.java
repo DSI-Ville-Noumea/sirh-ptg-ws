@@ -124,7 +124,7 @@ public class SaisieServiceTest {
 		assertNull(argument.getValue().getIdPointage());
 		assertNull(argument.getValue().getQuantite());
 		assertNull(argument.getValue().getRefPrime());
-		assertNull(argument.getValue().getHeureSupPayee());
+		assertNull(argument.getValue().getHeureSupRecuperee());
 		assertNull(argument.getValue().getPointageParent());
 	}
 	
@@ -142,7 +142,7 @@ public class SaisieServiceTest {
 		dto.setSaisies(Arrays.asList(new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
 		
 		HeureSupDto hs1 = new HeureSupDto();
-		hs1.setPayee(true);
+		hs1.setRecuperee(true);
 		hs1.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
 		hs1.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		hs1.setMotif("le motif 3");
@@ -182,7 +182,7 @@ public class SaisieServiceTest {
 		Mockito.verify(pRepo).savePointage(argument.capture());
 		
 		assertEquals(RefTypePointageEnum.H_SUP, argument.getValue().getTypePointageEnum());
-		assertTrue(argument.getValue().getHeureSupPayee());
+		assertTrue(argument.getValue().getHeureSupRecuperee());
 		assertEquals(agent.getIdAgent(), argument.getValue().getIdAgent());
 		assertEquals(new DateTime(2013, 05, 16, 15, 0, 0).toDate(), argument.getValue().getDateDebut());
 		assertEquals(new DateTime(2013, 05, 16, 16, 0, 0).toDate(), argument.getValue().getDateFin());
@@ -275,7 +275,7 @@ public class SaisieServiceTest {
 		assertEquals("mot", argument.getValue().getMotif().getText());
 		assertEquals(lundi, argument.getValue().getDateLundi());
 		assertNull(argument.getValue().getIdPointage());
-		assertNull(argument.getValue().getHeureSupPayee());
+		assertNull(argument.getValue().getHeureSupRecuperee());
 		assertNull(argument.getValue().getAbsenceConcertee());
 		assertNull(argument.getValue().getPointageParent());
 	}

@@ -69,9 +69,9 @@ public class Pointage {
 	@JoinColumn(name = "ID_REF_PRIME", referencedColumnName = "ID_REF_PRIME")
 	private RefPrime refPrime;
 
-	@Column(name = "IS_HSUP_PAYEE")
+	@Column(name = "IS_HSUP_RECUPEREE")
 	@Type(type = "boolean")
-	private Boolean heureSupPayee;
+	private Boolean heureSupRecuperee;
 
 	@Column(name = "IS_ABS_CONCERTEE")
 	@Type(type = "boolean")

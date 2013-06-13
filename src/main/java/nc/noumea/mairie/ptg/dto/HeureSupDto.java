@@ -7,7 +7,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 @XmlRootElement
 public class HeureSupDto extends PointageDto  {
 	
-	private Boolean payee;
+	private Boolean recuperee;
 
 	public HeureSupDto() {
 	
@@ -15,14 +15,14 @@ public class HeureSupDto extends PointageDto  {
 	
 	public HeureSupDto(Pointage p) {
 		super(p);
-		this.payee = p.getHeureSupPayee();
+		this.recuperee = p.getHeureSupRecuperee();
 	}
 	
-	public Boolean getPayee() {
-		return payee;
+	public Boolean getRecuperee() {
+		return recuperee;
 	}
 
-	public void setPayee(Boolean payee) {
-		this.payee = payee;
+	public void setRecuperee(Boolean recuperee) {
+		this.recuperee = recuperee;
 	}
 }

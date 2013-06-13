@@ -172,7 +172,7 @@ public class PointageServiceTest {
 		t2.setIdRefTypePointage(2);
 		t2.setLabel("H_SUP");
 		p2.setType(t2);
-		p2.setHeureSupPayee(true);
+		p2.setHeureSupRecuperee(true);
 		p2.setDateDebut(new DateTime(2013, 05, 16, 14, 0, 0).toDate());
 		p2.setDateFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		p2.setDateLundi(dateLundi);
@@ -209,7 +209,7 @@ public class PointageServiceTest {
 		assertEquals(new Integer(3), result.getSaisies().get(1).getAbsences().get(0).getIdPointage());
 
 		assertEquals(1, result.getSaisies().get(3).getHeuresSup().size());
-		assertEquals(true, result.getSaisies().get(3).getHeuresSup().get(0).getPayee());
+		assertEquals(true, result.getSaisies().get(3).getHeuresSup().get(0).getRecuperee());
 		assertEquals(1, (int) result.getSaisies().get(3).getHeuresSup().get(0).getIdRefEtat());
 		assertEquals(new DateTime(2013, 05, 16, 14, 0, 0).toDate(), result.getSaisies().get(3).getHeuresSup().get(0).getHeureDebut());
 		assertEquals(new DateTime(2013, 05, 16, 16, 0, 0).toDate(), result.getSaisies().get(3).getHeuresSup().get(0).getHeureFin());

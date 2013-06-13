@@ -85,12 +85,12 @@ privileged aspect Pointage_Roo_JavaBean {
         this.refPrime = refPrime;
     }
     
-    public Boolean Pointage.getHeureSupPayee() {
-        return this.heureSupPayee;
+    public Boolean Pointage.getHeureSupRecuperee() {
+        return this.heureSupRecuperee;
     }
     
-    public void Pointage.setHeureSupPayee(Boolean heureSupPayee) {
-        this.heureSupPayee = heureSupPayee;
+    public void Pointage.setHeureSupRecuperee(Boolean heureSupRecuperee) {
+        this.heureSupRecuperee = heureSupRecuperee;
     }
     
     public Boolean Pointage.getAbsenceConcertee() {
