@@ -94,7 +94,7 @@ public class SaisieService implements ISaisieService {
 				Pointage ptg = pointageService.getOrCreateNewPointage(prime.getIdPointage(), idAgent, dateLundi, prime.getIdRefPrime());
 				originalAgentPointages.remove(ptg);
 
-				ptg.setDateDebut(prime.getHeureDebut());
+				ptg.setDateDebut(prime.getHeureDebut() == null ? jourDto.getDate() : prime.getHeureDebut());
 				ptg.setDateFin(prime.getHeureFin());
 				ptg.setQuantite(prime.getQuantite());
 				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME.getValue()));
