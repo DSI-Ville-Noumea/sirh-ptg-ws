@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Arrays;
 
 import nc.noumea.mairie.domain.Spbase;
+import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
@@ -13,6 +14,7 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class VentilationServiceTest {
 
@@ -27,7 +29,7 @@ public class VentilationServiceTest {
 		abs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 	}
 	
-	//@Test
+	@Test
 	public void processHSupFonctionnaire() {
 		
 		// Given
@@ -97,6 +99,10 @@ public class VentilationServiceTest {
 		Spcarr spcarr = new Spcarr();
 		spcarr.setSpbase(spbase);
 		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
 		VentilationService service = new VentilationService();
 		
 		// When
@@ -116,7 +122,7 @@ public class VentilationServiceTest {
 		assertEquals(6d, result.getHComposees(), 0);
 	}
 	
-	//@Test
+	@Test
 	public void processHSupFonctionnaire_withBase20H() {
 		
 		// Given
@@ -185,6 +191,10 @@ public class VentilationServiceTest {
 		spbase.setNbashh(20);
 		Spcarr spcarr = new Spcarr();
 		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
 		
 		VentilationService service = new VentilationService();
 		
