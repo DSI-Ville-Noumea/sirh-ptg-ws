@@ -15,7 +15,7 @@ privileged aspect Affectation_Roo_Jpa_Entity {
     
     declare @type: Affectation: @Entity;
     
-    declare @type: Affectation: @Table(schema = "SIRH", name = "AFFECTATION");
+    declare @type: Affectation: @Table(name = "AFFECTATION");
     
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

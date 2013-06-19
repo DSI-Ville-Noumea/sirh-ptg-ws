@@ -11,6 +11,6 @@ privileged aspect Spadmn_Roo_Jpa_Entity {
     
     declare @type: Spadmn: @Entity;
     
-    declare @type: Spadmn: @Table(schema = "MAIRIE", name = "SPADMN");
+    declare @type: Spadmn: @Table(name = "SPADMN");
     
 }

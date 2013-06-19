@@ -11,6 +11,6 @@ privileged aspect Spcarr_Roo_Jpa_Entity {
     
     declare @type: Spcarr: @Entity;
     
-    declare @type: Spcarr: @Table(schema = "MAIRIE", name = "SPCARR");
+    declare @type: Spcarr: @Table(name = "SPCARR");
     
 }

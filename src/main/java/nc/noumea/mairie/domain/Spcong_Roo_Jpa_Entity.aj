@@ -11,6 +11,6 @@ privileged aspect Spcong_Roo_Jpa_Entity {
     
     declare @type: Spcong: @Entity;
     
-    declare @type: Spcong: @Table(schema = "MAIRIE", name = "SPCONG");
+    declare @type: Spcong: @Table(name = "SPCONG");
     
 }

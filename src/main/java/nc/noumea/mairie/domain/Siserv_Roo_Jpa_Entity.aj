@@ -11,6 +11,6 @@ privileged aspect Siserv_Roo_Jpa_Entity {
     
     declare @type: Siserv: @Entity;
     
-    declare @type: Siserv: @Table(schema = "MAIRIE", name = "SISERV");
+    declare @type: Siserv: @Table(name = "SISERV");
     
 }

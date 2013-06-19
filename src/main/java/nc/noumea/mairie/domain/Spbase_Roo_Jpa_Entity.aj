@@ -11,6 +11,6 @@ privileged aspect Spbase_Roo_Jpa_Entity {
     
     declare @type: Spbase: @Entity;
     
-    declare @type: Spbase: @Table(schema = "MAIRIE", name = "SPBASE");
+    declare @type: Spbase: @Table(name = "SPBASE");
     
 }

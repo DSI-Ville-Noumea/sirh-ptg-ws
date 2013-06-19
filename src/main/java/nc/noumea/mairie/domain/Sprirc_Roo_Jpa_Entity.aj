@@ -11,6 +11,6 @@ privileged aspect Sprirc_Roo_Jpa_Entity {
     
     declare @type: Sprirc: @Entity;
     
-    declare @type: Sprirc: @Table(schema = "MAIRIE", name = "SPRIRC");
+    declare @type: Sprirc: @Table(name = "SPRIRC");
     
 }

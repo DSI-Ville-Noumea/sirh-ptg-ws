@@ -11,6 +11,6 @@ privileged aspect Spbarem_Roo_Jpa_Entity {
     
     declare @type: Spbarem: @Entity;
     
-    declare @type: Spbarem: @Table(schema = "MAIRIE", name = "SPBAREM");
+    declare @type: Spbarem: @Table(name = "SPBAREM");
     
 }

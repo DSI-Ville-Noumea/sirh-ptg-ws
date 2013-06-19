@@ -11,6 +11,6 @@ privileged aspect Spabsen_Roo_Jpa_Entity {
     
     declare @type: Spabsen: @Entity;
     
-    declare @type: Spabsen: @Table(schema = "MAIRIE", name = "SPABSEN");
+    declare @type: Spabsen: @Table(name = "SPABSEN");
     
 }
