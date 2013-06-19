@@ -2,6 +2,7 @@ package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -46,4 +47,27 @@ public class Spbase {
 	
 	@Column(name = "NBASCH", columnDefinition = "numeric")
 	private double nbasch;
+	
+	@Transient
+	public double getDayBase(int day) {
+		
+		switch(day) {
+			case 0:
+				return getNbahlu();
+			case 1:
+				return getNbahma();
+			case 2:
+				return getNbahme();
+			case 3:
+				return getNbahje();
+			case 4:
+				return getNbahve();
+			case 5:
+				return getNbahsa();
+			case 6:
+				return getNbahdi();
+				default:
+					return 0.0;
+		}
+	}
 }
