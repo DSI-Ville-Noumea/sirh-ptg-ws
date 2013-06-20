@@ -1,4 +1,4 @@
-package PointageDataConsistencyRules;
+package nc.noumea.mairie.ptg.service;
 
 import static org.junit.Assert.assertEquals;
 

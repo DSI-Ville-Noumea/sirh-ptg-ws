@@ -16,12 +16,20 @@ privileged aspect Siserv_Roo_Json {
         return new JSONSerializer().exclude("*.class").serialize(this);
     }
     
+    public String Siserv.toJson(String[] fields) {
+        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+    }
+    
     public static Siserv Siserv.fromJsonToSiserv(String json) {
         return new JSONDeserializer<Siserv>().use(null, Siserv.class).deserialize(json);
     }
     
     public static String Siserv.toJsonArray(Collection<Siserv> collection) {
         return new JSONSerializer().exclude("*.class").serialize(collection);
+    }
+    
+    public static String Siserv.toJsonArray(Collection<Siserv> collection, String[] fields) {
+        return new JSONSerializer().include(fields).exclude("*.class").serialize(collection);
     }
     
     public static Collection<Siserv> Siserv.fromJsonArrayToSiservs(String json) {
