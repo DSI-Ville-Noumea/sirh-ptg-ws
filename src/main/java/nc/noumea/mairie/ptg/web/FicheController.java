@@ -4,11 +4,9 @@ import java.text.ParseException;
 import java.util.Date;
 
 import nc.noumea.mairie.ptg.domain.Pointage;
-import nc.noumea.mairie.ptg.dto.FichePointageDto;
+import nc.noumea.mairie.ptg.dto.FichePointageListDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -32,9 +30,6 @@ public class FicheController {
 	private IPointageRepository pointageRepository;
 
 	@Autowired
-	private IAgentMatriculeConverterService agentMatriculeConverterService;
-
-	@Autowired
 	private IPointageService pointageService;
 
 	@ResponseBody
@@ -48,16 +43,13 @@ public class FicheController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/xml/getFichePointage", produces = "application/xml", method = RequestMethod.GET)
+	@RequestMapping(value = "/xml/getFichesPointage", produces = "application/xml", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ModelAndView getXmlFichePointage(@RequestParam("idAgent") int idAgent,
+	public ModelAndView getXmlFichesPointage(@RequestParam("csvIdAgents") String csvIdAgents,
 			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date) throws ParseException {
 
-		Integer convertedId = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		FichePointageListDto fiches = pointageService.getFichesPointageForUsers(csvIdAgents, date);
 
-		Agent ag = Agent.findAgent(convertedId);
-		FichePointageDto fichePointageAgent = pointageService.getFichePointageForAgent(ag, date);
-
-		return new ModelAndView("xmlView", "object", fichePointageAgent);
+		return new ModelAndView("xmlView", "object", fiches);
 	}
 }

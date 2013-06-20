@@ -16,6 +16,7 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
+import nc.noumea.mairie.ptg.dto.FichePointageListDto;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
@@ -49,7 +50,9 @@ public class PointageService implements IPointageService {
 	@Autowired
 	private HelperService helperService;
 
-	@Override
+	@Autowired
+	private IAgentMatriculeConverterService agentMatriculeConverterService;
+
 	public FichePointageDto getFichePointageForAgent(Agent agent, Date date) {
 
 		if (!helperService.isDateAMonday(date))
@@ -99,6 +102,29 @@ public class PointageService implements IPointageService {
 		}
 
 		return result;
+	}
+
+	@Override
+	public FichePointageListDto getFichesPointageForUsers(String csvIdAgents, Date date) {
+
+		List<Agent> listAgent = new ArrayList<Agent>();
+
+		for (String id : csvIdAgents.split(",")) {
+			Integer convertedId = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(Integer.valueOf(id));
+			Agent ag = Agent.findAgent(convertedId);
+			if (ag != null) {
+				listAgent.add(ag);
+			}
+		}
+
+		FichePointageListDto fiches = new FichePointageListDto();
+
+		for (Agent agent : listAgent) {
+			FichePointageDto ficheDto = getFichePointageForAgent(agent, date);
+			fiches.getFiches().add(ficheDto);
+		}
+
+		return fiches;
 	}
 
 	@Override

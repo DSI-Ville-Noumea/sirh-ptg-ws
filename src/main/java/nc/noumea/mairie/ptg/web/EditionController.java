@@ -8,7 +8,6 @@ import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IFichesService;
 import nc.noumea.mairie.ptg.service.IReportingService;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +49,7 @@ public class EditionController {
 	public ResponseEntity<String> getFichesToPrint(@RequestParam("idAgent") Integer idAgent,
 			@RequestParam(value = "codeService", required = false) String codeService) {
 
-		logger.debug(
-				"entered GET [edition/listeFiches] => getFichesToPrint with parameters idAgent = {}, codeService = {}",
-				idAgent, codeService);
+		logger.debug("entered GET [edition/listeFiches] => getFichesToPrint with parameters idAgent = {}, codeService = {}", idAgent, codeService);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -63,27 +60,22 @@ public class EditionController {
 
 		if (agents.size() == 0)
 			throw new NoContentException();
-		
+
 		String json = new JSONSerializer().exclude("*.class").serialize(agents);
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/downloadFichePointage", method = RequestMethod.GET)
+	@RequestMapping(value = "/downloadFichesPointage", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<byte[]> downloadFichePointage(@RequestParam("idAgent") int idAgent,
+	public ResponseEntity<byte[]> downloadFichesPointage(@RequestParam("csvIdAgents") String csvIdAgents,
 			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date) {
-
-		Integer convertedId = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		Agent ag = Agent.findAgent(convertedId);
-		if (ag == null)
-			throw new NotFoundException();
 
 		byte[] responseData = null;
 
 		try {
-			responseData = reportingService.getFichePointageReportAsByteArray(idAgent, date);
+			responseData = reportingService.getFichesPointageReportAsByteArray(csvIdAgents, date);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -91,7 +83,7 @@ public class EditionController {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/pdf");
-		headers.add("Content-Disposition", String.format("attachment; filename=\"fichePointage_%s_%s.pdf\"", ag.getDisplayNom(), convertedId));
+		headers.add("Content-Disposition", String.format("attachment; filename=\"fichePointage.pdf\""));
 
 		return new ResponseEntity<byte[]>(responseData, headers, HttpStatus.OK);
 	}

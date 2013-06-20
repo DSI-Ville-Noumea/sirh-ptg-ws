@@ -4,5 +4,5 @@ import java.util.Date;
 
 public interface IReportingService {
 
-	byte[] getFichePointageReportAsByteArray(int idAgent, Date date) throws Exception;
+	byte[] getFichesPointageReportAsByteArray(String csvIdAgents, Date date) throws Exception;
 }

@@ -33,19 +33,6 @@ public class ReportingService implements IReportingService {
 	private static final String PARAM_FORMAT = "__format";
 	private static final String PARAM_LOCALE = "__locale";
 
-	@Override
-	public byte[] getFichePointageReportAsByteArray(int idAgent, Date date) throws Exception {
-
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("idAgent", String.valueOf(idAgent));
-		map.put("date", sdf.format(date));
-
-		ClientResponse response = createAndFireRequest(map, "fichePointage.rptdesign", "PDF");
-
-		return readResponseAsByteArray(response, map);
-	}
-
 	public ClientResponse createAndFireRequest(Map<String, String> reportParameters, String reportName, String format) {
 
 		Client client = Client.create();
@@ -94,5 +81,18 @@ public class ReportingService implements IReportingService {
 		}
 
 		return sb.toString();
+	}
+
+	@Override
+	public byte[] getFichesPointageReportAsByteArray(String csvIdAgents, Date date) throws Exception {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("csvIdAgents", String.valueOf(csvIdAgents));
+		map.put("date", sdf.format(date));
+
+		ClientResponse response = createAndFireRequest(map, "fichesPointage.rptdesign", "PDF");
+
+		return readResponseAsByteArray(response, map);
 	}
 }

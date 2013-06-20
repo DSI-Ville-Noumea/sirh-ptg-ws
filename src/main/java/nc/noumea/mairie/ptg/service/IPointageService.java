@@ -5,13 +5,12 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
+import nc.noumea.mairie.ptg.dto.FichePointageListDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 public interface IPointageService {
 
-	public FichePointageDto getFichePointageForAgent(Agent agent, Date date);
 
 	public FichePointageDto getFilledFichePointageForAgent(int idAgent, Date dateLundi);
 	
@@ -23,5 +22,7 @@ public interface IPointageService {
 	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage);
 	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi);
 	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime);
+
+	public FichePointageListDto getFichesPointageForUsers(String csvIdAgents, Date date);
 
 }
