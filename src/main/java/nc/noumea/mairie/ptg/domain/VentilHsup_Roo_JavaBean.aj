@@ -32,14 +32,6 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.hAbsences = hAbsences;
     }
     
-    public double VentilHsup.getHTotal() {
-        return this.hTotal;
-    }
-    
-    public void VentilHsup.setHTotal(double hTotal) {
-        this.hTotal = hTotal;
-    }
-    
     public double VentilHsup.getHHorsContrat() {
         return this.hHorsContrat;
     }
@@ -48,12 +40,28 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.hHorsContrat = hHorsContrat;
     }
     
-    public double VentilHsup.getHComplementaires() {
-        return this.hComplementaires;
+    public double VentilHsup.getHSup() {
+        return this.hSup;
     }
     
-    public void VentilHsup.setHComplementaires(double hComplementaires) {
-        this.hComplementaires = hComplementaires;
+    public void VentilHsup.setHSup(double hSup) {
+        this.hSup = hSup;
+    }
+    
+    public double VentilHsup.getHSup25() {
+        return this.hSup25;
+    }
+    
+    public void VentilHsup.setHSup25(double hSup25) {
+        this.hSup25 = hSup25;
+    }
+    
+    public double VentilHsup.getHSup50() {
+        return this.hSup50;
+    }
+    
+    public void VentilHsup.setHSup50(double hSup50) {
+        this.hSup50 = hSup50;
     }
     
     public double VentilHsup.getHsdjf() {
@@ -88,52 +96,12 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.hMai = hMai;
     }
     
-    public double VentilHsup.getHSup() {
-        return this.hSup;
-    }
-    
-    public void VentilHsup.setHSup(double hSup) {
-        this.hSup = hSup;
-    }
-    
     public double VentilHsup.getHsNuit() {
         return this.hsNuit;
     }
     
     public void VentilHsup.setHsNuit(double hsNuit) {
         this.hsNuit = hsNuit;
-    }
-    
-    public double VentilHsup.getHsJour() {
-        return this.hsJour;
-    }
-    
-    public void VentilHsup.setHsJour(double hsJour) {
-        this.hsJour = hsJour;
-    }
-    
-    public double VentilHsup.getHSup25() {
-        return this.hSup25;
-    }
-    
-    public void VentilHsup.setHSup25(double hSup25) {
-        this.hSup25 = hSup25;
-    }
-    
-    public double VentilHsup.getHSup50() {
-        return this.hSup50;
-    }
-    
-    public void VentilHsup.setHSup50(double hSup50) {
-        this.hSup50 = hSup50;
-    }
-    
-    public double VentilHsup.getHComposees() {
-        return this.hComposees;
-    }
-    
-    public void VentilHsup.setHComposees(double hComposees) {
-        this.hComposees = hComposees;
     }
     
     public double VentilHsup.getHNormales() {
@@ -144,12 +112,28 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.hNormales = hNormales;
     }
     
+    public double VentilHsup.getHComplementaires() {
+        return this.hComplementaires;
+    }
+    
+    public void VentilHsup.setHComplementaires(double hComplementaires) {
+        this.hComplementaires = hComplementaires;
+    }
+    
     public double VentilHsup.getHSimple() {
         return this.hSimple;
     }
     
     public void VentilHsup.setHSimple(double hSimple) {
         this.hSimple = hSimple;
+    }
+    
+    public double VentilHsup.getHComposees() {
+        return this.hComposees;
+    }
+    
+    public void VentilHsup.setHComposees(double hComposees) {
+        this.hComposees = hComposees;
     }
     
 }

@@ -9,4 +9,6 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 public interface IVentilationService {
 
 	VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, List<Pointage> pointages);
+	
+	VentilHsup processHSupNonFonctionnaire(Integer idAgent, Spcarr carr, List<Pointage> pointages);
 }

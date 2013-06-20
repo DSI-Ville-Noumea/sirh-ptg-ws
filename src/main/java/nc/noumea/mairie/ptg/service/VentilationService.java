@@ -18,12 +18,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class VentilationService implements IVentilationService {
 
-	private static int HEURE_JOUR_DEBUT = 4;
-	private static int HEURE_JOUR_FIN = 21;
+	private static int HEURE_JOUR_DEBUT_F = 4;
+	private static int HEURE_JOUR_FIN_F = 21;
 	private static int NB_HS_SIMPLE = 3;
 	private static double BASE_HEBDO_LEGALE = 39;
 	
 	public VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, List<Pointage> pointages) {
+		return  processHSup(idAgent, carr, pointages, true);
+	}
+	
+	public VentilHsup processHSupNonFonctionnaire(Integer idAgent, Spcarr carr, List<Pointage> pointages) {
+		return  processHSup(idAgent, carr, pointages, false);
+	}
+	
+	public VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, boolean isFonctionnaire) {
 		
 		DateTime dateLundi = new DateTime(pointages.get(0).getDateLundi());
 		
@@ -84,9 +92,9 @@ public class VentilationService implements IVentilationService {
 				// Create the HS Jour interval for that day (the hours between which hours are considered HS JOUR)
 				Interval hSupJourInterval = new Interval(
 						new DateTime(heuresSupInterval.getStart().getYear(), heuresSupInterval.getStart().getMonthOfYear(), 
-								heuresSupInterval.getStart().getDayOfMonth(), HEURE_JOUR_DEBUT, 0, 0), 
+								heuresSupInterval.getStart().getDayOfMonth(), HEURE_JOUR_DEBUT_F, 0, 0), 
 						new DateTime(heuresSupInterval.getStart().getYear(), heuresSupInterval.getStart().getMonthOfYear(), 
-								heuresSupInterval.getStart().getDayOfMonth(), HEURE_JOUR_FIN, 0, 0));
+								heuresSupInterval.getStart().getDayOfMonth(), HEURE_JOUR_FIN_F, 0, 0));
 				
 				// Calculate the overlap of the HS to determine what to be counted as HS Nuit and HS Jour
 				Interval hSupJourOverlap = hSupJourInterval.overlap(heuresSupInterval);
