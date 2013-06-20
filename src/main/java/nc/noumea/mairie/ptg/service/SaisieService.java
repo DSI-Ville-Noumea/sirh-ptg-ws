@@ -36,7 +36,7 @@ public class SaisieService implements ISaisieService {
 	private IPointageDataConsistencyRules ptgDataCosistencyRules;
 	
 	@Override
-	public SaisieReturnMessageDto saveFichePointage(FichePointageDto fichePointageDto) {
+	public SaisieReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto) {
 
 		Date dateLundi = fichePointageDto.getDateLundi();
 		
@@ -53,7 +53,7 @@ public class SaisieService implements ISaisieService {
 			
 			for (AbsenceDto abs : jourDto.getAbsences()) {
 				
-				Pointage ptg = pointageService.getOrCreateNewPointage(abs.getIdPointage(), idAgent, dateLundi);
+				Pointage ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi);
 				originalAgentPointages.remove(ptg);
 				
 				ptg.setAbsenceConcertee(abs.getConcertee());
@@ -68,7 +68,7 @@ public class SaisieService implements ISaisieService {
 			
 			for (HeureSupDto hs : jourDto.getHeuresSup()) {
 				
-				Pointage ptg = pointageService.getOrCreateNewPointage(hs.getIdPointage(), idAgent, dateLundi);
+				Pointage ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi);
 				originalAgentPointages.remove(ptg);
 				
 				ptg.setHeureSupRecuperee(hs.getRecuperee());
@@ -91,7 +91,7 @@ public class SaisieService implements ISaisieService {
 					continue;
 				}
 				
-				Pointage ptg = pointageService.getOrCreateNewPointage(prime.getIdPointage(), idAgent, dateLundi, prime.getIdRefPrime());
+				Pointage ptg = pointageService.getOrCreateNewPointage(idAgentOperator, prime.getIdPointage(), idAgent, dateLundi, prime.getIdRefPrime());
 				originalAgentPointages.remove(ptg);
 
 				ptg.setDateDebut(prime.getHeureDebut() == null ? jourDto.getDate() : prime.getHeureDebut());
@@ -116,7 +116,7 @@ public class SaisieService implements ISaisieService {
 			return result;
 		
 		savePointages(finalPointages);
-		deletePointages(originalAgentPointages);
+		deletePointages(idAgentOperator, originalAgentPointages);
 		
 		return result;
 	}
@@ -130,7 +130,7 @@ public class SaisieService implements ISaisieService {
 	 * Given a list of Pointage, delete each of them when in SAISI
 	 * @param pointagesToDelete
 	 */
-	protected void deletePointages(List<Pointage> pointagesToDelete) {
+	protected void deletePointages(Integer idAgentOperator, List<Pointage> pointagesToDelete) {
 		// Delete anything that was not updated from the saving process
 		for (Pointage pointageToDelete : pointagesToDelete) {
 			
@@ -142,7 +142,7 @@ public class SaisieService implements ISaisieService {
 			}
 			
 			// Otherwise, create a new record of the Pointage with values set to 0 (in order to keep track of deletion)
-			Pointage pbis = pointageService.getOrCreateNewPointage(pointageToDelete);
+			Pointage pbis = pointageService.getOrCreateNewPointage(idAgentOperator, pointageToDelete);
 			pointageRepository.savePointage(pbis);
 		}
 	}

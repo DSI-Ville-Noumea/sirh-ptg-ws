@@ -104,8 +104,7 @@ public class ApprobationService implements IApprobationService {
 	}
 
 	@Override
-	public List<ConsultPointageDto> getPointagesArchives(Integer idAgent,
-			Integer idPointage) {
+	public List<ConsultPointageDto> getPointagesArchives(Integer idAgent, Integer idPointage) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 		

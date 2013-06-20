@@ -5,6 +5,6 @@ import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 
 public interface ISaisieService {
 	
-	public SaisieReturnMessageDto saveFichePointage(FichePointageDto fichePointageDto);
+	public SaisieReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto);
 	
 }

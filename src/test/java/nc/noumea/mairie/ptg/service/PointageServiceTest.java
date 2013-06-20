@@ -468,7 +468,7 @@ public class PointageServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hs);
 		
 		// When
-		Pointage result = service.getOrCreateNewPointage(idPointage, 9007867, dateLundi, 89);
+		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, 89);
 		
 		// Then
 		assertEquals(9007867, (int) result.getIdAgent());
@@ -477,6 +477,7 @@ public class PointageServiceTest {
 		assertEquals(1, result.getEtats().size());
 		assertEquals(EtatPointageEnum.SAISI, result.getLatestEtatPointage().getEtat());
 		assertEquals(new DateTime(2013, 05, 17, 9, 25, 8).toDate(), result.getLatestEtatPointage().getEtatPointagePk().getDateEtat());
+		assertEquals(9001234, (int) result.getLatestEtatPointage().getIdAgent());
 	}
 	
 	@Test
@@ -511,7 +512,7 @@ public class PointageServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hs);
 		
 		// When
-		Pointage result = service.getOrCreateNewPointage(idPointage, 9007867, dateLundi, 89);
+		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, 89);
 		
 		// Then
 		assertEquals(67, (int) result.getIdPointage());
@@ -521,6 +522,7 @@ public class PointageServiceTest {
 		assertEquals(1, result.getEtats().size());
 		assertEquals(EtatPointageEnum.SAISI, result.getLatestEtatPointage().getEtat());
 		assertEquals(new DateTime(2013, 05, 17, 9, 25, 8).toDate(), result.getLatestEtatPointage().getEtatPointagePk().getDateEtat());
+		assertEquals(9001234, (int) result.getLatestEtatPointage().getIdAgent());
 	}
 	
 	@Test
@@ -557,7 +559,7 @@ public class PointageServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hs);
 		
 		// When
-		Pointage result = service.getOrCreateNewPointage(idPointage, 9007867, dateLundi, 89);
+		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, 89);
 		
 		// Then
 		assertNull(result.getIdPointage());
@@ -568,5 +570,6 @@ public class PointageServiceTest {
 		assertEquals(1, result.getEtats().size());
 		assertEquals(EtatPointageEnum.SAISI, result.getLatestEtatPointage().getEtat());
 		assertEquals(new DateTime(2013, 05, 17, 9, 25, 8).toDate(), result.getLatestEtatPointage().getEtatPointagePk().getDateEtat());
+		assertEquals(9001234, (int) result.getLatestEtatPointage().getIdAgent());
 	}
 }

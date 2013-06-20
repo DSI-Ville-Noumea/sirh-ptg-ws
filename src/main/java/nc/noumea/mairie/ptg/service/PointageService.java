@@ -176,20 +176,20 @@ public class PointageService implements IPointageService {
 	 * @param dateLundi
 	 * @return
 	 */
-	public Pointage getOrCreateNewPointage(Pointage pointage) {
-		return getOrCreateNewPointage(pointage.getIdPointage(), pointage.getIdAgent(), pointage.getDateLundi(), pointage.getRefPrime()
+	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Pointage pointage) {
+		return getOrCreateNewPointage(idAgentCreator, pointage.getIdPointage(), pointage.getIdAgent(), pointage.getDateLundi(), pointage.getRefPrime()
 				.getIdRefPrime());
 	}
 
-	public Pointage getOrCreateNewPointage(Integer idPointage) {
-		return getOrCreateNewPointage(idPointage, null, null, null);
+	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage) {
+		return getOrCreateNewPointage(idAgentCreator, idPointage, null, null, null);
 	}
 
-	public Pointage getOrCreateNewPointage(Integer idPointage, Integer idAgent, Date dateLundi) {
-		return getOrCreateNewPointage(idPointage, idAgent, dateLundi, null);
+	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi) {
+		return getOrCreateNewPointage(idAgentCreator, idPointage, idAgent, dateLundi, null);
 	}
 
-	public Pointage getOrCreateNewPointage(Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime) {
+	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime) {
 
 		Pointage ptg = null;
 		Pointage parentPointage = null;
@@ -200,8 +200,10 @@ public class PointageService implements IPointageService {
 
 			// if its state is SAISI, return it, otherwise create a new one with
 			// this one as parent
-			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI) {
-				ptg.getLatestEtatPointage().getEtatPointagePk().setDateEtat(helperService.getCurrentDate());
+			EtatPointage etatPtg = ptg.getLatestEtatPointage();
+			if (etatPtg.getEtat() == EtatPointageEnum.SAISI) {
+				etatPtg.getEtatPointagePk().setDateEtat(helperService.getCurrentDate());
+				etatPtg.setIdAgent(idAgentCreator);
 				return ptg;
 			}
 			parentPointage = ptg;
@@ -211,7 +213,7 @@ public class PointageService implements IPointageService {
 		ptg.setPointageParent(parentPointage);
 		ptg.setIdAgent(idAgent);
 		ptg.setDateLundi(dateLundi);
-		addEtatPointage(ptg, EtatPointageEnum.SAISI);
+		addEtatPointage(ptg, EtatPointageEnum.SAISI, idAgentCreator);
 
 		// if this is a Prime kind of Pointage, fetch its RefPrime
 		if (idRefPrime != null)
@@ -226,13 +228,14 @@ public class PointageService implements IPointageService {
 	 * @param ptg
 	 * @param etat
 	 */
-	protected void addEtatPointage(Pointage ptg, EtatPointageEnum etat) {
+	protected void addEtatPointage(Pointage ptg, EtatPointageEnum etat, Integer idAgentCreator) {
 		EtatPointagePK pk = new EtatPointagePK();
 		pk.setDateEtat(helperService.getCurrentDate());
 		pk.setPointage(ptg);
 		EtatPointage ep = new EtatPointage();
 		ep.setEtat(etat);
 		ep.setEtatPointagePk(pk);
+		ep.setIdAgent(idAgentCreator);
 		ptg.getEtats().add(ep);
 	}
 

@@ -99,7 +99,7 @@ public class SaisieController {
 		if (!accessRightService.canUserAccessInput(convertedIdAgent, convertedagent))
 			throw new AccessForbiddenException();
 		
-		SaisieReturnMessageDto srm = saisieService.saveFichePointage(dto);
+		SaisieReturnMessageDto srm = saisieService.saveFichePointage(convertedIdAgent, dto);
 		
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
 		
