@@ -155,7 +155,7 @@ public class ApprobationService implements IApprobationService {
 			
 			// Check whether the current target and if it can be updated
 			EtatPointage currentEtat = ptg.getLatestEtatPointage();
-			if (currentEtat.getEtat() != EtatPointageEnum.SAISI) {
+			if (currentEtat.getEtat() != EtatPointageEnum.SAISI && currentEtat.getEtat() != EtatPointageEnum.APPROUVE && currentEtat.getEtat() != EtatPointageEnum.REFUSE) {
 				result.getErrors().add(String.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.", ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.getEtat().name()));
 				continue;
 			}
@@ -165,9 +165,9 @@ public class ApprobationService implements IApprobationService {
 			
 			if (targetEtat != EtatPointageEnum.APPROUVE
 					&& targetEtat != EtatPointageEnum.REFUSE
-					&& targetEtat != EtatPointageEnum.EN_ATTENTE) {
+					&& targetEtat != EtatPointageEnum.SAISI) {
 					result.getErrors().add(
-							String.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou EN_ATTENTE sont acceptés.", 
+							String.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.", 
 								ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
 					continue;
 			}
