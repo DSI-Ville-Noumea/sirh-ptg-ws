@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +10,8 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.service.IHolidayService;
+import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;

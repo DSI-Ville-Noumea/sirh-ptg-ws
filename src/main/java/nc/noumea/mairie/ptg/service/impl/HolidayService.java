@@ -1,4 +1,6 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
+
+import nc.noumea.mairie.ptg.service.IHolidayService;
 
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;

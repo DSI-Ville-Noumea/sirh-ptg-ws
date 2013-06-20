@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.Siserv;
-import nc.noumea.mairie.ptg.service.HelperService;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.sirh.domain.FichePoste;
 
 import org.joda.time.DateTime;

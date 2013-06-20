@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import nc.noumea.mairie.ptg.service.IReportingService;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;

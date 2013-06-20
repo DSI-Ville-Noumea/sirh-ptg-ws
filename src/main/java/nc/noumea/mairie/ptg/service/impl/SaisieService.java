@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -16,6 +16,10 @@ import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
+import nc.noumea.mairie.ptg.service.IPointageService;
+import nc.noumea.mairie.ptg.service.ISaisieService;
+import nc.noumea.mairie.ptg.service.NotAMondayException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
 
@@ -11,6 +11,8 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.service.IHolidayService;
+import nc.noumea.mairie.ptg.service.impl.VentilationHSupService;
 
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;

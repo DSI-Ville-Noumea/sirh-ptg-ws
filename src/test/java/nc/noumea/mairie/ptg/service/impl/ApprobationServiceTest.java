@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
 
@@ -21,6 +21,8 @@ import nc.noumea.mairie.ptg.repository.AccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.service.impl.ApprobationService;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;

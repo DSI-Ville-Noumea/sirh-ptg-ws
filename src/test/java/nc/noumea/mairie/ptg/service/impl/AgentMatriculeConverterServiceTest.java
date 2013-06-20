@@ -1,6 +1,9 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+
+import nc.noumea.mairie.ptg.service.AgentMatriculeConverterServiceException;
+import nc.noumea.mairie.ptg.service.impl.AgentMatriculeConverterService;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -20,6 +20,8 @@ import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.ptg.service.impl.AccessRightsService;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;

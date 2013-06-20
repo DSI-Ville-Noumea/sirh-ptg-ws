@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,6 +25,9 @@ import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.ptg.service.IPointageService;
+import nc.noumea.mairie.ptg.service.NotAMondayException;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 

@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -25,6 +25,11 @@ import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
+import nc.noumea.mairie.ptg.service.IPointageService;
+import nc.noumea.mairie.ptg.service.NotAMondayException;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
+import nc.noumea.mairie.ptg.service.impl.SaisieService;
 
 import org.joda.time.DateTime;
 import org.junit.Test;

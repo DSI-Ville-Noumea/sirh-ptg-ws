@@ -14,7 +14,7 @@ import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
-import nc.noumea.mairie.ptg.service.HelperService;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.springframework.beans.factory.annotation.Autowired;

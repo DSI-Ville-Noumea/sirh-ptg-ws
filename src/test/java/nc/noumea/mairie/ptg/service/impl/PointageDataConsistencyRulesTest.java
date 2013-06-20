@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,8 +23,8 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
-import nc.noumea.mairie.ptg.service.HelperService;
-import nc.noumea.mairie.ptg.service.PointageDataConsistencyRules;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
+import nc.noumea.mairie.ptg.service.impl.PointageDataConsistencyRules;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;

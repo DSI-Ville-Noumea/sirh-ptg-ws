@@ -1,4 +1,7 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ptg.service.impl;
+
+import nc.noumea.mairie.ptg.service.AgentMatriculeConverterServiceException;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 
 import org.springframework.stereotype.Service;
 
