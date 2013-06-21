@@ -15,6 +15,7 @@
         <class>nc.noumea.mairie.ptg.domain.PtgComment</class>
         <class>nc.noumea.mairie.ptg.domain.RefEtat</class>
         <class>nc.noumea.mairie.ptg.domain.VentilHsup</class>
+        <class>nc.noumea.mairie.ptg.domain.VentilPrime</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>

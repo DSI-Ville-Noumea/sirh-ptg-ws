@@ -3,6 +3,8 @@ package nc.noumea.mairie.ptg.domain;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -61,4 +63,8 @@ public class VentilHsup {
 
 	@Column(name = "H_COMPOSEES", columnDefinition = "number")
 	private double hComposees;
+	
+	@Column(name = "ETAT")
+	@Enumerated(EnumType.ORDINAL)
+	private EtatPointageEnum etat;
 }
