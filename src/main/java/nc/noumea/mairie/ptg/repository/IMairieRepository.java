@@ -13,11 +13,18 @@ import nc.noumea.mairie.sirh.domain.Agent;
 public interface IMairieRepository {
 
 	Agent getAgent(int idAgent);
+
 	Spcarr getAgentCurrentCarriere(Agent aAgent, Date asOfDate);
+
 	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date);
+
 	Spadmn getAgentCurrentPosition(Agent ag, Date asOfDate);
-	
+
 	List<Sprirc> getListRecuperationBetween(Integer idAgent, Date start, Date end);
+
 	List<Spcong> getListCongeBetween(Integer idAgent, Date start, Date end);
+
 	List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end);
+
+	boolean isJourHoliday(Date date);
 }

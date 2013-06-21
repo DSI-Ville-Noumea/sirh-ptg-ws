@@ -70,43 +70,41 @@ public class MairieRepository implements IMairieRepository {
 
 		return result;
 	}
-	
+
 	@Override
 	public List<Sprirc> getListRecuperationBetween(Integer idAgent, Date start, Date end) {
-		
+
 		TypedQuery<Sprirc> query = sirhEntityManager.createNamedQuery("getSprircForAgentAndPeriod", Sprirc.class);
 		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
 		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
 		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
-		
+
 		return query.getResultList();
 	}
-	
+
 	@Override
 	public List<Spcong> getListCongeBetween(Integer idAgent, Date start, Date end) {
-		
+
 		TypedQuery<Spcong> query = sirhEntityManager.createNamedQuery("getSpcongForAgentAndPeriod", Spcong.class);
 		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
 		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
 		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
-		
+
 		return query.getResultList();
 	}
-	
+
 	@Override
 	public List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end) {
-		
 		TypedQuery<Spabsen> query = sirhEntityManager.createNamedQuery("getSpabsenForAgentAndPeriod", Spabsen.class);
 		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
 		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
 		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
-		
+
 		return query.getResultList();
 	}
 
 	@Override
 	public Spadmn getAgentCurrentPosition(Agent agent, Date asOfDate) {
-		
 		TypedQuery<Spadmn> qSpadmn = sirhEntityManager.createNamedQuery("getAgentSpadmnAsOfDate", Spadmn.class);
 		qSpadmn.setParameter("nomatr", agent.getNomatr());
 
@@ -117,5 +115,15 @@ public class MairieRepository implements IMairieRepository {
 		Spadmn adm = qSpadmn.getSingleResult();
 
 		return adm;
+	}
+
+	@Override
+	public boolean isJourHoliday(Date date) {
+		TypedQuery<Boolean> q = sirhEntityManager.createNamedQuery("isJourHoliday", Boolean.class);
+		q.setParameter("date", date);
+
+		Boolean result = q.getSingleResult();
+
+		return (result != null && result);
 	}
 }
