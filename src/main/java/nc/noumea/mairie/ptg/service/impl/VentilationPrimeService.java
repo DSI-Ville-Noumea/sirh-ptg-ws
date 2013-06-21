@@ -46,6 +46,11 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 		return new ArrayList<VentilPrime>(primesByMonth.values());
 	}
 	
+	public List<VentilPrime> generatePrimesAgent(Integer idAgent, List<Pointage> pointagres, Date dateDebutMois) {
+		
+		return null;
+	}
+	
 	private List<Pointage> getPrimesPointages(List<Pointage> pointages) {
 		
 		List<Pointage> result = new ArrayList<Pointage>();

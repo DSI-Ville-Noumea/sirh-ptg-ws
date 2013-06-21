@@ -9,4 +9,5 @@ import nc.noumea.mairie.ptg.domain.VentilPrime;
 public interface IVentilationPrimeService {
 
 	List<VentilPrime> processPrimesAgent(Integer idAgent, List<Pointage> pointages, Date dateDebutMois);
+	List<VentilPrime> generatePrimesAgent(Integer idAgent, List<Pointage> pointagres, Date dateDebutMois);
 }
