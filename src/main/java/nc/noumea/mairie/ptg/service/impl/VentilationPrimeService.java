@@ -8,13 +8,16 @@ import java.util.List;
 import java.util.Map;
 
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
+import org.springframework.stereotype.Service;
 
+@Service
 public class VentilationPrimeService implements IVentilationPrimeService {
 
 	// List of rubrique to not aggregate because used for calulating other Primes
@@ -46,9 +49,27 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 		return new ArrayList<VentilPrime>(primesByMonth.values());
 	}
 	
-	public List<VentilPrime> generatePrimesAgent(Integer idAgent, List<Pointage> pointagres, Date dateDebutMois) {
+	@Override
+	public List<VentilPrime> processPrimesCalculeesAgent(Integer idAgent, List<PointageCalcule> pointages, Date dateDebutMois) {
 		
-		return null;
+		Map<Integer, VentilPrime> primesByMonth = new HashMap<Integer, VentilPrime>();
+		
+		for (PointageCalcule ptg : pointages) {
+			
+			Integer idRefPrime = ptg.getRefPrime().getIdRefPrime();
+			
+			if (!primesByMonth.containsKey(idRefPrime)) {
+				VentilPrime vp = new VentilPrime();
+				vp.setIdAgent(idAgent);
+				vp.setRefPrime(ptg.getRefPrime());
+				vp.setDateDebutMois(dateDebutMois);
+				primesByMonth.put(idRefPrime, vp);
+			}
+			
+			primesByMonth.get(idRefPrime).addQuantite(ptg.getQuantite());
+		}
+		
+		return new ArrayList<VentilPrime>(primesByMonth.values());
 	}
 	
 	private List<Pointage> getPrimesPointages(List<Pointage> pointages) {

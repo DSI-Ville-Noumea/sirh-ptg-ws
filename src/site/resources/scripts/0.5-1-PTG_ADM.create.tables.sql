@@ -74,6 +74,34 @@ create public synonym PTG_VENTIL_PRIME for PTG_VENTIL_PRIME;
 grant select, insert, update, delete on PTG_VENTIL_PRIME to R_PTG_USR;
 grant select on PTG_VENTIL_PRIME to R_PTG_READ;
 
+----------------------------------------------------------------
+-- PTG_VENTIL_ABSENCE
+----------------------------------------------------------------
+create sequence PTG_S_VENTIL_ABSENCE 
+start with 1 
+increment by 1 
+nomaxvalue;
+
+create public synonym PTG_S_VENTIL_ABSENCE for PTG_S_VENTIL_ABSENCE;
+grant select on PTG_S_VENTIL_ABSENCE to R_PTG_USR;
+
+CREATE TABLE PTG_VENTIL_ABSENCE (
+  ID_VENTIL_ABSENCE NUMBER(38,0) NOT NULL,
+  ID_AGENT NUMBER(8,0) NOT NULL,
+  DATE_DEBUT_MOIS DATE NOT NULL,
+  ETAT NUMBER(2,0), 
+  QUANTITE_CONCERTEE NUMBER(7,2) DEFAULT 0,
+  QUANTITE_NON_CONCERTEE NUMBER(7,2) DEFAULT 0,
+  VERSION NUMBER(38,0) DEFAULT 0,
+  constraint PK_PTG_VENTIL_ABSENCE
+   primary key (ID_VENTIL_ABSENCE)
+  )
+TABLESPACE TS_PTG_BIG_DATA;
+
+create public synonym PTG_VENTIL_ABSENCE for PTG_VENTIL_ABSENCE;
+grant select, insert, update, delete on PTG_VENTIL_ABSENCE to R_PTG_USR;
+grant select on PTG_VENTIL_ABSENCE to R_PTG_READ;
+
 --==============================================================
 -- Table: PTG_POINTAGE_CALCULE
 --==============================================================
