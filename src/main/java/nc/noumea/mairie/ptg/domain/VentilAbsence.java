@@ -22,13 +22,21 @@ public class VentilAbsence {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateDebutMois;
 	
-	@Column(name = "QUANTITE_CONCERTEE")
-	private Integer quantiteConcertee;
+	@Column(name = "MINUTES_CONCERTEE")
+	private int minutesConcertee;
 
-	@Column(name = "QUANTITE_NON_CONCERTEE")
-	private Integer quantiteNonConcertee;
+	@Column(name = "MINUTES_NON_CONCERTEE")
+	private int minutesNonConcertee;
 
 	@Column(name = "ETAT")
 	@Enumerated(EnumType.ORDINAL)
 	private EtatPointageEnum etat;
+	
+	public void addMinutesConcertee(Integer minutes) {
+		minutesConcertee += minutes;
+	}
+	
+	public void addMinutesNonConcertee(Integer minutes) {
+		minutesNonConcertee += minutes;
+	}
 }

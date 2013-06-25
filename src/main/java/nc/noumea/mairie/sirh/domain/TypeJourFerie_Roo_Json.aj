@@ -16,12 +16,20 @@ privileged aspect TypeJourFerie_Roo_Json {
         return new JSONSerializer().exclude("*.class").serialize(this);
     }
     
+    public String TypeJourFerie.toJson(String[] fields) {
+        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+    }
+    
     public static TypeJourFerie TypeJourFerie.fromJsonToTypeJourFerie(String json) {
         return new JSONDeserializer<TypeJourFerie>().use(null, TypeJourFerie.class).deserialize(json);
     }
     
     public static String TypeJourFerie.toJsonArray(Collection<TypeJourFerie> collection) {
         return new JSONSerializer().exclude("*.class").serialize(collection);
+    }
+    
+    public static String TypeJourFerie.toJsonArray(Collection<TypeJourFerie> collection, String[] fields) {
+        return new JSONSerializer().include(fields).exclude("*.class").serialize(collection);
     }
     
     public static Collection<TypeJourFerie> TypeJourFerie.fromJsonArrayToTypeJourFeries(String json) {

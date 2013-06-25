@@ -25,20 +25,20 @@ privileged aspect VentilAbsence_Roo_JavaBean {
         this.dateDebutMois = dateDebutMois;
     }
     
-    public Integer VentilAbsence.getQuantiteConcertee() {
-        return this.quantiteConcertee;
+    public int VentilAbsence.getMinutesConcertee() {
+        return this.minutesConcertee;
     }
     
-    public void VentilAbsence.setQuantiteConcertee(Integer quantiteConcertee) {
-        this.quantiteConcertee = quantiteConcertee;
+    public void VentilAbsence.setMinutesConcertee(int minutesConcertee) {
+        this.minutesConcertee = minutesConcertee;
     }
     
-    public Integer VentilAbsence.getQuantiteNonConcertee() {
-        return this.quantiteNonConcertee;
+    public int VentilAbsence.getMinutesNonConcertee() {
+        return this.minutesNonConcertee;
     }
     
-    public void VentilAbsence.setQuantiteNonConcertee(Integer quantiteNonConcertee) {
-        this.quantiteNonConcertee = quantiteNonConcertee;
+    public void VentilAbsence.setMinutesNonConcertee(int minutesNonConcertee) {
+        this.minutesNonConcertee = minutesNonConcertee;
     }
     
     public EtatPointageEnum VentilAbsence.getEtat() {
