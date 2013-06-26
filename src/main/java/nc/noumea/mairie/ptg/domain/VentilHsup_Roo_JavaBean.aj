@@ -25,116 +25,116 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.dateLundi = dateLundi;
     }
     
-    public double VentilHsup.getHAbsences() {
-        return this.hAbsences;
+    public int VentilHsup.getMAbsences() {
+        return this.mAbsences;
     }
     
-    public void VentilHsup.setHAbsences(double hAbsences) {
-        this.hAbsences = hAbsences;
+    public void VentilHsup.setMAbsences(int mAbsences) {
+        this.mAbsences = mAbsences;
     }
     
-    public double VentilHsup.getHHorsContrat() {
-        return this.hHorsContrat;
+    public int VentilHsup.getMHorsContrat() {
+        return this.mHorsContrat;
     }
     
-    public void VentilHsup.setHHorsContrat(double hHorsContrat) {
-        this.hHorsContrat = hHorsContrat;
+    public void VentilHsup.setMHorsContrat(int mHorsContrat) {
+        this.mHorsContrat = mHorsContrat;
     }
     
-    public double VentilHsup.getHSup() {
-        return this.hSup;
+    public int VentilHsup.getMSup() {
+        return this.mSup;
     }
     
-    public void VentilHsup.setHSup(double hSup) {
-        this.hSup = hSup;
+    public void VentilHsup.setMSup(int mSup) {
+        this.mSup = mSup;
     }
     
-    public double VentilHsup.getHSup25() {
-        return this.hSup25;
+    public int VentilHsup.getMSup25() {
+        return this.mSup25;
     }
     
-    public void VentilHsup.setHSup25(double hSup25) {
-        this.hSup25 = hSup25;
+    public void VentilHsup.setMSup25(int mSup25) {
+        this.mSup25 = mSup25;
     }
     
-    public double VentilHsup.getHSup50() {
-        return this.hSup50;
+    public int VentilHsup.getMSup50() {
+        return this.mSup50;
     }
     
-    public void VentilHsup.setHSup50(double hSup50) {
-        this.hSup50 = hSup50;
+    public void VentilHsup.setMSup50(int mSup50) {
+        this.mSup50 = mSup50;
     }
     
-    public double VentilHsup.getHsdjf() {
-        return this.hsdjf;
+    public int VentilHsup.getMsdjf() {
+        return this.msdjf;
     }
     
-    public void VentilHsup.setHsdjf(double hsdjf) {
-        this.hsdjf = hsdjf;
+    public void VentilHsup.setMsdjf(int msdjf) {
+        this.msdjf = msdjf;
     }
     
-    public double VentilHsup.getHsdjf25() {
-        return this.hsdjf25;
+    public int VentilHsup.getMsdjf25() {
+        return this.msdjf25;
     }
     
-    public void VentilHsup.setHsdjf25(double hsdjf25) {
-        this.hsdjf25 = hsdjf25;
+    public void VentilHsup.setMsdjf25(int msdjf25) {
+        this.msdjf25 = msdjf25;
     }
     
-    public double VentilHsup.getHsdjf50() {
-        return this.hsdjf50;
+    public int VentilHsup.getMsdjf50() {
+        return this.msdjf50;
     }
     
-    public void VentilHsup.setHsdjf50(double hsdjf50) {
-        this.hsdjf50 = hsdjf50;
+    public void VentilHsup.setMsdjf50(int msdjf50) {
+        this.msdjf50 = msdjf50;
     }
     
-    public double VentilHsup.getHMai() {
-        return this.hMai;
+    public int VentilHsup.getMMai() {
+        return this.mMai;
     }
     
-    public void VentilHsup.setHMai(double hMai) {
-        this.hMai = hMai;
+    public void VentilHsup.setMMai(int mMai) {
+        this.mMai = mMai;
     }
     
-    public double VentilHsup.getHsNuit() {
-        return this.hsNuit;
+    public int VentilHsup.getMsNuit() {
+        return this.msNuit;
     }
     
-    public void VentilHsup.setHsNuit(double hsNuit) {
-        this.hsNuit = hsNuit;
+    public void VentilHsup.setMsNuit(int msNuit) {
+        this.msNuit = msNuit;
     }
     
-    public double VentilHsup.getHNormales() {
-        return this.hNormales;
+    public int VentilHsup.getMNormales() {
+        return this.mNormales;
     }
     
-    public void VentilHsup.setHNormales(double hNormales) {
-        this.hNormales = hNormales;
+    public void VentilHsup.setMNormales(int mNormales) {
+        this.mNormales = mNormales;
     }
     
-    public double VentilHsup.getHComplementaires() {
-        return this.hComplementaires;
+    public int VentilHsup.getMComplementaires() {
+        return this.mComplementaires;
     }
     
-    public void VentilHsup.setHComplementaires(double hComplementaires) {
-        this.hComplementaires = hComplementaires;
+    public void VentilHsup.setMComplementaires(int mComplementaires) {
+        this.mComplementaires = mComplementaires;
     }
     
-    public double VentilHsup.getHSimple() {
-        return this.hSimple;
+    public int VentilHsup.getMSimple() {
+        return this.mSimple;
     }
     
-    public void VentilHsup.setHSimple(double hSimple) {
-        this.hSimple = hSimple;
+    public void VentilHsup.setMSimple(int mSimple) {
+        this.mSimple = mSimple;
     }
     
-    public double VentilHsup.getHComposees() {
-        return this.hComposees;
+    public int VentilHsup.getMComposees() {
+        return this.mComposees;
     }
     
-    public void VentilHsup.setHComposees(double hComposees) {
-        this.hComposees = hComposees;
+    public void VentilHsup.setMComposees(int mComposees) {
+        this.mComposees = mComposees;
     }
     
     public EtatPointageEnum VentilHsup.getEtat() {

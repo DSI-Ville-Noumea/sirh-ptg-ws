@@ -1,5 +1,7 @@
 package nc.noumea.mairie.domain;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Transient;
@@ -69,5 +71,50 @@ public class Spbase {
 				default:
 					return 0.0;
 		}
+	}
+	
+	@Transient
+	public int getDayBaseInMinutes(int day) {
+		
+		Double baseMairie = 0d;
+		
+		switch(day) {
+			case 0:
+				baseMairie = getNbahlu();
+				break;
+			case 1:
+				baseMairie = getNbahma();
+				break;
+			case 2:
+				baseMairie = getNbahme();
+				break;
+			case 3:
+				baseMairie = getNbahje();
+				break;
+			case 4:
+				baseMairie = getNbahve();
+				break;
+			case 5:
+				baseMairie = getNbahsa();
+				break;
+			case 6:
+				baseMairie = getNbahdi();
+				break;
+		}
+		
+		return convertMairieNbHeuresFormatToMinutes(baseMairie);
+	}
+
+	public int getWeekBaseInMinutes() {
+		return convertMairieNbHeuresFormatToMinutes(getNbashh());
+	}
+	
+	public static int convertMairieNbHeuresFormatToMinutes(Double nbHeuresMairies) {
+		
+		BigDecimal v = new BigDecimal(String.valueOf(nbHeuresMairies));
+		int nbHours = v.intValue();
+		int nbMinutes = v.multiply(BigDecimal.TEN).subtract(new BigDecimal(nbHours).multiply(BigDecimal.TEN)).intValue() * 10;
+		
+		return nbHours * 60 + nbMinutes;
 	}
 }

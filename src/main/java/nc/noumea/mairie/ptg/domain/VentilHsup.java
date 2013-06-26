@@ -22,47 +22,47 @@ public class VentilHsup {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateLundi;
 	
-	@Column(name = "H_ABS", columnDefinition = "number")
-	private double hAbsences;
+	@Column(name = "M_ABS")
+	private int mAbsences;
 
-	@Column(name = "H_HORS_CONTRAT", columnDefinition = "number")
-	private double hHorsContrat;
+	@Column(name = "M_HORS_CONTRAT")
+	private int mHorsContrat;
 	
-	@Column(name = "H_SUP", columnDefinition = "number")
-	private double hSup;
+	@Column(name = "M_SUP")
+	private int mSup;
 
-	@Column(name = "H_SUP_25", columnDefinition = "number")
-	private double hSup25;
+	@Column(name = "M_SUP_25")
+	private int mSup25;
 
-	@Column(name = "H_SUP_50", columnDefinition = "number")
-	private double hSup50;
+	@Column(name = "M_SUP_50")
+	private int mSup50;
 
-	@Column(name = "H_DJF", columnDefinition = "number")
-	private double hsdjf;
+	@Column(name = "M_DJF")
+	private int msdjf;
 
-	@Column(name = "H_DJF_25", columnDefinition = "number")
-	private double hsdjf25;
+	@Column(name = "M_DJF_25")
+	private int msdjf25;
 
-	@Column(name = "H_DJF_50", columnDefinition = "number")
-	private double hsdjf50;
+	@Column(name = "M_DJF_50")
+	private int msdjf50;
 	
-	@Column(name = "H_1_MAI", columnDefinition = "number")
-	private double hMai;
+	@Column(name = "M_1_MAI")
+	private int mMai;
 	
-	@Column(name = "H_NUIT", columnDefinition = "number")
-	private double hsNuit;
+	@Column(name = "M_NUIT")
+	private int msNuit;
 	
-	@Column(name = "H_NORMALES", columnDefinition = "number")
-	private double hNormales;
+	@Column(name = "M_NORMALES")
+	private int mNormales;
 
-	@Column(name = "H_COMPLEMENTAIRES", columnDefinition = "number")
-	private double hComplementaires;
+	@Column(name = "M_COMPLEMENTAIRES")
+	private int mComplementaires;
 	
-	@Column(name = "H_SIMPLES", columnDefinition = "number")
-	private double hSimple;
+	@Column(name = "M_SIMPLES")
+	private int mSimple;
 
-	@Column(name = "H_COMPOSEES", columnDefinition = "number")
-	private double hComposees;
+	@Column(name = "M_COMPOSEES")
+	private int mComposees;
 	
 	@Column(name = "ETAT")
 	@Enumerated(EnumType.ORDINAL)

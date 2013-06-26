@@ -12,7 +12,6 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.service.IHolidayService;
-import nc.noumea.mairie.ptg.service.impl.VentilationHSupService;
 
 import org.joda.time.DateTime;
 import org.junit.BeforeClass;
@@ -20,7 +19,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-public class VentilationHsupServiceTest {
+public class VentilationHSupServiceTest {
 
 	private static RefTypePointage hSup;
 	private static RefTypePointage abs;
@@ -119,15 +118,15 @@ public class VentilationHsupServiceTest {
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
 		assertEquals(p1.getDateLundi(), result.getDateLundi());
-		assertEquals(15d, result.getHHorsContrat(), 0);
-		assertEquals(3d, result.getHAbsences(), 0);
-		assertEquals(12d, result.getHSup(), 0);
-		
-		assertEquals(1d, result.getHsNuit(), 0);
-		assertEquals(2d, result.getHsdjf(), 0);
-		assertEquals(0d, result.getHNormales(), 0);
-		assertEquals(3d, result.getHSimple(), 0);
-		assertEquals(6d, result.getHComposees(), 0);
+		assertEquals(15* 60, result.getMHorsContrat(), 0);
+		assertEquals(3* 60, result.getMAbsences(), 0);
+		assertEquals(12* 60, result.getMSup(), 0);
+
+		assertEquals(1* 60, result.getMsNuit(), 0);
+		assertEquals(2* 60, result.getMsdjf(), 0);
+		assertEquals(0, result.getMNormales(), 0);
+		assertEquals(3* 60, result.getMSimple(), 0);
+		assertEquals(6* 60, result.getMComposees(), 0);
 	}
 	
 	@Test
@@ -216,15 +215,15 @@ public class VentilationHsupServiceTest {
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
 		assertEquals(p1.getDateLundi(), result.getDateLundi());
-		assertEquals(15d, result.getHHorsContrat(), 0);
-		assertEquals(3d, result.getHAbsences(), 0);
-		assertEquals(12d, result.getHSup(), 0);
-		
-		assertEquals(1d, result.getHsNuit(), 0);
-		assertEquals(2d, result.getHsdjf(), 0);
-		assertEquals(9d, result.getHNormales(), 0);
-		assertEquals(0d, result.getHSimple(), 0);
-		assertEquals(0d, result.getHComposees(), 0);
+		assertEquals(15 * 60, result.getMHorsContrat(), 0);
+		assertEquals(3 * 60, result.getMAbsences(), 0);
+		assertEquals(12 * 60, result.getMSup(), 0);
+
+		assertEquals(1 * 60, result.getMsNuit(), 0);
+		assertEquals(2 * 60, result.getMsdjf(), 0);
+		assertEquals(9 * 60, result.getMNormales(), 0);
+		assertEquals(0, result.getMSimple(), 0);
+		assertEquals(0, result.getMComposees(), 0);
 	}
 	
 	@Test
@@ -313,21 +312,21 @@ public class VentilationHsupServiceTest {
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
 		assertEquals(p1.getDateLundi(), result.getDateLundi());
-		assertEquals(15d, result.getHHorsContrat(), 0);
-		assertEquals(3d, result.getHAbsences(), 0);
-		assertEquals(12d, result.getHSup(), 0);
-		
-		assertEquals(4d, result.getHsNuit(), 0);
-		assertEquals(6d, result.getHsdjf(), 0);
-		assertEquals(4d, result.getHMai(), 0);
-		assertEquals(0d, result.getHComplementaires(), 0);
-		assertEquals(8d, result.getHSup25(), 0);
-		assertEquals(4d, result.getHSup50(), 0);
-		assertEquals(6d, result.getHsdjf25(), 0);
-		assertEquals(0d, result.getHsdjf50(), 0);
-		assertEquals(0d, result.getHNormales(), 0);
-		assertEquals(0d, result.getHSimple(), 0);
-		assertEquals(0d, result.getHComposees(), 0);
+		assertEquals(15 * 60, result.getMHorsContrat(), 0);
+		assertEquals(3 * 60, result.getMAbsences(), 0);
+		assertEquals(12 * 60, result.getMSup(), 0);
+
+		assertEquals(4 * 60, result.getMsNuit(), 0);
+		assertEquals(6 * 60, result.getMsdjf(), 0);
+		assertEquals(4 * 60, result.getMMai(), 0);
+		assertEquals(0 , result.getMComplementaires(), 0);
+		assertEquals(8 * 60, result.getMSup25(), 0);
+		assertEquals(4 * 60, result.getMSup50(), 0);
+		assertEquals(6 * 60, result.getMsdjf25(), 0);
+		assertEquals(0 , result.getMsdjf50(), 0);
+		assertEquals(0 , result.getMNormales(), 0);
+		assertEquals(0 , result.getMSimple(), 0);
+		assertEquals(0 , result.getMComposees(), 0);
 	}
 	
 	@Test
@@ -416,20 +415,20 @@ public class VentilationHsupServiceTest {
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
 		assertEquals(p1.getDateLundi(), result.getDateLundi());
-		assertEquals(15d, result.getHHorsContrat(), 0);
-		assertEquals(3d, result.getHAbsences(), 0);
-		assertEquals(12d, result.getHSup(), 0);
-		
-		assertEquals(6d, result.getHsNuit(), 0);
-		assertEquals(6d, result.getHsdjf(), 0);
-		assertEquals(4d, result.getHMai(), 0);
-		assertEquals(12d, result.getHComplementaires(), 0);
-		assertEquals(0d, result.getHSup25(), 0);
-		assertEquals(0d, result.getHSup50(), 0);
-		assertEquals(6d, result.getHsdjf25(), 0);
-		assertEquals(0d, result.getHsdjf50(), 0);
-		assertEquals(0d, result.getHNormales(), 0);
-		assertEquals(0d, result.getHSimple(), 0);
-		assertEquals(0d, result.getHComposees(), 0);
+		assertEquals(15 * 60, result.getMHorsContrat(), 0);
+		assertEquals(3 * 60, result.getMAbsences(), 0);
+		assertEquals(12 * 60, result.getMSup(), 0);
+
+		assertEquals(6 * 60, result.getMsNuit(), 0);
+		assertEquals(6 * 60, result.getMsdjf(), 0);
+		assertEquals(4 * 60, result.getMMai(), 0);
+		assertEquals(12 * 60, result.getMComplementaires(), 0);
+		assertEquals(0 , result.getMSup25(), 0);
+		assertEquals(0 , result.getMSup50(), 0);
+		assertEquals(6 * 60, result.getMsdjf25(), 0);
+		assertEquals(0 , result.getMsdjf50(), 0);
+		assertEquals(0 , result.getMNormales(), 0);
+		assertEquals(0 , result.getMSimple(), 0);
+		assertEquals(0 , result.getMComposees(), 0);
 	}
 }
