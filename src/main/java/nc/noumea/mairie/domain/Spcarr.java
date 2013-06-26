@@ -5,6 +5,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -18,7 +19,10 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJson
 @RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPCARR", versionField = "")
-@NamedQuery(name = "getCurrentCarriere", query = "select carr from Spcarr carr where carr.id.nomatr = :nomatr and carr.id.datdeb <= :todayFormatMairie and (carr.dateFin = 0 or carr.dateFin >= :todayFormatMairie)")
+@NamedQueries({
+	@NamedQuery(name = "getCurrentCarriere", query = "select carr from Spcarr carr where carr.id.nomatr = :nomatr and carr.id.datdeb <= :todayFormatMairie and (carr.dateFin = 0 or carr.dateFin >= :todayFormatMairie)"),
+	@NamedQuery(name = "getAll900MatriculesByStatus", query = "select distinct 900000 + carr.nomatr from Spacarr carr where carr.cdcate = :cdcate")
+})
 public class Spcarr {
 
 	@EmbeddedId
@@ -67,6 +71,19 @@ public class Spcarr {
 				return AgentStatutEnum.C;
 			case 7:
 				return AgentStatutEnum.CC;
+			default:
+				return null;
+		}
+	}
+	
+	public static Integer getStatutCarriereFromEnum(AgentStatutEnum statut) {
+		switch (statut) {
+			case F:
+				return 20;
+			case C:
+				return 4;
+			case CC:
+				return 7;
 			default:
 				return null;
 		}

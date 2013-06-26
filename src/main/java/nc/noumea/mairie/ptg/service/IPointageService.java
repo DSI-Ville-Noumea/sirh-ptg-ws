@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.service;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.FichePointageListDto;
@@ -24,5 +25,7 @@ public interface IPointageService {
 	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime);
 
 	public FichePointageListDto getFichesPointageForUsers(String csvIdAgents, Date date);
+	
+	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate, List<EtatPointageEnum> etats);
 
 }

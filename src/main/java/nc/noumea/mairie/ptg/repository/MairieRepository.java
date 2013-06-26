@@ -9,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
@@ -125,5 +126,12 @@ public class MairieRepository implements IMairieRepository {
 		Boolean result = q.getSingleResult();
 
 		return (result != null && result);
+	}
+	
+	public List<Integer> getAllAgentIdsByStatus(AgentStatutEnum statut) {
+		TypedQuery<Integer> q = sirhEntityManager.createNamedQuery("getAll900MatriculesByStatus", Integer.class);
+		q.setParameter("cdcate", Spcarr.getStatutCarriereFromEnum(statut));		
+		
+		return q.getResultList();
 	}
 }

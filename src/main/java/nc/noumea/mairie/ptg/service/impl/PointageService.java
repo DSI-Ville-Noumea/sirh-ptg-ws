@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -288,5 +289,35 @@ public class PointageService implements IPointageService {
 			res.add(dto);
 		}
 		return res;
+	}
+
+	@Override
+	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate, List<EtatPointageEnum> etats) {
+
+		List<Pointage> agentPointages = pointageRepository.getListPointages(Arrays.asList(idAgent), fromDate, toDate, null);
+
+		logger.debug("Found {} Pointage for agent {} between dates {} and {}", agentPointages.size(), idAgent, fromDate, toDate);
+
+		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
+
+		List<Pointage> resultList = new ArrayList<Pointage>();
+		
+		for (Pointage ptg : agentPointages) {
+
+			if (oldPointagesToAvoid.contains(ptg.getIdPointage())) {
+				logger.debug("Not taking Pointage {} because not the latest.", ptg.getIdPointage());
+				continue;
+			}
+
+			if (ptg.getPointageParent() != null) {
+				logger.debug("Pointage {} has a parent {}, adding it to avoid list.", ptg.getIdPointage(), ptg.getPointageParent().getIdPointage());
+				oldPointagesToAvoid.add(ptg.getPointageParent().getIdPointage());
+			}
+			
+			if (etats.contains(ptg.getLatestEtatPointage().getEtat()))
+					resultList.add(ptg);
+		}
+		
+		return resultList;
 	}
 }

@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.repository;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
@@ -27,4 +28,6 @@ public interface IMairieRepository {
 	List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end);
 
 	boolean isJourHoliday(Date date);
+	
+	List<Integer> getAllAgentIdsByStatus(AgentStatutEnum statut);
 }
