@@ -32,9 +32,12 @@ public class MairieRepository implements IMairieRepository {
 
 	@Override
 	public Spcarr getAgentCurrentCarriere(Agent agent, Date asOfDate) {
+		return getAgentCurrentCarriere(agent.getNomatr(), asOfDate);
+	}
+	public Spcarr getAgentCurrentCarriere(Integer nomatr, Date asOfDate) {
 
 		TypedQuery<Spcarr> qCarr = sirhEntityManager.createNamedQuery("getCurrentCarriere", Spcarr.class);
-		qCarr.setParameter("nomatr", agent.getNomatr());
+		qCarr.setParameter("nomatr", nomatr);
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		int dateFormatMairie = Integer.valueOf(sdf.format(asOfDate));

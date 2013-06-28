@@ -14,6 +14,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
@@ -292,9 +293,9 @@ public class PointageService implements IPointageService {
 	}
 
 	@Override
-	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate, List<EtatPointageEnum> etats) {
+	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum type, List<EtatPointageEnum> etats) {
 
-		List<Pointage> agentPointages = pointageRepository.getListPointages(Arrays.asList(idAgent), fromDate, toDate, null);
+		List<Pointage> agentPointages = pointageRepository.getListPointages(Arrays.asList(idAgent), fromDate, toDate, type != null ? type.getValue() : null);
 
 		logger.debug("Found {} Pointage for agent {} between dates {} and {}", agentPointages.size(), idAgent, fromDate, toDate);
 

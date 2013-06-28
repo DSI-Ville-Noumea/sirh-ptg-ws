@@ -323,7 +323,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		
 	}
 	
-	private Interval getDayHSupJourIntervalForStatut(DateTime day, AgentStatutEnum statut) {
+	public Interval getDayHSupJourIntervalForStatut(DateTime day, AgentStatutEnum statut) {
 		
 		int startHour, endHour;
 		

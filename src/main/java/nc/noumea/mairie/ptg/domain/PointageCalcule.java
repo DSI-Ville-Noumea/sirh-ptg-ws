@@ -57,4 +57,9 @@ public class PointageCalcule {
 	public RefTypePointageEnum getTypePointageEnum() {
 		return RefTypePointageEnum.getRefTypePointageEnum(type.getIdRefTypePointage());
 	}
+	
+	public void addQuantity(Integer qty) {
+		this.quantite = this.quantite == null ? 0 : this.quantite;
+		this.quantite += qty;
+	}
 }
