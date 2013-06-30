@@ -36,10 +36,10 @@ public class PrimeDtoTest {
 		assertEquals(ref.getIdRefPrime(), result.getIdRefPrime());
 		assertEquals(ref.getNoRubr(), result.getNumRubrique());
 	}
-	
+
 	@Test
 	public void updateWithPointage_withPERIODE_HEURES() {
-		
+
 		// Given
 		PrimeDto result = new PrimeDto();
 		Pointage p = new Pointage();
@@ -58,10 +58,10 @@ public class PrimeDtoTest {
 		PtgComment c = new PtgComment();
 		c.setText("blibli");
 		p.setCommentaire(c);
-		
+
 		// When
 		result.updateWithPointage(p);
-		
+
 		// Then
 		assertEquals(p.getIdPointage(), result.getIdPointage());
 		assertNull(result.getQuantite());
@@ -71,10 +71,10 @@ public class PrimeDtoTest {
 		assertEquals("blabla", result.getMotif());
 		assertEquals("blibli", result.getCommentaire());
 	}
-	
+
 	@Test
 	public void updateWithPointage_withCASE_A_COCHER() {
-		
+
 		// Given
 		PrimeDto result = new PrimeDto();
 		Pointage p = new Pointage();
@@ -92,10 +92,10 @@ public class PrimeDtoTest {
 		PtgComment c = new PtgComment();
 		c.setText("blibli");
 		p.setCommentaire(c);
-		
+
 		// When
 		result.updateWithPointage(p);
-		
+
 		// Then
 		assertEquals(p.getIdPointage(), result.getIdPointage());
 		assertEquals(p.getQuantite(), result.getQuantite());
@@ -105,10 +105,10 @@ public class PrimeDtoTest {
 		assertEquals("blabla", result.getMotif());
 		assertEquals("blibli", result.getCommentaire());
 	}
-	
+
 	@Test
 	public void updateWithPointage_withNB_HEURES() {
-		
+
 		// Given
 		PrimeDto result = new PrimeDto();
 		Pointage p = new Pointage();
@@ -126,10 +126,10 @@ public class PrimeDtoTest {
 		PtgComment c = new PtgComment();
 		c.setText("blibli");
 		p.setCommentaire(c);
-		
+
 		// When
 		result.updateWithPointage(p);
-		
+
 		// Then
 		assertEquals(p.getIdPointage(), result.getIdPointage());
 		assertEquals(p.getQuantite(), result.getQuantite());
@@ -139,10 +139,10 @@ public class PrimeDtoTest {
 		assertEquals("blabla", result.getMotif());
 		assertEquals("blibli", result.getCommentaire());
 	}
-	
+
 	@Test
 	public void updateWithPointage_withNB_INDEMNITES() {
-		
+
 		// Given
 		PrimeDto result = new PrimeDto();
 		Pointage p = new Pointage();
@@ -160,10 +160,10 @@ public class PrimeDtoTest {
 		PtgComment c = new PtgComment();
 		c.setText("blibli");
 		p.setCommentaire(c);
-		
+
 		// When
 		result.updateWithPointage(p);
-		
+
 		// Then
 		assertEquals(p.getIdPointage(), result.getIdPointage());
 		assertEquals(p.getQuantite(), result.getQuantite());

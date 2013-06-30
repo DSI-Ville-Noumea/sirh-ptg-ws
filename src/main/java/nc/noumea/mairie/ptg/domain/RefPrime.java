@@ -38,4 +38,5 @@ public class RefPrime {
 	@Column(name = "STATUT")
 	@Enumerated(EnumType.STRING)
 	private AgentStatutEnum statut;
+	
 }

@@ -139,3 +139,30 @@ TABLESPACE TS_PTG_BIG_DATA;
 create public synonym PTG_POINTAGE_CALCULE for PTG_POINTAGE_CALCULE;
 grant select, insert, update, delete on PTG_POINTAGE_CALCULE to R_PTG_USR;
 grant select on PTG_POINTAGE_CALCULE to R_PTG_READ;
+
+
+----------------------------------------------------------------
+-- PTG_VENTIL_DATE
+----------------------------------------------------------------
+create sequence PTG_S_VENTIL_DATE 
+start with 1 
+increment by 1 
+nomaxvalue;
+
+create public synonym PTG_S_VENTIL_DATE for PTG_S_VENTIL_DATE;
+grant select on PTG_S_VENTIL_DATE to R_PTG_USR;
+
+CREATE TABLE PTG_VENTIL_DATE (
+  ID_VENTIL_DATE NUMBER(38,0) NOT NULL,
+  DATE_VENTIL DATE NOT NULL,
+  ETAT VARCHAR2(2),
+  TYPE_CHAINE_PAIE VARCHAR2(3) not null,
+  VERSION NUMBER(38,0) DEFAULT 0,
+  constraint PK_PTG_VENTIL_DATE
+   primary key (ID_VENTIL_DATE)
+  )
+TABLESPACE TS_PTG_DATA;
+
+create public synonym PTG_VENTIL_DATE for PTG_VENTIL_DATE;
+grant select, insert, update, delete on PTG_VENTIL_DATE to R_PTG_USR;
+grant select on PTG_VENTIL_DATE to R_PTG_READ;
