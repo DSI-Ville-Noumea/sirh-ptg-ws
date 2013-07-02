@@ -9,6 +9,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
@@ -25,6 +26,7 @@ public class VentilDate {
 	@Enumerated(EnumType.STRING)
 	private TypeChainePaieEnum typeChainePaie;
 
-	@Column(name = "VARCHAR2")
-	private String etat;
+	@Column(name = "IS_PAYE", nullable = false)
+	@Type(type = "boolean")
+	private boolean paye;
 }

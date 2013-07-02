@@ -25,12 +25,12 @@ privileged aspect VentilDate_Roo_JavaBean {
         this.typeChainePaie = typeChainePaie;
     }
     
-    public String VentilDate.getEtat() {
-        return this.etat;
+    public boolean VentilDate.isPaye() {
+        return this.paye;
     }
     
-    public void VentilDate.setEtat(String etat) {
-        this.etat = etat;
+    public void VentilDate.setPaye(boolean paye) {
+        this.paye = paye;
     }
     
 }

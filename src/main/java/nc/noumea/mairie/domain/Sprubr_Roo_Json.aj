@@ -16,12 +16,20 @@ privileged aspect Sprubr_Roo_Json {
         return new JSONSerializer().exclude("*.class").serialize(this);
     }
     
+    public String Sprubr.toJson(String[] fields) {
+        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+    }
+    
     public static Sprubr Sprubr.fromJsonToSprubr(String json) {
         return new JSONDeserializer<Sprubr>().use(null, Sprubr.class).deserialize(json);
     }
     
     public static String Sprubr.toJsonArray(Collection<Sprubr> collection) {
         return new JSONSerializer().exclude("*.class").serialize(collection);
+    }
+    
+    public static String Sprubr.toJsonArray(Collection<Sprubr> collection, String[] fields) {
+        return new JSONSerializer().include(fields).exclude("*.class").serialize(collection);
     }
     
     public static Collection<Sprubr> Sprubr.fromJsonArrayToSprubrs(String json) {
