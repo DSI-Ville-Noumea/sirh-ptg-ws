@@ -1,10 +1,14 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -29,4 +33,13 @@ public class VentilDate {
 	@Column(name = "IS_PAYE", nullable = false)
 	@Type(type = "boolean")
 	private boolean paye;
+	
+	@OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<VentilAbsence> ventilAsbences;
+	
+	@OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<VentilHsup> ventilHsups;
+	
+	@OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<VentilPrime> ventilPrimes;
 }

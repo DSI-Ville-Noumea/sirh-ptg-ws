@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
@@ -40,6 +41,7 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 				vp.setIdAgent(idAgent);
 				vp.setRefPrime(ptg.getRefPrime());
 				vp.setDateDebutMois(dateDebutMois);
+				vp.setEtat(EtatPointageEnum.VENTILE);
 				primesByMonth.put(idRefPrime, vp);
 			}
 			

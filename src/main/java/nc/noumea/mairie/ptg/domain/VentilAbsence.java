@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -18,9 +20,9 @@ public class VentilAbsence {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 	
-	@Column(name = "DATE_DEBUT_MOIS")
+	@Column(name = "DATE_LUNDI")
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateDebutMois;
+	private Date dateLundi;
 	
 	@Column(name = "MINUTES_CONCERTEE")
 	private int minutesConcertee;
@@ -31,6 +33,10 @@ public class VentilAbsence {
 	@Column(name = "ETAT")
 	@Enumerated(EnumType.ORDINAL)
 	private EtatPointageEnum etat;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
+	private VentilDate ventilDate;
 	
 	public void addMinutesConcertee(Integer minutes) {
 		minutesConcertee += minutes;

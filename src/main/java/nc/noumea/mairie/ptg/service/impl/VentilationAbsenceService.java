@@ -18,11 +18,11 @@ import org.springframework.stereotype.Service;
 public class VentilationAbsenceService implements IVentilationAbsenceService {
 
 	@Override
-	public VentilAbsence processAbsenceAgent(Integer idAgent, List<Pointage> pointages, Date dateDebutMois) {
+	public VentilAbsence processAbsenceAgent(Integer idAgent, List<Pointage> pointages, Date dateLundi) {
 		
 		VentilAbsence result = new VentilAbsence();
 		result.setIdAgent(idAgent);
-		result.setDateDebutMois(dateDebutMois);
+		result.setDateLundi(dateLundi);
 		result.setEtat(EtatPointageEnum.VENTILE);
 		
 		for (Pointage ptg : getAbsencePointages(pointages)) {

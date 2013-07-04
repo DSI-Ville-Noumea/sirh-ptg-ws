@@ -15,17 +15,17 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.ptg.service.IPointageService;
-import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class PointageCalculeService implements IPointageCalculeService {
 
 	@Autowired 
@@ -36,12 +36,6 @@ public class PointageCalculeService implements IPointageCalculeService {
 	
 	@Autowired
 	private IPointageService pointageService;
-	
-	@Autowired
-	private IVentilationHSupService ventilationHSupService;
-	
-	@Autowired
-	private IHolidayService holidayService;
 	
 	/**
 	 * Calculating a list of PointageCalcule for an agent over a week (from = monday, to = sunday)

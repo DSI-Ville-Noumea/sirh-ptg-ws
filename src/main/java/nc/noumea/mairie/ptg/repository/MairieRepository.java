@@ -34,6 +34,8 @@ public class MairieRepository implements IMairieRepository {
 	public Spcarr getAgentCurrentCarriere(Agent agent, Date asOfDate) {
 		return getAgentCurrentCarriere(agent.getNomatr(), asOfDate);
 	}
+	
+	@Override
 	public Spcarr getAgentCurrentCarriere(Integer nomatr, Date asOfDate) {
 
 		TypedQuery<Spcarr> qCarr = sirhEntityManager.createNamedQuery("getCurrentCarriere", Spcarr.class);
@@ -136,5 +138,11 @@ public class MairieRepository implements IMairieRepository {
 		q.setParameter("cdcate", Spcarr.getStatutCarriereFromEnum(statut));		
 		
 		return q.getResultList();
+	}
+
+	@Override
+	public List<Integer> getAllAgentsIdsByStatusAndBetween(AgentStatutEnum statut, Integer from, Integer to) {
+		
+		return null;
 	}
 }

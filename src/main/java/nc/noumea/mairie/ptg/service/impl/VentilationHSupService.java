@@ -7,6 +7,7 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
@@ -60,6 +61,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		VentilHsup result = new VentilHsup();
 		result.setIdAgent(idAgent);
 		result.setDateLundi(dateLundi.toDate());
+		result.setEtat(EtatPointageEnum.VENTILE);
 		
 		// First retrieve all the absences in the Pointages
 		for (Pointage ptg : pointages) {
@@ -391,5 +393,4 @@ public class VentilationHSupService implements IVentilationHSupService {
 			this.nbMinutesNuit = nbMinutesNuit;
 		}
 	}
-	
 }

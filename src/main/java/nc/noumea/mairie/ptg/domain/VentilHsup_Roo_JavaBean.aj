@@ -5,6 +5,7 @@ package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 
 privileged aspect VentilHsup_Roo_JavaBean {
@@ -143,6 +144,14 @@ privileged aspect VentilHsup_Roo_JavaBean {
     
     public void VentilHsup.setEtat(EtatPointageEnum etat) {
         this.etat = etat;
+    }
+    
+    public VentilDate VentilHsup.getVentilDate() {
+        return this.ventilDate;
+    }
+    
+    public void VentilHsup.setVentilDate(VentilDate ventilDate) {
+        this.ventilDate = ventilDate;
     }
     
 }

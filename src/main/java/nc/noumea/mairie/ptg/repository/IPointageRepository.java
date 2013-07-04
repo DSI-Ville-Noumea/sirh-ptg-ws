@@ -6,10 +6,11 @@ import java.util.List;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 
 public interface IPointageRepository {
-
-	List<Integer> getIdPointagesParents(Pointage pointage);
 
 	List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut);
 
@@ -18,6 +19,12 @@ public interface IPointageRepository {
 	List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
 	
 	List<Pointage> getPointageArchives(Integer idPointage);
+
+	List<Pointage> getListPointagesForVentilationByDateEtat(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum pointageType);
+
+	VentilDate getLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid);
+
+	void removeVentilationsForDateAgentAndType(VentilDate ventilDate, Integer idAgent, RefTypePointageEnum typePointage);
 	
 	void savePointage(Pointage ptg);
 

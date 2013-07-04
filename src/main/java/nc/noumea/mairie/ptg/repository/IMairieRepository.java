@@ -16,7 +16,7 @@ public interface IMairieRepository {
 	Agent getAgent(int idAgent);
 
 	Spcarr getAgentCurrentCarriere(Agent aAgent, Date asOfDate);
-	Spcarr getAgentCurrentCarriere(Integer  noMatr, Date asOfDate);
+	Spcarr getAgentCurrentCarriere(Integer noMatr, Date asOfDate);
 
 	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date);
 
@@ -31,4 +31,6 @@ public interface IMairieRepository {
 	boolean isJourHoliday(Date date);
 	
 	List<Integer> getAllAgentIdsByStatus(AgentStatutEnum statut);
+	
+	List<Integer> getAllAgentsIdsByStatusAndBetween(AgentStatutEnum statut, Integer from, Integer to);
 }

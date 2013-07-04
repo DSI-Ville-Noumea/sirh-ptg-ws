@@ -36,6 +36,10 @@ public class VentilPrime {
 	@Column(name = "QUANTITE")
 	private Integer quantite;
 	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
+	private VentilDate ventilDate;
+	
 	@Transient
 	public void addQuantite(Integer quantite) {
 		if(this.quantite == null)

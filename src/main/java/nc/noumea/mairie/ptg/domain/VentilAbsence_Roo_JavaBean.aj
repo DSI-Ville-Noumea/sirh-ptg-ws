@@ -6,6 +6,7 @@ package nc.noumea.mairie.ptg.domain;
 import java.util.Date;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 
 privileged aspect VentilAbsence_Roo_JavaBean {
     
@@ -17,12 +18,12 @@ privileged aspect VentilAbsence_Roo_JavaBean {
         this.idAgent = idAgent;
     }
     
-    public Date VentilAbsence.getDateDebutMois() {
-        return this.dateDebutMois;
+    public Date VentilAbsence.getDateLundi() {
+        return this.dateLundi;
     }
     
-    public void VentilAbsence.setDateDebutMois(Date dateDebutMois) {
-        this.dateDebutMois = dateDebutMois;
+    public void VentilAbsence.setDateLundi(Date dateLundi) {
+        this.dateLundi = dateLundi;
     }
     
     public int VentilAbsence.getMinutesConcertee() {
@@ -47,6 +48,14 @@ privileged aspect VentilAbsence_Roo_JavaBean {
     
     public void VentilAbsence.setEtat(EtatPointageEnum etat) {
         this.etat = etat;
+    }
+    
+    public VentilDate VentilAbsence.getVentilDate() {
+        return this.ventilDate;
+    }
+    
+    public void VentilAbsence.setVentilDate(VentilDate ventilDate) {
+        this.ventilDate = ventilDate;
     }
     
 }

@@ -48,7 +48,7 @@ public class VentilationAbsenceServiceTest {
 		assertEquals(9008765, (int)result.getIdAgent());
 		assertEquals(0, result.getMinutesConcertee());
 		assertEquals(0, result.getMinutesNonConcertee());
-		assertEquals(dateDebutMois.toDate(), result.getDateDebutMois());
+		assertEquals(dateDebutMois.toDate(), result.getDateLundi());
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
 	
@@ -85,6 +85,7 @@ public class VentilationAbsenceServiceTest {
 		assertEquals(9008765, (int)result.getIdAgent());
 		assertEquals(60, result.getMinutesConcertee());
 		assertEquals(120, result.getMinutesNonConcertee());
-		assertEquals(dateDebutMois.toDate(), result.getDateDebutMois());
+		assertEquals(dateDebutMois.toDate(), result.getDateLundi());
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
 }

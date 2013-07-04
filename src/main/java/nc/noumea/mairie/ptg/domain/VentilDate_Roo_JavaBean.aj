@@ -4,8 +4,12 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
+import java.util.Set;
 import nc.noumea.mairie.ptg.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
+import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.domain.VentilPrime;
 
 privileged aspect VentilDate_Roo_JavaBean {
     
@@ -31,6 +35,30 @@ privileged aspect VentilDate_Roo_JavaBean {
     
     public void VentilDate.setPaye(boolean paye) {
         this.paye = paye;
+    }
+    
+    public Set<VentilAbsence> VentilDate.getVentilAsbences() {
+        return this.ventilAsbences;
+    }
+    
+    public void VentilDate.setVentilAsbences(Set<VentilAbsence> ventilAsbences) {
+        this.ventilAsbences = ventilAsbences;
+    }
+    
+    public Set<VentilHsup> VentilDate.getVentilHsups() {
+        return this.ventilHsups;
+    }
+    
+    public void VentilDate.setVentilHsups(Set<VentilHsup> ventilHsups) {
+        this.ventilHsups = ventilHsups;
+    }
+    
+    public Set<VentilPrime> VentilDate.getVentilPrimes() {
+        return this.ventilPrimes;
+    }
+    
+    public void VentilDate.setVentilPrimes(Set<VentilPrime> ventilPrimes) {
+        this.ventilPrimes = ventilPrimes;
     }
     
 }

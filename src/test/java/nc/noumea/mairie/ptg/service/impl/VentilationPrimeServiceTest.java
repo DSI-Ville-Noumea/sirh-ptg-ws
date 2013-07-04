@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
@@ -112,10 +113,12 @@ public class VentilationPrimeServiceTest {
 		assertEquals(9007865, (int) result.get(0).getIdAgent());
 		assertEquals(dateDebutMois, result.get(0).getDateDebutMois());
 		assertEquals(refPrime1, result.get(0).getRefPrime());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(9007865, (int) result.get(1).getIdAgent());
 		assertEquals(dateDebutMois, result.get(1).getDateDebutMois());
 		assertEquals(refPrime2, result.get(1).getRefPrime());
 		assertEquals(3, (int) result.get(1).getQuantite());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
 	}
 	
 	@Test
@@ -172,5 +175,6 @@ public class VentilationPrimeServiceTest {
 		assertEquals(9007865, (int) result.get(0).getIdAgent());
 		assertEquals(dateDebutMois, result.get(0).getDateDebutMois());
 		assertEquals(refPrime1, result.get(0).getRefPrime());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 	}
 }

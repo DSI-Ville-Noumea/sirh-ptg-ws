@@ -12,6 +12,8 @@ import org.joda.time.Interval;
 
 public interface IVentilationHSupService {
 
+	VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, AgentStatutEnum statut);
+	
 	VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, List<Pointage> pointages);
 	
 	VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, List<Pointage> pointages);

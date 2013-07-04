@@ -6,6 +6,7 @@ package nc.noumea.mairie.ptg.domain;
 import java.util.Date;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 
 privileged aspect VentilPrime_Roo_JavaBean {
@@ -48,6 +49,14 @@ privileged aspect VentilPrime_Roo_JavaBean {
     
     public void VentilPrime.setQuantite(Integer quantite) {
         this.quantite = quantite;
+    }
+    
+    public VentilDate VentilPrime.getVentilDate() {
+        return this.ventilDate;
+    }
+    
+    public void VentilPrime.setVentilDate(VentilDate ventilDate) {
+        this.ventilDate = ventilDate;
     }
     
 }

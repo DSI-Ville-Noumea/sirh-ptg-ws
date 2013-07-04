@@ -7,6 +7,7 @@ import java.util.Arrays;
 import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
@@ -127,6 +128,8 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMNormales(), 0);
 		assertEquals(3* 60, result.getMSimple(), 0);
 		assertEquals(6* 60, result.getMComposees(), 0);
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
 	
 	@Test
@@ -224,6 +227,8 @@ public class VentilationHSupServiceTest {
 		assertEquals(9 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
 	
 	@Test
@@ -327,6 +332,8 @@ public class VentilationHSupServiceTest {
 		assertEquals(0 , result.getMNormales(), 0);
 		assertEquals(0 , result.getMSimple(), 0);
 		assertEquals(0 , result.getMComposees(), 0);
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
 	
 	@Test
@@ -430,5 +437,7 @@ public class VentilationHSupServiceTest {
 		assertEquals(0 , result.getMNormales(), 0);
 		assertEquals(0 , result.getMSimple(), 0);
 		assertEquals(0 , result.getMComposees(), 0);
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
 }
