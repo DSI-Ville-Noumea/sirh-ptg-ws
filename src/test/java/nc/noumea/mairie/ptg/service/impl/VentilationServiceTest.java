@@ -2,6 +2,7 @@ package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Map.Entry;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
@@ -21,6 +23,7 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
@@ -107,12 +110,14 @@ public class VentilationServiceTest {
 		p2.setDateLundi(new LocalDate(2013, 7, 8).toDate());
 		p2.setType(hSup);
 		Pointage p3 = new Pointage();
+		p3.setDateLundi(new LocalDate(2013, 7, 1).toDate());
 		p3.setType(prime);
 		p3.setDateDebut(new DateTime(2013, 7, 12, 14, 0, 0).toDate());
 		Pointage p4 = new Pointage();
-		p4.setType(abs);
 		p4.setDateLundi(new LocalDate(2013, 7, 22).toDate());
+		p4.setType(abs);
 		Pointage p5 = new Pointage();
+		p5.setDateLundi(new LocalDate(2013, 7, 22).toDate());
 		p5.setType(prime);
 		p5.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
 		Pointage p6 = new Pointage();
@@ -276,7 +281,57 @@ public class VentilationServiceTest {
 	}
 	
 	@Test
-	public void processVentilation_() {
+	public void calculatePointages_With4weeksBetweenTwoDates() {
+
+		// Given
+		Integer idAgent = 9008765;
+		Date from = new LocalDate(2013, 6, 30).toDate();
+		Date to = new LocalDate(2013, 7, 28).toDate();
 		
+		PointageCalcule pc1 = Mockito.spy(new PointageCalcule());
+		Mockito.doNothing().when(pc1).persist();
+		
+		IPointageCalculeService ptgCService = Mockito.mock(IPointageCalculeService.class);
+		Mockito.when(ptgCService.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F), Mockito.eq(new LocalDate(2013, 7, 1).toDate())))
+			.thenReturn(new ArrayList<PointageCalcule>());
+		Mockito.when(ptgCService.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F), Mockito.eq(new LocalDate(2013, 7, 1).toDate())))
+			.thenReturn(new ArrayList<PointageCalcule>());
+		Mockito.when(ptgCService.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F), Mockito.eq(new LocalDate(2013, 7, 1).toDate())))
+			.thenReturn(new ArrayList<PointageCalcule>());
+		Mockito.when(ptgCService.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F), Mockito.eq(new LocalDate(2013, 7, 1).toDate())))
+			.thenReturn(Arrays.asList(pc1));
+		
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(20); // F
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)), Mockito.any(Date.class))).thenReturn(carr);
+		
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "pointageCalculeService", ptgCService);
+		
+		// When
+		service.calculatePointages(idAgent, from, to);
+		
+		// Then
+		Mockito.verify(mairieRepo, Mockito.times(1))
+			.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)),Mockito.eq(new LocalDate(2013, 7, 1).toDate()));
+		Mockito.verify(mairieRepo, Mockito.times(1))
+			.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)),Mockito.eq(new LocalDate(2013, 7, 8).toDate()));
+		Mockito.verify(mairieRepo, Mockito.times(1))
+			.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)),Mockito.eq(new LocalDate(2013, 7, 15).toDate()));
+		Mockito.verify(mairieRepo, Mockito.times(1))
+			.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)),Mockito.eq(new LocalDate(2013, 7, 22).toDate()));
+		
+		Mockito.verify(ptgCService, Mockito.times(1))
+			.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F), Mockito.eq(new LocalDate(2013, 7, 1).toDate()));
+		Mockito.verify(ptgCService, Mockito.times(1))
+			.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F), Mockito.eq(new LocalDate(2013, 7, 8).toDate()));
+		Mockito.verify(ptgCService, Mockito.times(1))
+			.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F), Mockito.eq(new LocalDate(2013, 7, 15).toDate()));
+		Mockito.verify(ptgCService, Mockito.times(1))
+			.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F), Mockito.eq(new LocalDate(2013, 7, 22).toDate()));
+		
+		Mockito.verify(pc1, Mockito.times(1)).persist();
 	}
 }

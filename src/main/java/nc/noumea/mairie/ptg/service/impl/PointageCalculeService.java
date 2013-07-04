@@ -41,13 +41,14 @@ public class PointageCalculeService implements IPointageCalculeService {
 	 * Calculating a list of PointageCalcule for an agent over a week (from = monday, to = sunday)
 	 * Based on its RefPrime at the time of the monday
 	 */
-	public List<PointageCalcule> calculatePointagesForAgentAndWeek(Integer idAgent, AgentStatutEnum statut, DateTime dateLundi) {
+	public List<PointageCalcule> calculatePointagesForAgentAndWeek(Integer idAgent, AgentStatutEnum statut, Date dateLundi) {
 		
 		// List of the pointages of the concerned week
 		List<Pointage> agentPointages = pointageService.getLatestPointagesForAgentAndDates(
-				idAgent, dateLundi.toDate(), dateLundi.plusWeeks(1).toDate(), null, Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VALIDE, EtatPointageEnum.EN_ATTENTE));
+				idAgent, dateLundi, new DateTime(dateLundi).plusWeeks(1).toDate(), null, 
+				Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.JOURNALISE));
 		
-		List<Integer> norubrs = mairieRepository.getPrimePointagesByAgent(idAgent, dateLundi.toDate());
+		List<Integer> norubrs = mairieRepository.getPrimePointagesByAgent(idAgent, dateLundi);
 		List<RefPrime> refPrimes = pointageRepository.getRefPrimes(norubrs, statut);
 		
 		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>();
@@ -69,16 +70,16 @@ public class PointageCalculeService implements IPointageCalculeService {
 		return pointagesCalcules;
 	}
 	
-	public List<PointageCalcule> generatePointage7701(Integer idAgent, DateTime dateLundi, RefPrime prime, List<Pointage> pointages) {
+	public List<PointageCalcule> generatePointage7701(Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
 		
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
 
 		// Retrieve the agent Spcarr
-		Spcarr carr = mairieRepository.getAgentCurrentCarriere(Agent.getNoMatrFromIdAgent(idAgent), dateLundi.toDate());
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(Agent.getNoMatrFromIdAgent(idAgent), dateLundi);
 				
 		for (int i = 0; i < 7; i++) {
 			
-			DateTime dday = dateLundi.plusDays(i);
+			DateTime dday = new DateTime(dateLundi).plusDays(i);
 			int dayTotalMinutes = carr.getSpbase().getDayBaseInMinutes(i);
 			
 			for (Pointage ptg : getPointagesHSupForDay(pointages, dday)) {
@@ -91,7 +92,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 			PointageCalcule ptgCalc = new PointageCalcule();
 			ptgCalc.setIdAgent(idAgent);
 			ptgCalc.setDateDebut(dday.toDate());
-			ptgCalc.setDateLundi(dateLundi.toDate());
+			ptgCalc.setDateLundi(dateLundi);
 			ptgCalc.setEtat(EtatPointageEnum.VENTILE);
 			ptgCalc.setRefPrime(prime);
 			ptgCalc.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME));
@@ -102,7 +103,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 		return result;
 	}
 	
-	public List<PointageCalcule> generatePointage7711_12_13(Integer idAgent, DateTime dateLundi, RefPrime prime, List<Pointage> pointages) {
+	public List<PointageCalcule> generatePointage7711_12_13(Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
 		
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
 		

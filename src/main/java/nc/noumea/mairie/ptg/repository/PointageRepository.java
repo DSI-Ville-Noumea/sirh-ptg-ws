@@ -158,6 +158,19 @@ public class PointageRepository implements IPointageRepository {
 	}
 	
 	@Override
+	public void removePointageCalculesForDateAgent(Integer idAgent, Date from, Date to) {
+
+		String query = "DELETE FROM PointageCalcule ptg WHERE ptg.idAgent = :idAgent and ptg.dateLundi between :from and :to";
+		Query q = ptgEntityManager.createQuery(query);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("from", from);
+		q.setParameter("to", to);
+		
+		q.executeUpdate();
+		ptgEntityManager.flush();
+	}
+	
+	@Override
 	public void savePointage(Pointage ptg) {
 		if (ptg.getIdPointage() == null || ptg.getIdPointage().equals(0))
 			ptgEntityManager.persist(ptg);
@@ -167,6 +180,5 @@ public class PointageRepository implements IPointageRepository {
 	public <T> T getEntity(Class<T> Tclass, Object Id) {
 		return ptgEntityManager.find(Tclass, Id);
 	}
-
 
 }

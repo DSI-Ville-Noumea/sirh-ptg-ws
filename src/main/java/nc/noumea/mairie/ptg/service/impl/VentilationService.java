@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
@@ -17,12 +18,15 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
 import nc.noumea.mairie.ptg.service.IVentilationService;
 import nc.noumea.mairie.sirh.domain.Agent;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +47,9 @@ public class VentilationService implements IVentilationService {
 	private IVentilationAbsenceService ventilationAbsenceService;
 	
 	@Autowired
+	private IPointageCalculeService pointageCalculeService;
+	
+	@Autowired
 	private IMairieRepository mairieRepository;
 	
 	public void processVentilation(Integer fromAgentId, Integer toAgentId, Date ventilationDate, TypeChainePaieEnum typeChainePaie, RefTypePointageEnum pointageType) {
@@ -61,12 +68,18 @@ public class VentilationService implements IVentilationService {
 		
 		List<Integer> agentIds = new ArrayList<Integer>(); // retrieve agent ids
 		
-		for (Integer agentId : agentIds) {
+		for (Integer idAgent : agentIds) {
 			// 1. remove existing ventilations
-			removePreviousVentilations(toVentilDate, agentId, pointageType); 	
+			removePreviousVentilations(toVentilDate, idAgent, pointageType); 	
 			
-			// 2. call processVentilationForAgent method
-			processVentilationForAgent(toVentilDate, agentId,  fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), pointageType);
+			// 2. remove previously calculated pointages
+			removePreviousCalculatedPointages(idAgent, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+			
+			// 3. generate pointage calcules
+			calculatePointages(idAgent,  fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+			
+			// 4. call processVentilationForAgent method
+			processVentilationForAgent(toVentilDate, idAgent,  fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), pointageType);
 		}
 		
 	}
@@ -99,7 +112,7 @@ public class VentilationService implements IVentilationService {
 		for (Entry<Date, List<Pointage>> set : abs.entrySet()) {
 			absVentilees.add(ventilationAbsenceService.processAbsenceAgent(idAgent, set.getValue(), set.getKey()));
 		}
-
+		
 		// persisting all the generated entities linking them to the current ventil date
 		for (VentilHsup v : hSupsVentilees) {
 			v.setVentilDate(ventilDate);
@@ -118,9 +131,10 @@ public class VentilationService implements IVentilationService {
 	}
 	
 	/**
-	 * This method distributes all pointages into 3 maps
+	 * This method distributes all pointages into 4 maps
 	 * hSups: with a list of pointage per week
 	 * primes & abs: with a list of pointage per month
+	 * allByWeek: all kinds per week
 	 */
 	protected void distributePointages(List<Pointage> pointages, Map<Date, List<Pointage>> hSups, Map<Date, List<Pointage>> primes, Map<Date, List<Pointage>> abs) {
 		
@@ -146,8 +160,8 @@ public class VentilationService implements IVentilationService {
 			
 			if (!eligibleMap.containsKey(mapDate))
 				eligibleMap.put(mapDate, new ArrayList<Pointage>());
-			
 			eligibleMap.get(mapDate).add(ptg);
+			
 		}
 	}
 
@@ -156,18 +170,50 @@ public class VentilationService implements IVentilationService {
 	 * agent, date, and typePointage. 
 	 * Type is optional: if it is not given, all types will be deleted.
 	 * @param date
-	 * @param agentId
+	 * @param idAgent
 	 * @param pointageType
 	 */
-	protected void removePreviousVentilations(VentilDate date, Integer agentId, RefTypePointageEnum pointageType) {
+	protected void removePreviousVentilations(VentilDate date, Integer idAgent, RefTypePointageEnum pointageType) {
 	
 		if (pointageType == null) {
-			pointageRepository.removeVentilationsForDateAgentAndType(date, agentId, RefTypePointageEnum.ABSENCE);
-			pointageRepository.removeVentilationsForDateAgentAndType(date, agentId, RefTypePointageEnum.H_SUP);
-			pointageRepository.removeVentilationsForDateAgentAndType(date, agentId, RefTypePointageEnum.PRIME);
+			pointageRepository.removeVentilationsForDateAgentAndType(date, idAgent, RefTypePointageEnum.ABSENCE);
+			pointageRepository.removeVentilationsForDateAgentAndType(date, idAgent, RefTypePointageEnum.H_SUP);
+			pointageRepository.removeVentilationsForDateAgentAndType(date, idAgent, RefTypePointageEnum.PRIME);
 		}
 		else {
-			pointageRepository.removeVentilationsForDateAgentAndType(date, agentId, pointageType);
+			pointageRepository.removeVentilationsForDateAgentAndType(date, idAgent, pointageType);
+		}
+	}
+
+	/**
+	 * Removes existing pointages calcules for agent and between two dates
+	 * @param idAgent
+	 * @param from
+	 * @param to
+	 */
+	protected void removePreviousCalculatedPointages(Integer idAgent, Date from, Date to) {
+		pointageRepository.removePointageCalculesForDateAgent(idAgent, from, to);
+	}
+	
+	/**
+	 * Generates calculated pointages for all weeks in between two dates
+	 * @param idAgent
+	 * @param from
+	 * @param to
+	 */
+	protected void calculatePointages(Integer idAgent, Date from, Date to) {
+
+		Date monday = from;
+		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
+		
+		do {
+			monday = new DateTime(monday).withDayOfWeek(DateTimeConstants.MONDAY).plusWeeks(1).toDate();
+			Spcarr carr = mairieRepository.getAgentCurrentCarriere(Agent.getNoMatrFromIdAgent(idAgent), monday);
+			result.addAll(pointageCalculeService.calculatePointagesForAgentAndWeek(idAgent, carr.getStatutCarriere(), monday));
+		} while (monday.before(to)) ;
+
+		for (PointageCalcule ptgC : result) {
+			ptgC.persist();
 		}
 	}
 }

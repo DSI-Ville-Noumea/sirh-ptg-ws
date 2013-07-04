@@ -26,6 +26,8 @@ public interface IPointageRepository {
 
 	void removeVentilationsForDateAgentAndType(VentilDate ventilDate, Integer idAgent, RefTypePointageEnum typePointage);
 	
+	void removePointageCalculesForDateAgent(Integer idAgent, Date from, Date to);
+	
 	void savePointage(Pointage ptg);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
