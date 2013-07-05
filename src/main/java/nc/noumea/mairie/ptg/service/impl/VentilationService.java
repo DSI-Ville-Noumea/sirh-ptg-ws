@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
@@ -52,7 +55,10 @@ public class VentilationService implements IVentilationService {
 	@Autowired
 	private IMairieRepository mairieRepository;
 	
-	public void processVentilation(Integer fromAgentId, Integer toAgentId, Date ventilationDate, TypeChainePaieEnum typeChainePaie, RefTypePointageEnum pointageType) {
+	@Autowired
+	private HelperService helperService;
+	
+	public void processVentilation(Integer idAgent, Integer fromAgentId, Integer toAgentId, Date ventilationDate, TypeChainePaieEnum typeChainePaie, RefTypePointageEnum pointageType) {
 		
 		// Retrieving the current ventilation dates (from / to)
 		VentilDate fromVentilDate = pointageRepository.getLatestVentilDate(typeChainePaie, true);
@@ -60,31 +66,35 @@ public class VentilationService implements IVentilationService {
 		
 		if (toVentilDate == null) {
 			toVentilDate = new VentilDate();
-			toVentilDate.setDateVentilation(ventilationDate);
+			toVentilDate.setDateVentilation(new DateTime(ventilationDate).withHourOfDay(23).withMinuteOfHour(59).toDate());
 			toVentilDate.setPaye(false);
 			toVentilDate.setTypeChainePaie(typeChainePaie);
 			toVentilDate.persist();
 		}
 		
 		List<Integer> agentIds = new ArrayList<Integer>(); // retrieve agent ids
+		agentIds.add(fromAgentId);
 		
-		for (Integer idAgent : agentIds) {
+		for (Integer agent : agentIds) {
 			// 1. remove existing ventilations
-			removePreviousVentilations(toVentilDate, idAgent, pointageType); 	
+			removePreviousVentilations(toVentilDate, agent, pointageType); 	
 			
 			// 2. remove previously calculated pointages
-			removePreviousCalculatedPointages(idAgent, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+			removePreviousCalculatedPointages(agent, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
 			
 			// 3. generate pointage calcules
-			calculatePointages(idAgent,  fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+			calculatePointages(agent,  fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
 			
 			// 4. call processVentilationForAgent method
-			processVentilationForAgent(toVentilDate, idAgent,  fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), pointageType);
+			List<Pointage> ptgVentiles = processVentilationForAgent(toVentilDate, agent,  fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), pointageType);
+			
+			// 5. Mark pointages as etat VENTILE
+			markPointagesAsVentile(ptgVentiles, idAgent);
 		}
 		
 	}
 	
-	public void processVentilationForAgent(VentilDate ventilDate, Integer idAgent, Date from, Date to, RefTypePointageEnum pointageType) {
+	public List<Pointage> processVentilationForAgent(VentilDate ventilDate, Integer idAgent, Date from, Date to, RefTypePointageEnum pointageType) {
 		
 		List<Pointage> agentsPointageForPeriod = pointageRepository.getListPointagesForVentilationByDateEtat(idAgent, from, to, pointageType);
 
@@ -128,6 +138,8 @@ public class VentilationService implements IVentilationService {
 			v.setVentilDate(ventilDate);
 			v.persist();
 		}
+		
+		return agentsPointageForPeriod;
 	}
 	
 	/**
@@ -214,6 +226,30 @@ public class VentilationService implements IVentilationService {
 
 		for (PointageCalcule ptgC : result) {
 			ptgC.persist();
+		}
+	}
+
+	/**
+	 * Updates each pointages to set them as VENTILE state after being used for ventilation
+	 * @param pointages
+	 * @param idAgent 
+	 */
+	protected void markPointagesAsVentile(List<Pointage> pointages, int idAgent) {
+		
+		Date currentDate = helperService.getCurrentDate();
+		
+		for (Pointage ptg : pointages) {
+			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.VENTILE)
+				continue;
+
+			EtatPointagePK pk = new EtatPointagePK();
+			pk.setDateEtat(currentDate);
+			pk.setPointage(ptg);
+			EtatPointage ep = new EtatPointage();
+			ep.setEtat(EtatPointageEnum.VENTILE);
+			ep.setIdAgent(idAgent);
+			ep.setEtatPointagePk(pk);
+			ptg.getEtats().add(ep);
 		}
 	}
 }

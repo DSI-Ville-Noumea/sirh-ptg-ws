@@ -117,6 +117,7 @@ public class PointageRepository implements IPointageRepository {
 		return result;
 	}
 	
+	
 	@Override
 	public VentilDate getLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid) {
 		
@@ -140,13 +141,13 @@ public class PointageRepository implements IPointageRepository {
 
 		switch(typePointage) {
 			case PRIME:
-				query = "DELETE FROM VentilPrime vp JOIN vp.VentilDate vd WHERE vd.idVentilDate = :idVentilDate and vp.idAgent = :idAgent";
+				query = "DELETE FROM VentilPrime vp WHERE vp.ventilDate.idVentilDate = :idVentilDate and vp.idAgent = :idAgent";
 				break;
 			case H_SUP:
-				query = "DELETE FROM VentilHsup vh JOIN vh.VentilDate vd WHERE vd.idVentilDate = :idVentilDate and vh.idAgent = :idAgent";
+				query = "DELETE FROM VentilHsup vh WHERE vh.ventilDate.idVentilDate = :idVentilDate and vh.idAgent = :idAgent";
 				break;
 			case ABSENCE:
-				query = "DELETE FROM VentilAbsence va JOIN va.VentilDate vd WHERE vd.idVentilDate = :idVentilDate and va.idAgent = :idAgent";
+				query = "DELETE FROM VentilAbsence va WHERE va.ventilDate.idVentilDate = :idVentilDate and va.idAgent = :idAgent";
 				break;
 		}
 		

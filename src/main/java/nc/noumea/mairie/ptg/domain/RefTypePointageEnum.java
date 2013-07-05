@@ -14,16 +14,20 @@ public enum RefTypePointageEnum {
 		return type;
 	}
 	
-	public static RefTypePointageEnum getRefTypePointageEnum(int type) {
-		switch (type) {
-		case 1:
-			return ABSENCE;
-		case 2:
-			return H_SUP;
-		case 3:
-			return PRIME;
-		default:
+	public static RefTypePointageEnum getRefTypePointageEnum(Integer type) {
+		
+		if (type == null)
 			return null;
+		
+		switch (type) {
+			case 1:
+				return ABSENCE;
+			case 2:
+				return H_SUP;
+			case 3:
+				return PRIME;
+			default:
+				return null;
 		}
 	}
 }

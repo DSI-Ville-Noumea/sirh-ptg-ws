@@ -13,6 +13,9 @@ import java.util.Map.Entry;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
@@ -333,5 +336,54 @@ public class VentilationServiceTest {
 			.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F), Mockito.eq(new LocalDate(2013, 7, 22).toDate()));
 		
 		Mockito.verify(pc1, Mockito.times(1)).persist();
+	}
+	
+	@Test
+	public void markPointagesAsVentile_AddNewVENTILEetatToPointagesNotVENTILE() {
+		
+		// Given
+		Pointage p1 = new Pointage();
+		p1.setType(abs);
+		p1.setDateDebut(new LocalDate(2013, 7, 4).toDate());
+		EtatPointagePK pk1 = new EtatPointagePK();
+		pk1.setDateEtat(new Date());
+		pk1.setPointage(p1);
+		EtatPointage ep1 = new EtatPointage();
+		ep1.setEtatPointagePk(pk1);
+		ep1.setEtat(EtatPointageEnum.APPROUVE);
+		p1.getEtats().add(ep1);
+		
+		Pointage p2 = new Pointage();
+		p2.setType(abs);
+		p2.setDateDebut(new LocalDate(2013, 7, 4).toDate());
+		EtatPointagePK pk2 = new EtatPointagePK();
+		pk2.setDateEtat(new Date());
+		pk2.setPointage(p2);
+		EtatPointage ep2 = new EtatPointage();
+		ep2.setEtatPointagePk(pk2);
+		ep2.setEtat(EtatPointageEnum.VENTILE);
+		p2.getEtats().add(ep2);
+		
+		Date etatDate = new LocalDate(2013, 07, 01).toDate();
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(etatDate);
+		
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		service.markPointagesAsVentile(Arrays.asList(p1, p2), 9008888);
+		
+		// Then
+		assertEquals(2, p1.getEtats().size());
+		assertEquals(ep1, p1.getEtats().get(0));
+		assertEquals(EtatPointageEnum.APPROUVE, p1.getEtats().get(0).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, p1.getEtats().get(1).getEtat());
+		assertEquals(9008888, (int) p1.getEtats().get(1).getIdAgent());
+		assertEquals(etatDate, p1.getEtats().get(1).getEtatPointagePk().getDateEtat());
+		
+		assertEquals(1, p2.getEtats().size());
+		assertEquals(ep2, p2.getEtats().get(0));
+		assertEquals(EtatPointageEnum.VENTILE, p2.getEtats().get(0).getEtat());
 	}
 }

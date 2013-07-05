@@ -125,12 +125,10 @@ public class MairieRepository implements IMairieRepository {
 
 	@Override
 	public boolean isJourHoliday(Date date) {
-		TypedQuery<Boolean> q = sirhEntityManager.createNamedQuery("isJourHoliday", Boolean.class);
+		TypedQuery<Integer> q = sirhEntityManager.createNamedQuery("isJourHoliday", Integer.class);
 		q.setParameter("date", date);
 
-		Boolean result = q.getSingleResult();
-
-		return (result != null && result);
+		return (q.getResultList().size() != 0);
 	}
 	
 	public List<Integer> getAllAgentIdsByStatus(AgentStatutEnum statut) {

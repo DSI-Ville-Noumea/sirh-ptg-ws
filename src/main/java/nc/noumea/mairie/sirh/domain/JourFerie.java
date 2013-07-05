@@ -19,7 +19,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJson
 @RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", identifierType = Integer.class, identifierColumn = "ID_JOUR_FERIE", identifierField = "idJourFerie", table = "P_JOUR_FERIE", versionField = "")
-@NamedQuery(name = "isJourHoliday", query = "select sum(d.idJourFerie) from JourFerie j where j.dateJour = :date")
+@NamedQuery(name = "isJourHoliday", query = "select 1 from JourFerie where dateJour = :date")
 public class JourFerie {
 
 	@NotNull
