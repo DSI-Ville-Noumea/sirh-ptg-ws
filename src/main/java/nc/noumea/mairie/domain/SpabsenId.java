@@ -33,4 +33,16 @@ public class SpabsenId implements Serializable {
 	
 	@Column(name = "TYPE3", insertable = false, updatable = false, columnDefinition = "char")
 	private String type3;
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return super.equals(obj);
+	}
 }

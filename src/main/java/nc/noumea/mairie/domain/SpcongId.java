@@ -37,4 +37,16 @@ public class SpcongId implements Serializable {
 	
 	@Column(name = "RANG", insertable = false, updatable = false, columnDefinition = "numeric")
 	private Integer rang;
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		// TODO Auto-generated method stub
+		return super.equals(obj);
+	}
 }
