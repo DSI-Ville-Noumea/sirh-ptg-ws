@@ -31,4 +31,6 @@ public interface IPointageRepository {
 	void savePointage(Pointage ptg);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
+
+	List<Pointage> getListPointagesSIRH(Date fromDate, Date toDate, String codeService, Integer idRefType, Integer idAgentFrom, Integer idAgentTo);
 }

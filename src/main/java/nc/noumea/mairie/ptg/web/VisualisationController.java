@@ -37,23 +37,21 @@ public class VisualisationController {
 
 	@Autowired
 	private IApprobationService approbationService;
-	
+
 	@Autowired
 	private IAgentMatriculeConverterService agentMatriculeConverterService;
-	
+
 	@Autowired
 	private IAccessRightsService accessRightService;
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/pointages", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListePointages(
-			@RequestParam("idAgent") int idAgent,
+	public ResponseEntity<String> getListePointages(@RequestParam("idAgent") int idAgent,
 			@RequestParam("from") @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
-			@RequestParam("to") @DateTimeFormat(pattern = "YYYYMMdd") Date toDate, 
+			@RequestParam("to") @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
 			@RequestParam(value = "codeService", required = false) String codeService,
-			@RequestParam(value = "agent", required = false) Integer agent,
-			@RequestParam(value = "etat", required = false) Integer idRefEtat,
+			@RequestParam(value = "agent", required = false) Integer agent, @RequestParam(value = "etat", required = false) Integer idRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType) {
 
 		logger.debug(
@@ -62,76 +60,95 @@ public class VisualisationController {
 
 		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		Integer convertedAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agent);
-		
+
 		if (!accessRightService.canUserAccessVisualisation(convertedIdAgent))
 			throw new AccessForbiddenException();
-		
-		List<ConsultPointageDto> result = approbationService.getPointages(convertedIdAgent, fromDate, toDate, codeService, convertedAgent, idRefEtat, idRefType);
-		
+
+		List<ConsultPointageDto> result = approbationService.getPointages(convertedIdAgent, fromDate, toDate, codeService, convertedAgent, idRefEtat,
+				idRefType);
+
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-		
-		String response = new JSONSerializer().exclude("*.class")
-				.transform(new MSDateTransformer(), Date.class)
-				.deepSerialize(result);
-		
+
+		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(result);
+
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
-	
+
+	@ResponseBody
+	@RequestMapping(value = "/pointagesSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getListePointagesSIRH(@RequestParam("from") @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
+			@RequestParam("to") @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
+			@RequestParam(value = "codeService", required = false) String codeService,
+			@RequestParam(value = "agentFrom", required = false) Integer agentFrom,
+			@RequestParam(value = "agentTo", required = false) Integer agentTo, @RequestParam(value = "etat", required = false) Integer idRefEtat,
+			@RequestParam(value = "type", required = false) Integer idRefType) {
+
+		logger.debug(
+				"entered GET [visualisation/pointagesSIRH] => getListePointagesSIRH with parameters  from = {}, to = {}, codeService = {}, agentFrom = {},agentTo = {}, etat = {} and type = {}",
+				fromDate, toDate, codeService, agentFrom, agentTo, idRefEtat, idRefType);
+
+		Integer convertedAgentFrom = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agentFrom);
+		Integer convertedAgentTo = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agentTo);
+
+		List<ConsultPointageDto> result = approbationService.getPointagesSIRH(fromDate, toDate, codeService, convertedAgentFrom, convertedAgentTo,
+				idRefEtat, idRefType);
+
+		if (result.size() == 0)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+
+		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(result);
+
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+
 	@ResponseBody
 	@RequestMapping(value = "/historique", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getPointageArchives(
-			@RequestParam("idAgent") int idAgent,
-			@RequestParam("idPointage") Integer idPointage) {
+	public ResponseEntity<String> getPointageArchives(@RequestParam("idAgent") int idAgent, @RequestParam("idPointage") Integer idPointage) {
 
-		logger.debug(
-				"entered GET [visualisation/historique] => getPointageArchives with parameters idAgent = {} and idPointage = {}", idAgent, idPointage);
+		logger.debug("entered GET [visualisation/historique] => getPointageArchives with parameters idAgent = {} and idPointage = {}", idAgent,
+				idPointage);
 
 		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
+
 		if (!accessRightService.canUserAccessVisualisation(convertedIdAgent))
 			throw new AccessForbiddenException();
-		
+
 		List<ConsultPointageDto> result = approbationService.getPointagesArchives(idAgent, idPointage);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-		
-		String response = new JSONSerializer().exclude("*.class")
-				.transform(new MSDateTransformer(), Date.class)
-				.deepSerialize(result);
-		
+
+		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(result);
+
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/changerEtats", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
-	public ResponseEntity<String> setPointagesEtat(
-			@RequestParam("idAgent") int idAgent,
+	public ResponseEntity<String> setPointagesEtat(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String pointagesEtatChangeDtoString) {
 
-		logger.debug(
-				"entered GET [visualisation/changerEtats] => setPointagesEtat with parameters idAgent = {}", idAgent);
+		logger.debug("entered GET [visualisation/changerEtats] => setPointagesEtat with parameters idAgent = {}", idAgent);
 
 		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
+
 		if (!accessRightService.canUserAccessAppro(convertedIdAgent))
 			throw new AccessForbiddenException();
-		
-		List<PointagesEtatChangeDto> dto = new JSONDeserializer<List<PointagesEtatChangeDto>>()
-				.use(null, ArrayList.class).use("values", PointagesEtatChangeDto.class)
-				.deserialize(pointagesEtatChangeDtoString);
-			
+
+		List<PointagesEtatChangeDto> dto = new JSONDeserializer<List<PointagesEtatChangeDto>>().use(null, ArrayList.class)
+				.use("values", PointagesEtatChangeDto.class).deserialize(pointagesEtatChangeDtoString);
+
 		SaisieReturnMessageDto result = approbationService.setPointagesEtat(idAgent, dto);
 
-		String response = new JSONSerializer().exclude("*.class")
-				.deepSerialize(result);
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
 		if (result.getErrors().size() != 0)
-			return new ResponseEntity<String>(response,  HttpStatus.CONFLICT);
-		
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 }
