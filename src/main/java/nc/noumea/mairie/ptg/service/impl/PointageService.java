@@ -316,7 +316,7 @@ public class PointageService implements IPointageService {
 			}
 			
 			if (etats.contains(ptg.getLatestEtatPointage().getEtat()))
-					resultList.add(ptg);
+				resultList.add(ptg);
 		}
 		
 		return resultList;

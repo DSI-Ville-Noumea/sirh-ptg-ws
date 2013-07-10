@@ -15,11 +15,13 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,9 @@ public class PointageCalculeService implements IPointageCalculeService {
 	
 	@Autowired
 	private IPointageService pointageService;
+	
+	@Autowired
+	private IHolidayService holidayService;
 	
 	/**
 	 * Calculating a list of PointageCalcule for an agent over a week (from = monday, to = sunday)
@@ -56,13 +61,18 @@ public class PointageCalculeService implements IPointageCalculeService {
 		for (RefPrime prime : refPrimes) {
 			
 			switch (prime.getNoRubr()) {
-				case 7701:
-					pointagesCalcules.addAll(generatePointage7701(idAgent, dateLundi, prime, agentPointages));
-					continue;
+//				case 7701:
+//					pointagesCalcules.addAll(generatePointage7701(idAgent, dateLundi, prime, agentPointages));
+//					break;
 				case 7711:
 				case 7712:
 				case 7713:
 					pointagesCalcules.addAll(generatePointage7711_12_13(idAgent, dateLundi, prime, agentPointages));
+					break;
+				case 7720:
+				case 7721:
+				case 7722:
+					pointagesCalcules.addAll(generatePointage7720_21_22(idAgent, dateLundi, prime, agentPointages));
 					continue;
 			}
 		}
@@ -107,7 +117,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 		
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
 		
-		for (Pointage ptg : getPointagesPrime7715(pointages)) {
+		for (Pointage ptg : getPointagesPrime(pointages, 7715)) {
 			
 			LocalDate datePointage = new DateTime(ptg.getDateDebut()).toLocalDate();
 			
@@ -118,23 +128,53 @@ public class PointageCalculeService implements IPointageCalculeService {
 			
 			long totalMinutes = inputInterval.toDuration().minus(primeIntervalInverse.overlap(inputInterval).toDuration()).getStandardMinutes();
 			
+			if (prime.getNoRubr().equals(7712)
+					&& (datePointage.getDayOfWeek() == DateTimeConstants.SUNDAY || holidayService.isHoliday(datePointage))) {
+				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
+				returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
+				existingPc.addQuantite((int) (totalMinutes / 60));
+				continue;
+			}
+			
 			if (prime.getNoRubr().equals(7711)) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
 				returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
-				existingPc.addQuantity((int) (totalMinutes / 60));
+				existingPc.addQuantite((int) (totalMinutes / 60));
 				continue;
 			}
-			// TODO: réponse à question si les heures peuvent compter deux fois (nuit et dimanche)
-//			if (prime.getNoRubr().equals(7712) 
-//					&& (datePointage.getDayOfWeek() == DateTimeConstants.SUNDAY || holidayService.isHoliday(datePointage))) {
-//				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
-//				returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
-//				existingPc.addQuantity((int) (totalMinutes / 60));
-//				continue;
-//			}
+
+			if (prime.getNoRubr().equals(7713)) {
+
+				DateTime d1 = new DateTime(datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 5, 0, 0);
+				DateTime d2 = new DateTime(datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 13, 0, 0);
+				DateTime d3 = new DateTime(datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 21, 0, 0);
+
+				if (inputInterval.toDuration().toStandardHours().getHours() >= 9
+					|| inputInterval.contains(d1) && inputInterval.contains(d2)
+					|| inputInterval.contains(d2) && inputInterval.contains(d3)) {
+					PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
+					returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
+					
+					if (existingPc.getQuantite() < 2)
+						existingPc.addQuantite(1);
+				}
+			}
 		}
 		
 		return result;
+	}
+	
+	private List<PointageCalcule> generatePointage7720_21_22(Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
+
+		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
+		
+		for (Pointage ptg : getPointagesPrime(pointages, 7701)) {
+			PointageCalcule existingPc = returnOrCreateNewPointageWithPrime(null, ptg, prime);
+			existingPc.addQuantite(ptg.getQuantite());
+		}
+		
+		return result;
+		
 	}
 	
 	private List<Pointage> getPointagesHSupForDay(List<Pointage> pointages, DateTime day) {
@@ -152,13 +192,13 @@ public class PointageCalculeService implements IPointageCalculeService {
 		return result;
 	}
 	
-	private List<Pointage> getPointagesPrime7715(List<Pointage> pointages) {
+	private List<Pointage> getPointagesPrime(List<Pointage> pointages, Integer noRubr) {
 		
 		List<Pointage> result = new ArrayList<Pointage>();
 		
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.PRIME
-					&& ptg.getRefPrime().getNoRubr().equals(7715))
+					&& ptg.getRefPrime().getNoRubr().equals(noRubr))
 				result.add(ptg);
 		}
 		
