@@ -50,11 +50,15 @@ public class VentilationHSupService implements IVentilationHSupService {
 	}
 	
 	@Override
-	public VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, List<Pointage> pointages) {
-		return  processHSup(idAgent, carr, pointages, AgentStatutEnum.CC);
+	public VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, List<Pointage> pointages, boolean has1150Prime) {
+		return  processHSup(idAgent, carr, pointages, AgentStatutEnum.CC, has1150Prime);
 	}
 	
 	public VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, AgentStatutEnum statut) {
+		return processHSup(idAgent, carr, pointages, statut, false);
+	}
+	
+	public VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime) {
 		
 		DateTime dateLundi = new DateTime(pointages.get(0).getDateLundi());
 		
@@ -117,8 +121,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 				weekMinutes += Minutes.getTotalMinutes();
 				
 				// For agents statuses CC and C, count Hours done on DJF and NUIT even if those hours will not
-				// be counted as Minutes Sup
-				if (statut != AgentStatutEnum.F)
+				// be counted as Minutes Sup (except if agent has Prime Rubr n° 1150)
+				if (statut != AgentStatutEnum.F && !has1150Prime)
 					countHSupDJFandNUITNotFonctionnaire(result, Minutes);
 				
 				// Then, if those hours can't be counted as HSup (because under the weekBase), stop here the process

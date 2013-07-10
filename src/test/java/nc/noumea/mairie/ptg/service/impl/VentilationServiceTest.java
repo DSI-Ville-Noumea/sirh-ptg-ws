@@ -191,11 +191,55 @@ public class VentilationServiceTest {
 		carr.setCdcate(7); //CC
 		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mairieRepo.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)), Mockito.eq(p1.getDateLundi()))).thenReturn(carr);
+		Mockito.when(mairieRepo.getPrimePointagesByAgent(idAgent, new LocalDate(2013, 7, 1).toDate())).thenReturn(Arrays.asList(1128, 1135));
 		
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
 		Mockito.doNothing().when(ventilHsup).persist();
 		IVentilationHSupService hSupV = Mockito.mock(IVentilationHSupService.class);
-		Mockito.when(hSupV.processHSup(Mockito.eq(idAgent), Mockito.eq(carr), Mockito.anyListOf(Pointage.class), Mockito.eq(AgentStatutEnum.CC)))
+		Mockito.when(hSupV.processHSup(Mockito.eq(idAgent), Mockito.eq(carr), Mockito.anyListOf(Pointage.class), Mockito.eq(AgentStatutEnum.CC), Mockito.eq(false)))
+				.thenReturn(ventilHsup);
+		
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
+		
+		// When
+		service.processVentilationForAgent(ventilDate, idAgent, from, ventilDate.getDateVentilation(), typePointage);
+		
+		// Then
+		Mockito.verify(ventilHsup, Mockito.times(1)).persist();
+		assertEquals(ventilDate, ventilHsup.getVentilDate());
+	}
+	
+	@Test
+	public void processVentilationForAgent_HSup_AgentHasPrime1150() {
+		
+		// Given
+		RefTypePointageEnum typePointage = RefTypePointageEnum.H_SUP;
+		Integer idAgent = 9008765;
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setDateVentilation(new LocalDate(2013, 7, 28).toDate());
+		Date from = new LocalDate(2013, 7, 1).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setType(hSup);
+		p1.setDateLundi(new LocalDate(2013, 7, 1).toDate());
+		
+		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepo.getListPointagesForVentilationByDateEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
+				.thenReturn(Arrays.asList(p1));
+		
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(7); //CC
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)), Mockito.eq(p1.getDateLundi()))).thenReturn(carr);
+		Mockito.when(mairieRepo.getPrimePointagesByAgent(idAgent, new LocalDate(2013, 7, 1).toDate())).thenReturn(Arrays.asList(1128, 1150, 1135));
+		
+		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
+		Mockito.doNothing().when(ventilHsup).persist();
+		IVentilationHSupService hSupV = Mockito.mock(IVentilationHSupService.class);
+		Mockito.when(hSupV.processHSup(Mockito.eq(idAgent), Mockito.eq(carr), Mockito.anyListOf(Pointage.class), Mockito.eq(AgentStatutEnum.CC), Mockito.eq(true)))
 				.thenReturn(ventilHsup);
 		
 		VentilationService service = new VentilationService();

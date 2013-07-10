@@ -312,7 +312,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "holidayService", hService);
 		
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), false);
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -437,6 +437,69 @@ public class VentilationHSupServiceTest {
 		assertEquals(0 , result.getMNormales(), 0);
 		assertEquals(0 , result.getMSimple(), 0);
 		assertEquals(0 , result.getMComposees(), 0);
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
+	
+	@Test
+	public void processHSupConventionCollective_CC_base39H_has1150Prime() {
+		
+		// Given
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(new DateTime(2013, 04, 1, 0, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2013, 04, 1, 8, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 04, 1, 20, 0, 0).toDate());
+		p1.setType(hSup);
+					
+		Pointage p2 = new Pointage();
+		p2.setDateLundi(new DateTime(2013, 04, 1, 0, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2013, 04, 2, 22, 0, 0).toDate());
+		p2.setDateFin(new DateTime(2013, 04, 3, 0, 0, 0).toDate());
+		p2.setType(hSup);
+				
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(8);
+		spbase.setNbahma(8);
+		spbase.setNbahme(8);
+		spbase.setNbahje(8);
+		spbase.setNbahve(7);
+		spbase.setNbahsa(0);
+		spbase.setNbahdi(0);
+		spbase.setNbashh(39);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		Mockito.when(hService.isHoliday(new DateTime(2013, 04, 1, 8, 0, 0))).thenReturn(true);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "holidayService", hService);
+		
+		// When
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, Arrays.asList(p1, p2), true);
+				
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p1.getDateLundi(), result.getDateLundi());
+		assertEquals(14 * 60, result.getMHorsContrat());
+		assertEquals(0, result.getMAbsences());
+		assertEquals(14 * 60, result.getMSup());
+
+		assertEquals(0, result.getMsNuit());
+		assertEquals(0, result.getMsdjf());
+		assertEquals(0, result.getMMai());
+		assertEquals(0 , result.getMComplementaires());
+		assertEquals(8 * 60, result.getMSup25());
+		assertEquals(6 * 60, result.getMSup50());
+		assertEquals(0, result.getMsdjf25());
+		assertEquals(0 , result.getMsdjf50());
+		assertEquals(0 , result.getMNormales());
+		assertEquals(0 , result.getMSimple());
+		assertEquals(0 , result.getMComposees());
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}

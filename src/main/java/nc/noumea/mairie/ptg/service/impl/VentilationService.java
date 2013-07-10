@@ -109,8 +109,9 @@ public class VentilationService implements IVentilationService {
 		
 		List<VentilHsup> hSupsVentilees = new ArrayList<VentilHsup>();
 		for (Entry<Date, List<Pointage>> set : hSups.entrySet()) {
+			boolean has1150Prime = mairieRepository.getPrimePointagesByAgent(idAgent, set.getKey()).contains(1150);
 			Spcarr carr = mairieRepository.getAgentCurrentCarriere(Agent.getNoMatrFromIdAgent(idAgent), set.getKey());
-			hSupsVentilees.add(ventilationHSupService.processHSup(idAgent, carr, set.getValue(), carr.getStatutCarriere()));
+			hSupsVentilees.add(ventilationHSupService.processHSup(idAgent, carr, set.getValue(), carr.getStatutCarriere(), has1150Prime));
 		}
 		
 		List<VentilPrime> primesVentilees = new ArrayList<VentilPrime>();
@@ -143,10 +144,9 @@ public class VentilationService implements IVentilationService {
 	}
 	
 	/**
-	 * This method distributes all pointages into 4 maps
+	 * This method distributes all pointages into 3 maps
 	 * hSups: with a list of pointage per week
 	 * primes & abs: with a list of pointage per month
-	 * allByWeek: all kinds per week
 	 */
 	protected void distributePointages(List<Pointage> pointages, Map<Date, List<Pointage>> hSups, Map<Date, List<Pointage>> primes, Map<Date, List<Pointage>> abs) {
 		

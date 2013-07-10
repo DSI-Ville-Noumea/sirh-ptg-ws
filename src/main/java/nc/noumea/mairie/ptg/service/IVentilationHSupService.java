@@ -12,13 +12,15 @@ import org.joda.time.Interval;
 
 public interface IVentilationHSupService {
 
+	VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime);
+	
 	VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, AgentStatutEnum statut);
 	
 	VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, List<Pointage> pointages);
 	
 	VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, List<Pointage> pointages);
 	
-	VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, List<Pointage> pointages);
+	VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, List<Pointage> pointages, boolean has1150Prime);
 	
 	Interval getDayHSupJourIntervalForStatut(DateTime day, AgentStatutEnum statut);
 }
