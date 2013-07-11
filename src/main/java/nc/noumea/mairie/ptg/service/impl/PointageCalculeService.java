@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
-import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
@@ -18,7 +17,6 @@ import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.ptg.service.IPointageService;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -61,9 +59,6 @@ public class PointageCalculeService implements IPointageCalculeService {
 		for (RefPrime prime : refPrimes) {
 			
 			switch (prime.getNoRubr()) {
-//				case 7701:
-//					pointagesCalcules.addAll(generatePointage7701(idAgent, dateLundi, prime, agentPointages));
-//					break;
 				case 7711:
 				case 7712:
 				case 7713:
@@ -78,39 +73,6 @@ public class PointageCalculeService implements IPointageCalculeService {
 		}
 		
 		return pointagesCalcules;
-	}
-	
-	public List<PointageCalcule> generatePointage7701(Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
-		
-		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
-
-		// Retrieve the agent Spcarr
-		Spcarr carr = mairieRepository.getAgentCurrentCarriere(Agent.getNoMatrFromIdAgent(idAgent), dateLundi);
-				
-		for (int i = 0; i < 7; i++) {
-			
-			DateTime dday = new DateTime(dateLundi).plusDays(i);
-			int dayTotalMinutes = carr.getSpbase().getDayBaseInMinutes(i);
-			
-			for (Pointage ptg : getPointagesHSupForDay(pointages, dday)) {
-				dayTotalMinutes += new Interval(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin())).toDuration().getStandardMinutes();
-			}
-			
-			if (dayTotalMinutes <= 0)
-				continue;
-			
-			PointageCalcule ptgCalc = new PointageCalcule();
-			ptgCalc.setIdAgent(idAgent);
-			ptgCalc.setDateDebut(dday.toDate());
-			ptgCalc.setDateLundi(dateLundi);
-			ptgCalc.setEtat(EtatPointageEnum.VENTILE);
-			ptgCalc.setRefPrime(prime);
-			ptgCalc.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME));
-			ptgCalc.setQuantite(dayTotalMinutes / 60); // because our sum was in minutes, we only take full hours
-			result.add(ptgCalc);
-		}
-		
-		return result;
 	}
 	
 	public List<PointageCalcule> generatePointage7711_12_13(Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
@@ -185,21 +147,6 @@ public class PointageCalculeService implements IPointageCalculeService {
 		
 		return result;
 		
-	}
-	
-	private List<Pointage> getPointagesHSupForDay(List<Pointage> pointages, DateTime day) {
-		
-		List<Pointage> result = new ArrayList<Pointage>();
-		
-		for (Pointage ptg : pointages) {
-			DateTime dday = new DateTime(ptg.getDateDebut());
-			if (dday.getDayOfYear() == day.getDayOfYear() 
-					&& dday.getYear() == day.getYear() 
-					&& ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP)
-				result.add(ptg);
-		}
-		
-		return result;
 	}
 	
 	private List<Pointage> getPointagesPrime(List<Pointage> pointages, Integer noRubr) {
