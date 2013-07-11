@@ -20,8 +20,10 @@ public interface IPointageRepository {
 
 	List<Pointage> getPointageArchives(Integer idPointage);
 
-	List<Pointage> getListPointagesForVentilationByDateEtat(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum pointageType);
+	List<Pointage> getListPointagesForVentilationByDateAndEtat(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum pointageType);
 
+	List<Integer> getListIdAgentsForVentilationByDateAndEtat(Date fromDate, Date toDate, RefTypePointageEnum pointageType);
+	
 	VentilDate getLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid);
 
 	void removeVentilationsForDateAgentAndType(VentilDate ventilDate, Integer idAgent, RefTypePointageEnum typePointage);

@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
@@ -183,14 +185,14 @@ public class VentilationServiceTest {
 		p1.setType(hSup);
 		p1.setDateLundi(new LocalDate(2013, 7, 1).toDate());
 		
-		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pointageRepo.getListPointagesForVentilationByDateEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
-				.thenReturn(Arrays.asList(p1));
-		
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(7); //CC
+		
+		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
+				.thenReturn(Arrays.asList(p1));
+		
 		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mairieRepo.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)), Mockito.eq(p1.getDateLundi()))).thenReturn(carr);
 		Mockito.when(mairieRepo.getPrimePointagesByAgent(idAgent, new LocalDate(2013, 7, 1).toDate())).thenReturn(Arrays.asList(1128, 1135));
 		
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
@@ -205,7 +207,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
 		
 		// When
-		service.processVentilationForAgent(ventilDate, idAgent, from, ventilDate.getDateVentilation(), typePointage);
+		service.processVentilationForAgent(ventilDate, idAgent, carr, from, ventilDate.getDateVentilation(), typePointage);
 		
 		// Then
 		Mockito.verify(ventilHsup, Mockito.times(1)).persist();
@@ -226,14 +228,14 @@ public class VentilationServiceTest {
 		p1.setType(hSup);
 		p1.setDateLundi(new LocalDate(2013, 7, 1).toDate());
 		
-		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pointageRepo.getListPointagesForVentilationByDateEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
-				.thenReturn(Arrays.asList(p1));
-		
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(7); //CC
+		
+		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
+				.thenReturn(Arrays.asList(p1));
+		
 		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mairieRepo.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)), Mockito.eq(p1.getDateLundi()))).thenReturn(carr);
 		Mockito.when(mairieRepo.getPrimePointagesByAgent(idAgent, new LocalDate(2013, 7, 1).toDate())).thenReturn(Arrays.asList(1128, 1150, 1135));
 		
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
@@ -248,7 +250,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
 		
 		// When
-		service.processVentilationForAgent(ventilDate, idAgent, from, ventilDate.getDateVentilation(), typePointage);
+		service.processVentilationForAgent(ventilDate, idAgent, carr, from, ventilDate.getDateVentilation(), typePointage);
 		
 		// Then
 		Mockito.verify(ventilHsup, Mockito.times(1)).persist();
@@ -270,7 +272,7 @@ public class VentilationServiceTest {
 		p1.setDateDebut(new LocalDate(2013, 7, 4).toDate());
 		
 		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pointageRepo.getListPointagesForVentilationByDateEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
+		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
 				.thenReturn(Arrays.asList(p1));
 		
 		VentilAbsence ventilAbs = Mockito.spy(new VentilAbsence());
@@ -284,7 +286,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationAbsenceService", absV);
 		
 		// When
-		service.processVentilationForAgent(ventilDate, idAgent, from, ventilDate.getDateVentilation(), typePointage);
+		service.processVentilationForAgent(ventilDate, idAgent, null, from, ventilDate.getDateVentilation(), typePointage);
 		
 		// Then
 		Mockito.verify(ventilAbs, Mockito.times(1)).persist();
@@ -306,7 +308,7 @@ public class VentilationServiceTest {
 		p1.setDateDebut(new LocalDate(2013, 7, 4).toDate());
 		
 		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pointageRepo.getListPointagesForVentilationByDateEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
+		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
 				.thenReturn(Arrays.asList(p1));
 		
 		VentilPrime ventilPrime = Mockito.spy(new VentilPrime());
@@ -320,7 +322,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationPrimeService", primeV);
 		
 		// When
-		service.processVentilationForAgent(ventilDate, idAgent, from, ventilDate.getDateVentilation(), typePointage);
+		service.processVentilationForAgent(ventilDate, idAgent, null, from, ventilDate.getDateVentilation(), typePointage);
 		
 		// Then
 		Mockito.verify(ventilPrime, Mockito.times(1)).persist();
@@ -430,4 +432,82 @@ public class VentilationServiceTest {
 		assertEquals(ep2, p2.getEtats().get(0));
 		assertEquals(EtatPointageEnum.VENTILE, p2.getEtats().get(0).getEtat());
 	}
+	
+	@Test
+	public void isAgentEligibleToVentilation_AgentisFandTargetIsF_ReturnSpcarr() {
+		
+		// Given
+		Date asOfDate = new LocalDate(2013, 1, 28).toDate();
+		
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(20); // F
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgentCurrentCarriere(7898, asOfDate)).thenReturn(carr);
+		
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		Spcarr result = service.isAgentEligibleToVentilation(9007898, AgentStatutEnum.F, asOfDate);
+		
+		// Then
+		assertEquals(result, carr);
+	}
+	
+	@Test
+	public void isAgentEligibleToVentilation_AgentisCCandTargetIsF_ReturnNull() {
+		
+		// Given
+		Date asOfDate = new LocalDate(2013, 1, 28).toDate();
+		
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(7); // CC
+		
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgentCurrentCarriere(7898, asOfDate)).thenReturn(carr);
+		
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		
+		// When
+		Spcarr result = service.isAgentEligibleToVentilation(9007898, AgentStatutEnum.F, asOfDate);
+		
+		// Then
+		assertNull(result);
+	}
+	
+	@Test
+	public void getTypeChainePaieFromStatut_Statut_F_ReturnHCC() {
+		
+		// Given
+		VentilationService service = new VentilationService();
+		
+		// Then
+		assertEquals(TypeChainePaieEnum.HCC, service.getTypeChainePaieFromStatut(AgentStatutEnum.F));
+		
+	}
+	
+	@Test
+	public void getTypeChainePaieFromStatut_Statut_C_ReturnHCC() {
+		
+		// Given
+		VentilationService service = new VentilationService();
+		
+		// Then
+		assertEquals(TypeChainePaieEnum.HCC, service.getTypeChainePaieFromStatut(AgentStatutEnum.C));
+		
+	}
+	
+	@Test
+	public void getTypeChainePaieFromStatut_Statut_CC_ReturnCC() {
+		
+		// Given
+		VentilationService service = new VentilationService();
+		
+		// Then
+		assertEquals(TypeChainePaieEnum.CC, service.getTypeChainePaieFromStatut(AgentStatutEnum.CC));
+		
+	}
+	
 }
