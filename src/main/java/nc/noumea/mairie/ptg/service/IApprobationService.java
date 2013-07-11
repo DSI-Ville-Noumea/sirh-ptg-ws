@@ -11,8 +11,7 @@ public interface IApprobationService {
 
 	List<ConsultPointageDto> getPointages(Integer idAgent, Date from, Date to, String codeService, Integer agent, Integer idRefEtat, Integer idRefType);
 
-	List<ConsultPointageDto> getPointagesSIRH(Date from, Date to, String codeService, Integer idAgentFrom, Integer idAgentTo, Integer idRefEtat,
-			Integer idRefType);
+	List<ConsultPointageDto> getPointagesSIRH(Date from, Date to, List<Integer> idAgents, Integer idRefEtat, Integer idRefType);
 
 	List<ConsultPointageDto> getPointagesArchives(Integer idAgent, Integer idPointage);
 

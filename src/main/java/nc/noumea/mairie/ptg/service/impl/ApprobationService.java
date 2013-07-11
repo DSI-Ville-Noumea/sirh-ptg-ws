@@ -73,20 +73,6 @@ public class ApprobationService implements IApprobationService {
 		return result;
 	}
 
-	@Override
-	public List<ConsultPointageDto> getPointagesSIRH(Date from, Date to, String codeService, Integer idAgentFrom, Integer idAgentTo,
-			Integer idRefEtat, Integer idRefType) {
-
-		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
-
-		// get pointages with filters
-		List<Pointage> list = pointageRepository.getListPointagesSIRH(from, to, codeService, idRefType, idAgentFrom, idAgentTo);
-
-		result = construitJson(list, idRefEtat);
-
-		return result;
-	}
-
 	private List<ConsultPointageDto> construitJson(List<Pointage> list, Integer idRefEtat) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
@@ -206,6 +192,19 @@ public class ApprobationService implements IApprobationService {
 
 			ptg.getEtats().add(etat);
 		}
+
+		return result;
+	}
+
+	@Override
+	public List<ConsultPointageDto> getPointagesSIRH(Date from, Date to, List<Integer> idAgents, Integer idRefEtat, Integer idRefType) {
+
+		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
+
+		// get pointages with filters
+		List<Pointage> list = pointageRepository.getListPointagesSIRH(from, to, idRefType, idAgents);
+
+		result = construitJson(list, idRefEtat);
 
 		return result;
 	}

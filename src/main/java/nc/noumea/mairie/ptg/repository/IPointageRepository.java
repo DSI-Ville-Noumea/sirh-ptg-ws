@@ -17,7 +17,7 @@ public interface IPointageRepository {
 	List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
 
 	List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
-	
+
 	List<Pointage> getPointageArchives(Integer idPointage);
 
 	List<Pointage> getListPointagesForVentilationByDateEtat(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum pointageType);
@@ -25,12 +25,12 @@ public interface IPointageRepository {
 	VentilDate getLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid);
 
 	void removeVentilationsForDateAgentAndType(VentilDate ventilDate, Integer idAgent, RefTypePointageEnum typePointage);
-	
+
 	void removePointageCalculesForDateAgent(Integer idAgent, Date from, Date to);
-	
+
 	void savePointage(Pointage ptg);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
 
-	List<Pointage> getListPointagesSIRH(Date fromDate, Date toDate, String codeService, Integer idRefType, Integer idAgentFrom, Integer idAgentTo);
+	List<Pointage> getListPointagesSIRH(Date fromDate, Date toDate, Integer idRefType, List<Integer> idAgents);
 }

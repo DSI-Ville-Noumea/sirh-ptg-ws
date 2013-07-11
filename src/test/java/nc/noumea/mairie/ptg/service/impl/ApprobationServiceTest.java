@@ -639,9 +639,6 @@ public class ApprobationServiceTest {
 		// Given
 		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
-		String codeService = null;
-		Integer agentFrom = 9001234;
-		Integer agentTo = 9001235;
 		Integer idRefEtat = null;
 		Integer idRefType = 1;
 
@@ -669,8 +666,12 @@ public class ApprobationServiceTest {
 		etat2.setEtat(EtatPointageEnum.SAISI);
 		ptg2.getEtats().add(etat2);
 
+		List<Integer> idAgents = new ArrayList<Integer>();
+		idAgents.add(9001234);
+		idAgents.add(9001235);
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointagesSIRH(fromDate, toDate, codeService, idRefType, 9001234, 9001235)).thenReturn(Arrays.asList(ptg, ptg2));
+		Mockito.when(pRepo.getListPointagesSIRH(fromDate, toDate, idRefType, idAgents)).thenReturn(Arrays.asList(ptg, ptg2));
 
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
@@ -681,7 +682,7 @@ public class ApprobationServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
 		// When
-		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, codeService, agentFrom, agentTo, idRefEtat, idRefType);
+		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, idAgents, idRefEtat, idRefType);
 
 		// Then
 		assertEquals(2, result.size());
@@ -696,9 +697,6 @@ public class ApprobationServiceTest {
 		// Given
 		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
-		String codeService = null;
-		Integer agentFrom = 9001234;
-		Integer agentTo = 9001235;
 		Integer idRefType = 1;
 
 		Pointage ptg = new Pointage();
@@ -725,8 +723,12 @@ public class ApprobationServiceTest {
 		etat2.setEtat(EtatPointageEnum.SAISI);
 		ptg2.getEtats().add(etat2);
 
+		List<Integer> idAgents = new ArrayList<Integer>();
+		idAgents.add(9001234);
+		idAgents.add(9001235);
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointagesSIRH(fromDate, toDate, codeService, idRefType, 9001234, 9001235)).thenReturn(Arrays.asList(ptg, ptg2));
+		Mockito.when(pRepo.getListPointagesSIRH(fromDate, toDate, idRefType, idAgents)).thenReturn(Arrays.asList(ptg, ptg2));
 
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
@@ -736,8 +738,7 @@ public class ApprobationServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
 		// When
-		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, codeService, agentFrom, agentTo,
-				EtatPointageEnum.SAISI.getCodeEtat(), idRefType);
+		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, idAgents, EtatPointageEnum.SAISI.getCodeEtat(), idRefType);
 
 		// Then
 		assertEquals(1, result.size());
@@ -750,9 +751,6 @@ public class ApprobationServiceTest {
 		// Given
 		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
-		String codeService = null;
-		Integer agentFrom = 9001234;
-		Integer agentTo = 9001235;
 		Integer idRefEtat = null;
 		Integer idRefType = null;
 
@@ -781,8 +779,12 @@ public class ApprobationServiceTest {
 		etat2.setEtat(EtatPointageEnum.SAISI);
 		ptg2.getEtats().add(etat2);
 
+		List<Integer> idAgents = new ArrayList<Integer>();
+		idAgents.add(9001234);
+		idAgents.add(9001235);
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointagesSIRH(fromDate, toDate, codeService, idRefType, 9001234, 9001235)).thenReturn(Arrays.asList(ptg, ptg2));
+		Mockito.when(pRepo.getListPointagesSIRH(fromDate, toDate, idRefType, idAgents)).thenReturn(Arrays.asList(ptg, ptg2));
 
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
@@ -792,7 +794,7 @@ public class ApprobationServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
 		// When
-		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, codeService, agentFrom, agentTo, idRefEtat, idRefType);
+		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, idAgents, idRefEtat, idRefType);
 
 		// Then
 		assertEquals(2, result.size());

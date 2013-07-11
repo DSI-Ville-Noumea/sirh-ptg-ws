@@ -80,20 +80,21 @@ public class VisualisationController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getListePointagesSIRH(@RequestParam("from") @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
 			@RequestParam("to") @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
-			@RequestParam(value = "codeService", required = false) String codeService,
-			@RequestParam(value = "agentFrom", required = false) Integer agentFrom,
-			@RequestParam(value = "agentTo", required = false) Integer agentTo, @RequestParam(value = "etat", required = false) Integer idRefEtat,
+			@RequestParam(value = "idAgents", required = false) String idAgents, @RequestParam(value = "etat", required = false) Integer idRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType) {
 
 		logger.debug(
-				"entered GET [visualisation/pointagesSIRH] => getListePointagesSIRH with parameters  from = {}, to = {}, codeService = {}, agentFrom = {},agentTo = {}, etat = {} and type = {}",
-				fromDate, toDate, codeService, agentFrom, agentTo, idRefEtat, idRefType);
+				"entered GET [visualisation/pointagesSIRH] => getListePointagesSIRH with parameters  from = {}, to = {},  idAgents = {}, etat = {} and type = {}",
+				fromDate, toDate, idAgents, idRefEtat, idRefType);
 
-		Integer convertedAgentFrom = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agentFrom);
-		Integer convertedAgentTo = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agentTo);
+		List<Integer> agentIds = new ArrayList<Integer>();
+		if (idAgents != null) {
+			for (String id : idAgents.split(",")) {
+				agentIds.add(Integer.valueOf(id));
+			}
+		}
 
-		List<ConsultPointageDto> result = approbationService.getPointagesSIRH(fromDate, toDate, codeService, convertedAgentFrom, convertedAgentTo,
-				idRefEtat, idRefType);
+		List<ConsultPointageDto> result = approbationService.getPointagesSIRH(fromDate, toDate, agentIds, idRefEtat, idRefType);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);

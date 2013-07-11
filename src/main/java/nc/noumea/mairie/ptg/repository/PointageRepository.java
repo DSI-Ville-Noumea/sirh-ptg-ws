@@ -23,7 +23,7 @@ public class PointageRepository implements IPointageRepository {
 
 	@PersistenceContext(unitName = "ptgPersistenceUnit")
 	private EntityManager ptgEntityManager;
-	
+
 	@Override
 	public List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut) {
 
@@ -180,9 +180,7 @@ public class PointageRepository implements IPointageRepository {
 	}
 
 	@Override
-	public List<Pointage> getListPointagesSIRH(Date fromDate, Date toDate, String codeService, Integer idRefType, Integer idAgentFrom,
-			Integer idAgentTo) {
-
+	public List<Pointage> getListPointagesSIRH(Date fromDate, Date toDate, Integer idRefType, List<Integer> idAgents) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ptg.* ");
 		sb.append("FROM PTG_POINTAGE ptg ");
@@ -190,17 +188,10 @@ public class PointageRepository implements IPointageRepository {
 		sb.append("LEFT JOIN PTG_COMMENT commentaire ON ptg.ID_COMMENT_COMMENTAIRE = motif.ID_COMMENT ");
 		sb.append("LEFT JOIN PTG_REF_PRIME refPrime ON ptg.ID_REF_PRIME = refPrime.ID_REF_PRIME ");
 		sb.append("INNER JOIN PTG_REF_TYPE_POINTAGE type ON ptg.ID_TYPE_POINTAGE = type.ID_REF_TYPE_POINTAGE ");
-		sb.append("INNER JOIN PTG_DROITS_AGENT agent ON ptg.ID_AGENT = agent.ID_AGENT ");
 		sb.append("WHERE to_date(PTG.DATE_DEBUT)>= :fromDate AND to_date(PTG.DATE_DEBUT)<= :toDate ");
 
-		if (idAgentFrom != null && idAgentTo == null) {
-			sb.append("AND ptg.ID_AGENT= :idAgentFrom ");
-		} else if (idAgentFrom != null && idAgentTo != null) {
-			sb.append("AND ptg.ID_AGENT between :idAgentFrom and :idAgentTo ");
-		}
-
-		if (codeService != null) {
-			sb.append("AND agent.CODE_SERVICE like :codeService ");
+		if (idAgents != null) {
+			sb.append("AND ptg.ID_AGENT IN (:idAgents) ");
 		}
 
 		if (idRefType != null) {
@@ -211,15 +202,8 @@ public class PointageRepository implements IPointageRepository {
 		q.setParameter("fromDate", fromDate);
 		q.setParameter("toDate", toDate);
 
-		if (idAgentFrom != null && idAgentTo == null) {
-			q.setParameter("idAgentFrom", idAgentFrom);
-		} else if (idAgentFrom != null && idAgentTo != null) {
-			q.setParameter("idAgentFrom", idAgentFrom);
-			q.setParameter("idAgentTo", idAgentTo);
-		}
-
-		if (codeService != null) {
-			q.setParameter("codeService", codeService + '%');
+		if (idAgents != null) {
+			q.setParameter("idAgents", idAgents);
 		}
 		if (idRefType != null)
 			q.setParameter("idRefType", idRefType);
