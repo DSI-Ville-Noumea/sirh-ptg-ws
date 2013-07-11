@@ -190,7 +190,7 @@ public class PointageRepository implements IPointageRepository {
 		sb.append("INNER JOIN PTG_REF_TYPE_POINTAGE type ON ptg.ID_TYPE_POINTAGE = type.ID_REF_TYPE_POINTAGE ");
 		sb.append("WHERE to_date(PTG.DATE_DEBUT)>= :fromDate AND to_date(PTG.DATE_DEBUT)<= :toDate ");
 
-		if (idAgents != null) {
+		if (idAgents != null && idAgents.size() > 0) {
 			sb.append("AND ptg.ID_AGENT IN (:idAgents) ");
 		}
 
@@ -202,7 +202,7 @@ public class PointageRepository implements IPointageRepository {
 		q.setParameter("fromDate", fromDate);
 		q.setParameter("toDate", toDate);
 
-		if (idAgents != null) {
+		if (idAgents != null && idAgents.size() > 0) {
 			q.setParameter("idAgents", idAgents);
 		}
 		if (idRefType != null)
