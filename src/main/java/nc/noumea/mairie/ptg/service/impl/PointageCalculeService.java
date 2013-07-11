@@ -126,37 +126,46 @@ public class PointageCalculeService implements IPointageCalculeService {
 					new DateTime(datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 5, 0, 0),
 					new DateTime(datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 21, 0, 0));
 			
-			long totalMinutes = inputInterval.toDuration().minus(primeIntervalInverse.overlap(inputInterval).toDuration()).getStandardMinutes();
+			Interval overlap = primeIntervalInverse.overlap(inputInterval);
+			long dayMinutes = overlap == null ? 0 : overlap.toDuration().getStandardMinutes();
+			long totalMinutes = inputInterval.toDuration().getStandardMinutes();
 			
 			if (prime.getNoRubr().equals(7712)
 					&& (datePointage.getDayOfWeek() == DateTimeConstants.SUNDAY || holidayService.isHoliday(datePointage))) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
-				returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
+				existingPc = returnOrCreateNewPointageWithPrime(null, ptg, prime);
 				existingPc.addQuantite((int) (totalMinutes / 60));
+
+				if (!result.contains(existingPc))
+					result.add(existingPc);
+				
 				continue;
 			}
 			
 			if (prime.getNoRubr().equals(7711)) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
-				returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
-				existingPc.addQuantite((int) (totalMinutes / 60));
+				existingPc = returnOrCreateNewPointageWithPrime(null, ptg, prime);
+				existingPc.addQuantite((int) ((totalMinutes - dayMinutes) / 60));
+
+				if (!result.contains(existingPc))
+					result.add(existingPc);
+				
 				continue;
 			}
 
 			if (prime.getNoRubr().equals(7713)) {
 
-				DateTime d1 = new DateTime(datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 5, 0, 0);
-				DateTime d2 = new DateTime(datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 13, 0, 0);
-				DateTime d3 = new DateTime(datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 21, 0, 0);
-
 				if (inputInterval.toDuration().toStandardHours().getHours() >= 9
-					|| inputInterval.contains(d1) && inputInterval.contains(d2)
-					|| inputInterval.contains(d2) && inputInterval.contains(d3)) {
+						|| inputInterval.getStart().getHourOfDay() <= 5 && inputInterval.getEnd().getHourOfDay() >= 13
+						|| inputInterval.getStart().getHourOfDay() <= 13 && inputInterval.getEnd().getHourOfDay() >= 21) {
 					PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
-					returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
+					existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
 					
-					if (existingPc.getQuantite() < 2)
+					if (existingPc.getQuantite() == null ||  existingPc.getQuantite() < 2)
 						existingPc.addQuantite(1);
+					
+					if (!result.contains(existingPc))
+						result.add(existingPc);
 				}
 			}
 		}
@@ -164,13 +173,14 @@ public class PointageCalculeService implements IPointageCalculeService {
 		return result;
 	}
 	
-	private List<PointageCalcule> generatePointage7720_21_22(Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
+	public List<PointageCalcule> generatePointage7720_21_22(Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
 
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
 		
 		for (Pointage ptg : getPointagesPrime(pointages, 7701)) {
 			PointageCalcule existingPc = returnOrCreateNewPointageWithPrime(null, ptg, prime);
 			existingPc.addQuantite(ptg.getQuantite());
+			result.add(existingPc);
 		}
 		
 		return result;
@@ -249,7 +259,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 		pCalcule.setDateDebut(newPrimeStartDate);
 		pCalcule.setEtat(EtatPointageEnum.VENTILE);
 		pCalcule.setRefPrime(prime);
-		pCalcule.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME));
+		pCalcule.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME.getValue()));
 		
 		return pCalcule;
 	}
