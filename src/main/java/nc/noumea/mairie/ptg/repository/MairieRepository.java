@@ -45,9 +45,12 @@ public class MairieRepository implements IMairieRepository {
 		int dateFormatMairie = Integer.valueOf(sdf.format(asOfDate));
 		qCarr.setParameter("todayFormatMairie", dateFormatMairie);
 
-		Spcarr carr = qCarr.getSingleResult();
+		List<Spcarr> result = qCarr.getResultList();
+		
+		if (result.size() != 1)
+			return null;
 
-		return carr;
+		return result.get(0);
 	}
 
 	@Override

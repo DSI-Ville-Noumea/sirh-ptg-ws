@@ -47,8 +47,7 @@ public class VentilationController {
 				ventilationDate, agentsJson, idRefTypePointage, statut);
 
 		// Deserializing integer list
-		List<Integer> agents = new ArrayList<Integer>();
-		new JSONDeserializer<List<Integer>>().use(null, ArrayList.class).use("values", Integer.class).deserialize(agentsJson);
+		List<Integer> agents = new JSONDeserializer<List<Integer>>().use(null, ArrayList.class).use("values", Integer.class).deserialize(agentsJson);
 		
 		// Running ventilation
 		ventilationService.processVentilation(9005138, agents, ventilationDate, AgentStatutEnum.valueOf(statut), RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage));

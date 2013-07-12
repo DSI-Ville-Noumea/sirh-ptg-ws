@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
+import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
@@ -31,6 +33,7 @@ import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +43,12 @@ public class VentilationService implements IVentilationService {
 
 	@Autowired
 	private IPointageRepository pointageRepository;
+	
+	@Autowired
+	private IMairieRepository mairieRepository;
+	
+	@Autowired
+	private IPointageService pointageService;
 	
 	@Autowired
 	private IVentilationPrimeService ventilationPrimeService;
@@ -52,9 +61,6 @@ public class VentilationService implements IVentilationService {
 	
 	@Autowired
 	private IPointageCalculeService pointageCalculeService;
-	
-	@Autowired
-	private IMairieRepository mairieRepository;
 	
 	@Autowired
 	private HelperService helperService;
@@ -132,18 +138,16 @@ public class VentilationService implements IVentilationService {
 		
 		// If the choice was to ventilate ABSENCE or H_SUP (or all), ventilate both because they're tied together
 		if (pointageType == null || pointageType == RefTypePointageEnum.H_SUP || pointageType == RefTypePointageEnum.ABSENCE) {
+			
 			for (Entry<Date, List<Pointage>> set : hSups.entrySet()) {
 				boolean has1150Prime = mairieRepository.getPrimePointagesByAgent(idAgent, set.getKey()).contains(1150);
-				
-				// We need to concat hSups with abs in order to ventilate the weeks hsups
-				List<Pointage> absOfWeek = abs.get(set.getKey());
-				if (absOfWeek != null)
-					set.getValue().addAll(absOfWeek);
-				
-				hSupsVentilees.add(ventilationHSupService.processHSup(idAgent, carr, set.getValue(), carr.getStatutCarriere(), has1150Prime));
+				List<Pointage> pointagesToUse = getPointagesForWeek(idAgent, set.getKey(), from, to, set.getValue(), abs.get(set.getKey()));
+				hSupsVentilees.add(ventilationHSupService.processHSup(idAgent, carr, pointagesToUse, carr.getStatutCarriere(), has1150Prime));
 			}
+			
 			for (Entry<Date, List<Pointage>> set : abs.entrySet()) {
-				absVentilees.add(ventilationAbsenceService.processAbsenceAgent(idAgent, set.getValue(), set.getKey()));
+				List<Pointage> pointagesToUse = getPointagesForWeek(idAgent, set.getKey(), from, to, set.getValue(), null);
+				absVentilees.add(ventilationAbsenceService.processAbsenceAgent(idAgent, pointagesToUse, set.getKey()));
 			}
 		}
 		
@@ -173,6 +177,42 @@ public class VentilationService implements IVentilationService {
 		return agentsPointageForPeriod;
 	}
 	
+	protected List<Pointage> getPointagesForWeek(Integer idAgent, Date dateLundi, Date from, Date to, List<Pointage> hSups, List<Pointage> abs) {
+
+		// If the pointages we need are for a week inside the ventilation dates, then return what we already fetched from the DB
+		// because all the pointages have already been selected with the first query.
+		if (new Interval(new DateTime(from), new DateTime(to)).contains(new DateTime(dateLundi))) {
+			if (abs != null)
+				hSups.addAll(abs);
+			return hSups;
+		}
+		
+		// If, however, this dateLundi is a previous date, we need to retrieve all the pointages of that week 
+		// to give to the ventilation process
+		List<Pointage> agentPointages = pointageService.getLatestPointagesForAgentAndDates(
+				idAgent, dateLundi, new DateTime(dateLundi).plusWeeks(1).toDate(), null, 
+				Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.JOURNALISE));
+		
+		return agentPointages;
+	}
+	
+//	protected List<Pointage> getPointagesMonth(Integer idAgent, Date dateDebutMois, Date from, Date to, List<Pointage> primes) {
+//
+//		// If the pointages we need are for a month inside the ventilation dates, then return what we already fetched from the DB
+//		// because all the pointages have already been selected with the first query.
+//		if (new Interval(new DateTime(from), new DateTime(to)).contains(new DateTime(dateDebutMois))) {
+//			return primes;
+//		}
+//		
+//		// If, however, this dateDebutMois is a previous date, we need to retrieve all the pointages 
+//		// of that month to give to the ventilation process
+//		List<Pointage> agentPointages = pointageService.getLatestPointagesForAgentAndDates(
+//				idAgent, dateLundi, new DateTime(dateLundi).plusWeeks(1).toDate(), null, 
+//				Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.JOURNALISE));
+//		
+//		return agentPointages;
+//	}
+
 	/**
 	 * This method distributes all pointages into 3 maps
 	 * hSups & abs : with a list of pointage per week
@@ -291,7 +331,7 @@ public class VentilationService implements IVentilationService {
 	 */
 	protected Spcarr isAgentEligibleToVentilation(Integer idAgent, AgentStatutEnum statut, Date date) {
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(Agent.getNoMatrFromIdAgent(idAgent), date);
-		AgentStatutEnum agentStatus = carr.getStatutCarriere();
+		AgentStatutEnum agentStatus = carr != null ? carr.getStatutCarriere() : null;
 		return agentStatus == statut ? carr : null;
 	}
 }

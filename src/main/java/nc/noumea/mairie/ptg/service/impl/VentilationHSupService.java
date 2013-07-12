@@ -219,8 +219,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 		int nbMinutesSup = Minutes.getTotalMinutes();
 		
 		// If we're doing HS JOUR under the BASE_HEBDO_LEGAL = 39, count them as HS Complementaires
-		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE) {
-			int nbMinutesComplementairesToAdd = (nbMinutesSup + result.getMComplementaires() + weekBase) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - result.getMComplementaires()) : nbMinutesSup;
+		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE && weekBase < BASE_HEBDO_LEGALE) {
+			int nbMinutesComplementairesToAdd = (nbMinutesSup + result.getMComplementaires() + weekBase) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup) : nbMinutesSup;
 			result.setMComplementaires(result.getMComplementaires() + nbMinutesComplementairesToAdd);
 			nbMinutesSup -= nbMinutesComplementairesToAdd;
 			
