@@ -112,7 +112,7 @@ public class PointageRepository implements IPointageRepository {
 	}
 	
 	@Override
-	public List<Integer> getListIdAgentsForVentilationByDateAndEtat(Date fromDate, Date toDate, RefTypePointageEnum pointageType) {
+	public List<Integer> getListIdAgentsForVentilationByDateAndEtat(Date fromDate, Date toDate) {
 		
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT distinct (p.id_agent) as id_agent ");
@@ -122,12 +122,7 @@ public class PointageRepository implements IPointageRepository {
 		sb.append("SELECT epmax.id_pointage, max(epmax.date_etat) AS maxdate  ");
 		sb.append("FROM ptg_etat_pointage epmax ");
 		sb.append("INNER JOIN ptg_pointage ptg ON ptg.id_pointage = epmax.id_pointage ");
-
-		if (pointageType != null)
-			sb.append("WHERE ptg.ID_TYPE_POINTAGE = :typePointage ");
-
 		sb.append("GROUP BY epmax.id_pointage)  ");
-
 		sb.append("maxEtats ON maxEtats.maxdate = ep.date_etat AND maxEtats.id_pointage = ep.id_pointage ");
 		sb.append("WHERE ep.date_etat BETWEEN :fromDate AND :toDate AND ep.etat = :approuve ");
 		sb.append("OR ep.etat = :ventile ");
@@ -137,10 +132,7 @@ public class PointageRepository implements IPointageRepository {
 		q.setParameter("toDate", toDate);
 		q.setParameter("approuve", EtatPointageEnum.APPROUVE.getCodeEtat());
 		q.setParameter("ventile", EtatPointageEnum.VENTILE.getCodeEtat());
-
-		if (pointageType != null)
-			q.setParameter("typePointage", pointageType.getValue());
-
+		
 		@SuppressWarnings("unchecked")
 		List<BigDecimal> rawResult = q.getResultList();
 		List<Integer> result = new ArrayList<Integer>();

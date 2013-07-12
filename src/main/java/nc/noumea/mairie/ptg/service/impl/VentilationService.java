@@ -79,13 +79,13 @@ public class VentilationService implements IVentilationService {
 			agents = pointageRepository
 					.getListIdAgentsForVentilationByDateAndEtat(
 							fromVentilDate.getDateVentilation(),
-							toVentilDate.getDateVentilation(), pointageType);
+							toVentilDate.getDateVentilation());
 		}
 
 		// For all seleted agents, proceed to ventilation
 		for (Integer agent : agents) {
 			// 1. Verify whether this agent is eligible, through its Status (Spcarr)
-			Spcarr carr = isAgentEligibleToVentilation(idAgent, statut, toVentilDate.getDateVentilation());
+			Spcarr carr = isAgentEligibleToVentilation(agent, statut, toVentilDate.getDateVentilation());
 			if (carr == null)
 				continue;
 			
@@ -102,7 +102,7 @@ public class VentilationService implements IVentilationService {
 			List<Pointage> ptgVentiles = processVentilationForAgent(toVentilDate, agent, carr, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), pointageType);
 			
 			// 6. Mark pointages as etat VENTILE
-			markPointagesAsVentile(ptgVentiles, idAgent);
+			markPointagesAsVentile(ptgVentiles, agent);
 		}
 		
 	}

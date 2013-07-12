@@ -22,7 +22,7 @@ public interface IPointageRepository {
 
 	List<Pointage> getListPointagesForVentilationByDateAndEtat(Integer idAgent, Date fromDate, Date toDate);
 
-	List<Integer> getListIdAgentsForVentilationByDateAndEtat(Date fromDate, Date toDate, RefTypePointageEnum pointageType);
+	List<Integer> getListIdAgentsForVentilationByDateAndEtat(Date fromDate, Date toDate);
 	
 	VentilDate getLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid);
 

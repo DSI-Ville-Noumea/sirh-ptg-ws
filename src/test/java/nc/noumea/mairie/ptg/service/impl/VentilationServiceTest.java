@@ -543,7 +543,6 @@ public class VentilationServiceTest {
 		
 		// Then
 		assertEquals(TypeChainePaieEnum.HCC, service.getTypeChainePaieFromStatut(AgentStatutEnum.C));
-		
 	}
 	
 	@Test
@@ -554,7 +553,54 @@ public class VentilationServiceTest {
 		
 		// Then
 		assertEquals(TypeChainePaieEnum.CC, service.getTypeChainePaieFromStatut(AgentStatutEnum.CC));
-		
 	}
 	
+	@Test
+	public void processVentilation_VentilationDateExisting_useExistingOne() {
+		
+		// Given
+		Date ventilationDate = new LocalDate(2013, 7, 7).toDate();
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		RefTypePointageEnum pointageType = null;
+		
+		Date lastPaidDate = new DateTime().toDate();
+		VentilDate lastPaidVentilDate = new VentilDate();
+		lastPaidVentilDate.setDateVentilation(lastPaidDate);
+		
+		Date lastUnPaidDate = new DateTime().toDate();
+		VentilDate lastUnPaidVentilDate = new VentilDate();
+		lastUnPaidVentilDate.setDateVentilation(lastUnPaidDate);
+		
+		List<Integer> agentList = Arrays.asList(9005432, 9005431);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getLatestVentilDate(TypeChainePaieEnum.HCC, true)).thenReturn(lastPaidVentilDate);
+		Mockito.when(pRepo.getLatestVentilDate(TypeChainePaieEnum.HCC, false)).thenReturn(lastUnPaidVentilDate);
+		Mockito.when(pRepo.getListIdAgentsForVentilationByDateAndEtat(lastPaidDate, lastUnPaidDate)).thenReturn(agentList);
+		
+		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		
+		Spcarr carr = new Spcarr();
+		Mockito.doReturn(carr).when(service).isAgentEligibleToVentilation(9005432, statut, lastUnPaidDate);
+		Mockito.doReturn(null).when(service).isAgentEligibleToVentilation(9005431, statut, lastUnPaidDate);
+		Mockito.doNothing().when(service).removePreviousVentilations(lastUnPaidVentilDate, 9005432, null);
+		Mockito.doNothing().when(service).removePreviousCalculatedPointages(9005432, lastPaidDate, lastUnPaidDate);
+		Mockito.doNothing().when(service).calculatePointages(9005432, lastPaidDate, lastUnPaidDate);
+		List<Pointage> ptgVentiles = new ArrayList<Pointage>();
+		Mockito.doReturn(ptgVentiles).when(service).processVentilationForAgent(lastUnPaidVentilDate, 9005432, carr, lastPaidDate, lastUnPaidDate, pointageType);
+		Mockito.doNothing().when(service).markPointagesAsVentile(ptgVentiles, 9005432);
+		
+		// When
+		service.processVentilation(9008765, new ArrayList<Integer>(), ventilationDate, statut, pointageType);
+		
+		// Then
+		Mockito.verify(service, Mockito.times(1)).isAgentEligibleToVentilation(9005432, statut, lastUnPaidDate);
+		Mockito.verify(service, Mockito.times(1)).isAgentEligibleToVentilation(9005431, statut, lastUnPaidDate);
+		Mockito.verify(service, Mockito.times(1)).removePreviousVentilations(lastUnPaidVentilDate, 9005432, null);
+		Mockito.verify(service, Mockito.times(1)).removePreviousCalculatedPointages(9005432, lastPaidDate, lastUnPaidDate);
+		Mockito.verify(service, Mockito.times(1)).calculatePointages(9005432, lastPaidDate, lastUnPaidDate);
+		Mockito.verify(service, Mockito.times(1)).processVentilationForAgent(lastUnPaidVentilDate, 9005432, carr, lastPaidDate, lastUnPaidDate, pointageType);
+		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9005432);
+	}
 }
