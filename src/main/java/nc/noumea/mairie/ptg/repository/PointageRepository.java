@@ -1,5 +1,7 @@
 package nc.noumea.mairie.ptg.repository;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -78,7 +80,7 @@ public class PointageRepository implements IPointageRepository {
 	}
 
 	@Override
-	public List<Pointage> getListPointagesForVentilationByDateAndEtat(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum pointageType) {
+	public List<Pointage> getListPointagesForVentilationByDateAndEtat(Integer idAgent, Date fromDate, Date toDate) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT p.* ");
@@ -89,15 +91,11 @@ public class PointageRepository implements IPointageRepository {
 		sb.append("FROM ptg_etat_pointage epmax ");
 		sb.append("INNER JOIN ptg_pointage ptg ON ptg.id_pointage = epmax.id_pointage ");
 		sb.append("WHERE ptg.id_agent = :idAgent ");
-
-		if (pointageType != null)
-			sb.append("AND ptg.ID_TYPE_POINTAGE = :typePointage ");
-
 		sb.append("GROUP BY epmax.id_pointage)  ");
 		sb.append("maxEtats ON maxEtats.maxdate = ep.date_etat AND maxEtats.id_pointage = ep.id_pointage ");
 		sb.append("WHERE p.ID_AGENT = :idAgent ");
-		sb.append("AND ep.date_etat between :fromDate and :toDate ");
-		sb.append("AND (ep.etat = :approuve or ep.etat = :ventile) ");
+		sb.append("AND (ep.date_etat BETWEEN :fromDate AND :toDate AND ep.etat = :approuve ");
+		sb.append("OR ep.etat = :ventile) ");
 		sb.append("ORDER BY id_pointage DESC ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
@@ -106,9 +104,6 @@ public class PointageRepository implements IPointageRepository {
 		q.setParameter("toDate", toDate);
 		q.setParameter("approuve", EtatPointageEnum.APPROUVE.getCodeEtat());
 		q.setParameter("ventile", EtatPointageEnum.VENTILE.getCodeEtat());
-
-		if (pointageType != null)
-			q.setParameter("typePointage", pointageType.getValue());
 
 		@SuppressWarnings("unchecked")
 		List<Pointage> result = q.getResultList();
@@ -120,25 +115,24 @@ public class PointageRepository implements IPointageRepository {
 	public List<Integer> getListIdAgentsForVentilationByDateAndEtat(Date fromDate, Date toDate, RefTypePointageEnum pointageType) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT distinct (p.id_agent) ");
+		sb.append("SELECT distinct (p.id_agent) as id_agent ");
 		sb.append("FROM PTG_ETAT_POINTAGE ep ");
 		sb.append("INNER JOIN PTG_POINTAGE p ON ep.ID_POINTAGE = p.ID_POINTAGE ");
 		sb.append("INNER JOIN ( ");
 		sb.append("SELECT epmax.id_pointage, max(epmax.date_etat) AS maxdate  ");
 		sb.append("FROM ptg_etat_pointage epmax ");
 		sb.append("INNER JOIN ptg_pointage ptg ON ptg.id_pointage = epmax.id_pointage ");
-		sb.append("WHERE ptg.id_agent = :idAgent ");
 
 		if (pointageType != null)
-			sb.append("AND ptg.ID_TYPE_POINTAGE = :typePointage ");
+			sb.append("WHERE ptg.ID_TYPE_POINTAGE = :typePointage ");
 
 		sb.append("GROUP BY epmax.id_pointage)  ");
 
 		sb.append("maxEtats ON maxEtats.maxdate = ep.date_etat AND maxEtats.id_pointage = ep.id_pointage ");
-		sb.append("AND ep.date_etat between :fromDate and :toDate ");
-		sb.append("AND (ep.etat = :approuve or ep.etat = :ventile) ");
+		sb.append("WHERE ep.date_etat BETWEEN :fromDate AND :toDate AND ep.etat = :approuve ");
+		sb.append("OR ep.etat = :ventile ");
 
-		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
+		Query q = ptgEntityManager.createNativeQuery(sb.toString());
 		q.setParameter("fromDate", fromDate);
 		q.setParameter("toDate", toDate);
 		q.setParameter("approuve", EtatPointageEnum.APPROUVE.getCodeEtat());
@@ -148,7 +142,12 @@ public class PointageRepository implements IPointageRepository {
 			q.setParameter("typePointage", pointageType.getValue());
 
 		@SuppressWarnings("unchecked")
-		List<Integer> result = q.getResultList();
+		List<BigDecimal> rawResult = q.getResultList();
+		List<Integer> result = new ArrayList<Integer>();
+		
+		for (BigDecimal l : rawResult) {
+			result.add(l.intValue());
+		}
 		
 		return result;
 	}

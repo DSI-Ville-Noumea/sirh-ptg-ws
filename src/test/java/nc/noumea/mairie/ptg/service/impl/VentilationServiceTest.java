@@ -82,7 +82,7 @@ public class VentilationServiceTest {
 	}
 	
 	@Test
-	public void removePreviousVentilations_TypeSelected_DeleteOnlySelectedType() {
+	public void removePreviousVentilations_TypeSelected_H_SUP_Delete2Types() {
 		
 		// Given
 		RefTypePointageEnum typePointage = RefTypePointageEnum.H_SUP;
@@ -99,11 +99,58 @@ public class VentilationServiceTest {
 		service.removePreviousVentilations(ventilDate, idAgent, typePointage);
 		
 		// Then
-		Mockito.verify(pointageRepo, Mockito.never()).removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.ABSENCE);
+		Mockito.verify(pointageRepo, Mockito.times(1)).removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.ABSENCE);
 		Mockito.verify(pointageRepo, Mockito.times(1)).removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.H_SUP);
 		Mockito.verify(pointageRepo, Mockito.never()).removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.PRIME);
 	}
 
+	@Test
+	public void removePreviousVentilations_TypeSelected_ABSENCE_Delete2Types() {
+		
+		// Given
+		RefTypePointageEnum typePointage = RefTypePointageEnum.ABSENCE;
+		Integer idAgent = 9008765;
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setDateVentilation(new LocalDate(2013, 4, 6).toDate());
+		
+		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
+		
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepo);
+		
+		// When
+		service.removePreviousVentilations(ventilDate, idAgent, typePointage);
+		
+		// Then
+		Mockito.verify(pointageRepo, Mockito.times(1)).removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.ABSENCE);
+		Mockito.verify(pointageRepo, Mockito.times(1)).removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.H_SUP);
+		Mockito.verify(pointageRepo, Mockito.never()).removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.PRIME);
+	}
+	
+	@Test
+	public void removePreviousVentilations_TypeSelected_PRIME_Delete1Type() {
+		
+		// Given
+		RefTypePointageEnum typePointage = RefTypePointageEnum.PRIME;
+		Integer idAgent = 9008765;
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setDateVentilation(new LocalDate(2013, 4, 6).toDate());
+		
+		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
+		
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepo);
+		
+		// When
+		service.removePreviousVentilations(ventilDate, idAgent, typePointage);
+		
+		// Then
+		Mockito.verify(pointageRepo, Mockito.never()).removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.ABSENCE);
+		Mockito.verify(pointageRepo, Mockito.never()).removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.H_SUP);
+		Mockito.verify(pointageRepo, Mockito.times(1)).removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.PRIME);
+	}
+
+	
 	@Test
 	public void distributePointages_2pointagesEachType_With2dateLundiOfSameMonth() {
 		
@@ -189,7 +236,7 @@ public class VentilationServiceTest {
 		carr.setCdcate(7); //CC
 		
 		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
+		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation()))
 				.thenReturn(Arrays.asList(p1));
 		
 		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
@@ -232,7 +279,7 @@ public class VentilationServiceTest {
 		carr.setCdcate(7); //CC
 		
 		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
+		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation()))
 				.thenReturn(Arrays.asList(p1));
 		
 		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
@@ -272,7 +319,7 @@ public class VentilationServiceTest {
 		p1.setDateDebut(new LocalDate(2013, 7, 4).toDate());
 		
 		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
+		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation()))
 				.thenReturn(Arrays.asList(p1));
 		
 		VentilAbsence ventilAbs = Mockito.spy(new VentilAbsence());
@@ -308,7 +355,7 @@ public class VentilationServiceTest {
 		p1.setDateDebut(new LocalDate(2013, 7, 4).toDate());
 		
 		IPointageRepository pointageRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation(), typePointage))
+		Mockito.when(pointageRepo.getListPointagesForVentilationByDateAndEtat(idAgent, from, ventilDate.getDateVentilation()))
 				.thenReturn(Arrays.asList(p1));
 		
 		VentilPrime ventilPrime = Mockito.spy(new VentilPrime());

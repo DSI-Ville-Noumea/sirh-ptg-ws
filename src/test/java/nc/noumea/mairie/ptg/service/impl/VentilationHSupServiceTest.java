@@ -503,4 +503,166 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
+	
+	@Test
+	public void processHSupFonctionnaire_CustomExample_base39H() {
+		
+		// Given
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2013, 05, 20, 12, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 20, 14, 0, 0).toDate());
+		p1.setType(abs);
+					
+		Pointage p2 = new Pointage();
+		p2.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2013, 05, 21, 4, 0, 0).toDate());
+		p2.setDateFin(new DateTime(2013, 05, 21, 6, 0, 0).toDate());
+		p2.setType(hSup);
+		
+		Pointage p3 = new Pointage();
+		p3.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p3.setDateDebut(new DateTime(2013, 05, 22, 4, 0, 0).toDate());
+		p3.setDateFin(new DateTime(2013, 05, 22, 6, 30, 0).toDate());
+		p3.setType(hSup);
+		
+		Pointage p4 = new Pointage();
+		p4.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p4.setDateDebut(new DateTime(2013, 05, 22, 7, 0, 0).toDate());
+		p4.setDateFin(new DateTime(2013, 05, 22, 8, 30, 0).toDate());
+		p4.setType(abs);
+		
+		Pointage p5 = new Pointage();
+		p5.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p5.setDateDebut(new DateTime(2013, 05, 23, 21, 0, 0).toDate());
+		p5.setDateFin(new DateTime(2013, 05, 23, 21, 30, 0).toDate());
+		p5.setType(hSup);
+
+		Pointage p6 = new Pointage();
+		p6.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p6.setDateDebut(new DateTime(2013, 05, 24, 21, 0, 0).toDate());
+		p6.setDateFin(new DateTime(2013, 05, 24, 22, 0, 0).toDate());
+		p6.setType(hSup);
+		
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(7.45);
+		spbase.setNbahma(7.45);
+		spbase.setNbahme(7.45);
+		spbase.setNbahje(7.45);
+		spbase.setNbahve(7.45);
+		spbase.setNbahsa(0);
+		spbase.setNbahdi(0);
+		spbase.setNbashh(38.45);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "holidayService", hService);
+		
+		// When
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, Arrays.asList(p1, p2, p3, p4, p5, p6));
+				
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p1.getDateLundi(), result.getDateLundi());
+		assertEquals(360, result.getMHorsContrat());
+		assertEquals(210, result.getMAbsences());
+		assertEquals(150, result.getMSup());
+
+		assertEquals(60, result.getMsNuit());
+		assertEquals(0, result.getMsdjf());
+		assertEquals(15, result.getMNormales());
+		assertEquals(75, result.getMSimple());
+		assertEquals(0, result.getMComposees());
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
+	
+	@Test
+	public void processHSupFonctionnaire_CustomExample_base58H30() {
+		
+		// Given
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2013, 05, 20, 12, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 20, 14, 0, 0).toDate());
+		p1.setType(abs);
+					
+		Pointage p2 = new Pointage();
+		p2.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2013, 05, 21, 4, 0, 0).toDate());
+		p2.setDateFin(new DateTime(2013, 05, 21, 6, 0, 0).toDate());
+		p2.setType(hSup);
+		
+		Pointage p3 = new Pointage();
+		p3.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p3.setDateDebut(new DateTime(2013, 05, 22, 4, 0, 0).toDate());
+		p3.setDateFin(new DateTime(2013, 05, 22, 6, 30, 0).toDate());
+		p3.setType(hSup);
+		
+		Pointage p4 = new Pointage();
+		p4.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p4.setDateDebut(new DateTime(2013, 05, 22, 7, 0, 0).toDate());
+		p4.setDateFin(new DateTime(2013, 05, 22, 8, 30, 0).toDate());
+		p4.setType(abs);
+		
+		Pointage p5 = new Pointage();
+		p5.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p5.setDateDebut(new DateTime(2013, 05, 23, 21, 0, 0).toDate());
+		p5.setDateFin(new DateTime(2013, 05, 23, 21, 30, 0).toDate());
+		p5.setType(hSup);
+
+		Pointage p6 = new Pointage();
+		p6.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
+		p6.setDateDebut(new DateTime(2013, 05, 24, 21, 0, 0).toDate());
+		p6.setDateFin(new DateTime(2013, 05, 24, 22, 0, 0).toDate());
+		p6.setType(hSup);
+		
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(8.45);
+		spbase.setNbahma(8.45);
+		spbase.setNbahme(8.45);
+		spbase.setNbahje(8.45);
+		spbase.setNbahve(8.45);
+		spbase.setNbahsa(4.15);
+		spbase.setNbahdi(10.30);
+		spbase.setNbashh(58.30);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "holidayService", hService);
+		
+		// When
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, Arrays.asList(p1, p2, p3, p4, p5, p6));
+				
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p1.getDateLundi(), result.getDateLundi());
+		assertEquals(360, result.getMHorsContrat());
+		assertEquals(210, result.getMAbsences());
+		assertEquals(150, result.getMSup());
+
+		assertEquals(0, result.getMsNuit());
+		assertEquals(150, result.getMsdjf());
+		assertEquals(0, result.getMNormales());
+		assertEquals(0, result.getMSimple());
+		assertEquals(0, result.getMComposees());
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
 }

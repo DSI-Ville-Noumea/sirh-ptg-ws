@@ -99,6 +99,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 			// In the whole amount of MinutesSup, take only the ones we added with this day of work
 			nbMinutesSup = nbMinutesSup > dayBase ? dayBase : nbMinutesSup;
 			
+			// Then take what's over the agent's weekBase only
+			
 			switch (statut) {
 				case F:
 					generateHSupFonctionnaire(result, weekBase, weekMinutes, dday, nbMinutesSup);
@@ -150,7 +152,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 	}
 
 	protected void generateHSupFonctionnaire(VentilHsup result, int weekBase, int weekMinutes, DateTime dday, int nbMinutesSupJour) {
-		generateHSupFonctionnaire(result, weekBase, weekMinutes, dday, nbMinutesSupJour, 0, dday.plusHours(4));
+		generateHSupFonctionnaire(result, weekBase, weekMinutes, dday, nbMinutesSupJour, 0, dday.plusHours(HEURE_JOUR_DEBUT_F));
 	}
 	
 	protected void generateHSupFonctionnaire(VentilHsup result, int weekBase, int weekMinutes, DateTime dday, int nbMinutesSupJour, int nbMinutesSupNuit, DateTime startDate) {
@@ -173,9 +175,9 @@ public class VentilationHSupService implements IVentilationHSupService {
 			result.setMsNuit(result.getMsNuit() + nbMinutesSupNuit);
 		}
 		
-		// If we're doing HS JOUR under the BASE_HEBDO_LEGAL = 39, count them as HS Normale
-		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE) {
-			int nbMinutesNormalesToAdd = (nbMinutesSupJour + result.getMNormales() + weekBase) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - result.getMNormales()) : nbMinutesSupJour;
+		// If we're doing HS JOUR under the BASE_HEBDO_LEGAL = 39, count them as HS Normale (for people having weekBase != BASE_HEBDO_LEGALE)
+		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE && weekBase < BASE_HEBDO_LEGALE) {
+			int nbMinutesNormalesToAdd = (nbMinutesSupJour + result.getMNormales() + weekBase) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup) : nbMinutesSupJour;
 			result.setMNormales(result.getMNormales() + nbMinutesNormalesToAdd);
 			nbMinutesSupJour -= nbMinutesNormalesToAdd;
 			
@@ -183,7 +185,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 				return;
 		}
 		
-		// If we're doing HS over the BASE_HEBDO_LEGAL = 39, count the next ones as H Composees
+		// If we're doing HS over the BASE_HEBDO_LEGAL = 39, and under NB_HS_SIMPLE, count them as HS_Simple
 		if (weekMinutes > BASE_HEBDO_LEGALE && result.getMSimple() < NB_HS_SIMPLE) {
 			
 			int nbMinutesSimplesToAdd = (nbMinutesSupJour + result.getMSimple()) > NB_HS_SIMPLE ? (NB_HS_SIMPLE - result.getMSimple()) : nbMinutesSupJour;

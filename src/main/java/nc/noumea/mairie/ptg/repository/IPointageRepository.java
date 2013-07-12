@@ -20,7 +20,7 @@ public interface IPointageRepository {
 
 	List<Pointage> getPointageArchives(Integer idPointage);
 
-	List<Pointage> getListPointagesForVentilationByDateAndEtat(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum pointageType);
+	List<Pointage> getListPointagesForVentilationByDateAndEtat(Integer idAgent, Date fromDate, Date toDate);
 
 	List<Integer> getListIdAgentsForVentilationByDateAndEtat(Date fromDate, Date toDate, RefTypePointageEnum pointageType);
 	

@@ -113,7 +113,7 @@ public class Spbase {
 		
 		BigDecimal v = new BigDecimal(String.valueOf(nbHeuresMairies));
 		int nbHours = v.intValue();
-		int nbMinutes = v.multiply(BigDecimal.TEN).subtract(new BigDecimal(nbHours).multiply(BigDecimal.TEN)).intValue() * 10;
+		int nbMinutes = v.subtract(new BigDecimal(nbHours)).multiply(new BigDecimal(100)).intValue();
 		
 		return nbHours * 60 + nbMinutes;
 	}
