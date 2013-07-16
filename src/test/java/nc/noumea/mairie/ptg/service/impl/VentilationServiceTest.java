@@ -29,6 +29,7 @@ import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
+import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
@@ -602,5 +603,117 @@ public class VentilationServiceTest {
 		Mockito.verify(service, Mockito.times(1)).calculatePointages(9005432, lastPaidDate, lastUnPaidDate);
 		Mockito.verify(service, Mockito.times(1)).processVentilationForAgent(lastUnPaidVentilDate, 9005432, carr, lastPaidDate, lastUnPaidDate, pointageType);
 		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9005432);
+	}
+	
+	@Test
+	public void getPointagesForWeek_PointagesAreInVentilationRange_ReturnGivenList() {
+
+		// Given
+		List<Pointage> hSups = new ArrayList<Pointage>();
+		hSups.add(new Pointage());
+		hSups.add(new Pointage());
+		List<Pointage> abs = new ArrayList<Pointage>();
+		abs.add(new Pointage());
+		abs.add(new Pointage());
+		abs.add(new Pointage());
+		
+		Date dateLundi = new LocalDate(2013, 7, 15).toDate();
+		Date from = new LocalDate(2013, 7, 15).toDate();
+		Date to = new DateTime(2013, 7, 21, 23, 59, 59).toDate();
+		VentilationService service = new VentilationService();
+		
+		// When
+		List<Pointage> result = service.getPointagesForWeek(9008765, dateLundi, from, to, hSups, abs);
+		
+		// Then
+		assertEquals(5, result.size());
+	}
+	
+	@Test
+	public void getPointagesForWeek_PointagesAreNotInVentilationRange_FetchPointageFromService() {
+
+		// Given
+		List<Pointage> hSups = new ArrayList<Pointage>();
+		hSups.add(new Pointage());
+		hSups.add(new Pointage());
+		List<Pointage> abs = new ArrayList<Pointage>();
+		abs.add(new Pointage());
+		abs.add(new Pointage());
+		abs.add(new Pointage());
+		
+		Date dateLundi = new LocalDate(2013, 7, 8).toDate();
+		Date from = new LocalDate(2013, 7, 15).toDate();
+		Date to = new DateTime(2013, 7, 21, 23, 59, 59).toDate();
+		
+		List<Pointage> newList = new ArrayList<Pointage>();
+		newList.add(new Pointage());
+		
+		Date fromInterval = dateLundi;
+		Date toInterval = new LocalDate(2013, 7, 15).toDate();
+		List<EtatPointageEnum> etats = Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.JOURNALISE);
+		
+		IPointageService pService = Mockito.mock(IPointageService.class);
+		Mockito.when(pService.getLatestPointagesForAgentAndDates(9008765, fromInterval, toInterval, null, etats)).thenReturn(newList);
+		
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "pointageService", pService);
+		
+		// When
+		List<Pointage> result = service.getPointagesForWeek(9008765, dateLundi, from, to, hSups, abs);
+		
+		// Then
+		assertEquals(newList, result);
+	}
+	
+	@Test
+	public void getPointagesForMonth_PointagesAreInVentilationRange_ReturnGivenList() {
+		
+		// Given
+		List<Pointage> primes = new ArrayList<Pointage>();
+		primes.add(new Pointage());
+		primes.add(new Pointage());
+		
+		Date dateDebutMois = new LocalDate(2013, 7, 1).toDate();
+		Date from = new LocalDate(2013, 7, 1).toDate();
+		Date to = new DateTime(2013, 8, 4, 23, 59, 59).toDate();
+		VentilationService service = new VentilationService();
+		
+		// When
+		List<Pointage> result = service.getPointagesForMonth(9008765, dateDebutMois, from, to, primes);
+		
+		// Then
+		assertEquals(primes, result);
+		
+	}
+	
+	@Test
+	public void getPointagesForMonth_PointagesAreNotInVentilationRange_FetchPointageFromService() {
+		
+		// Given
+		List<Pointage> primes = new ArrayList<Pointage>();
+		primes.add(new Pointage());
+		primes.add(new Pointage());
+		
+		Date dateDebutMois = new LocalDate(2013, 6, 1).toDate();
+		Date from = new LocalDate(2013, 7, 1).toDate();
+		Date to = new DateTime(2013, 8, 4, 23, 59, 59).toDate();
+		
+		List<Pointage> newList = new ArrayList<Pointage>();
+		newList.add(new Pointage());
+		Date fromInterval = dateDebutMois;
+		Date toInterval = new LocalDate(2013, 7, 1).toDate();
+		List<EtatPointageEnum> etats = Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.JOURNALISE);
+		
+		IPointageService pService = Mockito.mock(IPointageService.class);
+		Mockito.when(pService.getLatestPointagesForAgentAndDates(Mockito.eq(9008765), Mockito.eq(fromInterval), Mockito.eq(toInterval), Mockito.eq(RefTypePointageEnum.PRIME), Mockito.eq(etats))).thenReturn(newList);
+		
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "pointageService", pService);
+		
+		// When
+		List<Pointage> result = service.getPointagesForMonth(9008765, dateDebutMois, from, to, primes);
+		
+		// Then
+		assertEquals(newList, result);
 	}
 }

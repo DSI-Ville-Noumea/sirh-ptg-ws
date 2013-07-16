@@ -154,7 +154,8 @@ public class VentilationService implements IVentilationService {
 		// If the choice was to ventilate only PRIME or all
 		if (pointageType == null || pointageType == RefTypePointageEnum.PRIME) {
 			for (Entry<Date, List<Pointage>> set : primes.entrySet()) {
-				primesVentilees.addAll(ventilationPrimeService.processPrimesAgent(idAgent, set.getValue(), set.getKey()));
+				List<Pointage> pointagesToUse = getPointagesForMonth(idAgent, set.getKey(), from, to, set.getValue());
+				primesVentilees.addAll(ventilationPrimeService.processPrimesAgent(idAgent, pointagesToUse, set.getKey()));
 			}
 		}
 		
@@ -196,22 +197,22 @@ public class VentilationService implements IVentilationService {
 		return agentPointages;
 	}
 	
-//	protected List<Pointage> getPointagesMonth(Integer idAgent, Date dateDebutMois, Date from, Date to, List<Pointage> primes) {
-//
-//		// If the pointages we need are for a month inside the ventilation dates, then return what we already fetched from the DB
-//		// because all the pointages have already been selected with the first query.
-//		if (new Interval(new DateTime(from), new DateTime(to)).contains(new DateTime(dateDebutMois))) {
-//			return primes;
-//		}
-//		
-//		// If, however, this dateDebutMois is a previous date, we need to retrieve all the pointages 
-//		// of that month to give to the ventilation process
-//		List<Pointage> agentPointages = pointageService.getLatestPointagesForAgentAndDates(
-//				idAgent, dateLundi, new DateTime(dateLundi).plusWeeks(1).toDate(), null, 
-//				Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.JOURNALISE));
-//		
-//		return agentPointages;
-//	}
+	protected List<Pointage> getPointagesForMonth(Integer idAgent, Date dateDebutMois, Date from, Date to, List<Pointage> primes) {
+
+		// If the pointages we need are for a month inside the ventilation dates, then return what we already fetched from the DB
+		// because all the pointages have already been selected with the first query.
+		if (new Interval(new DateTime(from), new DateTime(to)).contains(new DateTime(dateDebutMois))) {
+			return primes;
+		}
+		
+		// If, however, this dateDebutMois is a previous date, we need to retrieve all the pointages 
+		// of that month to give to the ventilation process
+		List<Pointage> agentPointages = pointageService.getLatestPointagesForAgentAndDates(
+				idAgent, dateDebutMois, new DateTime(dateDebutMois).plusMonths(1).toDate() , RefTypePointageEnum.PRIME, 
+				Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.JOURNALISE));
+		
+		return agentPointages;
+	}
 
 	/**
 	 * This method distributes all pointages into 3 maps
