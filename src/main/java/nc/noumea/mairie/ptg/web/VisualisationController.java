@@ -47,7 +47,8 @@ public class VisualisationController {
 	@ResponseBody
 	@RequestMapping(value = "/pointages", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListePointages(@RequestParam("idAgent") int idAgent,
+	public ResponseEntity<String> getListePointages(
+			@RequestParam("idAgent") int idAgent,
 			@RequestParam("from") @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
 			@RequestParam("to") @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
 			@RequestParam(value = "codeService", required = false) String codeService,
@@ -78,9 +79,11 @@ public class VisualisationController {
 	@ResponseBody
 	@RequestMapping(value = "/pointagesSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListePointagesSIRH(@RequestParam("from") @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
+	public ResponseEntity<String> getListePointagesSIRH(
+			@RequestParam("from") @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
 			@RequestParam("to") @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
-			@RequestParam(value = "idAgents", required = false) String idAgents, @RequestParam(value = "etat", required = false) Integer idRefEtat,
+			@RequestParam(value = "idAgents", required = false) String idAgents, 
+			@RequestParam(value = "etat", required = false) Integer idRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType) {
 
 		logger.debug(

@@ -93,7 +93,7 @@ public class AccessRightsController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> listApprobateurs() {
 
-		logger.debug("entered GET [droits/listeApprobateurs] => listeApprobateurs with no parameter --> for SIRH ");
+		logger.debug("entered GET [droits/approbateurs] => listApprobateurs with no parameter --> for SIRH ");
 
 		List<AgentWithServiceDto> result = accessRightService.listAgentsApprobateurs();
 
@@ -104,7 +104,7 @@ public class AccessRightsController {
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> setApprobateur(@RequestBody String agentsDtoJson) {
-		logger.debug("entered POST [droits/approbateur] => setApprobateur ");
+		logger.debug("entered POST [droits/approbateurs] => setApprobateur --> for SIRH ");
 
 		List<AgentWithServiceDto> agDtos = new JSONDeserializer<List<AgentWithServiceDto>>().use(null, ArrayList.class)
 				.use("values", AgentWithServiceDto.class).deserialize(agentsDtoJson);

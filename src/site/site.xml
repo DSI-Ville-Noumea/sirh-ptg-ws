@@ -31,6 +31,9 @@
         	<item name="Releases" href="exploitation/releases.html"/>
         	<item name="WebApp Context" href="exploitation/context.html"/>
         </menu>
+		<menu name="Conception">
+        	<item name="SIRH API Doc" href="conception/sirh-api.html"/>
+		</menu>
         <menu ref="reports"/>
     </body>
 </project>

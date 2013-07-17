@@ -68,12 +68,12 @@ public class ApprobationService implements IApprobationService {
 		// get pointages with filters
 		List<Pointage> list = pointageRepository.getListPointages(agentIds, fromDate, toDate, idRefType);
 
-		result = construitJson(list, idRefEtat);
+		result = filterOutOldPointagesVersion(list, idRefEtat);
 
 		return result;
 	}
 
-	private List<ConsultPointageDto> construitJson(List<Pointage> list, Integer idRefEtat) {
+	private List<ConsultPointageDto> filterOutOldPointagesVersion(List<Pointage> list, Integer idRefEtat) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 
@@ -204,7 +204,7 @@ public class ApprobationService implements IApprobationService {
 		// get pointages with filters
 		List<Pointage> list = pointageRepository.getListPointagesSIRH(from, to, idRefType, idAgents);
 
-		result = construitJson(list, idRefEtat);
+		result = filterOutOldPointagesVersion(list, idRefEtat);
 
 		return result;
 	}

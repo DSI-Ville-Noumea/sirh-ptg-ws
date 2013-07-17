@@ -1,0 +1,159 @@
+            ------
+            SIRH-PTG-WS API WS doc
+            ------
+            Nicolas Raynaud
+            ------
+             2013-07-17
+
+
+SIRH-PTG-WS API pour SIRH
+
+* Droits
+
+** Gestion des approbateurs de pointages
+
+ <<URL>> : /droits/approbateurs
+ 
+ <<Accepted Methods>> : GET, POST
+ 
+ <<Parameters>>
+
+  -
+
+ <<Content>> (required only for POST) : La liste des agents (seulement la propriété "idAgent" est nécessaire) approbateurs.
+ 
++-------------------------+
+[
+   {
+       "idAgent": 9005138
+   },
+   {
+       "idAgent": 9002990
+   }
+]
++-------------------------+
+
+ <<Response>> : <<GET>> : la liste complète des agents approbateurs. <<POST>> : la liste des agents en erreur lors de la sauvegarde de la liste donnée.
+
++-------------------------+
+[
+   {
+       "codeService": "DCCA",
+       "idAgent": 9005138,
+       "nom": "CHARVET",
+       "prenom": "TATIANA",
+       "service": "DSI Service Etudes et Développement",
+       "statut": null
+   },
+   {
+       "codeService": "DCCA",
+       "idAgent": 9002990,
+       "nom": "DEPLANQUE",
+       "prenom": "RICHARD",
+       "service": "DSI Service Etudes et Développement",
+       "statut": null
+   }
+]
++-------------------------+
+
+* Visualisation
+
+** Visualiser les pointages en liste
+
+ <<URL>> : /visualisation/pointagesSIRH
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<from>> : Pour sélectionner les pointages après une date
+  
+  * <<to>> : Pour sélectionner les pointages jusqu'à une date
+  
+  * <<idAgents>> (optional) : La liste des ID_AGENT (900xxxx) pour lesquels sélectionner les pointages (sous la forme d'une chaine en CSV)
+  
+  * <<etat>> (optional) : L'état id des pointages à sélectionner
+  
+  * <<type>> (optional) : Le type id des pointages à ventiler. ABS (1), H_SUP (2) ou PRIME (3)
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+
++-------------------------+
+[
+   {
+       "agent":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       },
+       "commentaire": "",
+       "date": "/Date(1368450000000+1100)/",
+       "dateSaisie": "/Date(1368746640000+1100)/",
+       "debut": "/Date(1368450000000+1100)/",
+       "fin": null,
+       "idPointage": 13,
+       "idRefEtat": 0,
+       "motif": "",
+       "quantite": "1",
+       "typePointage": "Prime"
+   },
+   {
+       "agent":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       },
+       "commentaire": "",
+       "date": "/Date(1368622800000+1100)/",
+       "dateSaisie": "/Date(1371100316000+1100)/",
+       "debut": "/Date(1368622800000+1100)/",
+       "fin": "/Date(1368622800000+1100)/",
+       "idPointage": 12,
+       "idRefEtat": 2,
+       "motif": "",
+       "quantite": "0m",
+       "typePointage": "Absence"
+   }
+]
++-------------------------+
+
+
+* Ventilation
+
+** Lancer une ventilation
+
+ <<URL>> : /ventilation/run
+ 
+ <<Accepted Methods>> : POST
+ 
+ <<Parameters>>
+
+  * <<date>> : La date de ventilation
+  
+  * <<typePointage>> (optional) : Le type id des pointages à ventiler. ABS (1), H_SUP (2) ou PRIME (3)
+
+  * <<statut>> : Le statut des agents à ventiler. 'F', 'C' or 'CC'
+
+ <<Content>> (optional) : La liste des ID_AGENT à ventiler. Si cette liste est vide, tous les agents ayant le statut donné en paramètre seront ventilés.
+ 
++-------------------------+
+[ 9008765, 9009876, 9004323 ]
++-------------------------+
+ 
+ ou (liste vide)
+
++-------------------------+
+[ ]
++-------------------------+
+
+ <<Response>>
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
