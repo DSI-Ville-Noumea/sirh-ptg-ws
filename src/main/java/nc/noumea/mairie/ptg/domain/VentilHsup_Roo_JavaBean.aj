@@ -138,6 +138,14 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.mComposees = mComposees;
     }
     
+    public int VentilHsup.getMRecuperees() {
+        return this.mRecuperees;
+    }
+    
+    public void VentilHsup.setMRecuperees(int mRecuperees) {
+        this.mRecuperees = mRecuperees;
+    }
+    
     public EtatPointageEnum VentilHsup.getEtat() {
         return this.etat;
     }

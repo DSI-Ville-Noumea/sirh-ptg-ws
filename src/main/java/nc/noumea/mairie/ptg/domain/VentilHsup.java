@@ -66,6 +66,9 @@ public class VentilHsup {
 	@Column(name = "M_COMPOSEES")
 	private int mComposees;
 	
+	@Column(name = "M_RECUPEREES")
+	private int mRecuperees;
+	
 	@Column(name = "ETAT")
 	@Enumerated(EnumType.ORDINAL)
 	private EtatPointageEnum etat;
