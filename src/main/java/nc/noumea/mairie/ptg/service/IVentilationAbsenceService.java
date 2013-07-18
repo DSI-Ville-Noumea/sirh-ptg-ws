@@ -8,5 +8,5 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 
 public interface IVentilationAbsenceService {
 
-	VentilAbsence processAbsenceAgent(Integer idAgent, List<Pointage> pointages, Date dateDebutMois);
+	VentilAbsence processAbsenceAgent(Integer idAgent, List<Pointage> pointages, Date dateLundi);
 }

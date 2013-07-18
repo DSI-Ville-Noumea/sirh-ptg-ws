@@ -56,6 +56,10 @@ public class Spcarr {
 	
 	@Transient
 	public AgentStatutEnum getStatutCarriere() {
+		
+		if (cdcate == null)
+			return null;
+		
 		switch (cdcate) {
 			case 1:
 			case 2:
