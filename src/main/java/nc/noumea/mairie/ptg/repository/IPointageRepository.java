@@ -17,7 +17,7 @@ public interface IPointageRepository {
 
 	List<Pointage> getPointageArchives(Integer idPointage);
 
-	void removePointageCalculesForDateAgent(Integer idAgent, Date from, Date to);
+	void removePointageCalculesForDateAgent(Integer idAgent, Date dateLundi);
 
 	void savePointage(Pointage ptg);
 

@@ -1,7 +1,6 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -16,7 +15,6 @@ import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
-import nc.noumea.mairie.ptg.service.IPointageService;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -35,21 +33,13 @@ public class PointageCalculeService implements IPointageCalculeService {
 	private IPointageRepository pointageRepository;
 	
 	@Autowired
-	private IPointageService pointageService;
-	
-	@Autowired
 	private IHolidayService holidayService;
 	
 	/**
 	 * Calculating a list of PointageCalcule for an agent over a week (from = monday, to = sunday)
 	 * Based on its RefPrime at the time of the monday
 	 */
-	public List<PointageCalcule> calculatePointagesForAgentAndWeek(Integer idAgent, AgentStatutEnum statut, Date dateLundi) {
-		
-		// List of the pointages of the concerned week
-		List<Pointage> agentPointages = pointageService.getLatestPointagesForAgentAndDates(
-				idAgent, dateLundi, new DateTime(dateLundi).plusWeeks(1).toDate(), null, 
-				Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.JOURNALISE));
+	public List<PointageCalcule> calculatePointagesForAgentAndWeek(Integer idAgent, AgentStatutEnum statut, Date dateLundi, List<Pointage> agentPointages) {
 		
 		List<Integer> norubrs = mairieRepository.getPrimePointagesByAgent(idAgent, dateLundi);
 		List<RefPrime> refPrimes = pointageRepository.getRefPrimes(norubrs, statut);
