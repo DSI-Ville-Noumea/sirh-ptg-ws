@@ -60,6 +60,9 @@ public class VentilationHSupService implements IVentilationHSupService {
 	
 	public VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime) {
 		
+		if (pointages.size() == 0)
+			return null;
+		
 		DateTime dateLundi = new DateTime(pointages.get(0).getDateLundi());
 		
 		VentilHsup result = new VentilHsup();

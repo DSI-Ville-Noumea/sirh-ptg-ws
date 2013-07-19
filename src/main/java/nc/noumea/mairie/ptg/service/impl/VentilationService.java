@@ -102,7 +102,7 @@ public class VentilationService implements IVentilationService {
 			if (pointageType == null || pointageType == RefTypePointageEnum.ABSENCE || pointageType == RefTypePointageEnum.H_SUP) {
 				for (Date dateLundi : getDistinctDateLundiFromListOfDates(pointagesToVentilateDates)) {
 					pointagesVentiles.addAll(processHSupAndAbsVentilationForWeekAndAgent(
-							toVentilDate, agent, carr, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), dateLundi));
+							toVentilDate, agent, carr, dateLundi, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation()));
 				}
 			}
 			
@@ -113,7 +113,7 @@ public class VentilationService implements IVentilationService {
 				removePreviousCalculatedPointages(agent, dateLundi);
 				
 				// 5.2 Calculate pointages for week
-				calculatePointages(agent, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), dateLundi);
+				calculatePointages(agent, dateLundi, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
 				
 			}
 			
@@ -122,7 +122,7 @@ public class VentilationService implements IVentilationService {
 				for (Date dateDebutMois : getDistinctDateDebutMoisFromListOfDates(pointagesToVentilateDates)) {
 					
 					processPrimesVentilationForMonthAndAgent(
-							toVentilDate, agent, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), dateDebutMois);
+							toVentilDate, agent, dateDebutMois, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
 				}
 			}
 			
@@ -245,7 +245,7 @@ public class VentilationService implements IVentilationService {
 	 * @param toEtatDate
 	 * @param dateLundi
 	 */
-	protected void calculatePointages(Integer idAgent, Date fromEtatDate, Date toEtatDate, Date dateLundi) {
+	protected void calculatePointages(Integer idAgent, Date dateLundi, Date fromEtatDate, Date toEtatDate) {
 
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
 		

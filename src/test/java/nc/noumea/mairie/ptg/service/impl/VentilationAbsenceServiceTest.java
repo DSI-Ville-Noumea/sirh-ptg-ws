@@ -33,7 +33,7 @@ public class VentilationAbsenceServiceTest {
 	}
 	
 	@Test
-	public void processAbsenceAgent_NoAbsences_ReturnEmpty() {
+	public void processAbsenceAgent_NoAbsences_ReturnNull() {
 		
 		// Given
 		DateTime dateDebutMois = new DateTime(2013, 5, 1, 0, 0, 0);
