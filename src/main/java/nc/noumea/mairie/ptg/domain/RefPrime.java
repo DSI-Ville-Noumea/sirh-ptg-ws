@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.domain;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
@@ -15,7 +16,11 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_REF_PRIME", sequenceName = "PTG_S_REF_PRIME", identifierColumn = "ID_REF_PRIME", identifierField = "idRefPrime", identifierType = Integer.class, versionField = "")
-@NamedQuery(name = "getRefPrimesNotCalculated", query = "from RefPrime rf where rf.noRubr in (:noRubrList) and rf.statut = :statut and rf.calculee = false")
+@NamedQueries({
+	@NamedQuery(name = "getRefPrimesNotCalculated", query = "from RefPrime rf where rf.noRubr in (:noRubrList) and rf.statut = :statut and rf.calculee = false"),
+	@NamedQuery(name = "getListPrimesByIdDesc", query = "select ptg from RefPrime ptg where ptg.statut = :statut order by ptg.noRubr desc")
+})
+
 public class RefPrime {
 
 	@NotNull
