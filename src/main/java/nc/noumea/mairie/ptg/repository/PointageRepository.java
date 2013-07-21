@@ -26,15 +26,13 @@ public class PointageRepository implements IPointageRepository {
 		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getRefPrimesNotCalculated", RefPrime.class);
 		query.setParameter("noRubrList", noRubrList.size() == 0 ? null : noRubrList);
 		query.setParameter("statut", statut);
-
 		return query.getResultList();
 	}
-	
+
 	@Override
 	public List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut) {
 
 		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getListPrimesByIdDesc", RefPrime.class);
-		System.out.println("PointageRepository requ:" + query.toString());
 		query.setParameter("statut", statut);
 		return query.getResultList();
 	}
@@ -71,9 +69,7 @@ public class PointageRepository implements IPointageRepository {
 
 	public List<Pointage> getPointageArchives(Integer idPointage) {
 
-		Query q = ptgEntityManager.createNativeQuery(
-				"SELECT t1.* FROM PTG_POINTAGE t1 START WITH t1.ID_POINTAGE = :idPointage CONNECT BY PRIOR t1.ID_POINTAGE_PARENT = t1.ID_POINTAGE",
-				Pointage.class);
+		Query q = ptgEntityManager.createNativeQuery("SELECT t1.* FROM PTG_POINTAGE t1 START WITH t1.ID_POINTAGE = :idPointage CONNECT BY PRIOR t1.ID_POINTAGE_PARENT = t1.ID_POINTAGE", Pointage.class);
 		q.setParameter("idPointage", idPointage);
 
 		@SuppressWarnings("unchecked")
@@ -136,8 +132,7 @@ public class PointageRepository implements IPointageRepository {
 
 		@SuppressWarnings("unchecked")
 		List<Pointage> result = q.getResultList();
-
 		return result;
 	}
-	
+
 }
