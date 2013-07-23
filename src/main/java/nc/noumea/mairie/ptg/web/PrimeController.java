@@ -34,23 +34,32 @@ public class PrimeController {
 	private IPrimeService primeService;
 
 	@ResponseBody
-	@RequestMapping(value = "/getListePrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@RequestMapping(value = "/getListePrimeWithStatus", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListePrime(
-			@RequestParam("statutAgent") String statutAgent) {
+	public ResponseEntity<String> getListePrime(@RequestParam("statutAgent") String statutAgent) {
 
-		logger.debug(
-				"entered GET [primes] => getListePrime with parameters statsAgent = {}",
-				statutAgent);
-
-		// primeService.getPrimeListForAgent(statutAgent);
+		logger.debug("entered GET [primes] => getListePrime with parameters statsAgent = {}", statutAgent);
 
 		List<RefPrimeDto> result = primeService.getPrimeListForAgent(AgentStatutEnum.valueOf(statutAgent));
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-		String response = new JSONSerializer().exclude("*.class")
-				.deepSerialize(result);
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getListePrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getListePrime() {
+
+		logger.debug("entered GET [primes] => getListePrime ");
+
+		List<RefPrimeDto> result = primeService.getPrimeList();
+
+		if (result.size() == 0)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 

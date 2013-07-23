@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.repository;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,9 +33,27 @@ public class PointageRepository implements IPointageRepository {
 	@Override
 	public List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut) {
 
-		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getListPrimesByIdDesc", RefPrime.class);
+		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getListPrimesWithStatusByIdDesc", RefPrime.class);
 		query.setParameter("statut", statut);
 		return query.getResultList();
+	}
+
+	@Override
+	public List<RefPrime> getRefPrimesList() {
+
+		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getListPrimesByIdDesc", RefPrime.class);
+
+		List<RefPrime> temp = query.getResultList();
+
+		List<Integer> rubs = new ArrayList<>();
+		List<RefPrime> res = new ArrayList<>();
+		for (RefPrime p : temp) {
+			if (!rubs.contains(p.getNoRubr())) {
+				rubs.add(p.getNoRubr());
+				res.add(p);
+			}
+		}
+		return res;
 	}
 
 	@Override

@@ -18,7 +18,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_REF_PRIME", sequenceName = "PTG_S_REF_PRIME", identifierColumn = "ID_REF_PRIME", identifierField = "idRefPrime", identifierType = Integer.class, versionField = "")
 @NamedQueries({
 	@NamedQuery(name = "getRefPrimesNotCalculated", query = "from RefPrime rf where rf.noRubr in (:noRubrList) and rf.statut = :statut and rf.calculee = false"),
-	@NamedQuery(name = "getListPrimesByIdDesc", query = "select ptg from RefPrime ptg where ptg.statut = :statut order by ptg.noRubr")
+	@NamedQuery(name = "getListPrimesWithStatusByIdDesc", query = "select ptg from RefPrime ptg where ptg.statut = :statut order by ptg.noRubr"),
+	@NamedQuery(name = "getListPrimesByIdDesc", query = "select ptg from RefPrime ptg order by ptg.noRubr") //distinct ptg.noRubr
 })
 
 public class RefPrime {
