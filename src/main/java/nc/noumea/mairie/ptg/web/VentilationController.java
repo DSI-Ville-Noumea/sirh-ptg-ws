@@ -53,5 +53,5 @@ public class VentilationController {
 		ventilationService.processVentilation(9005138, agents, ventilationDate, AgentStatutEnum.valueOf(statut), RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage));
 		
 		return new ResponseEntity<String>(HttpStatus.OK);
-	}
+	} 
 }

@@ -294,10 +294,15 @@ public class PointageService implements IPointageService {
 
 	@Override
 	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum type, List<EtatPointageEnum> etats) {
+		return getLatestPointagesForAgentsAndDates(Arrays.asList(idAgent), fromDate, toDate, type, etats);
+	}
+	
+	@Override
+	public List<Pointage> getLatestPointagesForAgentsAndDates(List<Integer> idAgents, Date fromDate, Date toDate, RefTypePointageEnum type, List<EtatPointageEnum> etats) {
 
-		List<Pointage> agentPointages = pointageRepository.getListPointages(Arrays.asList(idAgent), fromDate, toDate, type != null ? type.getValue() : null);
+		List<Pointage> agentPointages = pointageRepository.getListPointages(idAgents, fromDate, toDate, type != null ? type.getValue() : null);
 
-		logger.debug("Found {} Pointage for agent {} between dates {} and {}", agentPointages.size(), idAgent, fromDate, toDate);
+		logger.debug("Found {} Pointage for agents {} between dates {} and {}", agentPointages.size(), idAgents, fromDate, toDate);
 
 		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
 
@@ -305,17 +310,17 @@ public class PointageService implements IPointageService {
 		
 		for (Pointage ptg : agentPointages) {
 
-			if (oldPointagesToAvoid.contains(ptg.getIdPointage())) {
-				logger.debug("Not taking Pointage {} because not the latest.", ptg.getIdPointage());
-				continue;
-			}
-
 			if (ptg.getPointageParent() != null) {
 				logger.debug("Pointage {} has a parent {}, adding it to avoid list.", ptg.getIdPointage(), ptg.getPointageParent().getIdPointage());
 				oldPointagesToAvoid.add(ptg.getPointageParent().getIdPointage());
 			}
 			
-			if (etats.contains(ptg.getLatestEtatPointage().getEtat()))
+			if (oldPointagesToAvoid.contains(ptg.getIdPointage())) {
+				logger.debug("Not taking Pointage {} because not the latest.", ptg.getIdPointage());
+				continue;
+			}
+			
+			if (etats == null || etats.contains(ptg.getLatestEtatPointage().getEtat()))
 				resultList.add(ptg);
 		}
 		

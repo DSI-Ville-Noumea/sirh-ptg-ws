@@ -18,6 +18,7 @@ public interface IPointageRepository {
 	List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
 
 	List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
+	List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
 
 	List<Pointage> getPointageArchives(Integer idPointage);
 
@@ -26,6 +27,4 @@ public interface IPointageRepository {
 	void savePointage(Pointage ptg);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
-
-	List<Pointage> getListPointagesSIRH(Date fromDate, Date toDate, Integer idRefType, List<Integer> idAgents);
 }

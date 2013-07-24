@@ -21,6 +21,7 @@ import nc.noumea.mairie.ptg.repository.AccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
@@ -37,6 +38,7 @@ public class ApprobationServiceTest {
 		Integer idAgent = 9008765;
 		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
+		Date toDateQuery = new DateTime(2013, 05, 21, 0, 0, 0).toDate();
 		String codeService = null;
 		Integer agent = null;
 		Integer idRefEtat = null;
@@ -76,18 +78,24 @@ public class ApprobationServiceTest {
 		etat2.setEtat(EtatPointageEnum.SAISI);
 		ptg2.getEtats().add(etat2);
 
-		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(
-				pRepo.getListPointages(Mockito.eq(Arrays.asList(9001234, 9001235)), Mockito.eq(fromDate), Mockito.eq(toDate), Mockito.eq(idRefType)))
-				.thenReturn(Arrays.asList(ptg, ptg2));
-
+		List<EtatPointageEnum> letat = null;
+		IPointageService pService = Mockito.mock(IPointageService.class);
+		Mockito.when(pService
+				.getLatestPointagesForAgentsAndDates(Mockito.eq(Arrays.asList(9001234, 9001235)), 
+						Mockito.eq(fromDate), 
+						Mockito.eq(toDateQuery), 
+						Mockito.eq(RefTypePointageEnum.ABSENCE), 
+						Mockito.eq(letat)))
+			.thenReturn(Arrays.asList(ptg, ptg2));
+		
+		
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
 		Mockito.when(mRepo.getAgent(9001235)).thenReturn(new Agent());
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
 		// When
@@ -106,9 +114,11 @@ public class ApprobationServiceTest {
 		Integer idAgent = 9008765;
 		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
+		Date toDateQuery = new DateTime(2013, 05, 21, 0, 0, 0).toDate();
 		String codeService = null;
 		Integer agent = null;
 		Integer idRefType = 1;
+		Integer idRefEtat = EtatPointageEnum.SAISI.getCodeEtat();
 
 		List<DroitsAgent> das = new ArrayList<DroitsAgent>();
 		DroitsAgent da = new DroitsAgent();
@@ -116,18 +126,6 @@ public class ApprobationServiceTest {
 		das.add(da);
 		IAccessRightsRepository arRepo = Mockito.mock(AccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, codeService)).thenReturn(das);
-
-		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9001234);
-		ptg.setIdPointage(1);
-		ptg.setType(new RefTypePointage());
-		ptg.getType().setIdRefTypePointage(1);
-		EtatPointage etat = new EtatPointage();
-		EtatPointagePK etatpk = new EtatPointagePK();
-		etatpk.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat.setEtatPointagePk(etatpk);
-		etat.setEtat(EtatPointageEnum.APPROUVE);
-		ptg.getEtats().add(etat);
 
 		Pointage ptg2 = new Pointage();
 		ptg2.setIdAgent(9001234);
@@ -141,81 +139,21 @@ public class ApprobationServiceTest {
 		etat2.setEtat(EtatPointageEnum.SAISI);
 		ptg2.getEtats().add(etat2);
 
-		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointages(Mockito.eq(Arrays.asList(9001234)), Mockito.eq(fromDate), Mockito.eq(toDate), Mockito.eq(idRefType)))
-				.thenReturn(Arrays.asList(ptg, ptg2));
-
+		IPointageService pService = Mockito.mock(IPointageService.class);
+		Mockito.when(pService
+				.getLatestPointagesForAgentsAndDates(Mockito.eq(Arrays.asList(9001234)), 
+						Mockito.eq(fromDate), 
+						Mockito.eq(toDateQuery), 
+						Mockito.eq(RefTypePointageEnum.ABSENCE), 
+						Mockito.eq(Arrays.asList(EtatPointageEnum.SAISI))))
+			.thenReturn(Arrays.asList(ptg2));
+		
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
-
-		// When
-		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, codeService, agent, EtatPointageEnum.SAISI.getCodeEtat(),
-				idRefType);
-
-		// Then
-		assertEquals(1, result.size());
-		assertEquals(2, (int) result.get(0).getIdPointage());
-	}
-
-	@Test
-	public void getPointages_PtgWithParent_ReturnNoPointageWithParent() {
-
-		// Given
-		Integer idAgent = 9008765;
-		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
-		String codeService = null;
-		Integer agent = null;
-		Integer idRefEtat = null;
-		Integer idRefType = null;
-
-		List<DroitsAgent> das = new ArrayList<DroitsAgent>();
-		DroitsAgent da = new DroitsAgent();
-		da.setIdAgent(9001234);
-		das.add(da);
-		IAccessRightsRepository arRepo = Mockito.mock(AccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, codeService)).thenReturn(das);
-
-		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9001234);
-		ptg.setIdPointage(1);
-		ptg.setType(new RefTypePointage());
-		ptg.getType().setIdRefTypePointage(1);
-		EtatPointage etat = new EtatPointage();
-		EtatPointagePK etatpk = new EtatPointagePK();
-		etatpk.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat.setEtatPointagePk(etatpk);
-		etat.setEtat(EtatPointageEnum.APPROUVE);
-		ptg.getEtats().add(etat);
-
-		Pointage ptg2 = new Pointage();
-		ptg2.setIdAgent(9001234);
-		ptg2.setIdPointage(2);
-		ptg2.setType(new RefTypePointage());
-		ptg2.getType().setIdRefTypePointage(1);
-		ptg2.setPointageParent(ptg);
-		EtatPointage etat2 = new EtatPointage();
-		EtatPointagePK etatpk2 = new EtatPointagePK();
-		etatpk2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat2.setEtatPointagePk(etatpk2);
-		etat2.setEtat(EtatPointageEnum.SAISI);
-		ptg2.getEtats().add(etat2);
-
-		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointages(Mockito.eq(Arrays.asList(9001234)), Mockito.eq(fromDate), Mockito.eq(toDate), Mockito.eq(idRefType)))
-				.thenReturn(Arrays.asList(ptg2, ptg));
-
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
-
-		ApprobationService service = new ApprobationService();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
 		// When
@@ -224,72 +162,6 @@ public class ApprobationServiceTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals(2, (int) result.get(0).getIdPointage());
-	}
-
-	@Test
-	public void getPointages_AgentFilter_ReturnFilteredPointages() {
-
-		// Given
-		Integer idAgent = 9008765;
-		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
-		String codeService = null;
-		Integer agent = 9001235;
-		Integer idRefEtat = null;
-		Integer idRefType = null;
-
-		List<DroitsAgent> das = new ArrayList<DroitsAgent>();
-		DroitsAgent da = new DroitsAgent();
-		da.setIdAgent(9001234);
-		das.add(da);
-		DroitsAgent da2 = new DroitsAgent();
-		da2.setIdAgent(9001235);
-		das.add(da2);
-		IAccessRightsRepository arRepo = Mockito.mock(AccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, codeService)).thenReturn(das);
-
-		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9001235);
-		ptg.setIdPointage(1);
-		ptg.setType(new RefTypePointage());
-		ptg.getType().setIdRefTypePointage(1);
-		EtatPointage etat = new EtatPointage();
-		EtatPointagePK etatpk = new EtatPointagePK();
-		etatpk.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat.setEtatPointagePk(etatpk);
-		etat.setEtat(EtatPointageEnum.APPROUVE);
-		ptg.getEtats().add(etat);
-
-		Pointage ptg2 = new Pointage();
-		ptg2.setIdAgent(9001234);
-		ptg2.setIdPointage(2);
-		ptg2.setType(new RefTypePointage());
-		ptg2.getType().setIdRefTypePointage(1);
-		EtatPointage etat2 = new EtatPointage();
-		EtatPointagePK etatpk2 = new EtatPointagePK();
-		etatpk2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat2.setEtatPointagePk(etatpk2);
-		etat2.setEtat(EtatPointageEnum.SAISI);
-		ptg2.getEtats().add(etat2);
-
-		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointages(Mockito.eq(Arrays.asList(agent)), Mockito.eq(fromDate), Mockito.eq(toDate), Mockito.eq(idRefType)))
-				.thenReturn(Arrays.asList(ptg));
-
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getAgent(ptg.getIdAgent())).thenReturn(new Agent());
-
-		ApprobationService service = new ApprobationService();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
-
-		// When
-		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, codeService, agent, idRefEtat, idRefType);
-
-		// Then
-		assertEquals(1, result.size());
-		assertEquals(1, (int) result.get(0).getIdPointage());
 	}
 
 	@Test
@@ -634,82 +506,14 @@ public class ApprobationServiceTest {
 	}
 
 	@Test
-	public void getPointagesSIRH_NoFilters_ReturnAllPointagesForGivenPeriod() {
-
-		// Given
-		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
-		Integer idRefEtat = null;
-		Integer idRefType = 1;
-
-		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9001234);
-		ptg.setIdPointage(1);
-		ptg.setType(new RefTypePointage());
-		ptg.getType().setIdRefTypePointage(1);
-		EtatPointage etat = new EtatPointage();
-		EtatPointagePK etatpk = new EtatPointagePK();
-		etatpk.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat.setEtatPointagePk(etatpk);
-		etat.setEtat(EtatPointageEnum.APPROUVE);
-		ptg.getEtats().add(etat);
-
-		Pointage ptg2 = new Pointage();
-		ptg2.setIdAgent(9001235);
-		ptg2.setIdPointage(2);
-		ptg2.setType(new RefTypePointage());
-		ptg2.getType().setIdRefTypePointage(1);
-		EtatPointage etat2 = new EtatPointage();
-		EtatPointagePK etatpk2 = new EtatPointagePK();
-		etatpk2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat2.setEtatPointagePk(etatpk2);
-		etat2.setEtat(EtatPointageEnum.SAISI);
-		ptg2.getEtats().add(etat2);
-
-		List<Integer> idAgents = new ArrayList<Integer>();
-		idAgents.add(9001234);
-		idAgents.add(9001235);
-
-		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointagesSIRH(fromDate, toDate, idRefType, idAgents)).thenReturn(Arrays.asList(ptg, ptg2));
-
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
-		Mockito.when(mRepo.getAgent(9001235)).thenReturn(new Agent());
-
-		ApprobationService service = new ApprobationService();
-		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
-
-		// When
-		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, idAgents, idRefEtat, idRefType);
-
-		// Then
-		assertEquals(2, result.size());
-		assertEquals(1, (int) result.get(0).getIdPointage());
-		assertEquals(2, (int) result.get(1).getIdPointage());
-
-	}
-
-	@Test
 	public void getPointagesSIRH_EtatFilters_ReturnFilteredPointages() {
 
 		// Given
 		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
-		Integer idRefType = 1;
-
-		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9001234);
-		ptg.setIdPointage(1);
-		ptg.setType(new RefTypePointage());
-		ptg.getType().setIdRefTypePointage(1);
-		EtatPointage etat = new EtatPointage();
-		EtatPointagePK etatpk = new EtatPointagePK();
-		etatpk.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat.setEtatPointagePk(etatpk);
-		etat.setEtat(EtatPointageEnum.APPROUVE);
-		ptg.getEtats().add(etat);
+		Date toDateQuery = new DateTime(2013, 05, 21, 0, 0, 0).toDate();
+		Integer idRefType = RefTypePointageEnum.ABSENCE.getValue();
+		Integer idRefEtat = EtatPointageEnum.SAISI.getCodeEtat();
 
 		Pointage ptg2 = new Pointage();
 		ptg2.setIdAgent(9001234);
@@ -722,82 +526,28 @@ public class ApprobationServiceTest {
 		etat2.setEtatPointagePk(etatpk2);
 		etat2.setEtat(EtatPointageEnum.SAISI);
 		ptg2.getEtats().add(etat2);
-
+		
 		List<Integer> idAgents = new ArrayList<Integer>();
 		idAgents.add(9001234);
 		idAgents.add(9001235);
 
-		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointagesSIRH(fromDate, toDate, idRefType, idAgents)).thenReturn(Arrays.asList(ptg, ptg2));
-
+		IPointageService pService = Mockito.mock(IPointageService.class);
+		Mockito.when(pService
+				.getLatestPointagesForAgentsAndDates(idAgents, fromDate, toDateQuery, RefTypePointageEnum.ABSENCE, Arrays.asList(EtatPointageEnum.SAISI)))
+			.thenReturn(Arrays.asList(ptg2));
+		
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
 
 		ApprobationService service = new ApprobationService();
-		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
-
-		// When
-		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, idAgents, EtatPointageEnum.SAISI.getCodeEtat(), idRefType);
-
-		// Then
-		assertEquals(1, result.size());
-		assertEquals(2, (int) result.get(0).getIdPointage());
-	}
-
-	@Test
-	public void getPointagesSIRH_PtgWithParent_ReturnNoPointageWithParent() {
-
-		// Given
-		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
-		Integer idRefEtat = null;
-		Integer idRefType = null;
-
-		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9001234);
-		ptg.setIdPointage(1);
-		ptg.setType(new RefTypePointage());
-		ptg.getType().setIdRefTypePointage(1);
-		EtatPointage etat = new EtatPointage();
-		EtatPointagePK etatpk = new EtatPointagePK();
-		etatpk.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat.setEtatPointagePk(etatpk);
-		etat.setEtat(EtatPointageEnum.APPROUVE);
-		ptg.getEtats().add(etat);
-
-		Pointage ptg2 = new Pointage();
-		ptg2.setIdAgent(9001234);
-		ptg2.setIdPointage(2);
-		ptg2.setType(new RefTypePointage());
-		ptg2.getType().setIdRefTypePointage(1);
-		ptg2.setPointageParent(ptg);
-		EtatPointage etat2 = new EtatPointage();
-		EtatPointagePK etatpk2 = new EtatPointagePK();
-		etatpk2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat2.setEtatPointagePk(etatpk2);
-		etat2.setEtat(EtatPointageEnum.SAISI);
-		ptg2.getEtats().add(etat2);
-
-		List<Integer> idAgents = new ArrayList<Integer>();
-		idAgents.add(9001234);
-		idAgents.add(9001235);
-
-		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointagesSIRH(fromDate, toDate, idRefType, idAgents)).thenReturn(Arrays.asList(ptg, ptg2));
-
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
-
-		ApprobationService service = new ApprobationService();
-		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
 		// When
 		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, idAgents, idRefEtat, idRefType);
 
 		// Then
-		assertEquals(2, result.size());
-		assertEquals(1, (int) result.get(0).getIdPointage());
+		assertEquals(1, result.size());
+		assertEquals(2, (int) result.get(0).getIdPointage());
 	}
 }

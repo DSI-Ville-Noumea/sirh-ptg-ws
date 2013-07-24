@@ -29,8 +29,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_POINTAGE", identifierField = "idPointage", identifierType = Integer.class, table = "PTG_POINTAGE", sequenceName = "PTG_S_POINTAGE")
 @NamedQueries({
 	@NamedQuery(name = "getPointageForAgentAndDateLundiByIdDesc", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire where ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi order by ptg.idPointage desc"),
-	@NamedQuery(name = "getListPointageByAgentsAndDate", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type where ptg.idAgent in :idAgents and ptg.dateDebut >= :fromDate and ptg.dateDebut <= :toDate order by ptg.idPointage desc"),
-	@NamedQuery(name = "getListPointageByAgentsTypeAndDate", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type where ptg.idAgent in :idAgents and ptg.dateDebut >= :fromDate and ptg.dateDebut <= :toDate and ptg.type.idRefTypePointage = :idRefTypePointage order by ptg.idPointage desc")
+	@NamedQuery(name = "getListPointageByAgentsAndDate", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type where ptg.idAgent in :idAgents and ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate order by ptg.idPointage desc"),
+	@NamedQuery(name = "getListPointageByAgentsTypeAndDate", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type where ptg.idAgent in :idAgents and ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate and ptg.type.idRefTypePointage = :idRefTypePointage order by ptg.idPointage desc")
 })
 public class Pointage {
 

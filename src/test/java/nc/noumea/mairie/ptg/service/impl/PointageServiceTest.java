@@ -17,6 +17,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
@@ -25,12 +26,12 @@ import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.service.impl.HelperService;
-import nc.noumea.mairie.ptg.service.impl.PointageService;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.mock.staticmock.MockStaticEntityMethods;
@@ -39,6 +40,20 @@ import org.springframework.test.util.ReflectionTestUtils;
 @MockStaticEntityMethods
 public class PointageServiceTest {
 
+	private static RefTypePointage hSup;
+	private static RefTypePointage prime;
+	private static RefTypePointage abs;
+	
+	@BeforeClass
+	public static void Setup() {
+		prime = new RefTypePointage();
+		prime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		hSup = new RefTypePointage();
+		hSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		abs= new RefTypePointage();
+		abs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+	}
+	
 	@Test
 	public void getAgentFichePointage() throws ParseException {
 
@@ -573,5 +588,140 @@ public class PointageServiceTest {
 		assertEquals(EtatPointageEnum.SAISI, result.getLatestEtatPointage().getEtat());
 		assertEquals(new DateTime(2013, 05, 17, 9, 25, 8).toDate(), result.getLatestEtatPointage().getEtatPointagePk().getDateEtat());
 		assertEquals(9001234, (int) result.getLatestEtatPointage().getIdAgent());
+	}
+	
+	@Test
+	public void getLatestPointagesForAgentsAndDates_1Agent_2Dates_SkipOldPointages() {
+		
+		// Given
+		List<Integer> agentIds = Arrays.asList(9008765);
+		Date from = new LocalDate(2013, 7, 8).toDate();
+		Date to = new LocalDate(2013, 7, 19).toDate();
+
+		Pointage p1 = new Pointage();
+		p1.setIdPointage(1);
+		
+		Pointage p2 = new Pointage();
+		p2.setIdPointage(2);
+		p2.setPointageParent(p1);
+		
+		Pointage p3 = new Pointage();
+		p3.setIdPointage(3);
+		
+		List<Pointage> ptgs = Arrays.asList(p3, p2, p1);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getListPointages(agentIds, from, to, null)).thenReturn(ptgs);
+		
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		
+		// When
+		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, null, null);
+		
+		// Then
+		assertEquals(2, result.size());
+		assertEquals(p3, result.get(0));
+		assertEquals(p2, result.get(1));
+	}
+	
+	@Test
+	public void getLatestPointagesForAgentsAndDates_3Agentz_RefTypeFilter_SkipOldPointages() {
+		
+		// Given
+		List<Integer> agentIds = Arrays.asList(9008765);
+		Date from = new LocalDate(2013, 7, 8).toDate();
+		Date to = new LocalDate(2013, 7, 19).toDate();
+		RefTypePointageEnum type = RefTypePointageEnum.H_SUP;
+		
+		Pointage p3 = new Pointage();
+		p3.setType(hSup);
+		p3.setIdPointage(3);
+
+		Pointage p4 = new Pointage();
+		p4.setType(hSup);
+		p4.setIdPointage(4);
+		p4.setPointageParent(p3);
+
+		Pointage p5 = new Pointage();
+		p5.setType(hSup);
+		p5.setIdPointage(5);
+		p5.setPointageParent(p4);
+		
+		List<Pointage> ptgs = Arrays.asList(p5, p4, p3);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getListPointages(agentIds, from, to, type.getValue())).thenReturn(ptgs);
+		
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		
+		// When
+		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, type, null);
+		
+		// Then
+		assertEquals(1, result.size());
+		assertEquals(p5, result.get(0));
+	}
+	
+	@Test
+	public void getLatestPointagesForAgentsAndDates_3Agentz_EtatFilter_SkipOldPointages() {
+		
+		// Given
+		List<Integer> agentIds = Arrays.asList(9008765);
+		Date from = new LocalDate(2013, 7, 8).toDate();
+		Date to = new LocalDate(2013, 7, 19).toDate();
+		EtatPointageEnum etat = EtatPointageEnum.APPROUVE;
+		
+		Pointage p1 = new Pointage();
+		p1.setIdPointage(1);
+		EtatPointage ep1 = new EtatPointage();
+		ep1.setEtat(EtatPointageEnum.REFUSE);
+		p1.getEtats().add(ep1);
+		
+		Pointage p2 = new Pointage();
+		p2.setIdPointage(2);
+		p2.setPointageParent(p1);
+		EtatPointage ep2 = new EtatPointage();
+		ep2.setEtat(EtatPointageEnum.APPROUVE);
+		p2.getEtats().add(ep2);
+		
+		Pointage p3 = new Pointage();
+		p3.setType(hSup);
+		p3.setIdPointage(3);
+		EtatPointage ep3 = new EtatPointage();
+		ep3.setEtat(EtatPointageEnum.REFUSE);
+		p3.getEtats().add(ep3);
+		
+		Pointage p4 = new Pointage();
+		p4.setType(hSup);
+		p4.setIdPointage(4);
+		p4.setPointageParent(p3);
+		EtatPointage ep4 = new EtatPointage();
+		ep4.setEtat(EtatPointageEnum.APPROUVE);
+		p4.getEtats().add(ep4);
+		
+		Pointage p5 = new Pointage();
+		p5.setType(hSup);
+		p5.setIdPointage(5);
+		p5.setPointageParent(p4);
+		EtatPointage ep5 = new EtatPointage();
+		ep5.setEtat(EtatPointageEnum.SAISI);
+		p5.getEtats().add(ep5);
+		
+		List<Pointage> ptgs = Arrays.asList(p5, p4, p2, p3, p1);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getListPointages(agentIds, from, to, null)).thenReturn(ptgs);
+		
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		
+		// When
+		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, null, Arrays.asList(etat));
+		
+		// Then
+		assertEquals(1, result.size());
+		assertEquals(p2, result.get(0));
 	}
 }

@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
@@ -17,7 +19,9 @@ import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IApprobationService;
+import nc.noumea.mairie.ptg.service.IPointageService;
 
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +44,11 @@ public class ApprobationService implements IApprobationService {
 	@Autowired
 	private HelperService helperService;
 
+	@Autowired
+	private IPointageService pointageService;
+	
 	@Override
-	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService, Integer agent, Integer idRefEtat,
-			Integer idRefType) {
+	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService, Integer agent, Integer idRefEtat, Integer idRefType) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 
@@ -65,49 +71,35 @@ public class ApprobationService implements IApprobationService {
 			}
 		}
 
-		// get pointages with filters
-		List<Pointage> list = pointageRepository.getListPointages(agentIds, fromDate, toDate, idRefType);
-
-		result = filterOutOldPointagesVersion(list, idRefEtat);
-
-		return result;
+		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType);
 	}
 
-	private List<ConsultPointageDto> filterOutOldPointagesVersion(List<Pointage> list, Integer idRefEtat) {
-
+	@Override
+	public List<ConsultPointageDto> getPointagesSIRH(Date fromDate, Date toDate, List<Integer> agentIds, Integer idRefEtat, Integer idRefType) {
+		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType);
+	}
+	
+	protected List<ConsultPointageDto> createConsultPointageDtoListFromSearch(List<Integer> agentIds, Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType) {
+		
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 
-		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
-
-		// iterate and create dtos
-		for (Pointage ptg : list) {
-
-			if (oldPointagesToAvoid.contains(ptg.getIdPointage())) {
-				logger.debug("Not taking Pointage {} because not the latest.", ptg.getIdPointage());
-				continue;
-			}
-
-			if (ptg.getPointageParent() != null) {
-				logger.debug("Pointage {} has a parent {}, adding it to avoid list.", ptg.getIdPointage(), ptg.getPointageParent().getIdPointage());
-				oldPointagesToAvoid.add(ptg.getPointageParent().getIdPointage());
-			}
-
-			if (idRefEtat != null && ptg.getLatestEtatPointage().getEtat().getCodeEtat() != idRefEtat) {
-				logger.debug("Not taking Pointage {} because its state is {} and filter is {}", ptg.getIdPointage(), ptg.getLatestEtatPointage()
-						.getEtat().getCodeEtat(), idRefEtat);
-				continue;
-			}
-
+		// get pointages with filters
+		// We convert the 'toDate' date into the next day at 00H00 because the query will take it as a timestamp.
+		List<Pointage> pointages = pointageService.getLatestPointagesForAgentsAndDates(agentIds, fromDate, new LocalDate(toDate).plusDays(1).toDate(), 
+				RefTypePointageEnum.getRefTypePointageEnum(idRefType), 
+				idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)));
+		
+		for (Pointage ptg : pointages) {
 			AgentDto agDto = new AgentDto(mairieRepository.getAgent(ptg.getIdAgent()));
 			ConsultPointageDto dto = new ConsultPointageDto(ptg);
 			dto.updateEtat(ptg.getLatestEtatPointage());
 			dto.setAgent(agDto);
 			result.add(dto);
 		}
-
+		
 		return result;
 	}
-
+	
 	@Override
 	public List<ConsultPointageDto> getPointagesArchives(Integer idAgent, Integer idPointage) {
 
@@ -195,18 +187,4 @@ public class ApprobationService implements IApprobationService {
 
 		return result;
 	}
-
-	@Override
-	public List<ConsultPointageDto> getPointagesSIRH(Date from, Date to, List<Integer> idAgents, Integer idRefEtat, Integer idRefType) {
-
-		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
-
-		// get pointages with filters
-		List<Pointage> list = pointageRepository.getListPointagesSIRH(from, to, idRefType, idAgents);
-
-		result = filterOutOldPointagesVersion(list, idRefEtat);
-
-		return result;
-	}
-
 }

@@ -108,13 +108,11 @@ public class VentilationService implements IVentilationService {
 			
 			// 5. Pointages generated (Primes)
 			for (Date dateLundi : getDistinctDateLundiFromListOfDates(pointagesToVentilateDates)) {
-
 				// 5.1 Remove previously calculated Pointages (Primes)
 				removePreviousCalculatedPointages(agent, dateLundi);
 				
 				// 5.2 Calculate pointages for week
 				calculatePointages(agent, dateLundi, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
-				
 			}
 			
 			// 6. Ventilation of PRIMES

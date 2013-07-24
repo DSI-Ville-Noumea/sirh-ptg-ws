@@ -23,6 +23,9 @@ public enum EtatPointageEnum {
 
 	public static EtatPointageEnum getEtatPointageEnum(Integer codeEtat) {
 
+		if (codeEtat == null)
+			return null;
+		
 		switch (codeEtat) {
 			case 0:
 				return SAISI;

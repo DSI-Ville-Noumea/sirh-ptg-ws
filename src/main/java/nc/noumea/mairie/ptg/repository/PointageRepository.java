@@ -120,8 +120,9 @@ public class PointageRepository implements IPointageRepository {
 		return ptgEntityManager.find(Tclass, Id);
 	}
 
-	@Override
-	public List<Pointage> getListPointagesSIRH(Date fromDate, Date toDate, Integer idRefType, List<Integer> idAgents) {
+	@Deprecated
+	public List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ptg.* ");
 		sb.append("FROM PTG_POINTAGE ptg ");
@@ -139,6 +140,8 @@ public class PointageRepository implements IPointageRepository {
 			sb.append("AND ptg.ID_TYPE_POINTAGE = :idRefType ");
 		}
 
+		sb.append("ORDER BY ptg.ID_POINTAGE DESC");
+		
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
 		q.setParameter("fromDate", fromDate);
 		q.setParameter("toDate", toDate);
