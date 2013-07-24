@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,11 +46,7 @@ public class VentilationAbsenceServiceTest {
 		VentilAbsence result = service.processAbsenceAgent(9008765, pointages, dateDebutMois.toDate());
 		
 		// Then
-		assertEquals(9008765, (int)result.getIdAgent());
-		assertEquals(0, result.getMinutesConcertee());
-		assertEquals(0, result.getMinutesNonConcertee());
-		assertEquals(dateDebutMois.toDate(), result.getDateLundi());
-		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+		assertNull(result);
 	}
 	
 	@Test

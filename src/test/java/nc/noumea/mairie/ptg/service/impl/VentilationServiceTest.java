@@ -173,7 +173,7 @@ public class VentilationServiceTest {
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
 		Mockito.doNothing().when(ventilHsup).persist();
 		IVentilationHSupService hSupV = Mockito.mock(IVentilationHSupService.class);
-		Mockito.when(hSupV.processHSup(Mockito.eq(idAgent), Mockito.eq(carr), Mockito.anyListOf(Pointage.class), Mockito.eq(AgentStatutEnum.CC), Mockito.eq(false)))
+		Mockito.when(hSupV.processHSup(Mockito.eq(idAgent), Mockito.eq(carr), Mockito.eq(dateLundi), Mockito.anyListOf(Pointage.class), Mockito.eq(AgentStatutEnum.CC), Mockito.eq(false)))
 				.thenReturn(ventilHsup);
 		
 		IVentilationAbsenceService absV = Mockito.mock(IVentilationAbsenceService.class);
@@ -220,7 +220,7 @@ public class VentilationServiceTest {
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
 		Mockito.doNothing().when(ventilHsup).persist();
 		IVentilationHSupService hSupV = Mockito.mock(IVentilationHSupService.class);
-		Mockito.when(hSupV.processHSup(Mockito.eq(idAgent), Mockito.eq(carr), Mockito.anyListOf(Pointage.class), Mockito.eq(AgentStatutEnum.CC), Mockito.eq(true)))
+		Mockito.when(hSupV.processHSup(Mockito.eq(idAgent), Mockito.eq(carr), Mockito.eq(dateLundi), Mockito.anyListOf(Pointage.class), Mockito.eq(AgentStatutEnum.CC), Mockito.eq(true)))
 				.thenReturn(ventilHsup);
 		
 		IVentilationAbsenceService absV = Mockito.mock(IVentilationAbsenceService.class);

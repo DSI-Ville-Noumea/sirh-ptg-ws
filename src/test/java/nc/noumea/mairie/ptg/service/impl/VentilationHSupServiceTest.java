@@ -1,8 +1,12 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spbhor;
@@ -15,6 +19,7 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.service.IHolidayService;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -34,9 +39,27 @@ public class VentilationHSupServiceTest {
 	}
 	
 	@Test
+	public void processHSup_NoPointages_ReturnNull() {
+		
+		// Given
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		Date dateLundi = new LocalDate(2013, 7, 22).toDate();
+		
+		VentilationHSupService service = new VentilationHSupService();
+		
+		// When
+		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false);
+		
+		// Then
+		assertNull(result);
+	}
+	
+	@Test
 	public void processHSupFonctionnaire_base39H() {
 		
 		// Given
+		Date dateLundi = new LocalDate(2012, 04, 30).toDate();
+		
 		Pointage p1 = new Pointage();
 		p1.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
 		p1.setDateDebut(new DateTime(2012, 04, 30, 6, 0, 0).toDate());
@@ -114,7 +137,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "holidayService", hService);
 		
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -132,10 +155,73 @@ public class VentilationHSupServiceTest {
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
 	
+//	@Test
+	// Temporarily disabled as the BR on MRECUPEREES is not yet stable
+	public void processHSupFonctionnaire_base39H_2HS_Recuperees() {
+		
+		// Given
+		Date dateLundi = new LocalDate(2012, 04, 30).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2012, 04, 30, 6, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2012, 04, 30, 7, 0, 0).toDate());
+		p1.setType(hSup);
+		
+		Pointage p2 = new Pointage();
+		p2.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2012, 04, 30, 18, 0, 0).toDate());
+		p2.setDateFin(new DateTime(2012, 04, 30, 19, 15, 0).toDate());
+		p2.setType(hSup);
+		
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(8);
+		spbase.setNbahma(8);
+		spbase.setNbahme(8);
+		spbase.setNbahje(8);
+		spbase.setNbahve(7);
+		spbase.setNbahsa(0);
+		spbase.setNbahdi(0);
+		spbase.setNbashh(39);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "holidayService", hService);
+		
+		// When
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
+				
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p1.getDateLundi(), result.getDateLundi());
+		assertEquals(2* 60, result.getMHorsContrat());
+		assertEquals(0, result.getMAbsences());
+		assertEquals(2* 60, result.getMSup());
+		assertEquals(2* 60, result.getMRecuperees());
+
+		assertEquals(0, result.getMsNuit());
+		assertEquals(0, result.getMsdjf());
+		assertEquals(0, result.getMNormales());
+		assertEquals(2* 60, result.getMSimple());
+		assertEquals(0, result.getMComposees());
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
+	
 	@Test
 	public void processHSupFonctionnaire_withBase20H() {
 		
 		// Given
+		Date dateLundi = new LocalDate(2012, 04, 30).toDate();
+		
 		Pointage p1 = new Pointage();
 		p1.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
 		p1.setDateDebut(new DateTime(2012, 04, 30, 6, 0, 0).toDate());
@@ -213,7 +299,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "holidayService", hService);
 		
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -235,6 +321,8 @@ public class VentilationHSupServiceTest {
 	public void processHSupConventionCollective_CC_base39H() {
 		
 		// Given
+		Date dateLundi = new LocalDate(2012, 04, 30).toDate();
+		
 		Pointage p1 = new Pointage();
 		p1.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
 		p1.setDateDebut(new DateTime(2012, 04, 30, 6, 0, 0).toDate());
@@ -312,7 +400,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "holidayService", hService);
 		
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), false);
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -340,6 +428,8 @@ public class VentilationHSupServiceTest {
 	public void processHSupContractuel_C_base20H() {
 		
 		// Given
+		Date dateLundi = new LocalDate(2012, 04, 30).toDate();
+		
 		Pointage p1 = new Pointage();
 		p1.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
 		p1.setDateDebut(new DateTime(2012, 04, 30, 6, 0, 0).toDate());
@@ -417,7 +507,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "holidayService", hService);
 		
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -445,6 +535,8 @@ public class VentilationHSupServiceTest {
 	public void processHSupConventionCollective_CC_base39H_has1150Prime() {
 		
 		// Given
+		Date dateLundi = new LocalDate(2013, 04, 1).toDate();
+		
 		Pointage p1 = new Pointage();
 		p1.setDateLundi(new DateTime(2013, 04, 1, 0, 0, 0).toDate());
 		p1.setDateDebut(new DateTime(2013, 04, 1, 8, 0, 0).toDate());
@@ -480,7 +572,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "holidayService", hService);
 		
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, Arrays.asList(p1, p2), true);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), true);
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -508,6 +600,8 @@ public class VentilationHSupServiceTest {
 	public void processHSupFonctionnaire_CustomExample_base39H() {
 		
 		// Given
+		Date dateLundi = new LocalDate(2013, 05, 20).toDate();
+		
 		Pointage p1 = new Pointage();
 		p1.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		p1.setDateDebut(new DateTime(2013, 05, 20, 12, 0, 0).toDate());
@@ -567,7 +661,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "holidayService", hService);
 		
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, Arrays.asList(p1, p2, p3, p4, p5, p6));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6));
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -589,6 +683,8 @@ public class VentilationHSupServiceTest {
 	public void processHSupFonctionnaire_CustomExample_base58H30() {
 		
 		// Given
+		Date dateLundi = new LocalDate(2013, 05, 20).toDate();
+		
 		Pointage p1 = new Pointage();
 		p1.setDateLundi(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		p1.setDateDebut(new DateTime(2013, 05, 20, 12, 0, 0).toDate());
@@ -648,7 +744,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "holidayService", hService);
 		
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, Arrays.asList(p1, p2, p3, p4, p5, p6));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6));
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());

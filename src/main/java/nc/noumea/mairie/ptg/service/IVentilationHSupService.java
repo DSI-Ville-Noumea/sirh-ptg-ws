@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.service;
 
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
@@ -12,15 +13,15 @@ import org.joda.time.Interval;
 
 public interface IVentilationHSupService {
 
-	VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime);
+	VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime);
 	
-	VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, AgentStatutEnum statut);
+	VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut);
 	
-	VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, List<Pointage> pointages);
+	VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages);
 	
-	VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, List<Pointage> pointages);
+	VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages);
 	
-	VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, List<Pointage> pointages, boolean has1150Prime);
+	VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, boolean has1150Prime);
 	
 	Interval getDayHSupJourIntervalForStatut(DateTime day, AgentStatutEnum statut);
 }

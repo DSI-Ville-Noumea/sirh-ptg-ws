@@ -168,7 +168,7 @@ public class VentilationService implements IVentilationService {
 		List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesAbsenceAndHSupForVentilation(idAgent, fromVentilDate, toVentilDate, dateLundi);
 
 		boolean has1150Prime = mairieRepository.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
-		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, agentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime);
+		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi, agentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime);
 		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, agentsPointageForPeriod, dateLundi);
 		
 		// persisting all the generated entities linking them to the current ventil date

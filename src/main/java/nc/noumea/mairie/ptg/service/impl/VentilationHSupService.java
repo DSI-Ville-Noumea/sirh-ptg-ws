@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
@@ -40,34 +41,32 @@ public class VentilationHSupService implements IVentilationHSupService {
 	private IHolidayService holidayService;
 	
 	@Override
-	public VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, List<Pointage> pointages) {
-		return  processHSup(idAgent, carr, pointages, AgentStatutEnum.F);
+	public VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages) {
+		return  processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.F);
 	}
 	
 	@Override
-	public VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, List<Pointage> pointages) {
-		return  processHSup(idAgent, carr, pointages, AgentStatutEnum.C);
+	public VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages) {
+		return  processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.C);
 	}
 	
 	@Override
-	public VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, List<Pointage> pointages, boolean has1150Prime) {
-		return  processHSup(idAgent, carr, pointages, AgentStatutEnum.CC, has1150Prime);
+	public VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, boolean has1150Prime) {
+		return  processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.CC, has1150Prime);
 	}
 	
-	public VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, AgentStatutEnum statut) {
-		return processHSup(idAgent, carr, pointages, statut, false);
+	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut) {
+		return processHSup(idAgent, carr, dateLundi, pointages, statut, false);
 	}
 	
-	public VentilHsup processHSup(Integer idAgent, Spcarr carr, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime) {
-		
+	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime) {
+
 		if (pointages.size() == 0)
 			return null;
 		
-		DateTime dateLundi = new DateTime(pointages.get(0).getDateLundi());
-		
 		VentilHsup result = new VentilHsup();
 		result.setIdAgent(idAgent);
-		result.setDateLundi(dateLundi.toDate());
+		result.setDateLundi(dateLundi);
 		result.setEtat(EtatPointageEnum.VENTILE);
 		
 		// First retrieve all the absences in the Pointages
@@ -92,7 +91,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		for (int i = 0; i < 7; i++) {
 
 			int dayBase = base.getDayBaseInMinutes(i);
-			DateTime dday = dateLundi.plusDays(i);
+			DateTime dday = new DateTime(dateLundi).plusDays(i);
 			
 			// Compute the new total of hours for the agent
 			weekMinutes += dayBase;

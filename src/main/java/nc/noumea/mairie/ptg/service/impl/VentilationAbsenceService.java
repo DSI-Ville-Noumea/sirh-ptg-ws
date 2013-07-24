@@ -20,6 +20,9 @@ public class VentilationAbsenceService implements IVentilationAbsenceService {
 	@Override
 	public VentilAbsence processAbsenceAgent(Integer idAgent, List<Pointage> pointages, Date dateLundi) {
 		
+		if (pointages.size() == 0)
+			return null;
+		
 		VentilAbsence result = new VentilAbsence();
 		result.setIdAgent(idAgent);
 		result.setDateLundi(dateLundi);
