@@ -157,3 +157,61 @@ SIRH-PTG-WS API pour SIRH
 +-------------------------+
  HTTP Status code OK : 200
 +-------------------------+
+
+
+
++-------------------------+
+
+
+* Prime
+
+** Récuperer la liste des primes existantes. 
+
+ <<URL>> : /primes/getListePrime
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ -
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+ 
++-------------------------+
+[{"calculee":false,"description":"Prime forfaitaire mensuelle de 3000F","idRefPrime":271,"libelle":"PRIME DE PERMANENCE","numRubrique":7120,"statut":"F","typeSaisie":"CASE_A_COCHER"},
+ {"calculee":false,"description":"Prime forfaitaire journalière de 3000F","idRefPrime":275,"libelle":"INDEMNITE D'ASTREINTE","numRubrique":7121,"statut":"C","typeSaisie":"CASE_A_COCHER"},
+ {"calculee":false,"description":"Prime forfaitaire journalière de 3000F","idRefPrime":279,"libelle":"INDEMNITE DE PERMANENCE CFM","numRubrique":7123,"statut":"CC","typeSaisie":"CASE_A_COCHER"}]
++-------------------------+
+ 
+ 
+ 
+** Récuperer la liste des primes d'un agent en fonction de son statut. 
+
+ <<URL>> : /primes/getListePrimeWithStatus
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut de l'agent.  'F', 'C' ou 'CC'
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+ 
++-------------------------+
+[{"calculee":false,"description":"Prime forfaitaire journalière de 3000F","idRefPrime":276,"libelle":"INDEMNITE D'ASTREINTE","numRubrique":7121,"statut":"CC","typeSaisie":"CASE_A_COCHER"},
+ {"calculee":false,"description":"Prime forfaitaire journalière de 3000F","idRefPrime":279,"libelle":"INDEMNITE DE PERMANENCE CFM","numRubrique":7123,"statut":"CC","typeSaisie":"CASE_A_COCHER"}]
++-------------------------+
+ 
+ 
+ 
+ 
+
+
