@@ -1,15 +1,8 @@
 package nc.noumea.mairie.ptg.dto;
 
-/**
- * DTO for RefPrime Objects
- * C.Levointurier
- */
-import javax.xml.bind.annotation.XmlRootElement;
 
-import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 
-@XmlRootElement
 public class RefPrimeDto {
 
 	private Integer idRefPrime;
@@ -23,18 +16,18 @@ public class RefPrimeDto {
 	public RefPrimeDto() {
 	}
 
-	public RefPrimeDto(RefPrime primeDto) {
-		idRefPrime = primeDto.getIdRefPrime();
-		numRubrique = primeDto.getNoRubr();
-		libelle = primeDto.getLibelle();
-		description = primeDto.getDescription();
-		if (primeDto.getTypeSaisie() == null) {
+	public RefPrimeDto(RefPrime prime) {
+		idRefPrime = prime.getIdRefPrime();
+		numRubrique = prime.getNoRubr();
+		libelle = prime.getLibelle();
+		description = prime.getDescription();
+		if (prime.getTypeSaisie() == null) {
 			typeSaisie = "null";
 		} else {
-			typeSaisie = primeDto.getTypeSaisie().name();
+			typeSaisie = prime.getTypeSaisie().name();
 		}
-		calculee = primeDto.isCalculee();
-		statut = primeDto.getStatut().name();
+		calculee = prime.isCalculee();
+		statut = prime.getStatut().name();
 	}
 
 	public RefPrimeDto(RefPrimeDto primeDto) {
