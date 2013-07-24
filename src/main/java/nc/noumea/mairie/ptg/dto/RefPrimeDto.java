@@ -1,6 +1,5 @@
 package nc.noumea.mairie.ptg.dto;
 
-
 import nc.noumea.mairie.ptg.domain.RefPrime;
 
 public class RefPrimeDto {
@@ -27,7 +26,11 @@ public class RefPrimeDto {
 			typeSaisie = prime.getTypeSaisie().name();
 		}
 		calculee = prime.isCalculee();
-		statut = prime.getStatut().name();
+		if (prime.getStatut() == null) {
+			statut = "null";
+		} else {
+			statut = prime.getStatut().name();
+		}
 	}
 
 	public RefPrimeDto(RefPrimeDto primeDto) {
