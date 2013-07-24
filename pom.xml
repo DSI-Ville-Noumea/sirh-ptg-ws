@@ -15,7 +15,7 @@
 		<slf4j.version>1.7.5</slf4j.version>
 		<spring.version>3.2.3.RELEASE</spring.version>
 	</properties>
-	
+
 	<issueManagement>
 		<system>REDMINE</system>
 		<url>https://redmine/projects/sirh-ptg-ws</url>
@@ -32,7 +32,7 @@
 			<url>file:\\cristal\dsi$\DSI\PROJETS\1 - EN COURS\2 - Métiers\SIRH\3-Techniques\Documentation_Agile\SIRH-PTG-WS\</url>
 		</site>
 	</distributionManagement>
-	
+
 	<repositories>
 		<repository>
 			<id>spring-maven-release</id>
@@ -50,7 +50,7 @@
 			<url>http://spring-roo-repository.springsource.org/release</url>
 		</repository>
 	</repositories>
-	
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>spring-maven-release</id>
@@ -68,7 +68,7 @@
 			<url>http://spring-roo-repository.springsource.org/release</url>
 		</pluginRepository>
 	</pluginRepositories>
-	
+
 	<dependencies>
 		<!-- General dependencies for standard applications -->
 		<dependency>
@@ -323,7 +323,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.3</version>
 				<configuration>
 					<reportPlugins>
 						<plugin>
@@ -354,10 +354,10 @@
 									<format>html</format>
 								</formats>
 								<instrumentation>
-						            <excludes>
-						              <exclude>**/*_Roo_*.*</exclude>
-						            </excludes>
-						          </instrumentation>
+									<excludes>
+										<exclude>**/*_Roo_*.*</exclude>
+									</excludes>
+								</instrumentation>
 							</configuration>
 						</plugin>
 						<plugin>
@@ -419,12 +419,12 @@
 				</dependencies>
 				<executions>
 					<execution>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>test-compile</goal>
-                        </goals>
-                    </execution>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>compile</goal>
+							<goal>test-compile</goal>
+						</goals>
+					</execution>
 				</executions>
 				<configuration>
 					<outxml>true</outxml>
@@ -457,6 +457,7 @@
 					<excludes>
 						<exclude>**/*_Roo_*</exclude>
 					</excludes>
+					<argLine>-XX:-UseSplitVerifier</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
