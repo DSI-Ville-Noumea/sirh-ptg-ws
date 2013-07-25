@@ -25,7 +25,6 @@ import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
 import nc.noumea.mairie.ptg.service.IVentilationService;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -247,7 +246,7 @@ public class VentilationService implements IVentilationService {
 
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
 		
-		Spcarr carr = mairieRepository.getAgentCurrentCarriere(Agent.getNoMatrFromIdAgent(idAgent), dateLundi);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), dateLundi);
 		List<Pointage> ptgs = ventilationRepository.getListPointagesForPrimesCalculees(idAgent, fromEtatDate, toEtatDate, dateLundi);
 		result.addAll(pointageCalculeService.calculatePointagesForAgentAndWeek(idAgent, carr.getStatutCarriere(), dateLundi, ptgs));
 
@@ -288,7 +287,7 @@ public class VentilationService implements IVentilationService {
 	 * @return the Agent's Spcarr if the agent is eligible, null otherwise
 	 */
 	protected Spcarr isAgentEligibleToVentilation(Integer idAgent, AgentStatutEnum statut, Date date) {
-		Spcarr carr = mairieRepository.getAgentCurrentCarriere(Agent.getNoMatrFromIdAgent(idAgent), date);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
 		AgentStatutEnum agentStatus = carr != null ? carr.getStatutCarriere() : null;
 		return agentStatus == statut ? carr : null;
 	}

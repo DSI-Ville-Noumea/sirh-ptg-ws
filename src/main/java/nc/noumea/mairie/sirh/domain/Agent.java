@@ -50,8 +50,4 @@ public class Agent {
 	public String getDisplayNom() {
 		return getNomUsage();
 	}
-	
-	public static Integer getNoMatrFromIdAgent(Integer idAgent) {
-		return idAgent - 9000000;
-	}
 }

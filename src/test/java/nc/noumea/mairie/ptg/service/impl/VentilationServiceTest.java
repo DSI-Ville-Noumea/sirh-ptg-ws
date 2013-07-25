@@ -28,7 +28,6 @@ import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.LocalDate;
 import org.junit.BeforeClass;
@@ -356,19 +355,23 @@ public class VentilationServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(20); // F
 		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mairieRepo.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)), Mockito.eq(dateLundi))).thenReturn(carr);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(Mockito.eq(8765), Mockito.eq(dateLundi))).thenReturn(carr);
+		
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
 		
 		VentilationService service = new VentilationService();
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
 		ReflectionTestUtils.setField(service, "pointageCalculeService", ptgCService);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
 		
 		// When
 		service.calculatePointages(idAgent, dateLundi, from, to);
 		
 		// Then
 		Mockito.verify(mairieRepo, Mockito.times(1))
-			.getAgentCurrentCarriere(Mockito.eq(Agent.getNoMatrFromIdAgent(idAgent)),Mockito.eq(new LocalDate(2013, 7, 1).toDate()));
+			.getAgentCurrentCarriere(Mockito.eq(8765),Mockito.eq(new LocalDate(2013, 7, 1).toDate()));
 		
 		Mockito.verify(ptgCService, Mockito.times(1))
 			.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F), Mockito.eq(dateLundi), Mockito.eq(ptgList));
@@ -437,8 +440,12 @@ public class VentilationServiceTest {
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(7898, asOfDate)).thenReturn(carr);
 		
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9007898)).thenReturn(7898);
+		
 		VentilationService service = new VentilationService();
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
 		
 		// When
 		Spcarr result = service.isAgentEligibleToVentilation(9007898, AgentStatutEnum.F, asOfDate);
@@ -459,8 +466,12 @@ public class VentilationServiceTest {
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(7898, asOfDate)).thenReturn(carr);
 		
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9007898)).thenReturn(7898);
+		
 		VentilationService service = new VentilationService();
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
 		
 		// When
 		Spcarr result = service.isAgentEligibleToVentilation(9007898, AgentStatutEnum.F, asOfDate);
