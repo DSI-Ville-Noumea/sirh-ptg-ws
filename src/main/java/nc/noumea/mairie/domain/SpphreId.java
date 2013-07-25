@@ -4,20 +4,17 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 
 @RooJavaBean
 @Embeddable
-public class SppactId implements Serializable {
+public class SpphreId implements Serializable {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 2981861500000391579L;
+	private static final long serialVersionUID = 6532385527445432473L;
 
 	@Override
 	public int hashCode() {
@@ -31,11 +28,8 @@ public class SppactId implements Serializable {
 	
 	@Column(name = "NOMATR", columnDefinition = "numeric")
 	private Integer nomatr;
-	
+
 	@Column(name = "DATJOU", columnDefinition = "numeric")
-	private Integer datjour;
+	private Integer datJour;
 	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "CDACT3", referencedColumnName = "CDACT3", columnDefinition = "char")
-	private Spacti activite;
 }

@@ -6,13 +6,13 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
@@ -131,9 +131,9 @@ public class VentilationService implements IVentilationService {
 
 	protected TypeChainePaieEnum getTypeChainePaieFromStatut(AgentStatutEnum statut) {
 		if (statut == AgentStatutEnum.CC)
-			return TypeChainePaieEnum.CC;
+			return TypeChainePaieEnum.SCV;
 		else
-			return TypeChainePaieEnum.HCC;
+			return TypeChainePaieEnum.SHC;
 	}
 
 	protected List<Date> getDistinctDateLundiFromListOfDates(List<Date> dates) {

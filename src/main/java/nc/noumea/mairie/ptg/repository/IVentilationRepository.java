@@ -3,10 +3,10 @@ package nc.noumea.mairie.ptg.repository;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 
 public interface IVentilationRepository {

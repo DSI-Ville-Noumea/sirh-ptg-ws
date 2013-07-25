@@ -10,6 +10,7 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
@@ -17,7 +18,6 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
@@ -481,24 +481,24 @@ public class VentilationServiceTest {
 	}
 	
 	@Test
-	public void getTypeChainePaieFromStatut_Statut_F_ReturnHCC() {
+	public void getTypeChainePaieFromStatut_Statut_F_ReturnSHC() {
 		
 		// Given
 		VentilationService service = new VentilationService();
 		
 		// Then
-		assertEquals(TypeChainePaieEnum.HCC, service.getTypeChainePaieFromStatut(AgentStatutEnum.F));
+		assertEquals(TypeChainePaieEnum.SHC, service.getTypeChainePaieFromStatut(AgentStatutEnum.F));
 		
 	}
 	
 	@Test
-	public void getTypeChainePaieFromStatut_Statut_C_ReturnHCC() {
+	public void getTypeChainePaieFromStatut_Statut_C_ReturnSHC() {
 		
 		// Given
 		VentilationService service = new VentilationService();
 		
 		// Then
-		assertEquals(TypeChainePaieEnum.HCC, service.getTypeChainePaieFromStatut(AgentStatutEnum.C));
+		assertEquals(TypeChainePaieEnum.SHC, service.getTypeChainePaieFromStatut(AgentStatutEnum.C));
 	}
 	
 	@Test
@@ -508,7 +508,7 @@ public class VentilationServiceTest {
 		VentilationService service = new VentilationService();
 		
 		// Then
-		assertEquals(TypeChainePaieEnum.CC, service.getTypeChainePaieFromStatut(AgentStatutEnum.CC));
+		assertEquals(TypeChainePaieEnum.SCV, service.getTypeChainePaieFromStatut(AgentStatutEnum.CC));
 	}
 	
 	@Test
@@ -574,8 +574,8 @@ public class VentilationServiceTest {
 		List<Date> pointagesDates = new ArrayList<Date>();
 		
 		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.HCC, true)).thenReturn(lastPaidVentilDate);
-		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.HCC, false)).thenReturn(lastUnPaidVentilDate);
+		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, true)).thenReturn(lastPaidVentilDate);
+		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(lastUnPaidVentilDate);
 		Mockito.when(vRepo.getDistinctDatesOfPointages(9005432, lastUnPaidDate, ventilationDate)).thenReturn(pointagesDates);
 		Mockito.when(vRepo.getListIdAgentsForVentilationByDateAndEtat(lastPaidDate, lastUnPaidDate)).thenReturn(agentList);
 		

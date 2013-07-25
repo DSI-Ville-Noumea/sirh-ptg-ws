@@ -5,7 +5,7 @@ package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
 import java.util.Set;
-import nc.noumea.mairie.ptg.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;

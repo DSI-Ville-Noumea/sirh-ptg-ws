@@ -1,8 +1,9 @@
-package nc.noumea.mairie.ptg.domain;
+package nc.noumea.mairie.domain;
 
 public enum TypeChainePaieEnum {
 
-	CC("CC"), HCC("HCC");
+	SHC("SHC"), // Hors Conventions Collectives (Fonctionnaires & Contractuels)
+	SCV("SCV"); // Conventions Collectives
 
 	private String typeChainePaie;
 

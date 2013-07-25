@@ -7,7 +7,7 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @RooJavaBean
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPPACT", versionField = "", identifierColumn = "")
+@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPPACT", versionField = "")
 public class Sppact {
 
 	@EmbeddedId
@@ -16,4 +16,6 @@ public class Sppact {
 	@Column(name = "NBHEUR", columnDefinition = "numeric")
 	private double nbHeures;
 	
+	@Column(name = "SERVI", columnDefinition = "char default '    '")
+	private String service;
 }

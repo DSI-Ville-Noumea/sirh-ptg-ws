@@ -24,4 +24,12 @@ privileged aspect Sppact_Roo_JavaBean {
         this.nbHeures = nbHeures;
     }
     
+    public String Sppact.getService() {
+        return this.service;
+    }
+    
+    public void Sppact.setService(String service) {
+        this.service = service;
+    }
+    
 }
