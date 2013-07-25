@@ -15,13 +15,11 @@ import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+//@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/META-INF/spring/applicationContext-test.xml"})
 public class PointageRepositoryTest {
 
