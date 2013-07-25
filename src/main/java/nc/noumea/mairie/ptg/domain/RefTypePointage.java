@@ -1,8 +1,6 @@
 package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -16,7 +14,6 @@ public class RefTypePointage {
 
 	@Id
 	@Column(name = "ID_REF_TYPE_POINTAGE")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idRefTypePointage;
 
 	@Column(name = "LABEL", columnDefinition = "NVARCHAR2")
