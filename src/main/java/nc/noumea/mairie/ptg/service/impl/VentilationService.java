@@ -119,8 +119,8 @@ public class VentilationService implements IVentilationService {
 			if (pointageType == null || pointageType == RefTypePointageEnum.PRIME) {
 				for (Date dateDebutMois : getDistinctDateDebutMoisFromListOfDates(pointagesToVentilateDates)) {
 					
-					processPrimesVentilationForMonthAndAgent(
-							toVentilDate, agent, dateDebutMois, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+					pointagesVentiles.addAll(processPrimesVentilationForMonthAndAgent(
+							toVentilDate, agent, dateDebutMois, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation()));
 				}
 			}
 			
