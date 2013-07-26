@@ -8,6 +8,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -85,6 +87,13 @@ public class Pointage {
 	@JoinColumn(name = "ID_COMMENT_COMMENTAIRE")
 	private PtgComment commentaire;
 
+	@ManyToMany
+	@JoinTable(
+			name = "PTG_POINTAGE_VENTIL_DATE",
+			joinColumns = @JoinColumn(name = "ID_POINTAGE"), 
+			inverseJoinColumns = @JoinColumn(name = "ID_VENTIL_DATE"))
+	private List<VentilDate> ventilations = new ArrayList<VentilDate>();
+	
 	@Transient
 	public RefTypePointageEnum getTypePointageEnum() {
 		return RefTypePointageEnum.getRefTypePointageEnum(type.getIdRefTypePointage());

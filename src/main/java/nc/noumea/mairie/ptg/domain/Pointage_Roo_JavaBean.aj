@@ -10,6 +10,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 
 privileged aspect Pointage_Roo_JavaBean {
     
@@ -115,6 +116,14 @@ privileged aspect Pointage_Roo_JavaBean {
     
     public void Pointage.setCommentaire(PtgComment commentaire) {
         this.commentaire = commentaire;
+    }
+    
+    public List<VentilDate> Pointage.getVentilations() {
+        return this.ventilations;
+    }
+    
+    public void Pointage.setVentilations(List<VentilDate> ventilations) {
+        this.ventilations = ventilations;
     }
     
 }

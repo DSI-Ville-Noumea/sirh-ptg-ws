@@ -380,9 +380,11 @@ public class VentilationServiceTest {
 	}
 	
 	@Test
-	public void markPointagesAsVentile_AddNewVENTILEetatToPointagesNotVENTILE() {
+	public void markPointagesAsVentile_LinkToVentilDate_AddNewVENTILEetatToPointagesNotVENTILE() {
 		
 		// Given
+		VentilDate ventilDate = new VentilDate();
+		
 		Pointage p1 = new Pointage();
 		p1.setType(abs);
 		p1.setDateDebut(new LocalDate(2013, 7, 4).toDate());
@@ -404,6 +406,7 @@ public class VentilationServiceTest {
 		ep2.setEtatPointagePk(pk2);
 		ep2.setEtat(EtatPointageEnum.VENTILE);
 		p2.getEtats().add(ep2);
+		p2.getVentilations().add(new VentilDate());
 		
 		Date etatDate = new LocalDate(2013, 07, 01).toDate();
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -413,7 +416,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		service.markPointagesAsVentile(Arrays.asList(p1, p2), 9008888);
+		service.markPointagesAsVentile(Arrays.asList(p1, p2), 9008888, ventilDate);
 		
 		// Then
 		assertEquals(2, p1.getEtats().size());
@@ -422,10 +425,12 @@ public class VentilationServiceTest {
 		assertEquals(EtatPointageEnum.VENTILE, p1.getEtats().get(1).getEtat());
 		assertEquals(9008888, (int) p1.getEtats().get(1).getIdAgent());
 		assertEquals(etatDate, p1.getEtats().get(1).getEtatPointagePk().getDateEtat());
+		assertEquals(ventilDate, p1.getVentilations().get(0));
 		
 		assertEquals(1, p2.getEtats().size());
 		assertEquals(ep2, p2.getEtats().get(0));
 		assertEquals(EtatPointageEnum.VENTILE, p2.getEtats().get(0).getEtat());
+		assertEquals(ventilDate, p2.getVentilations().get(1));
 	}
 	
 	@Test
@@ -602,7 +607,7 @@ public class VentilationServiceTest {
 		Mockito.doNothing().when(service).calculatePointages(9005432, datesLundi.get(0), lastPaidDate, lastUnPaidDate);
 		Mockito.doReturn(ptgVentiles).when(service).processPrimesVentilationForMonthAndAgent(lastUnPaidVentilDate, 9005432, datesDebutMois.get(0), lastPaidDate, lastUnPaidDate);
 
-		Mockito.doNothing().when(service).markPointagesAsVentile(ptgVentiles, 9005432);
+		Mockito.doNothing().when(service).markPointagesAsVentile(ptgVentiles, 9005432, lastUnPaidVentilDate);
 		
 		// When
 		service.processVentilation(9008765, new ArrayList<Integer>(), ventilationDate, statut, pointageType);
@@ -617,7 +622,7 @@ public class VentilationServiceTest {
 		Mockito.verify(service, Mockito.times(1)).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
 		Mockito.verify(service, Mockito.times(1)).calculatePointages(9005432, datesLundi.get(0), lastPaidDate, lastUnPaidDate);
 		Mockito.verify(service, Mockito.times(1)).processPrimesVentilationForMonthAndAgent(lastUnPaidVentilDate, 9005432, datesDebutMois.get(0), lastPaidDate, lastUnPaidDate);
-		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9005432);
+		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9005432, lastUnPaidVentilDate);
 	}
 	
 }

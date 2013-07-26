@@ -123,8 +123,8 @@ public class VentilationService implements IVentilationService {
 				}
 			}
 			
-			// 7. Mark pointages as etat VENTILE
-			markPointagesAsVentile(pointagesVentiles, agent);
+			// 7. Mark pointages as etat VENTILE and add this VentilDate to their list of ventilations
+			markPointagesAsVentile(pointagesVentiles, agent, toVentilDate);
 		}
 		
 	}
@@ -256,15 +256,21 @@ public class VentilationService implements IVentilationService {
 	}
 
 	/**
-	 * Updates each pointages to set them as VENTILE state after being used for ventilation
+	 * Updates each pointage to set them as VENTILE state after being used for ventilation
+	 * Also link them to the VentilDate that has just ventilated them (for further searches)
 	 * @param pointages
 	 * @param idAgent 
+	 * @param ventilDate
 	 */
-	protected void markPointagesAsVentile(List<Pointage> pointages, int idAgent) {
+	protected void markPointagesAsVentile(List<Pointage> pointages, int idAgent, VentilDate ventilDate) {
 		
 		Date currentDate = helperService.getCurrentDate();
 		
 		for (Pointage ptg : pointages) {
+			
+			if (!ptg.getVentilations().contains(ventilDate))
+				ptg.getVentilations().add(ventilDate);
+			
 			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.VENTILE)
 				continue;
 

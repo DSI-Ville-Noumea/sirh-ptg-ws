@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -8,6 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -44,4 +48,11 @@ public class VentilDate {
 	
 	@OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Set<VentilPrime> ventilPrimes;
+	
+	@ManyToMany
+	@JoinTable(
+			name = "PTG_POINTAGE_VENTIL_DATE", 
+			inverseJoinColumns = @JoinColumn(name = "ID_POINTAGE"), 
+			joinColumns = @JoinColumn(name = "ID_VENTIL_DATE"))
+	private Set<Pointage> pointages = new HashSet<Pointage>();
 }
