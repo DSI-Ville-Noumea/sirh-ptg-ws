@@ -10,9 +10,12 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPACTI", versionField = "")
 public class Spacti {
 
+	public static String CODE_ACTIVITE_ABS_NON_CONCERTEE = "A01";
+	public static String CODE_ACTIVITE_ABS_CONCERTEE = "A02";
+
 	@Id
 	@Column(name = "CDACT3", insertable = false, updatable = false, columnDefinition = "char")
-	private Integer codeActvite;
+	private String codeActvite;
 	
 	@Column(name = "LIACTI", columnDefinition = "char")
 	private String libelleActivite;

@@ -135,6 +135,7 @@ public class VentilationHSupServiceTest {
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
@@ -297,6 +298,7 @@ public class VentilationHSupServiceTest {
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
@@ -398,6 +400,7 @@ public class VentilationHSupServiceTest {
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), false);
@@ -505,6 +508,7 @@ public class VentilationHSupServiceTest {
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
@@ -570,6 +574,7 @@ public class VentilationHSupServiceTest {
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), true);
@@ -659,6 +664,7 @@ public class VentilationHSupServiceTest {
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6));
@@ -742,6 +748,7 @@ public class VentilationHSupServiceTest {
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6));

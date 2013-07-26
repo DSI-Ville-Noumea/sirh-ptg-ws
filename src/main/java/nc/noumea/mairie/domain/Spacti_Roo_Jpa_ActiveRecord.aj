@@ -28,8 +28,8 @@ privileged aspect Spacti_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Spacti o", Spacti.class).getResultList();
     }
     
-    public static Spacti Spacti.findSpacti(Integer codeActvite) {
-        if (codeActvite == null) return null;
+    public static Spacti Spacti.findSpacti(String codeActvite) {
+        if (codeActvite == null || codeActvite.length() == 0) return null;
         return entityManager().find(Spacti.class, codeActvite);
     }
     

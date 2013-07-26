@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.service.impl;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -14,14 +15,14 @@ public class HelperService {
 		return new Date();
 	}
 
-	public int getWeekDayFromDateBase0(final Date date) {
-		return new DateTime(date).dayOfWeek().get() - 1;
-	}
-
 	public boolean isDateAMonday(final Date date) {
 		return new DateTime(date).dayOfWeek().get() == 1;
 	}
 
+	public int getWeekDayFromDateBase0(final Date date) {
+		return new DateTime(date).dayOfWeek().get() - 1;
+	}
+	
 	public String getWeekStringFromDate(final Date date) {
 		DateTime d = new DateTime(date);
 		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/YYYY");
@@ -50,5 +51,24 @@ public class HelperService {
 	
 	public Integer getMairieMatrFromIdAgent(Integer idAgent) {
 		return idAgent - 9000000;
+	}
+	
+	public int convertMairieNbHeuresFormatToMinutes(Double nbHeuresMairies) {
+		
+		BigDecimal v = new BigDecimal(String.valueOf(nbHeuresMairies));
+		int nbHours = v.intValue();
+		int nbMinutes = v.subtract(new BigDecimal(nbHours)).multiply(new BigDecimal(100)).intValue();
+		
+		return nbHours * 60 + nbMinutes;
+	}
+	
+	public double convertMinutesToMairieNbHeuresFormat(int minutes) {
+		
+		int nbHours = minutes / 60;
+		int nbMinutes = minutes - (nbHours * 60);
+
+		double result = (double) (nbHours * 100 + nbMinutes) / 100;
+		
+		return result;
 	}
 }

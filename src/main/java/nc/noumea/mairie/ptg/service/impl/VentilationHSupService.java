@@ -40,6 +40,9 @@ public class VentilationHSupService implements IVentilationHSupService {
 	@Autowired
 	private IHolidayService holidayService;
 	
+	@Autowired
+	private HelperService helperService;
+	
 	@Override
 	public VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages) {
 		return  processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.F);
@@ -83,14 +86,14 @@ public class VentilationHSupService implements IVentilationHSupService {
 		// Compute the agent week hour base
 		Spbase base = carr.getSpbase();
 		Spbhor spbhor = carr.getSpbhor();
-		int weekBase = (int) (base.getWeekBaseInMinutes() * spbhor.getTaux());
+		int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(base.getNbashh()) * spbhor.getTaux());
 		int weekMinutes = 0 - result.getMAbsences();
 		
 		// For each day of the week, get related pointages of HSup to count them
 		// and compare to the agent Hour Base
 		for (int i = 0; i < 7; i++) {
 
-			int dayBase = base.getDayBaseInMinutes(i);
+			int dayBase = helperService.convertMairieNbHeuresFormatToMinutes(base.getDayBase(i));
 			DateTime dday = new DateTime(dateLundi).plusDays(i);
 			
 			// Compute the new total of hours for the agent

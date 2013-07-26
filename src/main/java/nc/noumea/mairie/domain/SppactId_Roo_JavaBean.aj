@@ -16,12 +16,12 @@ privileged aspect SppactId_Roo_JavaBean {
         this.nomatr = nomatr;
     }
     
-    public Integer SppactId.getDatjour() {
-        return this.datjour;
+    public Integer SppactId.getDateJour() {
+        return this.dateJour;
     }
     
-    public void SppactId.setDatjour(Integer datjour) {
-        this.datjour = datjour;
+    public void SppactId.setDateJour(Integer dateJour) {
+        this.dateJour = dateJour;
     }
     
     public Spacti SppactId.getActivite() {

@@ -33,7 +33,7 @@ public class SppactId implements Serializable {
 	private Integer nomatr;
 	
 	@Column(name = "DATJOU", columnDefinition = "numeric")
-	private Integer datjour;
+	private Integer dateJour;
 	
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CDACT3", referencedColumnName = "CDACT3", columnDefinition = "char")

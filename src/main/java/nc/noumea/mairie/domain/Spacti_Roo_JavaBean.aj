@@ -7,11 +7,11 @@ import nc.noumea.mairie.domain.Spacti;
 
 privileged aspect Spacti_Roo_JavaBean {
     
-    public Integer Spacti.getCodeActvite() {
+    public String Spacti.getCodeActvite() {
         return this.codeActvite;
     }
     
-    public void Spacti.setCodeActvite(Integer codeActvite) {
+    public void Spacti.setCodeActvite(String codeActvite) {
         this.codeActvite = codeActvite;
     }
     
