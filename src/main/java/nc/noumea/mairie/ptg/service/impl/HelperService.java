@@ -55,6 +55,9 @@ public class HelperService {
 	
 	public int convertMairieNbHeuresFormatToMinutes(Double nbHeuresMairies) {
 		
+		if (nbHeuresMairies == 0.0d)
+			return 0;
+		
 		BigDecimal v = new BigDecimal(String.valueOf(nbHeuresMairies));
 		int nbHours = v.intValue();
 		int nbMinutes = v.subtract(new BigDecimal(nbHours)).multiply(new BigDecimal(100)).intValue();
@@ -63,6 +66,9 @@ public class HelperService {
 	}
 	
 	public double convertMinutesToMairieNbHeuresFormat(int minutes) {
+		
+		if (minutes == 0)
+			return 0.0d;
 		
 		int nbHours = minutes / 60;
 		int nbMinutes = minutes - (nbHours * 60);

@@ -66,23 +66,31 @@ public class PointageRepository implements IPointageRepository {
 		return query.getResultList();
 	}
 
-	@Override
 	public List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
 
-		String queryName = "";
+		StringBuilder sb = new StringBuilder();
+		sb.append("select ptg from Pointage ptg ");
+		sb.append("LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type ");
+		sb.append("where ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate ");
+		
 		if (idRefType != null)
-			queryName = "getListPointageByAgentsTypeAndDate";
-		else
-			queryName = "getListPointageByAgentsAndDate";
+			sb.append("and ptg.type.idRefTypePointage = :idRefTypePointage ");
+		
+		if (idAgents != null && idAgents.size() > 0)
+			sb.append("and ptg.idAgent in :idAgents ");
 
-		TypedQuery<Pointage> query = ptgEntityManager.createNamedQuery(queryName, Pointage.class);
-		query.setParameter("idAgents", idAgents.size() == 0 ? null : idAgents);
+		sb.append("order by ptg.idPointage desc ");
+
+		TypedQuery<Pointage> query = ptgEntityManager.createQuery(sb.toString(), Pointage.class);
 		query.setParameter("fromDate", fromDate);
 		query.setParameter("toDate", toDate);
 
 		if (idRefType != null)
 			query.setParameter("idRefTypePointage", idRefType);
 
+		if (idAgents != null && idAgents.size() > 0)
+			query.setParameter("idAgents", idAgents);
+		
 		return query.getResultList();
 	}
 
@@ -122,16 +130,12 @@ public class PointageRepository implements IPointageRepository {
 		return ptgEntityManager.find(Tclass, Id);
 	}
 
-	@Deprecated
+	
 	public List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ptg.* ");
 		sb.append("FROM PTG_POINTAGE ptg ");
-		sb.append("LEFT JOIN PTG_COMMENT motif ON ptg.ID_COMMENT_MOTIF = motif.ID_COMMENT ");
-		sb.append("LEFT JOIN PTG_COMMENT commentaire ON ptg.ID_COMMENT_COMMENTAIRE = motif.ID_COMMENT ");
-		sb.append("LEFT JOIN PTG_REF_PRIME refPrime ON ptg.ID_REF_PRIME = refPrime.ID_REF_PRIME ");
-		sb.append("INNER JOIN PTG_REF_TYPE_POINTAGE type ON ptg.ID_TYPE_POINTAGE = type.ID_REF_TYPE_POINTAGE ");
 		sb.append("WHERE to_date(PTG.DATE_DEBUT)>= :fromDate AND to_date(PTG.DATE_DEBUT)<= :toDate ");
 
 		if (idAgents != null && idAgents.size() > 0) {
@@ -148,12 +152,12 @@ public class PointageRepository implements IPointageRepository {
 		q.setParameter("fromDate", fromDate);
 		q.setParameter("toDate", toDate);
 
-		if (idAgents != null && idAgents.size() > 0) {
+		if (idAgents != null && idAgents.size() > 0)
 			q.setParameter("idAgents", idAgents);
-		}
+		
 		if (idRefType != null)
 			q.setParameter("idRefType", idRefType);
-
+		
 		@SuppressWarnings("unchecked")
 		List<Pointage> result = q.getResultList();
 		return result;
