@@ -206,6 +206,35 @@ SIRH-PTG-WS API pour SIRH
 [{"calculee":false,"description":"Prime forfaitaire journalière de 3000F","idRefPrime":276,"libelle":"INDEMNITE D'ASTREINTE","numRubrique":7121,"statut":"CC","typeSaisie":"CASE_A_COCHER"},
  {"calculee":false,"description":"Prime forfaitaire journalière de 3000F","idRefPrime":279,"libelle":"INDEMNITE DE PERMANENCE CFM","numRubrique":7123,"statut":"CC","typeSaisie":"CASE_A_COCHER"}]
 +-------------------------+
+  
+ 
+** Récuperer le détail d'une prime. 
+
+ <<URL>> : /primes/getPrime
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<noRubr>> : le numero de la prime
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+ 
++-------------------------+
+    {
+       "calculee": false,
+       "description": "Prime forfaitaire de 15000F/autopsie",
+       "idRefPrime": 295,
+       "libelle": "INDEMNITE PARTICIPATION AUTOPSIES TARIF II",
+       "numRubrique": 7710,
+       "statut": "F",
+       "typeSaisie": "NB_INDEMNITES"
+    }
++-------------------------+
  
  
  

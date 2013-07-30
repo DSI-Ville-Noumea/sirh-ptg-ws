@@ -42,4 +42,14 @@ public class PrimeService implements IPrimeService {
 		return res;
 	}
 
+	@Override
+	public RefPrimeDto getPrime(Integer noRubr) {
+		RefPrimeDto res = new RefPrimeDto();
+
+		List<RefPrime> result = pointageRepository.getRefPrimesListWithNoRubr(noRubr);
+		RefPrime p = result.get(0);
+		res = new RefPrimeDto(p);
+		return res;
+	}
+
 }

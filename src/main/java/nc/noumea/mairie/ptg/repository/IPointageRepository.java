@@ -11,13 +11,14 @@ public interface IPointageRepository {
 
 	List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut);
 
-	List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut) ;
-	
-	List<RefPrime> getRefPrimesList() ;
-	
+	List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut);
+
+	List<RefPrime> getRefPrimesList();
+
 	List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
 
 	List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
+
 	List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
 
 	List<Pointage> getPointageArchives(Integer idPointage);
@@ -27,4 +28,6 @@ public interface IPointageRepository {
 	void savePointage(Pointage ptg);
 
 	<T> T getEntity(Class<T> Tclass, Object Id);
+
+	List<RefPrime> getRefPrimesListWithNoRubr(Integer noRubr);
 }

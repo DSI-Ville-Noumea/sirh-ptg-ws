@@ -88,7 +88,9 @@ public class PointageRepository implements IPointageRepository {
 
 	public List<Pointage> getPointageArchives(Integer idPointage) {
 
-		Query q = ptgEntityManager.createNativeQuery("SELECT t1.* FROM PTG_POINTAGE t1 START WITH t1.ID_POINTAGE = :idPointage CONNECT BY PRIOR t1.ID_POINTAGE_PARENT = t1.ID_POINTAGE", Pointage.class);
+		Query q = ptgEntityManager.createNativeQuery(
+				"SELECT t1.* FROM PTG_POINTAGE t1 START WITH t1.ID_POINTAGE = :idPointage CONNECT BY PRIOR t1.ID_POINTAGE_PARENT = t1.ID_POINTAGE",
+				Pointage.class);
 		q.setParameter("idPointage", idPointage);
 
 		@SuppressWarnings("unchecked")
@@ -122,7 +124,7 @@ public class PointageRepository implements IPointageRepository {
 
 	@Deprecated
 	public List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
-		
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ptg.* ");
 		sb.append("FROM PTG_POINTAGE ptg ");
@@ -141,7 +143,7 @@ public class PointageRepository implements IPointageRepository {
 		}
 
 		sb.append("ORDER BY ptg.ID_POINTAGE DESC");
-		
+
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
 		q.setParameter("fromDate", fromDate);
 		q.setParameter("toDate", toDate);
@@ -155,6 +157,14 @@ public class PointageRepository implements IPointageRepository {
 		@SuppressWarnings("unchecked")
 		List<Pointage> result = q.getResultList();
 		return result;
+	}
+
+	@Override
+	public List<RefPrime> getRefPrimesListWithNoRubr(Integer noRubr) {
+
+		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getRefPrimesByNorubr", RefPrime.class);
+		query.setParameter("noRubr", noRubr);
+		return query.getResultList();
 	}
 
 }

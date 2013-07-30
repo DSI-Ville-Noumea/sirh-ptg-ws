@@ -63,4 +63,21 @@ public class PrimeController {
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/getPrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getPrime(@RequestParam("noRubr") Integer noRubr) {
+
+		logger.debug("entered GET [primes] => getPrime with parameters noRubr = {}", noRubr);
+
+		RefPrimeDto result = primeService.getPrime(noRubr);
+
+		if (result == null) {
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		}
+
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+
 }
