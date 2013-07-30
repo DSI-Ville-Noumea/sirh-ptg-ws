@@ -562,6 +562,12 @@ public class PointageServiceTest {
 		p67.setRefPrime(rf89);
 		p67.setDateLundi(dateLundi);
 		p67.getEtats().add(etatSaisi);
+		p67.setDateDebut(new DateTime(2013, 5, 14, 8, 0, 0).toDate());
+		p67.setDateFin(new DateTime(2013, 5, 14, 10, 30, 0).toDate());
+		p67.setQuantite(2);
+		p67.setAbsenceConcertee(true);
+		p67.setHeureSupRecuperee(true);
+		p67.setType(hSup);
 		
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getEntity(Pointage.class, idPointage)).thenReturn(p67);
@@ -588,6 +594,13 @@ public class PointageServiceTest {
 		assertEquals(EtatPointageEnum.SAISI, result.getLatestEtatPointage().getEtat());
 		assertEquals(new DateTime(2013, 05, 17, 9, 25, 8).toDate(), result.getLatestEtatPointage().getEtatPointagePk().getDateEtat());
 		assertEquals(9001234, (int) result.getLatestEtatPointage().getIdAgent());
+		assertEquals(p67.getDateDebut(), result.getDateDebut());
+		assertEquals(p67.getDateFin(), result.getDateFin());
+		assertEquals(p67.getQuantite(), result.getQuantite());
+		assertEquals(p67.getAbsenceConcertee(), result.getAbsenceConcertee());
+		assertEquals(p67.getHeureSupRecuperee(), result.getHeureSupRecuperee());
+		assertEquals(p67.getType(), result.getType());
+		
 	}
 	
 	@Test

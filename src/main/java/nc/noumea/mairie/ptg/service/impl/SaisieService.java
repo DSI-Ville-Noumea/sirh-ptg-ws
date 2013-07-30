@@ -49,7 +49,7 @@ public class SaisieService implements ISaisieService {
 		
 		Integer idAgent = fichePointageDto.getAgent().getIdAgent();
 		
-		List<Pointage> originalAgentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi);
+		List<Pointage> originalAgentPointages = pointageService.getLatestPointagesForAgentAndDateMonday(idAgent, dateLundi);
 		
 		List<Pointage> finalPointages = new ArrayList<Pointage>();
 		

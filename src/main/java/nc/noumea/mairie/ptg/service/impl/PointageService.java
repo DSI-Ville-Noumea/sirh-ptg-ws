@@ -198,18 +198,9 @@ public class PointageService implements IPointageService {
 		return null;
 	}
 
-	/**
-	 * Based on the user input, this code retrieves a Pointage if existing,
-	 * creates a new one if not.
-	 * 
-	 * @param idPointage
-	 * @param idAgent
-	 * @param dateLundi
-	 * @return
-	 */
 	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Pointage pointage) {
-		return getOrCreateNewPointage(idAgentCreator, pointage.getIdPointage(), pointage.getIdAgent(), pointage.getDateLundi(), pointage.getRefPrime()
-				.getIdRefPrime());
+		return getOrCreateNewPointage(idAgentCreator, pointage.getIdPointage(), pointage.getIdAgent(), pointage.getDateLundi(), 
+				pointage.getRefPrime() == null ? null : pointage.getRefPrime().getIdRefPrime());
 	}
 
 	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage) {
@@ -246,6 +237,17 @@ public class PointageService implements IPointageService {
 		ptg.setDateLundi(dateLundi);
 		addEtatPointage(ptg, EtatPointageEnum.SAISI, idAgentCreator);
 
+		// If this pointage is a new version of an existing one,
+		// initialize its properties with the parent Pointage
+		if (parentPointage != null) {
+			ptg.setDateDebut(parentPointage.getDateDebut());
+			ptg.setDateFin(parentPointage.getDateFin());
+			ptg.setQuantite(parentPointage.getQuantite());
+			ptg.setAbsenceConcertee(parentPointage.getAbsenceConcertee());
+			ptg.setHeureSupRecuperee(parentPointage.getHeureSupRecuperee());
+			ptg.setType(parentPointage.getType());
+		}
+		
 		// if this is a Prime kind of Pointage, fetch its RefPrime
 		if (idRefPrime != null)
 			ptg.setRefPrime(pointageRepository.getEntity(RefPrime.class, idRefPrime));
@@ -292,23 +294,35 @@ public class PointageService implements IPointageService {
 		return res;
 	}
 
-	@Override
+	public List<Pointage> getLatestPointagesForAgentAndDateMonday(Integer idAgent, Date dateMonday) {
+		
+		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateMonday);
+
+		logger.debug("Found {} Pointage for agent {} and date monday {}", agentPointages.size(), idAgent, dateMonday);
+		
+		return filterOldPointagesAndEtatFromList(agentPointages, null);
+	}
+	
 	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum type, List<EtatPointageEnum> etats) {
 		return getLatestPointagesForAgentsAndDates(Arrays.asList(idAgent), fromDate, toDate, type, etats);
 	}
 	
-	@Override
 	public List<Pointage> getLatestPointagesForAgentsAndDates(List<Integer> idAgents, Date fromDate, Date toDate, RefTypePointageEnum type, List<EtatPointageEnum> etats) {
 
 		List<Pointage> agentPointages = pointageRepository.getListPointages(idAgents, fromDate, toDate, type != null ? type.getValue() : null);
 
 		logger.debug("Found {} Pointage for agents {} between dates {} and {}", agentPointages.size(), idAgents, fromDate, toDate);
 
+		return filterOldPointagesAndEtatFromList(agentPointages, etats);
+	}
+	
+	protected List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats) {
+		
 		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
 
 		List<Pointage> resultList = new ArrayList<Pointage>();
 		
-		for (Pointage ptg : agentPointages) {
+		for (Pointage ptg : pointages) {
 
 			if (ptg.getPointageParent() != null) {
 				logger.debug("Pointage {} has a parent {}, adding it to avoid list.", ptg.getIdPointage(), ptg.getPointageParent().getIdPointage());
@@ -322,6 +336,8 @@ public class PointageService implements IPointageService {
 			
 			if (etats == null || etats.contains(ptg.getLatestEtatPointage().getEtat()))
 				resultList.add(ptg);
+			else
+				logger.debug("Not taking Pointage {} because not in the given Etat list : {}.", ptg.getIdPointage(), etats);
 		}
 		
 		return resultList;

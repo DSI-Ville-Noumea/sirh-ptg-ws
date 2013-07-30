@@ -19,12 +19,32 @@ public interface IPointageService {
 
 	List<RefTypePointageDto> getRefTypesPointage();
 
+	/**
+	 * Based on the user input, this code retrieves a Pointage if existing,
+	 * creates a new one if not.
+	 * It does NOT set its pointage characteristics (dateDebut, dateFin, quantite and booleans)
+	 * @param idAgentCreator
+	 * @param pointage
+	 * @return
+	 */
 	Pointage getOrCreateNewPointage(Integer idAgentCreator, Pointage pointage);
 	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage);
 	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi);
 	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime);
 
 	FichePointageListDto getFichesPointageForUsers(String csvIdAgents, Date date);
+	
+	/**
+	 * This method searches through the list of Pointages given a set of filters (agentId, and dateLundi).
+	 * In the case a Pointage has multiple records (to keep history on its different statuses)
+	 * Only the latest version will be returned.
+	 * This means that if a Pointage's old version satisfies all the filters but its new version doesn't
+	 * this Pointage will not be returned at all.
+	 * @param idAgent
+	 * @param dateMonday
+	 * @return
+	 */
+	List<Pointage> getLatestPointagesForAgentAndDateMonday(Integer idAgent, Date dateMonday);
 	
 	/**
 	 * This method searches through the list of Pointages given a set of filters (agentId, from and to dates

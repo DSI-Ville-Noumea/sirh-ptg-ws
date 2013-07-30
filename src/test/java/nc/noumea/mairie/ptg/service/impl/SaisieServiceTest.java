@@ -28,8 +28,6 @@ import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
-import nc.noumea.mairie.ptg.service.impl.HelperService;
-import nc.noumea.mairie.ptg.service.impl.SaisieService;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -461,16 +459,16 @@ public class SaisieServiceTest {
 		e2.setEtat(EtatPointageEnum.REFUSE);
 		p2.getEtats().add(e2);
 		
-		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(p, p2));
-
+		IPointageService pService = Mockito.mock(IPointageService.class);
+		Mockito.when(pService.getLatestPointagesForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(p, p2));
+		
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
 		
 		SaisieService service = Mockito.spy(new SaisieService());
 		Mockito.doNothing().when(service).deletePointages(9001234, Arrays.asList(p, p2));
 		
 		ReflectionTestUtils.setField(service, "helperService", hS);
-		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		
 		// When
