@@ -144,10 +144,6 @@ public class SaisieService implements ISaisieService {
 				pointageToDelete.remove();
 				continue;
 			}
-			
-			// Otherwise, create a new record of the Pointage with values set to 0 (in order to keep track of deletion)
-			Pointage pbis = pointageService.getOrCreateNewPointage(idAgentOperator, pointageToDelete);
-			pointageRepository.savePointage(pbis);
 		}
 	}
 	

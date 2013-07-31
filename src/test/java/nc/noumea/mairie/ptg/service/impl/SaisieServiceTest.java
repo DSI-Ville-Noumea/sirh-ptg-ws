@@ -13,6 +13,7 @@ import java.util.List;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
@@ -499,36 +500,73 @@ public class SaisieServiceTest {
 	}
 	
 	@Test
-	public void deletePointages_1PointageNotSaisi_createANewOneToSave() {
+	public void crudComments_motif_commentaire_newString() {
 		
 		// Given
-		Pointage p1 = Mockito.spy(new Pointage());
-		Mockito.doNothing().when(p1).remove();
-		EtatPointage e1 = new EtatPointage();
-		e1.setEtat(EtatPointageEnum.VENTILE);
-		p1.getEtats().add(e1);
+		Pointage ptg = new Pointage();
+		String motif = "motif";
+		String commentaire = "commentaire";
 		
-		Pointage p1bis = new Pointage();
-		p1bis.setPointageParent(p1);
-		EtatPointage e2 = new EtatPointage();
-		e2.setEtat(EtatPointageEnum.SAISI);
-		p1bis.getEtats().add(e2);
-		
-		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		
-		IPointageService pService = Mockito.mock(IPointageService.class);
-		Mockito.when(pService.getOrCreateNewPointage(9001234, p1)).thenReturn(p1bis);
-		
-		List<Pointage> ptgToDelete = Arrays.asList(p1);
 		SaisieService service = new SaisieService();
-		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		ReflectionTestUtils.setField(service, "pointageService", pService);
 		
 		// When
-		service.deletePointages(9001234, ptgToDelete);
+		service.crudComments(ptg, motif, commentaire);
 		
 		// Then
-		Mockito.verify(pRepo, Mockito.times(1)).savePointage(p1bis);
+		assertEquals(motif, ptg.getMotif().getText());
+		assertEquals(commentaire, ptg.getCommentaire().getText());
 	}
 	
+	@Test
+	public void crudComments_motif_commentaire_modifyString() {
+		
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setMotif(new PtgComment());
+		ptg.getMotif().setText("value");
+		ptg.setCommentaire(new PtgComment());
+		ptg.getMotif().setText("value");
+		String motif = "motif";
+		String commentaire = "commentaire";
+		
+		SaisieService service = new SaisieService();
+		
+		// When
+		service.crudComments(ptg, motif, commentaire);
+		
+		// Then
+		assertEquals(motif, ptg.getMotif().getText());
+		assertEquals(commentaire, ptg.getCommentaire().getText());
+	}
+	
+	@Test
+	public void crudComments_motif_commentaire_deleteComment() {
+		
+		// Given
+		PtgComment existingMotif = Mockito.spy(new PtgComment());
+		existingMotif.setText("value");
+		Mockito.doNothing().when(existingMotif).remove();
+		PtgComment existingComment = Mockito.spy(new PtgComment());
+		Mockito.doNothing().when(existingComment).remove();
+		
+		existingComment.setText("value2");
+		Pointage ptg = new Pointage();
+		ptg.setMotif(existingMotif);
+		ptg.setCommentaire(existingComment);
+		
+		String motif = "";
+		String commentaire = "";
+		
+		SaisieService service = new SaisieService();
+		
+		// When
+		service.crudComments(ptg, motif, commentaire);
+		
+		// Then
+		assertNull(ptg.getMotif());
+		assertNull(ptg.getCommentaire());
+
+		Mockito.verify(existingMotif, Mockito.times(1)).remove();
+		Mockito.verify(existingComment, Mockito.times(1)).remove();
+	}
 }

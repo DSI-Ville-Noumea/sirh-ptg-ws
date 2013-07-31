@@ -24,14 +24,32 @@ public interface IPointageService {
 	 * creates a new one if not.
 	 * It does NOT set its pointage characteristics (dateDebut, dateFin, quantite and booleans)
 	 * @param idAgentCreator
-	 * @param pointage
+	 * @param idPointage
+	 * @param idAgent
+	 * @param dateLundi
 	 * @return
 	 */
-	Pointage getOrCreateNewPointage(Integer idAgentCreator, Pointage pointage);
-	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage);
 	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi);
+	
+	/**
+	 * Based on the user input, this code retrieves a Pointage if existing,
+	 * creates a new one if not.
+	 * It does NOT set its pointage characteristics (dateDebut, dateFin, quantite and booleans)
+	 * @param idAgentCreator
+	 * @param idPointage
+	 * @param idAgent
+	 * @param dateLundi
+	 * @param idRefPrime
+	 * @return
+	 */
 	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime);
 
+	/**
+	 * Returns a list of FichePointageDto initialized with Agents assigned PRIMES at a given date
+	 * @param csvIdAgents
+	 * @param date
+	 * @return
+	 */
 	FichePointageListDto getFichesPointageForUsers(String csvIdAgents, Date date);
 	
 	/**

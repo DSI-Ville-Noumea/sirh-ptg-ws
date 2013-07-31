@@ -10,6 +10,7 @@ import nc.noumea.mairie.domain.SppactId;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IExportPaieRepository;
+import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.service.IExportAbsencePaieAbsenceService;
 
 import org.joda.time.DateTime;
@@ -22,6 +23,9 @@ public class ExportAbsencePaieService implements IExportAbsencePaieAbsenceServic
 
 	@Autowired
 	private IExportPaieRepository exportPaieRepository;
+	
+	@Autowired
+	private IMairieRepository mairieRepository;
 	
 	@Autowired
 	private HelperService helperService;
@@ -41,10 +45,7 @@ public class ExportAbsencePaieService implements IExportAbsencePaieAbsenceServic
 			// Compute the time period in minutes, add them to potential existing minutes for that day, and convert them to Mairie Format
 			Period p = new Period(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin()));
 			int nbMinutesAlreadySet = helperService.convertMairieNbHeuresFormatToMinutes(act.getNbHeures());
-			act.setNbHeures(helperService.convertMinutesToMairieNbHeuresFormat(nbMinutesAlreadySet + p.getMinutes()));
-			
-			// List this Sppact as modified and prepare it in the list
-			modifiedOrAddedSppact.add(act);
+			act.setNbHeures(helperService.convertMinutesToMairieNbHeuresFormat(nbMinutesAlreadySet + p.toStandardMinutes().getMinutes()));
 		}
 		
 		return modifiedOrAddedSppact;
@@ -57,28 +58,27 @@ public class ExportAbsencePaieService implements IExportAbsencePaieAbsenceServic
 		Integer nomatr = helperService.getMairieMatrFromIdAgent(idAgent);
 		Integer dateJourMairie = helperService.getIntegerDateMairieFromDate(dateJour);
 		String codeActi = isConcertee ? Spacti.CODE_ACTIVITE_ABS_CONCERTEE : Spacti.CODE_ACTIVITE_ABS_NON_CONCERTEE;
-		Spacti activite = Spacti.findSpacti(codeActi);
+		Spacti activite = mairieRepository.getEntity(Spacti.class, codeActi);
 		
 		// First search through existing spacti
 		for (Sppact a : existingRecords) {
 			if (a.getId().getNomatr().equals(nomatr) 
 				&& a.getId().getDateJour().equals(dateJourMairie)
 				&& a.getId().getActivite().equals(activite)) {
-				act = a;
-				break;
+				return a;
 			}
 		}
 
 		// Then Look for an exising record already existing in the DB
-		if (act == null) {
-			act = exportPaieRepository.getSppactForDayAndAgent(idAgent, dateJour, codeActi);
-		}
+		act = exportPaieRepository.getSppactForDayAndAgent(idAgent, dateJour, codeActi);
 		
 		// At last create a new record
 		if (act == null) {
 			act = new Sppact();
 			act.setId(new SppactId(nomatr, dateJourMairie, activite));
 		}
+		
+		existingRecords.add(act);
 		
 		return act;
 	}

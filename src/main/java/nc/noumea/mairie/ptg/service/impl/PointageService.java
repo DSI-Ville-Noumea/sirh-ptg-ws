@@ -25,8 +25,8 @@ import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
@@ -192,19 +192,6 @@ public class PointageService implements IPointageService {
 		}
 
 		return ficheDto;
-	}
-
-	protected Pointage getPointageBasedOnEtatPointage() {
-		return null;
-	}
-
-	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Pointage pointage) {
-		return getOrCreateNewPointage(idAgentCreator, pointage.getIdPointage(), pointage.getIdAgent(), pointage.getDateLundi(), 
-				pointage.getRefPrime() == null ? null : pointage.getRefPrime().getIdRefPrime());
-	}
-
-	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage) {
-		return getOrCreateNewPointage(idAgentCreator, idPointage, null, null, null);
 	}
 
 	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi) {
