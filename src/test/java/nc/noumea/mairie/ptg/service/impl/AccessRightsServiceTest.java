@@ -19,9 +19,7 @@ import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
-import nc.noumea.mairie.ptg.service.impl.AccessRightsService;
-import nc.noumea.mairie.ptg.service.impl.HelperService;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -413,13 +411,13 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
 
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mRepo.getAgent(1)).thenReturn(a1);
 		Mockito.when(mRepo.getAgent(2)).thenReturn(a2);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 
 		// When
 		List<AgentDto> result = service.getAgentsToApproveOrInput(idAgent);
@@ -593,12 +591,12 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droit);
 
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mRepo.getAgent(9008778)).thenReturn(delegataire);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 
 		// When
 		DelegatorAndOperatorsDto result = service.getDelegatorAndOperators(idAgent);
@@ -625,12 +623,12 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droit);
 
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mRepo.getAgent(9008778)).thenReturn(ope);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 
 		// When
 		DelegatorAndOperatorsDto result = service.getDelegatorAndOperators(idAgent);

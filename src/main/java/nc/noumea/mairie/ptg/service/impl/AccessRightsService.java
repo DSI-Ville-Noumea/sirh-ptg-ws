@@ -12,7 +12,7 @@ import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;
@@ -36,7 +36,7 @@ public class AccessRightsService implements IAccessRightsService {
 	private IAccessRightsRepository accessRightsRepository;
 
 	@Autowired
-	private IMairieRepository mairieRepository;
+	private ISirhRepository sirhRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
@@ -71,7 +71,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		if (droit.getIdAgentDelegataire() != null) {
-			Agent delegataire = mairieRepository.getAgent(droit.getIdAgentDelegataire());
+			Agent delegataire = sirhRepository.getAgent(droit.getIdAgentDelegataire());
 
 			if (delegataire == null)
 				logger.warn("L'agent délégataire {} n'existe pas.", droit.getIdAgentDelegataire());
@@ -80,7 +80,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		for (Droit operateur : droit.getOperateurs()) {
-			Agent ope = mairieRepository.getAgent(operateur.getIdAgent());
+			Agent ope = sirhRepository.getAgent(operateur.getIdAgent());
 			if (ope == null)
 				logger.warn("L'agent opérateur {} n'existe pas.", operateur.getIdAgent());
 			else
@@ -257,7 +257,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
 			AgentDto agDto = new AgentDto();
-			Agent ag = mairieRepository.getAgent(da.getIdAgent());
+			Agent ag = sirhRepository.getAgent(da.getIdAgent());
 			agDto.setIdAgent(da.getIdAgent());
 			agDto.setNom(ag.getDisplayNom());
 			agDto.setPrenom(ag.getDisplayPrenom());

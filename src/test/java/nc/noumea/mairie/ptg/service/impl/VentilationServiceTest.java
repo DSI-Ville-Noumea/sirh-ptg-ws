@@ -22,7 +22,7 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
@@ -166,7 +166,7 @@ public class VentilationServiceTest {
 		Mockito.when(ventilRepo.getListPointagesAbsenceAndHSupForVentilation(idAgent, fromEtatDate, toEtatDate, dateLundi))
 				.thenReturn(Arrays.asList(p1));
 		
-		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getPrimePointagesByAgent(idAgent,dateLundi)).thenReturn(Arrays.asList(1128, 1135));
 		
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
@@ -179,7 +179,7 @@ public class VentilationServiceTest {
 		
 		VentilationService service = new VentilationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilRepo);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
 		ReflectionTestUtils.setField(service, "ventilationAbsenceService", absV);
 		
@@ -213,7 +213,7 @@ public class VentilationServiceTest {
 		Mockito.when(ventilRepo.getListPointagesAbsenceAndHSupForVentilation(idAgent, fromEtatDate, toEtatDate, dateLundi))
 				.thenReturn(Arrays.asList(p1));
 		
-		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(Arrays.asList(1128, 1150, 1135));
 		
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
@@ -226,7 +226,7 @@ public class VentilationServiceTest {
 		
 		VentilationService service = new VentilationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilRepo);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
 		ReflectionTestUtils.setField(service, "ventilationAbsenceService", absV);
 		
@@ -265,11 +265,11 @@ public class VentilationServiceTest {
 		Mockito.when(absV.processAbsenceAgent(Mockito.eq(idAgent), Mockito.anyListOf(Pointage.class), Mockito.any(Date.class)))
 				.thenReturn(ventilAbs);
 		
-		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(Arrays.asList(1128));
 		
 		VentilationService service = new VentilationService();
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilRepo);
 		ReflectionTestUtils.setField(service, "ventilationAbsenceService", absV);
 		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
@@ -354,14 +354,14 @@ public class VentilationServiceTest {
 		
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(20); // F
-		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getAgentCurrentCarriere(Mockito.eq(8765), Mockito.eq(dateLundi))).thenReturn(carr);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
 		
 		VentilationService service = new VentilationService();
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
 		ReflectionTestUtils.setField(service, "pointageCalculeService", ptgCService);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
@@ -442,14 +442,14 @@ public class VentilationServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(20); // F
 		
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(7898, asOfDate)).thenReturn(carr);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getMairieMatrFromIdAgent(9007898)).thenReturn(7898);
 		
 		VentilationService service = new VentilationService();
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
 		
 		// When
@@ -468,14 +468,14 @@ public class VentilationServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(7); // CC
 		
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(7898, asOfDate)).thenReturn(carr);
 		
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getMairieMatrFromIdAgent(9007898)).thenReturn(7898);
 		
 		VentilationService service = new VentilationService();
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
 		
 		// When

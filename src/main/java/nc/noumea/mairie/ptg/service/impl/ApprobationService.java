@@ -16,7 +16,7 @@ import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
 import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IApprobationService;
 import nc.noumea.mairie.ptg.service.IPointageService;
@@ -39,7 +39,7 @@ public class ApprobationService implements IApprobationService {
 	private IAccessRightsRepository accessRightsRepository;
 
 	@Autowired
-	private IMairieRepository mairieRepository;
+	private ISirhRepository sirhRepository;
 
 	@Autowired
 	private HelperService helperService;
@@ -90,7 +90,7 @@ public class ApprobationService implements IApprobationService {
 				idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)));
 		
 		for (Pointage ptg : pointages) {
-			AgentDto agDto = new AgentDto(mairieRepository.getAgent(ptg.getIdAgent()));
+			AgentDto agDto = new AgentDto(sirhRepository.getAgent(ptg.getIdAgent()));
 			ConsultPointageDto dto = new ConsultPointageDto(ptg);
 			dto.updateEtat(ptg.getLatestEtatPointage());
 			dto.setAgent(agDto);
@@ -110,7 +110,7 @@ public class ApprobationService implements IApprobationService {
 		for (Pointage ptg : list) {
 
 			for (EtatPointage etat : ptg.getEtats()) {
-				AgentDto agDto = new AgentDto(mairieRepository.getAgent(etat.getIdAgent()));
+				AgentDto agDto = new AgentDto(sirhRepository.getAgent(etat.getIdAgent()));
 				ConsultPointageDto dto = new ConsultPointageDto(ptg);
 				dto.updateEtat(etat);
 				dto.setAgent(agDto);

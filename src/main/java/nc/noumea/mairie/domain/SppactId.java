@@ -29,6 +29,16 @@ public class SppactId implements Serializable {
 		return super.equals(obj);
 	}
 	
+	public SppactId() {
+		
+	}
+	
+	public SppactId(Integer nomatr, Integer dateJour, Spacti activite) {
+		this.nomatr = nomatr;
+		this.dateJour = dateJour;
+		this.activite = activite;
+	}
+	
 	@Column(name = "NOMATR", columnDefinition = "numeric")
 	private Integer nomatr;
 	

@@ -24,8 +24,8 @@ import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -96,7 +96,7 @@ public class PointageServiceTest {
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(Arrays.asList(rp1, rp2));
 
-		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getAgentCurrentCarriere(agent, d)).thenReturn(carr);
 		Mockito.when(mairieRepo.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
 
@@ -109,7 +109,7 @@ public class PointageServiceTest {
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
 
 		FichePointageDto dto = service.getFichePointageForAgent(agent, d);
@@ -197,7 +197,7 @@ public class PointageServiceTest {
 		e2.setEtat(EtatPointageEnum.APPROUVE);
 		p2.getEtats().add(e2);
 
-		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
@@ -210,7 +210,7 @@ public class PointageServiceTest {
 		PointageService service = Mockito.spy(new PointageService());
 		Mockito.doReturn(dto).when(service).getFichePointageForAgent(ag, dateLundi);
 
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
 
@@ -295,7 +295,7 @@ public class PointageServiceTest {
 		e2.setEtat(EtatPointageEnum.APPROUVE);
 		p2.getEtats().add(e2);
 
-		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
@@ -308,7 +308,7 @@ public class PointageServiceTest {
 		PointageService service = Mockito.spy(new PointageService());
 		Mockito.doReturn(dto).when(service).getFichePointageForAgent(ag, dateLundi);
 
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
 
@@ -416,7 +416,7 @@ public class PointageServiceTest {
 		e3.setEtat(EtatPointageEnum.REFUSE_DEFINITIVEMENT);
 		p3.getEtats().add(e3);
 
-		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
@@ -430,7 +430,7 @@ public class PointageServiceTest {
 		PointageService service = Mockito.spy(new PointageService());
 		Mockito.doReturn(dto).when(service).getFichePointageForAgent(ag, dateLundi);
 
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
 

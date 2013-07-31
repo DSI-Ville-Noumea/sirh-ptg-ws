@@ -11,7 +11,7 @@ import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.sirh.domain.Agent;
 
-public interface IMairieRepository {
+public interface ISirhRepository {
 
 	Agent getAgent(int idAgent);
 

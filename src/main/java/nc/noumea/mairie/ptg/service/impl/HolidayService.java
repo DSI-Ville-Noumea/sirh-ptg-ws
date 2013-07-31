@@ -2,7 +2,7 @@ package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.Date;
 
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IHolidayService;
 
 import org.joda.time.DateTime;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class HolidayService implements IHolidayService {
 
 	@Autowired
-	private IMairieRepository mairieRepository;
+	private ISirhRepository sirhRepository;
 
 	public boolean isHoliday(DateTime day) {
 		return isHoliday(day.toDate());
@@ -27,6 +27,6 @@ public class HolidayService implements IHolidayService {
 
 	@Override
 	public boolean isHoliday(Date day) {
-		return mairieRepository.isJourHoliday(day);
+		return sirhRepository.isJourHoliday(day);
 	}
 }

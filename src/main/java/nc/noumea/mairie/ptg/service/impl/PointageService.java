@@ -25,7 +25,7 @@ import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
@@ -47,7 +47,7 @@ public class PointageService implements IPointageService {
 	private IPointageRepository pointageRepository;
 
 	@Autowired
-	private IMairieRepository mairieRepository;
+	private ISirhRepository sirhRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
@@ -73,7 +73,7 @@ public class PointageService implements IPointageService {
 
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
-		Spcarr carr = mairieRepository.getAgentCurrentCarriere(agent, helperService.getCurrentDate());
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(agent, helperService.getCurrentDate());
 		agentDto.setStatut(carr.getStatutCarriere().name());
 
 		// on construit le DTO de jourPointage
@@ -84,7 +84,7 @@ public class PointageService implements IPointageService {
 
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
-		List<Integer> pps = mairieRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		List<Integer> pps = sirhRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
 		if (pps.size() > 0) {
 			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
 
@@ -135,7 +135,7 @@ public class PointageService implements IPointageService {
 	@Override
 	public FichePointageDto getFilledFichePointageForAgent(int idAgent, Date dateLundi) {
 
-		Agent agent = mairieRepository.getAgent(idAgent);
+		Agent agent = sirhRepository.getAgent(idAgent);
 
 		FichePointageDto ficheDto = getFichePointageForAgent(agent, dateLundi);
 

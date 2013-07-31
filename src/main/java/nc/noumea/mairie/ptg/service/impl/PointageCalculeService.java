@@ -11,7 +11,7 @@ import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
@@ -27,7 +27,7 @@ import org.springframework.stereotype.Service;
 public class PointageCalculeService implements IPointageCalculeService {
 
 	@Autowired 
-	private IMairieRepository mairieRepository;
+	private ISirhRepository sirhRepository;
 	
 	@Autowired
 	private IPointageRepository pointageRepository;
@@ -41,7 +41,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 	 */
 	public List<PointageCalcule> calculatePointagesForAgentAndWeek(Integer idAgent, AgentStatutEnum statut, Date dateLundi, List<Pointage> agentPointages) {
 		
-		List<Integer> norubrs = mairieRepository.getPrimePointagesByAgent(idAgent, dateLundi);
+		List<Integer> norubrs = sirhRepository.getPrimePointagesByAgent(idAgent, dateLundi);
 		List<RefPrime> refPrimes = pointageRepository.getRefPrimes(norubrs, statut);
 		
 		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>();
