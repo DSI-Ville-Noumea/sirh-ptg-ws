@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -103,5 +105,37 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 
 		assertFalse(service.isDateAMonday(new LocalDate(2013, 7, 2).toDate()));
+	}
+	
+
+	@Test
+	public void getTypeChainePaieFromStatut_Statut_F_ReturnSHC() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals(TypeChainePaieEnum.SHC, service.getTypeChainePaieFromStatut(AgentStatutEnum.F));
+		
+	}
+	
+	@Test
+	public void getTypeChainePaieFromStatut_Statut_C_ReturnSHC() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals(TypeChainePaieEnum.SHC, service.getTypeChainePaieFromStatut(AgentStatutEnum.C));
+	}
+	
+	@Test
+	public void getTypeChainePaieFromStatut_Statut_CC_ReturnCC() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals(TypeChainePaieEnum.SCV, service.getTypeChainePaieFromStatut(AgentStatutEnum.CC));
 	}
 }

@@ -17,8 +17,8 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
@@ -61,7 +61,7 @@ public class VentilationService implements IVentilationService {
 	public void processVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType) {
 		
 		// Retrieving the current ventilation dates (from / to)
-		TypeChainePaieEnum typeChainePaie = getTypeChainePaieFromStatut(statut);
+		TypeChainePaieEnum typeChainePaie = helperService.getTypeChainePaieFromStatut(statut);
 		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, true);
 		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, false);
 		
@@ -127,13 +127,6 @@ public class VentilationService implements IVentilationService {
 			markPointagesAsVentile(pointagesVentiles, agent, toVentilDate);
 		}
 		
-	}
-
-	protected TypeChainePaieEnum getTypeChainePaieFromStatut(AgentStatutEnum statut) {
-		if (statut == AgentStatutEnum.CC)
-			return TypeChainePaieEnum.SCV;
-		else
-			return TypeChainePaieEnum.SHC;
 	}
 
 	protected List<Date> getDistinctDateLundiFromListOfDates(List<Date> dates) {

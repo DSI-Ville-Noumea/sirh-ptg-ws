@@ -486,37 +486,6 @@ public class VentilationServiceTest {
 	}
 	
 	@Test
-	public void getTypeChainePaieFromStatut_Statut_F_ReturnSHC() {
-		
-		// Given
-		VentilationService service = new VentilationService();
-		
-		// Then
-		assertEquals(TypeChainePaieEnum.SHC, service.getTypeChainePaieFromStatut(AgentStatutEnum.F));
-		
-	}
-	
-	@Test
-	public void getTypeChainePaieFromStatut_Statut_C_ReturnSHC() {
-		
-		// Given
-		VentilationService service = new VentilationService();
-		
-		// Then
-		assertEquals(TypeChainePaieEnum.SHC, service.getTypeChainePaieFromStatut(AgentStatutEnum.C));
-	}
-	
-	@Test
-	public void getTypeChainePaieFromStatut_Statut_CC_ReturnCC() {
-		
-		// Given
-		VentilationService service = new VentilationService();
-		
-		// Then
-		assertEquals(TypeChainePaieEnum.SCV, service.getTypeChainePaieFromStatut(AgentStatutEnum.CC));
-	}
-	
-	@Test
 	public void getDistinctDateLundiFromListOfDates_3dates_2dateLundi() {
 	
 		// Given
@@ -584,8 +553,12 @@ public class VentilationServiceTest {
 		Mockito.when(vRepo.getDistinctDatesOfPointages(9005432, lastUnPaidDate, ventilationDate)).thenReturn(pointagesDates);
 		Mockito.when(vRepo.getListIdAgentsForVentilationByDateAndEtat(lastPaidDate, lastUnPaidDate)).thenReturn(agentList);
 		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SHC);
+		
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		Spcarr carr = new Spcarr();
 		Mockito.doReturn(carr).when(service).isAgentEligibleToVentilation(9005432, statut, lastUnPaidDate);

@@ -5,6 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
+
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
@@ -76,5 +79,12 @@ public class HelperService {
 		double result = (double) (nbHours * 100 + nbMinutes) / 100;
 		
 		return result;
+	}
+	
+	public TypeChainePaieEnum getTypeChainePaieFromStatut(AgentStatutEnum statut) {
+		if (statut == AgentStatutEnum.CC)
+			return TypeChainePaieEnum.SCV;
+		else
+			return TypeChainePaieEnum.SHC;
 	}
 }
