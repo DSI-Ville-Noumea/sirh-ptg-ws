@@ -23,6 +23,7 @@ public class EtatPointage {
 	@Enumerated(EnumType.ORDINAL)
 	private EtatPointageEnum etat;
 	
+	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 }
