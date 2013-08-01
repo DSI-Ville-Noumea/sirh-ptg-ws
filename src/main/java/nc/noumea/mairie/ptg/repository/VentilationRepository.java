@@ -257,4 +257,8 @@ public class VentilationRepository implements IVentilationRepository {
 		ptgEntityManager.flush();
 	}
 
+	@Override
+	public List<Pointage> getPointagesVentilesForAgent(Integer idAgent, Integer idVentilDate) {
+		return null;
+	}
 }

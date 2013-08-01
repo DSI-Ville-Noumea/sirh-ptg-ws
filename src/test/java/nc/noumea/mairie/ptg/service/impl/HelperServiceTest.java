@@ -90,7 +90,47 @@ public class HelperServiceTest {
 	
 		HelperService service = new HelperService();
 
-		assertNull(service.getDateFromMairieInteger(null));
+		assertNull(service.getDateFromMairieInteger(0));
+	}
+	
+	@Test
+	public void getIntegerMonthDateMairieFromDate_ConvertToIntegerYYYYMM() {
+		
+		HelperService service = new HelperService();
+
+		assertEquals(201207, (int) service.getIntegerMonthDateMairieFromDate(new DateTime(2012, 7, 30, 9, 8, 54).toDate()));
+	}
+	
+	@Test
+	public void getIntegerMonthDateMairieFromDate_dateIsNull_Return0() {
+		
+		HelperService service = new HelperService();
+
+		assertEquals(0, (int) service.getIntegerMonthDateMairieFromDate(null));
+	}
+	
+	@Test
+	public void getMonthDateFromMairieInteger_201207_ReturnDateObject() {
+	
+		HelperService service = new HelperService();
+
+		assertEquals(new LocalDate(2012, 7, 1).toDate(), service.getMonthDateFromMairieInteger(201207));
+	}
+	
+	@Test
+	public void getMonthDateFromMairieInteger_null_ReturnNull() {
+	
+		HelperService service = new HelperService();
+
+		assertNull(service.getMonthDateFromMairieInteger(0));
+	}
+	
+	@Test
+	public void getMonthDateFromMairieInteger_0_ReturnNull() {
+	
+		HelperService service = new HelperService();
+
+		assertNull(service.getMonthDateFromMairieInteger(null));
 	}
 	
 	@Test

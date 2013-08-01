@@ -52,7 +52,8 @@ public class VisualisationController {
 			@RequestParam("from") @DateTimeFormat(pattern = "YYYYMMdd") Date fromDate,
 			@RequestParam("to") @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
 			@RequestParam(value = "codeService", required = false) String codeService,
-			@RequestParam(value = "agent", required = false) Integer agent, @RequestParam(value = "etat", required = false) Integer idRefEtat,
+			@RequestParam(value = "agent", required = false) Integer agent, 
+			@RequestParam(value = "etat", required = false) Integer idRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType) {
 
 		logger.debug(

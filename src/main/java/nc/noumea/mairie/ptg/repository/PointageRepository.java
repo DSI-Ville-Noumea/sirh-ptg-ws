@@ -66,34 +66,7 @@ public class PointageRepository implements IPointageRepository {
 		return query.getResultList();
 	}
 
-	public List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
-
-		StringBuilder sb = new StringBuilder();
-		sb.append("select ptg from Pointage ptg ");
-		sb.append("LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type ");
-		sb.append("where ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate ");
-		
-		if (idRefType != null)
-			sb.append("and ptg.type.idRefTypePointage = :idRefTypePointage ");
-		
-		if (idAgents != null && idAgents.size() > 0)
-			sb.append("and ptg.idAgent in :idAgents ");
-
-		sb.append("order by ptg.idPointage desc ");
-
-		TypedQuery<Pointage> query = ptgEntityManager.createQuery(sb.toString(), Pointage.class);
-		query.setParameter("fromDate", fromDate);
-		query.setParameter("toDate", toDate);
-
-		if (idRefType != null)
-			query.setParameter("idRefTypePointage", idRefType);
-
-		if (idAgents != null && idAgents.size() > 0)
-			query.setParameter("idAgents", idAgents);
-		
-		return query.getResultList();
-	}
-
+	@Override
 	public List<Pointage> getPointageArchives(Integer idPointage) {
 
 		Query q = ptgEntityManager.createNativeQuery(
@@ -124,13 +97,37 @@ public class PointageRepository implements IPointageRepository {
 		if (ptg.getIdPointage() == null || ptg.getIdPointage().equals(0))
 			ptgEntityManager.persist(ptg);
 	}
-
-	@Override
-	public <T> T getEntity(Class<T> Tclass, Object Id) {
-		return ptgEntityManager.find(Tclass, Id);
-	}
-
 	
+	@Override
+	public List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select ptg from Pointage ptg ");
+		sb.append("LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type ");
+		sb.append("where ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate ");
+		
+		if (idRefType != null)
+			sb.append("and ptg.type.idRefTypePointage = :idRefTypePointage ");
+		
+		if (idAgents != null && idAgents.size() > 0)
+			sb.append("and ptg.idAgent in :idAgents ");
+
+		sb.append("order by ptg.idPointage desc ");
+
+		TypedQuery<Pointage> query = ptgEntityManager.createQuery(sb.toString(), Pointage.class);
+		query.setParameter("fromDate", fromDate);
+		query.setParameter("toDate", toDate);
+
+		if (idRefType != null)
+			query.setParameter("idRefTypePointage", idRefType);
+
+		if (idAgents != null && idAgents.size() > 0)
+			query.setParameter("idAgents", idAgents);
+		
+		return query.getResultList();
+	}
+	
+	@Override
 	public List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
 
 		StringBuilder sb = new StringBuilder();
@@ -169,6 +166,11 @@ public class PointageRepository implements IPointageRepository {
 		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getRefPrimesByNorubr", RefPrime.class);
 		query.setParameter("noRubr", noRubr);
 		return query.getResultList();
+	}
+
+	@Override
+	public <T> T getEntity(Class<T> Tclass, Object Id) {
+		return ptgEntityManager.find(Tclass, Id);
 	}
 
 }

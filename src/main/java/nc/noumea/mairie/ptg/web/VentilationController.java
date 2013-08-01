@@ -37,6 +37,7 @@ public class VentilationController {
 	@RequestMapping(value = "/run", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional("ptgTransactionManager")
 	public ResponseEntity<String> runVentilation(
+			@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date ventilationDate,
 			@RequestParam(value = "typePointage", required = false) Integer idRefTypePointage,
 			@RequestParam(value = "statut") String statut,
@@ -50,7 +51,7 @@ public class VentilationController {
 		List<Integer> agents = new JSONDeserializer<List<Integer>>().use(null, ArrayList.class).use("values", Integer.class).deserialize(agentsJson);
 		
 		// Running ventilation
-		ventilationService.processVentilation(9005138, agents, ventilationDate, AgentStatutEnum.valueOf(statut), RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage));
+		ventilationService.processVentilation(idAgent, agents, ventilationDate, AgentStatutEnum.valueOf(statut), RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage));
 		
 		return new ResponseEntity<String>(HttpStatus.OK);
 	} 

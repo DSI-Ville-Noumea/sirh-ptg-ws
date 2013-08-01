@@ -51,6 +51,26 @@ public class HelperService {
 	public Integer getIntegerDateMairieFromDate(Date date) {
 		return date == null ? 0 : Integer.parseInt(mairieDateFormat.format(date));
 	}
+
+	private static SimpleDateFormat mairieMonthDateFormat = new SimpleDateFormat("yyyyMM");
+	
+	public Date getMonthDateFromMairieInteger(Integer monthDateAsInteger) {
+		if (monthDateAsInteger == null || monthDateAsInteger.equals(0))
+			return null;
+		
+		try {
+			return mairieMonthDateFormat.parse(String.valueOf(monthDateAsInteger));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
+	
+	public Integer getIntegerMonthDateMairieFromDate(Date date) {
+		return date == null ? 0 : Integer.parseInt(mairieMonthDateFormat.format(date));
+	}
 	
 	public Integer getMairieMatrFromIdAgent(Integer idAgent) {
 		return idAgent - 9000000;

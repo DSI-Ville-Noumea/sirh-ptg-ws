@@ -28,7 +28,7 @@ public interface IPointageRepository {
 
 	void savePointage(Pointage ptg);
 
-	<T> T getEntity(Class<T> Tclass, Object Id);
-
 	List<RefPrime> getRefPrimesListWithNoRubr(Integer noRubr);
+
+	<T> T getEntity(Class<T> Tclass, Object Id);
 }
