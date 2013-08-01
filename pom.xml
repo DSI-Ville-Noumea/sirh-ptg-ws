@@ -316,6 +316,8 @@
 				</configuration>
 				<!-- <configuration> <webXml>target/web.xml</webXml> </configuration> -->
 			</plugin>
+			<!-- Kept at 2.5.1 as this is the latest compatible version with ROO aspectjs -->
+			<!-- cf. https://jira.springsource.org/browse/ROO-3396 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
