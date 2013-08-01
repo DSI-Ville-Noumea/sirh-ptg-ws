@@ -46,7 +46,7 @@ public class ApprobationService implements IApprobationService {
 
 	@Autowired
 	private IPointageService pointageService;
-	
+
 	@Override
 	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService, Integer agent, Integer idRefEtat, Integer idRefType) {
 
@@ -78,17 +78,17 @@ public class ApprobationService implements IApprobationService {
 	public List<ConsultPointageDto> getPointagesSIRH(Date fromDate, Date toDate, List<Integer> agentIds, Integer idRefEtat, Integer idRefType) {
 		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType);
 	}
-	
+
 	protected List<ConsultPointageDto> createConsultPointageDtoListFromSearch(List<Integer> agentIds, Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType) {
-		
+
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 
 		// get pointages with filters
-		// We convert the 'toDate' date into the next day at 00H00 because the query will take it as a timestamp.
-		List<Pointage> pointages = pointageService.getLatestPointagesForAgentsAndDates(agentIds, fromDate, new LocalDate(toDate).plusDays(1).toDate(), 
-				RefTypePointageEnum.getRefTypePointageEnum(idRefType), 
+		// We convert the 'toDate' date into the next day at 00H00 because the
+		// query will take it as a timestamp.
+		List<Pointage> pointages = pointageService.getLatestPointagesForAgentsAndDates(agentIds, fromDate, new LocalDate(toDate).plusDays(1).toDate(), RefTypePointageEnum.getRefTypePointageEnum(idRefType),
 				idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)));
-		
+
 		for (Pointage ptg : pointages) {
 			AgentDto agDto = new AgentDto(sirhRepository.getAgent(ptg.getIdAgent()));
 			ConsultPointageDto dto = new ConsultPointageDto(ptg);
@@ -96,19 +96,22 @@ public class ApprobationService implements IApprobationService {
 			dto.setAgent(agDto);
 			result.add(dto);
 		}
-		
+
 		return result;
 	}
-	
+
 	@Override
 	public List<ConsultPointageDto> getPointagesArchives(Integer idAgent, Integer idPointage) {
+		return getPointagesArchives(idPointage);
+	}
+
+	@Override
+	public List<ConsultPointageDto> getPointagesArchives(Integer idPointage) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
-
 		List<Pointage> list = pointageRepository.getPointageArchives(idPointage);
 
 		for (Pointage ptg : list) {
-
 			for (EtatPointage etat : ptg.getEtats()) {
 				AgentDto agDto = new AgentDto(sirhRepository.getAgent(etat.getIdAgent()));
 				ConsultPointageDto dto = new ConsultPointageDto(ptg);
@@ -116,9 +119,7 @@ public class ApprobationService implements IApprobationService {
 				dto.setAgent(agDto);
 				result.add(dto);
 			}
-
 		}
-
 		return result;
 	}
 
@@ -146,19 +147,14 @@ public class ApprobationService implements IApprobationService {
 			// Check whether the user has sufficient rights to update this
 			// Pointage
 			if (!droitsAgentsIds.contains(ptg.getIdAgent())) {
-				result.getErrors().add(
-						String.format("L'agent %s n'a pas le droit de mettre à jour le pointage %s de l'agent %s.", idAgent, ptg.getIdPointage(),
-								ptg.getIdAgent()));
+				result.getErrors().add(String.format("L'agent %s n'a pas le droit de mettre à jour le pointage %s de l'agent %s.", idAgent, ptg.getIdPointage(), ptg.getIdAgent()));
 				continue;
 			}
 
 			// Check whether the current target and if it can be updated
 			EtatPointage currentEtat = ptg.getLatestEtatPointage();
-			if (currentEtat.getEtat() != EtatPointageEnum.SAISI && currentEtat.getEtat() != EtatPointageEnum.APPROUVE
-					&& currentEtat.getEtat() != EtatPointageEnum.REFUSE) {
-				result.getErrors().add(
-						String.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.", ptg.getIdPointage(),
-								ptg.getIdAgent(), currentEtat.getEtat().name()));
+			if (currentEtat.getEtat() != EtatPointageEnum.SAISI && currentEtat.getEtat() != EtatPointageEnum.APPROUVE && currentEtat.getEtat() != EtatPointageEnum.REFUSE) {
+				result.getErrors().add(String.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.", ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.getEtat().name()));
 				continue;
 			}
 
@@ -166,10 +162,7 @@ public class ApprobationService implements IApprobationService {
 			EtatPointageEnum targetEtat = EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat());
 
 			if (targetEtat != EtatPointageEnum.APPROUVE && targetEtat != EtatPointageEnum.REFUSE && targetEtat != EtatPointageEnum.SAISI) {
-				result.getErrors()
-						.add(String
-								.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.",
-										ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
+				result.getErrors().add(String.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.", ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
 				continue;
 			}
 
@@ -179,12 +172,30 @@ public class ApprobationService implements IApprobationService {
 			etatPk.setDateEtat(helperService.getCurrentDate());
 			etatPk.setPointage(ptg);
 			etat.setEtatPointagePk(etatPk);
-			etat.setIdAgent(idAgent);
+			etat.setIdAgent(ptg.getIdAgent());
 			etat.setEtat(targetEtat);
-
 			ptg.getEtats().add(etat);
 		}
 
 		return result;
 	}
+
+	@Override
+	public SaisieReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> etatsDto) {
+
+		SaisieReturnMessageDto result = new SaisieReturnMessageDto();
+		for (PointagesEtatChangeDto dto : etatsDto) {
+			EtatPointage etat = new EtatPointage();
+			Pointage ptg = pointageRepository.getEntity(Pointage.class, dto.getIdPointage());
+			EtatPointagePK etatPk = new EtatPointagePK();
+			etatPk.setDateEtat(helperService.getCurrentDate());
+			etatPk.setPointage(ptg);
+			etat.setIdAgent(ptg.getIdAgent());
+			etat.setEtatPointagePk(etatPk);
+			etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
+			ptg.getEtats().add(etat);
+		}
+		return result;
+	}
+
 }

@@ -14,6 +14,8 @@ public interface IApprobationService {
 	List<ConsultPointageDto> getPointagesSIRH(Date from, Date to, List<Integer> idAgents, Integer idRefEtat, Integer idRefType);
 
 	List<ConsultPointageDto> getPointagesArchives(Integer idAgent, Integer idPointage);
+	List<ConsultPointageDto> getPointagesArchives(Integer idPointage);
 
 	SaisieReturnMessageDto setPointagesEtat(Integer idAgent, List<PointagesEtatChangeDto> dto);
+	SaisieReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> dto);
 }

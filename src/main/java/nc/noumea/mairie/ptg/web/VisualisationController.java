@@ -136,7 +136,7 @@ public class VisualisationController {
 	public ResponseEntity<String> setPointagesEtat(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String pointagesEtatChangeDtoString) {
 
-		logger.debug("entered GET [visualisation/changerEtats] => setPointagesEtat with parameters idAgent = {}", idAgent);
+		logger.debug("entered POST [visualisation/changerEtats] => setPointagesEtat with parameters idAgent = {}", idAgent);
 
 		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -155,4 +155,44 @@ public class VisualisationController {
 
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
+	
+	
+
+	@ResponseBody
+	@RequestMapping(value = "/changerEtatsSIRH", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
+	@Transactional(value = "ptgTransactionManager")
+	public ResponseEntity<String> setPointagesEtatSIRH(@RequestParam("idAgent") int idAgent,@RequestBody(required = true) String pointagesEtatChangeDtoString) {
+
+		logger.debug("entered POST [visualisation/changerEtatsSIRH] => setPointagesEtat");
+
+		List<PointagesEtatChangeDto> dto = new JSONDeserializer<List<PointagesEtatChangeDto>>().use(null, ArrayList.class)
+				.use("values", PointagesEtatChangeDto.class).deserialize(pointagesEtatChangeDtoString);
+
+		SaisieReturnMessageDto result = approbationService.setPointagesEtatSIRH(idAgent,dto);
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "/historiqueSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getPointageArchives(@RequestParam("idPointage") Integer idPointage) {
+
+		logger.debug("entered GET [visualisation/historiqueSIRH] => getPointageArchives with parameter idPointage = {}", idPointage);
+
+		
+		List<ConsultPointageDto> result = approbationService.getPointagesArchives(idPointage);
+		if (result.size() == 0)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	
+	
 }

@@ -124,6 +124,79 @@ SIRH-PTG-WS API pour SIRH
 +-------------------------+
 
 
+
+** Modifier les états d'une liste de pointages 
+
+ <<URL>> : /visualisation/changerEtatsSIRH
+ 
+ <<Accepted Methods>> : POST
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : L'ID_AGENT (900xxxx) qui fait l'opération.
+ 
+ <<Content>>
+  
++-------------------------+ 
+[
+	{
+		"idPointage" : 9877,
+		"idRefEtat" : 3 // (REFUSE 2 / APPROUVE 1 / EN_ATTENTE 8)
+	},
+	...
+]
++-------------------------+
+ 
+ <<Response>>
+
++-------------------------+
+HTTP Status code OK : 200
++-------------------------+
+
+
+
+** Visualiser l'historique d'un pointage 
+
+ <<URL>> : /visualisation/historiqueSIRH
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ * <<idPointage>> : Identifiant du pointage.
+ 
+ <<Content>>
+  
+-
+ 
+ <<Response>>
+
++-------------------------+
+[
+    {
+		"idPointage" : 98765,
+		"agent" :
+		{
+			"nom" : "Dupont",
+			"prenom" : "Michel",
+			"idAgent" : 9008765,
+		},
+		"type" : "H. Supp", // (texte libre)
+		"date" : "/Date()/",
+		"debut" : "/Date()/",
+		"fin" : "/Date()/",
+		"quantite" : "3h30", // (texte libre: "3h30", "3", "1")
+		"motif" : "blabla",
+		"commentaire" : "le commentaire",
+		"etat" : "SAISI", // (SAISI/…)
+		"dateSaisie" : "/Date()/"
+	},
+	…
+]
++-------------------------+
+
+
+
 * Ventilation
 
 ** Lancer une ventilation
