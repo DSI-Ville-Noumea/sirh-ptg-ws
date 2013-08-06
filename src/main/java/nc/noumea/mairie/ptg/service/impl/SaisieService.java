@@ -13,6 +13,7 @@ import nc.noumea.mairie.ptg.dto.AbsenceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
+import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -57,9 +58,16 @@ public class SaisieService implements ISaisieService {
 			
 			for (AbsenceDto abs : jourDto.getAbsences()) {
 				
-				Pointage ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi);
-				originalAgentPointages.remove(ptg);
+				// Try to retrieve in the existing original pointages if it exists
+				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, abs);
 				
+				// If already existing, try and compare if it has changed compared to the original version
+				if (ptg != null && !hasPointageChanged(ptg, abs)) {
+					continue;
+				}
+				
+				// Only if it has changed, process this pointage
+				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi);
 				ptg.setAbsenceConcertee(abs.getConcertee());
 				ptg.setDateDebut(abs.getHeureDebut());
 				ptg.setDateFin(abs.getHeureFin());
@@ -72,9 +80,16 @@ public class SaisieService implements ISaisieService {
 			
 			for (HeureSupDto hs : jourDto.getHeuresSup()) {
 				
-				Pointage ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi);
-				originalAgentPointages.remove(ptg);
+				// Try to retrieve in the existing original pointages if it exists
+				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, hs);
 				
+				// If already existing, try and compare if it has changed compared to the original version
+				if (ptg != null && !hasPointageChanged(ptg, hs)) {
+					continue;
+				}
+				
+				// Only if it has changed, process this pointage
+				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi);
 				ptg.setHeureSupRecuperee(hs.getRecuperee());
 				ptg.setDateDebut(hs.getHeureDebut());
 				ptg.setDateFin(hs.getHeureFin());
@@ -88,16 +103,21 @@ public class SaisieService implements ISaisieService {
 			for (PrimeDto prime : jourDto.getPrimes()) {
 				
 				// if the new pointage has null qte, null datedebut and datefin, leave it (it is a template)
-				if (prime.getHeureDebut() == null 
-					&& prime.getHeureFin() == null 
+				if (prime.getHeureFin() == null 
 					&& (prime.getQuantite() == null || prime.getQuantite().equals(0))) {
-					
 					continue;
 				}
 				
-				Pointage ptg = pointageService.getOrCreateNewPointage(idAgentOperator, prime.getIdPointage(), idAgent, dateLundi, prime.getIdRefPrime());
-				originalAgentPointages.remove(ptg);
-
+				// Try to retrieve in the existing original pointages if it exists
+				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, prime);
+				
+				// If already existing, try and compare if it has changed compared to the original version
+				if (ptg != null && !hasPointageChanged(ptg, prime)) {
+					continue;
+				}
+				
+				// Only if it has changed, process this pointage
+				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, prime.getIdPointage(), idAgent, dateLundi, prime.getIdRefPrime());
 				ptg.setDateDebut(prime.getHeureDebut() == null ? jourDto.getDate() : prime.getHeureDebut());
 				ptg.setDateFin(prime.getHeureFin());
 				ptg.setQuantite(prime.getQuantite());
@@ -178,4 +198,42 @@ public class SaisieService implements ISaisieService {
 		}
 	}
 	
+	protected Pointage findPointageAndRemoveFromOriginals(List<Pointage> originalAgentPointages, PointageDto dto) {
+		
+		Pointage ptg = null;
+		
+		for (Pointage p : originalAgentPointages) {
+			if (p.getIdPointage().equals(dto.getIdPointage())) {
+				ptg = p;
+				break;
+			}
+		}
+		
+		if (ptg != null)
+			originalAgentPointages.remove(ptg);
+		
+		return ptg;
+	}
+	
+	protected boolean hasPointageChanged(Pointage ptg, PrimeDto prime) {
+		
+		if (ptg.getQuantite() != null)
+			return !ptg.getQuantite().equals(prime.getQuantite());
+		
+		return !(ptg.getDateDebut().equals(prime.getHeureDebut()) && ptg.getDateFin().equals(prime.getHeureFin()));
+	}
+
+	protected boolean hasPointageChanged(Pointage ptg, AbsenceDto absence) {
+		
+		return !(ptg.getAbsenceConcertee().equals(absence.getConcertee()) 
+				&& ptg.getDateDebut().equals(absence.getHeureDebut())
+				&& ptg.getDateFin().equals(absence.getHeureFin()));
+	}
+	
+	protected boolean hasPointageChanged(Pointage ptg, HeureSupDto hSup) {
+		
+		return !(ptg.getHeureSupRecuperee().equals(hSup.getRecuperee()) 
+				&& ptg.getDateDebut().equals(hSup.getHeureDebut())
+				&& ptg.getDateFin().equals(hSup.getHeureFin()));
+	}
 }

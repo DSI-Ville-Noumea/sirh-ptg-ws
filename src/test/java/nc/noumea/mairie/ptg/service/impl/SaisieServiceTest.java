@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -23,6 +24,7 @@ import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
+import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -568,5 +570,237 @@ public class SaisieServiceTest {
 
 		Mockito.verify(existingMotif, Mockito.times(1)).remove();
 		Mockito.verify(existingComment, Mockito.times(1)).remove();
+	}
+	
+	@Test
+	public void hasPointageChanged_PrimeQuantiteHasNotChanged_ReturnFalse() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setQuantite(1);
+		
+		PrimeDto prime = new PrimeDto();
+		prime.setQuantite(1);
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertFalse(service.hasPointageChanged(ptg, prime));
+	}
+	
+	@Test
+	public void hasPointageChanged_PrimeHDebutAndHFinHasNotChanged_ReturnFalse() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		PrimeDto prime = new PrimeDto();
+		prime.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		prime.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertFalse(service.hasPointageChanged(ptg, prime));
+	}
+	
+	@Test
+	public void hasPointageChanged_PrimeQuantiteHasChanged_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setQuantite(1);
+		
+		PrimeDto prime = new PrimeDto();
+		prime.setQuantite(2);
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, prime));
+	}
+	
+	@Test
+	public void hasPointageChanged_PrimeHDebutAndHFinHasChanged_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		PrimeDto prime = new PrimeDto();
+		prime.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		prime.setHeureFin(new DateTime(2013, 8, 1, 13, 10, 0).toDate());
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, prime));
+	}
+	
+	@Test
+	public void hasPointageChanged_AbsenceHasNotChanged_ReturnFalse() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setAbsenceConcertee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		AbsenceDto abs = new AbsenceDto();
+		abs.setConcertee(true);
+		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertFalse(service.hasPointageChanged(ptg, abs));
+	}
+	
+	@Test
+	public void hasPointageChanged_AbsenceConcerteeHasChanged_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setAbsenceConcertee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		AbsenceDto abs = new AbsenceDto();
+		abs.setConcertee(false);
+		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, abs));
+	}
+	
+	@Test
+	public void hasPointageChanged_AbsenceHoursHasChanged_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setAbsenceConcertee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		AbsenceDto abs = new AbsenceDto();
+		abs.setConcertee(true);
+		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 10, 0).toDate());
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, abs));
+	}
+	
+	@Test
+	public void hasPointageChanged_HSupHasNotChanged_ReturnFalse() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setHeureSupRecuperee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		HeureSupDto hSup = new HeureSupDto();
+		hSup.setRecuperee(true);
+		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertFalse(service.hasPointageChanged(ptg, hSup));
+	}
+	
+	@Test
+	public void hasPointageChanged_HSupRecupHasChanged_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setHeureSupRecuperee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		HeureSupDto hSup = new HeureSupDto();
+		hSup.setRecuperee(false);
+		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, hSup));
+	}
+	
+	@Test
+	public void hasPointageChanged_HSupHoursHasChanged_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setHeureSupRecuperee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		HeureSupDto hSup = new HeureSupDto();
+		hSup.setRecuperee(true);
+		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 10, 0).toDate());
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, hSup));
+	}
+	
+	@Test
+	public void findPointageAndRemoveFromOriginals_CantFindPointage_ReturnNull() {
+		
+		// Given
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		Pointage p1 = new Pointage();
+		p1.setIdPointage(1);
+		pointages.add(p1);
+		
+		PointageDto dto = new PrimeDto();
+		dto.setIdPointage(9);
+		
+		SaisieService service = new SaisieService();
+		
+		// When
+		Pointage ptg = service.findPointageAndRemoveFromOriginals(pointages, dto);
+		
+		// Then
+		assertNull(ptg);
+		assertEquals(1, pointages.size());
+	}
+	
+	@Test
+	public void findPointageAndRemoveFromOriginals_FindPointage_RemoveFromListAndReturnPointage() {
+		
+		// Given
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		Pointage p1 = new Pointage();
+		p1.setIdPointage(1);
+		pointages.add(p1);
+		
+		PointageDto dto = new PrimeDto();
+		dto.setIdPointage(1);
+		
+		SaisieService service = new SaisieService();
+		
+		// When
+		Pointage ptg = service.findPointageAndRemoveFromOriginals(pointages, dto);
+		
+		// Then
+		assertEquals(ptg, p1);
+		assertEquals(0, pointages.size());
 	}
 }
