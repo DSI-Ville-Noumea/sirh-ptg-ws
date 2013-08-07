@@ -19,6 +19,8 @@ public interface IPointageRepository {
 
 	List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
 
+	List<Pointage> getPointagesVentilesForAgent(Integer idAgent, Integer idVentilDate);
+	 
 	@Deprecated
 	List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
 

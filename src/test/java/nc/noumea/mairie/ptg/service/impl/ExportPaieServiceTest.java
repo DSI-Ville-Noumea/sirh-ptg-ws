@@ -90,7 +90,7 @@ public class ExportPaieServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		service.updateSpmatrForAgentAndPointages(9009899, Arrays.asList(p1, p2, p3));
+		service.updateSpmatrForAgentAndPointages(9009899, TypeChainePaieEnum.SCV, Arrays.asList(p1, p2, p3));
 		
 		// Then
 		Mockito.verify(mR, Mockito.times(1)).persistEntity(Mockito.any(Spmatr.class));
@@ -111,7 +111,7 @@ public class ExportPaieServiceTest {
 		matr.setNomatr(9899);
 		matr.setPerrap(201305);
 		IMairieRepository mR = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mR.findSpmatrForAgent(9009899)).thenReturn(matr);
+		Mockito.when(mR.findSpmatrForAgent(9899)).thenReturn(matr);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getIntegerMonthDateMairieFromDate(p2.getDateDebut())).thenReturn(201304);
@@ -122,7 +122,7 @@ public class ExportPaieServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		service.updateSpmatrForAgentAndPointages(9009899, Arrays.asList(p1, p2, p3));
+		service.updateSpmatrForAgentAndPointages(9009899, TypeChainePaieEnum.SCV, Arrays.asList(p1, p2, p3));
 		
 		// Then
 		Mockito.verify(mR, Mockito.never()).persistEntity(Mockito.any(Spmatr.class));
@@ -145,7 +145,7 @@ public class ExportPaieServiceTest {
 		matr.setNomatr(9899);
 		matr.setPerrap(201304);
 		IMairieRepository mR = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mR.findSpmatrForAgent(9009899)).thenReturn(matr);
+		Mockito.when(mR.findSpmatrForAgent(9899)).thenReturn(matr);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getIntegerMonthDateMairieFromDate(p2.getDateDebut())).thenReturn(201304);
@@ -156,7 +156,7 @@ public class ExportPaieServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		service.updateSpmatrForAgentAndPointages(9009899, Arrays.asList(p1, p2, p3));
+		service.updateSpmatrForAgentAndPointages(9009899, TypeChainePaieEnum.SCV, Arrays.asList(p1, p2, p3));
 		
 		// Then
 		Mockito.verify(mR, Mockito.never()).persistEntity(Mockito.any(Spmatr.class));

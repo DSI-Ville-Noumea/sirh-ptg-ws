@@ -1,5 +1,7 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.util.Map;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
 
@@ -10,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,14 +22,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/exportPaie")
 public class ExportPaieController {
 
-private Logger logger = LoggerFactory.getLogger(VentilationController.class);
+	private Logger logger = LoggerFactory.getLogger(VentilationController.class);
 	
 	@Autowired
 	private IExportPaieService exportPaieService;
 	
 	@ResponseBody
 	@RequestMapping(value = "/run", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional("ptgTransactionManager")
+//	@Transactional(value = "sirhTransactionManager")
+//	@Transactional(value = "ptgTransactionManager")
+	@Transactional(value = "chainedTransactionManager")
 	public ResponseEntity<String> runExportToPaie(
 			@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("statut") String statut) {
@@ -34,8 +39,11 @@ private Logger logger = LoggerFactory.getLogger(VentilationController.class);
 		logger.debug(
 				"entered GET [exportPaie/run] => runExportToPaie with parameters idAgent = {}, statut = {}",
 				idAgent, statut);
-
-		// Running exportPaieService
+		Map<Object, Object> map = TransactionSynchronizationManager.getResourceMap();
+		logger.debug("{}", TransactionSynchronizationManager.getResourceMap());
+		boolean s = TransactionSynchronizationManager.isSynchronizationActive();
+		logger.debug("{}", TransactionSynchronizationManager.isSynchronizationActive());
+		
 		exportPaieService.exportToPaie(idAgent, AgentStatutEnum.valueOf(statut));
 		
 		return new ResponseEntity<String>(HttpStatus.OK);

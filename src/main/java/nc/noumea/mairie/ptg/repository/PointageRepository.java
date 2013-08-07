@@ -128,6 +128,22 @@ public class PointageRepository implements IPointageRepository {
 	}
 	
 	@Override
+	public List<Pointage> getPointagesVentilesForAgent(Integer idAgent, Integer idVentilDate) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select ptg from VentilDate vd ");
+		sb.append("JOIN vd.pointages ptg ");
+		sb.append("where ptg.idAgent = :idAgent and vd.idVentilDate = :idVentilDate ");
+		sb.append("order by ptg.idPointage desc ");
+
+		TypedQuery<Pointage> query = ptgEntityManager.createQuery(sb.toString(), Pointage.class);
+		query.setParameter("idAgent", idAgent);
+		query.setParameter("idVentilDate", idVentilDate);
+		
+		return query.getResultList();
+	}
+	
+	@Override
 	public List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
 
 		StringBuilder sb = new StringBuilder();

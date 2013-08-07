@@ -15,6 +15,7 @@ import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
@@ -58,7 +59,7 @@ public class PointageService implements IPointageService {
 	@Autowired
 	private IAgentMatriculeConverterService agentMatriculeConverterService;
 
-	public FichePointageDto getFichePointageForAgent(Agent agent, Date date) {
+	protected FichePointageDto getFichePointageForAgent(Agent agent, Date date) {
 
 		if (!helperService.isDateAMonday(date))
 			throw new NotAMondayException();
@@ -194,10 +195,12 @@ public class PointageService implements IPointageService {
 		return ficheDto;
 	}
 
+	@Override
 	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi) {
 		return getOrCreateNewPointage(idAgentCreator, idPointage, idAgent, dateLundi, null);
 	}
 
+	@Override
 	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime) {
 
 		Pointage ptg = null;
@@ -281,6 +284,7 @@ public class PointageService implements IPointageService {
 		return res;
 	}
 
+	@Override
 	public List<Pointage> getLatestPointagesForAgentAndDateMonday(Integer idAgent, Date dateMonday) {
 		
 		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateMonday);
@@ -290,10 +294,12 @@ public class PointageService implements IPointageService {
 		return filterOldPointagesAndEtatFromList(agentPointages, null);
 	}
 	
+	@Override
 	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum type, List<EtatPointageEnum> etats) {
 		return getLatestPointagesForAgentsAndDates(Arrays.asList(idAgent), fromDate, toDate, type, etats);
 	}
 	
+	@Override
 	public List<Pointage> getLatestPointagesForAgentsAndDates(List<Integer> idAgents, Date fromDate, Date toDate, RefTypePointageEnum type, List<EtatPointageEnum> etats) {
 
 		List<Pointage> agentPointages = pointageRepository.getListPointages(idAgents, fromDate, toDate, type != null ? type.getValue() : null);
@@ -301,6 +307,16 @@ public class PointageService implements IPointageService {
 		logger.debug("Found {} Pointage for agents {} between dates {} and {}", agentPointages.size(), idAgents, fromDate, toDate);
 
 		return filterOldPointagesAndEtatFromList(agentPointages, etats);
+	}
+	
+	@Override
+	public List<Pointage> getPointagesVentilesForAgent(Integer idAgent, VentilDate ventilDate) {
+		
+		List<Pointage> agentPointages = pointageRepository.getPointagesVentilesForAgent(idAgent, ventilDate.getIdVentilDate());
+
+		logger.debug("Found {} Pointage for agent {} and ventil date {} as of {}", agentPointages.size(), idAgent, ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
+		
+		return filterOldPointagesAndEtatFromList(agentPointages, Arrays.asList(EtatPointageEnum.VENTILE));
 	}
 	
 	protected List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats) {

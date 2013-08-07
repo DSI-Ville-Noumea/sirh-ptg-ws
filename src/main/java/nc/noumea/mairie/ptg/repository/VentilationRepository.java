@@ -91,6 +91,30 @@ public class VentilationRepository implements IVentilationRepository {
 		return result;
 	}
 	
+
+	@Override
+	public List<Integer> getListIdAgentsForExportPaie(Integer idVentilDate) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT distinct (ptg.id_agent) as id_agent ");
+		sb.append("FROM PTG_POINTAGE ptg ");
+		sb.append("INNER JOIN PTG_POINTAGE_VENTIL_DATE pv ON ptg.ID_POINTAGE = pv.ID_POINTAGE ");
+		sb.append("WHERE pv.ID_VENTIL_DATE = :idVentilDate ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString());
+		q.setParameter("idVentilDate", idVentilDate);
+		
+		@SuppressWarnings("unchecked")
+		List<BigDecimal> rawResult = q.getResultList();
+		List<Integer> result = new ArrayList<Integer>();
+		
+		for (BigDecimal l : rawResult) {
+			result.add(l.intValue());
+		}
+		
+		return result;
+	}
+	
 	@Override
 	public List<Pointage> getListPointagesAbsenceAndHSupForVentilation(Integer idAgent, Date fromEtatDate, Date toEtatDate, Date dateLundi) {
 
@@ -257,8 +281,4 @@ public class VentilationRepository implements IVentilationRepository {
 		ptgEntityManager.flush();
 	}
 
-	@Override
-	public List<Pointage> getPointagesVentilesForAgent(Integer idAgent, Integer idVentilDate) {
-		return null;
-	}
 }

@@ -38,5 +38,4 @@ public class ExportPaieRepository implements IExportPaieRepository {
 		
 		return result.get(0);
 	}
-
 }

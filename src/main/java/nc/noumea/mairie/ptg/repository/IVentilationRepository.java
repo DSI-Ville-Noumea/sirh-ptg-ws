@@ -23,9 +23,9 @@ public interface IVentilationRepository {
 	
 	List<Integer> getListIdAgentsForVentilationByDateAndEtat(Date fromDate, Date toDate);
 	
+	List<Integer> getListIdAgentsForExportPaie(Integer idVentilDate);
+	
 	VentilDate getLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid);
 
 	void removeVentilationsForDateAgentAndType(VentilDate ventilDate, Integer idAgent, RefTypePointageEnum typePointage);
-	
-	List<Pointage> getPointagesVentilesForAgent(Integer idAgent, Integer idVentilDate);
 }

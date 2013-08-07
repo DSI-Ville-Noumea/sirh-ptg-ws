@@ -17,5 +17,5 @@ public class Sppact {
 	private double nbHeures;
 	
 	@Column(name = "SERVI", columnDefinition = "char default '    '")
-	private String service;
+	private String service = "    ";
 }

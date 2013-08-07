@@ -17,13 +17,13 @@ public class Spmatr {
 	private Integer nomatr;
 
 	@Column(name = "PERPRE", columnDefinition = "numeric default 0")
-	private Integer perpre;
+	private Integer perpre = 0;
 	
 	@Column(name = "PERRAP", columnDefinition = "numeric")
 	private Integer perrap;
 
 	@Column(name = "CDVALI", columnDefinition = "char default ' '")
-	private String cdvali;
+	private String cdvali = " ";
 
 	@Column(name = "CDCHAI", columnDefinition = "char")
 	@Enumerated(EnumType.STRING)

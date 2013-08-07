@@ -1,13 +1,16 @@
 package nc.noumea.mairie.ptg.service.impl;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.domain.Sppact;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
@@ -18,6 +21,7 @@ import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IExportAbsencePaieService;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
+import nc.noumea.mairie.ptg.service.IPointageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,17 +44,24 @@ public class ExportPaieService implements IExportPaieService {
 	@Autowired
 	private IExportAbsencePaieService exportAbsencePaieService;
 	
+	@Autowired
+	private IPointageService pointageService;
+	
+	@PersistenceContext(unitName = "ptgPersistenceUnit")
+	private EntityManager ptgEntityManager;
+	
 	public void exportToPaie(Integer agentIdValidating, AgentStatutEnum statut) {
 		
 		// 1. Retrieve eligible ventilation in order to get dates
-		VentilDate ventilDate = ventilationRepository.getLatestVentilDate(helperService.getTypeChainePaieFromStatut(statut), false);
+		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
+		VentilDate ventilDate = ventilationRepository.getLatestVentilDate(chainePaie, false);
 		
 		// If no ventilation has ever been ran, return now
 		if (ventilDate == null)
 			return;
 		
 		// 2. retrieve list of Agent from pointages
-		List<Integer> idAgents = new ArrayList<Integer>();
+		List<Integer> idAgents = ventilationRepository.getListIdAgentsForExportPaie(ventilDate.getIdVentilDate());
 		
 		for (Integer idAgent : idAgents) {
 			// 3. Verify whether this agent is eligible, through its Status (Spcarr)
@@ -58,7 +69,7 @@ public class ExportPaieService implements IExportPaieService {
 				continue;
 			
 			// 4. Retrieve all pointages that have been ventilated
-			List<Pointage> ventilatedPointages = ventilationRepository.getPointagesVentilesForAgent(idAgent, ventilDate.getIdVentilDate());
+			List<Pointage> ventilatedPointages = pointageService.getPointagesVentilesForAgent(idAgent, ventilDate);
 			
 			// 5. Export absences
 			persistSppac(exportAbsencePaieService.exportAbsencesToPaie(ventilatedPointages));
@@ -67,8 +78,10 @@ public class ExportPaieService implements IExportPaieService {
 			markPointagesAsValidated(ventilatedPointages, agentIdValidating);
 			
 			// 7. Update SPMATR with oldest pointage month
-			updateSpmatrForAgentAndPointages(idAgent, ventilatedPointages);
+			updateSpmatrForAgentAndPointages(idAgent, chainePaie, ventilatedPointages);
 		}
+		
+		ptgEntityManager.flush();
 	}
 	
 	/**
@@ -112,7 +125,7 @@ public class ExportPaieService implements IExportPaieService {
 	 * @param idAgent
 	 * @param pointages
 	 */
-	protected void updateSpmatrForAgentAndPointages(Integer idAgent, List<Pointage> pointages) {
+	protected void updateSpmatrForAgentAndPointages(Integer idAgent, TypeChainePaieEnum chainePaie, List<Pointage> pointages) {
 
 		Pointage oldestPointage = pointages.get(0);
 		
@@ -121,14 +134,17 @@ public class ExportPaieService implements IExportPaieService {
 				oldestPointage = ptg;
 		}
 		
-		Spmatr matr = mairieRepository.findSpmatrForAgent(idAgent);
+		Integer nomatr = helperService.getMairieMatrFromIdAgent(idAgent);
+		
+		Spmatr matr = mairieRepository.findSpmatrForAgent(nomatr);
 		
 		Integer oldestPointageIntegerDate = helperService.getIntegerMonthDateMairieFromDate(oldestPointage.getDateDebut());
 		
 		if (matr == null) {
 			matr = new Spmatr();
-			matr.setNomatr(helperService.getMairieMatrFromIdAgent(idAgent));
+			matr.setNomatr(nomatr);
 			matr.setPerrap(oldestPointageIntegerDate);
+			matr.setTypeChainePaie(chainePaie);
 			mairieRepository.persistEntity(matr);
 			return;
 		}

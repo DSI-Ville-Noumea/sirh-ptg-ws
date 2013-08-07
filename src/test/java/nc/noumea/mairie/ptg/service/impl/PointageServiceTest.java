@@ -602,7 +602,7 @@ public class PointageServiceTest {
 		assertEquals(p67.getType(), result.getType());
 		
 	}
-	
+		
 	@Test
 	public void getLatestPointagesForAgentsAndDates_1Agent_2Dates_SkipOldPointages() {
 		

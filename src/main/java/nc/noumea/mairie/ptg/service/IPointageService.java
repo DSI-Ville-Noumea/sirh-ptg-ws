@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.FichePointageListDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
@@ -97,4 +98,13 @@ public interface IPointageService {
 	 * @return
 	 */
 	List<Pointage> getLatestPointagesForAgentsAndDates(List<Integer> idAgents, Date fromDate, Date toDate, RefTypePointageEnum type, List<EtatPointageEnum> etats);
+
+	/**
+	 * 
+	 * @param idAgent
+	 * @param type
+	 * @param etats
+	 * @return
+	 */
+	List<Pointage> getPointagesVentilesForAgent(Integer idAgent, VentilDate ventilDate);
 }

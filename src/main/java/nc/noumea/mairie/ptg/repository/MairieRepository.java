@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class MairieRepository implements IMairieRepository {
 
-	@PersistenceContext(unitName = "ptgPersistenceUnit")
+	@PersistenceContext(unitName = "sirhPersistenceUnit")
 	private EntityManager entityManager;
 	
 	@Override
