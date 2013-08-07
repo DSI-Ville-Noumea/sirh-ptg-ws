@@ -55,12 +55,13 @@
 	<jee:jndi-lookup id="sirhDb400DataSource" jndi-name="jdbc/PTG_WS_DS2"
 		resource-ref="true" />
 
-	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
-		id="ptgTransactionManager">
-		<property name="entityManagerFactory" ref="ptgEntityManagerFactory" />
-	</bean>
 	<tx:annotation-driven mode="aspectj"
 		transaction-manager="ptgTransactionManager" />
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
+		id="ptgTransactionManager" primary="false">
+		<property name="entityManagerFactory" ref="ptgEntityManagerFactory" />
+		<qualifier value="ptgTransactionManager"/>
+	</bean>
 	<bean
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
 		id="ptgEntityManagerFactory">
@@ -68,19 +69,35 @@
 		<property name="dataSource" ref="ptgOracleDataSource" />
 	</bean>
 
-	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
-		id="sirhTransactionManager">
-		<property name="entityManagerFactory" ref="sirhEntityManagerFactory" />
-	</bean>
 	<tx:annotation-driven mode="aspectj"
 		transaction-manager="sirhTransactionManager" />
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
+		id="sirhTransactionManager" primary="false">
+		<property name="entityManagerFactory" ref="sirhEntityManagerFactory" />
+		<qualifier value="sirhTransactionManager"/>
+	</bean>
 	<bean
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
 		id="sirhEntityManagerFactory">
 		<property name="persistenceUnitName" value="sirhPersistenceUnit" />
 		<property name="dataSource" ref="sirhDb400DataSource" />
 	</bean>
-	
+
+	<!-- Custom ChainedTransactionManager Awaiting Spring Issue https://jira.springsource.org/browse/SPR-3844 
+		to be released (probably in Spring 4) to switch to official implementation -->
+	<tx:annotation-driven mode="aspectj"
+		transaction-manager="chainedTransactionManager" />
+	<bean id="chainedTransactionManager" class="nc.noumea.mairie.technical.ChainedTransactionManager"
+		primary="true">
+		<constructor-arg>
+			<list>
+				<ref bean="ptgTransactionManager" />
+				<ref bean="sirhTransactionManager" />
+			</list>
+		</constructor-arg>
+		<qualifier value="chainedTransactionManager" />
+	</bean>
+
 	<jee:jndi-lookup id="sirhWsBaseUrl" jndi-name="PTG_SIRH_WS_BASE_URL" expected-type="java.lang.String"/>
 	
 	<jee:jndi-lookup id="reportServerPath" jndi-name="REPORTING_SERVER_SIRH_PTG_REPORT_PATH" expected-type="java.lang.String"/>

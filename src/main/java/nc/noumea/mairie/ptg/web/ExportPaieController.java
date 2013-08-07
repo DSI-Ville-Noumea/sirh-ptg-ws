@@ -1,7 +1,5 @@
 package nc.noumea.mairie.ptg.web;
 
-import java.util.Map;
-
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
 
@@ -12,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,20 +26,13 @@ public class ExportPaieController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/run", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-//	@Transactional(value = "sirhTransactionManager")
-//	@Transactional(value = "ptgTransactionManager")
 	@Transactional(value = "chainedTransactionManager")
 	public ResponseEntity<String> runExportToPaie(
 			@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("statut") String statut) {
 
-		logger.debug(
-				"entered GET [exportPaie/run] => runExportToPaie with parameters idAgent = {}, statut = {}",
+		logger.debug("entered GET [exportPaie/run] => runExportToPaie with parameters idAgent = {}, statut = {}",
 				idAgent, statut);
-		Map<Object, Object> map = TransactionSynchronizationManager.getResourceMap();
-		logger.debug("{}", TransactionSynchronizationManager.getResourceMap());
-		boolean s = TransactionSynchronizationManager.isSynchronizationActive();
-		logger.debug("{}", TransactionSynchronizationManager.isSynchronizationActive());
 		
 		exportPaieService.exportToPaie(idAgent, AgentStatutEnum.valueOf(statut));
 		
