@@ -16,7 +16,7 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
-import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.AccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -273,7 +273,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdPointage(123);
 
 		// When
-		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -302,7 +302,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdPointage(123);
 
 		// When
-		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -336,7 +336,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdPointage(123);
 
 		// When
-		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -373,7 +373,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdRefEtat(5);
 
 		// When
-		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -414,7 +414,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdRefEtat(2);
 
 		// When
-		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -455,7 +455,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdRefEtat(0);
 
 		// When
-		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -496,7 +496,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdRefEtat(1);
 
 		// When
-		SaisieReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(0, result.getErrors().size());

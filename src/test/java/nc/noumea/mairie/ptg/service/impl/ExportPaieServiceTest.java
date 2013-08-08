@@ -10,6 +10,7 @@ import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 
@@ -35,9 +36,12 @@ public class ExportPaieServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		
 		// When
-		service.exportToPaie(1, AgentStatutEnum.CC);
+		ReturnMessageDto result = service.exportToPaie(1, AgentStatutEnum.CC);
 		
 		// Then
+		assertEquals(1, result.getInfos().size());
+		assertEquals("Aucune ventilation n'existe pour le statut [CC].", result.getInfos().get(0));
+		assertEquals(0, result.getErrors().size());
 		Mockito.verify(vR, Mockito.times(1)).getLatestVentilDate(TypeChainePaieEnum.SCV, false);
 	}
 	

@@ -139,11 +139,11 @@ SIRH-PTG-WS API pour SIRH
   
 +-------------------------+ 
 [
-	{
-		"idPointage" : 9877,
-		"idRefEtat" : 3 // (REFUSE 2 / APPROUVE 1 / EN_ATTENTE 8)
-	},
-	...
+    {
+        "idPointage" : 9877,
+        "idRefEtat" : 3 // (REFUSE 2 / APPROUVE 1 / EN_ATTENTE 8)
+    },
+    ...
 ]
 +-------------------------+
  
@@ -207,6 +207,8 @@ HTTP Status code OK : 200
  
  <<Parameters>>
 
+  * <<idAgent>> : L'Id de l'agent lancant la ventilation (matricule au format 900xxxx)
+  
   * <<date>> : La date de ventilation
   
   * <<typePointage>> (optional) : Le type id des pointages à ventiler. ABS (1), H_SUP (2) ou PRIME (3)
@@ -227,10 +229,82 @@ HTTP Status code OK : 200
 
  <<Response>>
 
+  * Si aucune erreur :
+
 +-------------------------+
  HTTP Status code OK : 200
 +-------------------------+
 
+  * Si une erreur fonctionnelle :
+
++-------------------------+
+ HTTP Status code CONFLICT : 409
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "erreurs" :
+    [
+        "erreur 1",
+        "erreur 2"
+    ],
+    "infos" : 
+    [
+        "info 1",
+        "info 2"
+    ]
+}
++-------------------------+
+
+
+
+* Déversement dans la paie (Exportation dans la paie)
+
+** Lancer une exportation
+
+ <<URL>> : /exportPaie/run
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : L'Id de l'agent lancant l'exportation (matricule au format 900xxxx)
+  
+  * <<statut>> : Le statut des agents à ventiler. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si une erreur fonctionnelle :
+
++-------------------------+
+ HTTP Status code CONFLICT : 409
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "erreurs" :
+    [
+        "erreur 1",
+        "erreur 2"
+    ],
+    "infos" : 
+    [
+        "info 1",
+        "info 2"
+    ]
+}
++-------------------------+
 
 
 * Prime
@@ -252,9 +326,36 @@ HTTP Status code OK : 200
  <<Response>>
  
 +-------------------------+
-[{"calculee":false,"description":"Prime forfaitaire mensuelle de 3000F","idRefPrime":271,"libelle":"PRIME DE PERMANENCE","numRubrique":7120,"statut":"F","typeSaisie":"CASE_A_COCHER"},
- {"calculee":false,"description":"Prime forfaitaire journalière de 3000F","idRefPrime":275,"libelle":"INDEMNITE D'ASTREINTE","numRubrique":7121,"statut":"C","typeSaisie":"CASE_A_COCHER"},
- {"calculee":false,"description":"Prime forfaitaire journalière de 3000F","idRefPrime":279,"libelle":"INDEMNITE DE PERMANENCE CFM","numRubrique":7123,"statut":"CC","typeSaisie":"CASE_A_COCHER"}]
+[
+    {
+        "calculee": false,
+        "description": "Prime forfaitaire mensuelle de 3000F",
+        "idRefPrime": 271,
+        "libelle": "PRIME DE PERMANENCE",
+        "numRubrique": 7120,
+        "statut": "F",
+        "typeSaisie": "CASE_A_COCHER"
+    },
+    {
+        "calculee": false,
+        "description": "Prime forfaitaire journalière de 3000F",
+        "idRefPrime": 275,
+        "libelle": "INDEMNITE D'ASTREINTE",
+        "numRubrique": 7121,
+        "statut": "C",
+        "typeSaisie": "CASE_A_COCHER"
+    },
+    {
+        "calculee": false,
+        "description": "Prime forfaitaire journalière de 3000F",
+        "idRefPrime": 279,
+        "libelle": "INDEMNITE DE PERMANENCE CFM",
+        "numRubrique": 7123,
+        "statut": "CC",
+        "typeSaisie": "CASE_A_COCHER"
+    },
+	...
+]
 +-------------------------+
  
  
@@ -276,8 +377,27 @@ HTTP Status code OK : 200
  <<Response>>
  
 +-------------------------+
-[{"calculee":false,"description":"Prime forfaitaire journalière de 3000F","idRefPrime":276,"libelle":"INDEMNITE D'ASTREINTE","numRubrique":7121,"statut":"CC","typeSaisie":"CASE_A_COCHER"},
- {"calculee":false,"description":"Prime forfaitaire journalière de 3000F","idRefPrime":279,"libelle":"INDEMNITE DE PERMANENCE CFM","numRubrique":7123,"statut":"CC","typeSaisie":"CASE_A_COCHER"}]
+[
+    {
+        "calculee": false,
+        "description": "Prime forfaitaire journalière de 3000F",
+        "idRefPrime": 276,
+        "libelle": "INDEMNITE D'ASTREINTE",
+        "numRubrique": 7121,
+        "statut": "CC",
+        "typeSaisie": "CASE_A_COCHER"
+    },
+    {
+        "calculee": false,
+        "description": "Prime forfaitaire journalière de 3000F",
+        "idRefPrime": 279,
+        "libelle": "INDEMNITE DE PERMANENCE CFM",
+        "numRubrique": 7123,
+        "statut": "CC",
+        "typeSaisie": "CASE_A_COCHER"
+    },
+	...
+]
 +-------------------------+
   
  

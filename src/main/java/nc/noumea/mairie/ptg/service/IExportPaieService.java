@@ -1,9 +1,10 @@
 package nc.noumea.mairie.ptg.service;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
 public interface IExportPaieService {
 
-	void exportToPaie(Integer agentIdValidating, AgentStatutEnum statut);
+	ReturnMessageDto exportToPaie(Integer agentIdValidating, AgentStatutEnum statut);
 	
 }

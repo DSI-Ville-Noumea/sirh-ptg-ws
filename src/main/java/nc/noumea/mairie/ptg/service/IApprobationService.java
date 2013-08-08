@@ -5,7 +5,7 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
-import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
 public interface IApprobationService {
 
@@ -16,6 +16,6 @@ public interface IApprobationService {
 	List<ConsultPointageDto> getPointagesArchives(Integer idAgent, Integer idPointage);
 	List<ConsultPointageDto> getPointagesArchives(Integer idPointage);
 
-	SaisieReturnMessageDto setPointagesEtat(Integer idAgent, List<PointagesEtatChangeDto> dto);
-	SaisieReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> dto);
+	ReturnMessageDto setPointagesEtat(Integer idAgent, List<PointagesEtatChangeDto> dto);
+	ReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> dto);
 }

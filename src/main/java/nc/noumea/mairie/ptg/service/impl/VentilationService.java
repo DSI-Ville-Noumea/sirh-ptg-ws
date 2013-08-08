@@ -17,6 +17,7 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
@@ -28,12 +29,16 @@ import nc.noumea.mairie.ptg.service.IVentilationService;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class VentilationService implements IVentilationService {
 
+	private Logger logger = LoggerFactory.getLogger(VentilationService.class);
+	
 	@Autowired
 	private IPointageRepository pointageRepository;
 	
@@ -58,7 +63,11 @@ public class VentilationService implements IVentilationService {
 	@Autowired
 	private HelperService helperService;
 	
-	public void processVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType) {
+	public ReturnMessageDto processVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType) {
+		
+		logger.info("Starting ventilation of Pointages for Agents [{}], date [{}], status [{}] and pointage type [{}]", agents, ventilationDate, statut, pointageType);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
 		
 		// Retrieving the current ventilation dates (from / to)
 		TypeChainePaieEnum typeChainePaie = helperService.getTypeChainePaieFromStatut(statut);
@@ -66,6 +75,7 @@ public class VentilationService implements IVentilationService {
 		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, false);
 		
 		if (toVentilDate == null) {
+			logger.info("No unpaid ventilation date found for statut. Creating a new one...");
 			toVentilDate = new VentilDate();
 			toVentilDate.setDateVentilation(new DateTime(ventilationDate).withHourOfDay(23).withMinuteOfHour(59).toDate());
 			toVentilDate.setPaye(false);
@@ -81,12 +91,20 @@ public class VentilationService implements IVentilationService {
 							toVentilDate.getDateVentilation());
 		}
 
+		logger.info("Found {} agents to ventilate pointages for (based on available pointages).", agents.size());
+		int nbProcessedAgents = 0;
+		
 		// For all seleted agents, proceed to ventilation
 		for (Integer agent : agents) {
 			// 1. Verify whether this agent is eligible, through its Status (Spcarr)
 			Spcarr carr = isAgentEligibleToVentilation(agent, statut, toVentilDate.getDateVentilation());
-			if (carr == null)
+			if (carr == null) {
+				logger.info("Agent {} not eligible for ventilation (status not matching), skipping to next.", agent);
 				continue;
+			}
+			
+			nbProcessedAgents++;
+			logger.debug("Ventilating pointages of agent {} [#{}]...", agent, nbProcessedAgents);
 			
 			// 2. remove existing ventilations
 			removePreviousVentilations(toVentilDate, agent, pointageType); 	
@@ -127,6 +145,9 @@ public class VentilationService implements IVentilationService {
 			markPointagesAsVentile(pointagesVentiles, agent, toVentilDate);
 		}
 		
+		logger.info("Successfully ventilated pointages of {} agents.", nbProcessedAgents);
+		
+		return result;
 	}
 
 	protected List<Date> getDistinctDateLundiFromListOfDates(List<Date> dates) {

@@ -14,7 +14,7 @@ import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
-import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -124,9 +124,9 @@ public class ApprobationService implements IApprobationService {
 	}
 
 	@Override
-	public SaisieReturnMessageDto setPointagesEtat(Integer idAgent, List<PointagesEtatChangeDto> etatsDto) {
+	public ReturnMessageDto setPointagesEtat(Integer idAgent, List<PointagesEtatChangeDto> etatsDto) {
 
-		SaisieReturnMessageDto result = new SaisieReturnMessageDto();
+		ReturnMessageDto result = new ReturnMessageDto();
 
 		List<DroitsAgent> droitsAgents = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent);
 		List<Integer> droitsAgentsIds = new ArrayList<Integer>();
@@ -181,9 +181,9 @@ public class ApprobationService implements IApprobationService {
 	}
 
 	@Override
-	public SaisieReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> etatsDto) {
+	public ReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> etatsDto) {
 
-		SaisieReturnMessageDto result = new SaisieReturnMessageDto();
+		ReturnMessageDto result = new ReturnMessageDto();
 		for (PointagesEtatChangeDto dto : etatsDto) {
 			EtatPointage etat = new EtatPointage();
 			Pointage ptg = pointageRepository.getEntity(Pointage.class, dto.getIdPointage());

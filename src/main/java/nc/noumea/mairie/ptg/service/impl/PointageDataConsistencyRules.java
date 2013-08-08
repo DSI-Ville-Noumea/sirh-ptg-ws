@@ -12,7 +12,7 @@ import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.sirh.domain.Agent;
@@ -45,7 +45,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
 	
 	@Override
-	public SaisieReturnMessageDto checkMaxAbsenceHebdo(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		double nbHours = 0;
 		
@@ -74,7 +74,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 	
 	@Override
-	public SaisieReturnMessageDto checkSprircRecuperation(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public ReturnMessageDto checkSprircRecuperation(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 		
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
 		
@@ -90,7 +90,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public SaisieReturnMessageDto checkSpcongConge(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public ReturnMessageDto checkSpcongConge(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 		
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
 		
@@ -104,7 +104,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 	
 	@Override
-	public SaisieReturnMessageDto checkSpabsenMaladie(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public ReturnMessageDto checkSpabsenMaladie(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 		
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
 		
@@ -118,7 +118,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 	
 	@Override
-	public SaisieReturnMessageDto checkAgentINAAndHSup(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		Agent ag = sirhRepository.getAgent(idAgent);
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag, dateLundi);
@@ -143,7 +143,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 	
 	@Override
-	public SaisieReturnMessageDto checkAgentInactivity(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		Agent ag = sirhRepository.getAgent(idAgent);
 		Spadmn adm = sirhRepository.getAgentCurrentPosition(ag, dateLundi);
@@ -189,8 +189,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	 * @param pointages The list of pointages to test the period against
 	 * @return The structure containing the INFO or ERROR messages
 	 */
-	protected SaisieReturnMessageDto checkInterval(
-			SaisieReturnMessageDto srm, 
+	protected ReturnMessageDto checkInterval(
+			ReturnMessageDto srm, 
 			String message, 
 			Integer start, 
 			Integer codem1, 
@@ -243,7 +243,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	 * It will check the different business rules in order to make sure they're consistent
 	 */
 	@Override
-	public void processDataConsistency(SaisieReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public void processDataConsistency(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 		checkSprircRecuperation(srm, idAgent, dateLundi, pointages);
 		checkSpcongConge(srm, idAgent, dateLundi, pointages);
 		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);

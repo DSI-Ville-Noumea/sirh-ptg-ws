@@ -1,10 +1,10 @@
 package nc.noumea.mairie.ptg.service;
 
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
-import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
 public interface ISaisieService {
 	
-	public SaisieReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto);
+	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto);
 	
 }

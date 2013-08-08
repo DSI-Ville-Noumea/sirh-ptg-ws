@@ -3,9 +3,6 @@ package nc.noumea.mairie.ptg.service.impl;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
@@ -16,6 +13,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.VentilDate;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
@@ -23,12 +21,16 @@ import nc.noumea.mairie.ptg.service.IExportAbsencePaieService;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ExportPaieService implements IExportPaieService {
 
+	private Logger logger = LoggerFactory.getLogger(ExportPaieService.class);
+	
 	@Autowired
 	private IVentilationRepository ventilationRepository;
 
@@ -47,26 +49,41 @@ public class ExportPaieService implements IExportPaieService {
 	@Autowired
 	private IPointageService pointageService;
 	
-	@PersistenceContext(unitName = "ptgPersistenceUnit")
-	private EntityManager ptgEntityManager;
-	
-	public void exportToPaie(Integer agentIdValidating, AgentStatutEnum statut) {
+	public ReturnMessageDto exportToPaie(Integer agentIdValidating, AgentStatutEnum statut) {
+		
+		logger.info("Starting exportation to Paie with status [{}]", statut);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		// 0. TODO: add verification on old DTAARA (now a table to see if we can perform paie)
 		
 		// 1. Retrieve eligible ventilation in order to get dates
 		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
 		VentilDate ventilDate = ventilationRepository.getLatestVentilDate(chainePaie, false);
 		
 		// If no ventilation has ever been ran, return now
-		if (ventilDate == null)
-			return;
+		if (ventilDate == null) {
+			logger.info("No unpaid ventilation date found. Nothing to export. Stopping process here.");
+			result.getInfos().add(String.format("Aucune ventilation n'existe pour le statut [%s].", statut));
+			return result;
+		}
 		
 		// 2. retrieve list of Agent from pointages
 		List<Integer> idAgents = ventilationRepository.getListIdAgentsForExportPaie(ventilDate.getIdVentilDate());
 		
+		logger.info("Found {} agents to export pointages for (based on available pointages).", idAgents.size());
+		int nbProcessedAgents = 0;
+		
 		for (Integer idAgent : idAgents) {
+			
 			// 3. Verify whether this agent is eligible, through its Status (Spcarr)
-			if (!isAgentEligibleToExport(idAgent, statut, ventilDate.getDateVentilation()))
+			if (!isAgentEligibleToExport(idAgent, statut, ventilDate.getDateVentilation())) {
+				logger.info("Agent {} not eligible for export (status not matching), skipping to next.", idAgent);
 				continue;
+			}
+			
+			nbProcessedAgents++;
+			logger.debug("Exporting pointages of agent {} [#{}]...", idAgent, nbProcessedAgents);
 			
 			// 4. Retrieve all pointages that have been ventilated
 			List<Pointage> ventilatedPointages = pointageService.getPointagesVentilesForAgent(idAgent, ventilDate);
@@ -81,7 +98,9 @@ public class ExportPaieService implements IExportPaieService {
 			updateSpmatrForAgentAndPointages(idAgent, chainePaie, ventilatedPointages);
 		}
 		
-		ptgEntityManager.flush();
+		logger.info("Exported pointages of {} agents with status {}", nbProcessedAgents, statut);
+		
+		return result;
 	}
 	
 	/**

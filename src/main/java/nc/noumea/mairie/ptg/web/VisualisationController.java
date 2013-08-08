@@ -6,7 +6,7 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
-import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IApprobationService;
@@ -147,7 +147,7 @@ public class VisualisationController {
 		List<PointagesEtatChangeDto> dto = new JSONDeserializer<List<PointagesEtatChangeDto>>().use(null, ArrayList.class)
 				.use("values", PointagesEtatChangeDto.class).deserialize(pointagesEtatChangeDtoString);
 
-		SaisieReturnMessageDto result = approbationService.setPointagesEtat(idAgent, dto);
+		ReturnMessageDto result = approbationService.setPointagesEtat(idAgent, dto);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
@@ -169,7 +169,7 @@ public class VisualisationController {
 		List<PointagesEtatChangeDto> dto = new JSONDeserializer<List<PointagesEtatChangeDto>>().use(null, ArrayList.class)
 				.use("values", PointagesEtatChangeDto.class).deserialize(pointagesEtatChangeDtoString);
 
-		SaisieReturnMessageDto result = approbationService.setPointagesEtatSIRH(idAgent,dto);
+		ReturnMessageDto result = approbationService.setPointagesEtatSIRH(idAgent,dto);
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
 		if (result.getErrors().size() != 0)

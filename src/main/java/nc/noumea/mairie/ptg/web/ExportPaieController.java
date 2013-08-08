@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.web;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
 
 import org.slf4j.Logger;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import flexjson.JSONSerializer;
 
 @Controller
 @RequestMapping("/exportPaie")
@@ -34,8 +37,8 @@ public class ExportPaieController {
 		logger.debug("entered GET [exportPaie/run] => runExportToPaie with parameters idAgent = {}, statut = {}",
 				idAgent, statut);
 		
-		exportPaieService.exportToPaie(idAgent, AgentStatutEnum.valueOf(statut));
+		ReturnMessageDto dto = exportPaieService.exportToPaie(idAgent, AgentStatutEnum.valueOf(statut));
 		
-		return new ResponseEntity<String>(HttpStatus.OK);
+		return new ResponseEntity<String>(new JSONSerializer().serialize(dto), HttpStatus.OK);
 	} 
 }

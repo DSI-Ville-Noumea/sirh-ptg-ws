@@ -15,7 +15,7 @@ import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
-import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
@@ -41,7 +41,7 @@ public class SaisieService implements ISaisieService {
 	private IPointageDataConsistencyRules ptgDataCosistencyRules;
 	
 	@Override
-	public SaisieReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto) {
+	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto) {
 
 		Date dateLundi = fichePointageDto.getDateLundi();
 		
@@ -130,7 +130,7 @@ public class SaisieService implements ISaisieService {
 			
 		}
 
-		SaisieReturnMessageDto result = new SaisieReturnMessageDto();
+		ReturnMessageDto result = new ReturnMessageDto();
 		
 		// calling data consistency
 		ptgDataCosistencyRules.processDataConsistency(result, idAgent, dateLundi, finalPointages);

@@ -3,12 +3,12 @@ package nc.noumea.mairie.ptg.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SaisieReturnMessageDto {
+public class ReturnMessageDto {
 
 	private List<String> errors;
 	private List<String> infos;
 
-	public SaisieReturnMessageDto() {
+	public ReturnMessageDto() {
 		errors = new ArrayList<String>();
 		infos = new ArrayList<String>();
 	}

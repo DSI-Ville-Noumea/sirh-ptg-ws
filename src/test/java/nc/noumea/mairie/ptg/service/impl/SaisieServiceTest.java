@@ -26,7 +26,7 @@ import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
-import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
@@ -411,12 +411,12 @@ public class SaisieServiceTest {
 				new Answer() {
 					  public Object answer(InvocationOnMock invocation) {
 					      Object[] args = invocation.getArguments();
-					      SaisieReturnMessageDto result = (SaisieReturnMessageDto)args[0];
+					      ReturnMessageDto result = (ReturnMessageDto)args[0];
 					      result.getErrors().add("message d'erreur");
 					      return null;
 					  }}
 			).when(dcMock).processDataConsistency(
-				Mockito.any(SaisieReturnMessageDto.class), Mockito.eq(agent.getIdAgent()), Mockito.eq(lundi), Mockito.anyList());
+				Mockito.any(ReturnMessageDto.class), Mockito.eq(agent.getIdAgent()), Mockito.eq(lundi), Mockito.anyList());
 		
 		SaisieService service = new SaisieService();
 
@@ -426,7 +426,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		
 		// When
-		SaisieReturnMessageDto res = service.saveFichePointage(9001234, dto);
+		ReturnMessageDto res = service.saveFichePointage(9001234, dto);
 		
 		// Then
 		Mockito.verify(pRepo, Mockito.never()).savePointage(newAbsPointage);

@@ -21,7 +21,7 @@ import nc.noumea.mairie.domain.SprircId;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.dto.SaisieReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.sirh.domain.Agent;
 
@@ -47,7 +47,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSprircRecuperation(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -78,7 +78,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSprircRecuperation(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -117,7 +117,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSprircRecuperation(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -157,7 +157,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSprircRecuperation(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -197,7 +197,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSprircRecuperation(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -238,7 +238,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSprircRecuperation(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -279,7 +279,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSprircRecuperation(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSprircRecuperation(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -302,7 +302,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSpcongConge(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -334,7 +334,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSpcongConge(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -374,7 +374,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSpcongConge(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -415,7 +415,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSpcongConge(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -457,7 +457,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSpcongConge(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSpcongConge(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -480,7 +480,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSpabsenMaladie(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSpabsenMaladie(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -511,7 +511,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSpabsenMaladie(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSpabsenMaladie(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -549,7 +549,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSpabsenMaladie(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSpabsenMaladie(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -589,7 +589,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkSpabsenMaladie(new SaisieReturnMessageDto(), idAgent, dateLundi, ptgs);
+		ReturnMessageDto result = service.checkSpabsenMaladie(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
 		
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -619,7 +619,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkMaxAbsenceHebdo(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2));
+		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2));
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -661,7 +661,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkMaxAbsenceHebdo(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2));
+		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2));
 		
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -704,7 +704,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkMaxAbsenceHebdo(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2));
+		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2));
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -742,7 +742,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkAgentINAAndHSup(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -780,7 +780,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkAgentINAAndHSup(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -818,7 +818,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkAgentINAAndHSup(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
 		
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -857,7 +857,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkAgentINAAndHSup(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
 		
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -895,7 +895,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkAgentINAAndHSup(new SaisieReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1));
 		
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -922,7 +922,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkAgentInactivity(new SaisieReturnMessageDto(), 9007865, dateLundi, null);
+		ReturnMessageDto result = service.checkAgentInactivity(new ReturnMessageDto(), 9007865, dateLundi, null);
 		
 		// Then
 		assertEquals(0, result.getInfos().size());
@@ -948,7 +948,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		
 		// When
-		SaisieReturnMessageDto result = service.checkAgentInactivity(new SaisieReturnMessageDto(), 9007865, dateLundi, null);
+		ReturnMessageDto result = service.checkAgentInactivity(new ReturnMessageDto(), 9007865, dateLundi, null);
 		
 		// Then
 		assertEquals(0, result.getInfos().size());
