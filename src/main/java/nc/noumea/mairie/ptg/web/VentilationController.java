@@ -6,6 +6,7 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IVentilationService;
 
 import org.slf4j.Logger;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 
 @Controller
 @RequestMapping("/ventilation")
@@ -51,8 +53,11 @@ public class VentilationController {
 		List<Integer> agents = new JSONDeserializer<List<Integer>>().use(null, ArrayList.class).use("values", Integer.class).deserialize(agentsJson);
 		
 		// Running ventilation
-		ventilationService.processVentilation(idAgent, agents, ventilationDate, AgentStatutEnum.valueOf(statut), RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage));
+		ReturnMessageDto result = ventilationService.processVentilation(idAgent, agents, ventilationDate, AgentStatutEnum.valueOf(statut), RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage));
 		
-		return new ResponseEntity<String>(HttpStatus.OK);
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.CONFLICT);
+		
+		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
 	} 
 }

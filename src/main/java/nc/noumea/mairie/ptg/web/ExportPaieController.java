@@ -37,8 +37,11 @@ public class ExportPaieController {
 		logger.debug("entered GET [exportPaie/run] => runExportToPaie with parameters idAgent = {}, statut = {}",
 				idAgent, statut);
 		
-		ReturnMessageDto dto = exportPaieService.exportToPaie(idAgent, AgentStatutEnum.valueOf(statut));
+		ReturnMessageDto result = exportPaieService.exportToPaie(idAgent, AgentStatutEnum.valueOf(statut));
 		
-		return new ResponseEntity<String>(new JSONSerializer().serialize(dto), HttpStatus.OK);
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.CONFLICT);
+		
+		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
 	} 
 }
