@@ -41,7 +41,6 @@ public class HelperService {
 		try {
 			return mairieDateFormat.parse(String.valueOf(dateAsInteger));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -61,7 +60,6 @@ public class HelperService {
 		try {
 			return mairieMonthDateFormat.parse(String.valueOf(monthDateAsInteger));
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

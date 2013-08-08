@@ -45,6 +45,30 @@ public class ExportPaieServiceTest {
 		Mockito.verify(vR, Mockito.times(1)).getLatestVentilDate(TypeChainePaieEnum.SCV, false);
 	}
 	
+	//@Test
+	public void exportToPaie_PaieIsNotReady_DoNothing() {
+		
+		// Given
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.CC)).thenReturn(TypeChainePaieEnum.SCV);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(null);
+		
+		ExportPaieService service = new ExportPaieService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		
+		// When
+		ReturnMessageDto result = service.exportToPaie(1, AgentStatutEnum.CC);
+		
+		// Then
+		assertEquals(0, result.getInfos().size());
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Impossible de lancer le processus de déversement : La Paie est en état [] au lieu de [] ou [].", result.getErrors().get(0));
+		Mockito.verify(vR, Mockito.never()).getLatestVentilDate(TypeChainePaieEnum.SCV, false);
+	}
+	
 	@Test
 	public void markPointagesAsValidated_2Pointages_AddEtatPointage() {
 		

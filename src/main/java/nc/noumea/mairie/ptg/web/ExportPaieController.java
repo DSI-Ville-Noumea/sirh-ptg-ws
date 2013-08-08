@@ -43,5 +43,5 @@ public class ExportPaieController {
 			return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.CONFLICT);
 		
 		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
-	} 
+	}
 }

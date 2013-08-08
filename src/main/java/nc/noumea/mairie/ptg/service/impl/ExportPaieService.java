@@ -19,6 +19,7 @@ import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IExportAbsencePaieService;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
+import nc.noumea.mairie.ptg.service.IPaieStatusService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 
 import org.slf4j.Logger;
@@ -49,13 +50,23 @@ public class ExportPaieService implements IExportPaieService {
 	@Autowired
 	private IPointageService pointageService;
 	
+	@Autowired
+	private IPaieStatusService paieStatusService;
+	
 	public ReturnMessageDto exportToPaie(Integer agentIdValidating, AgentStatutEnum statut) {
 		
 		logger.info("Starting exportation to Paie with status [{}]", statut);
 		
 		ReturnMessageDto result = new ReturnMessageDto();
 		
-		// 0. TODO: add verification on old DTAARA (now a table to see if we can perform paie)
+		// 0. Verify and set PAIE status to EXPORTING
+//		try {
+//			paieStatusService.setExportStatus();
+//		} catch (PaieStatusServiceException ex) {
+//			logger.error("Unable to start export process : ", ex);
+//			result.getErrors().add(ex.getMessage());
+//			return result;
+//		}
 		
 		// 1. Retrieve eligible ventilation in order to get dates
 		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
