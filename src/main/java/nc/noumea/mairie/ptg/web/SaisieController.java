@@ -109,4 +109,50 @@ public class SaisieController {
 			return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 	
+	
+	
+
+	@ResponseBody
+	@RequestMapping(value = "/ficheSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getFichePointageSIRH(
+			@RequestParam("idAgent") int idAgent,
+			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date){
+
+		logger.debug("entered GET [saisie/fiche] => getFichePointage with parameters idAgent = {}, date = {}", idAgent, date);
+		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(900000+idAgent);
+		FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(convertedIdAgent, date);
+		String response = new JSONSerializer().exclude("*.class")
+				.transform(new MSDateTransformer(), Date.class)
+				.deepSerialize(fichePointageAgent);
+		
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/ficheSIRH", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
+	@Transactional(value = "ptgTransactionManager")
+	public ResponseEntity<String> setFichePointageSIRH(
+			@RequestParam("idAgent") int idAgent,
+			@RequestBody(required = true) String fichePointage) {
+
+		logger.debug("entered POST [saisie/fiche] => setFichePointage with parameters idAgent = {}",idAgent);
+
+		FichePointageDto dto = new JSONDeserializer<FichePointageDto>()
+				.use(Date.class, new MSDateTransformer())
+				.deserializeInto(fichePointage, new FichePointageDto());
+		
+		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		
+		SaisieReturnMessageDto srm = saisieService.saveFichePointage(convertedIdAgent, dto);
+		
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
+		
+		if (srm.getErrors().size() != 0)
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+		else
+			return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	
 }
