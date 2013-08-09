@@ -144,8 +144,7 @@ public class SaisieController {
 		
 		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		
-		SaisieReturnMessageDto srm = saisieService.saveFichePointage(convertedIdAgent, dto);
-		
+		ReturnMessageDto srm = saisieService.saveFichePointage(convertedIdAgent, dto);		
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
 		
 		if (srm.getErrors().size() != 0)
@@ -153,6 +152,4 @@ public class SaisieController {
 		else
 			return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
-	
-	
 }
