@@ -140,55 +140,33 @@ public class PointageService implements IPointageService {
 
 		FichePointageDto ficheDto = getFichePointageForAgent(agent, dateLundi);
 
-		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi);
-
-		logger.debug("Found {} Pointage for agent {} and monday date {}", agentPointages.size(), idAgent, dateLundi);
-
-		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
+		List<Pointage> agentPointages = getLatestPointagesForSaisieForAgentAndDateMonday(idAgent, dateLundi);
 
 		for (Pointage ptg : agentPointages) {
-
-			if (oldPointagesToAvoid.contains(ptg.getIdPointage())) {
-				logger.debug("Not taking Pointage {} because not the latest.", ptg.getIdPointage());
-				continue;
-			}
-
-			if (ptg.getPointageParent() != null) {
-				logger.debug("Pointage {} has a parent {}, adding it to avoid list.", ptg.getIdPointage(), ptg.getPointageParent().getIdPointage());
-				oldPointagesToAvoid.add(ptg.getPointageParent().getIdPointage());
-			}
-
-			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.REFUSE_DEFINITIVEMENT
-					|| ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.REJETE_DEFINITIVEMENT) {
-				logger.debug("Pointage {} is {}, not retrieving it.", ptg.getIdPointage(), ptg.getLatestEtatPointage().getEtat().name());
-				continue;
-			}
 
 			JourPointageDto jour = ficheDto.getSaisies().get(helperService.getWeekDayFromDateBase0(ptg.getDateDebut()));
 
 			switch (ptg.getTypePointageEnum()) {
-			case ABSENCE:
-				AbsenceDto abs = new AbsenceDto(ptg);
-				jour.getAbsences().add(abs);
-				break;
-
-			case H_SUP:
-				HeureSupDto hsup = new HeureSupDto(ptg);
-				jour.getHeuresSup().add(hsup);
-				break;
-
-			case PRIME:
-				// Retrieve related primeDto in JourPointageDto and update it
-				// with value from Pointage
-				PrimeDto thePrimeToUpdate = null;
-				for (PrimeDto pDto : jour.getPrimes()) {
-					if (pDto.getNumRubrique().equals(ptg.getRefPrime().getNoRubr()))
-						thePrimeToUpdate = pDto;
-				}
-
-				thePrimeToUpdate.updateWithPointage(ptg);
-
-				break;
+				case ABSENCE:
+					AbsenceDto abs = new AbsenceDto(ptg);
+					jour.getAbsences().add(abs);
+					break;
+	
+				case H_SUP:
+					HeureSupDto hsup = new HeureSupDto(ptg);
+					jour.getHeuresSup().add(hsup);
+					break;
+	
+				case PRIME:
+					// Retrieve related primeDto in JourPointageDto and update it
+					// with value from Pointage
+					PrimeDto thePrimeToUpdate = null;
+					for (PrimeDto pDto : jour.getPrimes()) {
+						if (pDto.getNumRubrique().equals(ptg.getRefPrime().getNoRubr()))
+							thePrimeToUpdate = pDto;
+					}
+					thePrimeToUpdate.updateWithPointage(ptg);
+					break;
 			}
 		}
 
@@ -285,13 +263,21 @@ public class PointageService implements IPointageService {
 	}
 
 	@Override
-	public List<Pointage> getLatestPointagesForAgentAndDateMonday(Integer idAgent, Date dateMonday) {
+	public List<Pointage> getLatestPointagesForSaisieForAgentAndDateMonday(Integer idAgent, Date dateMonday) {
 		
 		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateMonday);
 
 		logger.debug("Found {} Pointage for agent {} and date monday {}", agentPointages.size(), idAgent, dateMonday);
 		
-		return filterOldPointagesAndEtatFromList(agentPointages, null);
+		return filterOldPointagesAndEtatFromList(agentPointages, 
+				Arrays.asList(EtatPointageEnum.APPROUVE, 
+						EtatPointageEnum.EN_ATTENTE, 
+						EtatPointageEnum.JOURNALISE, 
+						EtatPointageEnum.REFUSE, 
+						EtatPointageEnum.REJETE, 
+						EtatPointageEnum.SAISI, 
+						EtatPointageEnum.VALIDE, 
+						EtatPointageEnum.VENTILE));
 	}
 	
 	@Override

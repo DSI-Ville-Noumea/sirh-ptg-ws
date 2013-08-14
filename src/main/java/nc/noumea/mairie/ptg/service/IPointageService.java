@@ -63,7 +63,7 @@ public interface IPointageService {
 	 * @param dateMonday
 	 * @return
 	 */
-	List<Pointage> getLatestPointagesForAgentAndDateMonday(Integer idAgent, Date dateMonday);
+	List<Pointage> getLatestPointagesForSaisieForAgentAndDateMonday(Integer idAgent, Date dateMonday);
 	
 	/**
 	 * This method searches through the list of Pointages given a set of filters (agentId, from and to dates

@@ -463,7 +463,7 @@ public class SaisieServiceTest {
 		p2.getEtats().add(e2);
 		
 		IPointageService pService = Mockito.mock(IPointageService.class);
-		Mockito.when(pService.getLatestPointagesForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(p, p2));
+		Mockito.when(pService.getLatestPointagesForSaisieForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(p, p2));
 		
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
 		

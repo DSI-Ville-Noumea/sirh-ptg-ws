@@ -58,12 +58,28 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.mSup25 = mSup25;
     }
     
+    public int VentilHsup.getMSup25Recup() {
+        return this.mSup25Recup;
+    }
+    
+    public void VentilHsup.setMSup25Recup(int mSup25Recup) {
+        this.mSup25Recup = mSup25Recup;
+    }
+    
     public int VentilHsup.getMSup50() {
         return this.mSup50;
     }
     
     public void VentilHsup.setMSup50(int mSup50) {
         this.mSup50 = mSup50;
+    }
+    
+    public int VentilHsup.getMSup50Recup() {
+        return this.mSup50Recup;
+    }
+    
+    public void VentilHsup.setMSup50Recup(int mSup50Recup) {
+        this.mSup50Recup = mSup50Recup;
     }
     
     public int VentilHsup.getMsdjf() {
@@ -74,12 +90,28 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.msdjf = msdjf;
     }
     
+    public int VentilHsup.getMsdjfRecup() {
+        return this.msdjfRecup;
+    }
+    
+    public void VentilHsup.setMsdjfRecup(int msdjfRecup) {
+        this.msdjfRecup = msdjfRecup;
+    }
+    
     public int VentilHsup.getMsdjf25() {
         return this.msdjf25;
     }
     
     public void VentilHsup.setMsdjf25(int msdjf25) {
         this.msdjf25 = msdjf25;
+    }
+    
+    public int VentilHsup.getMsdjf25Recup() {
+        return this.msdjf25Recup;
+    }
+    
+    public void VentilHsup.setMsdjf25Recup(int msdjf25Recup) {
+        this.msdjf25Recup = msdjf25Recup;
     }
     
     public int VentilHsup.getMsdjf50() {
@@ -90,12 +122,28 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.msdjf50 = msdjf50;
     }
     
+    public int VentilHsup.getMsdjf50Recup() {
+        return this.msdjf50Recup;
+    }
+    
+    public void VentilHsup.setMsdjf50Recup(int msdjf50Recup) {
+        this.msdjf50Recup = msdjf50Recup;
+    }
+    
     public int VentilHsup.getMMai() {
         return this.mMai;
     }
     
     public void VentilHsup.setMMai(int mMai) {
         this.mMai = mMai;
+    }
+    
+    public int VentilHsup.getMMaiRecup() {
+        return this.mMaiRecup;
+    }
+    
+    public void VentilHsup.setMMaiRecup(int mMaiRecup) {
+        this.mMaiRecup = mMaiRecup;
     }
     
     public int VentilHsup.getMsNuit() {
@@ -106,12 +154,28 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.msNuit = msNuit;
     }
     
+    public int VentilHsup.getMsNuitRecup() {
+        return this.msNuitRecup;
+    }
+    
+    public void VentilHsup.setMsNuitRecup(int msNuitRecup) {
+        this.msNuitRecup = msNuitRecup;
+    }
+    
     public int VentilHsup.getMNormales() {
         return this.mNormales;
     }
     
     public void VentilHsup.setMNormales(int mNormales) {
         this.mNormales = mNormales;
+    }
+    
+    public int VentilHsup.getMNormalesRecup() {
+        return this.mNormalesRecup;
+    }
+    
+    public void VentilHsup.setMNormalesRecup(int mNormalesRecup) {
+        this.mNormalesRecup = mNormalesRecup;
     }
     
     public int VentilHsup.getMComplementaires() {
@@ -122,6 +186,14 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.mComplementaires = mComplementaires;
     }
     
+    public int VentilHsup.getMComplementairesRecup() {
+        return this.mComplementairesRecup;
+    }
+    
+    public void VentilHsup.setMComplementairesRecup(int mComplementairesRecup) {
+        this.mComplementairesRecup = mComplementairesRecup;
+    }
+    
     public int VentilHsup.getMSimple() {
         return this.mSimple;
     }
@@ -130,12 +202,28 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.mSimple = mSimple;
     }
     
+    public int VentilHsup.getMSimpleRecup() {
+        return this.mSimpleRecup;
+    }
+    
+    public void VentilHsup.setMSimpleRecup(int mSimpleRecup) {
+        this.mSimpleRecup = mSimpleRecup;
+    }
+    
     public int VentilHsup.getMComposees() {
         return this.mComposees;
     }
     
     public void VentilHsup.setMComposees(int mComposees) {
         this.mComposees = mComposees;
+    }
+    
+    public int VentilHsup.getMComposeesRecup() {
+        return this.mComposeesRecup;
+    }
+    
+    public void VentilHsup.setMComposeesRecup(int mComposeesRecup) {
+        this.mComposeesRecup = mComposeesRecup;
     }
     
     public int VentilHsup.getMRecuperees() {
