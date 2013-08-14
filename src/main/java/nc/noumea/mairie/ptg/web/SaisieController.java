@@ -54,9 +54,7 @@ public class SaisieController {
 			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date, 
 			@RequestParam("agent") int agent) {
 
-		logger.debug(
-				"entered GET [saisie/fiche] => getFichePointage with parameters idAgent = {}, date = {} and agent = {}",
-				idAgent, date, agent);
+		logger.debug("entered GET [saisie/fiche] => getFichePointage with parameters idAgent = {}, date = {} and agent = {}",idAgent, date, agent);
 
 		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		int convertedagent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agent);
@@ -70,7 +68,7 @@ public class SaisieController {
 		FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(agent, date);
 		String response = new JSONSerializer().exclude("*.class")
 				.transform(new MSDateTransformer(), Date.class)
-				.deepSerialize(fichePointageAgent);
+				.deepSerialize(fichePointageAgent);		
 		
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
@@ -82,9 +80,7 @@ public class SaisieController {
 			@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String fichePointage) {
 
-		logger.debug(
-				"entered POST [saisie/fiche] => setFichePointage with parameters idAgent = {}",
-				idAgent);
+		logger.debug("entered POST [saisie/fiche] => setFichePointage with parameters idAgent = {}",idAgent);
 
 		FichePointageDto dto = new JSONDeserializer<FichePointageDto>()
 				.use(Date.class, new MSDateTransformer())
@@ -119,13 +115,13 @@ public class SaisieController {
 			@RequestParam("idAgent") int idAgent,
 			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date){
 
-		logger.debug("entered GET [saisie/fiche] => getFichePointage with parameters idAgent = {}, date = {}", idAgent, date);
+		logger.debug("entered GET [saisie/ficheSIRH] => getFichePointage for SIRH with parameters idAgent = {}, date = {}", idAgent, date);
 		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(900000+idAgent);
 		FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(convertedIdAgent, date);
 		String response = new JSONSerializer().exclude("*.class")
 				.transform(new MSDateTransformer(), Date.class)
 				.deepSerialize(fichePointageAgent);
-		
+		//System.out.println(" json généré:"+response);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 	
@@ -136,7 +132,7 @@ public class SaisieController {
 			@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String fichePointage) {
 
-		logger.debug("entered POST [saisie/fiche] => setFichePointage with parameters idAgent = {}",idAgent);
+		logger.debug("entered POST [saisie/ficheSIRH] => setFichePointage for SIRH with parameters idAgent = {}",idAgent);
 
 		FichePointageDto dto = new JSONDeserializer<FichePointageDto>()
 				.use(Date.class, new MSDateTransformer())
