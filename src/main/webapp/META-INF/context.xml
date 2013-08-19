@@ -23,10 +23,16 @@
 	<!-- <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" 
 		/> -->
 
-	<Resource name="jdbc/PTG_WS_DS1" auth="Container" type="javax.sql.DataSource"
+	<!-- <Resource name="jdbc/PTG_WS_DS1" auth="Container" type="javax.sql.DataSource"
 		maxActive="100" maxIdle="30" minIdle="0" validationQuery="select 1 from dual"
 		maxWait="10000" initialSize="1" username="PTG" password="PTG"
 		driverClassName="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@DVLP:1521:ORADEV"
+		poolPreparedStatements="true" /> -->
+		<!-- RECETTE -->
+		<Resource name="jdbc/PTG_WS_DS1" auth="Container" type="javax.sql.DataSource"
+		maxActive="100" maxIdle="30" minIdle="0" validationQuery="select 1 from dual"
+		maxWait="10000" initialSize="1" username="ptg_read" password="fedycq6k"
+		driverClassName="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@svq-doracle.site-mairie.noumea.nc:1521:SIRHR"
 		poolPreparedStatements="true" />
 
 	<Resource name="jdbc/PTG_WS_DS2" auth="Container" type="javax.sql.DataSource"
@@ -37,7 +43,7 @@
 		maxWait="30000" initialSize="10" removeAbandonedTimeout="500"
 		removeAbandoned="true" logAbandoned="true" minEvictableIdleTimeMillis="30000"
 		jmxEnabled="true" username="opensirh" password="***REMOVED***"
-		driverClassName="com.ibm.as400.access.AS400JDBCDriver" url="jdbc:as400://robinnw;naming=system;libraries=MAIRIE,SIRH,SYSIBM;" />
+		driverClassName="com.ibm.as400.access.AS400JDBCDriver" url="jdbc:as400://robinnw;naming=system;libraries=MAIRIE2,SIRH2,SYSIBM;" />
 
 	<Environment name="PTG_SIRH_WS_BASE_URL" type="java.lang.String"
 		description="SIRH WS endpoint url" value="http://172.16.24.19:8085/sirhws/"
