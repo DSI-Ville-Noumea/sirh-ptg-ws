@@ -32,120 +32,120 @@ import flexjson.JSONSerializer;
 @RequestMapping("/saisie")
 public class SaisieController {
 
-	private Logger logger = LoggerFactory.getLogger(SaisieController.class);
+    private Logger logger = LoggerFactory.getLogger(SaisieController.class);
+    @Autowired
+    private IAgentMatriculeConverterService agentMatriculeConverterService;
+    @Autowired
+    private IPointageService pointageService;
+    @Autowired
+    private ISaisieService saisieService;
+    @Autowired
+    private IAccessRightsService accessRightService;
 
-	@Autowired
-	private IAgentMatriculeConverterService agentMatriculeConverterService;
+    @ResponseBody
+    @RequestMapping(value = "/fiche", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+    @Transactional(readOnly = true)
+    public ResponseEntity<String> getFichePointage(
+            @RequestParam("idAgent") int idAgent,
+            @RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date,
+            @RequestParam("agent") int agent) {
 
-	@Autowired
-	private IPointageService pointageService;
-	
-	@Autowired
-	private ISaisieService saisieService;
-	
-	@Autowired
-	private IAccessRightsService accessRightService;
+        logger.debug("entered GET [saisie/fiche] => getFichePointage with parameters idAgent = {}, date = {} and agent = {}", idAgent, date, agent);
 
-	@ResponseBody
-	@RequestMapping(value = "/fiche", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ResponseEntity<String> getFichePointage(
-			@RequestParam("idAgent") int idAgent,
-			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date, 
-			@RequestParam("agent") int agent) {
+        int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+        int convertedagent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agent);
 
-		logger.debug("entered GET [saisie/fiche] => getFichePointage with parameters idAgent = {}, date = {} and agent = {}",idAgent, date, agent);
+        if (Agent.findAgent(convertedagent) == null) {
+            throw new NotFoundException();
+        }
 
-		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		int convertedagent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agent);
-		
-		if (Agent.findAgent(convertedagent) == null)
-			throw new NotFoundException();
-		
-		if (!accessRightService.canUserAccessInput(convertedIdAgent, convertedagent))
-			throw new AccessForbiddenException();
-		
-		FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(agent, date);
-		String response = new JSONSerializer().exclude("*.class")
-				.transform(new MSDateTransformer(), Date.class)
-				.deepSerialize(fichePointageAgent);		
-		
-		return new ResponseEntity<String>(response, HttpStatus.OK);
-	}
-	
-	@ResponseBody
-	@RequestMapping(value = "/fiche", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
-	@Transactional(value = "ptgTransactionManager")
-	public ResponseEntity<String> setFichePointage(
-			@RequestParam("idAgent") int idAgent,
-			@RequestBody(required = true) String fichePointage) {
+        if (!accessRightService.canUserAccessInput(convertedIdAgent, convertedagent)) {
+            throw new AccessForbiddenException();
+        }
 
-		logger.debug("entered POST [saisie/fiche] => setFichePointage with parameters idAgent = {}",idAgent);
+        FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(agent, date);
+        String response = new JSONSerializer().exclude("*.class")
+                .transform(new MSDateTransformer(), Date.class)
+                .deepSerialize(fichePointageAgent);
 
-		FichePointageDto dto = new JSONDeserializer<FichePointageDto>()
-				.use(Date.class, new MSDateTransformer())
-				.deserializeInto(fichePointage, new FichePointageDto());
-		
-		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		int convertedagent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(dto.getAgent().getIdAgent());
-		
-		if (Agent.findAgent(convertedagent) == null)
-			throw new NotFoundException();
-		
-		if (!accessRightService.canUserAccessInput(convertedIdAgent, convertedagent))
-			throw new AccessForbiddenException();
-		
-		ReturnMessageDto srm = saisieService.saveFichePointage(convertedIdAgent, dto);
-		
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
-		
-		if (srm.getErrors().size() != 0)
-			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
-		else
-			return new ResponseEntity<String>(response, HttpStatus.OK);
-	}
-	
-	
-	
+        return new ResponseEntity<String>(response, HttpStatus.OK);
+    }
 
-	@ResponseBody
-	@RequestMapping(value = "/ficheSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ResponseEntity<String> getFichePointageSIRH(
-			@RequestParam("idAgent") int idAgent,
-			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date){
+    @ResponseBody
+    @RequestMapping(value = "/fiche", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
+    @Transactional(value = "ptgTransactionManager")
+    public ResponseEntity<String> setFichePointage(
+            @RequestParam("idAgent") int idAgent,
+            @RequestBody(required = true) String fichePointage) {
 
-		logger.debug("entered GET [saisie/ficheSIRH] => getFichePointage for SIRH with parameters idAgent = {}, date = {}", idAgent, date);
-		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(900000+idAgent);
-		FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(convertedIdAgent, date);
-		String response = new JSONSerializer().exclude("*.class")
-				.transform(new MSDateTransformer(), Date.class)
-				.deepSerialize(fichePointageAgent);
-		//System.out.println(" json généré:"+response);
-		return new ResponseEntity<String>(response, HttpStatus.OK);
-	}
-	
-	@ResponseBody
-	@RequestMapping(value = "/ficheSIRH", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
-	@Transactional(value = "ptgTransactionManager")
-	public ResponseEntity<String> setFichePointageSIRH(
-			@RequestParam("idAgent") int idAgent,
-			@RequestBody(required = true) String fichePointage) {
+        logger.debug("entered POST [saisie/fiche] => setFichePointage with parameters idAgent = {}", idAgent);
 
-		logger.debug("entered POST [saisie/ficheSIRH] => setFichePointage for SIRH with parameters idAgent = {}",idAgent);
+        FichePointageDto dto = new JSONDeserializer<FichePointageDto>()
+                .use(Date.class, new MSDateTransformer())
+                .deserializeInto(fichePointage, new FichePointageDto());
 
-		FichePointageDto dto = new JSONDeserializer<FichePointageDto>()
-				.use(Date.class, new MSDateTransformer())
-				.deserializeInto(fichePointage, new FichePointageDto());
-		
-		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		
-		ReturnMessageDto srm = saisieService.saveFichePointage(convertedIdAgent, dto);		
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
-		
-		if (srm.getErrors().size() != 0)
-			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
-		else
-			return new ResponseEntity<String>(response, HttpStatus.OK);
-	}
+        int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+        int convertedagent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(dto.getAgent().getIdAgent());
+
+        if (Agent.findAgent(convertedagent) == null) {
+            throw new NotFoundException();
+        }
+
+        if (!accessRightService.canUserAccessInput(convertedIdAgent, convertedagent)) {
+            throw new AccessForbiddenException();
+        }
+
+        ReturnMessageDto srm = saisieService.saveFichePointage(convertedIdAgent, dto);
+
+        String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
+
+        if (srm.getErrors().size() != 0) {
+            return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+        } else {
+            return new ResponseEntity<String>(response, HttpStatus.OK);
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/ficheSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+    @Transactional(readOnly = true)
+    public ResponseEntity<String> getFichePointageSIRH(
+            @RequestParam("idAgent") int idAgent,
+            @RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date) {
+
+        logger.debug("entered GET [saisie/ficheSIRH] => getFichePointage for SIRH with parameters idAgent = {}, date = {}", idAgent, date);
+        int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+        System.out.println("\nconvertedIdAgent:" + convertedIdAgent);
+        FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(idAgent, date);
+        System.out.println("\nfichePointageAgent:" + fichePointageAgent.getSemaine());
+        String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(fichePointageAgent);
+        System.out.println("\n\n... json généré:" + response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/ficheSIRH", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
+    @Transactional(value = "ptgTransactionManager")
+    public ResponseEntity<String> setFichePointageSIRH(
+            @RequestParam("idAgent") int idAgent,
+            @RequestBody(required = true) String fichePointage) {
+
+        logger.debug("entered POST [saisie/ficheSIRH] => setFichePointage for SIRH with parameters idAgent = {}", idAgent);
+
+        //       System.out.println("\n\n.. SaisieController.ficheSIRH json recu :\n"+fichePointage);
+
+        FichePointageDto dto = new JSONDeserializer<FichePointageDto>()
+                .use(Date.class, new MSDateTransformer())
+                .deserializeInto(fichePointage, new FichePointageDto());
+
+        int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+        ReturnMessageDto srm = saisieService.saveFichePointage(convertedIdAgent, dto);
+        String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
+
+        if (!srm.getErrors().isEmpty()) {
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        } else {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
 }
