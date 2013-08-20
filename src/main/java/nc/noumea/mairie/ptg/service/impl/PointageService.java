@@ -165,7 +165,9 @@ public class PointageService implements IPointageService {
 						if (pDto.getNumRubrique().equals(ptg.getRefPrime().getNoRubr()))
 							thePrimeToUpdate = pDto;
 					}
-					thePrimeToUpdate.updateWithPointage(ptg);
+					if (thePrimeToUpdate != null) {
+						thePrimeToUpdate.updateWithPointage(ptg);
+					}
 					break;
 			}
 		}
