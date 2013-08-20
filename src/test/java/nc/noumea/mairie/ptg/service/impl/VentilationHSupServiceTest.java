@@ -413,6 +413,165 @@ public class VentilationHSupServiceTest {
 	}
 	
 	@Test
+	public void processHSupFonctionnaire_base39H_6HS_Recuperees_3HDJF_3HSI_2HCO_Recuperees() {
+		
+		// Given
+		Date dateLundi = new LocalDate(2012, 04, 30).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2012, 05, 3, 6, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2012, 05, 3, 7, 0, 0).toDate());
+		p1.setHeureSupRecuperee(true);
+		p1.setType(hSup);
+		
+		Pointage p2 = new Pointage();
+		p2.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2012, 05, 4, 6, 0, 0).toDate());
+		p2.setDateFin(new DateTime(2012, 05, 4, 9, 0, 0).toDate());
+		p2.setHeureSupRecuperee(true);
+		p2.setType(hSup);
+		
+		Pointage p3 = new Pointage();
+		p3.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p3.setDateDebut(new DateTime(2012, 05, 4, 9, 0, 0).toDate());
+		p3.setDateFin(new DateTime(2012, 05, 4, 10, 0, 0).toDate());
+		p3.setHeureSupRecuperee(false);
+		p3.setType(hSup);
+		
+		Pointage p4 = new Pointage();
+		p4.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p4.setDateDebut(new DateTime(2012, 05, 6, 7, 0, 0).toDate());
+		p4.setDateFin(new DateTime(2012, 05, 6, 8, 0, 0).toDate());
+		p4.setHeureSupRecuperee(false);
+		p4.setType(hSup);
+		
+		Pointage p5 = new Pointage();
+		p5.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p5.setDateDebut(new DateTime(2012, 05, 6, 8, 0, 0).toDate());
+		p5.setDateFin(new DateTime(2012, 05, 6, 10, 0, 0).toDate());
+		p5.setHeureSupRecuperee(true);
+		p5.setType(hSup);
+		
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(8);
+		spbase.setNbahma(8);
+		spbase.setNbahme(8);
+		spbase.setNbahje(8);
+		spbase.setNbahve(7);
+		spbase.setNbahsa(0);
+		spbase.setNbahdi(0);
+		spbase.setNbashh(39);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		
+		// When
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
+		
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p1.getDateLundi(), result.getDateLundi());
+		assertEquals(8* 60, result.getMHorsContrat());
+		assertEquals(0, result.getMAbsences());
+		assertEquals(8* 60, result.getMSup());
+		assertEquals(6* 60, result.getMRecuperees());
+
+		assertEquals(0, result.getMsNuit());
+		assertEquals(3 * 60, result.getMsdjf());
+		assertEquals(0, result.getMNormales());
+		assertEquals(3 * 60, result.getMSimple());
+		assertEquals(2 * 60, result.getMComposees());
+		
+		assertEquals(0, result.getMsNuitRecup());
+		assertEquals(2 * 60, result.getMsdjfRecup());
+		assertEquals(0, result.getMNormalesRecup());
+		assertEquals(3 * 60, result.getMSimpleRecup());
+		assertEquals(1 * 60, result.getMComposeesRecup());
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
+	
+	@Test
+	public void processHSupFonctionnaire_base39H_5HS_2HS_Recuperees_2HCO_Recuperees() {
+		
+		// Given
+		Date dateLundi = new LocalDate(2012, 04, 30).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2012, 04, 30, 4, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2012, 04, 30, 6, 0, 0).toDate());
+		p1.setHeureSupRecuperee(true);
+		p1.setType(hSup);
+		
+		Pointage p2 = new Pointage();
+		p2.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2012, 04, 30, 18, 0, 0).toDate());
+		p2.setDateFin(new DateTime(2012, 04, 30, 21, 0, 0).toDate());
+		p2.setHeureSupRecuperee(false);
+		p2.setType(hSup);
+				
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(8);
+		spbase.setNbahma(8);
+		spbase.setNbahme(8);
+		spbase.setNbahje(8);
+		spbase.setNbahve(7);
+		spbase.setNbahsa(0);
+		spbase.setNbahdi(0);
+		spbase.setNbashh(39);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		
+		// When
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
+		
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p1.getDateLundi(), result.getDateLundi());
+		assertEquals(5 * 60, result.getMHorsContrat());
+		assertEquals(0, result.getMAbsences());
+		assertEquals(5 * 60, result.getMSup());
+		assertEquals(2 * 60, result.getMRecuperees());
+
+		assertEquals(0, result.getMsNuit());
+		assertEquals(0, result.getMsdjf());
+		assertEquals(0, result.getMNormales());
+		assertEquals(3 * 60, result.getMSimple());
+		assertEquals(2 * 60, result.getMComposees());
+		
+		assertEquals(0, result.getMsNuitRecup());
+		assertEquals(0, result.getMsdjfRecup());
+		assertEquals(0, result.getMNormalesRecup());
+		assertEquals(2 * 60, result.getMSimpleRecup());
+		assertEquals(0, result.getMComposeesRecup());
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
+	
+	@Test
 	public void processHSupCC_base39H_10HS_9HS_Recuperees() {
 		
 		// Given
@@ -611,6 +770,307 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMsdjf50Recup());
 		assertEquals(4 * 60, result.getMSup25Recup());
 		assertEquals(5 * 60, result.getMSup50Recup());
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
+	
+	@Test
+	public void processHSupCC_base39H_10HS_Recuperees_9HS_7at25_2at50() {
+		
+		// Given
+		Date dateLundi = new LocalDate(2012, 04, 30).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2012, 04, 30, 5, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2012, 04, 30, 8, 0, 0).toDate());
+		p1.setHeureSupRecuperee(true);
+		p1.setType(hSup);
+		
+		Pointage p2 = new Pointage();
+		p2.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2012, 05, 2, 5, 0, 0).toDate());
+		p2.setDateFin(new DateTime(2012, 05, 2, 6, 0, 0).toDate());
+		p2.setHeureSupRecuperee(false);
+		p2.setType(hSup);
+		
+		Pointage p3 = new Pointage();
+		p3.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p3.setDateDebut(new DateTime(2012, 05, 2, 6, 0, 0).toDate());
+		p3.setDateFin(new DateTime(2012, 05, 2, 8, 0, 0).toDate());
+		p3.setHeureSupRecuperee(true);
+		p3.setType(hSup);
+		
+		Pointage p4 = new Pointage();
+		p4.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p4.setDateDebut(new DateTime(2012, 05, 5, 5, 0, 0).toDate());
+		p4.setDateFin(new DateTime(2012, 05, 5, 8, 0, 0).toDate());
+		p4.setHeureSupRecuperee(true);
+		p4.setType(hSup);
+		
+		Pointage p5 = new Pointage();
+		p5.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p5.setDateDebut(new DateTime(2012, 05, 5, 19, 0, 0).toDate());
+		p5.setDateFin(new DateTime(2012, 05, 5, 20, 0, 0).toDate());
+		p5.setHeureSupRecuperee(true);
+		p5.setType(hSup);
+		
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(8);
+		spbase.setNbahma(8);
+		spbase.setNbahme(8);
+		spbase.setNbahje(8);
+		spbase.setNbahve(7);
+		spbase.setNbahsa(0);
+		spbase.setNbahdi(0);
+		spbase.setNbashh(39);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		
+		// When
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
+		
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p1.getDateLundi(), result.getDateLundi());
+		assertEquals(10 * 60, result.getMHorsContrat());
+		assertEquals(0, result.getMAbsences());
+		assertEquals(10 * 60, result.getMSup());
+		assertEquals(9 * 60, result.getMRecuperees());
+
+		assertEquals(0, result.getMsNuit());
+		assertEquals(0, result.getMsdjf());
+		assertEquals(0, result.getMNormales());
+		assertEquals(0, result.getMSimple());
+		assertEquals(0, result.getMComposees());
+		assertEquals(0, result.getMsdjf25());
+		assertEquals(0, result.getMsdjf50());
+		assertEquals(8 * 60, result.getMSup25());
+		assertEquals(2 * 60, result.getMSup50());
+		
+		assertEquals(0, result.getMsNuitRecup());
+		assertEquals(0, result.getMsdjfRecup());
+		assertEquals(0, result.getMNormalesRecup());
+		assertEquals(0, result.getMSimpleRecup());
+		assertEquals(0, result.getMComposeesRecup());
+		assertEquals(0, result.getMsdjf25Recup());
+		assertEquals(0, result.getMsdjf50Recup());
+		assertEquals(7 * 60, result.getMSup25Recup());
+		assertEquals(2 * 60, result.getMSup50Recup());
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
+	
+	@Test
+	public void processHSupCC_base39H_10HS_9HS_Recuperees_8at25_1at50() {
+		
+		// Given
+		Date dateLundi = new LocalDate(2012, 04, 30).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2012, 04, 30, 5, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2012, 04, 30, 8, 0, 0).toDate());
+		p1.setHeureSupRecuperee(true);
+		p1.setType(hSup);
+		
+		Pointage p2 = new Pointage();
+		p2.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2012, 05, 2, 5, 0, 0).toDate());
+		p2.setDateFin(new DateTime(2012, 05, 2, 8, 0, 0).toDate());
+		p2.setHeureSupRecuperee(true);
+		p2.setType(hSup);
+		
+		Pointage p3 = new Pointage();
+		p3.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p3.setDateDebut(new DateTime(2012, 05, 5, 5, 0, 0).toDate());
+		p3.setDateFin(new DateTime(2012, 05, 5, 7, 0, 0).toDate());
+		p3.setHeureSupRecuperee(true);
+		p3.setType(hSup);
+		
+		Pointage p4 = new Pointage();
+		p4.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p4.setDateDebut(new DateTime(2012, 05, 5, 7, 0, 0).toDate());
+		p4.setDateFin(new DateTime(2012, 05, 5, 8, 0, 0).toDate());
+		p4.setHeureSupRecuperee(false);
+		p4.setType(hSup);
+		
+		Pointage p5 = new Pointage();
+		p5.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p5.setDateDebut(new DateTime(2012, 05, 5, 19, 0, 0).toDate());
+		p5.setDateFin(new DateTime(2012, 05, 5, 20, 0, 0).toDate());
+		p5.setHeureSupRecuperee(true);
+		p5.setType(hSup);
+		
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(8);
+		spbase.setNbahma(8);
+		spbase.setNbahme(8);
+		spbase.setNbahje(8);
+		spbase.setNbahve(7);
+		spbase.setNbahsa(0);
+		spbase.setNbahdi(0);
+		spbase.setNbashh(39);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		
+		// When
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
+		
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p1.getDateLundi(), result.getDateLundi());
+		assertEquals(10 * 60, result.getMHorsContrat());
+		assertEquals(0, result.getMAbsences());
+		assertEquals(10 * 60, result.getMSup());
+		assertEquals(9 * 60, result.getMRecuperees());
+
+		assertEquals(0, result.getMsNuit());
+		assertEquals(0, result.getMsdjf());
+		assertEquals(0, result.getMNormales());
+		assertEquals(0, result.getMSimple());
+		assertEquals(0, result.getMComposees());
+		assertEquals(0, result.getMsdjf25());
+		assertEquals(0, result.getMsdjf50());
+		assertEquals(8 * 60, result.getMSup25());
+		assertEquals(2 * 60, result.getMSup50());
+		
+		assertEquals(0, result.getMsNuitRecup());
+		assertEquals(0, result.getMsdjfRecup());
+		assertEquals(0, result.getMNormalesRecup());
+		assertEquals(0, result.getMSimpleRecup());
+		assertEquals(0, result.getMComposeesRecup());
+		assertEquals(0, result.getMsdjf25Recup());
+		assertEquals(0, result.getMsdjf50Recup());
+		assertEquals(8 * 60, result.getMSup25Recup());
+		assertEquals(1 * 60, result.getMSup50Recup());
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
+	
+	@Test
+	public void processHSupCC_base39H_10HS_9HS_Recuperees_6atNuit_3at25() {
+		
+		// Given
+		Date dateLundi = new LocalDate(2012, 04, 30).toDate();
+		
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2012, 04, 30, 2, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2012, 04, 30, 4, 0, 0).toDate());
+		p1.setHeureSupRecuperee(true);
+		p1.setType(hSup);
+		
+		Pointage p2 = new Pointage();
+		p2.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2012, 04, 30, 22, 0, 0).toDate());
+		p2.setDateFin(new DateTime(2012, 04, 30, 23, 0, 0).toDate());
+		p2.setHeureSupRecuperee(true);
+		p2.setType(hSup);
+		
+		Pointage p3 = new Pointage();
+		p3.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p3.setDateDebut(new DateTime(2012, 05, 2, 5, 0, 0).toDate());
+		p3.setDateFin(new DateTime(2012, 05, 2, 8, 0, 0).toDate());
+		p3.setHeureSupRecuperee(true);
+		p3.setType(hSup);
+		
+		Pointage p4 = new Pointage();
+		p4.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p4.setDateDebut(new DateTime(2012, 05, 5, 2, 0, 0).toDate());
+		p4.setDateFin(new DateTime(2012, 05, 5, 4, 0, 0).toDate());
+		p4.setHeureSupRecuperee(true);
+		p4.setType(hSup);
+		
+		Pointage p5 = new Pointage();
+		p5.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p5.setDateDebut(new DateTime(2012, 05, 5, 22, 0, 0).toDate());
+		p5.setDateFin(new DateTime(2012, 05, 5, 23, 0, 0).toDate());
+		p5.setHeureSupRecuperee(true);
+		p5.setType(hSup);
+
+		Pointage p6 = new Pointage();
+		p6.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
+		p6.setDateDebut(new DateTime(2012, 05, 5, 23, 0, 0).toDate());
+		p6.setDateFin(new DateTime(2012, 05, 6, 0, 0, 0).toDate());
+		p6.setHeureSupRecuperee(false);
+		p6.setType(hSup);
+		
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(8);
+		spbase.setNbahma(8);
+		spbase.setNbahme(8);
+		spbase.setNbahje(8);
+		spbase.setNbahve(7);
+		spbase.setNbahsa(0);
+		spbase.setNbahdi(0);
+		spbase.setNbashh(39);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		
+		// When
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6));
+		
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p1.getDateLundi(), result.getDateLundi());
+		assertEquals(10 * 60, result.getMHorsContrat());
+		assertEquals(0, result.getMAbsences());
+		assertEquals(10 * 60, result.getMSup());
+		assertEquals(9 * 60, result.getMRecuperees());
+
+		assertEquals(7 * 60, result.getMsNuit());
+		assertEquals(0, result.getMsdjf());
+		assertEquals(0, result.getMNormales());
+		assertEquals(0, result.getMSimple());
+		assertEquals(0, result.getMComposees());
+		assertEquals(0, result.getMsdjf25());
+		assertEquals(0, result.getMsdjf50());
+		assertEquals(8 * 60, result.getMSup25());
+		assertEquals(2 * 60, result.getMSup50());
+		
+		assertEquals(6 * 60, result.getMsNuitRecup());
+		assertEquals(0, result.getMsdjfRecup());
+		assertEquals(0, result.getMNormalesRecup());
+		assertEquals(0, result.getMSimpleRecup());
+		assertEquals(0, result.getMComposeesRecup());
+		assertEquals(0, result.getMsdjf25Recup());
+		assertEquals(0, result.getMsdjf50Recup());
+		assertEquals(8 * 60, result.getMSup25Recup());
+		assertEquals(1 * 60, result.getMSup50Recup());
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
