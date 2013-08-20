@@ -65,7 +65,8 @@ public class PointageService implements IPointageService {
 			throw new NotAMondayException();
 
 		// Retrieve division service of agent
-		SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(agent.getIdAgent());
+		SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(agent
+				.getIdAgent());
 
 		// on construit le dto de l'agent
 		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);
@@ -74,7 +75,8 @@ public class PointageService implements IPointageService {
 
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(agent, helperService.getCurrentDate());
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(agent,
+				helperService.getCurrentDate());
 		agentDto.setStatut(carr.getStatutCarriere().name());
 
 		// on construit le DTO de jourPointage
@@ -85,9 +87,11 @@ public class PointageService implements IPointageService {
 
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
-		List<Integer> pps = sirhRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		List<Integer> pps = sirhRepository.getPrimePointagesByAgent(
+				agent.getIdAgent(), date);
 		if (pps.size() > 0) {
-			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
+			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps,
+					carr.getStatutCarriere());
 
 			for (RefPrime prime : refPrimes) {
 				jourPointageTemplate.getPrimes().add(new PrimeDto(prime));
@@ -99,7 +103,8 @@ public class PointageService implements IPointageService {
 		// tu as un jour de la semaine type avec toutes les primes
 
 		for (int jour = 1; jour < 7; jour++) {
-			JourPointageDto jourSuivant = new JourPointageDto(jourPointageTemplate);
+			JourPointageDto jourSuivant = new JourPointageDto(
+					jourPointageTemplate);
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(jourPointageTemplate.getDate());
 			calendar.add(Calendar.DATE, jour);
@@ -111,12 +116,14 @@ public class PointageService implements IPointageService {
 	}
 
 	@Override
-	public FichePointageListDto getFichesPointageForUsers(String csvIdAgents, Date date) {
+	public FichePointageListDto getFichesPointageForUsers(String csvIdAgents,
+			Date date) {
 
 		List<Agent> listAgent = new ArrayList<Agent>();
 
 		for (String id : csvIdAgents.split(",")) {
-			Integer convertedId = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(Integer.valueOf(id));
+			Integer convertedId = agentMatriculeConverterService
+					.tryConvertFromADIdAgentToSIRHIdAgent(Integer.valueOf(id));
 			Agent ag = Agent.findAgent(convertedId);
 			if (ag != null) {
 				listAgent.add(ag);
@@ -134,41 +141,43 @@ public class PointageService implements IPointageService {
 	}
 
 	@Override
-	public FichePointageDto getFilledFichePointageForAgent(int idAgent, Date dateLundi) {
+	public FichePointageDto getFilledFichePointageForAgent(int idAgent,
+			Date dateLundi) {
 
 		Agent agent = sirhRepository.getAgent(idAgent);
 
 		FichePointageDto ficheDto = getFichePointageForAgent(agent, dateLundi);
 
-		List<Pointage> agentPointages = getLatestPointagesForSaisieForAgentAndDateMonday(idAgent, dateLundi);
+		List<Pointage> agentPointages = getLatestPointagesForSaisieForAgentAndDateMonday(
+				idAgent, dateLundi);
 
 		for (Pointage ptg : agentPointages) {
 
-			JourPointageDto jour = ficheDto.getSaisies().get(helperService.getWeekDayFromDateBase0(ptg.getDateDebut()));
+			JourPointageDto jour = ficheDto.getSaisies().get(
+					helperService.getWeekDayFromDateBase0(ptg.getDateDebut()));
 
 			switch (ptg.getTypePointageEnum()) {
-				case ABSENCE:
-					AbsenceDto abs = new AbsenceDto(ptg);
-					jour.getAbsences().add(abs);
-					break;
-	
-				case H_SUP:
-					HeureSupDto hsup = new HeureSupDto(ptg);
-					jour.getHeuresSup().add(hsup);
-					break;
-	
-				case PRIME:
-					// Retrieve related primeDto in JourPointageDto and update it
-					// with value from Pointage
-					PrimeDto thePrimeToUpdate = null;
-					for (PrimeDto pDto : jour.getPrimes()) {
-						if (pDto.getNumRubrique().equals(ptg.getRefPrime().getNoRubr()))
-							thePrimeToUpdate = pDto;
-					}
-					if (thePrimeToUpdate != null) {
-						thePrimeToUpdate.updateWithPointage(ptg);
-					}
-					break;
+			case ABSENCE:
+				AbsenceDto abs = new AbsenceDto(ptg);
+				jour.getAbsences().add(abs);
+				break;
+
+			case H_SUP:
+				HeureSupDto hsup = new HeureSupDto(ptg);
+				jour.getHeuresSup().add(hsup);
+				break;
+
+			case PRIME:
+				// Retrieve related primeDto in JourPointageDto and update it
+				// with value from Pointage
+				PrimeDto thePrimeToUpdate = null;
+				for (PrimeDto pDto : jour.getPrimes()) {
+					if (pDto.getNumRubrique().equals(
+							ptg.getRefPrime().getNoRubr()))
+						thePrimeToUpdate = pDto;
+				}
+				thePrimeToUpdate.updateWithPointage(ptg);
+				break;
 			}
 		}
 
@@ -176,12 +185,16 @@ public class PointageService implements IPointageService {
 	}
 
 	@Override
-	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi) {
-		return getOrCreateNewPointage(idAgentCreator, idPointage, idAgent, dateLundi, null);
+	public Pointage getOrCreateNewPointage(Integer idAgentCreator,
+			Integer idPointage, Integer idAgent, Date dateLundi) {
+		return getOrCreateNewPointage(idAgentCreator, idPointage, idAgent,
+				dateLundi, null);
 	}
 
 	@Override
-	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Integer idRefPrime) {
+	public Pointage getOrCreateNewPointage(Integer idAgentCreator,
+			Integer idPointage, Integer idAgent, Date dateLundi,
+			Integer idRefPrime) {
 
 		Pointage ptg = null;
 		Pointage parentPointage = null;
@@ -194,7 +207,8 @@ public class PointageService implements IPointageService {
 			// this one as parent
 			EtatPointage etatPtg = ptg.getLatestEtatPointage();
 			if (etatPtg.getEtat() == EtatPointageEnum.SAISI) {
-				etatPtg.getEtatPointagePk().setDateEtat(helperService.getCurrentDate());
+				etatPtg.getEtatPointagePk().setDateEtat(
+						helperService.getCurrentDate());
 				etatPtg.setIdAgent(idAgentCreator);
 				return ptg;
 			}
@@ -217,10 +231,11 @@ public class PointageService implements IPointageService {
 			ptg.setHeureSupRecuperee(parentPointage.getHeureSupRecuperee());
 			ptg.setType(parentPointage.getType());
 		}
-		
+
 		// if this is a Prime kind of Pointage, fetch its RefPrime
 		if (idRefPrime != null)
-			ptg.setRefPrime(pointageRepository.getEntity(RefPrime.class, idRefPrime));
+			ptg.setRefPrime(pointageRepository.getEntity(RefPrime.class,
+					idRefPrime));
 
 		return ptg;
 	}
@@ -231,7 +246,8 @@ public class PointageService implements IPointageService {
 	 * @param ptg
 	 * @param etat
 	 */
-	protected void addEtatPointage(Pointage ptg, EtatPointageEnum etat, Integer idAgentCreator) {
+	protected void addEtatPointage(Pointage ptg, EtatPointageEnum etat,
+			Integer idAgentCreator) {
 		EtatPointagePK pk = new EtatPointagePK();
 		pk.setDateEtat(helperService.getCurrentDate());
 		pk.setPointage(ptg);
@@ -256,7 +272,8 @@ public class PointageService implements IPointageService {
 	@Override
 	public List<RefTypePointageDto> getRefTypesPointage() {
 		List<RefTypePointageDto> res = new ArrayList<RefTypePointageDto>();
-		List<RefTypePointage> refTypePointage = RefTypePointage.findAllRefTypePointages();
+		List<RefTypePointage> refTypePointage = RefTypePointage
+				.findAllRefTypePointages();
 		for (RefTypePointage type : refTypePointage) {
 			RefTypePointageDto dto = new RefTypePointageDto(type);
 			res.add(dto);
@@ -265,72 +282,95 @@ public class PointageService implements IPointageService {
 	}
 
 	@Override
-	public List<Pointage> getLatestPointagesForSaisieForAgentAndDateMonday(Integer idAgent, Date dateMonday) {
-		
-		List<Pointage> agentPointages = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateMonday);
+	public List<Pointage> getLatestPointagesForSaisieForAgentAndDateMonday(
+			Integer idAgent, Date dateMonday) {
 
-		logger.debug("Found {} Pointage for agent {} and date monday {}", agentPointages.size(), idAgent, dateMonday);
-		
-		return filterOldPointagesAndEtatFromList(agentPointages, 
-				Arrays.asList(EtatPointageEnum.APPROUVE, 
-						EtatPointageEnum.EN_ATTENTE, 
-						EtatPointageEnum.JOURNALISE, 
-						EtatPointageEnum.REFUSE, 
-						EtatPointageEnum.REJETE, 
-						EtatPointageEnum.SAISI, 
-						EtatPointageEnum.VALIDE, 
-						EtatPointageEnum.VENTILE));
+		List<Pointage> agentPointages = pointageRepository
+				.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateMonday);
+
+		logger.debug("Found {} Pointage for agent {} and date monday {}",
+				agentPointages.size(), idAgent, dateMonday);
+
+		return filterOldPointagesAndEtatFromList(agentPointages, Arrays.asList(
+				EtatPointageEnum.APPROUVE, EtatPointageEnum.EN_ATTENTE,
+				EtatPointageEnum.JOURNALISE, EtatPointageEnum.REFUSE,
+				EtatPointageEnum.REJETE, EtatPointageEnum.SAISI,
+				EtatPointageEnum.VALIDE, EtatPointageEnum.VENTILE));
 	}
-	
+
 	@Override
-	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate, RefTypePointageEnum type, List<EtatPointageEnum> etats) {
-		return getLatestPointagesForAgentsAndDates(Arrays.asList(idAgent), fromDate, toDate, type, etats);
+	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent,
+			Date fromDate, Date toDate, RefTypePointageEnum type,
+			List<EtatPointageEnum> etats) {
+		return getLatestPointagesForAgentsAndDates(Arrays.asList(idAgent),
+				fromDate, toDate, type, etats);
 	}
-	
+
 	@Override
-	public List<Pointage> getLatestPointagesForAgentsAndDates(List<Integer> idAgents, Date fromDate, Date toDate, RefTypePointageEnum type, List<EtatPointageEnum> etats) {
+	public List<Pointage> getLatestPointagesForAgentsAndDates(
+			List<Integer> idAgents, Date fromDate, Date toDate,
+			RefTypePointageEnum type, List<EtatPointageEnum> etats) {
 
-		List<Pointage> agentPointages = pointageRepository.getListPointages(idAgents, fromDate, toDate, type != null ? type.getValue() : null);
+		List<Pointage> agentPointages = pointageRepository.getListPointages(
+				idAgents, fromDate, toDate, type != null ? type.getValue()
+						: null);
 
-		logger.debug("Found {} Pointage for agents {} between dates {} and {}", agentPointages.size(), idAgents, fromDate, toDate);
+		logger.debug("Found {} Pointage for agents {} between dates {} and {}",
+				agentPointages.size(), idAgents, fromDate, toDate);
 
 		return filterOldPointagesAndEtatFromList(agentPointages, etats);
 	}
-	
-	@Override
-	public List<Pointage> getPointagesVentilesForAgent(Integer idAgent, VentilDate ventilDate) {
-		
-		List<Pointage> agentPointages = pointageRepository.getPointagesVentilesForAgent(idAgent, ventilDate.getIdVentilDate());
 
-		logger.debug("Found {} Pointage for agent {} and ventil date {} as of {}", agentPointages.size(), idAgent, ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
-		
-		return filterOldPointagesAndEtatFromList(agentPointages, Arrays.asList(EtatPointageEnum.VENTILE));
+	@Override
+	public List<Pointage> getPointagesVentilesForAgent(Integer idAgent,
+			VentilDate ventilDate) {
+
+		List<Pointage> agentPointages = pointageRepository
+				.getPointagesVentilesForAgent(idAgent,
+						ventilDate.getIdVentilDate());
+
+		logger.debug(
+				"Found {} Pointage for agent {} and ventil date {} as of {}",
+				agentPointages.size(), idAgent, ventilDate.getIdVentilDate(),
+				ventilDate.getDateVentilation());
+
+		return filterOldPointagesAndEtatFromList(agentPointages,
+				Arrays.asList(EtatPointageEnum.VENTILE));
 	}
-	
-	protected List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats) {
-		
+
+	protected List<Pointage> filterOldPointagesAndEtatFromList(
+			List<Pointage> pointages, List<EtatPointageEnum> etats) {
+
 		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
 
 		List<Pointage> resultList = new ArrayList<Pointage>();
-		
+
 		for (Pointage ptg : pointages) {
 
 			if (ptg.getPointageParent() != null) {
-				logger.debug("Pointage {} has a parent {}, adding it to avoid list.", ptg.getIdPointage(), ptg.getPointageParent().getIdPointage());
-				oldPointagesToAvoid.add(ptg.getPointageParent().getIdPointage());
+				logger.debug(
+						"Pointage {} has a parent {}, adding it to avoid list.",
+						ptg.getIdPointage(), ptg.getPointageParent()
+								.getIdPointage());
+				oldPointagesToAvoid
+						.add(ptg.getPointageParent().getIdPointage());
 			}
-			
+
 			if (oldPointagesToAvoid.contains(ptg.getIdPointage())) {
-				logger.debug("Not taking Pointage {} because not the latest.", ptg.getIdPointage());
+				logger.debug("Not taking Pointage {} because not the latest.",
+						ptg.getIdPointage());
 				continue;
 			}
-			
-			if (etats == null || etats.contains(ptg.getLatestEtatPointage().getEtat()))
+
+			if (etats == null
+					|| etats.contains(ptg.getLatestEtatPointage().getEtat()))
 				resultList.add(ptg);
 			else
-				logger.debug("Not taking Pointage {} because not in the given Etat list : {}.", ptg.getIdPointage(), etats);
+				logger.debug(
+						"Not taking Pointage {} because not in the given Etat list : {}.",
+						ptg.getIdPointage(), etats);
 		}
-		
+
 		return resultList;
 	}
 }
