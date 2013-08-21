@@ -320,7 +320,7 @@
         </dependency>
     </dependencies>
     <build>
-        <!--<finalName>sirh-ptg-ws##${maven.build.timestamp}-${project.version}</finalName>-->
+       <finalName>sirh-ptg-ws##${maven.build.timestamp}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
