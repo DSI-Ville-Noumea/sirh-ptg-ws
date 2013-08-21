@@ -110,16 +110,13 @@ public class SaisieController {
     @RequestMapping(value = "/ficheSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
     @Transactional(readOnly = true)
     public ResponseEntity<String> getFichePointageSIRH(
-            @RequestParam("idAgent") int idAgent,
+            @RequestParam("idAgent") int agent,
             @RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date) {
 
-        logger.debug("entered GET [saisie/ficheSIRH] => getFichePointage for SIRH with parameters idAgent = {}, date = {}", idAgent, date);
-        int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-        System.out.println("\nconvertedIdAgent:" + convertedIdAgent);
-        FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(idAgent, date);
-        System.out.println("\nfichePointageAgent:" + fichePointageAgent.getSemaine());
+        logger.debug("entered GET [saisie/ficheSIRH] => getFichePointage for SIRH with parameters idAgent = {}, date = {}", agent, date);
+        FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(agent, date);
         String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(fichePointageAgent);
-        System.out.println("\n\n... json généré:" + response);
+        //System.out.println("\n\n... json généré:" + response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
