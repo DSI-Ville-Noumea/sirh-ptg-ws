@@ -147,7 +147,7 @@ public class VisualisationController {
 		List<PointagesEtatChangeDto> dto = new JSONDeserializer<List<PointagesEtatChangeDto>>().use(null, ArrayList.class)
 				.use("values", PointagesEtatChangeDto.class).deserialize(pointagesEtatChangeDtoString);
 
-		ReturnMessageDto result = approbationService.setPointagesEtat(idAgent, dto);
+		ReturnMessageDto result = approbationService.setPointagesEtat(convertedIdAgent, dto);
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
