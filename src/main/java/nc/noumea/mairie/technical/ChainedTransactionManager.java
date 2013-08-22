@@ -15,6 +15,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.UnexpectedRollbackException;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+/**
+ * Transaction Manager able to perform 1PC with best effort
+ * Awaiting Spring Issue https://jira.springsource.org/browse/SPR-3844 
+ * to be released (probably in Spring 4) to switch to official implementation.
+ * The main goal is to provide a multi transaction handling for methods needing to 
+ * update several datasources at once.
+ */
 public class ChainedTransactionManager implements PlatformTransactionManager {
 
     private final static Log logger = LogFactory.getLog(ChainedTransactionManager.class);

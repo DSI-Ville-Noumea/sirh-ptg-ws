@@ -26,6 +26,15 @@ public class SpphreId implements Serializable {
 		return super.equals(obj);
 	}
 	
+	public SpphreId() {
+		
+	}
+	
+	public SpphreId(Integer nomatr, Integer datJour) {
+		this.setNomatr(nomatr);
+		this.setDatJour(datJour);
+	}
+	
 	@Column(name = "NOMATR", columnDefinition = "numeric")
 	private Integer nomatr;
 

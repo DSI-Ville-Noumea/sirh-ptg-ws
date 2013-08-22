@@ -17,7 +17,7 @@ public class Spphre {
 
 	@Column(name = "CDRECU", columnDefinition = "char")
 	@Enumerated(EnumType.STRING)
-	private SpphreRecupEnum spphreRecup;
+	private SpphreRecupEnum spphreRecup = SpphreRecupEnum.P;
 
 	@Column(name = "NBH25", columnDefinition = "numeric")
 	private double nbh25;

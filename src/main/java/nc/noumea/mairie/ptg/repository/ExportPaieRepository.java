@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.Sppact;
+import nc.noumea.mairie.domain.Spphre;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,22 @@ public class ExportPaieRepository implements IExportPaieRepository {
 		q.setParameter("codeActi", codeActi);
 		
 		List<Sppact> result = q.getResultList();
+		
+		if (result.size() == 0)
+			return null;
+		
+		return result.get(0);
+	}
+	
+	@Override
+	public Spphre getSpphreForDayAndAgent(Integer idAgent, Date day) {
+
+		String jpql = "from Spphre h where h.id.nomatr = :nomatr and h.id.datJour = :datJour";
+		TypedQuery<Spphre> q = mairieEntityManager.createQuery(jpql, Spphre.class);
+		q.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
+		q.setParameter("datJour", helperService.getIntegerDateMairieFromDate(day));
+		
+		List<Spphre> result = q.getResultList();
 		
 		if (result.size() == 0)
 			return null;

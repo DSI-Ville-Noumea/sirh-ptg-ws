@@ -82,7 +82,7 @@ public class ExportPaieService implements IExportPaieService {
 		// 2. retrieve list of Agent from pointages
 		List<Integer> idAgents = ventilationRepository.getListIdAgentsForExportPaie(ventilDate.getIdVentilDate());
 		
-		logger.info("Found {} agents to export pointages for (based on available pointages).", idAgents.size());
+		logger.info("Found {} agents to export pointages for (based on all available pointages for export and before agent filtering).", idAgents.size());
 		int nbProcessedAgents = 0;
 		
 		for (Integer idAgent : idAgents) {
