@@ -10,7 +10,6 @@ import nc.noumea.mairie.domain.SpphreRecupEnum;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.repository.IExportPaieRepository;
 import nc.noumea.mairie.ptg.service.IExportPaieHSupService;
-import nc.noumea.mairie.sirh.domain.CptRecup;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,12 +87,6 @@ public class ExportPaieHSupService implements IExportPaieHSupService {
 		hre.setNbhcomplementaires(helperService.convertMinutesToMairieNbHeuresFormat(nbHcomplementaires));
 		
 		return hre;
-	}
-	
-	@Override
-	public List<CptRecup> exportRecupToSirh(List<VentilHsup> ventilHsupOrderedByDateAsc) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
