@@ -4,10 +4,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 
@@ -177,5 +183,14 @@ public class HelperServiceTest {
 		
 		// Then
 		assertEquals(TypeChainePaieEnum.SCV, service.getTypeChainePaieFromStatut(AgentStatutEnum.CC));
+	}
+	
+	@Test
+	public void theDateTest() {
+		DateTime d = new DateTime(1377128761000l, DateTimeZone.forID("+1100"));
+		Date dd = d.toDate();
+		DateFormat df = new SimpleDateFormat("z Z");
+		String s = df.format(dd);
+		assertEquals("SBT +1100", s);
 	}
 }
