@@ -2,7 +2,7 @@ package nc.noumea.mairie.ptg.domain;
 
 public enum RefTypePointageEnum {
 
-	NULL(0),ABSENCE(1), H_SUP(2), PRIME(3);
+	ABSENCE(1), H_SUP(2), PRIME(3);
 
 	private int type;
 	
@@ -17,7 +17,7 @@ public enum RefTypePointageEnum {
 	public static RefTypePointageEnum getRefTypePointageEnum(Integer type) {
 		
 		if (type == null)
-			return NULL;
+			return null;
 		
 		switch (type) {
 			case 1:
@@ -27,7 +27,7 @@ public enum RefTypePointageEnum {
 			case 3:
 				return PRIME;
 			default:
-				return NULL;
+				return null;
 		}
 	}
 }
