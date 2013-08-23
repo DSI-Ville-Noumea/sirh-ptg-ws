@@ -1,6 +1,8 @@
 package nc.noumea.mairie.ptg.dto;
 
+import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
+import nc.noumea.mairie.ptg.domain.VentilPrime;
 
 @XmlRootElement
 public class VentilPrimeDto extends VentilDto {
@@ -11,6 +13,15 @@ public class VentilPrimeDto extends VentilDto {
     public VentilPrimeDto() {
     }
 
+    public VentilPrimeDto(VentilPrime hibObj) {
+        id_ref_prime = hibObj.getIdRefPrime();
+        quantite = hibObj.getQuantite();
+        id_ventil = hibObj.getIdVentilPrime();
+        date = hibObj.getDateDebutMois();
+        id_agent = hibObj.getIdAgent();
+        etat = hibObj.getEtat().getCodeEtat();
+    }
+
     public int getId_ventil_prime() {
         return id_ventil;
     }
@@ -19,11 +30,11 @@ public class VentilPrimeDto extends VentilDto {
         this.id_ventil = id_ventil_prime;
     }
 
-    public String getDate_debut_mois() {
+    public Date getDate_debut_mois() {
         return date;
     }
 
-    public void setDate_debut_mois(String date_debut_mois) {
+    public void setDate_debut_mois(Date date_debut_mois) {
         this.date = date_debut_mois;
     }
 
@@ -42,5 +53,4 @@ public class VentilPrimeDto extends VentilDto {
     public void setQuantite(int quantite) {
         this.quantite = quantite;
     }
-    
 }

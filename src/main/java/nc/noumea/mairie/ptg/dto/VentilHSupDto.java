@@ -1,6 +1,8 @@
 package nc.noumea.mairie.ptg.dto;
 
+import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
+import nc.noumea.mairie.ptg.domain.VentilHsup;
 
 @XmlRootElement
 public class VentilHSupDto extends VentilDto {
@@ -19,7 +21,6 @@ public class VentilHSupDto extends VentilDto {
     private int m_complementaires;
     private int m_simples;
     private int m_composees;
-    private int etat;
     private int m_recuperees;
     private int m_sup_25_r;
     private int m_sup_50_r;
@@ -36,6 +37,39 @@ public class VentilHSupDto extends VentilDto {
     public VentilHSupDto() {
     }
 
+    public VentilHSupDto(VentilHsup hibObj) {
+        mabs = hibObj.getmAbsences();
+        m_hors_contrat = hibObj.getmHorsContrat();
+        m_sup = hibObj.getmSup();
+        m_sup_25 = hibObj.getmSup25();
+        m_sup_50 = hibObj.getmSup50();
+        m_djf = hibObj.getMsdjf();
+        m_djf_25 = hibObj.getMsdjf25();
+        m_djf_50 = hibObj.getMsdjf50();
+        m_1_mai = hibObj.getmMai();
+        m_nuit = hibObj.getMsNuit();
+        m_normales = hibObj.getmNormales();
+        m_complementaires = hibObj.getmComplementaires();
+        m_simples = hibObj.getmSimple();
+        m_composees = hibObj.getmComposees();
+        etat = hibObj.getEtat().getCodeEtat();
+        m_recuperees = hibObj.getmRecuperees();
+        m_sup_25_r = hibObj.getmSup25Recup();
+        m_sup_50_r = hibObj.getmSup50Recup();
+        m_djf_r = hibObj.getMsdjfRecup();
+        m_djf_25_r = hibObj.getMsdjf25Recup();
+        m_djf_50_r = hibObj.getMsdjf50Recup();
+        m_1_mai_r = hibObj.getmMaiRecup();
+        m_nuit_r = hibObj.getMsNuitRecup();
+        m_normales_r = hibObj.getmNormalesRecup();
+        m_complementaires_r = hibObj.getmComplementairesRecup();
+        m_simples_r = hibObj.getmSimpleRecup();
+        m_composees_r = hibObj.getmComposeesRecup();
+        date = hibObj.getDateLundi();
+        id_agent = hibObj.getIdAgent();
+        id_ventil=hibObj.getIdVentilHSup();
+    }
+
     public int getId_ventil_hsup() {
         return id_ventil;
     }
@@ -44,11 +78,11 @@ public class VentilHSupDto extends VentilDto {
         this.id_ventil = id_ventil_hsup;
     }
 
-    public String getDate_lundi() {
+    public Date getDate_lundi() {
         return date;
     }
 
-    public void setDate_lundi(String date_lundi) {
+    public void setDate_lundi(Date date_lundi) {
         this.date = date_lundi;
     }
 
@@ -259,5 +293,4 @@ public class VentilHSupDto extends VentilDto {
     public void setM_composees_r(int m_composees_r) {
         this.m_composees_r = m_composees_r;
     }
-    
 }

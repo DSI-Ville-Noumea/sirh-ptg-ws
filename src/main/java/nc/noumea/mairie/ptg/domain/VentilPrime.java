@@ -18,32 +18,32 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_VENTIL_PRIME", identifierField = "idVentilPrime", identifierType = Integer.class, table = "PTG_VENTIL_PRIME", sequenceName = "PTG_S_VENTIL_PRIME")
 public class VentilPrime {
 
-	@Column(name = "ID_AGENT")
-	private Integer idAgent;
-	
-	@Column(name = "DATE_DEBUT_MOIS")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateDebutMois;
-	
-	@ManyToOne
-	@JoinColumn(name = "ID_REF_PRIME", referencedColumnName = "ID_REF_PRIME")
-	private RefPrime refPrime;
-	
-	@Column(name = "ETAT")
-	@Enumerated(EnumType.ORDINAL)
-	private EtatPointageEnum etat;
-	
-	@Column(name = "QUANTITE")
-	private Integer quantite;
-	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
-	private VentilDate ventilDate;
-	
-	@Transient
-	public void addQuantite(Integer quantite) {
-		if(this.quantite == null)
-			this.quantite = 0;
-		this.quantite += quantite;
-	}
+    @Column(name = "ID_AGENT")
+    private Integer idAgent;
+    @Column(name = "DATE_DEBUT_MOIS")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateDebutMois;
+    @ManyToOne
+    @JoinColumn(name = "ID_REF_PRIME", referencedColumnName = "ID_REF_PRIME")
+    private RefPrime refPrime;
+    @Column(name = "ETAT")
+    @Enumerated(EnumType.ORDINAL)
+    private EtatPointageEnum etat;
+    @Column(name = "QUANTITE")
+    private Integer quantite;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
+    private VentilDate ventilDate;
+
+    @Transient
+    public void addQuantite(Integer quantite) {
+        if (this.quantite == null) {
+            this.quantite = 0;
+        }
+        this.quantite += quantite;
+    }
+
+    public Integer getIdRefPrime() {
+        return refPrime.getIdRefPrime();
+    }
 }

@@ -27,32 +27,56 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_VENTIL_DATE", identifierField = "idVentilDate", identifierType = Integer.class, table = "PTG_VENTIL_DATE", sequenceName = "PTG_S_VENTIL_DATE")
 public class VentilDate {
 
-	@Column(name = "DATE_VENTIL")
-	@NotNull
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date dateVentilation;
+    @Column(name = "DATE_VENTIL")
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateVentilation;
+    @Column(name = "TYPE_CHAINE_PAIE")
+    @Enumerated(EnumType.STRING)
+    private TypeChainePaieEnum typeChainePaie;
+    @Column(name = "IS_PAYE", nullable = false)
+    @Type(type = "boolean")
+    private boolean paye;
+    @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<VentilAbsence> ventilAsbences;
+    @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<VentilHsup> ventilHsups;
+    @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<VentilPrime> ventilPrimes;
+    @ManyToMany
+    @JoinTable(
+            name = "PTG_POINTAGE_VENTIL_DATE",
+            inverseJoinColumns =
+            @JoinColumn(name = "ID_POINTAGE"),
+            joinColumns =
+            @JoinColumn(name = "ID_VENTIL_DATE"))
+    private Set<Pointage> pointages = new HashSet<Pointage>();
 
-	@Column(name = "TYPE_CHAINE_PAIE")
-	@Enumerated(EnumType.STRING)
-	private TypeChainePaieEnum typeChainePaie;
+    public Date getDateVentilation() {
+        return dateVentilation;
+    }
 
-	@Column(name = "IS_PAYE", nullable = false)
-	@Type(type = "boolean")
-	private boolean paye;
-	
-	@OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<VentilAbsence> ventilAsbences;
-	
-	@OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<VentilHsup> ventilHsups;
-	
-	@OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Set<VentilPrime> ventilPrimes;
-	
-	@ManyToMany
-	@JoinTable(
-			name = "PTG_POINTAGE_VENTIL_DATE", 
-			inverseJoinColumns = @JoinColumn(name = "ID_POINTAGE"), 
-			joinColumns = @JoinColumn(name = "ID_VENTIL_DATE"))
-	private Set<Pointage> pointages = new HashSet<Pointage>();
+    public TypeChainePaieEnum getTypeChainePaie() {
+        return typeChainePaie;
+    }
+
+    public boolean isPaye() {
+        return paye;
+    }
+
+    public Set<VentilAbsence> getVentilAsbences() {
+        return ventilAsbences;
+    }
+
+    public Set<VentilHsup> getVentilHsups() {
+        return ventilHsups;
+    }
+
+    public Set<VentilPrime> getVentilPrimes() {
+        return ventilPrimes;
+    }
+
+    public Set<Pointage> getPointages() {
+        return pointages;
+    }
 }
