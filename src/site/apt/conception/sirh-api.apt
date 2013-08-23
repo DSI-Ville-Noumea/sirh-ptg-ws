@@ -257,8 +257,52 @@ HTTP Status code OK : 200
     ]
 }
 +-------------------------+
+** Visualiser les ventilations
 
+ <<URL>> : /ventilation/showVentilation
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
 
+  * <<idDateVentil>> : L'id de date de ventilation. Entier.
+  
+  * <<csvIdAgents>> : Liste d' id d'agents séparés par des virgules pour lesquels on souhaite visualiser les pointages ventilés. Matricules au format 900xxxx
+  
+  * <<typePointage>> : Le type des pointages à ventiler. Entier. ABS (1), H_SUP (2) ou PRIME (3)
+ 
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+* Content 
+
++-------------------------+
+{
+   [{"date_debut_mois":"/Date(1367326800000+1100)/",
+     "etat":4,
+     "id_agent":9003903,
+     "id_ref_prime":289,
+     "id_ventil_prime":41,
+     "quantite":5}]
+}
++-------------------------+
+
+  * Si liste vide :
+
++-------------------------+
+ HTTP Status code NO-CONTENT : 204
++-------------------------+
+
+  
 
 * Déversement dans la paie (Exportation dans la paie)
 
