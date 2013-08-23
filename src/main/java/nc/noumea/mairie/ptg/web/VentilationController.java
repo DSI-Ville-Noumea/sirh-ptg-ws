@@ -62,13 +62,12 @@ public class VentilationController {
         return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
     }
 
-
     @ResponseBody
     @RequestMapping(value = "/show", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
     @Transactional("ptgTransactionManager")
     public ResponseEntity<String> showVentilation(
-            @RequestParam("csvIdAgents") String csvIdAgents,
             @RequestParam("idDateVentil") Integer idDateVentil,
+            @RequestParam("csvIdAgents") String csvIdAgents,
             @RequestParam("typePointage") Integer idRefTypePointage) {
 
         RefTypePointageEnum typepointage = RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage);
@@ -81,21 +80,7 @@ public class VentilationController {
             agents.add(Integer.parseInt(ag));
         }
 
-        // Request show depending on typepointage
-        List result = ventilationService.showVentilation(agents, idDateVentil, typepointage);
-
-        /**
-         * List result; switch (typepointage) { case ABSENCE: { result =
-         * ventilationService.showVentilation(agents, ventilationDate,
-         * AgentStatutEnum.valueOf(statut), typepointage,
-         * VentilAbsenceDto.class); break; } case H_SUP: { result =
-         * ventilationService.showVentilation(agents, ventilationDate,
-         * AgentStatutEnum.valueOf(statut), typepointage, VentilHSupDto.class);
-         * break; } case PRIME: default: { result =
-         * ventilationService.showVentilation(agents, ventilationDate,
-         * AgentStatutEnum.valueOf(statut), typepointage, VentilPrimeDto.class);
-         * break; } }*
-         */
+        List result = ventilationService.showVentilation(idDateVentil, agents, typepointage);
         if (result.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

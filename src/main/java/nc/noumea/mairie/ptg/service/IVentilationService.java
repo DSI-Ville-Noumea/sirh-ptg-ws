@@ -9,8 +9,7 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
 public interface IVentilationService {
 
-	ReturnMessageDto processVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType);
-        
-  	List showVentilation(List<Integer> agents, Integer idDateVentil,  RefTypePointageEnum pointageType);
-         
+    ReturnMessageDto processVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType);
+
+    List showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType);
 }

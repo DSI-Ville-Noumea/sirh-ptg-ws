@@ -328,17 +328,14 @@ public class VentilationService implements IVentilationService {
      * @return
      */
     @Override
-    public List showVentilation(List<Integer> agents, Integer idDateVentil, RefTypePointageEnum pointageType) {
-        logger.info("Showing ventilation of Pointages for Agents [{}], idDateVentil [{}] and pointage type [{}]", agents, idDateVentil, pointageType);
+    public List showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType) {
+        logger.debug("Showing ventilation of Pointages for Agents [{}], idDateVentil [{}] and pointage type [{}]", agents, idDateVentil, pointageType);
         List pointagesVentiles = new ArrayList<>();
-        // For all selected agents, get ventilation
+        // For all selected agents, get ventilated pointages
         for (Integer agent : agents) {
-            logger.info("Getting ventilation pointages of agent {} ...", agent);
-            // 2. select all distinct dates of pointages
-            //         List<Date> pointagesToVentilateDates = ventilationRepository.getDistinctDatesOfPointages(agent, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
             pointagesVentiles.addAll(ventilationRepository.getListOfVentilForDateAgentAndType(idDateVentil, agent, pointageType));
         }
-        logger.info("Returning {} ventilated pointages .", pointagesVentiles.size());
+        logger.debug("Returning {} ventilated pointages from showVentilation WS.", pointagesVentiles.size());
         return pointagesVentiles;
     }
 }
