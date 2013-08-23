@@ -40,4 +40,28 @@ public class VentilAbsence {
     public void addMinutesNonConcertee(Integer minutes) {
         minutesNonConcertee += minutes;
     }
+
+    public Integer getIdAgent() {
+        return idAgent;
+    }
+
+    public Date getDateLundi() {
+        return dateLundi;
+    }
+
+    public int getMinutesConcertee() {
+        return minutesConcertee;
+    }
+
+    public int getMinutesNonConcertee() {
+        return minutesNonConcertee;
+    }
+
+    public EtatPointageEnum getEtat() {
+        return etat;
+    }
+
+    public VentilDate getVentilDate() {
+        return ventilDate;
+    }
 }

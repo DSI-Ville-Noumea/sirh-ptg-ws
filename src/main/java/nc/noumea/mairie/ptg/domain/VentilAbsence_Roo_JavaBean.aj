@@ -10,48 +10,24 @@ import nc.noumea.mairie.ptg.domain.VentilDate;
 
 privileged aspect VentilAbsence_Roo_JavaBean {
     
-    public Integer VentilAbsence.getIdAgent() {
-        return this.idAgent;
-    }
-    
     public void VentilAbsence.setIdAgent(Integer idAgent) {
         this.idAgent = idAgent;
-    }
-    
-    public Date VentilAbsence.getDateLundi() {
-        return this.dateLundi;
     }
     
     public void VentilAbsence.setDateLundi(Date dateLundi) {
         this.dateLundi = dateLundi;
     }
     
-    public int VentilAbsence.getMinutesConcertee() {
-        return this.minutesConcertee;
-    }
-    
     public void VentilAbsence.setMinutesConcertee(int minutesConcertee) {
         this.minutesConcertee = minutesConcertee;
-    }
-    
-    public int VentilAbsence.getMinutesNonConcertee() {
-        return this.minutesNonConcertee;
     }
     
     public void VentilAbsence.setMinutesNonConcertee(int minutesNonConcertee) {
         this.minutesNonConcertee = minutesNonConcertee;
     }
     
-    public EtatPointageEnum VentilAbsence.getEtat() {
-        return this.etat;
-    }
-    
     public void VentilAbsence.setEtat(EtatPointageEnum etat) {
         this.etat = etat;
-    }
-    
-    public VentilDate VentilAbsence.getVentilDate() {
-        return this.ventilDate;
     }
     
     public void VentilAbsence.setVentilDate(VentilDate ventilDate) {

@@ -46,4 +46,28 @@ public class VentilPrime {
     public Integer getIdRefPrime() {
         return refPrime.getIdRefPrime();
     }
+
+    public Integer getIdAgent() {
+        return idAgent;
+    }
+
+    public Date getDateDebutMois() {
+        return dateDebutMois;
+    }
+
+    public RefPrime getRefPrime() {
+        return refPrime;
+    }
+
+    public EtatPointageEnum getEtat() {
+        return etat;
+    }
+
+    public Integer getQuantite() {
+        return quantite;
+    }
+
+    public VentilDate getVentilDate() {
+        return ventilDate;
+    }
 }
