@@ -1,9 +1,7 @@
             ------
             SIRH-PTG-WS API WS doc
             ------
-            Nicolas Raynaud
-            ------
-             2013-07-17
+
 
 
 SIRH-PTG-WS API pour SIRH
@@ -283,16 +281,68 @@ HTTP Status code OK : 200
  HTTP Status code OK : 200
 +-------------------------+
 
-* Content 
+  * Content 
+  
+** Si  typePointage = 1 (ABSENCE)
 
 +-------------------------+
 {
-   [{"date_debut_mois":"/Date(1367326800000+1100)/",
-     "etat":4,
-     "id_agent":9003903,
-     "id_ref_prime":289,
-     "id_ventil_prime":41,
-     "quantite":5}]
+    date_lundi: "/Date(1368968400000+1100)/"
+    etat: 4
+    id_agent: 9003903
+    id_ventil_absence: 61
+    minutes_concertees: 120
+    minutes_non_concertees: 90
+}
++-------------------------+
+
+** Si  typePointage = 2 (HEURE SUP)
+
++-------------------------+
+{
+    date_lundi: "/Date(1368968400000+1100)/"
+    etat: 4
+    id_agent: 9003903
+    id_ventil_hsup: 41
+    m_1_mai: 0
+    m_1_mai_r: 0
+    m_complementaires: 15
+    m_complementaires_r: 0
+    m_composees: 0
+    m_composees_r: 0
+    m_djf: 0
+    m_djf_25: 0
+    m_djf_25_r: 0
+    m_djf_50: 0
+    m_djf_50_r: 0
+    m_djf_r: 0
+    m_hors_contrat: 360
+    m_normales: 0
+    m_normales_r: 0
+    m_nuit: 90
+    m_nuit_r: 0
+    m_recuperees: 0
+    m_simples: 0
+    m_simples_r: 0
+    m_sup: 150
+    m_sup_25: 135
+    m_sup_25_r: 0
+    m_sup_50: 0
+    m_sup_50_r: 0
+    mabs: 210
+}
++-------------------------+
+
+** Si  typePointage = 3 (PRIME)
+
++-------------------------+
+{
+    date_debut_mois: "/Date(1367326800000+1100)/"
+    etat: 4
+    id_agent: 9003903
+    id_ref_prime: 289
+    id_ventil_prime: 41
+    quantite: 5
 }
 +-------------------------+
 
