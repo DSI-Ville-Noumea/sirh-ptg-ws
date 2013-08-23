@@ -83,7 +83,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		accessRightService.setDelegatorAndOperators(idAgent, new DelegatorAndOperatorsDto().deserializeFromJSON(delegatorAndOperatorsDtoJson));
+		accessRightService.setDelegatorAndOperators(convertedIdAgent, new DelegatorAndOperatorsDto().deserializeFromJSON(delegatorAndOperatorsDtoJson));
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
