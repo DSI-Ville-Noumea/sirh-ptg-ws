@@ -373,4 +373,9 @@ public class PointageService implements IPointageService {
 
 		return resultList;
 	}
+
+	@Override
+	public boolean isPrimeUtiliseePointage(Integer idAgent, Integer idRefPrime) {
+		return pointageRepository.isPrimeSurPointageouPointageCalcule(idAgent,idRefPrime);
+	}
 }

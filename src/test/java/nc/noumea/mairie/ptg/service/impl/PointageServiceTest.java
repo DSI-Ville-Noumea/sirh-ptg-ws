@@ -737,4 +737,26 @@ public class PointageServiceTest {
 		assertEquals(1, result.size());
 		assertEquals(p2, result.get(0));
 	}
+	
+	@Test
+	public void isPrimeUtiliseePointage() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(12);;
+		
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.isPrimeSurPointageouPointageCalcule(idAgent,  refPrime.getIdRefPrime())).thenReturn(false);
+		
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		
+		// When
+		boolean result = service.isPrimeUtiliseePointage(idAgent, refPrime.getIdRefPrime());
+		
+		// Then
+		assertEquals(false, result);
+	}
 }

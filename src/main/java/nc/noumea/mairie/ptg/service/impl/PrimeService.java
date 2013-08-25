@@ -25,7 +25,8 @@ public class PrimeService implements IPrimeService {
 	public List<RefPrimeDto> getPrimeListForAgent(AgentStatutEnum statutAgent) {
 
 		ArrayList<RefPrimeDto> res = new ArrayList<>();
-		List<RefPrime> result = pointageRepository.getRefPrimesListForAgent(statutAgent);
+		List<RefPrime> result = pointageRepository
+				.getRefPrimesListForAgent(statutAgent);
 		for (RefPrime p : result) {
 			res.add(new RefPrimeDto(p));
 		}
@@ -46,9 +47,22 @@ public class PrimeService implements IPrimeService {
 	public RefPrimeDto getPrime(Integer noRubr) {
 		RefPrimeDto res = new RefPrimeDto();
 
-		List<RefPrime> result = pointageRepository.getRefPrimesListWithNoRubr(noRubr);
+		List<RefPrime> result = pointageRepository
+				.getRefPrimesListWithNoRubr(noRubr);
 		RefPrime p = result.get(0);
 		res = new RefPrimeDto(p);
+		return res;
+	}
+
+	@Override
+	public List<RefPrimeDto> getPrimes(Integer noRubr) {
+
+		ArrayList<RefPrimeDto> res = new ArrayList<>();
+		List<RefPrime> result = pointageRepository
+				.getRefPrimesListWithNoRubr(noRubr);
+		for (RefPrime p : result) {
+			res.add(new RefPrimeDto(p));
+		}
 		return res;
 	}
 

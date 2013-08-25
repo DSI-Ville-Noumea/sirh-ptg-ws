@@ -8,8 +8,10 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
+import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.IPrimeService;
 
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,18 +35,26 @@ public class PrimeController {
 	@Autowired
 	private IPrimeService primeService;
 
+	@Autowired
+	private IPointageService pointageService;
+
 	@ResponseBody
 	@RequestMapping(value = "/getListePrimeWithStatus", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListePrime(@RequestParam("statutAgent") String statutAgent) {
+	public ResponseEntity<String> getListePrime(
+			@RequestParam("statutAgent") String statutAgent) {
 
-		logger.debug("entered GET [primes] => getListePrime with parameters statsAgent = {}", statutAgent);
+		logger.debug(
+				"entered GET [primes/getListePrimeWithStatus] => getListePrime with parameters statsAgent = {}",
+				statutAgent);
 
-		List<RefPrimeDto> result = primeService.getPrimeListForAgent(AgentStatutEnum.valueOf(statutAgent));
+		List<RefPrimeDto> result = primeService
+				.getPrimeListForAgent(AgentStatutEnum.valueOf(statutAgent));
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		String response = new JSONSerializer().exclude("*.class")
+				.deepSerialize(result);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 
@@ -53,22 +63,26 @@ public class PrimeController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getListePrime() {
 
-		logger.debug("entered GET [primes] => getListePrime ");
+		logger.debug("entered GET [primes/getListePrime] => getListePrime ");
 
 		List<RefPrimeDto> result = primeService.getPrimeList();
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		String response = new JSONSerializer().exclude("*.class")
+				.deepSerialize(result);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/getPrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getPrime(@RequestParam("noRubr") Integer noRubr) {
+	public ResponseEntity<String> getPrime(
+			@RequestParam("noRubr") Integer noRubr) {
 
-		logger.debug("entered GET [primes] => getPrime with parameters noRubr = {}", noRubr);
+		logger.debug(
+				"entered GET [primes/getPrime] => getPrime with parameters noRubr = {}",
+				noRubr);
 
 		RefPrimeDto result = primeService.getPrime(noRubr);
 
@@ -76,8 +90,36 @@ public class PrimeController {
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 		}
 
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		String response = new JSONSerializer().exclude("*.class")
+				.deepSerialize(result);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/isPrimeUtilisee", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> isPrimeUtilisee(
+			@RequestParam("noRubr") Integer noRubr,
+			@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug(
+				"entered GET [primes/isPrimeUtilisee] => isPrimeUtilisee with parameters noRubr = {} and idAgent = {} --> for SIRH ",
+				noRubr, idAgent);
+
+		List<RefPrimeDto> primes = primeService.getPrimes(noRubr);
+		boolean isUtilise = false;
+		for (RefPrimeDto refPrime : primes) {
+			if (pointageService.isPrimeUtiliseePointage(idAgent, refPrime.getIdRefPrime())) {
+				isUtilise = true;
+				break;
+			}
+		}
+
+		JSONObject jsonPrimeUtilisee = new JSONObject();
+		jsonPrimeUtilisee.put("isPrimeUtilisee", isUtilise);
+
+		return new ResponseEntity<String>(jsonPrimeUtilisee.toJSONString(),
+				HttpStatus.OK);
 	}
 
 }

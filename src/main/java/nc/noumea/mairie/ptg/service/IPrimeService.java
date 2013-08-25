@@ -18,4 +18,6 @@ public interface IPrimeService {
 
 	public RefPrimeDto getPrime(Integer noRubr);
 
+	public List<RefPrimeDto> getPrimes(Integer noRubr);
+
 }

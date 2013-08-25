@@ -107,4 +107,12 @@ public interface IPointageService {
 	 * @return
 	 */
 	List<Pointage> getPointagesVentilesForAgent(Integer idAgent, VentilDate ventilDate);
+	
+	/**
+	 * 
+	 * @param idAgent
+	 * @param idRefPrime
+	 * @return
+	 */
+	boolean isPrimeUtiliseePointage(Integer idAgent, Integer idRefPrime);
 }

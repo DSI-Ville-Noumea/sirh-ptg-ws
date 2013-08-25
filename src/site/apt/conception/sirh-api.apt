@@ -1,4 +1,4 @@
-            ------
+﻿            ------
             SIRH-PTG-WS API WS doc
             ------
 
@@ -520,6 +520,32 @@ HTTP Status code OK : 200
        "numRubrique": 7710,
        "statut": "F",
        "typeSaisie": "NB_INDEMNITES"
+    }
++-------------------------+
+
+
+
+** Savoir si une prime a déjà été pointée. 
+
+ <<URL>> : /primes/isPrimeUtilisee
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<noRubr>> : le numero de la prime
+
+  * <<idAgent>> : le numero de l'agent concerné
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+ 
++-------------------------+ 
+    {
+       "isPrimeUtilisee": true
     }
 +-------------------------+
  
