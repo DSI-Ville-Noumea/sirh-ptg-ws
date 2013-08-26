@@ -11,7 +11,6 @@ import nc.noumea.mairie.ptg.dto.RefPrimeDto;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.IPrimeService;
 
-import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,17 +108,17 @@ public class PrimeController {
 		List<RefPrimeDto> primes = primeService.getPrimes(noRubr);
 		boolean isUtilise = false;
 		for (RefPrimeDto refPrime : primes) {
-			if (pointageService.isPrimeUtiliseePointage(idAgent, refPrime.getIdRefPrime())) {
+			if (pointageService.isPrimeUtiliseePointage(idAgent,
+					refPrime.getIdRefPrime())) {
 				isUtilise = true;
 				break;
 			}
 		}
-
-		JSONObject jsonPrimeUtilisee = new JSONObject();
-		jsonPrimeUtilisee.put("isPrimeUtilisee", isUtilise);
-
-		return new ResponseEntity<String>(jsonPrimeUtilisee.toJSONString(),
-				HttpStatus.OK);
+		if (isUtilise) {
+			return new ResponseEntity<String>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		}
 	}
 
 }

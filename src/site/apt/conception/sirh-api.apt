@@ -543,11 +543,9 @@ HTTP Status code OK : 200
  
  <<Response>>
  
-+-------------------------+ 
-    {
-       "isPrimeUtilisee": true
-    }
-+-------------------------+
+  * 200 si utilisée
+  
+  * 204 si pas utilisée
  
  
  
