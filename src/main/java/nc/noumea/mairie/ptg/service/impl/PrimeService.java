@@ -1,7 +1,8 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 /**
- * This is the class for Prime service 
+ * This is the class for Prime service
+ *
  * @author C. Levointurier
  */
 import java.util.ArrayList;
@@ -19,51 +20,50 @@ import org.springframework.stereotype.Service;
 @Service
 public class PrimeService implements IPrimeService {
 
-	@Autowired
-	private IPointageRepository pointageRepository;
+    @Autowired
+    private IPointageRepository pointageRepository;
 
-	public List<RefPrimeDto> getPrimeListForAgent(AgentStatutEnum statutAgent) {
+    public List<RefPrimeDto> getPrimeListForAgent(AgentStatutEnum statutAgent) {
 
-		ArrayList<RefPrimeDto> res = new ArrayList<>();
-		List<RefPrime> result = pointageRepository
-				.getRefPrimesListForAgent(statutAgent);
-		for (RefPrime p : result) {
-			res.add(new RefPrimeDto(p));
-		}
-		return res;
-	}
+        ArrayList<RefPrimeDto> res = new ArrayList<>();
+        List<RefPrime> result = pointageRepository.getRefPrimesListForAgent(statutAgent);
+        for (RefPrime p : result) {
+            res.add(new RefPrimeDto(p));
+        }
+        return res;
+    }
 
-	public List<RefPrimeDto> getPrimeList() {
+    public List<RefPrimeDto> getPrimeList() {
 
-		ArrayList<RefPrimeDto> res = new ArrayList<>();
-		List<RefPrime> result = pointageRepository.getRefPrimesList();
-		for (RefPrime p : result) {
-			res.add(new RefPrimeDto(p));
-		}
-		return res;
-	}
+        ArrayList<RefPrimeDto> res = new ArrayList<>();
+        List<RefPrime> result = pointageRepository.getRefPrimesList();
+        for (RefPrime p : result) {
+            res.add(new RefPrimeDto(p));
+        }
+        return res;
+    }
 
-	@Override
-	public RefPrimeDto getPrime(Integer noRubr) {
-		RefPrimeDto res = new RefPrimeDto();
+    @Override
+    public RefPrimeDto getPrime(Integer noRubr) {
+        List<RefPrime> result = pointageRepository.getRefPrimesListWithNoRubr(noRubr);
+        return new RefPrimeDto(result.get(0));
+    }
 
-		List<RefPrime> result = pointageRepository
-				.getRefPrimesListWithNoRubr(noRubr);
-		RefPrime p = result.get(0);
-		res = new RefPrimeDto(p);
-		return res;
-	}
+    @Override
+    public RefPrimeDto getPrimeWithIdRefPrime(Integer idRefPrime) {
+        List<RefPrime> result = pointageRepository.getRefPrimesListWithIdRefPrime(idRefPrime);
+        return new RefPrimeDto(result.get(0));
+    }
 
-	@Override
-	public List<RefPrimeDto> getPrimes(Integer noRubr) {
+    @Override
+    public List<RefPrimeDto> getPrimes(Integer noRubr) {
 
-		ArrayList<RefPrimeDto> res = new ArrayList<>();
-		List<RefPrime> result = pointageRepository
-				.getRefPrimesListWithNoRubr(noRubr);
-		for (RefPrime p : result) {
-			res.add(new RefPrimeDto(p));
-		}
-		return res;
-	}
+        ArrayList<RefPrimeDto> res = new ArrayList<>();
+        List<RefPrime> result = pointageRepository.getRefPrimesListWithNoRubr(noRubr);
+        for (RefPrime p : result) {
+            res.add(new RefPrimeDto(p));
+        }
+        return res;
+    }
 
 }

@@ -20,6 +20,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 		@NamedQuery(name = "getRefPrimesNotCalculated", query = "from RefPrime rf where rf.noRubr in (:noRubrList) and rf.statut = :statut and rf.calculee = false"),
 		@NamedQuery(name = "getListPrimesWithStatusByIdDesc", query = "select ptg from RefPrime ptg where ptg.statut = :statut order by ptg.noRubr"),
 		@NamedQuery(name = "getRefPrimesByNorubr", query = "select ptg from RefPrime ptg where ptg.noRubr=:noRubr"),
+		@NamedQuery(name = "getRefPrimesByIdRefPrime", query = "select ptg from RefPrime ptg where ptg.idRefPrime=:idRefPrime"),
 		@NamedQuery(name = "getListPrimesByIdDesc", query = "select ptg from RefPrime ptg order by ptg.noRubr") // distinct
 																												// ptg.noRubr
 })

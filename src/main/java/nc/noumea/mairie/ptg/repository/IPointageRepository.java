@@ -9,30 +9,32 @@ import nc.noumea.mairie.ptg.domain.RefPrime;
 
 public interface IPointageRepository {
 
-	List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut);
+    List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut);
 
-	List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut);
+    List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut);
 
-	List<RefPrime> getRefPrimesList();
+    List<RefPrime> getRefPrimesList();
 
-	List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
+    List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
 
-	List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
+    List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
 
-	List<Pointage> getPointagesVentilesForAgent(Integer idAgent, Integer idVentilDate);
-	 
-	@Deprecated
-	List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
+    List<Pointage> getPointagesVentilesForAgent(Integer idAgent, Integer idVentilDate);
 
-	List<Pointage> getPointageArchives(Integer idPointage);
+    @Deprecated
+    List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
 
-	void removePointageCalculesForDateAgent(Integer idAgent, Date dateLundi);
+    List<Pointage> getPointageArchives(Integer idPointage);
 
-	void savePointage(Pointage ptg);
+    void removePointageCalculesForDateAgent(Integer idAgent, Date dateLundi);
 
-	List<RefPrime> getRefPrimesListWithNoRubr(Integer noRubr);
+    void savePointage(Pointage ptg);
 
-	<T> T getEntity(Class<T> Tclass, Object Id);
+    List<RefPrime> getRefPrimesListWithNoRubr(Integer noRubr);
+
+    List<RefPrime> getRefPrimesListWithIdRefPrime(Integer idRefPrime);
+
+    <T> T getEntity(Class<T> Tclass, Object Id);
 
 	boolean isPrimeSurPointageouPointageCalcule(Integer idAgent,
 			Integer idRefPrime);
