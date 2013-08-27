@@ -25,12 +25,9 @@ public class ConsultPointageDto {
 	private Date dateSaisie;
 
 	private static PeriodFormatter formatter = new PeriodFormatterBuilder()
-	    .appendHours()
-	    .appendSuffix("h")
-	    .appendMinutes()
-	    .appendSuffix("m")
-	    .toFormatter();
-	
+			.appendHours().appendSuffix("h").appendMinutes().appendSuffix("m")
+			.toFormatter();
+
 	public ConsultPointageDto() {
 
 	}
@@ -45,31 +42,33 @@ public class ConsultPointageDto {
 		motif = ptg.getMotif() == null ? "" : ptg.getMotif().getText();
 		commentaire = ptg.getCommentaire() == null ? "" : ptg.getCommentaire()
 				.getText();
-		
+
 		switch (ptg.getTypePointageEnum()) {
-			case ABSENCE:
-			case H_SUP:
+		case ABSENCE:
+		case H_SUP:
+			quantite = formatHourInterval(debut, fin);
+			break;
+		case PRIME:
+			typePointage = ptg.getRefPrime().getLibelle();
+			switch (ptg.getRefPrime().getTypeSaisie()) {
+			case CASE_A_COCHER:
+			case NB_INDEMNITES:
+				quantite = formatNumberOf(ptg.getQuantite(), "");
+				break;
+			case NB_HEURES:
+				quantite = formatNumberOf(ptg.getQuantite(), "h");
+				break;
+			case PERIODE_HEURES:
 				quantite = formatHourInterval(debut, fin);
 				break;
-			case PRIME:
-				switch (ptg.getRefPrime().getTypeSaisie()) {
-				case CASE_A_COCHER:
-				case NB_INDEMNITES:
-					quantite = formatNumberOf(ptg.getQuantite(), "");
-					break;
-				case NB_HEURES:
-					quantite = formatNumberOf(ptg.getQuantite(), "h");
-					break;
-				case PERIODE_HEURES:
-					quantite = formatHourInterval(debut, fin);
-					break;
-				}
+			}
 		}
 
 	}
 
 	private String formatHourInterval(Date debut, Date fin) {
-		return formatter.print(new Period(new DateTime(debut), new DateTime(fin)));
+		return formatter.print(new Period(new DateTime(debut),
+				new DateTime(fin)));
 	}
 
 	private String formatNumberOf(Integer quantite, String suffix) {
@@ -83,7 +82,7 @@ public class ConsultPointageDto {
 		idRefEtat = etat.getEtat().getCodeEtat();
 		dateSaisie = etat.getEtatPointagePk().getDateEtat();
 	}
-	
+
 	public Integer getIdPointage() {
 		return idPointage;
 	}

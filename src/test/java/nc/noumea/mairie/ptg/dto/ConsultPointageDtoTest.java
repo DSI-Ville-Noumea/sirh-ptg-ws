@@ -128,7 +128,9 @@ public class ConsultPointageDtoTest {
 		
 		ptg.setQuantite(2);
 		
-		ptg.setRefPrime(new RefPrime());
+		RefPrime ref = new RefPrime();
+		ref.setLibelle("nono");;
+		ptg.setRefPrime(ref);
 		ptg.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
 		
 		// When
@@ -136,7 +138,7 @@ public class ConsultPointageDtoTest {
 		
 		// Then
 		assertEquals(123, (int) dto.getIdPointage());
-		assertEquals("type ptg", dto.getTypePointage());
+		assertEquals("nono", dto.getTypePointage());
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDate());
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDebut());
 		assertNull(dto.getFin());
@@ -171,8 +173,9 @@ public class ConsultPointageDtoTest {
 		ptg.getMotif().setText("motif");
 		
 		ptg.setQuantite(1);
-		
-		ptg.setRefPrime(new RefPrime());
+		RefPrime ref = new RefPrime();
+		ref.setLibelle("nono");
+		ptg.setRefPrime(ref);
 		ptg.getRefPrime().setTypeSaisie(TypeSaisieEnum.CASE_A_COCHER);
 		
 		// When
@@ -180,7 +183,7 @@ public class ConsultPointageDtoTest {
 		
 		// Then
 		assertEquals(123, (int) dto.getIdPointage());
-		assertEquals("type ptg", dto.getTypePointage());
+		assertEquals("nono", dto.getTypePointage());
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDate());
 		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDebut());
 		assertNull(dto.getFin());
