@@ -199,6 +199,8 @@ HTTP Status code OK : 200
 
 ** Lancer une ventilation
 
+ <<ATTENTION : pour que cela fonctionne, il faut qu'il y ait deja une ventilation de payé pour chaque type de chaine de paie.>>
+
  <<URL>> : /ventilation/run
  
  <<Accepted Methods>> : POST
@@ -207,7 +209,7 @@ HTTP Status code OK : 200
 
   * <<idAgent>> : L'Id de l'agent lancant la ventilation (matricule au format 900xxxx)
   
-  * <<date>> : La date de ventilation
+  * <<date>> : La date de ventilation (un dimanche obligatoirement)
   
   * <<typePointage>> (optional) : Le type id des pointages à ventiler. ABS (1), H_SUP (2) ou PRIME (3)
 
