@@ -383,7 +383,7 @@ HTTP Status code OK : 200
 +-------------------------+
 {
     "codeChaine": "SHC",
-    "dateMaj": 1377639793523,
+    "dateMaj": "/Date(1368450000000+1100)/",
     "etat": {
         "codeEtat": 1,
         "libelleEtat": "Ecriture pointages en cours"

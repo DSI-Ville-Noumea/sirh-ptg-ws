@@ -1,11 +1,14 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.util.Date;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.SpWFPaie;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
+import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 
@@ -92,7 +95,10 @@ public class ExportPaieController {
 		
 		SpWFPaie etat = paieWorkflowService.getCurrentState(helperService.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
         
-		String resultJson = new JSONSerializer().exclude("*.class").serialize(etat);
+		String resultJson = new JSONSerializer()
+				.exclude("*.class")
+				.transform(new MSDateTransformer(), Date.class)
+				.serialize(etat);
 		
 		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
 	}
