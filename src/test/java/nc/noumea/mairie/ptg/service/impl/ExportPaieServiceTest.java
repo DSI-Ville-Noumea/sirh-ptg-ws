@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -10,9 +11,11 @@ import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
+import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -190,5 +193,24 @@ public class ExportPaieServiceTest {
 		Mockito.verify(mR, Mockito.never()).persistEntity(Mockito.any(Spmatr.class));
 		
 		assertEquals(201304, (int)matr.getPerrap());
+	}
+	
+	@Test
+	public void canStartExportPaieActionDto_callWFService() {
+		
+		// Given
+		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
+		
+		IPaieWorkflowService pwfs = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(pwfs.canChangeStateToExportPaieStarted(chainePaie)).thenReturn(true);
+		
+		ExportPaieService service = new ExportPaieService();
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pwfs);
+		
+		// When
+		CanStartWorkflowPaieActionDto result = service.canStartExportPaieActionDto(chainePaie);
+		
+		// Then
+		assertTrue(result.isCanStartExportPaieAction());
 	}
 }

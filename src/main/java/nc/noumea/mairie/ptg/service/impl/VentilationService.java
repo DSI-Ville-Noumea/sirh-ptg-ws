@@ -13,9 +13,6 @@ import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import static nc.noumea.mairie.ptg.domain.RefTypePointageEnum.ABSENCE;
-import static nc.noumea.mairie.ptg.domain.RefTypePointageEnum.H_SUP;
-import static nc.noumea.mairie.ptg.domain.RefTypePointageEnum.PRIME;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
@@ -41,6 +38,7 @@ import org.springframework.stereotype.Service;
 public class VentilationService implements IVentilationService {
 
     private Logger logger = LoggerFactory.getLogger(VentilationService.class);
+    
     @Autowired
     private IPointageRepository pointageRepository;
     @Autowired

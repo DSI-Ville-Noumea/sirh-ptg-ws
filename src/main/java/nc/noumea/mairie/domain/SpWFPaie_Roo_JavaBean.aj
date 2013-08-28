@@ -4,17 +4,26 @@
 package nc.noumea.mairie.domain;
 
 import java.util.Date;
+import nc.noumea.mairie.domain.SpWFEtat;
 import nc.noumea.mairie.domain.SpWFPaie;
-import nc.noumea.mairie.domain.SpWFPaieId;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 privileged aspect SpWFPaie_Roo_JavaBean {
     
-    public SpWFPaieId SpWFPaie.getId() {
-        return this.id;
+    public TypeChainePaieEnum SpWFPaie.getCodeChaine() {
+        return this.codeChaine;
     }
     
-    public void SpWFPaie.setId(SpWFPaieId id) {
-        this.id = id;
+    public void SpWFPaie.setCodeChaine(TypeChainePaieEnum codeChaine) {
+        this.codeChaine = codeChaine;
+    }
+    
+    public SpWFEtat SpWFPaie.getEtat() {
+        return this.etat;
+    }
+    
+    public void SpWFPaie.setEtat(SpWFEtat etat) {
+        this.etat = etat;
     }
     
     public Date SpWFPaie.getDateMaj() {

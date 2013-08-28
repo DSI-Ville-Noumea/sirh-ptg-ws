@@ -8,6 +8,7 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IVentilationService;
+import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 
 @Controller
 @RequestMapping("/ventilation")
@@ -61,6 +61,35 @@ public class VentilationController {
 
         return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
     }
+    
+    @ResponseBody
+	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "ptgTransactionManager")
+	public ResponseEntity<String> startVentilation(
+            @RequestParam("idAgent") Integer idAgent,
+            @RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date ventilationDate,
+            @RequestParam(value = "typePointage", required = false) Integer idRefTypePointage,
+            @RequestParam(value = "statut") String statut,
+            @RequestBody String agentsJson) {
+
+		logger.debug(
+                "entered POST [ventilation/start] => startVentilation with parameters date = {}, agents = {}, typePointage = {}, statut = {}",
+                ventilationDate, agentsJson, idRefTypePointage, statut);
+		
+		// Deserializing integer list
+        List<Integer> agents = new JSONDeserializer<List<Integer>>().use(null, ArrayList.class).use("values", Integer.class).deserialize(agentsJson);
+
+        //TODO: develop real call to ventilation service run method that will trigger the job
+        ReturnMessageDto result = new ReturnMessageDto();
+        
+        String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
+        
+        if (result.getErrors().size() != 0) {
+            return new ResponseEntity<String>(resultJson, HttpStatus.CONFLICT);
+        }
+
+        return new ResponseEntity<String>(resultJson, HttpStatus.OK);
+	}
 
     @ResponseBody
     @RequestMapping(value = "/show", produces = "application/json;charset=utf-8", method = RequestMethod.GET)

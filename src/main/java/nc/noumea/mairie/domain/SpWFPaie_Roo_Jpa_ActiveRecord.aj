@@ -7,7 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import nc.noumea.mairie.domain.SpWFPaie;
-import nc.noumea.mairie.domain.SpWFPaieId;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import org.springframework.transaction.annotation.Transactional;
 
 privileged aspect SpWFPaie_Roo_Jpa_ActiveRecord {
@@ -29,9 +29,9 @@ privileged aspect SpWFPaie_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM SpWFPaie o", SpWFPaie.class).getResultList();
     }
     
-    public static SpWFPaie SpWFPaie.findSpWFPaie(SpWFPaieId id) {
-        if (id == null) return null;
-        return entityManager().find(SpWFPaie.class, id);
+    public static SpWFPaie SpWFPaie.findSpWFPaie(TypeChainePaieEnum codeChaine) {
+        if (codeChaine == null) return null;
+        return entityManager().find(SpWFPaie.class, codeChaine);
     }
     
     public static List<SpWFPaie> SpWFPaie.findSpWFPaieEntries(int firstResult, int maxResults) {
@@ -50,7 +50,7 @@ privileged aspect SpWFPaie_Roo_Jpa_ActiveRecord {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            SpWFPaie attached = SpWFPaie.findSpWFPaie(this.id);
+            SpWFPaie attached = SpWFPaie.findSpWFPaie(this.codeChaine);
             this.entityManager.remove(attached);
         }
     }

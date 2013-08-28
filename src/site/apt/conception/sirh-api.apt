@@ -197,11 +197,11 @@ HTTP Status code OK : 200
 
 * Ventilation
 
-** Lancer une ventilation
+** Lancer une ventilation (lancer le traitement asynchrone)
 
- <<ATTENTION : pour que cela fonctionne, il faut qu'il y ait deja une ventilation de payé pour chaque type de chaine de paie.>>
+ <<ATTENTION : pour que cela fonctionne, il faut qu'il y ait deja une ventilation de payée pour chaque type de chaine de paie.>>
 
- <<URL>> : /ventilation/run
+ <<URL>> : /ventilation/start
  
  <<Accepted Methods>> : POST
  
@@ -235,7 +235,7 @@ HTTP Status code OK : 200
  HTTP Status code OK : 200
 +-------------------------+
 
-  * Si une erreur fonctionnelle :
+  * Si une erreur fonctionnelle car la ventilation n'a pas pu être lancée :
 
 +-------------------------+
  HTTP Status code CONFLICT : 409
@@ -257,6 +257,8 @@ HTTP Status code OK : 200
     ]
 }
 +-------------------------+
+
+
 ** Visualiser les ventilations
 
  <<URL>> : /ventilation/showVentilation
@@ -354,13 +356,102 @@ HTTP Status code OK : 200
  HTTP Status code NO-CONTENT : 204
 +-------------------------+
 
-  
 
 * Déversement dans la paie (Exportation dans la paie)
 
-** Lancer une exportation
+** Récupérer l'état du workflow
 
- <<URL>> : /exportPaie/run
+ <<URL>> : /exportPaie/etat
+ 
+ <<Accepted Methods>> : GET
+
+  <<Parameters>>
+
+  * <<statut>> : Le statut d'agent pour lequel demander l'état du workflow (F, C, CC).
+  
+
+ <<Response>>
+
+   * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content
+
++-------------------------+
+{
+    "codeChaine": "SHC",
+    "dateMaj": 1377639793523,
+    "etat": {
+        "codeEtat": 1,
+        "libelleEtat": "Ecriture pointages en cours"
+    },
+    "periodePaie": 0
+}
++-------------------------+
+
+
+** Différents états possibles du workflow
+
+*--*----*
+|<<CODE>>|<<LIBELLE>>|
+*--*----*
+|0 |Pret|
+*--*----*
+|1 |Ecriture pointages en cours|
+*--*----*
+|2 |Ecriture pointages terminée|
+*--*----*
+|3 |Calcul salaire en cours|
+*--*----*
+|4 |Calcul salaire terminé|
+*--*----*
+|5 |Journal en cours|
+*--*----*
+|6 |Journal terminé|
+*--*----*
+|7 |Etat payeur en cours|
+*--*----*
+|8 |Etat payeur terminé|
+*--*----*
+
+** Vérifier la possibilité de lancer une exportation
+
+ <<URL>> : /exportPaie/canStartExportPaie 
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut des agents dont les pointages sont à exporter dans la paie. 'F', 'C' or 'CC'
+
+ <<Content>> :
+ 
+-
+
+
+ <<Response>>
+
+  * Status :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "canStartExportPaieAction": true
+}
++-------------------------+
+
+
+** Lancer une exportation (lancer le traitement asynchrone)
+
+ <<URL>> : /exportPaie/start
  
  <<Accepted Methods>> : GET
  
@@ -368,7 +459,7 @@ HTTP Status code OK : 200
 
   * <<idAgent>> : L'Id de l'agent lancant l'exportation (matricule au format 900xxxx)
   
-  * <<statut>> : Le statut des agents à ventiler. 'F', 'C' or 'CC'
+  * <<statut>> : Le statut des agents dont les pointages sont à exporter : 'F', 'C' or 'CC'
 
 
  <<Response>>
@@ -379,7 +470,7 @@ HTTP Status code OK : 200
  HTTP Status code OK : 200
 +-------------------------+
 
-  * Si une erreur fonctionnelle :
+  * Si une erreur fonctionnelle car l'export n'a pu être lancé :
 
 +-------------------------+
  HTTP Status code CONFLICT : 409

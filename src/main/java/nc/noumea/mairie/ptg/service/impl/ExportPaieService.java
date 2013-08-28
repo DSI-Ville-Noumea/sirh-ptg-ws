@@ -13,14 +13,15 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.VentilDate;
+import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IExportAbsencePaieService;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
-import nc.noumea.mairie.ptg.service.IPaieStatusService;
 import nc.noumea.mairie.ptg.service.IPointageService;
+import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +52,7 @@ public class ExportPaieService implements IExportPaieService {
 	private IPointageService pointageService;
 	
 	@Autowired
-	private IPaieStatusService paieStatusService;
+	private IPaieWorkflowService paieWorkflowService;
 	
 	public ReturnMessageDto exportToPaie(Integer agentIdValidating, AgentStatutEnum statut) {
 		
@@ -188,5 +189,12 @@ public class ExportPaieService implements IExportPaieService {
 		for (Sppact sppact : absences) {
 			sppact.merge();
 		}
+	}
+
+	@Override
+	public CanStartWorkflowPaieActionDto canStartExportPaieActionDto(TypeChainePaieEnum chainePaie) {
+		CanStartWorkflowPaieActionDto result = new CanStartWorkflowPaieActionDto();
+		result.setCanStartExportPaieAction(paieWorkflowService.canChangeStateToExportPaieStarted(chainePaie));
+		return result;
 	}
 }
