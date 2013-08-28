@@ -417,6 +417,7 @@ HTTP Status code OK : 200
 |8 |Etat payeur terminé|
 *--*----*
 
+
 ** Vérifier la possibilité de lancer une exportation
 
  <<URL>> : /exportPaie/canStartExportPaie 
@@ -426,10 +427,6 @@ HTTP Status code OK : 200
  <<Parameters>>
 
   * <<statut>> : Le statut des agents dont les pointages sont à exporter dans la paie. 'F', 'C' or 'CC'
-
- <<Content>> :
- 
--
 
 
  <<Response>>
