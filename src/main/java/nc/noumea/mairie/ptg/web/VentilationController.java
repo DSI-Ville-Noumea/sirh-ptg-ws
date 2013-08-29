@@ -100,7 +100,7 @@ public class VentilationController {
             @RequestParam("idVentilTask") Integer idVentilTask) {
 
 		logger.debug(
-                "entered POST [ventilation/processTask] => processTask with parameters idAgent = {}", idVentilTask);
+                "entered GET [ventilation/processTask] => processTask with parameters idAgent = {}", idVentilTask);
 		
 		if (VentilTask.findVentilTask(idVentilTask) == null)
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);

@@ -192,6 +192,8 @@ public class VentilationService implements IVentilationService {
 
         // 7. Mark pointages as etat VENTILE and add this VentilDate to their list of ventilations
         markPointagesAsVentile(pointagesVentiles, agent, toVentilDate);
+        
+        logger.info("Ventilation of idVentilTask [{}] done.", idVentilTask);
     }
     
 	public ReturnMessageDto processVentilation(Integer idAgent,
@@ -313,6 +315,8 @@ public class VentilationService implements IVentilationService {
 
     protected List<Pointage> processHSupAndAbsVentilationForWeekAndAgent(VentilDate ventilDate, Integer idAgent, Spcarr carr, Date dateLundi, Date fromVentilDate) {
 
+    	logger.debug("Ventilation of HSUPs and ABS pointages...");
+    	
         List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesAbsenceAndHSupForVentilation(idAgent, fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
 
         boolean has1150Prime = sirhRepository.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
@@ -335,6 +339,8 @@ public class VentilationService implements IVentilationService {
 
     protected List<Pointage> processPrimesVentilationForMonthAndAgent(VentilDate ventilDate, Integer idAgent, Date dateDebutMois, Date fromVentilDate) {
 
+    	logger.debug("Ventilation of PRIME pointages...");
+    	
         List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesPrimeForVentilation(
                 idAgent, fromVentilDate, ventilDate.getDateVentilation(), dateDebutMois);
         List<PointageCalcule> agentsPointagesCalculesForPeriod = ventilationRepository.getListPointagesCalculesPrimeForVentilation(
@@ -366,6 +372,8 @@ public class VentilationService implements IVentilationService {
      */
     protected void removePreviousVentilations(VentilDate date, Integer idAgent, RefTypePointageEnum pointageType) {
 
+    	logger.debug("Removing previous ventilation records...");
+    	
         if (pointageType == null || pointageType == RefTypePointageEnum.H_SUP || pointageType == RefTypePointageEnum.ABSENCE) {
             ventilationRepository.removeVentilationsForDateAgentAndType(date, idAgent, RefTypePointageEnum.ABSENCE);
             ventilationRepository.removeVentilationsForDateAgentAndType(date, idAgent, RefTypePointageEnum.H_SUP);
@@ -383,6 +391,7 @@ public class VentilationService implements IVentilationService {
      * @param to
      */
     protected void removePreviousCalculatedPointages(Integer idAgent, Date dateLundi) {
+    	logger.debug("Removing previously calculated PRIME pointages...");
         pointageRepository.removePointageCalculesForDateAgent(idAgent, dateLundi);
     }
 
@@ -396,6 +405,8 @@ public class VentilationService implements IVentilationService {
      */
     protected void calculatePointages(Integer idAgent, Date dateLundi, Date fromEtatDate, Date toEtatDate) {
 
+    	logger.debug("Creation of calculated PRIME pointages...");
+    	
         List<PointageCalcule> result = new ArrayList<PointageCalcule>();
 
         Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), dateLundi);
@@ -418,6 +429,8 @@ public class VentilationService implements IVentilationService {
      */
     protected void markPointagesAsVentile(List<Pointage> pointages, int idAgent, VentilDate ventilDate) {
 
+    	logger.debug("Marking pointages as Etat = Ventile...");
+    	
         Date currentDate = helperService.getCurrentDate();
 
         for (Pointage ptg : pointages) {
