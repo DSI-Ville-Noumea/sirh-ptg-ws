@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
 import java.util.ArrayList;
@@ -22,6 +23,9 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
+import nc.noumea.mairie.ptg.domain.VentilTask;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
@@ -29,10 +33,13 @@ import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class VentilationServiceTest {
@@ -596,6 +603,146 @@ public class VentilationServiceTest {
 		Mockito.verify(service, Mockito.times(1)).calculatePointages(9005432, datesLundi.get(0), lastPaidDate, lastUnPaidDate);
 		Mockito.verify(service, Mockito.times(1)).processPrimesVentilationForMonthAndAgent(lastUnPaidVentilDate, 9005432, datesDebutMois.get(0), lastPaidDate, lastUnPaidDate);
 		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9005432, lastUnPaidVentilDate);
+	}
+
+	@Test
+	public void startVentilation_VentilationDateExists_2agents_1filtered_Create1VentilTask() {
+		
+		// Given
+		Date ventilationDate = new LocalDate(2013, 7, 28).toDate();
+		final AgentStatutEnum statut = AgentStatutEnum.F;
+		RefTypePointageEnum pointageType = RefTypePointageEnum.H_SUP;
+		
+		Date lastPaidDate = new LocalDate(2013, 7, 21).toDate();
+		final VentilDate lastPaidVentilDate = new VentilDate();
+		lastPaidVentilDate.setDateVentilation(lastPaidDate);
+		
+		Date lastUnPaidDate = new LocalDate(2013, 7, 28).toDate();
+		final VentilDate lastUnPaidVentilDate = new VentilDate();
+		lastUnPaidVentilDate.setDateVentilation(lastUnPaidDate);
+		
+		List<Integer> agentList = Arrays.asList(9005432, 9005431);
+		
+		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, true)).thenReturn(lastPaidVentilDate);
+		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(lastUnPaidVentilDate);
+		Mockito.when(vRepo.getListIdAgentsForVentilationByDateAndEtat(lastPaidDate, lastUnPaidDate)).thenReturn(agentList);
+		
+		final RefTypePointage refTypePointage = new RefTypePointage();
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(RefTypePointage.class, pointageType.getValue())).thenReturn(refTypePointage);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				VentilTask arg = (VentilTask) args[0];
+
+				assertEquals(9005432, (int) arg.getIdAgent());
+				assertEquals(new DateTime(2013, 8, 2, 10, 57, 23).toDate(), arg.getDateCreation());
+				assertEquals(9008765, (int) arg.getIdAgentCreation());
+				assertEquals(refTypePointage, arg.getRefTypePointage());
+				assertEquals(statut, arg.getStatut());
+				assertEquals(lastPaidVentilDate, arg.getVentilDateFrom());
+				assertEquals(lastUnPaidVentilDate, arg.getVentilDateTo());
+				return true;
+			}
+		}).when(pRepo).persisEntity(Mockito.isA(VentilTask.class));
+		
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SHC);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 8, 2, 10, 57, 23).toDate());
+		
+		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		Spcarr carr = new Spcarr();
+		Mockito.doReturn(carr).when(service).isAgentEligibleToVentilation(9005432, statut, lastUnPaidDate);
+		Mockito.doReturn(null).when(service).isAgentEligibleToVentilation(9005431, statut, lastUnPaidDate);
+		
+		// When
+		ReturnMessageDto result = service.startVentilation(9008765, new ArrayList<Integer>(), ventilationDate, statut, pointageType);
+		
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("Agent 9005432", result.getInfos().get(0));
+
+		Mockito.verify(pRepo, Mockito.never()).persisEntity(Mockito.isA(VentilDate.class));
+		Mockito.verify(pRepo, Mockito.times(1)).persisEntity(Mockito.isA(VentilTask.class));
+	}
+	
+	@Test
+	public void startVentilation_VentilationDateDoesNotExist_2agents_2filtered_CreateVentilDate_Create0VentilTask() {
+		
+		// Given
+		final Date ventilationDate = new LocalDate(2013, 7, 28).toDate();
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		RefTypePointageEnum pointageType = RefTypePointageEnum.H_SUP;
+		
+		Date lastPaidDate = new LocalDate(2013, 7, 21).toDate();
+		VentilDate lastPaidVentilDate = new VentilDate();
+		lastPaidVentilDate.setDateVentilation(lastPaidDate);
+		
+		List<Integer> agentList = Arrays.asList(9005432, 9005431);
+		
+		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, true)).thenReturn(lastPaidVentilDate);
+		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(null);
+		Mockito.when(vRepo.getListIdAgentsForVentilationByDateAndEtat(lastPaidDate, ventilationDate)).thenReturn(agentList);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				VentilDate arg = (VentilDate) args[0];
+
+				assertEquals(new DateTime(2013, 7, 28, 23, 59, 0).toDate(), arg.getDateVentilation());
+				assertEquals(TypeChainePaieEnum.SHC, arg.getTypeChainePaie());
+				assertFalse(arg.isPaye());
+				return true;
+			}
+		}).when(pRepo).persisEntity(Mockito.isA(VentilDate.class));
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SHC);
+		
+		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		Mockito.doReturn(null).when(service).isAgentEligibleToVentilation(9005432, statut, ventilationDate);
+		Mockito.doReturn(null).when(service).isAgentEligibleToVentilation(9005431, statut, ventilationDate);
+		
+		// When
+		ReturnMessageDto result = service.startVentilation(9008765, new ArrayList<Integer>(), ventilationDate, statut, pointageType);
+		
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+
+		Mockito.verify(pRepo, Mockito.times(1)).persisEntity(Mockito.isA(VentilDate.class));
+		Mockito.verify(pRepo, Mockito.never()).persisEntity(Mockito.isA(VentilTask.class));
+	}
+	
+	@Test
+	public void startVentilation_VentilationDateIsNotASunday_ReturnErrorMessage() {
+		
+		// Given
+		final Date ventilationDate = new LocalDate(2013, 7, 27).toDate();
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		RefTypePointageEnum pointageType = RefTypePointageEnum.H_SUP;
+		VentilationService service = Mockito.spy(new VentilationService());
+		
+		// When
+		ReturnMessageDto result = service.startVentilation(9008765, new ArrayList<Integer>(), ventilationDate, statut, pointageType);
+		
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals("La date de ventilation choisie est un [samedi]. Impossible de ventiler les pointages à une date autre qu'un dimanche.", result.getErrors().get(0));
+		assertEquals(0, result.getInfos().size());
 	}
 	
 }

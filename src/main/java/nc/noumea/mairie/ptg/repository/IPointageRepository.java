@@ -35,6 +35,8 @@ public interface IPointageRepository {
     List<RefPrime> getRefPrimesListWithIdRefPrime(Integer idRefPrime);
 
     <T> T getEntity(Class<T> Tclass, Object Id);
+    
+    void persisEntity(Object entity);
 
 	boolean isPrimeSurPointageouPointageCalcule(Integer idAgent,
 			Integer idRefPrime);

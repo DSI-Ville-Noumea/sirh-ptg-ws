@@ -200,6 +200,7 @@ HTTP Status code OK : 200
 ** Lancer une ventilation (lancer le traitement asynchrone)
 
  <<ATTENTION : pour que cela fonctionne, il faut qu'il y ait deja une ventilation de payée pour chaque type de chaine de paie.>>
+ Note: Cet appel de web service n'effectue pas le traitement de ventilation. Il programme la tâche en BDD et c'est un Job (SIRH-JOBS) qui l'effectuera.
 
  <<URL>> : /ventilation/start
  
@@ -252,8 +253,8 @@ HTTP Status code OK : 200
     ],
     "infos" : 
     [
-        "info 1",
-        "info 2"
+        "Agent 9008765",
+        "Agent 9008769"
     ]
 }
 +-------------------------+
@@ -448,6 +449,8 @@ HTTP Status code OK : 200
 
 ** Lancer une exportation (lancer le traitement asynchrone)
 
+ Note: Cet appel de web service n'effectue pas le traitement d'exportation. Il programme la tâche en BDD et c'est un Job (SIRH-JOBS) qui l'effectuera.
+ 
  <<URL>> : /exportPaie/start
  
  <<Accepted Methods>> : GET
@@ -484,8 +487,8 @@ HTTP Status code OK : 200
     ],
     "infos" : 
     [
-        "info 1",
-        "info 2"
+        "Agent 9008765",
+        "Agent 9008778"
     ]
 }
 +-------------------------+

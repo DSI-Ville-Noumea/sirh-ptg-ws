@@ -32,6 +32,7 @@ import flexjson.JSONSerializer;
 public class VentilationController {
 
     private Logger logger = LoggerFactory.getLogger(VentilationController.class);
+    
     @Autowired
     private IVentilationService ventilationService;
 
@@ -79,10 +80,10 @@ public class VentilationController {
 		// Deserializing integer list
         List<Integer> agents = new JSONDeserializer<List<Integer>>().use(null, ArrayList.class).use("values", Integer.class).deserialize(agentsJson);
 
-        //TODO: develop real call to ventilation service run method that will trigger the job
-        ReturnMessageDto result = new ReturnMessageDto();
+        ReturnMessageDto result = ventilationService.startVentilation(
+        		idAgent, agents, ventilationDate, AgentStatutEnum.valueOf(statut), RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage));
         
-        String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
+        String resultJson = new JSONSerializer().exclude("*.class").deepSerialize(result);
         
         if (result.getErrors().size() != 0) {
             return new ResponseEntity<String>(resultJson, HttpStatus.CONFLICT);

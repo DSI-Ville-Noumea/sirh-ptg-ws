@@ -12,11 +12,13 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
+import nc.noumea.mairie.ptg.domain.VentilTask;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
@@ -28,6 +30,7 @@ import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
 import nc.noumea.mairie.ptg.service.IVentilationService;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,22 +44,106 @@ public class VentilationService implements IVentilationService {
     
     @Autowired
     private IPointageRepository pointageRepository;
+    
     @Autowired
     private ISirhRepository sirhRepository;
+    
     @Autowired
     private IVentilationRepository ventilationRepository;
+    
     @Autowired
     private IVentilationPrimeService ventilationPrimeService;
+    
     @Autowired
     private IVentilationHSupService ventilationHSupService;
+    
     @Autowired
     private IVentilationAbsenceService ventilationAbsenceService;
+    
     @Autowired
     private IPointageCalculeService pointageCalculeService;
+    
     @Autowired
     private HelperService helperService;
 
-    public ReturnMessageDto processVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType) {
+    @Override
+	public ReturnMessageDto startVentilation(Integer idAgent,
+			List<Integer> agents, Date ventilationDate, AgentStatutEnum statut,
+			RefTypePointageEnum pointageType) {
+
+    	logger.info("Starting ventilation of Pointages for Agents [{}], date [{}], status [{}] and pointage type [{}]", 
+    			agents, ventilationDate, statut, pointageType);
+
+    	ReturnMessageDto result = new ReturnMessageDto();
+
+    	// Check that the ventilation date must be a sunday. Otherwise stop here
+    	DateTime givenVentilationDate = new DateTime(ventilationDate);
+    	if (givenVentilationDate.dayOfWeek().get() != DateTimeConstants.SUNDAY)
+    	{
+    		String msg = String.format(
+    				"La date de ventilation choisie est un [samedi]. Impossible de ventiler les pointages à une date autre qu'un dimanche.", 
+    				givenVentilationDate.dayOfWeek().getAsText());
+    		logger.error(msg);
+    		result.getErrors().add(msg);
+    		return result;
+    	}
+    	
+        // Retrieving the current ventilation dates (from / to)
+        TypeChainePaieEnum typeChainePaie = helperService.getTypeChainePaieFromStatut(statut);
+        VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, true);
+        VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, false);
+
+        if (toVentilDate == null) {
+            logger.info("No unpaid ventilation date found for statut. Creating a new one...");
+            toVentilDate = new VentilDate();
+            toVentilDate.setDateVentilation(givenVentilationDate.withHourOfDay(23).withMinuteOfHour(59).toDate());
+            toVentilDate.setPaye(false);
+            toVentilDate.setTypeChainePaie(typeChainePaie);
+            pointageRepository.persisEntity(toVentilDate);
+            logger.info("Created ventilation date as of [{}]", toVentilDate.getDateVentilation());
+        }
+        
+        // If no agents were set as parameters, we need to take everyone concerned
+        if (agents.size() == 0) {
+            agents = ventilationRepository
+                    .getListIdAgentsForVentilationByDateAndEtat(
+	                    fromVentilDate.getDateVentilation(),
+	                    toVentilDate.getDateVentilation());
+        }
+        
+        logger.info("Found {} agents to ventilate pointages for (based on available pointages) and before filtering.", agents.size());
+        
+        // For all seleted agents, proceed to ventilation
+        for (Integer agent : agents) {
+            // 1. Verify whether this agent is eligible, through its AgentStatutEnum (Spcarr)
+            Spcarr carr = isAgentEligibleToVentilation(agent, statut, toVentilDate.getDateVentilation());
+            if (carr == null) {
+                logger.info("Agent {} not eligible for ventilation (status not matching), skipping to next.", agent);
+                continue;
+            }
+            
+            VentilTask task = new VentilTask();
+            task.setIdAgent(agent);
+            task.setIdAgentCreation(idAgent);
+            task.setStatut(statut);
+            if (pointageType != null)
+            	task.setRefTypePointage(pointageRepository.getEntity(RefTypePointage.class, pointageType.getValue()));
+            task.setVentilDateFrom(fromVentilDate);
+            task.setVentilDateTo(toVentilDate);
+            task.setDateCreation(helperService.getCurrentDate());
+            pointageRepository.persisEntity(task);
+            
+            result.getInfos().add(String.format("Agent %s", agent));
+        }
+        
+        logger.info("Added ventilation tasks for {} agents after filtering.", result.getInfos().size());
+        
+		return result;
+	}
+    
+	public ReturnMessageDto processVentilation(Integer idAgent,
+			List<Integer> agents, Date ventilationDate, AgentStatutEnum statut,
+			RefTypePointageEnum pointageType) {
 
         logger.info("Starting ventilation of Pointages for Agents [{}], date [{}], status [{}] and pointage type [{}]", agents, ventilationDate, statut, pointageType);
 
@@ -336,4 +423,5 @@ public class VentilationService implements IVentilationService {
         logger.debug("Returning {} ventilated pointages from showVentilation WS.", pointagesVentiles.size());
         return pointagesVentiles;
     }
+
 }

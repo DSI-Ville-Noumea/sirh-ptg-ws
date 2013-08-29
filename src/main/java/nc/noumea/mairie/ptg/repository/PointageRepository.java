@@ -195,6 +195,11 @@ public class PointageRepository implements IPointageRepository {
     public <T> T getEntity(Class<T> Tclass, Object Id) {
         return ptgEntityManager.find(Tclass, Id);
     }
+    
+    @Override
+    public void persisEntity(Object entity) {
+        ptgEntityManager.persist(entity);
+    }
 
     @Override
     public List<RefPrime> getRefPrimesListWithIdRefPrime(Integer idRefPrime) {
@@ -202,7 +207,6 @@ public class PointageRepository implements IPointageRepository {
         query.setParameter("idRefPrime", idRefPrime);
         return query.getResultList();
     }
-    
     
     @Override
 	public boolean isPrimeSurPointageouPointageCalcule(Integer idAgent,
