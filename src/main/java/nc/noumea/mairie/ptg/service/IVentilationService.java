@@ -26,8 +26,15 @@ public interface IVentilationService {
 	 */
 	ReturnMessageDto startVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType);
 
+	/**
+	 * This service method is responsible for ventilating the pointages for a given VentilTask
+	 * VentilTask stores all the information necessary to perform the task : (idAgent, statut, fromDate, toDate, typePointage)
+	 * This service method is aimed at being called by the Jobs (through VentilationController.processTask).
+	 * @param idVentilTask
+	 */
 	void processVentilationForAgent(Integer idVentilTask);
 	
+	@Deprecated
     ReturnMessageDto processVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType);
 
     List showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType);
