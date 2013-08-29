@@ -191,7 +191,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationAbsenceService", absV);
 		
 		// When
-		service.processHSupAndAbsVentilationForWeekAndAgent(ventilDate, idAgent, carr, dateLundi, fromEtatDate, toEtatDate);
+		service.processHSupAndAbsVentilationForWeekAndAgent(ventilDate, idAgent, carr, dateLundi, fromEtatDate);
 		
 		// Then
 		Mockito.verify(ventilHsup, Mockito.times(1)).persist();
@@ -238,7 +238,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationAbsenceService", absV);
 		
 		// When
-		service.processHSupAndAbsVentilationForWeekAndAgent(ventilDate, idAgent, carr, dateLundi, fromEtatDate, toEtatDate);
+		service.processHSupAndAbsVentilationForWeekAndAgent(ventilDate, idAgent, carr, dateLundi, fromEtatDate);
 		
 		// Then
 		Mockito.verify(ventilHsup, Mockito.times(1)).persist();
@@ -282,7 +282,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
 		
 		// When
-		service.processHSupAndAbsVentilationForWeekAndAgent(ventilDate, idAgent, new Spcarr(), dateLundi, fromEtatDate, toEtatDate);
+		service.processHSupAndAbsVentilationForWeekAndAgent(ventilDate, idAgent, new Spcarr(), dateLundi, fromEtatDate);
 		
 		// Then
 		Mockito.verify(ventilAbs, Mockito.times(1)).persist();
@@ -328,7 +328,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationPrimeService", primeV);
 		
 		// When
-		service.processPrimesVentilationForMonthAndAgent(ventilDate, idAgent, dateDebutMois, fromEtatDate, toEtatDate);
+		service.processPrimesVentilationForMonthAndAgent(ventilDate, idAgent, dateDebutMois, fromEtatDate);
 		
 		// Then
 		Mockito.verify(ventilPrime, Mockito.times(1)).persist();
@@ -581,11 +581,11 @@ public class VentilationServiceTest {
 		Mockito.doReturn(datesDebutMois).when(service).getDistinctDateDebutMoisFromListOfDates(pointagesDates);
 				
 		List<Pointage> ptgVentiles = new ArrayList<Pointage>();
-		Mockito.doReturn(ptgVentiles).when(service).processHSupAndAbsVentilationForWeekAndAgent(lastUnPaidVentilDate, 9005432, carr, datesLundi.get(0), lastPaidDate, lastUnPaidDate);
+		Mockito.doReturn(ptgVentiles).when(service).processHSupAndAbsVentilationForWeekAndAgent(lastUnPaidVentilDate, 9005432, carr, datesLundi.get(0), lastPaidDate);
 
 		Mockito.doNothing().when(service).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
 		Mockito.doNothing().when(service).calculatePointages(9005432, datesLundi.get(0), lastPaidDate, lastUnPaidDate);
-		Mockito.doReturn(ptgVentiles).when(service).processPrimesVentilationForMonthAndAgent(lastUnPaidVentilDate, 9005432, datesDebutMois.get(0), lastPaidDate, lastUnPaidDate);
+		Mockito.doReturn(ptgVentiles).when(service).processPrimesVentilationForMonthAndAgent(lastUnPaidVentilDate, 9005432, datesDebutMois.get(0), lastPaidDate);
 
 		Mockito.doNothing().when(service).markPointagesAsVentile(ptgVentiles, 9005432, lastUnPaidVentilDate);
 		
@@ -598,10 +598,10 @@ public class VentilationServiceTest {
 		Mockito.verify(service, Mockito.times(1)).removePreviousVentilations(lastUnPaidVentilDate, 9005432, null);
 		Mockito.verify(service, Mockito.times(2)).getDistinctDateLundiFromListOfDates(pointagesDates);
 		Mockito.verify(service, Mockito.times(1)).getDistinctDateDebutMoisFromListOfDates(pointagesDates);
-		Mockito.verify(service, Mockito.times(1)).processHSupAndAbsVentilationForWeekAndAgent(lastUnPaidVentilDate, 9005432, carr, datesLundi.get(0), lastPaidDate, lastUnPaidDate);
+		Mockito.verify(service, Mockito.times(1)).processHSupAndAbsVentilationForWeekAndAgent(lastUnPaidVentilDate, 9005432, carr, datesLundi.get(0), lastPaidDate);
 		Mockito.verify(service, Mockito.times(1)).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
 		Mockito.verify(service, Mockito.times(1)).calculatePointages(9005432, datesLundi.get(0), lastPaidDate, lastUnPaidDate);
-		Mockito.verify(service, Mockito.times(1)).processPrimesVentilationForMonthAndAgent(lastUnPaidVentilDate, 9005432, datesDebutMois.get(0), lastPaidDate, lastUnPaidDate);
+		Mockito.verify(service, Mockito.times(1)).processPrimesVentilationForMonthAndAgent(lastUnPaidVentilDate, 9005432, datesDebutMois.get(0), lastPaidDate);
 		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9005432, lastUnPaidVentilDate);
 	}
 
@@ -745,4 +745,73 @@ public class VentilationServiceTest {
 		assertEquals(0, result.getInfos().size());
 	}
 	
+	@Test
+	public void processVentilationForAgent_NoPointageType_DoAll() {
+		
+		// Given
+		VentilTask task = new VentilTask();
+		task.setIdVentilTask(19);
+		task.setIdAgent(9005432);
+		task.setIdAgentCreation(9001234);
+		task.setDateCreation(new LocalDate(2013, 8, 13).toDate());
+		task.setStatut(AgentStatutEnum.F);
+		VentilDate fromVentilDate = new VentilDate();
+		fromVentilDate.setDateVentilation(new LocalDate(2013, 7, 21).toDate());
+		task.setVentilDateFrom(fromVentilDate);
+		VentilDate toVentilDate = new VentilDate();
+		toVentilDate.setDateVentilation(new LocalDate(2013, 7, 28).toDate());
+		task.setVentilDateTo(toVentilDate);
+		Date ventilationDate = new LocalDate(2013, 7, 28).toDate();
+		
+		List<Date> pointagesDates = new ArrayList<Date>();
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(VentilTask.class, 19)).thenReturn(task);
+		
+		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vRepo.getDistinctDatesOfPointages(9005432, fromVentilDate.getDateVentilation(), ventilationDate)).thenReturn(pointagesDates);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9005432)).thenReturn(5432);
+
+		Spcarr carr = new Spcarr();
+		ISirhRepository sRepo = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sRepo.getAgentCurrentCarriere(5432, ventilationDate)).thenReturn(carr);
+		
+		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", sRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		List<Date> datesLundi = new ArrayList<Date>();
+		datesLundi.add(new LocalDate(2013, 7, 22).toDate());
+		Mockito.doReturn(datesLundi).when(service).getDistinctDateLundiFromListOfDates(pointagesDates);
+		
+		List<Date> datesDebutMois = new ArrayList<Date>();
+		datesDebutMois.add(new LocalDate(2013, 7, 1).toDate());
+		Mockito.doReturn(datesDebutMois).when(service).getDistinctDateDebutMoisFromListOfDates(pointagesDates);
+				
+		List<Pointage> ptgVentiles = new ArrayList<Pointage>();
+		Mockito.doReturn(ptgVentiles).when(service).processHSupAndAbsVentilationForWeekAndAgent(toVentilDate, 9005432, carr, datesLundi.get(0), fromVentilDate.getDateVentilation());
+
+		Mockito.doNothing().when(service).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
+		Mockito.doNothing().when(service).calculatePointages(9005432, datesLundi.get(0), fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+		Mockito.doReturn(ptgVentiles).when(service).processPrimesVentilationForMonthAndAgent(toVentilDate, 9005432, datesDebutMois.get(0), fromVentilDate.getDateVentilation());
+
+		Mockito.doNothing().when(service).markPointagesAsVentile(ptgVentiles, 9005432, toVentilDate);
+		
+		// When
+		service.processVentilationForAgent(19);
+		
+		// Then
+		Mockito.verify(service, Mockito.times(1)).removePreviousVentilations(toVentilDate, 9005432, null);
+		Mockito.verify(service, Mockito.times(2)).getDistinctDateLundiFromListOfDates(pointagesDates);
+		Mockito.verify(service, Mockito.times(1)).getDistinctDateDebutMoisFromListOfDates(pointagesDates);
+		Mockito.verify(service, Mockito.times(1)).processHSupAndAbsVentilationForWeekAndAgent(toVentilDate, 9005432, carr, datesLundi.get(0), fromVentilDate.getDateVentilation());
+		Mockito.verify(service, Mockito.times(1)).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
+		Mockito.verify(service, Mockito.times(1)).calculatePointages(9005432, datesLundi.get(0), fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+		Mockito.verify(service, Mockito.times(1)).processPrimesVentilationForMonthAndAgent(toVentilDate, 9005432, datesDebutMois.get(0), fromVentilDate.getDateVentilation());
+		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9005432, toVentilDate);
+	}
 }

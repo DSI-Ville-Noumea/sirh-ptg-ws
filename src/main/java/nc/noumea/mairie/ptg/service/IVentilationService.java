@@ -26,6 +26,8 @@ public interface IVentilationService {
 	 */
 	ReturnMessageDto startVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType);
 
+	void processVentilationForAgent(Integer idVentilTask);
+	
     ReturnMessageDto processVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType);
 
     List showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType);

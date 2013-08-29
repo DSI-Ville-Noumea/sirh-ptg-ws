@@ -6,6 +6,7 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.VentilTask;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IVentilationService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
@@ -92,6 +93,23 @@ public class VentilationController {
         return new ResponseEntity<String>(resultJson, HttpStatus.OK);
 	}
 
+    @ResponseBody
+	@RequestMapping(value = "/processTask", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(value = "ptgTransactionManager")
+	public ResponseEntity<String> processTask(
+            @RequestParam("idVentilTask") Integer idVentilTask) {
+
+		logger.debug(
+                "entered POST [ventilation/processTask] => processTask with parameters idAgent = {}", idVentilTask);
+		
+		if (VentilTask.findVentilTask(idVentilTask) == null)
+			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		
+        ventilationService.processVentilationForAgent(idVentilTask);
+
+        return new ResponseEntity<String>(HttpStatus.OK);
+	}
+    
     @ResponseBody
     @RequestMapping(value = "/show", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
     @Transactional("ptgTransactionManager")

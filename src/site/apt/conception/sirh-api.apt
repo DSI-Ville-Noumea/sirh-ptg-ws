@@ -200,7 +200,7 @@ HTTP Status code OK : 200
 ** Lancer une ventilation (lancer le traitement asynchrone)
 
  <<ATTENTION : pour que cela fonctionne, il faut qu'il y ait deja une ventilation de payée pour chaque type de chaine de paie.>>
- Note: Cet appel de web service n'effectue pas le traitement de ventilation. Il programme la tâche en BDD et c'est un Job (SIRH-JOBS) qui l'effectuera.
+ Note: Cet appel de web service n'effectue pas le traitement de ventilation. Il programme la tâche en BDD et c'est un Job (SIRH-JOBS) qui l'effectuera (via un appel au WS ci-dessous ventilation/processTask).
 
  <<URL>> : /ventilation/start
  
@@ -257,6 +257,34 @@ HTTP Status code OK : 200
         "Agent 9008769"
     ]
 }
++-------------------------+
+
+
+** Exécuter une tâche de ventilation (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS de ventilation.>>
+ Note: Cet appel de web service vise à effectuer une tâche de ventilation. Une tâche de ventilation est le processus de ventilation des pointages d'un agent pour une période, un type de pointage et une date donnés.
+
+ <<URL>> : /ventilation/processTask
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idVentilTask>> : L'Id de la tâche de ventilation (préalablement créée via un appel à /ventilation/startVentilation)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si la tâche de ventilation est introuvable :
+
++-------------------------+
+ HTTP Status code CONFLICT : 404
 +-------------------------+
 
 
