@@ -19,6 +19,7 @@ import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.domain.VentilTask;
+import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
@@ -125,7 +126,7 @@ public class VentilationService implements IVentilationService {
             VentilTask task = new VentilTask();
             task.setIdAgent(agent);
             task.setIdAgentCreation(idAgent);
-            task.setStatut(statut);
+            task.setTypeChainePaie(typeChainePaie);
             if (pointageType != null)
             	task.setRefTypePointage(pointageRepository.getEntity(RefTypePointage.class, pointageType.getValue()));
             task.setVentilDateFrom(fromVentilDate);
@@ -468,6 +469,21 @@ public class VentilationService implements IVentilationService {
         return agentStatus == statut ? carr : null;
     }
 
+	@Override
+	public CanStartVentilationDto canStartVentilationForAgentStatus(AgentStatutEnum statut) {
+		
+		CanStartVentilationDto result = new CanStartVentilationDto();
+		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
+		result.setCanStartVentilation(ventilationRepository.canStartVentilation(chainePaie));
+		
+		if (result.isCanStartVentilation())
+			logger.debug("Ventiation for statut [{}] may be started. None currently processing...", statut);
+		else
+			logger.debug("Ventiation for statut [{}] may not be started. An existing one is currently processing...", statut);
+		
+		return result;
+	}
+	
     /**
      * Return The list of ventilations done for the agents at ventildate
      *
@@ -489,5 +505,6 @@ public class VentilationService implements IVentilationService {
         logger.debug("Returning {} ventilated pointages from showVentilation WS.", pointagesVentiles.size());
         return pointagesVentiles;
     }
+
 
 }

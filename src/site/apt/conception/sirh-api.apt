@@ -72,7 +72,7 @@ SIRH-PTG-WS API pour SIRH
   
   * <<etat>> (optional) : L'état id des pointages à sélectionner
   
-  * <<type>> (optional) : Le type id des pointages à ventiler. ABS (1), H_SUP (2) ou PRIME (3)
+  * <<type>> (optional) : Le type id des pointages à sélectionner. ABS (1), H_SUP (2) ou PRIME (3)
 
  <<Content>> 
  
@@ -196,6 +196,34 @@ HTTP Status code OK : 200
 
 
 * Ventilation
+
+** Vérifier la possibilité de lancer une ventilation
+
+ <<URL>> : /ventilation/canStartVentilation
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut des agents dont les pointages sont à ventiler. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Status :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "canStartVentilation": true
+}
++-------------------------+
+
 
 ** Lancer une ventilation (lancer le traitement asynchrone)
 

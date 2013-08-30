@@ -15,17 +15,10 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import static nc.noumea.mairie.ptg.domain.RefTypePointageEnum.ABSENCE;
-import static nc.noumea.mairie.ptg.domain.RefTypePointageEnum.H_SUP;
-import static nc.noumea.mairie.ptg.domain.RefTypePointageEnum.PRIME;
-import nc.noumea.mairie.ptg.domain.VentilDate;
-import nc.noumea.mairie.ptg.dto.AbsenceDto;
-import nc.noumea.mairie.ptg.dto.HeureSupDto;
-import nc.noumea.mairie.ptg.dto.PrimeDto;
-import nc.noumea.mairie.ptg.dto.VentilDto;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
-import nc.noumea.mairie.ptg.domain.VentilPrime;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.dto.VentilAbsenceDto;
 import nc.noumea.mairie.ptg.dto.VentilHSupDto;
 import nc.noumea.mairie.ptg.dto.VentilPrimeDto;
@@ -331,4 +324,14 @@ public class VentilationRepository implements IVentilationRepository {
         }
         return ret;
     }
+
+	
+    @Override
+	public boolean canStartVentilation(TypeChainePaieEnum chainePaie) {
+
+    	Query q = ptgEntityManager.createQuery("SELECT COUNT(vT) from VentilTask vT WHERE vT.taskStatus is NULL AND vT.dateVentilation is NULL AND vT.typeChainePaie = :chainePaie)");
+    	q.setParameter("chainePaie", chainePaie);
+    	
+    	return ((long) q.getSingleResult() == 0);
+	}
 }

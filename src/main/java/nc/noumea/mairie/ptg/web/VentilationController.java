@@ -7,6 +7,7 @@ import java.util.List;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilTask;
+import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IVentilationService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
@@ -93,6 +94,21 @@ public class VentilationController {
         return new ResponseEntity<String>(resultJson, HttpStatus.OK);
 	}
 
+    @ResponseBody
+	@RequestMapping(value = "/canStartVentilation", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> canStartVentilation(@RequestParam("statut") String statut) {
+
+		logger.debug("entered GET [ventilation/canStartVentilation] => canStartVentilation with parameter statut = {}", statut);
+		
+		CanStartVentilationDto result = ventilationService
+				.canStartVentilationForAgentStatus(AgentStatutEnum.valueOf(statut));
+        
+		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
+		
+		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
+	}
+    
     @ResponseBody
 	@RequestMapping(value = "/processTask", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(value = "ptgTransactionManager")

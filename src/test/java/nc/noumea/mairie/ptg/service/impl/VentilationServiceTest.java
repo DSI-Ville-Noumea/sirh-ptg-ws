@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.service.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +25,7 @@ import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.domain.VentilTask;
+import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
@@ -640,7 +642,7 @@ public class VentilationServiceTest {
 				assertEquals(new DateTime(2013, 8, 2, 10, 57, 23).toDate(), arg.getDateCreation());
 				assertEquals(9008765, (int) arg.getIdAgentCreation());
 				assertEquals(refTypePointage, arg.getRefTypePointage());
-				assertEquals(statut, arg.getStatut());
+				assertEquals(TypeChainePaieEnum.SHC, arg.getTypeChainePaie());
 				assertEquals(lastPaidVentilDate, arg.getVentilDateFrom());
 				assertEquals(lastUnPaidVentilDate, arg.getVentilDateTo());
 				return true;
@@ -754,7 +756,7 @@ public class VentilationServiceTest {
 		task.setIdAgent(9005432);
 		task.setIdAgentCreation(9001234);
 		task.setDateCreation(new LocalDate(2013, 8, 13).toDate());
-		task.setStatut(AgentStatutEnum.F);
+		task.setTypeChainePaie(TypeChainePaieEnum.SHC);
 		VentilDate fromVentilDate = new VentilDate();
 		fromVentilDate.setDateVentilation(new LocalDate(2013, 7, 21).toDate());
 		task.setVentilDateFrom(fromVentilDate);
@@ -813,5 +815,47 @@ public class VentilationServiceTest {
 		Mockito.verify(service, Mockito.times(1)).calculatePointages(9005432, datesLundi.get(0), fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
 		Mockito.verify(service, Mockito.times(1)).processPrimesVentilationForMonthAndAgent(toVentilDate, 9005432, datesDebutMois.get(0), fromVentilDate.getDateVentilation());
 		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9005432, toVentilDate);
+	}
+	
+	@Test
+	public void canStartVentilationForAgentStatus_CannotStart_ReturnFalse() {
+		
+		// Given
+		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vRepo.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(false);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.F)).thenReturn(TypeChainePaieEnum.SHC);
+		
+		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		CanStartVentilationDto result = service.canStartVentilationForAgentStatus(AgentStatutEnum.F);
+		
+		// Then
+		assertFalse(result.isCanStartVentilation());
+	}
+	
+	@Test
+	public void canStartVentilationForAgentStatus_CanStart_ReturnTrue() {
+		
+		// Given
+		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vRepo.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(true);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.F)).thenReturn(TypeChainePaieEnum.SHC);
+		
+		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		CanStartVentilationDto result = service.canStartVentilationForAgentStatus(AgentStatutEnum.F);
+		
+		// Then
+		assertTrue(result.isCanStartVentilation());
 	}
 }

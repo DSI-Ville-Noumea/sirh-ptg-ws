@@ -5,10 +5,21 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
 public interface IVentilationService {
 
+	/**
+	 * This service methods returns whether or not it is possible to start a new ventilation job.
+	 * It will browse the list of VentilTask in the db and return true if no VentilTask are ongoing
+	 * for the given AgentStatutEnum, and false otherwise.
+	 * 
+	 * @param statut
+	 * @return
+	 */
+	CanStartVentilationDto canStartVentilationForAgentStatus(AgentStatutEnum statut);
+	
 	/**
 	 * This service method is responsible for taking a request for starting a ventilation batch
 	 * This batch info will be stored in the database for SIRH-JOBS to access them and start the processes

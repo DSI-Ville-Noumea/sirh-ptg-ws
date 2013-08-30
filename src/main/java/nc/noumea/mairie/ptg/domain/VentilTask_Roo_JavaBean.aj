@@ -4,7 +4,7 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.Date;
-import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilTask;
@@ -35,12 +35,12 @@ privileged aspect VentilTask_Roo_JavaBean {
         this.dateCreation = dateCreation;
     }
     
-    public AgentStatutEnum VentilTask.getStatut() {
-        return this.statut;
+    public TypeChainePaieEnum VentilTask.getTypeChainePaie() {
+        return this.typeChainePaie;
     }
     
-    public void VentilTask.setStatut(AgentStatutEnum statut) {
-        this.statut = statut;
+    public void VentilTask.setTypeChainePaie(TypeChainePaieEnum typeChainePaie) {
+        this.typeChainePaie = typeChainePaie;
     }
     
     public RefTypePointage VentilTask.getRefTypePointage() {
@@ -65,6 +65,22 @@ privileged aspect VentilTask_Roo_JavaBean {
     
     public void VentilTask.setVentilDateTo(VentilDate ventilDateTo) {
         this.ventilDateTo = ventilDateTo;
+    }
+    
+    public Date VentilTask.getDateVentilation() {
+        return this.dateVentilation;
+    }
+    
+    public void VentilTask.setDateVentilation(Date dateVentilation) {
+        this.dateVentilation = dateVentilation;
+    }
+    
+    public String VentilTask.getTaskStatus() {
+        return this.taskStatus;
+    }
+    
+    public void VentilTask.setTaskStatus(String taskStatus) {
+        this.taskStatus = taskStatus;
     }
     
 }

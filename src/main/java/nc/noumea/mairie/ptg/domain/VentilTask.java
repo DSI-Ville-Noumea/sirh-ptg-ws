@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
-import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
@@ -34,9 +34,9 @@ public class VentilTask {
 	private Date dateCreation;
 	
 	@NotNull
-	@Column(name = "AGENT_STATUT")
+	@Column(name = "TYPE_CHAINE_PAIE")
 	@Enumerated(EnumType.STRING)
-	private AgentStatutEnum  statut;
+	private TypeChainePaieEnum typeChainePaie;
 	
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_TYPE_POINTAGE")
@@ -50,4 +50,9 @@ public class VentilTask {
     @JoinColumn(name = "ID_VENTIL_DATE_TO", referencedColumnName = "ID_VENTIL_DATE")
 	private VentilDate ventilDateTo;
 	
+	@Column(name = "DATE_VENTILATION")
+	private Date dateVentilation;
+	
+	@Column(name = "TASK_STATUS")
+	private String taskStatus;
 }
