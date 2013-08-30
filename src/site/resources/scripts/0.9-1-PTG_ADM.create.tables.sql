@@ -41,3 +41,35 @@ grant select, insert, update, delete on PTG_VENTIL_TASK to R_PTG_USR;
 grant select, update, delete on PTG_VENTIL_TASK to R_PTG_JOBS_USR;
 grant select on PTG_VENTIL_TASK to R_PTG_READ;
 
+----------------------------------------------------------------
+-- PTG_EXPORT_PAIE_TASK
+----------------------------------------------------------------
+create sequence PTG_S_EXPORT_PAIE_TASK 
+start with 1 
+increment by 1 
+nomaxvalue;
+
+create public synonym PTG_S_EXPORT_PAIE_TASK for PTG_S_EXPORT_PAIE_TASK;
+grant select on PTG_S_EXPORT_PAIE_TASK to R_PTG_USR;
+
+CREATE TABLE PTG_EXPORT_PAIE_TASK (
+  ID_EXPORT_PAIE_TASK NUMBER(38,0) not null,
+  ID_AGENT NUMBER(7,0) not null,
+  ID_AGENT_CREATION NUMBER(7,0) not null,
+  DATE_CREATION DATE not null,
+  TYPE_CHAINE_PAIE varchar2(3) not null,
+  ID_VENTIL_DATE NUMBER(38,0) not null,
+  DATE_EXPORT DATE,
+  TASK_STATUS varchar2(255),
+  VERSION NUMBER default 0 not null,
+  constraint PK_PTG_EXPORT_PAIE_TASK
+   primary key (ID_EXPORT_PAIE_TASK),
+  foreign key (ID_VENTIL_DATE)
+   references PTG_VENTIL_DATE (ID_VENTIL_DATE)
+  )
+TABLESPACE TS_PTG_DATA;
+
+create public synonym PTG_EXPORT_PAIE_TASK for PTG_EXPORT_PAIE_TASK;
+grant select, insert, update, delete on PTG_EXPORT_PAIE_TASK to R_PTG_USR;
+grant select, update, delete on PTG_EXPORT_PAIE_TASK to R_PTG_JOBS_USR;
+grant select on PTG_EXPORT_PAIE_TASK to R_PTG_READ;
