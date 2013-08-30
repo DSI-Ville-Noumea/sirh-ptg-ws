@@ -82,7 +82,7 @@ public class VentilationService implements IVentilationService {
     	if (givenVentilationDate.dayOfWeek().get() != DateTimeConstants.SUNDAY)
     	{
     		String msg = String.format(
-    				"La date de ventilation choisie est un [samedi]. Impossible de ventiler les pointages à une date autre qu'un dimanche.", 
+    				"La date de ventilation choisie est un [%s]. Impossible de ventiler les pointages à une date autre qu'un dimanche.", 
     				givenVentilationDate.dayOfWeek().getAsText());
     		logger.error(msg);
     		result.getErrors().add(msg);
