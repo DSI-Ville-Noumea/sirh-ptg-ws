@@ -299,7 +299,7 @@ HTTP Status code OK : 200
  
  <<Parameters>>
 
-  * <<idVentilTask>> : L'Id de la tâche de ventilation (préalablement créée via un appel à /ventilation/startVentilation)
+  * <<idVentilTask>> : L'Id de la tâche de ventilation (préalablement créée via un appel à /ventilation/start)
 
  <<Response>>
 
@@ -312,7 +312,7 @@ HTTP Status code OK : 200
   * Si la tâche de ventilation est introuvable :
 
 +-------------------------+
- HTTP Status code CONFLICT : 404
+ HTTP Status code NOT_FOUND : 404
 +-------------------------+
 
 
@@ -547,6 +547,34 @@ HTTP Status code OK : 200
         "Agent 9008778"
     ]
 }
++-------------------------+
+
+
+** Exécuter une tâche d'export dans la Paie (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS d'export Paie.>>
+ Note: Cet appel de web service vise à effectuer une tâche d'export Paie. Une tâche d'export Paie est le processus de copie des pointages d'un agent pour une période donnée dans la Paie.
+
+ <<URL>> : /exportPaie/processTask
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idExportPaieTask>> : L'Id de la tâche d'export (préalablement créée via un appel à /exportPaie/start)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si la tâche d'export est introuvable :
+
++-------------------------+
+ HTTP Status code NOT_FOUND : 404
 +-------------------------+
 
 
