@@ -21,9 +21,9 @@
         <url>https://redmine/projects/sirh-ptg-ws</url>
     </issueManagement>
     <scm>
-        <connection>scm:svn:https://dvlp.site-mairie.noumea.nc:8080/svn/sirh-ptg-ws/trunk</connection>
-        <developerConnection>scm:svn:https://dvlp.site-mairie.noumea.nc:8080/svn/sirh-ptg-ws/trunk</developerConnection>
-        <url>https://dvlp.site-mairie.noumea.nc:8080/svn/sirh-ptg-ws/trunk</url>
+        <connection>scm:svn:https://svn.ville-noumea.nc/sed/sirh-ptg-ws/trunk</connection>
+        <developerConnection>scm:svn:https://svn.ville-noumea.nc/sed/sirh-ptg-ws/trunk</developerConnection>
+        <url>https://svn.ville-noumea.nc/sed/sirh-ptg-ws/trunk</url>
     </scm>
     <distributionManagement>
         <repository>
