@@ -28,10 +28,10 @@ public class VentilHSupDtoTest {
         VentilHSupDto result = new VentilHSupDto(vh);
 
         // Then
-        assertEquals(idAgent, result.getId_agent());
-        assertEquals(true, result.getDate_lundi() != null);
-        assertEquals(m_sup_50, result.getM_sup_50());
-        assertEquals(idVentil, result.getId_ventil_hsup());
+        assertEquals(idAgent, result.getIdAgent());
+        assertEquals(true, result.getDateLundi() != null);
+        assertEquals(m_sup_50, result.getmSup50());
+        assertEquals(idVentil, result.getIdVentilHsup());
         assertEquals(EtatPointageEnum.SAISI, EtatPointageEnum.getEtatPointageEnum(result.getEtat()));
     }
 }

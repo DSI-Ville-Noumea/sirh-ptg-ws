@@ -92,4 +92,7 @@ public class PrimeDto extends PointageDto  {
 	public void setIdRefPrime(Integer idRefPrime) {
 		this.idRefPrime = idRefPrime;
 	}
+
+	
+	
 }

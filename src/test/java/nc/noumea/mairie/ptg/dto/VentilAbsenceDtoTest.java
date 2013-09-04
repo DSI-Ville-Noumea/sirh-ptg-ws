@@ -29,10 +29,10 @@ public class VentilAbsenceDtoTest {
         VentilAbsenceDto result = new VentilAbsenceDto(va);
 
         // Then
-        assertEquals(idAgent, result.getId_agent());
-        assertEquals(true, result.getDate_lundi() != null);
-        assertEquals(minC, result.getMinutes_concertees());
-        assertEquals(minNC, result.getMinutes_non_concertees());
+        assertEquals(idAgent, result.getIdAgent());
+        assertEquals(true, result.getDateLundi() != null);
+        assertEquals(minC, result.getMinutesConcertees());
+        assertEquals(minNC, result.getMinutesNonConcertees());
         assertEquals(EtatPointageEnum.SAISI, EtatPointageEnum.getEtatPointageEnum(result.getEtat()));
     }
 }

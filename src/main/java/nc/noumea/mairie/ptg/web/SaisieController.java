@@ -116,7 +116,7 @@ public class SaisieController {
         logger.debug("entered GET [saisie/ficheSIRH] => getFichePointage for SIRH with parameters idAgent = {}, date = {}", agent, date);
         FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(agent, date);
         String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(fichePointageAgent);
-        //System.out.println("\n\n... json généré:" + response);
+        logger.debug("\n\n... generated json :" + response);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -128,8 +128,7 @@ public class SaisieController {
             @RequestBody(required = true) String fichePointage) {
 
         logger.debug("entered POST [saisie/ficheSIRH] => setFichePointage for SIRH with parameters idAgent = {}", idAgent);
-
-        //       System.out.println("\n\n.. SaisieController.ficheSIRH json recu :\n"+fichePointage);
+        logger.debug("\n\n.. SaisieController.ficheSIRH json received :\n" + fichePointage);
 
         FichePointageDto dto = new JSONDeserializer<FichePointageDto>()
                 .use(Date.class, new MSDateTransformer())

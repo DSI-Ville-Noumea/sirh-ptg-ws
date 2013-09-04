@@ -32,10 +32,10 @@ public class VentilPrimeDtoTest {
         VentilPrimeDto result = new VentilPrimeDto(vp);
 
         // Then
-        assertEquals(idAgent, result.getId_agent());
-        assertEquals(true, result.getDate_debut_mois() != null);
-        assertEquals(libRef, result.getId_ref_prime());
-        assertEquals(idVentil, result.getId_ventil_prime());
+        assertEquals(idAgent, result.getIdAgent());
+        assertEquals(true, result.getDateDebutMois() != null);
+        assertEquals(libRef, result.getIdRefPrime());
+        assertEquals(idVentil, result.getIdVentilPrime());
         assertEquals(qte, result.getQuantite());
         assertEquals(EtatPointageEnum.SAISI, EtatPointageEnum.getEtatPointageEnum(result.getEtat()));
     }

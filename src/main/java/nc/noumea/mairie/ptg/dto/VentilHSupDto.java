@@ -7,290 +7,283 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 @XmlRootElement
 public class VentilHSupDto extends VentilDto {
 
-    private int mabs;
-    private int m_hors_contrat;
-    private int m_sup;
-    private int m_sup_25;
-    private int m_sup_50;
-    private int m_djf;
-    private int m_djf_25;
-    private int m_djf_50;
-    private int m_1_mai;
-    private int m_nuit;
-    private int m_normales;
-    private int m_complementaires;
-    private int m_simples;
-    private int m_composees;
-    private int m_recuperees;
-    private int m_sup_25_r;
-    private int m_sup_50_r;
-    private int m_djf_r;
-    private int m_djf_25_r;
-    private int m_djf_50_r;
-    private int m_1_mai_r;
-    private int m_nuit_r;
-    private int m_normales_r;
-    private int m_complementaires_r;
-    private int m_simples_r;
-    private int m_composees_r;
+	private int mabs;
+	private int mHorsContrat;
+	private int mSup;
+	private int mSup25;
+	private int mSup50;
+	private int mDjf;
+	private int mDjf25;
+	private int mDjf50;
+	private int m1Mai;
+	private int mNuit;
+	private int mNormales;
+	private int mComplementaires;
+	private int mSimples;
+	private int mComposees;
+	private int mRecuperees;
+	private int mSup25R;
+	private int mSup50R;
+	private int mDjfR;
+	private int mDjf25R;
+	private int mDjf_50R;
+	private int m1maiR;
+	private int mNuitR;
+	private int mNormalesR;
+	private int mComplementairesR;
+	private int mSimplesR;
+	private int mComposeesR;
 
-    public VentilHSupDto() {
-    }
+	public VentilHSupDto() {
+	}
 
-    public VentilHSupDto(VentilHsup hibObj) {
-        mabs = hibObj.getmAbsences();
-        m_hors_contrat = hibObj.getmHorsContrat();
-        m_sup = hibObj.getmSup();
-        m_sup_25 = hibObj.getmSup25();
-        m_sup_50 = hibObj.getmSup50();
-        m_djf = hibObj.getMsdjf();
-        m_djf_25 = hibObj.getMsdjf25();
-        m_djf_50 = hibObj.getMsdjf50();
-        m_1_mai = hibObj.getmMai();
-        m_nuit = hibObj.getMsNuit();
-        m_normales = hibObj.getmNormales();
-        m_complementaires = hibObj.getmComplementaires();
-        m_simples = hibObj.getmSimple();
-        m_composees = hibObj.getmComposees();
-        etat = hibObj.getEtat().getCodeEtat();
-        m_recuperees = hibObj.getmRecuperees();
-        m_sup_25_r = hibObj.getmSup25Recup();
-        m_sup_50_r = hibObj.getmSup50Recup();
-        m_djf_r = hibObj.getMsdjfRecup();
-        m_djf_25_r = hibObj.getMsdjf25Recup();
-        m_djf_50_r = hibObj.getMsdjf50Recup();
-        m_1_mai_r = hibObj.getmMaiRecup();
-        m_nuit_r = hibObj.getMsNuitRecup();
-        m_normales_r = hibObj.getmNormalesRecup();
-        m_complementaires_r = hibObj.getmComplementairesRecup();
-        m_simples_r = hibObj.getmSimpleRecup();
-        m_composees_r = hibObj.getmComposeesRecup();
-        date = hibObj.getDateLundi();
-        id_agent = hibObj.getIdAgent();
-        id_ventil=hibObj.getIdVentilHSup();
-    }
+	public VentilHSupDto(VentilHsup hibObj) {
+		mabs = hibObj.getmAbsences();
+		mHorsContrat = hibObj.getmHorsContrat();
+		mSup = hibObj.getmSup();
+		mSup25 = hibObj.getmSup25();
+		mSup50 = hibObj.getmSup50();
+		mDjf = hibObj.getMsdjf();
+		mDjf25 = hibObj.getMsdjf25();
+		mDjf50 = hibObj.getMsdjf50();
+		m1Mai = hibObj.getmMai();
+		mNuit = hibObj.getMsNuit();
+		mNormales = hibObj.getmNormales();
+		mComplementaires = hibObj.getmComplementaires();
+		mSimples = hibObj.getmSimple();
+		mComposees = hibObj.getmComposees();
+		etat = hibObj.getEtat().getCodeEtat();
+		mRecuperees = hibObj.getmRecuperees();
+		mSup25R = hibObj.getmSup25Recup();
+		mSup50R = hibObj.getmSup50Recup();
+		mDjfR = hibObj.getMsdjfRecup();
+		mDjf25R = hibObj.getMsdjf25Recup();
+		mDjf_50R = hibObj.getMsdjf50Recup();
+		m1maiR = hibObj.getmMaiRecup();
+		mNuitR = hibObj.getMsNuitRecup();
+		mNormalesR = hibObj.getmNormalesRecup();
+		mComplementairesR = hibObj.getmComplementairesRecup();
+		mSimplesR = hibObj.getmSimpleRecup();
+		mComposeesR = hibObj.getmComposeesRecup();
+		date = hibObj.getDateLundi();
+		idAgent = hibObj.getIdAgent();
+		idVentil = hibObj.getIdVentilHSup();
+	}
 
-    public int getId_ventil_hsup() {
-        return id_ventil;
-    }
+	public int getIdVentilHsup() {
+		return idVentil;
+	}
 
-    public void setId_ventil_hsup(int id_ventil_hsup) {
-        this.id_ventil = id_ventil_hsup;
-    }
+	public Date getDateLundi() {
+		return date;
+	}
 
-    public Date getDate_lundi() {
-        return date;
-    }
+	public int getMabs() {
+		return mabs;
+	}
 
-    public void setDate_lundi(Date date_lundi) {
-        this.date = date_lundi;
-    }
+	public void setMabs(int mabs) {
+		this.mabs = mabs;
+	}
 
-    public int getMabs() {
-        return mabs;
-    }
+	public int getmHorsContrat() {
+		return mHorsContrat;
+	}
 
-    public void setMabs(int mabs) {
-        this.mabs = mabs;
-    }
+	public void setmHorsContrat(int mHorsContrat) {
+		this.mHorsContrat = mHorsContrat;
+	}
 
-    public int getM_hors_contrat() {
-        return m_hors_contrat;
-    }
+	public int getmSup() {
+		return mSup;
+	}
 
-    public void setM_hors_contrat(int m_hors_contrat) {
-        this.m_hors_contrat = m_hors_contrat;
-    }
+	public void setmSup(int mSup) {
+		this.mSup = mSup;
+	}
 
-    public int getM_sup() {
-        return m_sup;
-    }
+	public int getmSup25() {
+		return mSup25;
+	}
 
-    public void setM_sup(int m_sup) {
-        this.m_sup = m_sup;
-    }
+	public void setmSup25(int mSup25) {
+		this.mSup25 = mSup25;
+	}
 
-    public int getM_sup_25() {
-        return m_sup_25;
-    }
+	public int getmSup50() {
+		return mSup50;
+	}
 
-    public void setM_sup_25(int m_sup_25) {
-        this.m_sup_25 = m_sup_25;
-    }
+	public void setmSup50(int mSup50) {
+		this.mSup50 = mSup50;
+	}
 
-    public int getM_sup_50() {
-        return m_sup_50;
-    }
+	public int getmDjf() {
+		return mDjf;
+	}
 
-    public void setM_sup_50(int m_sup_50) {
-        this.m_sup_50 = m_sup_50;
-    }
+	public void setmDjf(int mDjf) {
+		this.mDjf = mDjf;
+	}
 
-    public int getM_djf() {
-        return m_djf;
-    }
+	public int getmDjf25() {
+		return mDjf25;
+	}
 
-    public void setM_djf(int m_djf) {
-        this.m_djf = m_djf;
-    }
+	public void setmDjf25(int mDjf25) {
+		this.mDjf25 = mDjf25;
+	}
 
-    public int getM_djf_25() {
-        return m_djf_25;
-    }
+	public int getmDjf50() {
+		return mDjf50;
+	}
 
-    public void setM_djf_25(int m_djf_25) {
-        this.m_djf_25 = m_djf_25;
-    }
+	public void setmDjf50(int mDjf50) {
+		this.mDjf50 = mDjf50;
+	}
 
-    public int getM_djf_50() {
-        return m_djf_50;
-    }
+	public int getM1Mai() {
+		return m1Mai;
+	}
 
-    public void setM_djf_50(int m_djf_50) {
-        this.m_djf_50 = m_djf_50;
-    }
+	public void setM1Mai(int m1Mai) {
+		this.m1Mai = m1Mai;
+	}
 
-    public int getM_1_mai() {
-        return m_1_mai;
-    }
+	public int getmNuit() {
+		return mNuit;
+	}
 
-    public void setM_1_mai(int m_1_mai) {
-        this.m_1_mai = m_1_mai;
-    }
+	public void setmNuit(int mNuit) {
+		this.mNuit = mNuit;
+	}
 
-    public int getM_nuit() {
-        return m_nuit;
-    }
+	public int getmNormales() {
+		return mNormales;
+	}
 
-    public void setM_nuit(int m_nuit) {
-        this.m_nuit = m_nuit;
-    }
+	public void setmNormales(int mNormales) {
+		this.mNormales = mNormales;
+	}
 
-    public int getM_normales() {
-        return m_normales;
-    }
+	public int getmComplementaires() {
+		return mComplementaires;
+	}
 
-    public void setM_normales(int m_normales) {
-        this.m_normales = m_normales;
-    }
+	public void setmComplementaires(int mComplementaires) {
+		this.mComplementaires = mComplementaires;
+	}
 
-    public int getM_complementaires() {
-        return m_complementaires;
-    }
+	public int getmSimples() {
+		return mSimples;
+	}
 
-    public void setM_complementaires(int m_complementaires) {
-        this.m_complementaires = m_complementaires;
-    }
+	public void setmSimples(int mSimples) {
+		this.mSimples = mSimples;
+	}
 
-    public int getM_simples() {
-        return m_simples;
-    }
+	public int getmComposees() {
+		return mComposees;
+	}
 
-    public void setM_simples(int m_simples) {
-        this.m_simples = m_simples;
-    }
+	public void setmComposees(int mComposees) {
+		this.mComposees = mComposees;
+	}
 
-    public int getM_composees() {
-        return m_composees;
-    }
+	public int getmRecuperees() {
+		return mRecuperees;
+	}
 
-    public void setM_composees(int m_composees) {
-        this.m_composees = m_composees;
-    }
+	public void setmRecuperees(int mRecuperees) {
+		this.mRecuperees = mRecuperees;
+	}
 
-    public int getM_recuperees() {
-        return m_recuperees;
-    }
+	public int getmSup25R() {
+		return mSup25R;
+	}
 
-    public void setM_recuperees(int m_recuperees) {
-        this.m_recuperees = m_recuperees;
-    }
+	public void setmSup25R(int mSup25R) {
+		this.mSup25R = mSup25R;
+	}
 
-    public int getM_sup_25_r() {
-        return m_sup_25_r;
-    }
+	public int getmSup50R() {
+		return mSup50R;
+	}
 
-    public void setM_sup_25_r(int m_sup_25_r) {
-        this.m_sup_25_r = m_sup_25_r;
-    }
+	public void setmSup50R(int mSup50R) {
+		this.mSup50R = mSup50R;
+	}
 
-    public int getM_sup_50_r() {
-        return m_sup_50_r;
-    }
+	public int getmDjfR() {
+		return mDjfR;
+	}
 
-    public void setM_sup_50_r(int m_sup_50_r) {
-        this.m_sup_50_r = m_sup_50_r;
-    }
+	public void setmDjfR(int mDjfR) {
+		this.mDjfR = mDjfR;
+	}
 
-    public int getM_djf_r() {
-        return m_djf_r;
-    }
+	public int getmDjf25R() {
+		return mDjf25R;
+	}
 
-    public void setM_djf_r(int m_djf_r) {
-        this.m_djf_r = m_djf_r;
-    }
+	public void setmDjf25R(int mDjf25R) {
+		this.mDjf25R = mDjf25R;
+	}
 
-    public int getM_djf_25_r() {
-        return m_djf_25_r;
-    }
+	public int getmDjf_50R() {
+		return mDjf_50R;
+	}
 
-    public void setM_djf_25_r(int m_djf_25_r) {
-        this.m_djf_25_r = m_djf_25_r;
-    }
+	public void setmDjf_50R(int mDjf_50R) {
+		this.mDjf_50R = mDjf_50R;
+	}
 
-    public int getM_djf_50_r() {
-        return m_djf_50_r;
-    }
+	public int getM1maiR() {
+		return m1maiR;
+	}
 
-    public void setM_djf_50_r(int m_djf_50_r) {
-        this.m_djf_50_r = m_djf_50_r;
-    }
+	public void setM1maiR(int m1maiR) {
+		this.m1maiR = m1maiR;
+	}
 
-    public int getM_1_mai_r() {
-        return m_1_mai_r;
-    }
+	public int getmNuitR() {
+		return mNuitR;
+	}
 
-    public void setM_1_mai_r(int m_1_mai_r) {
-        this.m_1_mai_r = m_1_mai_r;
-    }
+	public void setmNuitR(int mNuitR) {
+		this.mNuitR = mNuitR;
+	}
 
-    public int getM_nuit_r() {
-        return m_nuit_r;
-    }
+	public int getmNormalesR() {
+		return mNormalesR;
+	}
 
-    public void setM_nuit_r(int m_nuit_r) {
-        this.m_nuit_r = m_nuit_r;
-    }
+	public void setmNormalesR(int mNormalesR) {
+		this.mNormalesR = mNormalesR;
+	}
 
-    public int getM_normales_r() {
-        return m_normales_r;
-    }
+	public int getmComplementairesR() {
+		return mComplementairesR;
+	}
 
-    public void setM_normales_r(int m_normales_r) {
-        this.m_normales_r = m_normales_r;
-    }
+	public void setmComplementairesR(int mComplementairesR) {
+		this.mComplementairesR = mComplementairesR;
+	}
 
-    public int getM_complementaires_r() {
-        return m_complementaires_r;
-    }
+	public int getmSimplesR() {
+		return mSimplesR;
+	}
 
-    public void setM_complementaires_r(int m_complementaires_r) {
-        this.m_complementaires_r = m_complementaires_r;
-    }
+	public void setmSimplesR(int mSimplesR) {
+		this.mSimplesR = mSimplesR;
+	}
 
-    public int getM_simples_r() {
-        return m_simples_r;
-    }
+	public int getmComposeesR() {
+		return mComposeesR;
+	}
 
-    public void setM_simples_r(int m_simples_r) {
-        this.m_simples_r = m_simples_r;
-    }
+	public void setmComposeesR(int mComposeesR) {
+		this.mComposeesR = mComposeesR;
+	}
 
-    public int getM_composees_r() {
-        return m_composees_r;
-    }
-
-    public void setM_composees_r(int m_composees_r) {
-        this.m_composees_r = m_composees_r;
-    }
 }

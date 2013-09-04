@@ -34,7 +34,7 @@ public abstract class PointageDto {
 		this.commentaire = pointageDto.commentaire;
 		this.idRefEtat = pointageDto.idRefEtat;
 	}
-	
+
 	public Integer getIdPointage() {
 		return idPointage;
 	}
@@ -82,4 +82,5 @@ public abstract class PointageDto {
 	public void setIdRefEtat(Integer idRefEtat) {
 		this.idRefEtat = idRefEtat;
 	}
+	
 }

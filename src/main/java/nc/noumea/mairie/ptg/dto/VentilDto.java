@@ -6,28 +6,44 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class VentilDto {
 
-    protected int id_ventil;
-    protected Date date;
-    protected int id_agent;
-    protected int etat;
+	protected int idVentil;
+	protected Date date;
+	protected int idAgent;
+	protected int etat;
 
-    
-    public VentilDto() {
-    }
+	public VentilDto() {
+	}
 
-    public int getId_agent() {
-        return id_agent;
-    }
+	public int getIdVentil() {
+		return idVentil;
+	}
 
-    public void setId_agent(int id_agent) {
-        this.id_agent = id_agent;
-    }
+	public void setIdVentil(int idVentil) {
+		this.idVentil = idVentil;
+	}
 
-    public int getEtat() {
-        return etat;
-    }
+	public Date getDate() {
+		return date;
+	}
 
-    public void setEtat(int etat) {
-        this.etat = etat;
-    }
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
+	public int getIdAgent() {
+		return idAgent;
+	}
+
+	public void setIdAgent(int idAgent) {
+		this.idAgent = idAgent;
+	}
+
+	public int getEtat() {
+		return etat;
+	}
+
+	public void setEtat(int etat) {
+		this.etat = etat;
+	}
+
 }
