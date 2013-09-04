@@ -161,15 +161,6 @@ public class ExportPaieService implements IExportPaieService {
 		
 		ReturnMessageDto result = new ReturnMessageDto();
 		
-		// 0. Verify and set PAIE status to EXPORTING
-		try {
-			paieWorkflowService.changeStateToExportPaieStarted(helperService.getTypeChainePaieFromStatut(statut));
-		} catch (WorkflowInvalidStateException e) {
-			logger.error("Could not start exportPaie process: {}", e.getMessage());
-			result.getErrors().add(e.getMessage());
-			return result;
-		}
-		
 		// 1. Retrieve eligible ventilation in order to get dates
 		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
 		VentilDate ventilDate = ventilationRepository.getLatestVentilDate(chainePaie, false);
@@ -297,6 +288,11 @@ public class ExportPaieService implements IExportPaieService {
 		CanStartWorkflowPaieActionDto result = new CanStartWorkflowPaieActionDto();
 		result.setCanStartExportPaieAction(paieWorkflowService.canChangeStateToExportPaieStarted(chainePaie));
 		return result;
+	}
+
+	@Override
+	public void stopExportToPaie(TypeChainePaieEnum typeChainePaie) throws WorkflowInvalidStateException {
+		paieWorkflowService.changeStateToExportPaieDone(typeChainePaie);
 	}
 
 }

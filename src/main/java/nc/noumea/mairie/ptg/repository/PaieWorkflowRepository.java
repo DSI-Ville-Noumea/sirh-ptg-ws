@@ -5,6 +5,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.domain.SpWFEtat;
 import nc.noumea.mairie.domain.SpWFPaie;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
@@ -34,5 +35,10 @@ public class PaieWorkflowRepository implements IPaieWorkflowRepository {
 		SpWFPaie currentState = entityManager.find(SpWFPaie.class, chainePaie);
 		
 		return currentState;
+	}
+
+	@Override
+	public SpWFEtat getEtat(Integer codeEtat) {
+		return entityManager.find(SpWFEtat.class, codeEtat);
 	}
 }

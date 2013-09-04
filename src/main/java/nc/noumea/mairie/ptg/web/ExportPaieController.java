@@ -4,6 +4,7 @@ import java.util.Date;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.SpWFPaie;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -11,6 +12,7 @@ import nc.noumea.mairie.ptg.service.IExportPaieService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
+import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +126,23 @@ public class ExportPaieController {
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
 		
 		exportPaieService.processExportPaieForAgent(idExportPaieTask);
+
+        return new ResponseEntity<String>(HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/stop", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(value = "sirhTransactionManager")
+	public ResponseEntity<String> stopExportPaie(
+			@RequestParam("typeChainePaie") String typeChainePaie) {
+
+		logger.debug("entered GET [exportPaie/stop] => stopExportPaie with parameters typeChainePaie = {}", typeChainePaie);
+		
+		try {
+			exportPaieService.stopExportToPaie(TypeChainePaieEnum.valueOf(typeChainePaie));
+		} catch (WorkflowInvalidStateException e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+		}
 
         return new ResponseEntity<String>(HttpStatus.OK);
 	}

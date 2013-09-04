@@ -578,6 +578,34 @@ HTTP Status code OK : 200
 +-------------------------+
 
 
+** Mettre à jour l'état du workflow après déversement dans la paie (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé uniquement par le Job SIRH-JOBS d'export Paie.>>
+ Note: Cet appel de web service vise à terminé la phase d'exportation dans la paie pour une chaine de paie donnée. Il consiste à mettre à jour le workflow de paie à l'état "Déversement terminé".
+
+ <<URL>> : /exportPaie/stop
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<typeChainePaie>> : Le type de chaine paie pour laquelle faire la mise à jour (SCV, SHC)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si la mise à jour du workflow est impossible :
+
++-------------------------+
+ HTTP Status code CONFLICT : 409
++-------------------------+
+
+
 * Prime
 
 ** Récuperer la liste des primes existantes. 

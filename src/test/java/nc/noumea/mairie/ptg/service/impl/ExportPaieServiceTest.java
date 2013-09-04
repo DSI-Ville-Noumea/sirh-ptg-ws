@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.service.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -333,5 +334,42 @@ public class ExportPaieServiceTest {
 		Mockito.verify(service, Mockito.times(1)).markPointagesAsValidated(pointages, 9009999);
 		Mockito.verify(service, Mockito.times(1)).updateSpmatrForAgentAndPointages(9008765, TypeChainePaieEnum.SCV, pointages);
 		Mockito.verify(service, Mockito.times(1)).persistSppac(sppacts);
+	}
+	
+	@Test
+	public void stopExportToPaie_InvalidState_ThrowException() throws WorkflowInvalidStateException {
+		
+		// Given
+		IPaieWorkflowService wfS = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.doThrow(new WorkflowInvalidStateException("message")).when(wfS).changeStateToExportPaieDone(TypeChainePaieEnum.SCV);
+		
+		ExportPaieService service = new ExportPaieService();
+		ReflectionTestUtils.setField(service, "paieWorkflowService", wfS);
+		
+		// When
+		try {
+			service.stopExportToPaie(TypeChainePaieEnum.SCV);
+		} catch(WorkflowInvalidStateException ex) {
+			return;
+		}
+		
+		fail("Should have thrown a WorkflowInvalidStateException");
+	}
+	
+	@Test
+	public void stopExportToPaie_validState() throws WorkflowInvalidStateException {
+	
+		// Given
+		IPaieWorkflowService wfS = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.doNothing().when(wfS).changeStateToExportPaieDone(TypeChainePaieEnum.SCV);
+		
+		ExportPaieService service = new ExportPaieService();
+		ReflectionTestUtils.setField(service, "paieWorkflowService", wfS);
+		
+		// When
+		service.stopExportToPaie(TypeChainePaieEnum.SCV);
+
+		// Then
+		Mockito.verify(wfS, Mockito.times(1)).changeStateToExportPaieDone(TypeChainePaieEnum.SCV);
 	}
 }
