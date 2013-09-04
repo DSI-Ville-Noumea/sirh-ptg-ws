@@ -512,6 +512,4 @@ public class VentilationService implements IVentilationService {
         logger.debug("Returning {} ventilated pointages from showVentilation WS.", pointagesVentiles.size());
         return pointagesVentiles;
     }
-
-
 }

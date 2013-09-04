@@ -325,7 +325,17 @@ public class VentilationRepository implements IVentilationRepository {
         return ret;
     }
 
-	
+    @Override
+    public List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAsc(Integer idAgent, Integer idVentilDate) {
+    	
+    	TypedQuery<VentilHsup> q = ptgEntityManager
+    			.createQuery("from VentilHsup h where h.idAgent = :idAgent and h.ventilDate.idVentilDate = :idVentilDate order by h.dateLundi asc", VentilHsup.class);
+    	q.setParameter("idAgent", idAgent);
+    	q.setParameter("idVentilDate", idVentilDate);
+    	
+    	return q.getResultList();
+    }
+    
     @Override
 	public boolean canStartVentilation(TypeChainePaieEnum chainePaie) {
 

@@ -8,6 +8,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
+import nc.noumea.mairie.ptg.domain.VentilHsup;
 
 public interface IVentilationRepository {
 
@@ -31,5 +32,7 @@ public interface IVentilationRepository {
 	
 	boolean canStartVentilation(TypeChainePaieEnum chainePaie);
 	
-        List getListOfVentilForDateAgentAndType(Integer ventilDateId,Integer idAgent, RefTypePointageEnum typePointage);
+    List getListOfVentilForDateAgentAndType(Integer ventilDateId,Integer idAgent, RefTypePointageEnum typePointage);
+    
+    List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAsc(Integer idAgent, Integer idVentilDate);
 }

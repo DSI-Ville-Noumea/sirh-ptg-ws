@@ -7,6 +7,7 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.domain.Sppact;
+import nc.noumea.mairie.domain.Spphre;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -14,13 +15,15 @@ import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.VentilDate;
+import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
-import nc.noumea.mairie.ptg.service.IExportAbsencePaieService;
+import nc.noumea.mairie.ptg.service.IExportPaieAbsenceService;
+import nc.noumea.mairie.ptg.service.IExportPaieHSupService;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
@@ -52,7 +55,10 @@ public class ExportPaieService implements IExportPaieService {
 	private HelperService helperService;
 	
 	@Autowired
-	private IExportAbsencePaieService exportAbsencePaieService;
+	private IExportPaieAbsenceService exportPaieAbsenceService;
+	
+	@Autowired
+	private IExportPaieHSupService exportPaieHSupService;
 	
 	@Autowired
 	private IPointageService pointageService;
@@ -134,9 +140,11 @@ public class ExportPaieService implements IExportPaieService {
 		List<Pointage> ventilatedPointages = pointageService.getPointagesVentilesForAgent(idAgent, ventilDate);
 		
 		// 2. Export absences
-		persistSppac(exportAbsencePaieService.exportAbsencesToPaie(ventilatedPointages));
+		persistSppac(exportPaieAbsenceService.exportAbsencesToPaie(ventilatedPointages));
 		
 		// 3. Export hSups
+		List<VentilHsup> vHsups = ventilationRepository.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(idAgent, ventilDate.getIdVentilDate());
+		persistSpphre(exportPaieHSupService.exportHsupToPaie(vHsups));
 		
 		// 4. Export Primes
 		
@@ -193,7 +201,7 @@ public class ExportPaieService implements IExportPaieService {
 			List<Pointage> ventilatedPointages = pointageService.getPointagesVentilesForAgent(idAgent, ventilDate);
 			
 			// 5. Export absences
-			persistSppac(exportAbsencePaieService.exportAbsencesToPaie(ventilatedPointages));
+			persistSppac(exportPaieAbsenceService.exportAbsencesToPaie(ventilatedPointages));
 			
 			// 6. Mark pointages as validated
 			markPointagesAsValidated(ventilatedPointages, agentIdValidating);
@@ -280,6 +288,12 @@ public class ExportPaieService implements IExportPaieService {
 	protected void persistSppac(List<Sppact> absences) {
 		for (Sppact sppact : absences) {
 			sppact.merge();
+		}
+	}
+	
+	protected void persistSpphre(List<Spphre> hSups) {
+		for (Spphre spphre : hSups) {
+			spphre.merge();
 		}
 	}
 

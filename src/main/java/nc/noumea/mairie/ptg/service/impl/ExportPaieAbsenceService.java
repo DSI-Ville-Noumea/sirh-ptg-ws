@@ -11,7 +11,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IExportPaieRepository;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
-import nc.noumea.mairie.ptg.service.IExportAbsencePaieService;
+import nc.noumea.mairie.ptg.service.IExportPaieAbsenceService;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ExportAbsencePaieService implements IExportAbsencePaieService {
+public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
 
 	@Autowired
 	private IExportPaieRepository exportPaieRepository;

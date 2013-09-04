@@ -39,7 +39,7 @@ public class ExportAbsencePaieServiceTest {
 		
 		// Given
 		List<Pointage> pointagesOrderedByDateAsc = new ArrayList<Pointage>();
-		ExportAbsencePaieService service = new ExportAbsencePaieService();
+		ExportPaieAbsenceService service = new ExportPaieAbsenceService();
 		
 		// Then
 		assertEquals(0, service.exportAbsencesToPaie(pointagesOrderedByDateAsc).size());
@@ -54,7 +54,7 @@ public class ExportAbsencePaieServiceTest {
 		Pointage p2 = new Pointage();
 		p2.setType(hSup);
 		
-		ExportAbsencePaieService service = new ExportAbsencePaieService();
+		ExportPaieAbsenceService service = new ExportPaieAbsenceService();
 		
 		// Then
 		assertEquals(0, service.exportAbsencesToPaie(Arrays.asList(p1, p2)).size());
@@ -84,7 +84,7 @@ public class ExportAbsencePaieServiceTest {
 		IExportPaieRepository eR = Mockito.mock(IExportPaieRepository.class);
 		Mockito.when(eR.getSppactForDayAndAgent(p1.getIdAgent(), p1.getDateDebut(), "A02")).thenReturn(null);
 		
-		ExportAbsencePaieService service = new ExportAbsencePaieService();
+		ExportPaieAbsenceService service = new ExportPaieAbsenceService();
 		ReflectionTestUtils.setField(service, "mairieRepository", mR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "exportPaieRepository", eR);
@@ -134,7 +134,7 @@ public class ExportAbsencePaieServiceTest {
 		IExportPaieRepository eR = Mockito.mock(IExportPaieRepository.class);
 		Mockito.when(eR.getSppactForDayAndAgent(p1.getIdAgent(), p1.getDateDebut(), "A02")).thenReturn(null);
 		
-		ExportAbsencePaieService service = new ExportAbsencePaieService();
+		ExportPaieAbsenceService service = new ExportPaieAbsenceService();
 		ReflectionTestUtils.setField(service, "mairieRepository", mR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "exportPaieRepository", eR);
@@ -186,7 +186,7 @@ public class ExportAbsencePaieServiceTest {
 		Mockito.when(eR.getSppactForDayAndAgent(p1.getIdAgent(), p1.getDateDebut(), "A02")).thenReturn(null);
 		Mockito.when(eR.getSppactForDayAndAgent(p1.getIdAgent(), p1.getDateDebut(), "A01")).thenReturn(null);
 		
-		ExportAbsencePaieService service = new ExportAbsencePaieService();
+		ExportPaieAbsenceService service = new ExportPaieAbsenceService();
 		ReflectionTestUtils.setField(service, "mairieRepository", mR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "exportPaieRepository", eR);
@@ -234,7 +234,7 @@ public class ExportAbsencePaieServiceTest {
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(3.3d)).thenReturn(210);
 		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(300)).thenReturn(4.3d);
 		
-		ExportAbsencePaieService service = new ExportAbsencePaieService();
+		ExportPaieAbsenceService service = new ExportPaieAbsenceService();
 		ReflectionTestUtils.setField(service, "mairieRepository", mR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "exportPaieRepository", eR);

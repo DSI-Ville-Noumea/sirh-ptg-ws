@@ -14,18 +14,21 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.domain.Sppact;
+import nc.noumea.mairie.domain.Spphre;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.VentilDate;
+import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
-import nc.noumea.mairie.ptg.service.IExportAbsencePaieService;
+import nc.noumea.mairie.ptg.service.IExportPaieAbsenceService;
+import nc.noumea.mairie.ptg.service.IExportPaieHSupService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
@@ -303,6 +306,7 @@ public class ExportPaieServiceTest {
 		task.setIdAgent(9008765);
 		task.setIdAgentCreation(9009999);
 		VentilDate ventilDate = new VentilDate();
+		ventilDate.setIdVentilDate(99);
 		ventilDate.setDateVentilation(new LocalDate(2013, 7, 1).toDate());
 		task.setVentilDate(ventilDate);
 		task.setTypeChainePaie(TypeChainePaieEnum.SCV);
@@ -315,17 +319,29 @@ public class ExportPaieServiceTest {
 		Mockito.when(pS.getPointagesVentilesForAgent(9008765, ventilDate)).thenReturn(pointages);
 		
 		List<Sppact> sppacts = new ArrayList<Sppact>();
-		IExportAbsencePaieService epS = Mockito.mock(IExportAbsencePaieService.class);
+		IExportPaieAbsenceService epS = Mockito.mock(IExportPaieAbsenceService.class);
 		Mockito.when(epS.exportAbsencesToPaie(pointages)).thenReturn(sppacts);
+		
+		List<VentilHsup> ventilHsupOrderedByDateAsc = new ArrayList<VentilHsup>();
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(9008765, ventilDate.getIdVentilDate()))
+			.thenReturn(ventilHsupOrderedByDateAsc);
+		
+		List<Spphre> spphres = new ArrayList<Spphre>();
+		IExportPaieHSupService ephS = Mockito.mock(IExportPaieHSupService.class);
+		Mockito.when(ephS.exportHsupToPaie(ventilHsupOrderedByDateAsc)).thenReturn(spphres);
 		
 		ExportPaieService service = Mockito.spy(new ExportPaieService());
 		Mockito.doNothing().when(service).markPointagesAsValidated(pointages, 9009999);
 		Mockito.doNothing().when(service).updateSpmatrForAgentAndPointages(9008765, TypeChainePaieEnum.SCV, pointages);
 		Mockito.doNothing().when(service).persistSppac(sppacts);
+		Mockito.doNothing().when(service).persistSpphre(spphres);
 
 		ReflectionTestUtils.setField(service, "pointageService", pS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
-		ReflectionTestUtils.setField(service, "exportAbsencePaieService", epS);
+		ReflectionTestUtils.setField(service, "exportPaieAbsenceService", epS);
+		ReflectionTestUtils.setField(service, "exportPaieHSupService", ephS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		
 		// When
 		service.processExportPaieForAgent(3);
@@ -334,6 +350,7 @@ public class ExportPaieServiceTest {
 		Mockito.verify(service, Mockito.times(1)).markPointagesAsValidated(pointages, 9009999);
 		Mockito.verify(service, Mockito.times(1)).updateSpmatrForAgentAndPointages(9008765, TypeChainePaieEnum.SCV, pointages);
 		Mockito.verify(service, Mockito.times(1)).persistSppac(sppacts);
+		Mockito.verify(service, Mockito.times(1)).persistSpphre(spphres);
 	}
 	
 	@Test
