@@ -142,6 +142,7 @@ public class VentilationService implements IVentilationService {
 		return result;
 	}
     
+    @Override
     public void processVentilationForAgent(Integer idVentilTask) {
     	
     	logger.info("Starting ventilation of idVentilTask [{}]", idVentilTask);
@@ -197,6 +198,12 @@ public class VentilationService implements IVentilationService {
         logger.info("Ventilation of idVentilTask [{}] done.", idVentilTask);
     }
     
+    /**
+	 * This method stays here only for development purposes (it is deprecated for any other use).
+	 * This is why it is marked as deprecated.
+	 */
+	@Override
+	@Deprecated
 	public ReturnMessageDto processVentilation(Integer idAgent,
 			List<Integer> agents, Date ventilationDate, AgentStatutEnum statut,
 			RefTypePointageEnum pointageType) {

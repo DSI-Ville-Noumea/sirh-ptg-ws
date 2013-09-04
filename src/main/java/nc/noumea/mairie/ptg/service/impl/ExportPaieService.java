@@ -11,17 +11,20 @@ import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
+import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IExportAbsencePaieService;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
+import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +39,9 @@ public class ExportPaieService implements IExportPaieService {
 	@Autowired
 	private IVentilationRepository ventilationRepository;
 
+	@Autowired
+	private IPointageRepository pointageRepository;
+	
 	@Autowired
 	private ISirhRepository sirhRepository;
 	
@@ -54,6 +60,101 @@ public class ExportPaieService implements IExportPaieService {
 	@Autowired
 	private IPaieWorkflowService paieWorkflowService;
 	
+	@Override
+	public ReturnMessageDto startExportToPaie(Integer agentIdValidating, AgentStatutEnum statut) {
+		
+		logger.info("Starting exportToPaie of Pointages for Agents statut [{}], asked by [{}]", 
+    			agentIdValidating, statut);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		// 1. Retrieve eligible ventilation in order to get dates
+		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
+		VentilDate ventilDate = ventilationRepository.getLatestVentilDate(chainePaie, false);
+		
+		// If no ventilation has ever been ran, return now
+		if (ventilDate == null) {
+			logger.info("No unpaid ventilation date found. Nothing to export. Stopping process here.");
+			result.getErrors().add(String.format("Aucune ventilation n'existe pour le statut [%s].", statut));
+			return result;
+		}
+		
+		// 2. Call workflow to make sure we can start the export process
+		try {
+			paieWorkflowService.changeStateToExportPaieStarted(helperService.getTypeChainePaieFromStatut(statut));
+		} catch (WorkflowInvalidStateException e) {
+			logger.error("Could not start exportPaie process: {}", e.getMessage());
+			result.getErrors().add(e.getMessage());
+			return result;
+		}
+				
+		// 3. retrieve list of Agent from pointages
+		List<Integer> idAgents = ventilationRepository.getListIdAgentsForExportPaie(ventilDate.getIdVentilDate());
+		
+		logger.info("Found {} agents to export pointages for (based on all available pointages for export and before agent filtering).", idAgents.size());
+		
+		for (Integer agent : idAgents) {
+			
+			// 4. Verify whether this agent is eligible, through its Status (Spcarr)
+			if (!isAgentEligibleToExport(agent, statut, ventilDate.getDateVentilation())) {
+				logger.info("Agent {} not eligible for export (status not matching), skipping to next.", agent);
+				continue;
+			}
+			
+			// 5. Create ExportPaieTask to notify job of a new expot to do
+			ExportPaieTask task = new ExportPaieTask();
+			task.setIdAgent(agent);
+			task.setIdAgentCreation(agentIdValidating);
+			task.setTypeChainePaie(chainePaie);
+			task.setDateCreation(helperService.getCurrentDate());
+			task.setVentilDate(ventilDate);
+			pointageRepository.persisEntity(task);
+			
+			result.getInfos().add(String.format("Agent %s", agent));
+        }
+        
+        logger.info("Added exportPaie tasks for {} agents after filtering.", result.getInfos().size());
+        
+        return result;
+	}
+	
+	@Override
+	public void processExportPaieForAgent(Integer idExportPaieTask) {
+
+		logger.info("Starting exportation to Paie of ExportPaieTask [{}]", idExportPaieTask);
+		ExportPaieTask task = pointageRepository.getEntity(ExportPaieTask.class, idExportPaieTask);
+    	logger.info("Exportation of Agent [{}] created by agent [{}] at [{}].", task.getIdAgent(), task.getIdAgentCreation(), task.getDateCreation());
+		
+    	Integer idAgent = task.getIdAgent();
+    	VentilDate ventilDate = task.getVentilDate();
+    	Integer agentIdValidating = task.getIdAgentCreation();
+    	TypeChainePaieEnum chainePaie = task.getTypeChainePaie();
+    	
+    	// 1. Retrieve all pointages that have been ventilated
+		List<Pointage> ventilatedPointages = pointageService.getPointagesVentilesForAgent(idAgent, ventilDate);
+		
+		// 2. Export absences
+		persistSppac(exportAbsencePaieService.exportAbsencesToPaie(ventilatedPointages));
+		
+		// 3. Export hSups
+		
+		// 4. Export Primes
+		
+		// 5. Mark pointages as validated
+		markPointagesAsValidated(ventilatedPointages, agentIdValidating);
+		
+		// 6. Update SPMATR with oldest pointage month
+		updateSpmatrForAgentAndPointages(idAgent, chainePaie, ventilatedPointages);
+    	
+		logger.info("Exportation of idExportPaieTask [{}] done.", idExportPaieTask);
+	}
+	
+	/**
+	 * This method stays here only for development purposes (it is deprecated for any other use).
+	 * This is why it is marked as deprecated.
+	 */
+	@Override
+	@Deprecated
 	public ReturnMessageDto exportToPaie(Integer agentIdValidating, AgentStatutEnum statut) {
 		
 		logger.info("Starting exportation to Paie with status [{}]", statut);
@@ -61,13 +162,13 @@ public class ExportPaieService implements IExportPaieService {
 		ReturnMessageDto result = new ReturnMessageDto();
 		
 		// 0. Verify and set PAIE status to EXPORTING
-//		try {
-//			paieStatusService.setExportStatus();
-//		} catch (PaieStatusServiceException ex) {
-//			logger.error("Unable to start export process : ", ex);
-//			result.getErrors().add(ex.getMessage());
-//			return result;
-//		}
+		try {
+			paieWorkflowService.changeStateToExportPaieStarted(helperService.getTypeChainePaieFromStatut(statut));
+		} catch (WorkflowInvalidStateException e) {
+			logger.error("Could not start exportPaie process: {}", e.getMessage());
+			result.getErrors().add(e.getMessage());
+			return result;
+		}
 		
 		// 1. Retrieve eligible ventilation in order to get dates
 		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
@@ -197,4 +298,5 @@ public class ExportPaieService implements IExportPaieService {
 		result.setCanStartExportPaieAction(paieWorkflowService.canChangeStateToExportPaieStarted(chainePaie));
 		return result;
 	}
+
 }

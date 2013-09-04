@@ -4,13 +4,13 @@ import java.util.Date;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.SpWFPaie;
+import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
-import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class ExportPaieController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(value = "chainedTransactionManager")
+	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> startExportPaie(
 			@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("statut") String statut) {
@@ -69,14 +69,7 @@ public class ExportPaieController {
 		logger.debug("entered GET [exportPaie/start] => startExportPaie with parameters idAgent = {}, statut = {}",
 				idAgent, statut);
 		
-		ReturnMessageDto result = new ReturnMessageDto();
-		
-        try {
-        	//TODO: develop real call to export paie service run method that will trigger the job
-			paieWorkflowService.changeStateToExportPaieStarted(helperService.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
-		} catch (WorkflowInvalidStateException e) {
-			result.getErrors().add(e.getMessage());
-		}
+		ReturnMessageDto result = exportPaieService.startExportToPaie(idAgent, AgentStatutEnum.valueOf(statut));
         
 		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
 		
@@ -116,5 +109,22 @@ public class ExportPaieController {
 		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
 		
 		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/processTask", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(value = "chainedTransactionManager")
+	public ResponseEntity<String> processTask(
+			@RequestParam("idExportPaieTask") Integer idExportPaieTask) {
+
+		logger.debug("entered GET [exportPaie/processTask] => processTask with parameters idExportPaieTask = {}",
+				idExportPaieTask);
+		
+		if (ExportPaieTask.findExportPaieTask(idExportPaieTask) == null)
+			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+		
+		exportPaieService.processExportPaieForAgent(idExportPaieTask);
+
+        return new ResponseEntity<String>(HttpStatus.OK);
 	}
 }

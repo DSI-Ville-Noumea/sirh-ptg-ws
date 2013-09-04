@@ -42,7 +42,7 @@ public class ExportPaieTask {
     private VentilDate ventilDate;
 	
 	@Column(name = "DATE_EXPORT")
-	private Date dateVentilation;
+	private Date dateExport;
 	
 	@Column(name = "TASK_STATUS")
 	private String taskStatus;

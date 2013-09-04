@@ -50,12 +50,12 @@ privileged aspect ExportPaieTask_Roo_JavaBean {
         this.ventilDate = ventilDate;
     }
     
-    public Date ExportPaieTask.getDateVentilation() {
-        return this.dateVentilation;
+    public Date ExportPaieTask.getDateExport() {
+        return this.dateExport;
     }
     
-    public void ExportPaieTask.setDateVentilation(Date dateVentilation) {
-        this.dateVentilation = dateVentilation;
+    public void ExportPaieTask.setDateExport(Date dateExport) {
+        this.dateExport = dateExport;
     }
     
     public String ExportPaieTask.getTaskStatus() {

@@ -1,77 +1,44 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
+import nc.noumea.mairie.domain.Sppact;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IMairieRepository;
+import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
+import nc.noumea.mairie.ptg.service.IExportAbsencePaieService;
+import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
+import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class ExportPaieServiceTest {
 
-	@Test
-	public void exportToPaie_NoVentilDate_DoNothing() {
-		
-		// Given
-		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.CC)).thenReturn(TypeChainePaieEnum.SCV);
-		
-		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(null);
-		
-		ExportPaieService service = new ExportPaieService();
-		ReflectionTestUtils.setField(service, "helperService", hS);
-		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		
-		// When
-		ReturnMessageDto result = service.exportToPaie(1, AgentStatutEnum.CC);
-		
-		// Then
-		assertEquals(1, result.getInfos().size());
-		assertEquals("Aucune ventilation n'existe pour le statut [CC].", result.getInfos().get(0));
-		assertEquals(0, result.getErrors().size());
-		Mockito.verify(vR, Mockito.times(1)).getLatestVentilDate(TypeChainePaieEnum.SCV, false);
-	}
-	
-	//@Test
-	public void exportToPaie_PaieIsNotReady_DoNothing() {
-		
-		// Given
-		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.CC)).thenReturn(TypeChainePaieEnum.SCV);
-		
-		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(null);
-		
-		ExportPaieService service = new ExportPaieService();
-		ReflectionTestUtils.setField(service, "helperService", hS);
-		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		
-		// When
-		ReturnMessageDto result = service.exportToPaie(1, AgentStatutEnum.CC);
-		
-		// Then
-		assertEquals(0, result.getInfos().size());
-		assertEquals(1, result.getErrors().size());
-		assertEquals("Impossible de lancer le processus de déversement : La Paie est en état [] au lieu de [] ou [].", result.getErrors().get(0));
-		Mockito.verify(vR, Mockito.never()).getLatestVentilDate(TypeChainePaieEnum.SCV, false);
-	}
-	
 	@Test
 	public void markPointagesAsValidated_2Pointages_AddEtatPointage() {
 		
@@ -212,5 +179,159 @@ public class ExportPaieServiceTest {
 		
 		// Then
 		assertTrue(result.isCanStartExportPaieAction());
+	}
+	
+	@Test
+	public void startExportToPaie_NoVentilDate_DoNothing() {
+		
+		// Given
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.CC)).thenReturn(TypeChainePaieEnum.SCV);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(null);
+		
+		ExportPaieService service = new ExportPaieService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		
+		// When
+		ReturnMessageDto result = service.startExportToPaie(1, AgentStatutEnum.CC);
+		
+		// Then
+		assertEquals(0, result.getInfos().size());
+		assertEquals("Aucune ventilation n'existe pour le statut [CC].", result.getErrors().get(0));
+		assertEquals(1, result.getErrors().size());
+		Mockito.verify(vR, Mockito.times(1)).getLatestVentilDate(TypeChainePaieEnum.SCV, false);
+	}
+	
+	@Test
+	public void startExportToPaie_PaieIsNotReady_DoNothing() throws WorkflowInvalidStateException {
+		
+		// Given
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.CC)).thenReturn(TypeChainePaieEnum.SCV);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(new VentilDate());
+
+		IPaieWorkflowService wfS = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.doThrow(new WorkflowInvalidStateException("message")).when(wfS).changeStateToExportPaieStarted(TypeChainePaieEnum.SCV);
+		
+		ExportPaieService service = new ExportPaieService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", wfS);
+		
+		// When
+		ReturnMessageDto result = service.startExportToPaie(1, AgentStatutEnum.CC);
+		
+		// Then
+		assertEquals(0, result.getInfos().size());
+		assertEquals(1, result.getErrors().size());
+		assertEquals("message", result.getErrors().get(0));
+	}
+	
+	@Test
+	public void startExportToPaie_PaieIsReady_ChangeStateAndCreateExportVentilTask() throws WorkflowInvalidStateException {
+		
+		// Given
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.CC)).thenReturn(TypeChainePaieEnum.SCV);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 7, 9, 10, 25, 2).toDate());
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setIdVentilDate(999);
+		ventilDate.setDateVentilation(new LocalDate(2013, 07, 01).toDate());
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(ventilDate);
+		List<Integer> agentsList = Arrays.asList(9008765, 9008989);
+		Mockito.when(vR.getListIdAgentsForExportPaie(999)).thenReturn(agentsList);
+
+		IPaieWorkflowService wfS = Mockito.mock(IPaieWorkflowService.class);
+
+		Spcarr validSpcarr = new Spcarr();
+		validSpcarr.setCdcate(7);
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgentCurrentCarriere(8765, ventilDate.getDateVentilation())).thenReturn(validSpcarr);
+		Mockito.when(sR.getAgentCurrentCarriere(8989, ventilDate.getDateVentilation())).thenReturn(null);
+		
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ExportPaieTask arg = (ExportPaieTask) args[0];
+
+				assertEquals(9008765, (int) arg.getIdAgent());
+				assertEquals(new DateTime(2013, 7, 9, 10, 25, 2).toDate(), arg.getDateCreation());
+				assertEquals(9001111, (int) arg.getIdAgentCreation());
+				assertEquals(TypeChainePaieEnum.SCV, arg.getTypeChainePaie());
+				assertEquals(999, (int) arg.getVentilDate().getIdVentilDate());
+				assertNull(arg.getDateExport());
+				assertNull(arg.getTaskStatus());
+				return true;
+			}
+		}).when(pR).persisEntity(Mockito.isA(ExportPaieTask.class));
+		
+		ExportPaieService service = new ExportPaieService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", wfS);
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		
+		// When
+		ReturnMessageDto result = service.startExportToPaie(9001111, AgentStatutEnum.CC);
+		
+		// Then
+		assertEquals(1, result.getInfos().size());
+		assertEquals("Agent 9008765", result.getInfos().get(0));
+		assertEquals(0, result.getErrors().size());
+		
+		Mockito.verify(wfS, Mockito.times(1)).changeStateToExportPaieStarted(TypeChainePaieEnum.SCV);
+	}
+
+	@Test
+	public void processExportPaieForAgent_ExportGivenAgent() {
+		
+		// Given
+		ExportPaieTask task = new ExportPaieTask();
+		task.setIdExportPaieTask(3);
+		task.setIdAgent(9008765);
+		task.setIdAgentCreation(9009999);
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setDateVentilation(new LocalDate(2013, 7, 1).toDate());
+		task.setVentilDate(ventilDate);
+		task.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pR.getEntity(ExportPaieTask.class, 3)).thenReturn(task);
+		
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		IPointageService pS = Mockito.mock(IPointageService.class);
+		Mockito.when(pS.getPointagesVentilesForAgent(9008765, ventilDate)).thenReturn(pointages);
+		
+		List<Sppact> sppacts = new ArrayList<Sppact>();
+		IExportAbsencePaieService epS = Mockito.mock(IExportAbsencePaieService.class);
+		Mockito.when(epS.exportAbsencesToPaie(pointages)).thenReturn(sppacts);
+		
+		ExportPaieService service = Mockito.spy(new ExportPaieService());
+		Mockito.doNothing().when(service).markPointagesAsValidated(pointages, 9009999);
+		Mockito.doNothing().when(service).updateSpmatrForAgentAndPointages(9008765, TypeChainePaieEnum.SCV, pointages);
+		Mockito.doNothing().when(service).persistSppac(sppacts);
+
+		ReflectionTestUtils.setField(service, "pointageService", pS);
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		ReflectionTestUtils.setField(service, "exportAbsencePaieService", epS);
+		
+		// When
+		service.processExportPaieForAgent(3);
+		
+		// Then
+		Mockito.verify(service, Mockito.times(1)).markPointagesAsValidated(pointages, 9009999);
+		Mockito.verify(service, Mockito.times(1)).updateSpmatrForAgentAndPointages(9008765, TypeChainePaieEnum.SCV, pointages);
+		Mockito.verify(service, Mockito.times(1)).persistSppac(sppacts);
 	}
 }
