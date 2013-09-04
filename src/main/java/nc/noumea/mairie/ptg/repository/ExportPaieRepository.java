@@ -9,6 +9,8 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.Sppact;
 import nc.noumea.mairie.domain.Spphre;
+import nc.noumea.mairie.domain.Sppprm;
+import nc.noumea.mairie.domain.Spprim;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,40 @@ public class ExportPaieRepository implements IExportPaieRepository {
 		q.setParameter("datJour", helperService.getIntegerDateMairieFromDate(day));
 		
 		List<Spphre> result = q.getResultList();
+		
+		if (result.size() == 0)
+			return null;
+		
+		return result.get(0);
+	}
+
+	@Override
+	public Sppprm getSppprmForDayAgentAndNorubr(Integer idAgent, Date day, Integer noRubr) {
+
+		String jpql = "from Sppprm p where p.id.nomatr = :nomatr and p.id.datJour = :datJour and p.id.noRubr = :noRubr";
+		TypedQuery<Sppprm> q = mairieEntityManager.createQuery(jpql, Sppprm.class);
+		q.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
+		q.setParameter("datJour", helperService.getIntegerDateMairieFromDate(day));
+		q.setParameter("noRubr", noRubr);
+		
+		List<Sppprm> result = q.getResultList();
+		
+		if (result.size() == 0)
+			return null;
+		
+		return result.get(0);
+	}
+	
+	@Override
+	public Spprim getSpprimForDayAgentAndNorubr(Integer idAgent, Date day, Integer noRubr) {
+
+		String jpql = "from Spprim p where p.id.nomatr = :nomatr and p.id.dateDebut = :dateDebut and p.id.noRubr = :noRubr";
+		TypedQuery<Spprim> q = mairieEntityManager.createQuery(jpql, Spprim.class);
+		q.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
+		q.setParameter("dateDebut", helperService.getIntegerDateMairieFromDate(day));
+		q.setParameter("noRubr", noRubr);
+		
+		List<Spprim> result = q.getResultList();
 		
 		if (result.size() == 0)
 			return null;

@@ -26,6 +26,16 @@ public class SpprimId implements Serializable {
 		return super.equals(obj);
 	}
 	
+	public SpprimId() {
+		
+	}
+	
+	public SpprimId(Integer nomatr, Integer dateDebut, Integer norubr) {
+		this.nomatr = nomatr;
+		this.dateDebut = dateDebut;
+		this.noRubr = norubr;
+	}
+	
 	@Column(name = "NOMATR", columnDefinition = "numeric")
 	private Integer nomatr;
 
@@ -33,5 +43,5 @@ public class SpprimId implements Serializable {
 	private Integer dateDebut;
 	
 	@Column(name = "NORUBR", columnDefinition = "numeric")
-	private Integer norubr;
+	private Integer noRubr;
 }

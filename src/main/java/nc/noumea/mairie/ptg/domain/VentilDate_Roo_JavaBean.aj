@@ -22,8 +22,16 @@ privileged aspect VentilDate_Roo_JavaBean {
         this.dateVentilation = dateVentilation;
     }
     
+    public TypeChainePaieEnum VentilDate.getTypeChainePaie() {
+        return this.typeChainePaie;
+    }
+    
     public void VentilDate.setTypeChainePaie(TypeChainePaieEnum typeChainePaie) {
         this.typeChainePaie = typeChainePaie;
+    }
+    
+    public boolean VentilDate.isPaye() {
+        return this.paye;
     }
     
     public void VentilDate.setPaye(boolean paye) {

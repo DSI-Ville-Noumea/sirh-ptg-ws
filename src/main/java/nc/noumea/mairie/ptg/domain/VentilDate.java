@@ -31,18 +31,24 @@ public class VentilDate {
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateVentilation;
+    
     @Column(name = "TYPE_CHAINE_PAIE")
     @Enumerated(EnumType.STRING)
     private TypeChainePaieEnum typeChainePaie;
+    
     @Column(name = "IS_PAYE", nullable = false)
     @Type(type = "boolean")
     private boolean paye;
+    
     @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<VentilAbsence> ventilAbsences;
+    
     @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<VentilHsup> ventilHsups;
+    
     @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<VentilPrime> ventilPrimes;
+    
     @ManyToMany
     @JoinTable(
             name = "PTG_POINTAGE_VENTIL_DATE",
@@ -51,14 +57,5 @@ public class VentilDate {
             joinColumns =
             @JoinColumn(name = "ID_VENTIL_DATE"))
     private Set<Pointage> pointages = new HashSet<Pointage>();
-
-
-    public TypeChainePaieEnum getTypeChainePaie() {
-        return typeChainePaie;
-    }
-
-    public boolean isPaye() {
-        return paye;
-    }
 
 }

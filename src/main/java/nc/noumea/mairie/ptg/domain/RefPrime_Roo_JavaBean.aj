@@ -4,6 +4,7 @@
 package nc.noumea.mairie.ptg.domain;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.ptg.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 
@@ -55,6 +56,14 @@ privileged aspect RefPrime_Roo_JavaBean {
     
     public void RefPrime.setStatut(AgentStatutEnum statut) {
         this.statut = statut;
+    }
+    
+    public MairiePrimeTableEnum RefPrime.getMairiePrimeTableEnum() {
+        return this.mairiePrimeTableEnum;
+    }
+    
+    public void RefPrime.setMairiePrimeTableEnum(MairiePrimeTableEnum mairiePrimeTableEnum) {
+        this.mairiePrimeTableEnum = mairiePrimeTableEnum;
     }
     
 }

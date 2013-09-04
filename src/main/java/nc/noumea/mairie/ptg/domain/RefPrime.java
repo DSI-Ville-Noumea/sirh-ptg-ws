@@ -46,5 +46,9 @@ public class RefPrime {
 	@Column(name = "STATUT")
 	@Enumerated(EnumType.STRING)
 	private AgentStatutEnum statut;
+	
+	@Column(name = "MAIRIE_PRIME")
+	@Enumerated(EnumType.STRING)
+	private MairiePrimeTableEnum mairiePrimeTableEnum;
 
 }

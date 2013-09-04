@@ -23,12 +23,12 @@ privileged aspect SpprimId_Roo_JavaBean {
         this.dateDebut = dateDebut;
     }
     
-    public Integer SpprimId.getNorubr() {
-        return this.norubr;
+    public Integer SpprimId.getNoRubr() {
+        return this.noRubr;
     }
     
-    public void SpprimId.setNorubr(Integer norubr) {
-        this.norubr = norubr;
+    public void SpprimId.setNoRubr(Integer noRubr) {
+        this.noRubr = noRubr;
     }
     
 }

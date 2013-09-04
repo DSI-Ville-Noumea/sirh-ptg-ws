@@ -20,17 +20,22 @@ public class VentilPrime {
 
     @Column(name = "ID_AGENT")
     private Integer idAgent;
+    
     @Column(name = "DATE_DEBUT_MOIS")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateDebutMois;
+    
     @ManyToOne
     @JoinColumn(name = "ID_REF_PRIME", referencedColumnName = "ID_REF_PRIME")
     private RefPrime refPrime;
+    
     @Column(name = "ETAT")
     @Enumerated(EnumType.ORDINAL)
     private EtatPointageEnum etat;
+    
     @Column(name = "QUANTITE")
     private Integer quantite;
+    
     @ManyToOne(optional = false)
     @JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
     private VentilDate ventilDate;
