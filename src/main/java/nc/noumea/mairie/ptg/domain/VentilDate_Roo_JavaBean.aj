@@ -14,6 +14,10 @@ import nc.noumea.mairie.ptg.domain.VentilPrime;
 
 privileged aspect VentilDate_Roo_JavaBean {
     
+    public Date VentilDate.getDateVentilation() {
+        return this.dateVentilation;
+    }
+    
     public void VentilDate.setDateVentilation(Date dateVentilation) {
         this.dateVentilation = dateVentilation;
     }
@@ -26,16 +30,32 @@ privileged aspect VentilDate_Roo_JavaBean {
         this.paye = paye;
     }
     
-    public void VentilDate.setVentilAsbences(Set<VentilAbsence> ventilAsbences) {
-        this.ventilAsbences = ventilAsbences;
+    public Set<VentilAbsence> VentilDate.getVentilAbsences() {
+        return this.ventilAbsences;
+    }
+    
+    public void VentilDate.setVentilAbsences(Set<VentilAbsence> ventilAbsences) {
+        this.ventilAbsences = ventilAbsences;
+    }
+    
+    public Set<VentilHsup> VentilDate.getVentilHsups() {
+        return this.ventilHsups;
     }
     
     public void VentilDate.setVentilHsups(Set<VentilHsup> ventilHsups) {
         this.ventilHsups = ventilHsups;
     }
     
+    public Set<VentilPrime> VentilDate.getVentilPrimes() {
+        return this.ventilPrimes;
+    }
+    
     public void VentilDate.setVentilPrimes(Set<VentilPrime> ventilPrimes) {
         this.ventilPrimes = ventilPrimes;
+    }
+    
+    public Set<Pointage> VentilDate.getPointages() {
+        return this.pointages;
     }
     
     public void VentilDate.setPointages(Set<Pointage> pointages) {

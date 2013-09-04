@@ -38,7 +38,7 @@ public class VentilDate {
     @Type(type = "boolean")
     private boolean paye;
     @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<VentilAbsence> ventilAsbences;
+    private Set<VentilAbsence> ventilAbsences;
     @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<VentilHsup> ventilHsups;
     @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -52,9 +52,6 @@ public class VentilDate {
             @JoinColumn(name = "ID_VENTIL_DATE"))
     private Set<Pointage> pointages = new HashSet<Pointage>();
 
-    public Date getDateVentilation() {
-        return dateVentilation;
-    }
 
     public TypeChainePaieEnum getTypeChainePaie() {
         return typeChainePaie;
@@ -64,19 +61,4 @@ public class VentilDate {
         return paye;
     }
 
-    public Set<VentilAbsence> getVentilAsbences() {
-        return ventilAsbences;
-    }
-
-    public Set<VentilHsup> getVentilHsups() {
-        return ventilHsups;
-    }
-
-    public Set<VentilPrime> getVentilPrimes() {
-        return ventilPrimes;
-    }
-
-    public Set<Pointage> getPointages() {
-        return pointages;
-    }
 }

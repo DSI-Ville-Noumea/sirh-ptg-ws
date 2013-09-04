@@ -21,6 +21,7 @@ import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.domain.VentilTask;
 import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.VentilDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
@@ -502,9 +503,9 @@ public class VentilationService implements IVentilationService {
      * @return
      */
     @Override
-    public List showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType) {
+    public List<VentilDto> showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType) {
         logger.debug("Showing ventilation of Pointages for Agents [{}], idDateVentil [{}] and pointage type [{}]", agents, idDateVentil, pointageType);
-        List pointagesVentiles = new ArrayList<>();
+        List<VentilDto> pointagesVentiles = new ArrayList<>();
         // For all selected agents, get ventilated pointages
         for (Integer agent : agents) {
             pointagesVentiles.addAll(ventilationRepository.getListOfVentilForDateAgentAndType(idDateVentil, agent, pointageType));

@@ -9,6 +9,7 @@ import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilTask;
 import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.VentilDto;
 import nc.noumea.mairie.ptg.service.IVentilationService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 
@@ -125,7 +126,7 @@ public class VentilationController {
 			agents.add(Integer.parseInt(ag));
 		}
 
-		List result = ventilationService.showVentilation(idDateVentil, agents, typepointage);
+		List<VentilDto> result = ventilationService.showVentilation(idDateVentil, agents, typepointage);
 		if (result.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}

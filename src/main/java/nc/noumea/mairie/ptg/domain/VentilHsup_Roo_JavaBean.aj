@@ -10,8 +10,16 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 
 privileged aspect VentilHsup_Roo_JavaBean {
     
+    public Integer VentilHsup.getIdAgent() {
+        return this.idAgent;
+    }
+    
     public void VentilHsup.setIdAgent(Integer idAgent) {
         this.idAgent = idAgent;
+    }
+    
+    public Date VentilHsup.getDateLundi() {
+        return this.dateLundi;
     }
     
     public void VentilHsup.setDateLundi(Date dateLundi) {
@@ -74,24 +82,48 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.mSup50Recup = mSup50Recup;
     }
     
+    public int VentilHsup.getMsdjf() {
+        return this.msdjf;
+    }
+    
     public void VentilHsup.setMsdjf(int msdjf) {
         this.msdjf = msdjf;
+    }
+    
+    public int VentilHsup.getMsdjfRecup() {
+        return this.msdjfRecup;
     }
     
     public void VentilHsup.setMsdjfRecup(int msdjfRecup) {
         this.msdjfRecup = msdjfRecup;
     }
     
+    public int VentilHsup.getMsdjf25() {
+        return this.msdjf25;
+    }
+    
     public void VentilHsup.setMsdjf25(int msdjf25) {
         this.msdjf25 = msdjf25;
+    }
+    
+    public int VentilHsup.getMsdjf25Recup() {
+        return this.msdjf25Recup;
     }
     
     public void VentilHsup.setMsdjf25Recup(int msdjf25Recup) {
         this.msdjf25Recup = msdjf25Recup;
     }
     
+    public int VentilHsup.getMsdjf50() {
+        return this.msdjf50;
+    }
+    
     public void VentilHsup.setMsdjf50(int msdjf50) {
         this.msdjf50 = msdjf50;
+    }
+    
+    public int VentilHsup.getMsdjf50Recup() {
+        return this.msdjf50Recup;
     }
     
     public void VentilHsup.setMsdjf50Recup(int msdjf50Recup) {
@@ -114,8 +146,16 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.mMaiRecup = mMaiRecup;
     }
     
+    public int VentilHsup.getMsNuit() {
+        return this.msNuit;
+    }
+    
     public void VentilHsup.setMsNuit(int msNuit) {
         this.msNuit = msNuit;
+    }
+    
+    public int VentilHsup.getMsNuitRecup() {
+        return this.msNuitRecup;
     }
     
     public void VentilHsup.setMsNuitRecup(int msNuitRecup) {
@@ -194,8 +234,16 @@ privileged aspect VentilHsup_Roo_JavaBean {
         this.mRecuperees = mRecuperees;
     }
     
+    public EtatPointageEnum VentilHsup.getEtat() {
+        return this.etat;
+    }
+    
     public void VentilHsup.setEtat(EtatPointageEnum etat) {
         this.etat = etat;
+    }
+    
+    public VentilDate VentilHsup.getVentilDate() {
+        return this.ventilDate;
     }
     
     public void VentilHsup.setVentilDate(VentilDate ventilDate) {

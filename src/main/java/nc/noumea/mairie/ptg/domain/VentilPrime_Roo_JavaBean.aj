@@ -11,24 +11,48 @@ import nc.noumea.mairie.ptg.domain.VentilPrime;
 
 privileged aspect VentilPrime_Roo_JavaBean {
     
+    public Integer VentilPrime.getIdAgent() {
+        return this.idAgent;
+    }
+    
     public void VentilPrime.setIdAgent(Integer idAgent) {
         this.idAgent = idAgent;
+    }
+    
+    public Date VentilPrime.getDateDebutMois() {
+        return this.dateDebutMois;
     }
     
     public void VentilPrime.setDateDebutMois(Date dateDebutMois) {
         this.dateDebutMois = dateDebutMois;
     }
     
+    public RefPrime VentilPrime.getRefPrime() {
+        return this.refPrime;
+    }
+    
     public void VentilPrime.setRefPrime(RefPrime refPrime) {
         this.refPrime = refPrime;
+    }
+    
+    public EtatPointageEnum VentilPrime.getEtat() {
+        return this.etat;
     }
     
     public void VentilPrime.setEtat(EtatPointageEnum etat) {
         this.etat = etat;
     }
     
+    public Integer VentilPrime.getQuantite() {
+        return this.quantite;
+    }
+    
     public void VentilPrime.setQuantite(Integer quantite) {
         this.quantite = quantite;
+    }
+    
+    public VentilDate VentilPrime.getVentilDate() {
+        return this.ventilDate;
     }
     
     public void VentilPrime.setVentilDate(VentilDate ventilDate) {

@@ -20,6 +20,7 @@ import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.dto.VentilAbsenceDto;
+import nc.noumea.mairie.ptg.dto.VentilDto;
 import nc.noumea.mairie.ptg.dto.VentilHSupDto;
 import nc.noumea.mairie.ptg.dto.VentilPrimeDto;
 
@@ -287,8 +288,8 @@ public class VentilationRepository implements IVentilationRepository {
     }
 
     @Override
-    public List getListOfVentilForDateAgentAndType(Integer ventilDateId, Integer idAgent, RefTypePointageEnum typePointage) {
-        List ret = new ArrayList();
+    public List<VentilDto> getListOfVentilForDateAgentAndType(Integer ventilDateId, Integer idAgent, RefTypePointageEnum typePointage) {
+        List<VentilDto> ret = new ArrayList<>();
         switch (typePointage) {
             case PRIME: {
                 String query = "SELECT tb.* FROM PTG_VENTIL_PRIME tb WHERE tb.ID_AGENT = :idAgent AND  tb.ID_VENTIL_DATE = :idVentilDate ";

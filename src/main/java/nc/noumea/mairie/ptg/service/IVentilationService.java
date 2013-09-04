@@ -7,6 +7,7 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.VentilDto;
 
 public interface IVentilationService {
 
@@ -48,5 +49,5 @@ public interface IVentilationService {
 	@Deprecated
     ReturnMessageDto processVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate, AgentStatutEnum statut, RefTypePointageEnum pointageType);
 
-    List showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType);
+    List<VentilDto> showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType);
 }
