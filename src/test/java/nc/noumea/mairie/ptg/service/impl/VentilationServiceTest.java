@@ -537,6 +537,42 @@ public class VentilationServiceTest {
 	}
 	
 
+	
+	 /**
+     * this method only uses sql query.  Unable to test it yet
+    @Test
+    public void showVentilation() {
+
+        // Given
+        Integer agent = 9005138;
+        Integer idDateVentil = 25;
+        IVentilationRepository ventilationRepo = Mockito.mock(IVentilationRepository.class);
+        VentilationService service = new VentilationService();
+        ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepo);
+        List ret = new ArrayList();
+        VentilPrimeDto ventilPrime = new VentilPrimeDto();
+        VentilHSupDto ventilHsup = new VentilHSupDto();
+        VentilAbsenceDto ventilAbs = new VentilAbsenceDto();
+
+
+        // When
+        ret.add(ventilPrime);
+        Mockito.when(ventilationRepo.getListOfVentilForDateAgentAndType(idDateVentil, agent, RefTypePointageEnum.PRIME)).thenReturn(ret);
+        ret.clear();
+        ret.add(ventilHsup);
+        Mockito.when(ventilationRepo.getListOfVentilForDateAgentAndType(idDateVentil, agent, RefTypePointageEnum.H_SUP)).thenReturn(ret);
+        ret.clear();
+        ret.add(ventilAbs);
+        Mockito.when(ventilationRepo.getListOfVentilForDateAgentAndType(idDateVentil, agent, RefTypePointageEnum.ABSENCE)).thenReturn(ret);
+
+
+        // Then 
+        Mockito.verify(ventilationRepo).getListOfVentilForDateAgentAndType(idDateVentil, agent, RefTypePointageEnum.ABSENCE);
+
+    }**/
+	
+	
+	
 	@Test
 	public void processVentilation_VentilationDateExisting_useExistingOne() {
 		
