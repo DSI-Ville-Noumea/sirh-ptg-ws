@@ -306,7 +306,7 @@ public class VentilationService implements IVentilationService {
 
 	protected List<Pointage> processHSupAndAbsVentilationForWeekAndAgent(VentilDate ventilDate, Integer idAgent, Spcarr carr, Date dateLundi, Date fromVentilDate) {
 
-		logger.debug("Ventilation of HSUPs and ABS pointages...");
+		logger.debug("Ventilation of HSUPs and ABS pointages for date monday [{}]...", dateLundi);
 
 		List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesAbsenceAndHSupForVentilation(idAgent, fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
 
@@ -330,7 +330,7 @@ public class VentilationService implements IVentilationService {
 
 	protected List<Pointage> processPrimesVentilationForMonthAndAgent(VentilDate ventilDate, Integer idAgent, Date dateDebutMois, Date fromVentilDate) {
 
-		logger.debug("Ventilation of PRIME pointages...");
+		logger.debug("Ventilation of PRIME pointages for date 1st of month [{}]...", dateDebutMois);
 
 		List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesPrimeForVentilation(idAgent, fromVentilDate, ventilDate.getDateVentilation(), dateDebutMois);
 		List<PointageCalcule> agentsPointagesCalculesForPeriod = ventilationRepository.getListPointagesCalculesPrimeForVentilation(idAgent, dateDebutMois);
@@ -378,7 +378,7 @@ public class VentilationService implements IVentilationService {
 	 * @param to
 	 */
 	protected void removePreviousCalculatedPointages(Integer idAgent, Date dateLundi) {
-		logger.debug("Removing previously calculated PRIME pointages...");
+		logger.debug("Removing previously calculated PRIME pointages for date monday [{}]...", dateLundi);
 		pointageRepository.removePointageCalculesForDateAgent(idAgent, dateLundi);
 	}
 
@@ -392,7 +392,7 @@ public class VentilationService implements IVentilationService {
 	 */
 	protected void calculatePointages(Integer idAgent, Date dateLundi, Date fromEtatDate, Date toEtatDate) {
 
-		logger.debug("Creation of calculated PRIME pointages...");
+		logger.debug("Creation of calculated PRIME pointages for date monday [{}]...", dateLundi);
 
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
 
