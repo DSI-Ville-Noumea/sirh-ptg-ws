@@ -22,6 +22,7 @@ import nc.noumea.mairie.ptg.domain.VentilTask;
 import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.VentilAbsenceDto;
+import nc.noumea.mairie.ptg.dto.VentilDateDto;
 import nc.noumea.mairie.ptg.dto.VentilDto;
 import nc.noumea.mairie.ptg.dto.VentilHSupDto;
 import nc.noumea.mairie.ptg.dto.VentilPrimeDto;
@@ -514,5 +515,21 @@ public class VentilationService implements IVentilationService {
 		}
 		logger.debug("Returning {} ventilated pointages from showVentilation WS.", pointagesVentiles.size());
 		return pointagesVentiles;
+	}
+
+	@Override
+	public VentilDateDto getVentilationEnCoursForStatut(
+			AgentStatutEnum statut) {
+		TypeChainePaieEnum typeChainePaie = helperService.getTypeChainePaieFromStatut(statut);
+		VentilDate ventilEnCoursDate = ventilationRepository.getLatestVentilDate(typeChainePaie, false);
+
+		VentilDateDto result = new VentilDateDto(ventilEnCoursDate);
+		
+		if (result.isPaie())
+			logger.debug("La ventilation pour le statut [{}] n'est pas en cours.", statut);
+		else
+			logger.debug("La ventilation pour le statut [{}] est en cours.", statut);
+
+		return result;
 	}
 }

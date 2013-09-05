@@ -197,6 +197,39 @@ HTTP Status code OK : 200
 
 * Ventilation
 
+** Connaitre la ventilation en cours pour un type chaine
+
+ <<URL>> : /ventilation/getVentilationEnCours
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut des agents dont les pointages sont à ventiler. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Content si ventilation en cours
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
++-------------------------+
+{
+    "dateVentil": "/Date(1378040340000+1100)/",
+    "paie": false,
+     "typeChaine": "SHC"
+}
++-------------------------+
+
+  * Content si pas de ventilation en cours
+
++-------------------------+
+ HTTP Status code NO_CONTENT : 204
++-------------------------+
+
 ** Vérifier la possibilité de lancer une ventilation
 
  <<URL>> : /ventilation/canStartVentilation
