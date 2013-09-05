@@ -752,9 +752,10 @@ public class PointageServiceTest {
 		
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		
+		List<Integer> list= new ArrayList<>();
+		list.add(refPrime.getIdRefPrime());
 		// When
-		boolean result = service.isPrimeUtiliseePointage(idAgent, refPrime.getIdRefPrime());
+		boolean result = service.isPrimeUtiliseePointage(idAgent, list);
 		
 		// Then
 		assertEquals(false, result);
