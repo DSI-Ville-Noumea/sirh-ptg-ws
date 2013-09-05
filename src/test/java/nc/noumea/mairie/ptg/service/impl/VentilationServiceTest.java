@@ -573,6 +573,7 @@ public class VentilationServiceTest {
 	
 	
 	
+	@SuppressWarnings("deprecation")
 	@Test
 	public void processVentilation_VentilationDateExisting_useExistingOne() {
 		
@@ -662,6 +663,7 @@ public class VentilationServiceTest {
 		List<Integer> agentList = Arrays.asList(9005432, 9005431);
 		
 		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vRepo.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(true);
 		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, true)).thenReturn(lastPaidVentilDate);
 		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(lastUnPaidVentilDate);
 		Mockito.when(vRepo.getListIdAgentsForVentilationByDateAndEtat(lastPaidDate, lastUnPaidDate)).thenReturn(agentList);
@@ -726,6 +728,7 @@ public class VentilationServiceTest {
 		List<Integer> agentList = Arrays.asList(9005432, 9005431);
 		
 		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vRepo.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(true);
 		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, true)).thenReturn(lastPaidVentilDate);
 		Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(null);
 		Mockito.when(vRepo.getListIdAgentsForVentilationByDateAndEtat(lastPaidDate, ventilationDate)).thenReturn(agentList);
@@ -772,7 +775,16 @@ public class VentilationServiceTest {
 		final Date ventilationDate = new LocalDate(2013, 7, 27).toDate();
 		AgentStatutEnum statut = AgentStatutEnum.F;
 		RefTypePointageEnum pointageType = RefTypePointageEnum.H_SUP;
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.canStartVentilation(TypeChainePaieEnum.SCV)).thenReturn(true);
+		
 		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		
 		// When
 		ReturnMessageDto result = service.startVentilation(9008765, new ArrayList<Integer>(), ventilationDate, statut, pointageType);
@@ -780,6 +792,33 @@ public class VentilationServiceTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals("La date de ventilation choisie est un [samedi]. Impossible de ventiler les pointages à une date autre qu'un dimanche.", result.getErrors().get(0));
+		assertEquals(0, result.getInfos().size());
+	}
+	
+	@Test
+	public void startVentilation_AVentilationAlreadyRunning_ReturnErrorMessage() {
+		
+		// Given
+		final Date ventilationDate = new LocalDate(2013, 7, 27).toDate();
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		RefTypePointageEnum pointageType = RefTypePointageEnum.H_SUP;
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.canStartVentilation(TypeChainePaieEnum.SCV)).thenReturn(false);
+		
+		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		
+		// When
+		ReturnMessageDto result = service.startVentilation(9008765, new ArrayList<Integer>(), ventilationDate, statut, pointageType);
+		
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Ventiation for statut [F] may not be started. An existing one is currently processing...", result.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 	}
 	

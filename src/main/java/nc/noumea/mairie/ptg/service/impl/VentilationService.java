@@ -77,7 +77,16 @@ public class VentilationService implements IVentilationService {
 		logger.info("Starting ventilation of Pointages for Agents [{}], date [{}], status [{}] and pointage type [{}]", agents, ventilationDate, statut, pointageType);
 
 		ReturnMessageDto result = new ReturnMessageDto();
+		TypeChainePaieEnum typeChainePaie = helperService.getTypeChainePaieFromStatut(statut);
 
+		// Check whether a ventilation can be started (is there one currently running for this chainePaie)
+		if (!ventilationRepository.canStartVentilation(typeChainePaie)) {
+			String msg = String.format("Ventiation for statut [%s] may not be started. An existing one is currently processing...", statut);
+			logger.error(msg);
+			result.getErrors().add(msg);
+			return result;
+		}
+		
 		// Check that the ventilation date must be a sunday. Otherwise stop here
 		DateTime givenVentilationDate = new DateTime(ventilationDate);
 		if (givenVentilationDate.dayOfWeek().get() != DateTimeConstants.SUNDAY) {
@@ -88,7 +97,6 @@ public class VentilationService implements IVentilationService {
 		}
 
 		// Retrieving the current ventilation dates (from / to)
-		TypeChainePaieEnum typeChainePaie = helperService.getTypeChainePaieFromStatut(statut);
 		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, true);
 		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, false);
 
