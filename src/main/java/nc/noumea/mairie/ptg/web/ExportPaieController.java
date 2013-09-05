@@ -63,7 +63,7 @@ public class ExportPaieController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(value = "ptgTransactionManager")
+	@Transactional(value = "chainedTransactionManager")
 	public ResponseEntity<String> startExportPaie(
 			@RequestParam("idAgent") Integer idAgent,
 			@RequestParam("statut") String statut) {

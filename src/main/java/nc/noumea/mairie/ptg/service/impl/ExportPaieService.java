@@ -147,6 +147,11 @@ public class ExportPaieService implements IExportPaieService {
     	logger.debug("Retrieving ventilated pointages...");
 		List<Pointage> ventilatedPointages = pointageService.getPointagesVentilesForAgent(idAgent, ventilDate);
 		
+		if (ventilatedPointages.size() == 0) {
+			logger.debug("No pointages to export. Exiting...");
+			return;
+		}
+		
 		// 2. Export absences
     	logger.debug("Exporting Absences...");
 		persistSppac(exportPaieAbsenceService.exportAbsencesToPaie(ventilatedPointages));
@@ -274,6 +279,10 @@ public class ExportPaieService implements IExportPaieService {
 	 */
 	protected void updateSpmatrForAgentAndPointages(Integer idAgent, TypeChainePaieEnum chainePaie, List<Pointage> pointages) {
 
+		// If no pointages were updated, return without updating SPMATR
+		if (pointages.size() == 0)
+			return;
+		
 		Pointage oldestPointage = pointages.get(0);
 		
 		for(Pointage ptg : pointages) {

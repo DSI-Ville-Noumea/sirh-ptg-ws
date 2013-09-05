@@ -318,7 +318,7 @@ public class ExportPaieServiceTest {
 		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pR.getEntity(ExportPaieTask.class, 3)).thenReturn(task);
 		
-		List<Pointage> pointages = new ArrayList<Pointage>();
+		List<Pointage> pointages = Arrays.asList(new Pointage());
 		IPointageService pS = Mockito.mock(IPointageService.class);
 		Mockito.when(pS.getPointagesVentilesForAgent(9008765, ventilDate)).thenReturn(pointages);
 		
@@ -367,6 +367,74 @@ public class ExportPaieServiceTest {
 		Mockito.verify(service, Mockito.times(1)).persistSpphre(spphres);
 		Mockito.verify(service, Mockito.times(1)).persistSppprm(sppprms);
 		Mockito.verify(service, Mockito.times(1)).persistSpprim(spprims);
+	}
+	
+	@Test
+	public void processExportPaieForAgent_AgentHasNoPointages_ExitBeforeProcessing() {
+		
+		// Given
+		ExportPaieTask task = new ExportPaieTask();
+		task.setIdExportPaieTask(3);
+		task.setIdAgent(9008765);
+		task.setIdAgentCreation(9009999);
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setIdVentilDate(99);
+		ventilDate.setDateVentilation(new LocalDate(2013, 7, 1).toDate());
+		task.setVentilDate(ventilDate);
+		task.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pR.getEntity(ExportPaieTask.class, 3)).thenReturn(task);
+		
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		IPointageService pS = Mockito.mock(IPointageService.class);
+		Mockito.when(pS.getPointagesVentilesForAgent(9008765, ventilDate)).thenReturn(pointages);
+		
+		List<Sppact> sppacts = new ArrayList<Sppact>();
+		IExportPaieAbsenceService epS = Mockito.mock(IExportPaieAbsenceService.class);
+		Mockito.when(epS.exportAbsencesToPaie(pointages)).thenReturn(sppacts);
+		
+		List<VentilHsup> ventilHsupOrderedByDateAsc = new ArrayList<VentilHsup>();
+		List<VentilPrime> ventilPrimeOrderedByDateAsc = new ArrayList<VentilPrime>();
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(9008765, ventilDate.getIdVentilDate()))
+			.thenReturn(ventilHsupOrderedByDateAsc);
+		Mockito.when(vR.getListVentilPrimesMoisForAgentAndVentilDateOrderByDateAsc(9008765, ventilDate.getIdVentilDate()))
+			.thenReturn(ventilPrimeOrderedByDateAsc);
+		
+		List<Spphre> spphres = new ArrayList<Spphre>();
+		IExportPaieHSupService ephS = Mockito.mock(IExportPaieHSupService.class);
+		Mockito.when(ephS.exportHsupToPaie(ventilHsupOrderedByDateAsc)).thenReturn(spphres);
+
+		List<Sppprm> sppprms = new ArrayList<Sppprm>();
+		List<Spprim> spprims = new ArrayList<Spprim>();
+		IExportPaiePrimeService eppS = Mockito.mock(IExportPaiePrimeService.class);
+		Mockito.when(eppS.exportPrimesJourToPaie(pointages)).thenReturn(sppprms);
+		Mockito.when(eppS.exportPrimesMoisToPaie(ventilPrimeOrderedByDateAsc)).thenReturn(spprims);
+		
+		ExportPaieService service = Mockito.spy(new ExportPaieService());
+		Mockito.doNothing().when(service).markPointagesAsValidated(pointages, 9009999);
+		Mockito.doNothing().when(service).updateSpmatrForAgentAndPointages(9008765, TypeChainePaieEnum.SCV, pointages);
+		Mockito.doNothing().when(service).persistSppac(sppacts);
+		Mockito.doNothing().when(service).persistSpphre(spphres);
+
+		ReflectionTestUtils.setField(service, "pointageService", pS);
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		ReflectionTestUtils.setField(service, "exportPaieAbsenceService", epS);
+		ReflectionTestUtils.setField(service, "exportPaieHSupService", ephS);
+		ReflectionTestUtils.setField(service, "exportPaiePrimeService", eppS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		
+		// When
+		service.processExportPaieForAgent(3);
+		
+		// Then
+		Mockito.verify(service, Mockito.never()).markPointagesAsValidated(pointages, 9009999);
+		Mockito.verify(service, Mockito.never()).updateSpmatrForAgentAndPointages(9008765, TypeChainePaieEnum.SCV, pointages);
+		Mockito.verify(service, Mockito.never()).persistSppac(sppacts);
+		Mockito.verify(service, Mockito.never()).persistSpphre(spphres);
+		Mockito.verify(service, Mockito.never()).persistSppprm(sppprms);
+		Mockito.verify(service, Mockito.never()).persistSpprim(spprims);
 	}
 	
 	@Test

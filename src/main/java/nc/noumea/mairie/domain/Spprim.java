@@ -20,8 +20,8 @@ public class Spprim {
 	private double montantPrime;
 	
 	@Column(name = "REFARR", columnDefinition = "numeric default 0")
-	private Integer refArr;
+	private Integer refArr = 0;
 	
 	@Column(name = "DATARR", columnDefinition = "numeric default 0")
-	private Integer datArr;
+	private Integer datArr = 0;
 }

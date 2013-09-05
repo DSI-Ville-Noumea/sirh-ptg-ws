@@ -1,8 +1,8 @@
 package nc.noumea.mairie.ptg.repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.SpWFEtat;
@@ -29,10 +29,7 @@ public class PaieWorkflowRepository implements IPaieWorkflowRepository {
 	@Override
 	public SpWFPaie selectForUpdateState(TypeChainePaieEnum chainePaie) {
 		
-		Query qLock = entityManager.createNativeQuery("LOCK TABLE SPWFPAIE IN EXCLUSIVE MODE");
-		qLock.executeUpdate();
-		
-		SpWFPaie currentState = entityManager.find(SpWFPaie.class, chainePaie);
+		SpWFPaie currentState = entityManager.find(SpWFPaie.class, chainePaie, LockModeType.PESSIMISTIC_WRITE);
 		
 		return currentState;
 	}
