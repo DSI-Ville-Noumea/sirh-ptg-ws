@@ -44,4 +44,6 @@ public interface IVentilationRepository {
 	List<VentilHsup> getListOfVentilHSForDateAgentAndType(Integer ventilDateId, Integer idAgent);
 
 	List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAsc(Integer idAgent, Integer idVentilDate);
+    
+    List<VentilPrime> getListVentilPrimesMoisForAgentAndVentilDateOrderByDateAsc(Integer idAgent, Integer idVentilDate);
 }

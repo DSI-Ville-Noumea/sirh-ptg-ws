@@ -37,7 +37,10 @@ public class ExportPaieHSupService implements IExportPaieHSupService {
 			fillInSpphre(hre, ventilHsup);
 			
 			// Add the item to the list of hre modified/created
-			hsups.add(hre);
+			if (!isSpphreEmpty(hre))
+				hsups.add(hre);
+			else
+				hre.remove();
 		}
 		
 		return hsups;
@@ -89,4 +92,15 @@ public class ExportPaieHSupService implements IExportPaieHSupService {
 		return hre;
 	}
 
+	protected boolean isSpphreEmpty(Spphre hre) {
+
+		return (hre.getNbh25() == 0d
+				&& hre.getNbh50() == 0d
+				&& hre.getNbhcomplementaires() == 0d
+				&& hre.getNbhdim() == 0d
+				&& hre.getNbhmai() == 0d
+				&& hre.getNbhnuit() == 0d
+				&& hre.getNbhscomposees() == 0d
+				&& hre.getNbhssimple() == 0d);
+	}
 }

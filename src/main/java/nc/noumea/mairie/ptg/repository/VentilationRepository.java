@@ -12,6 +12,7 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
@@ -19,21 +20,12 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
-import nc.noumea.mairie.ptg.dto.VentilAbsenceDto;
-import nc.noumea.mairie.ptg.dto.VentilDto;
-import nc.noumea.mairie.ptg.dto.VentilHSupDto;
-import nc.noumea.mairie.ptg.dto.VentilPrimeDto;
-import nc.noumea.mairie.ptg.web.VentilationController;
 
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public class VentilationRepository implements IVentilationRepository {
-
-	private Logger logger = LoggerFactory.getLogger(VentilationRepository.class);
 
 	@PersistenceContext(unitName = "ptgPersistenceUnit")
 	private EntityManager ptgEntityManager;
@@ -322,6 +314,18 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
+	public List<VentilPrime> getListVentilPrimesMoisForAgentAndVentilDateOrderByDateAsc(Integer idAgent, Integer idVentilDate) {
+
+    	TypedQuery<VentilPrime> q = ptgEntityManager
+    			.createQuery("from VentilPrime p where p.idAgent = :idAgent and p.ventilDate.idVentilDate = :idVentilDate and p.refPrime.mairiePrimeTableEnum = :mairiePrimeTableEnum order by p.dateDebutMois asc", VentilPrime.class);
+    	q.setParameter("idAgent", idAgent);
+    	q.setParameter("idVentilDate", idVentilDate);
+    	q.setParameter("mairiePrimeTableEnum", MairiePrimeTableEnum.SPPRIM);
+    	
+    	return q.getResultList();
+	}
+
+    @Override
 	public boolean canStartVentilation(TypeChainePaieEnum chainePaie) {
 
 		Query q = ptgEntityManager.createQuery("SELECT COUNT(vT) from VentilTask vT WHERE vT.taskStatus is NULL AND vT.dateVentilation is NULL AND vT.typeChainePaie = :chainePaie)");

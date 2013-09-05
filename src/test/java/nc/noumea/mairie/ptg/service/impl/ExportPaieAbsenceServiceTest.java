@@ -249,4 +249,45 @@ public class ExportPaieAbsenceServiceTest {
 		assertEquals(acti, result.get(0).getId().getActivite());
 		assertEquals(4.3d, result.get(0).getNbHeures(), 0);
 	}
+	
+	@Test
+	public void exportAbsencesToPaie_1Absence_NewValueIs0_DeleteExistingSppact() {
+		
+		// Given
+		Pointage p1 = new Pointage();
+		p1.setIdAgent(9008765);
+		p1.setDateDebut(new DateTime(2013, 5, 15, 8, 45, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 5, 15, 8, 45, 0).toDate());
+		p1.setAbsenceConcertee(true);
+		p1.setType(abs);
+		
+		Spacti acti = new Spacti();
+		IMairieRepository mR = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mR.getEntity(Spacti.class, "A02")).thenReturn(acti);
+
+		Sppact sppact = Mockito.spy(new Sppact());
+		Mockito.doNothing().when(sppact).remove();
+		sppact.setNbHeures(3.3d);
+		sppact.setId(new SppactId(8765, 20130515, acti));
+		IExportPaieRepository eR = Mockito.mock(IExportPaieRepository.class);
+		Mockito.when(eR.getSppactForDayAndAgent(p1.getIdAgent(), p1.getDateDebut(), "A02")).thenReturn(sppact);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
+		Mockito.when(hS.getIntegerDateMairieFromDate(p1.getDateDebut())).thenReturn(20130515);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(3.3d)).thenReturn(210);
+		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(300)).thenReturn(4.3d);
+		
+		ExportPaieAbsenceService service = new ExportPaieAbsenceService();
+		ReflectionTestUtils.setField(service, "mairieRepository", mR);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "exportPaieRepository", eR);
+		
+		// When
+		List<Sppact> result = service.exportAbsencesToPaie(Arrays.asList(p1));
+		
+		// Then
+		assertEquals(0, result.size());
+		Mockito.verify(sppact, Mockito.times(1)).remove();
+	}
 }

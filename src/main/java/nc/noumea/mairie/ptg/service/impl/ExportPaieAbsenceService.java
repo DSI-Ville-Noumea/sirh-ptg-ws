@@ -46,6 +46,11 @@ public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
 			Period p = new Period(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin()));
 			int nbMinutesAlreadySet = helperService.convertMairieNbHeuresFormatToMinutes(act.getNbHeures());
 			act.setNbHeures(helperService.convertMinutesToMairieNbHeuresFormat(nbMinutesAlreadySet + p.toStandardMinutes().getMinutes()));
+			
+			if (act.getNbHeures() == 0d) {
+				modifiedOrAddedSppact.remove(act);
+				act.remove();
+			}
 		}
 		
 		return modifiedOrAddedSppact;

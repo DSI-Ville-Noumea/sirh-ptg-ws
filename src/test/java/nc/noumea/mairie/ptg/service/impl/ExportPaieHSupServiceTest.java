@@ -213,4 +213,42 @@ public class ExportPaieHSupServiceTest {
 		assertEquals(2d, result.get(0).getNbhscomposees(), 0);
 		assertEquals(2.05d, result.get(0).getNbhcomplementaires(), 0);
 	}
+	
+	@Test
+	public void exportHSupToPaie_1VentilHSup_NewValueIsO_DeleteExistingSpphre() {
+		
+		// Given
+		VentilHsup h1 = new VentilHsup();
+		h1.setIdAgent(9008765);
+		h1.setDateLundi(new LocalDate(2013, 8, 5).toDate());
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
+		Mockito.when(hS.getIntegerDateMairieFromDate(h1.getDateLundi())).thenReturn(20130805);
+		
+		Spphre existingHre = Mockito.spy(new Spphre());
+		Mockito.doNothing().when(existingHre).remove();
+		existingHre.setId(new SpphreId(8765, 20130805));
+		existingHre.setNbh25(1);
+		existingHre.setNbh50(1);
+		existingHre.setNbhdim(1);
+		existingHre.setNbhmai(1);
+		existingHre.setNbhnuit(1);
+		existingHre.setNbhssimple(1);
+		existingHre.setNbhscomposees(1);
+		existingHre.setNbhcomplementaires(1);
+		IExportPaieRepository eR = Mockito.mock(IExportPaieRepository.class);
+		Mockito.when(eR.getSpphreForDayAndAgent(9008765, h1.getDateLundi())).thenReturn(existingHre);
+		
+		ExportPaieHSupService service = new ExportPaieHSupService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "exportPaieRepository", eR);
+		
+		// When
+		List<Spphre> result = service.exportHsupToPaie(Arrays.asList(h1));
+		
+		// Then
+		assertEquals(0, result.size());
+		Mockito.verify(existingHre, Mockito.times(1)).remove();
+	}
 }
