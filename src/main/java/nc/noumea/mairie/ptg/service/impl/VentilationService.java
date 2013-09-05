@@ -494,7 +494,6 @@ public class VentilationService implements IVentilationService {
 				for (VentilHsup hs : ventilationRepository.getListOfVentilHSForDateAgentAndType(idDateVentil, agent))
 					pointagesVentiles.add(new VentilHSupDto(hs));
 			}
-
 			break;
 		}
 		case PRIME: {
@@ -502,7 +501,6 @@ public class VentilationService implements IVentilationService {
 				for (VentilPrime prime : ventilationRepository.getListOfVentilPrimeForDateAgentAndType(idDateVentil, agent))
 					pointagesVentiles.add(new VentilPrimeDto(prime));
 			}
-
 			break;
 		}
 		}

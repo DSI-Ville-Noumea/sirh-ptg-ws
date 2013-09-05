@@ -25,117 +25,94 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import flexjson.JSONSerializer;
+import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/primes")
 public class PrimeController {
 
-    private Logger logger = LoggerFactory.getLogger(PrimeController.class);
-    @Autowired
-    private IPrimeService primeService;
-    @Autowired
-    private IPointageService pointageService;
+	private Logger logger = LoggerFactory.getLogger(PrimeController.class);
+	@Autowired
+	private IPrimeService primeService;
+	@Autowired
+	private IPointageService pointageService;
 
-    @ResponseBody
-    @RequestMapping(value = "/getListePrimeWithStatus", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-    @Transactional(readOnly = true)
-    public ResponseEntity<String> getListePrime(
-            @RequestParam("statutAgent") String statutAgent) {
+	@ResponseBody
+	@RequestMapping(value = "/getListePrimeWithStatus", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getListePrime(@RequestParam("statutAgent") String statutAgent) {
 
-        logger.debug(
-                "entered GET [primes/getListePrimeWithStatus] => getListePrime with parameters statsAgent = {}",
-                statutAgent);
+		logger.debug("entered GET [primes/getListePrimeWithStatus] => getListePrime with parameters statsAgent = {}", statutAgent);
 
-        List<RefPrimeDto> result = primeService
-                .getPrimeListForAgent(AgentStatutEnum.valueOf(statutAgent));
+		List<RefPrimeDto> result = primeService.getPrimeListForAgent(AgentStatutEnum.valueOf(statutAgent));
 
-        if (result.size() == 0) {
-            return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-        }
-        String response = new JSONSerializer().exclude("*.class")
-                .deepSerialize(result);
-        return new ResponseEntity<String>(response, HttpStatus.OK);
-    }
+		if (result.size() == 0) {
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		}
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
 
-    @ResponseBody
-    @RequestMapping(value = "/getListePrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-    @Transactional(readOnly = true)
-    public ResponseEntity<String> getListePrime() {
+	@ResponseBody
+	@RequestMapping(value = "/getListePrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getListePrime() {
 
-        logger.debug("entered GET [primes/getListePrime] => getListePrime ");
+		logger.debug("entered GET [primes/getListePrime] => getListePrime ");
 
-        List<RefPrimeDto> result = primeService.getPrimeList();
+		List<RefPrimeDto> result = primeService.getPrimeList();
 
-        if (result.size() == 0) {
-            return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-        }
-        String response = new JSONSerializer().exclude("*.class")
-                .deepSerialize(result);
-        return new ResponseEntity<String>(response, HttpStatus.OK);
-    }
+		if (result.size() == 0) {
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		}
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
 
-    @ResponseBody
-    @RequestMapping(value = "/getPrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-    @Transactional(readOnly = true)
-    public ResponseEntity<String> getPrime(
-            @RequestParam("noRubr") Integer noRubr) {
+	@ResponseBody
+	@RequestMapping(value = "/getPrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getPrime(@RequestParam("noRubr") Integer noRubr) {
 
-        logger.debug(
-                "entered GET [primes/getPrime] => getPrime with parameters noRubr = {}",
-                noRubr);
+		logger.debug("entered GET [primes/getPrime] => getPrime with parameters noRubr = {}", noRubr);
 
-        RefPrimeDto result = primeService.getPrime(noRubr);
+		RefPrimeDto result = primeService.getPrime(noRubr);
 
-        if (result == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+		if (result == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
 
-        String response = new JSONSerializer().exclude("*.class")
-                .deepSerialize(result);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
-    @ResponseBody
-    @RequestMapping(value = "/getPrimeFromIdRefPrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-    @Transactional(readOnly = true)
-    public ResponseEntity<String> getPrimeFromIdRefPrime(@RequestParam("idRefPrime") Integer idRefPrime) {
+	@ResponseBody
+	@RequestMapping(value = "/getPrimeFromIdRefPrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getPrimeFromIdRefPrime(@RequestParam("idRefPrime") Integer idRefPrime) {
 
-        logger.debug("entered GET [primes] => getPrimeFromIdRefPrime with parameters idRefPrime = {}", idRefPrime);
+		logger.debug("entered GET [primes] => getPrimeFromIdRefPrime with parameters idRefPrime = {}", idRefPrime);
 
-        RefPrimeDto result = primeService.getPrimeWithIdRefPrime(idRefPrime);
+		RefPrimeDto result = primeService.getPrimeWithIdRefPrime(idRefPrime);
 
-        if (result == null) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+		if (result == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
 
-        String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
-    @ResponseBody
-    @RequestMapping(value = "/isPrimeUtilisee", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-    @Transactional(readOnly = true)
-    public ResponseEntity<String> isPrimeUtilisee(
-            @RequestParam("noRubr") Integer noRubr,
-            @RequestParam("idAgent") Integer idAgent) {
+	@ResponseBody
+	@RequestMapping(value = "/isPrimeUtilisee", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> isPrimeUtilisee(@RequestParam("noRubr") Integer noRubr, @RequestParam("idAgent") Integer idAgent) {
 
-        logger.debug(
-                "entered GET [primes/isPrimeUtilisee] => isPrimeUtilisee with parameters noRubr = {} and idAgent = {} --> for SIRH ",
-                noRubr, idAgent);
-
-        List<RefPrimeDto> primes = primeService.getPrimes(noRubr);
-        boolean isUtilise = false;
-        for (RefPrimeDto refPrime : primes) {
-            if (pointageService.isPrimeUtiliseePointage(idAgent,
-                    refPrime.getIdRefPrime())) {
-                isUtilise = true;
-                break;
-            }
-        }
-        if (isUtilise) {
-            return new ResponseEntity<String>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-        }
-    }
+		logger.debug("entered GET [primes/isPrimeUtilisee] => isPrimeUtilisee with parameters noRubr = {} and idAgent = {} --> for SIRH ", noRubr, idAgent);
+		if (pointageService.isPrimeUtiliseePointage(idAgent, primeService.getPrimesId(noRubr))) {
+			return new ResponseEntity<String>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		}
+	}
 }

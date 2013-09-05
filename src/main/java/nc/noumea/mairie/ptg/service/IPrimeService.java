@@ -12,13 +12,16 @@ import nc.noumea.mairie.ptg.dto.RefPrimeDto;
 
 public interface IPrimeService {
 
-    public List<RefPrimeDto> getPrimeListForAgent(AgentStatutEnum statutAgent);
+	public List<RefPrimeDto> getPrimeListForAgent(AgentStatutEnum statutAgent);
 
-    public List<RefPrimeDto> getPrimeList();
+	public List<RefPrimeDto> getPrimeList();
 
-    public RefPrimeDto getPrime(Integer noRubr);
+	public RefPrimeDto getPrime(Integer noRubr);
 
-    public RefPrimeDto getPrimeWithIdRefPrime(Integer idRefPrime);
+	public RefPrimeDto getPrimeWithIdRefPrime(Integer idRefPrime);
 
-    public List<RefPrimeDto> getPrimes(Integer noRubr);
+	public List<RefPrimeDto> getPrimes(Integer noRubr);
+
+	public List<Integer> getPrimesId(Integer noRubr);
+
 }

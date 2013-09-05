@@ -111,8 +111,8 @@ public interface IPointageService {
 	/**
 	 * 
 	 * @param idAgent
-	 * @param idRefPrime
+	 * @param refPrimes
 	 * @return
 	 */
-	boolean isPrimeUtiliseePointage(Integer idAgent, Integer idRefPrime);
+	boolean isPrimeUtiliseePointage(Integer idAgent, List<Integer> refPrimes);
 }
