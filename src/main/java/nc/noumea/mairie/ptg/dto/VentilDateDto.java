@@ -7,7 +7,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 
-@XmlRootElement
 public class VentilDateDto {
 
 	private Date dateVentil;
