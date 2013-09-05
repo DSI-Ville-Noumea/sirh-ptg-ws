@@ -102,8 +102,8 @@ public class SaisieService implements ISaisieService {
 
 			for (PrimeDto prime : jourDto.getPrimes()) {
 				
-				// if the new pointage has null qte, null datedebut and datefin, leave it (it is a template)
-				if (prime.getHeureFin() == null 
+				// if the new pointage has no idPointage, null qte, null datedebut and datefin, leave it (it is a template)
+				if (prime.getIdPointage() == null && prime.getHeureFin() == null 
 					&& (prime.getQuantite() == null || prime.getQuantite().equals(0))) {
 					continue;
 				}

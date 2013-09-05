@@ -20,7 +20,9 @@ public class VentilationAbsenceService implements IVentilationAbsenceService {
 	@Override
 	public VentilAbsence processAbsenceAgent(Integer idAgent, List<Pointage> pointages, Date dateLundi) {
 		
-		if (pointages.size() == 0)
+		List<Pointage> absPointages = getAbsencePointages(pointages);
+		
+		if (absPointages.size() == 0)
 			return null;
 		
 		VentilAbsence result = new VentilAbsence();
@@ -28,7 +30,7 @@ public class VentilationAbsenceService implements IVentilationAbsenceService {
 		result.setDateLundi(dateLundi);
 		result.setEtat(EtatPointageEnum.VENTILE);
 		
-		for (Pointage ptg : getAbsencePointages(pointages)) {
+		for (Pointage ptg : absPointages) {
 			double minutes = new Interval(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin())).toDuration().getStandardMinutes();
 			if (ptg.getAbsenceConcertee())
 				result.addMinutesConcertee((int) minutes);

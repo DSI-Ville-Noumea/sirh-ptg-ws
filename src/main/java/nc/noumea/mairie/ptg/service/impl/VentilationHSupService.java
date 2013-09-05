@@ -64,7 +64,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 	
 	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime) {
 
-		if (pointages.size() == 0)
+		// If there are no HSUPS pointages, there will be no VentilHSup.
+		if (!areThereHSupsPointages(pointages))
 			return null;
 		
 		VentilHsup result = new VentilHsup();
@@ -161,6 +162,16 @@ public class VentilationHSupService implements IVentilationHSupService {
 		adjustHeuresRecuperees(result, statut);
 		
 		return result;
+	}
+
+	protected boolean areThereHSupsPointages(List<Pointage> pointages) {
+		
+		for (Pointage ptg : pointages) {
+			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP)
+				return true;
+		}
+		
+		return false;
 	}
 
 	/**
