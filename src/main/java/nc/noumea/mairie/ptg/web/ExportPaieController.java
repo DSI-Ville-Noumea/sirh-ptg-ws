@@ -73,7 +73,7 @@ public class ExportPaieController {
 		
 		ReturnMessageDto result = exportPaieService.startExportToPaie(idAgent, AgentStatutEnum.valueOf(statut));
         
-		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
+		String resultJson = new JSONSerializer().exclude("*.class").deepSerialize(result);
 		
 		if (result.getErrors().size() != 0)
 			return new ResponseEntity<String>(resultJson, HttpStatus.CONFLICT);

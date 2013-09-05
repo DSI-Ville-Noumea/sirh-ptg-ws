@@ -68,11 +68,11 @@ public class VentilationController {
 
 		if (result.getErrors().size() != 0) {
 			return new ResponseEntity<String>(new JSONSerializer().exclude(
-					"*.class").serialize(result), HttpStatus.CONFLICT);
+					"*.class").deepSerialize(result), HttpStatus.CONFLICT);
 		}
 
 		return new ResponseEntity<String>(new JSONSerializer().exclude(
-				"*.class").serialize(result), HttpStatus.OK);
+				"*.class").deepSerialize(result), HttpStatus.OK);
 	}
 
 	@ResponseBody
