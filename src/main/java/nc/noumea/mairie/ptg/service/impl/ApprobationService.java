@@ -219,7 +219,7 @@ public class ApprobationService implements IApprobationService {
 			}
 
 			if (currentEtat != EtatPointageEnum.APPROUVE && currentEtat != EtatPointageEnum.REJETE
-					&& currentEtat != EtatPointageEnum.VENTILE && targetEtat == EtatPointageEnum.APPROUVE) {
+					&& currentEtat != EtatPointageEnum.VENTILE && targetEtat == EtatPointageEnum.EN_ATTENTE) {
 				ok = false;
 			}
 			if (currentEtat != EtatPointageEnum.APPROUVE && currentEtat != EtatPointageEnum.EN_ATTENTE
