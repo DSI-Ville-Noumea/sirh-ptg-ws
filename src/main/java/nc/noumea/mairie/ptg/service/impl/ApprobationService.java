@@ -48,7 +48,8 @@ public class ApprobationService implements IApprobationService {
 	private IPointageService pointageService;
 
 	@Override
-	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService, Integer agent, Integer idRefEtat, Integer idRefType) {
+	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService,
+			Integer agent, Integer idRefEtat, Integer idRefType) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 
@@ -75,18 +76,21 @@ public class ApprobationService implements IApprobationService {
 	}
 
 	@Override
-	public List<ConsultPointageDto> getPointagesSIRH(Date fromDate, Date toDate, List<Integer> agentIds, Integer idRefEtat, Integer idRefType) {
+	public List<ConsultPointageDto> getPointagesSIRH(Date fromDate, Date toDate, List<Integer> agentIds,
+			Integer idRefEtat, Integer idRefType) {
 		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType);
 	}
 
-	protected List<ConsultPointageDto> createConsultPointageDtoListFromSearch(List<Integer> agentIds, Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType) {
+	protected List<ConsultPointageDto> createConsultPointageDtoListFromSearch(List<Integer> agentIds, Date fromDate,
+			Date toDate, Integer idRefEtat, Integer idRefType) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 
 		// get pointages with filters
 		// We convert the 'toDate' date into the next day at 00H00 because the
 		// query will take it as a timestamp.
-		List<Pointage> pointages = pointageService.getLatestPointagesForAgentsAndDates(agentIds, fromDate, new LocalDate(toDate).plusDays(1).toDate(), RefTypePointageEnum.getRefTypePointageEnum(idRefType),
+		List<Pointage> pointages = pointageService.getLatestPointagesForAgentsAndDates(agentIds, fromDate,
+				new LocalDate(toDate).plusDays(1).toDate(), RefTypePointageEnum.getRefTypePointageEnum(idRefType),
 				idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)));
 
 		for (Pointage ptg : pointages) {
@@ -147,22 +151,32 @@ public class ApprobationService implements IApprobationService {
 			// Check whether the user has sufficient rights to update this
 			// Pointage
 			if (!droitsAgentsIds.contains(ptg.getIdAgent())) {
-				result.getErrors().add(String.format("L'agent %s n'a pas le droit de mettre à jour le pointage %s de l'agent %s.", idAgent, ptg.getIdPointage(), ptg.getIdAgent()));
+				result.getErrors().add(
+						String.format("L'agent %s n'a pas le droit de mettre à jour le pointage %s de l'agent %s.",
+								idAgent, ptg.getIdPointage(), ptg.getIdAgent()));
 				continue;
 			}
 
 			// Check whether the current target and if it can be updated
 			EtatPointage currentEtat = ptg.getLatestEtatPointage();
-			if (currentEtat.getEtat() != EtatPointageEnum.SAISI && currentEtat.getEtat() != EtatPointageEnum.APPROUVE && currentEtat.getEtat() != EtatPointageEnum.REFUSE) {
-				result.getErrors().add(String.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.", ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.getEtat().name()));
+			if (currentEtat.getEtat() != EtatPointageEnum.SAISI && currentEtat.getEtat() != EtatPointageEnum.APPROUVE
+					&& currentEtat.getEtat() != EtatPointageEnum.REFUSE) {
+				result.getErrors()
+						.add(String
+								.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.",
+										ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.getEtat().name()));
 				continue;
 			}
 
 			// Check whether the target EtatPointage is authorized
 			EtatPointageEnum targetEtat = EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat());
 
-			if (targetEtat != EtatPointageEnum.APPROUVE && targetEtat != EtatPointageEnum.REFUSE && targetEtat != EtatPointageEnum.SAISI) {
-				result.getErrors().add(String.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.", ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
+			if (targetEtat != EtatPointageEnum.APPROUVE && targetEtat != EtatPointageEnum.REFUSE
+					&& targetEtat != EtatPointageEnum.SAISI) {
+				result.getErrors()
+						.add(String
+								.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.",
+										ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
 				continue;
 			}
 
@@ -193,18 +207,39 @@ public class ApprobationService implements IApprobationService {
 				continue;
 			}
 
-			// Check whether the current target and if it can be updated
-			EtatPointage currentEtat = ptg.getLatestEtatPointage();
-			if (currentEtat.getEtat() != EtatPointageEnum.SAISI && currentEtat.getEtat() != EtatPointageEnum.APPROUVE && currentEtat.getEtat() != EtatPointageEnum.REFUSE) {
-				result.getErrors().add(String.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.", ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.getEtat().name()));
+			// Check whether the current target and the target EtatPointage are
+			// authorized
+			EtatPointageEnum currentEtat = ptg.getLatestEtatPointage().getEtat();
+			EtatPointageEnum targetEtat = EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat());
+			boolean ok = true;
+
+			if (currentEtat != EtatPointageEnum.SAISI && currentEtat != EtatPointageEnum.EN_ATTENTE
+					&& currentEtat != EtatPointageEnum.REJETE && targetEtat == EtatPointageEnum.APPROUVE) {
+				ok = false;
+			}
+
+			if (currentEtat != EtatPointageEnum.APPROUVE && currentEtat != EtatPointageEnum.REJETE
+					&& currentEtat != EtatPointageEnum.VENTILE && targetEtat == EtatPointageEnum.APPROUVE) {
+				ok = false;
+			}
+			if (currentEtat != EtatPointageEnum.APPROUVE && currentEtat != EtatPointageEnum.EN_ATTENTE
+					&& currentEtat != EtatPointageEnum.VENTILE && targetEtat == EtatPointageEnum.REJETE) {
+				ok = false;
+			}
+			if (!ok) {
+				result.getErrors()
+						.add(String.format(
+								"Impossible de mettre à %s le pointage %s de l'agent %s car celui-ci est à l'état %s.",
+								targetEtat.name(), ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.name()));
 				continue;
 			}
 
-			// Check whether the target EtatPointage is authorized
-			EtatPointageEnum targetEtat = EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat());
-
-			if (targetEtat != EtatPointageEnum.APPROUVE && targetEtat != EtatPointageEnum.REFUSE && targetEtat != EtatPointageEnum.SAISI) {
-				result.getErrors().add(String.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.", ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
+			if (targetEtat != EtatPointageEnum.APPROUVE && targetEtat != EtatPointageEnum.REJETE
+					&& targetEtat != EtatPointageEnum.EN_ATTENTE) {
+				result.getErrors()
+						.add(String
+								.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REJETE ou EN_ATTENTE sont acceptés depuis SIRH.",
+										ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
 				continue;
 			}
 
