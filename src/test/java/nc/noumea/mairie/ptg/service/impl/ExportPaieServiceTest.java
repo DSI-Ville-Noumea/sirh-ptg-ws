@@ -458,19 +458,25 @@ public class ExportPaieServiceTest {
 	}
 	
 	@Test
-	public void stopExportToPaie_validState() throws WorkflowInvalidStateException {
+	public void stopExportToPaie_validState_UpdateVentilDate() throws WorkflowInvalidStateException {
 	
 		// Given
 		IPaieWorkflowService wfS = Mockito.mock(IPaieWorkflowService.class);
 		Mockito.doNothing().when(wfS).changeStateToExportPaieDone(TypeChainePaieEnum.SCV);
 		
+		VentilDate vd = new VentilDate();
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(vd);
+		
 		ExportPaieService service = new ExportPaieService();
 		ReflectionTestUtils.setField(service, "paieWorkflowService", wfS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		
 		// When
 		service.stopExportToPaie(TypeChainePaieEnum.SCV);
 
 		// Then
+		assertTrue(vd.isPaye());
 		Mockito.verify(wfS, Mockito.times(1)).changeStateToExportPaieDone(TypeChainePaieEnum.SCV);
 	}
 }

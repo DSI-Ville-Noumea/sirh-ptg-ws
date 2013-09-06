@@ -132,7 +132,7 @@ public class ExportPaieController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/stop", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(value = "sirhTransactionManager")
+	@Transactional(value = "chainedTransactionManager")
 	public ResponseEntity<String> stopExportPaie(
 			@RequestParam("typeChainePaie") String typeChainePaie) {
 

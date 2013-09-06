@@ -344,6 +344,8 @@ public class ExportPaieService implements IExportPaieService {
 	@Override
 	public void stopExportToPaie(TypeChainePaieEnum typeChainePaie) throws WorkflowInvalidStateException {
 		paieWorkflowService.changeStateToExportPaieDone(typeChainePaie);
+		VentilDate ventilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, false);
+		ventilDate.setPaye(true);
 	}
 
 }
