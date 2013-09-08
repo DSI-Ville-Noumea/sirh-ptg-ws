@@ -351,9 +351,9 @@ HTTP Status code OK : 200
 
 ** Visualiser les ventilations
 
- <<URL>> : /ventilation/showVentilation
+ <<URL>> : /ventilation/show
  
- <<Accepted Methods>> : GET
+ <<Accepted Methods>> : POST
  
  <<Parameters>>
 
@@ -362,10 +362,12 @@ HTTP Status code OK : 200
   * <<csvIdAgents>> : Liste d' id d'agents séparés par des virgules pour lesquels on souhaite visualiser les pointages ventilés. Matricules au format 900xxxx
   
   * <<typePointage>> : Le type des pointages à ventiler. Entier. ABS (1), H_SUP (2) ou PRIME (3)
+  
+  <<Content>> : La liste des ID_AGENT à visualiser.
  
- <<Content>> 
- 
- -
++-------------------------+
+[ 9008765, 9009876, 9004323 ]
++-------------------------+
  
  <<Response>>
 
