@@ -220,20 +220,21 @@ public class SaisieService implements ISaisieService {
 		if (ptg.getQuantite() != null)
 			return !ptg.getQuantite().equals(prime.getQuantite());
 		
-		return !(ptg.getDateDebut().equals(prime.getHeureDebut()) && ptg.getDateFin().equals(prime.getHeureFin()));
+		return !(ptg.getDateDebut().getTime() == prime.getHeureDebut().getTime()
+				&& ptg.getDateFin().getTime() == prime.getHeureFin().getTime());
 	}
 
 	protected boolean hasPointageChanged(Pointage ptg, AbsenceDto absence) {
 		
 		return !(ptg.getAbsenceConcertee().equals(absence.getConcertee()) 
-				&& ptg.getDateDebut().equals(absence.getHeureDebut())
-				&& ptg.getDateFin().equals(absence.getHeureFin()));
+				&& ptg.getDateDebut().getTime() == absence.getHeureDebut().getTime()
+				&& ptg.getDateFin().getTime() == absence.getHeureFin().getTime());
 	}
 	
 	protected boolean hasPointageChanged(Pointage ptg, HeureSupDto hSup) {
 		
 		return !(ptg.getHeureSupRecuperee().equals(hSup.getRecuperee()) 
-				&& ptg.getDateDebut().equals(hSup.getHeureDebut())
-				&& ptg.getDateFin().equals(hSup.getHeureFin()));
+				&& ptg.getDateDebut().getTime() == hSup.getHeureDebut().getTime()
+				&& ptg.getDateFin().getTime() == hSup.getHeureFin().getTime());
 	}
 }
