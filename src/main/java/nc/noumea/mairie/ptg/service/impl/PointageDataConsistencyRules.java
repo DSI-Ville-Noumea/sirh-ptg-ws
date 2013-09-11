@@ -41,6 +41,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String BASE_HOR_Z_MSG = "L'agent est en base horaire \"Z\" sur la période";
 	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
 	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez saisi des primes et/ou heures supplémentaires sur des périodes où l’agent était absent.";
+	public static final String ERROR_7651_MSG = "";
+	public static final String ERROR_7652_MSG = "";
 	
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
 	
@@ -153,6 +155,20 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		return srm;
 	}
+
+	@Override
+	public ReturnMessageDto checkPrime7651(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ReturnMessageDto checkPrime7652(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	//-- Helpers --//
 	
@@ -220,8 +236,6 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			
 			if (rInterval.overlaps(pInterval)) {
 				
-				String msg = String.format(message, ptgTimeStart.toString("dd/MM/yyyy HH:mm"));
-				
 				if (ptgTimeStart.dayOfYear().get() == dayOfYearDeb && partialDayDeb
 					|| ptgTimeStart.dayOfYear().get() == dayOfYearFin && partialDayFin
 					|| ptgTimeEnd.dayOfYear().get() == dayOfYearDeb && partialDayDeb
@@ -230,8 +244,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 						srm.getInfos().add(AVERT_MESSAGE_ABS);
 					}
 				}
-				else
+				else {
+					String msg = String.format(message, ptgTimeStart.toString("dd/MM/yyyy HH:mm"));
 					srm.getErrors().add(msg);
+				}
 			}
 		}
 		
