@@ -37,11 +37,11 @@ public interface IVentilationRepository {
 
 	boolean canStartVentilation(TypeChainePaieEnum chainePaie);
 
-	List<VentilAbsence> getListOfVentilAbsenceForDateAgentAndType(Integer ventilDateId, Integer idAgent);
+	List<VentilAbsence> getListOfVentilAbsenceForDateAgentAndType(Integer ventilDateId, List<Integer> agentIds);
 
-	List<VentilPrime> getListOfVentilPrimeForDateAgentAndType(Integer ventilDateId, Integer idAgent);
+	List<VentilPrime> getListOfVentilPrimeForDateAgentAndType(Integer ventilDateId, List<Integer> agentIds);
 
-	List<VentilHsup> getListOfVentilHSForDateAgentAndType(Integer ventilDateId, Integer idAgent);
+	List<VentilHsup> getListOfVentilHSForDateAgentAndType(Integer ventilDateId, List<Integer> agentIds);
 
 	List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAsc(Integer idAgent, Integer idVentilDate);
     

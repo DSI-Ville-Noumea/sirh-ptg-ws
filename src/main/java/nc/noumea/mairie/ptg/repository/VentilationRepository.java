@@ -119,7 +119,8 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<Pointage> getListPointagesAbsenceAndHSupForVentilation(Integer idAgent, Date fromEtatDate, Date toEtatDate, Date dateLundi) {
+	public List<Pointage> getListPointagesAbsenceAndHSupForVentilation(Integer idAgent, Date fromEtatDate,
+			Date toEtatDate, Date dateLundi) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT p.* ");
@@ -156,7 +157,8 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<Pointage> getListPointagesPrimeForVentilation(Integer idAgent, Date fromEtatDate, Date toEtatDate, Date dateDebutMois) {
+	public List<Pointage> getListPointagesPrimeForVentilation(Integer idAgent, Date fromEtatDate, Date toEtatDate,
+			Date dateDebutMois) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT p.* ");
@@ -192,7 +194,8 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<Pointage> getListPointagesForPrimesCalculees(Integer idAgent, Date fromEtatDate, Date toEtatDate, Date dateLundi) {
+	public List<Pointage> getListPointagesForPrimesCalculees(Integer idAgent, Date fromEtatDate, Date toEtatDate,
+			Date dateLundi) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT p.* ");
@@ -247,7 +250,10 @@ public class VentilationRepository implements IVentilationRepository {
 	@Override
 	public VentilDate getLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid) {
 
-		TypedQuery<VentilDate> q = ptgEntityManager.createQuery("SELECT d FROM VentilDate d where d.typeChainePaie = :chainePaie and d.paye = :paid ORDER BY d.dateVentilation desc", VentilDate.class);
+		TypedQuery<VentilDate> q = ptgEntityManager
+				.createQuery(
+						"SELECT d FROM VentilDate d where d.typeChainePaie = :chainePaie and d.paye = :paid ORDER BY d.dateVentilation desc",
+						VentilDate.class);
 
 		q.setParameter("chainePaie", chainePaie);
 		q.setParameter("paid", isPaid);
@@ -259,20 +265,21 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public void removeVentilationsForDateAgentAndType(VentilDate ventilDate, Integer idAgent, RefTypePointageEnum typePointage) {
+	public void removeVentilationsForDateAgentAndType(VentilDate ventilDate, Integer idAgent,
+			RefTypePointageEnum typePointage) {
 
 		String query = null;
 
 		switch (typePointage) {
-		case PRIME:
-			query = "DELETE FROM VentilPrime vp WHERE vp.ventilDate.idVentilDate = :idVentilDate and vp.idAgent = :idAgent";
-			break;
-		case H_SUP:
-			query = "DELETE FROM VentilHsup vh WHERE vh.ventilDate.idVentilDate = :idVentilDate and vh.idAgent = :idAgent";
-			break;
-		case ABSENCE:
-			query = "DELETE FROM VentilAbsence va WHERE va.ventilDate.idVentilDate = :idVentilDate and va.idAgent = :idAgent";
-			break;
+			case PRIME:
+				query = "DELETE FROM VentilPrime vp WHERE vp.ventilDate.idVentilDate = :idVentilDate and vp.idAgent = :idAgent";
+				break;
+			case H_SUP:
+				query = "DELETE FROM VentilHsup vh WHERE vh.ventilDate.idVentilDate = :idVentilDate and vh.idAgent = :idAgent";
+				break;
+			case ABSENCE:
+				query = "DELETE FROM VentilAbsence va WHERE va.ventilDate.idVentilDate = :idVentilDate and va.idAgent = :idAgent";
+				break;
 		}
 
 		Query q = ptgEntityManager.createQuery(query);
@@ -283,30 +290,78 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilAbsence> getListOfVentilAbsenceForDateAgentAndType(Integer ventilDateId, Integer idAgent) {
-		String query = "FROM VentilAbsence tb WHERE tb.idAgent = " + idAgent + " AND  tb.ventilDate.idVentilDate = " + ventilDateId;
-		TypedQuery<VentilAbsence> q = ptgEntityManager.createQuery(query, VentilAbsence.class);
-		return q.getResultList();
+	public List<VentilAbsence> getListOfVentilAbsenceForDateAgentAndType(Integer ventilDateId, List<Integer> agentIds) {
+		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
+		List<Integer> agentIdsReduite = null;
+
+		String query = "FROM VentilAbsence tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate = :ventilDateId";
+		int fromIndex = 0;
+		int toIndex = 0;
+
+		do {
+			toIndex = fromIndex + 1000;
+			agentIdsReduite = agentIds.subList(fromIndex, toIndex > agentIds.size() ? agentIds.size() : toIndex);
+			TypedQuery<VentilAbsence> q = ptgEntityManager.createQuery(query, VentilAbsence.class);
+			q.setParameter("agentIds", agentIdsReduite);
+			q.setParameter("ventilDateId", ventilDateId);
+			resultat.addAll(q.getResultList());
+			fromIndex = toIndex;
+		} while (fromIndex < agentIds.size());
+
+		return resultat;
 	}
 
 	@Override
-	public List<VentilPrime> getListOfVentilPrimeForDateAgentAndType(Integer ventilDateId, Integer idAgent) {
-		String query = "FROM VentilPrime tb WHERE tb.idAgent = " + idAgent + " AND  tb.ventilDate.idVentilDate = " + ventilDateId;
-		TypedQuery<VentilPrime> q = ptgEntityManager.createQuery(query, VentilPrime.class);
-		return q.getResultList();
+	public List<VentilPrime> getListOfVentilPrimeForDateAgentAndType(Integer ventilDateId, List<Integer> agentIds) {
+		List<VentilPrime> resultat = new ArrayList<VentilPrime>();
+		List<Integer> agentIdsReduite = null;
+
+		String query = "FROM VentilPrime tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate = :ventilDateId";
+		int fromIndex = 0;
+		int toIndex = 0;
+
+		do {
+			toIndex = fromIndex + 1000;
+			agentIdsReduite = agentIds.subList(fromIndex, toIndex > agentIds.size() ? agentIds.size() : toIndex);
+			TypedQuery<VentilPrime> q = ptgEntityManager.createQuery(query, VentilPrime.class);
+			q.setParameter("agentIds", agentIdsReduite);
+			q.setParameter("ventilDateId", ventilDateId);
+			resultat.addAll(q.getResultList());
+			fromIndex = toIndex;
+		} while (fromIndex < agentIds.size());
+
+		return resultat;
 	}
 
 	@Override
-	public List<VentilHsup> getListOfVentilHSForDateAgentAndType(Integer ventilDateId, Integer idAgent) {
-		String query = "FROM VentilHsup tb WHERE tb.idAgent = " + idAgent + " AND  tb.ventilDate.idVentilDate = " + ventilDateId;
-		TypedQuery<VentilHsup> q = ptgEntityManager.createQuery(query, VentilHsup.class);
-		return q.getResultList();
+	public List<VentilHsup> getListOfVentilHSForDateAgentAndType(Integer ventilDateId, List<Integer> agentIds) {
+		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
+		List<Integer> agentIdsReduite = null;
+
+		String query = "FROM VentilHsup tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate= :ventilDateId";
+		int fromIndex = 0;
+		int toIndex = 0;
+
+		do {
+			toIndex = fromIndex + 1000;
+			agentIdsReduite = agentIds.subList(fromIndex, toIndex > agentIds.size() ? agentIds.size() : toIndex);
+			TypedQuery<VentilHsup> q = ptgEntityManager.createQuery(query, VentilHsup.class);
+			q.setParameter("agentIds", agentIdsReduite);
+			q.setParameter("ventilDateId", ventilDateId);
+			resultat.addAll(q.getResultList());
+			fromIndex = toIndex;
+		} while (fromIndex < agentIds.size());
+
+		return resultat;
 	}
 
 	@Override
 	public List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAsc(Integer idAgent, Integer idVentilDate) {
 
-		TypedQuery<VentilHsup> q = ptgEntityManager.createQuery("from VentilHsup h where h.idAgent = :idAgent and h.ventilDate.idVentilDate = :idVentilDate order by h.dateLundi asc", VentilHsup.class);
+		TypedQuery<VentilHsup> q = ptgEntityManager
+				.createQuery(
+						"from VentilHsup h where h.idAgent = :idAgent and h.ventilDate.idVentilDate = :idVentilDate order by h.dateLundi asc",
+						VentilHsup.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idVentilDate", idVentilDate);
 
@@ -314,21 +369,25 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilPrime> getListVentilPrimesMoisForAgentAndVentilDateOrderByDateAsc(Integer idAgent, Integer idVentilDate) {
+	public List<VentilPrime> getListVentilPrimesMoisForAgentAndVentilDateOrderByDateAsc(Integer idAgent,
+			Integer idVentilDate) {
 
-    	TypedQuery<VentilPrime> q = ptgEntityManager
-    			.createQuery("from VentilPrime p where p.idAgent = :idAgent and p.ventilDate.idVentilDate = :idVentilDate and p.refPrime.mairiePrimeTableEnum = :mairiePrimeTableEnum order by p.dateDebutMois asc", VentilPrime.class);
-    	q.setParameter("idAgent", idAgent);
-    	q.setParameter("idVentilDate", idVentilDate);
-    	q.setParameter("mairiePrimeTableEnum", MairiePrimeTableEnum.SPPRIM);
-    	
-    	return q.getResultList();
+		TypedQuery<VentilPrime> q = ptgEntityManager
+				.createQuery(
+						"from VentilPrime p where p.idAgent = :idAgent and p.ventilDate.idVentilDate = :idVentilDate and p.refPrime.mairiePrimeTableEnum = :mairiePrimeTableEnum order by p.dateDebutMois asc",
+						VentilPrime.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("idVentilDate", idVentilDate);
+		q.setParameter("mairiePrimeTableEnum", MairiePrimeTableEnum.SPPRIM);
+
+		return q.getResultList();
 	}
 
-    @Override
+	@Override
 	public boolean canStartVentilation(TypeChainePaieEnum chainePaie) {
 
-		Query q = ptgEntityManager.createQuery("SELECT COUNT(vT) from VentilTask vT WHERE vT.taskStatus is NULL AND vT.dateVentilation is NULL AND vT.typeChainePaie = :chainePaie)");
+		Query q = ptgEntityManager
+				.createQuery("SELECT COUNT(vT) from VentilTask vT WHERE vT.taskStatus is NULL AND vT.dateVentilation is NULL AND vT.typeChainePaie = :chainePaie)");
 		q.setParameter("chainePaie", chainePaie);
 
 		return ((long) q.getSingleResult() == 0);
