@@ -5,7 +5,7 @@
     <groupId>nc.noumea.mairie</groupId>
     <artifactId>sirh-ptg-ws</artifactId>
     <packaging>war</packaging>
-	<version>0.9</version>
+	<version>0.10-SNAPSHOT</version>
     <name>sirh-ptg-ws</name>
     <properties>
         <aspectj.version>1.7.2.RELEASE</aspectj.version>
@@ -60,11 +60,6 @@
             <id>spring-roo-repository</id>
             <name>Spring Roo Repository</name>
             <url>http://spring-roo-repository.springsource.org/release</url>
-        </repository>
-         <repository>
-                <id>java.net2</id>
-                <name>Repository hosting the jee6 artifacts</name>
-                <url>http://download.java.net/maven/2</url>
         </repository>
     </repositories>
 
@@ -313,7 +308,7 @@
         </dependency>
     </dependencies>
     <build>
-       <finalName>sirh-ptg-ws##${maven.build.timestamp}-${project.version}</finalName>
+		<finalName>sirh-ptg-ws##${maven.build.timestamp}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-deploy-plugin</artifactId>
