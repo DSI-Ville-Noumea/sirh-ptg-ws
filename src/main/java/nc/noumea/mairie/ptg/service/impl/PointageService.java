@@ -232,25 +232,17 @@ public class PointageService implements IPointageService {
 	@Override
 	public Pointage getOrCreateNewPointageSIRH(Integer idAgentCreator, Integer idPointage, Integer idAgent,
 			AgentStatutEnum statut, Date dateLundi, Integer idRefPrime) {
-		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
 		Pointage ptg = null;
 		Pointage parentPointage = null;
 
 		// if the pointage already exists, fetch it
 		if (idPointage != null && !idPointage.equals(0)) {
 			ptg = pointageRepository.getEntity(Pointage.class, idPointage);
-
 			// if its state is APPROUVE, return it, otherwise create a new one
 			// with this one as parent
 			EtatPointage etatPtg = ptg.getLatestEtatPointage();
 			if (etatPtg.getEtat() == EtatPointageEnum.APPROUVE) {
-				// date ventilation test
-				VentilDate lastVentil = ventilRepository.getLatestVentilDate(chainePaie, false);
-				if (lastVentil != null) {
-					etatPtg.getEtatPointagePk().setDateEtat(lastVentil.getDateVentilation());
-				} else {
-					etatPtg.getEtatPointagePk().setDateEtat(helperService.getCurrentDate());
-				}
+				// etatPtg.getEtatPointagePk().setDateEtat(helperService.getCurrentDate());
 				etatPtg.setIdAgent(idAgentCreator);
 				return ptg;
 			}
@@ -261,7 +253,8 @@ public class PointageService implements IPointageService {
 		ptg.setPointageParent(parentPointage);
 		ptg.setIdAgent(idAgent);
 		ptg.setDateLundi(dateLundi);
-		addEtatPointage(ptg, EtatPointageEnum.APPROUVE, idAgentCreator);
+		addEtatPointageSIRH(ptg, EtatPointageEnum.APPROUVE, idAgentCreator,
+				helperService.getTypeChainePaieFromStatut(statut));
 
 		// If this pointage is a new version of an existing one,
 		// initialize its properties with the parent Pointage
@@ -290,6 +283,29 @@ public class PointageService implements IPointageService {
 	protected void addEtatPointage(Pointage ptg, EtatPointageEnum etat, Integer idAgentCreator) {
 		EtatPointagePK pk = new EtatPointagePK();
 		pk.setDateEtat(helperService.getCurrentDate());
+		pk.setPointage(ptg);
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(etat);
+		ep.setEtatPointagePk(pk);
+		ep.setIdAgent(idAgentCreator);
+		ptg.getEtats().add(ep);
+	}
+
+	/**
+	 * Adds an EtatPointage state to a given Pointage for SIRH
+	 * 
+	 * @param ptg
+	 * @param etat
+	 */
+	protected void addEtatPointageSIRH(Pointage ptg, EtatPointageEnum etat, Integer idAgentCreator,
+			TypeChainePaieEnum chainePaie) {
+		EtatPointagePK pk = new EtatPointagePK();
+		VentilDate lastVentil = ventilRepository.getLatestVentilDate(chainePaie, false);
+		if (lastVentil != null) {
+			pk.setDateEtat(lastVentil.getDateVentilation());
+		} else {
+			pk.setDateEtat(helperService.getCurrentDate());
+		}
 		pk.setPointage(ptg);
 		EtatPointage ep = new EtatPointage();
 		ep.setEtat(etat);

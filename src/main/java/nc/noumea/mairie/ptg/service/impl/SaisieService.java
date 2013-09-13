@@ -183,7 +183,9 @@ public class SaisieService implements ISaisieService {
 
 				// If already existing, try and compare if it has changed
 				// compared to the original version
-				if (ptg != null && !hasPointageChanged(ptg, abs) && !hasTextChanged(ptg, abs)) {
+				if (ptg != null && !hasPointageChanged(ptg, abs)) {// &&
+																	// !hasTextChanged(ptg,
+																	// abs)) {
 					continue;
 				}
 
@@ -206,7 +208,9 @@ public class SaisieService implements ISaisieService {
 
 				// If already existing, try and compare if it has changed
 				// compared to the original version
-				if (ptg != null && !hasPointageChanged(ptg, hs) && !hasTextChanged(ptg, hs)) {
+				if (ptg != null && !hasPointageChanged(ptg, hs)) {// &&
+																	// !hasTextChanged(ptg,
+																	// hs)) {
 					continue;
 				}
 
@@ -235,7 +239,10 @@ public class SaisieService implements ISaisieService {
 
 				// If already existing, try and compare if it has changed
 				// compared to the original version
-				if (ptg != null && !hasPointageChanged(ptg, prime) && !hasTextChanged(ptg, prime)) {
+				if (ptg != null && !hasPointageChanged(ptg, prime)) {// &&
+																		// !hasTextChanged(ptg,
+																		// prime))
+																		// {
 					continue;
 				}
 

@@ -5,19 +5,22 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
+import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IApprobationService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 
@@ -46,6 +49,9 @@ public class ApprobationService implements IApprobationService {
 
 	@Autowired
 	private IPointageService pointageService;
+
+	@Autowired
+	private IVentilationRepository ventilRepository;
 
 	@Override
 	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService,
@@ -195,7 +201,8 @@ public class ApprobationService implements IApprobationService {
 	}
 
 	@Override
-	public ReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> etatsDto) {
+	public ReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> etatsDto,
+			AgentStatutEnum statut) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		for (PointagesEtatChangeDto dto : etatsDto) {
@@ -227,8 +234,8 @@ public class ApprobationService implements IApprobationService {
 				ok = false;
 			}
 			if (!ok) {
-				result.getErrors()
-						.add(String.format(
+				result.getErrors().add(
+						String.format(
 								"Impossible de mettre à %s le pointage %s de l'agent %s car celui-ci est à l'état %s.",
 								targetEtat.name(), ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.name()));
 				continue;
@@ -246,7 +253,14 @@ public class ApprobationService implements IApprobationService {
 			// at last, create and add the new EtatPointage
 			EtatPointage etat = new EtatPointage();
 			EtatPointagePK etatPk = new EtatPointagePK();
-			etatPk.setDateEtat(helperService.getCurrentDate());
+			VentilDate lastVentil = ventilRepository.getLatestVentilDate(
+					helperService.getTypeChainePaieFromStatut(statut), false);
+			if (targetEtat == EtatPointageEnum.APPROUVE && lastVentil != null) {
+				etatPk.setDateEtat(lastVentil.getDateVentilation());
+
+			} else {
+				etatPk.setDateEtat(helperService.getCurrentDate());
+			}
 			etatPk.setPointage(ptg);
 			etat.setIdAgent(ptg.getIdAgent());
 			etat.setEtatPointagePk(etatPk);
