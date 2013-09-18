@@ -2,7 +2,6 @@ package nc.noumea.mairie.ptg.web;
 
 import java.util.Date;
 
-import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
@@ -125,21 +124,18 @@ public class SaisieController {
 	@RequestMapping(value = "/ficheSIRH", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> setFichePointageSIRH(@RequestParam("idAgent") int idAgent,
-			@RequestParam("statutAgent") String statut, @RequestBody(required = true) String fichePointage) {
+			@RequestBody(required = true) String fichePointage) {
 
 		logger.debug(
-				"entered POST [saisie/ficheSIRH] => setFichePointage for SIRH with parameters idAgent = {} and statut = {}",
-				idAgent, statut);
-		logger.debug("\n.. SaisieController.ficheSIRH json received :\n" + fichePointage);
+				"entered POST [saisie/ficheSIRH] => setFichePointage for SIRH with parameters idAgent = {}",
+				idAgent);
 
 		FichePointageDto dto = new JSONDeserializer<FichePointageDto>().use(Date.class, new MSDateTransformer())
 				.deserializeInto(fichePointage, new FichePointageDto());
 
 		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-		ReturnMessageDto srm = saisieService.saveFichePointageSIRH(convertedIdAgent, dto,
-				AgentStatutEnum.valueOf(statut));
-		// ReturnMessageDto srm =
-		// saisieService.saveFichePointage(convertedIdAgent, dto);
+		ReturnMessageDto srm = saisieService.saveFichePointage(convertedIdAgent, dto, true);
+
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(srm);
 
 		if (!srm.getErrors().isEmpty()) {

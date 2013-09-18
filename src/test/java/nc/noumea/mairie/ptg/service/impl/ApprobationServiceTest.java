@@ -10,7 +10,6 @@ import java.util.List;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
-import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
@@ -60,9 +59,7 @@ public class ApprobationServiceTest {
 		ptg.setType(new RefTypePointage());
 		ptg.getType().setIdRefTypePointage(1);
 		EtatPointage etat = new EtatPointage();
-		EtatPointagePK etatpk = new EtatPointagePK();
-		etatpk.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat.setEtatPointagePk(etatpk);
+		etat.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		etat.setEtat(EtatPointageEnum.APPROUVE);
 		ptg.getEtats().add(etat);
 
@@ -72,9 +69,7 @@ public class ApprobationServiceTest {
 		ptg2.setType(new RefTypePointage());
 		ptg2.getType().setIdRefTypePointage(1);
 		EtatPointage etat2 = new EtatPointage();
-		EtatPointagePK etatpk2 = new EtatPointagePK();
-		etatpk2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat2.setEtatPointagePk(etatpk2);
+		etat2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		etat2.setEtat(EtatPointageEnum.SAISI);
 		ptg2.getEtats().add(etat2);
 
@@ -133,9 +128,7 @@ public class ApprobationServiceTest {
 		ptg2.setType(new RefTypePointage());
 		ptg2.getType().setIdRefTypePointage(1);
 		EtatPointage etat2 = new EtatPointage();
-		EtatPointagePK etatpk2 = new EtatPointagePK();
-		etatpk2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat2.setEtatPointagePk(etatpk2);
+		etat2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		etat2.setEtat(EtatPointageEnum.SAISI);
 		ptg2.getEtats().add(etat2);
 
@@ -199,26 +192,20 @@ public class ApprobationServiceTest {
 		ptg1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		EtatPointage etat1 = new EtatPointage();
-		EtatPointagePK etat1pk = new EtatPointagePK();
-		etat1pk.setDateEtat(new DateTime(2013, 04, 28, 8, 10, 0).toDate());
-		etat1pk.setPointage(ptg1);
-		etat1.setEtatPointagePk(etat1pk);
+		etat1.setDateEtat(new DateTime(2013, 04, 28, 8, 10, 0).toDate());
+		etat1.setPointage(ptg1);
 		etat1.setEtat(EtatPointageEnum.SAISI);
 		etat1.setIdAgent(9007861);
 
 		EtatPointage etat2 = new EtatPointage();
-		EtatPointagePK etat2pk = new EtatPointagePK();
-		etat2pk.setDateEtat(new DateTime(2013, 04, 29, 10, 20, 0).toDate());
-		etat2pk.setPointage(ptg1);
-		etat2.setEtatPointagePk(etat2pk);
+		etat2.setDateEtat(new DateTime(2013, 04, 29, 10, 20, 0).toDate());
+		etat2.setPointage(ptg1);
 		etat2.setEtat(EtatPointageEnum.REFUSE);
 		etat2.setIdAgent(9007860);
 
 		EtatPointage etat3 = new EtatPointage();
-		EtatPointagePK etat3pk = new EtatPointagePK();
-		etat3pk.setDateEtat(new DateTime(2013, 04, 29, 10, 30, 0).toDate());
-		etat3pk.setPointage(ptg1);
-		etat3.setEtatPointagePk(etat3pk);
+		etat3.setDateEtat(new DateTime(2013, 04, 29, 10, 30, 0).toDate());
+		etat3.setPointage(ptg1);
 		etat3.setEtat(EtatPointageEnum.SAISI);
 		etat3.setIdAgent(9007861);
 
@@ -521,9 +508,7 @@ public class ApprobationServiceTest {
 		ptg2.setType(new RefTypePointage());
 		ptg2.getType().setIdRefTypePointage(1);
 		EtatPointage etat2 = new EtatPointage();
-		EtatPointagePK etatpk2 = new EtatPointagePK();
-		etatpk2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
-		etat2.setEtatPointagePk(etatpk2);
+		etat2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		etat2.setEtat(EtatPointageEnum.SAISI);
 		ptg2.getEtats().add(etat2);
 		

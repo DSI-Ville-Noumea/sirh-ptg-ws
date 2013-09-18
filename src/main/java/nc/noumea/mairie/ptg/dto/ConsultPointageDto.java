@@ -80,7 +80,7 @@ public class ConsultPointageDto {
 
 	public void updateEtat(EtatPointage etat) {
 		idRefEtat = etat.getEtat().getCodeEtat();
-		dateSaisie = etat.getEtatPointagePk().getDateEtat();
+		dateSaisie = etat.getDateEtat();
 	}
 
 	public Integer getIdPointage() {

@@ -13,7 +13,6 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.SpcarrId;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
-import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
@@ -477,15 +476,17 @@ public class PointageServiceTest {
 		Mockito.when(pRepo.getEntity(EtatPointage.class, EtatPointageEnum.SAISI.getCodeEtat())).thenReturn(etatSaisi);
 		Mockito.when(pRepo.getEntity(RefPrime.class, 89)).thenReturn(rf89);
 		
-		HelperService hs = Mockito.mock(HelperService.class);
-		Mockito.when(hs.getCurrentDate()).thenReturn(new DateTime(2013, 05, 17, 9, 25, 8).toDate());
+		Date dateEtat = new DateTime(2013, 05, 17, 9, 25, 8).toDate();
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 5, 17, 9, 12, 0).toDate());
 		
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		ReflectionTestUtils.setField(service, "helperService", hs);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, 89);
+		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, dateEtat, 89);
 		
 		// Then
 		assertEquals(9007867, (int) result.getIdAgent());
@@ -493,7 +494,8 @@ public class PointageServiceTest {
 		assertEquals(dateLundi, result.getDateLundi());
 		assertEquals(1, result.getEtats().size());
 		assertEquals(EtatPointageEnum.SAISI, result.getLatestEtatPointage().getEtat());
-		assertEquals(new DateTime(2013, 05, 17, 9, 25, 8).toDate(), result.getLatestEtatPointage().getEtatPointagePk().getDateEtat());
+		assertEquals(new DateTime(2013, 05, 17, 9, 25, 8).toDate(), result.getLatestEtatPointage().getDateEtat());
+		assertEquals(new DateTime(2013, 05, 17, 9, 12, 0).toDate(), result.getLatestEtatPointage().getDateMaj());
 		assertEquals(9001234, (int) result.getLatestEtatPointage().getIdAgent());
 	}
 	
@@ -505,8 +507,8 @@ public class PointageServiceTest {
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		
 		EtatPointage etatSaisi = new EtatPointage();
-		etatSaisi.setEtatPointagePk(new EtatPointagePK());
 		etatSaisi.setEtat(EtatPointageEnum.SAISI);
+		etatSaisi.setDateEtat(new LocalDate(2013, 5, 1).toDate());
 		
 		RefPrime rf89 = new RefPrime();
 		rf89.setIdRefPrime(89);
@@ -521,15 +523,17 @@ public class PointageServiceTest {
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getEntity(Pointage.class, idPointage)).thenReturn(p67);
 		
-		HelperService hs = Mockito.mock(HelperService.class);
-		Mockito.when(hs.getCurrentDate()).thenReturn(new DateTime(2013, 05, 17, 9, 25, 8).toDate());
+		Date dateEtat = new DateTime(2013, 05, 17, 9, 25, 8).toDate();
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 5, 17, 9, 12, 0).toDate());
 		
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		ReflectionTestUtils.setField(service, "helperService", hs);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, 89);
+		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, dateEtat, 89);
 		
 		// Then
 		assertEquals(67, (int) result.getIdPointage());
@@ -538,7 +542,8 @@ public class PointageServiceTest {
 		assertEquals(dateLundi, result.getDateLundi());
 		assertEquals(1, result.getEtats().size());
 		assertEquals(EtatPointageEnum.SAISI, result.getLatestEtatPointage().getEtat());
-		assertEquals(new DateTime(2013, 05, 17, 9, 25, 8).toDate(), result.getLatestEtatPointage().getEtatPointagePk().getDateEtat());
+		assertEquals(new LocalDate(2013, 5, 1).toDate(), result.getLatestEtatPointage().getDateEtat());
+		assertEquals(new DateTime(2013, 05, 17, 9, 12, 0).toDate(), result.getLatestEtatPointage().getDateMaj());
 		assertEquals(9001234, (int) result.getLatestEtatPointage().getIdAgent());
 	}
 	
@@ -550,7 +555,6 @@ public class PointageServiceTest {
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		
 		EtatPointage etatSaisi = new EtatPointage();
-		etatSaisi.setEtatPointagePk(new EtatPointagePK());
 		etatSaisi.setEtat(EtatPointageEnum.REFUSE);
 		
 		RefPrime rf89 = new RefPrime();
@@ -574,15 +578,17 @@ public class PointageServiceTest {
 		Mockito.when(pRepo.getEntity(EtatPointage.class, EtatPointageEnum.SAISI.getCodeEtat())).thenReturn(etatSaisi);
 		Mockito.when(pRepo.getEntity(RefPrime.class, 89)).thenReturn(rf89);
 		
-		HelperService hs = Mockito.mock(HelperService.class);
-		Mockito.when(hs.getCurrentDate()).thenReturn(new DateTime(2013, 05, 17, 9, 25, 8).toDate());
+		Date dateEtat = new DateTime(2013, 05, 17, 9, 25, 8).toDate();
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 5, 17, 9, 12, 0).toDate());
 		
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		ReflectionTestUtils.setField(service, "helperService", hs);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
-		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, 89);
+		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, dateEtat, 89);
 		
 		// Then
 		assertNull(result.getIdPointage());
@@ -592,7 +598,8 @@ public class PointageServiceTest {
 		assertEquals(dateLundi, result.getDateLundi());
 		assertEquals(1, result.getEtats().size());
 		assertEquals(EtatPointageEnum.SAISI, result.getLatestEtatPointage().getEtat());
-		assertEquals(new DateTime(2013, 05, 17, 9, 25, 8).toDate(), result.getLatestEtatPointage().getEtatPointagePk().getDateEtat());
+		assertEquals(new DateTime(2013, 05, 17, 9, 25, 8).toDate(), result.getLatestEtatPointage().getDateEtat());
+		assertEquals(new DateTime(2013, 05, 17, 9, 12, 0).toDate(), result.getLatestEtatPointage().getDateMaj());
 		assertEquals(9001234, (int) result.getLatestEtatPointage().getIdAgent());
 		assertEquals(p67.getDateDebut(), result.getDateDebut());
 		assertEquals(p67.getDateFin(), result.getDateFin());

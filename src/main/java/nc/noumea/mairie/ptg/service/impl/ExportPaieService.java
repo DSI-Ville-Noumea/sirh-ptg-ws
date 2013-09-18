@@ -13,7 +13,6 @@ import nc.noumea.mairie.domain.Spprim;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
-import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.VentilDate;
@@ -259,13 +258,12 @@ public class ExportPaieService implements IExportPaieService {
 		Date currentDate = helperService.getCurrentDate();
 		
 		for (Pointage ptg : pointages) {
-			EtatPointagePK pk = new EtatPointagePK();
-			pk.setDateEtat(currentDate);
-			pk.setPointage(ptg);
 			EtatPointage ep = new EtatPointage();
+			ep.setDateEtat(currentDate);
+			ep.setDateMaj(currentDate);
+			ep.setPointage(ptg);
 			ep.setEtat(EtatPointageEnum.VALIDE);
 			ep.setIdAgent(idAgent);
-			ep.setEtatPointagePk(pk);
 			ptg.getEtats().add(ep);
 		}
 	}

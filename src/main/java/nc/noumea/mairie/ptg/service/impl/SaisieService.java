@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
@@ -18,6 +20,8 @@ import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
+import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.ISaisieService;
@@ -33,6 +37,12 @@ public class SaisieService implements ISaisieService {
 	private IPointageRepository pointageRepository;
 
 	@Autowired
+	private IVentilationRepository ventilationRepository;
+
+	@Autowired
+	private ISirhRepository sirhRepository;
+
+	@Autowired
 	private IPointageService pointageService;
 
 	@Autowired
@@ -43,6 +53,11 @@ public class SaisieService implements ISaisieService {
 
 	@Override
 	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto) {
+		return saveFichePointage(idAgentOperator, fichePointageDto, false);
+	}
+	
+	@Override
+	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto, boolean approveModifiedPointages) {
 
 		Date dateLundi = fichePointageDto.getDateLundi();
 
@@ -71,7 +86,7 @@ public class SaisieService implements ISaisieService {
 				}
 
 				// Only if it has changed, process this pointage
-				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi);
+				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi, helperService.getCurrentDate());
 				ptg.setAbsenceConcertee(abs.getConcertee());
 				ptg.setDateDebut(abs.getHeureDebut());
 				ptg.setDateFin(abs.getHeureFin());
@@ -95,7 +110,7 @@ public class SaisieService implements ISaisieService {
 				}
 
 				// Only if it has changed, process this pointage
-				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi);
+				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi, helperService.getCurrentDate());
 				ptg.setHeureSupRecuperee(hs.getRecuperee());
 				ptg.setDateDebut(hs.getHeureDebut());
 				ptg.setDateFin(hs.getHeureFin());
@@ -127,7 +142,7 @@ public class SaisieService implements ISaisieService {
 
 				// Only if it has changed, process this pointage
 				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, prime.getIdPointage(), idAgent,
-						dateLundi, prime.getIdRefPrime());
+						dateLundi, helperService.getCurrentDate(), prime.getIdRefPrime());
 				ptg.setDateDebut(prime.getHeureDebut() == null ? jourDto.getDate() : prime.getHeureDebut());
 				ptg.setDateFin(prime.getHeureFin());
 				ptg.setQuantite(prime.getQuantite());
@@ -149,131 +164,42 @@ public class SaisieService implements ISaisieService {
 		if (result.getErrors().size() != 0)
 			return result;
 
-		savePointages(finalPointages);
-		deletePointages(idAgentOperator, originalAgentPointages);
-
-		return result;
-	}
-
-	/**
-	 * Same method as saveFichePointage for SIRH: -Set status as APPROUVE when
-	 * SAISIE -Set date as the last unpaid VentilDate
-	 */
-	@Override
-	public ReturnMessageDto saveFichePointageSIRH(Integer idAgentOperator, FichePointageDto fichePointageDto,
-			AgentStatutEnum statut) {
-
-		Date dateLundi = fichePointageDto.getDateLundi();
-		if (!helperService.isDateAMonday(dateLundi))
-			throw new NotAMondayException();
-
-		Integer idAgent = fichePointageDto.getAgent().getIdAgent();
-
-		List<Pointage> originalAgentPointages = pointageService.getLatestPointagesForSaisieForAgentAndDateMonday(
-				idAgent, dateLundi);
-		List<Pointage> finalPointages = new ArrayList<Pointage>();
-
-		for (JourPointageDto jourDto : fichePointageDto.getSaisies()) {
-
-			for (AbsenceDto abs : jourDto.getAbsences()) {
-
-				// Try to retrieve in the existing original pointages if it
-				// exists
-				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, abs);
-
-				// If already existing, try and compare if it has changed
-				// compared to the original version
-				if (ptg != null && !hasPointageChanged(ptg, abs)) {// &&
-																	// !hasTextChanged(ptg,
-																	// abs)) {
-					continue;
-				}
-
-				// Only if it has changed, process this pointage
-				ptg = pointageService.getOrCreateNewPointageSIRH(idAgentOperator, abs.getIdPointage(), idAgent, statut,
-						dateLundi, null);
-				ptg.setAbsenceConcertee(abs.getConcertee());
-				ptg.setDateDebut(abs.getHeureDebut());
-				ptg.setDateFin(abs.getHeureFin());
-				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.ABSENCE.getValue()));
-				crudComments(ptg, abs.getMotif(), abs.getCommentaire());
-				finalPointages.add(ptg);
-			}
-
-			for (HeureSupDto hs : jourDto.getHeuresSup()) {
-
-				// Try to retrieve in the existing original pointages if it
-				// exists
-				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, hs);
-
-				// If already existing, try and compare if it has changed
-				// compared to the original version
-				if (ptg != null && !hasPointageChanged(ptg, hs)) {// &&
-																	// !hasTextChanged(ptg,
-																	// hs)) {
-					continue;
-				}
-
-				// Only if it has changed, process this pointage
-				ptg = pointageService.getOrCreateNewPointageSIRH(idAgentOperator, hs.getIdPointage(), idAgent, statut,
-						dateLundi, null);
-				ptg.setHeureSupRecuperee(hs.getRecuperee());
-				ptg.setDateDebut(hs.getHeureDebut());
-				ptg.setDateFin(hs.getHeureFin());
-				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.H_SUP.getValue()));
-				crudComments(ptg, hs.getMotif(), hs.getCommentaire());
-				finalPointages.add(ptg);
-			}
-
-			for (PrimeDto prime : jourDto.getPrimes()) {
-
-				// if the new pointage has null qte, null datedebut and datefin,
-				// leave it (it is a template)
-				if (prime.getHeureFin() == null && (prime.getQuantite() == null || prime.getQuantite().equals(0))) {
-					continue;
-				}
-
-				// Try to retrieve in the existing original pointages if it
-				// exists
-				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, prime);
-
-				// If already existing, try and compare if it has changed
-				// compared to the original version
-				if (ptg != null && !hasPointageChanged(ptg, prime)) {// &&
-																		// !hasTextChanged(ptg,
-																		// prime))
-																		// {
-					continue;
-				}
-
-				// Only if it has changed, process this pointage
-				ptg = pointageService.getOrCreateNewPointageSIRH(idAgentOperator, prime.getIdPointage(), idAgent,
-						statut, dateLundi, prime.getIdRefPrime());
-				ptg.setDateDebut(prime.getHeureDebut() == null ? jourDto.getDate() : prime.getHeureDebut());
-				ptg.setDateFin(prime.getHeureFin());
-				ptg.setQuantite(prime.getQuantite());
-				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME.getValue()));
-				crudComments(ptg, prime.getMotif(), prime.getCommentaire());
-				finalPointages.add(ptg);
-			}
-
+		// If called with the approvedModifidPointages parameter, we need to mark all the modified pointages directly as APPROUVE
+		if (approveModifiedPointages) {
+			markPointagesAsApproved(finalPointages, dateLundi, idAgent, idAgentOperator);
 		}
-
-		ReturnMessageDto result = new ReturnMessageDto();
-
-		// calling data consistency
-		ptgDataCosistencyRules.processDataConsistency(result, idAgent, dateLundi, finalPointages);
-
-		// If any blocking error, return the list of problems and do not save
-		if (result.getErrors().size() != 0)
-			return result;
-
+		
 		savePointages(finalPointages);
 		deletePointages(idAgentOperator, originalAgentPointages);
 
 		return result;
 	}
 
+	protected void markPointagesAsApproved(List<Pointage> pointages, Date dateLundi, Integer idAgent, Integer idAgentOperator) {
+
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), dateLundi);
+		VentilDate currentVentilation = ventilationRepository.getLatestVentilDate(helperService.getTypeChainePaieFromStatut(carr.getStatutCarriere()), false);
+		Date currentDateEtat = currentVentilation == null ? helperService.getCurrentDate() : currentVentilation.getDateVentilation();
+		
+		for (Pointage ptg : pointages) {
+			
+			// If the pointage was already APPROUVE (it hasnt been modified), dont change its Etat
+			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.APPROUVE)
+				continue;
+			
+			// Otherwise, since we're from SIRH, we need to mark it as APPROUVE
+			// and set its DateEtat to the VentilationDate if a current one exists
+			EtatPointage ep = new EtatPointage();
+			ep.setDateEtat(currentDateEtat);
+			ep.setDateMaj(helperService.getCurrentDate());
+			ep.setEtat(EtatPointageEnum.APPROUVE);
+			ep.setIdAgent(idAgentOperator);
+			ep.setPointage(ptg);
+			ptg.getEtats().add(ep);
+		}
+		
+	}
+	
 	private void savePointages(List<Pointage> finalPointages) {
 		for (Pointage ptg : finalPointages)
 			pointageRepository.savePointage(ptg);

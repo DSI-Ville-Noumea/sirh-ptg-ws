@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
-import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
@@ -30,8 +29,7 @@ public class ConsultPointageDtoTest {
 		
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.APPROUVE);
-		etat.setEtatPointagePk(new EtatPointagePK());
-		etat.getEtatPointagePk().setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
+		etat.setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
 		ptg.getEtats().add(etat);
 		
 		ptg.setDateDebut(new DateTime(2013, 05, 14, 8, 0, 0).toDate());
@@ -72,8 +70,7 @@ public class ConsultPointageDtoTest {
 		
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.APPROUVE);
-		etat.setEtatPointagePk(new EtatPointagePK());
-		etat.getEtatPointagePk().setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
+		etat.setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
 		ptg.getEtats().add(etat);
 		
 		ptg.setDateDebut(new DateTime(2013, 05, 14, 8, 0, 0).toDate());
@@ -114,8 +111,7 @@ public class ConsultPointageDtoTest {
 		
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.APPROUVE);
-		etat.setEtatPointagePk(new EtatPointagePK());
-		etat.getEtatPointagePk().setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
+		etat.setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
 		ptg.getEtats().add(etat);
 		
 		ptg.setDateDebut(new DateTime(2013, 05, 14, 8, 0, 0).toDate());
@@ -160,8 +156,7 @@ public class ConsultPointageDtoTest {
 		
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.APPROUVE);
-		etat.setEtatPointagePk(new EtatPointagePK());
-		etat.getEtatPointagePk().setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
+		etat.setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
 		ptg.getEtats().add(etat);
 		
 		ptg.setDateDebut(new DateTime(2013, 05, 14, 8, 0, 0).toDate());
@@ -198,8 +193,7 @@ public class ConsultPointageDtoTest {
 		// Given
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.APPROUVE);
-		etat.setEtatPointagePk(new EtatPointagePK());
-		etat.getEtatPointagePk().setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
+		etat.setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
 		
 		// When
 		ConsultPointageDto dto = new ConsultPointageDto();

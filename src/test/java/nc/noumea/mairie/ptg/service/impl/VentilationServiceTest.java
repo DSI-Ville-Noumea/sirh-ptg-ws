@@ -15,7 +15,6 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
-import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
@@ -494,22 +493,18 @@ public class VentilationServiceTest {
 		Pointage p1 = new Pointage();
 		p1.setType(abs);
 		p1.setDateDebut(new LocalDate(2013, 7, 4).toDate());
-		EtatPointagePK pk1 = new EtatPointagePK();
-		pk1.setDateEtat(new Date());
-		pk1.setPointage(p1);
 		EtatPointage ep1 = new EtatPointage();
-		ep1.setEtatPointagePk(pk1);
+		ep1.setDateEtat(new Date());
+		ep1.setPointage(p1);
 		ep1.setEtat(EtatPointageEnum.APPROUVE);
 		p1.getEtats().add(ep1);
 
 		Pointage p2 = new Pointage();
 		p2.setType(abs);
 		p2.setDateDebut(new LocalDate(2013, 7, 4).toDate());
-		EtatPointagePK pk2 = new EtatPointagePK();
-		pk2.setDateEtat(new Date());
-		pk2.setPointage(p2);
 		EtatPointage ep2 = new EtatPointage();
-		ep2.setEtatPointagePk(pk2);
+		ep2.setDateEtat(new Date());
+		ep2.setPointage(p2);
 		ep2.setEtat(EtatPointageEnum.VENTILE);
 		p2.getEtats().add(ep2);
 		p2.getVentilations().add(new VentilDate());
@@ -531,8 +526,8 @@ public class VentilationServiceTest {
 		assertEquals(EtatPointageEnum.APPROUVE, p1.getEtats().get(0).getEtat());
 		assertEquals(EtatPointageEnum.VENTILE, p1.getEtats().get(1).getEtat());
 		assertEquals(9008888, (int) p1.getEtats().get(1).getIdAgent());
-		assertEquals(etatDate, p1.getEtats().get(1).getEtatPointagePk()
-				.getDateEtat());
+		assertEquals(etatDate, p1.getEtats().get(1).getDateEtat());
+		assertEquals(etatDate, p1.getEtats().get(1).getDateMaj());
 		assertEquals(ventilDate, p1.getVentilations().get(0));
 
 		assertEquals(1, p2.getEtats().size());

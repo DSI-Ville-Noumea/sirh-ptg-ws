@@ -7,7 +7,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
-import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import org.springframework.transaction.annotation.Transactional;
 
 privileged aspect EtatPointage_Roo_Jpa_ActiveRecord {
@@ -29,9 +28,9 @@ privileged aspect EtatPointage_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM EtatPointage o", EtatPointage.class).getResultList();
     }
     
-    public static EtatPointage EtatPointage.findEtatPointage(EtatPointagePK etatPointagePk) {
-        if (etatPointagePk == null) return null;
-        return entityManager().find(EtatPointage.class, etatPointagePk);
+    public static EtatPointage EtatPointage.findEtatPointage(Integer idEtatPointage) {
+        if (idEtatPointage == null) return null;
+        return entityManager().find(EtatPointage.class, idEtatPointage);
     }
     
     public static List<EtatPointage> EtatPointage.findEtatPointageEntries(int firstResult, int maxResults) {
@@ -50,7 +49,7 @@ privileged aspect EtatPointage_Roo_Jpa_ActiveRecord {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            EtatPointage attached = EtatPointage.findEtatPointage(this.etatPointagePk);
+            EtatPointage attached = EtatPointage.findEtatPointage(this.idEtatPointage);
             this.entityManager.remove(attached);
         }
     }

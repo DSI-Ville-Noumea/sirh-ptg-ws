@@ -9,7 +9,6 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
-import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
@@ -188,10 +187,9 @@ public class ApprobationService implements IApprobationService {
 
 			// at last, create and add the new EtatPointage
 			EtatPointage etat = new EtatPointage();
-			EtatPointagePK etatPk = new EtatPointagePK();
-			etatPk.setDateEtat(helperService.getCurrentDate());
-			etatPk.setPointage(ptg);
-			etat.setEtatPointagePk(etatPk);
+			etat.setDateEtat(helperService.getCurrentDate());
+			etat.setDateMaj(helperService.getCurrentDate());
+			etat.setPointage(ptg);
 			etat.setIdAgent(ptg.getIdAgent());
 			etat.setEtat(targetEtat);
 			ptg.getEtats().add(etat);
@@ -252,18 +250,15 @@ public class ApprobationService implements IApprobationService {
 
 			// at last, create and add the new EtatPointage
 			EtatPointage etat = new EtatPointage();
-			EtatPointagePK etatPk = new EtatPointagePK();
-			VentilDate lastVentil = ventilRepository.getLatestVentilDate(
-					helperService.getTypeChainePaieFromStatut(statut), false);
-			if (targetEtat == EtatPointageEnum.APPROUVE && lastVentil != null) {
-				etatPk.setDateEtat(lastVentil.getDateVentilation());
+			VentilDate lastVentil = ventilRepository.getLatestVentilDate(helperService.getTypeChainePaieFromStatut(statut), false);
+			if (targetEtat == EtatPointageEnum.APPROUVE && lastVentil != null)
+				etat.setDateEtat(lastVentil.getDateVentilation());
+			else
+				etat.setDateEtat(helperService.getCurrentDate());
 
-			} else {
-				etatPk.setDateEtat(helperService.getCurrentDate());
-			}
-			etatPk.setPointage(ptg);
+			etat.setDateMaj(helperService.getCurrentDate());
+			etat.setPointage(ptg);
 			etat.setIdAgent(ptg.getIdAgent());
-			etat.setEtatPointagePk(etatPk);
 			etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
 			ptg.getEtats().add(etat);
 		}

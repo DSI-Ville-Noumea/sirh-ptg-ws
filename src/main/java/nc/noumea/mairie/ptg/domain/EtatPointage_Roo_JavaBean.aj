@@ -3,18 +3,35 @@
 
 package nc.noumea.mairie.ptg.domain;
 
+import java.util.Date;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
-import nc.noumea.mairie.ptg.domain.EtatPointagePK;
+import nc.noumea.mairie.ptg.domain.Pointage;
 
 privileged aspect EtatPointage_Roo_JavaBean {
     
-    public EtatPointagePK EtatPointage.getEtatPointagePk() {
-        return this.etatPointagePk;
+    public Pointage EtatPointage.getPointage() {
+        return this.pointage;
     }
     
-    public void EtatPointage.setEtatPointagePk(EtatPointagePK etatPointagePk) {
-        this.etatPointagePk = etatPointagePk;
+    public void EtatPointage.setPointage(Pointage pointage) {
+        this.pointage = pointage;
+    }
+    
+    public Date EtatPointage.getDateEtat() {
+        return this.dateEtat;
+    }
+    
+    public void EtatPointage.setDateEtat(Date dateEtat) {
+        this.dateEtat = dateEtat;
+    }
+    
+    public Date EtatPointage.getDateMaj() {
+        return this.dateMaj;
+    }
+    
+    public void EtatPointage.setDateMaj(Date dateMaj) {
+        this.dateMaj = dateMaj;
     }
     
     public EtatPointageEnum EtatPointage.getEtat() {

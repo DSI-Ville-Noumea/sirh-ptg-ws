@@ -9,7 +9,6 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
-import nc.noumea.mairie.ptg.domain.EtatPointagePK;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
@@ -487,13 +486,12 @@ public class VentilationService implements IVentilationService {
 				continue;
 			}
 
-			EtatPointagePK pk = new EtatPointagePK();
-			pk.setDateEtat(currentDate);
-			pk.setPointage(ptg);
 			EtatPointage ep = new EtatPointage();
+			ep.setDateEtat(currentDate);
+			ep.setDateMaj(currentDate);
+			ep.setPointage(ptg);
 			ep.setEtat(EtatPointageEnum.VENTILE);
 			ep.setIdAgent(idAgent);
-			ep.setEtatPointagePk(pk);
 			ptg.getEtats().add(ep);
 		}
 	}

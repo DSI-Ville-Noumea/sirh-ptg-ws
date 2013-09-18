@@ -44,8 +44,8 @@ public class Pointage {
 	@JoinColumn(name = "ID_TYPE_POINTAGE")
 	private RefTypePointage type;
 
-	@OneToMany(mappedBy = "etatPointagePk.pointage", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-	@OrderBy("etatPointagePk.dateEtat desc")
+	@OneToMany(mappedBy = "pointage", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OrderBy("idEtatPointage desc")
 	private List<EtatPointage> etats = new ArrayList<EtatPointage>();
 
 	@Column(name = "DATE_LUNDI")
@@ -92,6 +92,7 @@ public class Pointage {
 			name = "PTG_POINTAGE_VENTIL_DATE",
 			joinColumns = @JoinColumn(name = "ID_POINTAGE"), 
 			inverseJoinColumns = @JoinColumn(name = "ID_VENTIL_DATE"))
+	@OrderBy("idVentilDate desc")
 	private List<VentilDate> ventilations = new ArrayList<VentilDate>();
 	
 	@Transient
@@ -102,5 +103,12 @@ public class Pointage {
 	@Transient
 	public EtatPointage getLatestEtatPointage() {
 		return etats.iterator().next();
+	}
+	
+	@Transient
+	public VentilDate getLatestVentilDate() {
+		if (ventilations.size() ==0)
+			return null;
+		return ventilations.iterator().next();
 	}
 }

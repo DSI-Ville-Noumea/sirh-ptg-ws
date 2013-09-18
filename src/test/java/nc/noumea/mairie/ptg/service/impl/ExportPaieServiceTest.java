@@ -65,10 +65,12 @@ public class ExportPaieServiceTest {
 		service.markPointagesAsValidated(Arrays.asList(p1, p2), 9008799);
 		
 		// Then
-		assertEquals(date, p1.getEtats().get(0).getEtatPointagePk().getDateEtat());
+		assertEquals(date, p1.getEtats().get(0).getDateEtat());
+		assertEquals(date, p1.getEtats().get(0).getDateMaj());
 		assertEquals(9008799, (int) p1.getEtats().get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VALIDE, p1.getEtats().get(0).getEtat());
-		assertEquals(date, p2.getEtats().get(0).getEtatPointagePk().getDateEtat());
+		assertEquals(date, p2.getEtats().get(0).getDateEtat());
+		assertEquals(date, p2.getEtats().get(0).getDateMaj());
 		assertEquals(9008799, (int) p2.getEtats().get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VALIDE, p2.getEtats().get(0).getEtat());
 	}

@@ -3,7 +3,6 @@ package nc.noumea.mairie.ptg.service;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
@@ -30,9 +29,10 @@ public interface IPointageService {
 	 * @param idPointage
 	 * @param idAgent
 	 * @param dateLundi
+	 * @param dateEtat
 	 * @return
 	 */
-	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi);
+	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Date dateEtat);
 
 	/**
 	 * Based on the user input, this code retrieves a Pointage if existing,
@@ -43,29 +43,11 @@ public interface IPointageService {
 	 * @param idPointage
 	 * @param idAgent
 	 * @param dateLundi
+	 * @param dateEtat
 	 * @param idRefPrime
 	 * @return
 	 */
-	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi,
-			Integer idRefPrime);
-
-	/**
-	 * Same method as getOrCreateNewPointage but with SIRH rules. Based on the
-	 * user input, this code retrieves a Pointage if existing, creates a new one
-	 * if not. It does NOT set its pointage characteristics (dateDebut, dateFin,
-	 * quantite and booleans) Each modification sets in APPOUVE The date used
-	 * for new status is the last unpaid VentilDate
-	 * 
-	 * @param idAgentCreator
-	 * @param idPointage
-	 * @param idAgent
-	 * @param statut
-	 * @param dateLundi
-	 * @param idRefPrime
-	 * @return
-	 */
-	Pointage getOrCreateNewPointageSIRH(Integer idAgentCreator, Integer idPointage, Integer idAgent,
-			AgentStatutEnum statut, Date dateLundi, Integer idRefPrime);
+	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Date dateEtat, Integer idRefPrime);
 
 	/**
 	 * Returns a list of FichePointageDto initialized with Agents assigned
