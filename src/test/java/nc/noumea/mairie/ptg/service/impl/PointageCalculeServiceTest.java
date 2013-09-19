@@ -125,7 +125,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7711, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7, 9).toDate(), result.get(0).getDateDebut());
-		assertEquals(3, (int) result.get(0).getQuantite());
+		assertEquals(180, (int) result.get(0).getQuantite());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -164,7 +164,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7712, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7,14).toDate(), result.get(0).getDateDebut());
-		assertEquals(4, (int) result.get(0).getQuantite());
+		assertEquals(240, (int) result.get(0).getQuantite());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -207,7 +207,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7712, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7,13).toDate(), result.get(0).getDateDebut());
-		assertEquals(4, (int) result.get(0).getQuantite());
+		assertEquals(240, (int) result.get(0).getQuantite());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());

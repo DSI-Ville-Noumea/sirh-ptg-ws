@@ -30,6 +30,15 @@ public class PointageRepository implements IPointageRepository {
         query.setParameter("statut", statut);
         return query.getResultList();
     }
+    
+    @Override
+    public List<RefPrime> getRefPrimesCalculees(List<Integer> noRubrList, AgentStatutEnum statut) {
+
+        TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getRefPrimesCalculated", RefPrime.class);
+        query.setParameter("noRubrList", noRubrList.size() == 0 ? null : noRubrList);
+        query.setParameter("statut", statut);
+        return query.getResultList();
+    }
 
     @Override
     public List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut) {

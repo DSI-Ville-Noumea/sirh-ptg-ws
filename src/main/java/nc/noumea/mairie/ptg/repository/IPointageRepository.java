@@ -12,6 +12,8 @@ public interface IPointageRepository {
 
     List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut);
 
+    List<RefPrime> getRefPrimesCalculees(List<Integer> noRubrList, AgentStatutEnum statut);
+    
     List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut);
 
     List<RefPrime> getRefPrimesList();

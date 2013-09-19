@@ -237,7 +237,7 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("WHERE pc.ID_AGENT = :idAgent ");
 		sb.append("AND extract(MONTH FROM pc.DATE_DEBUT) = :month ");
 
-		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), PointageCalcule.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("month", new LocalDate(dateDebutMois).monthOfYear().get());
 

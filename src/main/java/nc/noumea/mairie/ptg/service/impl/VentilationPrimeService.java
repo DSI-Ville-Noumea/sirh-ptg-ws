@@ -65,6 +65,7 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 				vp.setIdAgent(idAgent);
 				vp.setRefPrime(ptg.getRefPrime());
 				vp.setDateDebutMois(dateDebutMois);
+				vp.setEtat(EtatPointageEnum.VENTILE);
 				primesByMonth.put(idRefPrime, vp);
 			}
 			

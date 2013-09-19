@@ -11,8 +11,8 @@ import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 
@@ -42,7 +42,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 	public List<PointageCalcule> calculatePointagesForAgentAndWeek(Integer idAgent, AgentStatutEnum statut, Date dateLundi, List<Pointage> agentPointages) {
 		
 		List<Integer> norubrs = sirhRepository.getPrimePointagesByAgent(idAgent, dateLundi);
-		List<RefPrime> refPrimes = pointageRepository.getRefPrimes(norubrs, statut);
+		List<RefPrime> refPrimes = pointageRepository.getRefPrimesCalculees(norubrs, statut);
 		
 		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>();
 		
@@ -86,7 +86,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 					&& (datePointage.getDayOfWeek() == DateTimeConstants.SUNDAY || holidayService.isHoliday(datePointage))) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
 				existingPc = returnOrCreateNewPointageWithPrime(null, ptg, prime);
-				existingPc.addQuantite((int) (totalMinutes / 60));
+				existingPc.addQuantite((int) totalMinutes);
 
 				if (!result.contains(existingPc))
 					result.add(existingPc);
@@ -97,7 +97,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 			if (prime.getNoRubr().equals(7711)) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
 				existingPc = returnOrCreateNewPointageWithPrime(null, ptg, prime);
-				existingPc.addQuantite((int) ((totalMinutes - dayMinutes) / 60));
+				existingPc.addQuantite((int) (totalMinutes - dayMinutes));
 
 				if (!result.contains(existingPc))
 					result.add(existingPc);
