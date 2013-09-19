@@ -21,6 +21,7 @@ import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
@@ -73,6 +74,23 @@ public class ExportPaieServiceTest {
 		assertEquals(date, p2.getEtats().get(0).getDateMaj());
 		assertEquals(9008799, (int) p2.getEtats().get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VALIDE, p2.getEtats().get(0).getEtat());
+	}
+	
+	@Test
+	public void markPointagesCalculesAsValidated_2Pointages_ForceEtat() {
+		
+		// Given
+		PointageCalcule p1 = new PointageCalcule();
+		PointageCalcule p2 = new PointageCalcule();
+		
+		ExportPaieService service = new ExportPaieService();
+		
+		// When
+		service.markPointagesCalculesAsValidated(Arrays.asList(p1, p2));
+		
+		// Then
+		assertEquals(EtatPointageEnum.VALIDE, p1.getEtat());
+		assertEquals(EtatPointageEnum.VALIDE, p2.getEtat());
 	}
 	
 	@Test
@@ -303,6 +321,7 @@ public class ExportPaieServiceTest {
 		Mockito.verify(wfS, Mockito.times(1)).changeStateToExportPaieStarted(TypeChainePaieEnum.SCV);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Test
 	public void processExportPaieForAgent_ExportGivenAgent() {
 		
@@ -321,8 +340,10 @@ public class ExportPaieServiceTest {
 		Mockito.when(pR.getEntity(ExportPaieTask.class, 3)).thenReturn(task);
 		
 		List<Pointage> pointages = Arrays.asList(new Pointage());
+		List<PointageCalcule> pointagesCalcules = Arrays.asList(new PointageCalcule());
 		IPointageService pS = Mockito.mock(IPointageService.class);
 		Mockito.when(pS.getPointagesVentilesForAgent(9008765, ventilDate)).thenReturn(pointages);
+		Mockito.when(pS.getPointagesCalculesVentilesForAgent(9008765, ventilDate)).thenReturn(pointagesCalcules);
 		
 		List<Sppact> sppacts = new ArrayList<Sppact>();
 		IExportPaieAbsenceService epS = Mockito.mock(IExportPaieAbsenceService.class);
@@ -341,13 +362,16 @@ public class ExportPaieServiceTest {
 		Mockito.when(ephS.exportHsupToPaie(ventilHsupOrderedByDateAsc)).thenReturn(spphres);
 
 		List<Sppprm> sppprms = new ArrayList<Sppprm>();
+		List<Sppprm> sppprmsCalculees = new ArrayList<Sppprm>();
 		List<Spprim> spprims = new ArrayList<Spprim>();
 		IExportPaiePrimeService eppS = Mockito.mock(IExportPaiePrimeService.class);
 		Mockito.when(eppS.exportPrimesJourToPaie(pointages)).thenReturn(sppprms);
 		Mockito.when(eppS.exportPrimesMoisToPaie(ventilPrimeOrderedByDateAsc)).thenReturn(spprims);
+		Mockito.when(eppS.exportPrimesCalculeesJourToPaie(pointagesCalcules)).thenReturn(sppprmsCalculees);
 		
 		ExportPaieService service = Mockito.spy(new ExportPaieService());
 		Mockito.doNothing().when(service).markPointagesAsValidated(pointages, 9009999);
+		Mockito.doNothing().when(service).markPointagesCalculesAsValidated(pointagesCalcules);
 		Mockito.doNothing().when(service).updateSpmatrForAgentAndPointages(9008765, TypeChainePaieEnum.SCV, pointages);
 		Mockito.doNothing().when(service).persistSppac(sppacts);
 		Mockito.doNothing().when(service).persistSpphre(spphres);
@@ -364,10 +388,11 @@ public class ExportPaieServiceTest {
 		
 		// Then
 		Mockito.verify(service, Mockito.times(1)).markPointagesAsValidated(pointages, 9009999);
+		Mockito.verify(service, Mockito.times(1)).markPointagesCalculesAsValidated(pointagesCalcules);
 		Mockito.verify(service, Mockito.times(1)).updateSpmatrForAgentAndPointages(9008765, TypeChainePaieEnum.SCV, pointages);
 		Mockito.verify(service, Mockito.times(1)).persistSppac(sppacts);
 		Mockito.verify(service, Mockito.times(1)).persistSpphre(spphres);
-		Mockito.verify(service, Mockito.times(1)).persistSppprm(sppprms);
+		Mockito.verify(service, Mockito.times(2)).persistSppprm(Mockito.anyList());
 		Mockito.verify(service, Mockito.times(1)).persistSpprim(spprims);
 	}
 	

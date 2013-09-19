@@ -10,6 +10,7 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
@@ -309,7 +310,7 @@ public class PointageService implements IPointageService {
 
 		return filterOldPointagesAndEtatFromList(agentPointages, Arrays.asList(EtatPointageEnum.VENTILE));
 	}
-
+	
 	protected List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats) {
 
 		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
@@ -340,6 +341,18 @@ public class PointageService implements IPointageService {
 		return resultList;
 	}
 
+	@Override
+	public List<PointageCalcule> getPointagesCalculesVentilesForAgent(Integer idAgent, VentilDate ventilDate) {
+
+		List<PointageCalcule> agentPointagesCalcules = pointageRepository.getPointagesCalculesVentilesForAgent(idAgent,
+				ventilDate.getIdVentilDate());
+
+		logger.debug("Found {} Pointage Calcules for agent {} and ventil date {} as of {}", agentPointagesCalcules.size(), idAgent,
+				ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
+
+		return agentPointagesCalcules;
+	}
+	
 	@Override
 	public boolean isPrimeUtiliseePointage(Integer idAgent, List<Integer> idRefPrime) {
 

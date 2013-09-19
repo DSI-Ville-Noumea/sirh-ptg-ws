@@ -10,6 +10,7 @@ import nc.noumea.mairie.domain.Spprim;
 import nc.noumea.mairie.domain.SpprimId;
 import nc.noumea.mairie.ptg.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.repository.IExportPaieRepository;
@@ -39,7 +40,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 				|| ptg.getRefPrime().getMairiePrimeTableEnum() != MairiePrimeTableEnum.SPPPRM)
 				continue;
 			
-			// Fetch or create Sppact
+			// Fetch or create Sppprm
 			Sppprm prm = findOrCreateSppprmRecord(modifiedOrAddedSppprm, ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getNoRubr());
 			
 			switch (ptg.getRefPrime().getTypeSaisie()) {
@@ -64,6 +65,45 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 		}
 		
 		return modifiedOrAddedSppprm;
+	}
+	
+	@Override
+	public List<Sppprm> exportPrimesCalculeesJourToPaie(List<PointageCalcule> pointagesCalculesOrderedByDateAsc) {
+
+		List<Sppprm> modifiedOrAddedSppprm = new ArrayList<Sppprm>();
+		
+		for (PointageCalcule ptgC : pointagesCalculesOrderedByDateAsc) {
+			
+			if (ptgC.getTypePointageEnum() != RefTypePointageEnum.PRIME
+				|| ptgC.getRefPrime().getMairiePrimeTableEnum() != MairiePrimeTableEnum.SPPPRM)
+				continue;
+			
+			// Fetch or create Sppprm
+			Sppprm prm = findOrCreateSppprmRecord(modifiedOrAddedSppprm, ptgC.getIdAgent(), ptgC.getDateDebut(), ptgC.getRefPrime().getNoRubr());
+			
+			switch (ptgC.getRefPrime().getTypeSaisie()) {
+				case NB_HEURES:
+				case PERIODE_HEURES:
+					prm.setNbPrime(helperService.convertMinutesToMairieNbHeuresFormat(ptgC.getQuantite()));
+					break;
+				case CASE_A_COCHER:
+				case NB_INDEMNITES:
+				default:
+					prm.setNbPrime(ptgC.getQuantite());
+					break;
+
+			}
+			
+			// If quantity is 0, remove this record from the list of Sppprm
+			if (prm.getNbPrime() == 0) {
+				modifiedOrAddedSppprm.remove(prm);
+				prm.remove();
+			}
+
+		}
+		
+		return modifiedOrAddedSppprm;
+		
 	}
 	
 	protected Sppprm findOrCreateSppprmRecord(List<Sppprm> existingRecords, Integer idAgent, Date dateJour, Integer norubr) {
@@ -106,7 +146,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 			if (ventilPrime.getRefPrime().getMairiePrimeTableEnum() != MairiePrimeTableEnum.SPPRIM)
 				continue;
 			
-			// Fetch or create Spphre
+			// Fetch or create Spprim
 			Spprim pri = findOrCreateSpprimmRecord(ventilPrime.getIdAgent(), ventilPrime.getDateDebutMois(), ventilPrime.getRefPrime().getNoRubr());
 			
 			// Fill in the number of Primes for the month

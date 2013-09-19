@@ -117,7 +117,7 @@ public class VentilationController {
 	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> processTask(@RequestParam("idVentilTask") Integer idVentilTask) {
 
-		logger.debug("entered GET [ventilation/processTask] => processTask with parameters idAgent = {}", idVentilTask);
+		logger.debug("entered GET [ventilation/processTask] => processTask with parameters idVentilTask = {}", idVentilTask);
 
 		if (VentilTask.findVentilTask(idVentilTask) == null)
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);

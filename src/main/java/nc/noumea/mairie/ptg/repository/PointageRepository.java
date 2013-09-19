@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 
 import org.springframework.stereotype.Repository;
@@ -147,6 +148,17 @@ public class PointageRepository implements IPointageRepository {
 
         return query.getResultList();
     }
+    
+    @Override
+	public List<PointageCalcule> getPointagesCalculesVentilesForAgent(Integer idAgent, Integer idVentilDate) {
+
+    	TypedQuery<PointageCalcule> query = ptgEntityManager.createQuery(
+    			"select ptg from PointageCalcule p where p.idAgent = :idAgent and p.lastVentilDate.idVentilDate = :idVentilDate", PointageCalcule.class);
+        query.setParameter("idAgent", idAgent);
+        query.setParameter("idVentilDate", idVentilDate);
+
+        return query.getResultList();
+	}
 
     @Override
     public List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {

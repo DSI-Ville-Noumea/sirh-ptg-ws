@@ -15,6 +15,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
@@ -145,6 +146,7 @@ public class ExportPaieService implements IExportPaieService {
     	// 1. Retrieve all pointages that have been ventilated
     	logger.debug("Retrieving ventilated pointages...");
 		List<Pointage> ventilatedPointages = pointageService.getPointagesVentilesForAgent(idAgent, ventilDate);
+		List<PointageCalcule> ventilatedPointagesCalcules = pointageService.getPointagesCalculesVentilesForAgent(idAgent, ventilDate);
 		
 		if (ventilatedPointages.size() == 0) {
 			logger.debug("No pointages to export. Exiting...");
@@ -165,10 +167,12 @@ public class ExportPaieService implements IExportPaieService {
 		List<VentilPrime> vPrimes = ventilationRepository.getListVentilPrimesMoisForAgentAndVentilDateOrderByDateAsc(idAgent, ventilDate.getIdVentilDate());
 		persistSpprim(exportPaiePrimeService.exportPrimesMoisToPaie(vPrimes));
 		persistSppprm(exportPaiePrimeService.exportPrimesJourToPaie(ventilatedPointages));
+		persistSppprm(exportPaiePrimeService.exportPrimesCalculeesJourToPaie(ventilatedPointagesCalcules));
 		
 		// 5. Mark pointages as validated
     	logger.debug("Marking pointages as Etat : valide ...");
 		markPointagesAsValidated(ventilatedPointages, agentIdValidating);
+		markPointagesCalculesAsValidated(ventilatedPointagesCalcules);
 		
 		// 6. Update SPMATR with oldest pointage month
     	logger.debug("Updating SPMATR for Paie...");
@@ -265,6 +269,16 @@ public class ExportPaieService implements IExportPaieService {
 			ep.setEtat(EtatPointageEnum.VALIDE);
 			ep.setIdAgent(idAgent);
 			ptg.getEtats().add(ep);
+		}
+	}
+	
+	/**
+	 * Updates each pointage calcule to set them as VALIDE state
+	 * @param pointages
+	 */
+	protected void markPointagesCalculesAsValidated(List<PointageCalcule> pointagesCalcules) {
+		for (PointageCalcule ptgC : pointagesCalcules) {
+			ptgC.setEtat(EtatPointageEnum.VALIDE);
 		}
 	}
 	

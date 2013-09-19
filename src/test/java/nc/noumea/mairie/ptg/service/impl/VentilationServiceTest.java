@@ -416,6 +416,9 @@ public class VentilationServiceTest {
 				dateDebutMois, fromEtatDate);
 
 		// Then
+		assertEquals(EtatPointageEnum.VENTILE, p2.getEtat());
+		assertEquals(ventilDate, p2.getLastVentilDate());
+		
 		Mockito.verify(ventilPrime, Mockito.times(1)).persist();
 		assertEquals(ventilDate, ventilPrime.getVentilDate());
 

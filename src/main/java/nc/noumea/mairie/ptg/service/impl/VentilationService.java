@@ -397,6 +397,13 @@ public class VentilationService implements IVentilationService {
 			v.persist();
 		}
 
+		// Because Pointages Calcules are not modifiable by anyone, we directly mark them
+		// as ventilated and set their VentilDate to the current one
+		for (PointageCalcule ptgC : agentsPointagesCalculesForPeriod) {
+			ptgC.setEtat(EtatPointageEnum.VENTILE);
+			ptgC.setLastVentilDate(ventilDate);
+		}
+		
 		return agentsPointageForPeriod;
 	}
 
