@@ -193,4 +193,70 @@ public class HelperServiceTest {
 		String s = df.format(dd);
 		assertEquals("SBT +1100", s);
 	}
+	
+	@Test
+	public void formatMinutesToString_HoursWithoutMinutes() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals("2h", service.formatMinutesToString(120));
+		
+	}
+	
+	@Test
+	public void formatMinutesToString_HoursWithMinutes() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals("4h30m", service.formatMinutesToString(270));
+		
+	}
+	
+	@Test
+	public void formatMinutesToString_MinutesWithoutHours() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals("15m", service.formatMinutesToString(15));
+		
+	}
+	
+	@Test
+	public void formatMinutesToString_PeriodHoursWithoutMinutes() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals("2h", service.formatMinutesToString(new DateTime(2013, 01, 01, 2, 15, 0).toDate(), new DateTime(2013, 01, 01, 4, 15, 0).toDate()));
+		
+	}
+	
+	@Test
+	public void formatMinutesToString_PeriodHoursWithMinutes() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals("4h30m", service.formatMinutesToString(new DateTime(2013, 01, 01, 16, 15, 0).toDate(), new DateTime(2013, 01, 01, 20, 45, 0).toDate()));
+		
+	}
+	
+	@Test
+	public void formatMinutesToString_PeriodMinutesWithoutHours() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals("15m", service.formatMinutesToString(new DateTime(2013, 01, 01, 2, 15, 0).toDate(), new DateTime(2013, 01, 01, 2, 30, 0).toDate()));
+		
+	}
 }

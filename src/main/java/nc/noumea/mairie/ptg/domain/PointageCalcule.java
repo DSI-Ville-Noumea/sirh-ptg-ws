@@ -53,6 +53,10 @@ public class PointageCalcule {
 	@JoinColumn(name = "ID_REF_PRIME", referencedColumnName = "ID_REF_PRIME")
 	private RefPrime refPrime;
 	
+	@ManyToOne
+	@JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
+	private VentilDate lastVentilDate;
+	
 	@Transient
 	public RefTypePointageEnum getTypePointageEnum() {
 		return RefTypePointageEnum.getRefTypePointageEnum(type.getIdRefTypePointage());

@@ -57,5 +57,8 @@ public class VentilDate {
             joinColumns =
             @JoinColumn(name = "ID_VENTIL_DATE"))
     private Set<Pointage> pointages = new HashSet<Pointage>();
+    
+    @OneToMany(mappedBy = "lastVentilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<PointageCalcule> pointagesCalcules = new HashSet<PointageCalcule>();
 
 }

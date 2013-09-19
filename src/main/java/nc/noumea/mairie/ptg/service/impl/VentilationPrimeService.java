@@ -88,14 +88,15 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 
 	private Integer getQuantiteFromPointage(Pointage ptg) {
 		
-		switch(ptg.getRefPrime().getTypeSaisie()) {
+		switch (ptg.getRefPrime().getTypeSaisie()) {
 			case CASE_A_COCHER:
-			case NB_HEURES :
-			case NB_INDEMNITES :
+			case NB_HEURES:
+			case NB_INDEMNITES:
 				return ptg.getQuantite();
 
 			case PERIODE_HEURES:
-				return (int) (new Interval(new DateTime(ptg.getDateDebut()), (new DateTime(ptg.getDateFin()))).toDuration().getStandardMinutes() / 60d);
+				return (int) new Interval(new DateTime(ptg.getDateDebut()), (new DateTime(ptg.getDateFin())))
+						.toDuration().getStandardMinutes();
 		}
 		
 		return 0;

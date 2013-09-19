@@ -438,7 +438,7 @@ HTTP Status code OK : 200
     id_agent: 9003903
     id_ref_prime: 289
     id_ventil_prime: 41
-    quantite: 5
+    quantite: "5" // ou "2h30" ou "45m"
 }
 +-------------------------+
 

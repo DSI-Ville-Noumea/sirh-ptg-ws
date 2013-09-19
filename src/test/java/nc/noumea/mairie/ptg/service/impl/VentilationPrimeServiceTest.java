@@ -96,7 +96,7 @@ public class VentilationPrimeServiceTest {
 		Pointage p3 = new Pointage();
 		p3.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
 		p3.setDateDebut(new DateTime(2012, 04, 15, 8, 15, 0).toDate());
-		p3.setDateFin(new DateTime(2012, 04, 15, 11, 15, 0).toDate());
+		p3.setDateFin(new DateTime(2012, 04, 15, 11, 45, 0).toDate());
 		p3.setRefPrime(refPrime2);
 		p3.setType(prime);
 		
@@ -117,7 +117,7 @@ public class VentilationPrimeServiceTest {
 		assertEquals(9007865, (int) result.get(1).getIdAgent());
 		assertEquals(dateDebutMois, result.get(1).getDateDebutMois());
 		assertEquals(refPrime2, result.get(1).getRefPrime());
-		assertEquals(3, (int) result.get(1).getQuantite());
+		assertEquals(210, (int) result.get(1).getQuantite());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
 	}
 	

@@ -9,6 +9,9 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -97,6 +100,28 @@ public class HelperService {
 		double result = (double) (nbHours * 100 + nbMinutes) / 100;
 		
 		return result;
+	}
+	
+	public String formatMinutesToString(Integer minutes) {
+		int nbMinutesModulo = minutes % 60;
+		int nbHours = minutes / 60;
+
+		StringBuilder sb = new StringBuilder();
+
+		if (nbHours > 0)
+			sb.append(String.format("%sh", nbHours));
+
+		if (nbMinutesModulo > 0)
+			sb.append(String.format("%sm", nbMinutesModulo));
+
+		return sb.toString();
+	}
+	
+	private static PeriodFormatter formatter = new PeriodFormatterBuilder().appendHours().appendSuffix("h")
+			.appendMinutes().appendSuffix("m").toFormatter();
+
+	public String formatMinutesToString(Date dateDebut, Date dateFin) {
+		return formatter.print(new Period(new DateTime(dateDebut), new DateTime(dateFin)));
 	}
 	
 	public TypeChainePaieEnum getTypeChainePaieFromStatut(AgentStatutEnum statut) {

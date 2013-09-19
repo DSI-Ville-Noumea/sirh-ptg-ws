@@ -4,11 +4,7 @@ import java.util.Date;
 
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
-
-import org.joda.time.DateTime;
-import org.joda.time.Period;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
 
 public class ConsultPointageDto {
 
@@ -24,15 +20,11 @@ public class ConsultPointageDto {
 	private Integer idRefEtat;
 	private Date dateSaisie;
 
-	private static PeriodFormatter formatter = new PeriodFormatterBuilder()
-			.appendHours().appendSuffix("h").appendMinutes().appendSuffix("m")
-			.toFormatter();
-
 	public ConsultPointageDto() {
 
 	}
 
-	public ConsultPointageDto(Pointage ptg) {
+	public ConsultPointageDto(Pointage ptg, HelperService helper) {
 
 		idPointage = ptg.getIdPointage();
 		typePointage = ptg.getType().getLabel();
@@ -44,38 +36,26 @@ public class ConsultPointageDto {
 				.getText();
 
 		switch (ptg.getTypePointageEnum()) {
-		case ABSENCE:
-		case H_SUP:
-			quantite = formatHourInterval(debut, fin);
-			break;
-		case PRIME:
-			typePointage = ptg.getRefPrime().getLibelle();
-			switch (ptg.getRefPrime().getTypeSaisie()) {
-			case CASE_A_COCHER:
-			case NB_INDEMNITES:
-				quantite = formatNumberOf(ptg.getQuantite(), "");
+			case ABSENCE:
+			case H_SUP:
+				quantite = helper.formatMinutesToString(debut, fin);
 				break;
-			case NB_HEURES:
-				quantite = formatNumberOf(ptg.getQuantite(), "h");
-				break;
-			case PERIODE_HEURES:
-				quantite = formatHourInterval(debut, fin);
-				break;
-			}
+			case PRIME:
+				typePointage = ptg.getRefPrime().getLibelle();
+				switch (ptg.getRefPrime().getTypeSaisie()) {
+					case CASE_A_COCHER:
+					case NB_INDEMNITES:
+						quantite = String.format("%s", ptg.getQuantite());
+						break;
+					case NB_HEURES:
+						quantite = helper.formatMinutesToString(ptg.getQuantite());
+						break;
+					case PERIODE_HEURES:
+						quantite = helper.formatMinutesToString(debut, fin);
+						break;
+				}
 		}
 
-	}
-
-	private String formatHourInterval(Date debut, Date fin) {
-		return formatter.print(new Period(new DateTime(debut),
-				new DateTime(fin)));
-	}
-
-	private String formatNumberOf(Integer quantite, String suffix) {
-		if (suffix != null && suffix != "")
-			return String.format("%s%s", quantite, suffix);
-
-		return String.format("%s", quantite);
 	}
 
 	public void updateEtat(EtatPointage etat) {

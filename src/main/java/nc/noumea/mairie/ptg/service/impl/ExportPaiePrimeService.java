@@ -41,7 +41,19 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 			
 			// Fetch or create Sppact
 			Sppprm prm = findOrCreateSppprmRecord(modifiedOrAddedSppprm, ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getNoRubr());
-			prm.setNbPrime(ptg.getQuantite());
+			
+			switch (ptg.getRefPrime().getTypeSaisie()) {
+				case NB_HEURES:
+				case PERIODE_HEURES:
+					prm.setNbPrime(helperService.convertMinutesToMairieNbHeuresFormat(ptg.getQuantite()));
+					break;
+				case CASE_A_COCHER:
+				case NB_INDEMNITES:
+				default:
+					prm.setNbPrime(ptg.getQuantite());
+					break;
+
+			}
 			
 			// If quantity is 0, remove this record from the list of Sppprm
 			if (prm.getNbPrime() == 0) {

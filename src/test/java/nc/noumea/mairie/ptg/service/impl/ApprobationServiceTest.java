@@ -88,10 +88,13 @@ public class ApprobationServiceTest {
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
 		Mockito.when(mRepo.getAgent(9001235)).thenReturn(new Agent());
 
+		HelperService hS = Mockito.mock(HelperService.class);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
 		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, codeService, agent, idRefEtat, idRefType);
@@ -144,10 +147,13 @@ public class ApprobationServiceTest {
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
 
+		HelperService hS = Mockito.mock(HelperService.class);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
 		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, codeService, agent, idRefEtat, idRefType);
@@ -222,9 +228,12 @@ public class ApprobationServiceTest {
 		ag9007861.setIdAgent(9007861);
 		Mockito.when(mRepo.getAgent(9007861)).thenReturn(ag9007861);
 
+		HelperService hS = Mockito.mock(HelperService.class);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
 		List<ConsultPointageDto> result = service.getPointagesArchives(9001234, 123);
@@ -524,9 +533,12 @@ public class ApprobationServiceTest {
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
 
+		HelperService hS = Mockito.mock(HelperService.class);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
 		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, idAgents, idRefEtat, idRefType);

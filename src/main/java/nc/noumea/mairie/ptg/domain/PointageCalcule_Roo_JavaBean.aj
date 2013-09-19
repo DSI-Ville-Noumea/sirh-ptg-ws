@@ -8,6 +8,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 
 privileged aspect PointageCalcule_Roo_JavaBean {
     
@@ -73,6 +74,14 @@ privileged aspect PointageCalcule_Roo_JavaBean {
     
     public void PointageCalcule.setRefPrime(RefPrime refPrime) {
         this.refPrime = refPrime;
+    }
+    
+    public VentilDate PointageCalcule.getLastVentilDate() {
+        return this.lastVentilDate;
+    }
+    
+    public void PointageCalcule.setLastVentilDate(VentilDate lastVentilDate) {
+        this.lastVentilDate = lastVentilDate;
     }
     
 }

@@ -24,15 +24,11 @@ import nc.noumea.mairie.ptg.service.IApprobationService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ApprobationService implements IApprobationService {
-
-	private Logger logger = LoggerFactory.getLogger(ApprobationService.class);
 
 	@Autowired
 	private IPointageRepository pointageRepository;
@@ -100,7 +96,7 @@ public class ApprobationService implements IApprobationService {
 
 		for (Pointage ptg : pointages) {
 			AgentDto agDto = new AgentDto(sirhRepository.getAgent(ptg.getIdAgent()));
-			ConsultPointageDto dto = new ConsultPointageDto(ptg);
+			ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
 			dto.updateEtat(ptg.getLatestEtatPointage());
 			dto.setAgent(agDto);
 			result.add(dto);
@@ -123,7 +119,7 @@ public class ApprobationService implements IApprobationService {
 		for (Pointage ptg : list) {
 			for (EtatPointage etat : ptg.getEtats()) {
 				AgentDto agDto = new AgentDto(sirhRepository.getAgent(etat.getIdAgent()));
-				ConsultPointageDto dto = new ConsultPointageDto(ptg);
+				ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
 				dto.updateEtat(etat);
 				dto.setAgent(agDto);
 				result.add(dto);

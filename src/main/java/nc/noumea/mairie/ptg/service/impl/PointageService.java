@@ -27,7 +27,6 @@ import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
-import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
@@ -43,18 +42,21 @@ import org.springframework.stereotype.Service;
 public class PointageService implements IPointageService {
 
 	private Logger logger = LoggerFactory.getLogger(PointageService.class);
+	
 	@Autowired
 	private IPointageRepository pointageRepository;
+	
 	@Autowired
 	private ISirhRepository sirhRepository;
+	
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
+	
 	@Autowired
 	private HelperService helperService;
+	
 	@Autowired
 	private IAgentMatriculeConverterService agentMatriculeConverterService;
-	@Autowired
-	private IVentilationRepository ventilRepository;
 
 	protected FichePointageDto getFichePointageForAgent(Agent agent, Date date) {
 

@@ -558,7 +558,7 @@ public class VentilationService implements IVentilationService {
 			case PRIME: {
 				for (VentilPrime prime : ventilationRepository.getListOfVentilPrimeForDateAgentAndType(idDateVentil,
 						agents))
-					pointagesVentiles.add(new VentilPrimeDto(prime));
+					pointagesVentiles.add(new VentilPrimeDto(prime, helperService));
 
 				break;
 			}
