@@ -17,6 +17,7 @@ import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
@@ -658,12 +659,88 @@ public class AccessRightsServiceTest {
 		dto.getDelegataire().setIdAgent(9009999);
 
 		// When
-		service.setDelegatorAndOperators(idAgent, dto);
+		ReturnMessageDto result = service.setDelegatorAndOperators(idAgent, dto);
 
 		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 		assertEquals(9009999, (int) droitAppro.getIdAgentDelegataire());
 	}
 
+	@Test
+	public void setDelegatorAndOperators_NewDelegataireIsAlreadyOperateur_ReturnErrorMessage() {
+
+		// Given
+		Integer idAgent = 9008765;
+
+		Droit droitAppro = new Droit();
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.isUserOperator(9009999)).thenReturn(true);
+		
+		Agent ag = new Agent();
+		ag.setIdAgent(9009999);
+		ag.setNomUsage("NOM");
+		ag.setPrenomUsage("PRENOM");
+		ISirhRepository sRepo = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sRepo.getAgent(9009999)).thenReturn(ag);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", sRepo);
+
+		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
+		dto.setDelegataire(new AgentDto());
+		dto.getDelegataire().setIdAgent(9009999);
+
+		// When
+		ReturnMessageDto result = service.setDelegatorAndOperators(idAgent, dto);
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals("L'agent NOM PRENOM [9009999] ne peut pas être délégataire car il ou elle est déjà opérateur.", result.getErrors().get(0));
+		assertEquals(0, result.getInfos().size());
+		assertNull(droitAppro.getIdAgentDelegataire());
+	}
+	
+	@Test
+	public void setDelegatorAndOperators_NewOperatorIsAlreadyDelegataire_ReturnErrorMessage() {
+
+		// Given
+		Integer idAgent = 9008765;
+
+		Droit droitAppro = new Droit();
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.isUserApprobatorOrDelegataire(9009999)).thenReturn(true);
+		
+		Agent ag = new Agent();
+		ag.setIdAgent(9009999);
+		ag.setNomUsage("NOM");
+		ag.setPrenomUsage("PRENOM");
+		ISirhRepository sRepo = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sRepo.getAgent(9009999)).thenReturn(ag);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhRepository", sRepo);
+
+		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
+		dto.getSaisisseurs().add(new AgentDto());
+		dto.getSaisisseurs().get(0).setIdAgent(9009999);
+
+		// When
+		ReturnMessageDto result = service.setDelegatorAndOperators(idAgent, dto);
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals("L'agent NOM PRENOM [9009999] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.", result.getErrors().get(0));
+		assertEquals(0, result.getInfos().size());
+		assertNull(droitAppro.getIdAgentDelegataire());
+	}
+	
 	@Test
 	public void setDelegatorAndOperators_SameExistingDelegataire_DoNothing() {
 
@@ -684,9 +761,11 @@ public class AccessRightsServiceTest {
 		dto.getDelegataire().setIdAgent(9009999);
 
 		// When
-		service.setDelegatorAndOperators(idAgent, dto);
+		ReturnMessageDto result = service.setDelegatorAndOperators(idAgent, dto);
 
 		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 		assertEquals(9009999, (int) droitAppro.getIdAgentDelegataire());
 	}
 
@@ -708,9 +787,11 @@ public class AccessRightsServiceTest {
 		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
 
 		// When
-		service.setDelegatorAndOperators(idAgent, dto);
+		ReturnMessageDto result = service.setDelegatorAndOperators(idAgent, dto);
 
 		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 		assertNull(droitAppro.getIdAgentDelegataire());
 
 	}
@@ -739,9 +820,11 @@ public class AccessRightsServiceTest {
 		dto.getSaisisseurs().add(ope1);
 
 		// When
-		service.setDelegatorAndOperators(idAgent, dto);
+		ReturnMessageDto result = service.setDelegatorAndOperators(idAgent, dto);
 
 		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 		Droit operateur = droitAppro.getOperateurs().iterator().next();
 		assertEquals(9009999, (int) operateur.getIdAgent());
 		assertEquals(currentDate, operateur.getDateModification());
@@ -774,9 +857,11 @@ public class AccessRightsServiceTest {
 		dto.getSaisisseurs().add(ope1);
 
 		// When
-		service.setDelegatorAndOperators(idAgent, dto);
+		ReturnMessageDto result = service.setDelegatorAndOperators(idAgent, dto);
 
 		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 		Droit operateur = droitAppro.getOperateurs().iterator().next();
 		assertEquals(9009999, (int) operateur.getIdAgent());
 		assertEquals(previousDate, operateur.getDateModification());
@@ -808,9 +893,11 @@ public class AccessRightsServiceTest {
 		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
 
 		// When
-		service.setDelegatorAndOperators(idAgent, dto);
+		ReturnMessageDto result = service.setDelegatorAndOperators(idAgent, dto);
 
 		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 		assertEquals(0, droitAppro.getOperateurs().size());
 		Mockito.verify(droitOpe, Mockito.times(1)).remove();
 	}

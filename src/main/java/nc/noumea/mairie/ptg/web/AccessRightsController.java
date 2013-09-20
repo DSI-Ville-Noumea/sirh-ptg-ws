@@ -87,7 +87,12 @@ public class AccessRightsController {
 		ReturnMessageDto result = accessRightService
 				.setDelegatorAndOperators(convertedIdAgent, new DelegatorAndOperatorsDto().deserializeFromJSON(delegatorAndOperatorsDtoJson));
 
-		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").deepSerialize(result), HttpStatus.OK);
+		String jsonResult = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(jsonResult, HttpStatus.CONFLICT); 
+		else
+			return new ResponseEntity<String>(jsonResult, HttpStatus.OK);
 	}
 
 	@ResponseBody

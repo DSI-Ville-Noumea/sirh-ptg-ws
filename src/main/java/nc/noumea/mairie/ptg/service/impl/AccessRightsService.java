@@ -94,13 +94,22 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public ReturnMessageDto setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto) {
 
+		ReturnMessageDto result = new ReturnMessageDto();
+		
 		Droit droitApprobateur = accessRightsRepository.getApprobateurFetchOperateurs(idAgent);
 
 		List<Droit> originalOperateurs = new ArrayList<Droit>(droitApprobateur.getOperateurs());
 
 		if (dto.getDelegataire() != null) {
 			// Check that the new delegataire is not an operator
-			droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
+			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
+				Agent ag = sirhRepository.getAgent(dto.getDelegataire().getIdAgent());
+				result.getErrors().add(String.format("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.", 
+						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+			}
+			else {
+				droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
+			}
 		} else {
 			droitApprobateur.setIdAgentDelegataire(null);
 		}
@@ -121,6 +130,12 @@ public class AccessRightsService implements IAccessRightsService {
 				continue;
 
 			// Check that the new operateur is not already delegataire or approbateur
+			if (accessRightsRepository.isUserApprobatorOrDelegataire(operateurDto.getIdAgent())) {
+				Agent ag = sirhRepository.getAgent(operateurDto.getIdAgent());
+				result.getErrors().add(String.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.", 
+						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+				continue;
+			}
 			
 			existingOperateur = new Droit();
 			existingOperateur.setDroitApprobateur(droitApprobateur);
@@ -135,7 +150,7 @@ public class AccessRightsService implements IAccessRightsService {
 			droitOperateurToDelete.remove();
 		}
 		
-		return null;
+		return result;
 	}
 
 	@Override
