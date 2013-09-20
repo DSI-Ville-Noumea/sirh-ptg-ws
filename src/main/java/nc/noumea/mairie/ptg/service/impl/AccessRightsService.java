@@ -10,6 +10,7 @@ import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
@@ -91,13 +92,14 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public void setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto) {
+	public ReturnMessageDto setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto) {
 
 		Droit droitApprobateur = accessRightsRepository.getApprobateurFetchOperateurs(idAgent);
 
 		List<Droit> originalOperateurs = new ArrayList<Droit>(droitApprobateur.getOperateurs());
 
 		if (dto.getDelegataire() != null) {
+			// Check that the new delegataire is not an operator
 			droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
 		} else {
 			droitApprobateur.setIdAgentDelegataire(null);
@@ -118,6 +120,8 @@ public class AccessRightsService implements IAccessRightsService {
 			if (existingOperateur != null)
 				continue;
 
+			// Check that the new operateur is not already delegataire or approbateur
+			
 			existingOperateur = new Droit();
 			existingOperateur.setDroitApprobateur(droitApprobateur);
 			existingOperateur.setOperateur(true);
@@ -130,6 +134,8 @@ public class AccessRightsService implements IAccessRightsService {
 			droitApprobateur.getOperateurs().remove(droitOperateurToDelete);
 			droitOperateurToDelete.remove();
 		}
+		
+		return null;
 	}
 
 	@Override

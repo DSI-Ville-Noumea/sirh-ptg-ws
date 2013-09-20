@@ -75,6 +75,9 @@ public class SaisieService implements ISaisieService {
 
 			for (AbsenceDto abs : jourDto.getAbsences()) {
 
+				if (abs.isaSupprimer())
+					continue;
+				
 				// Try to retrieve in the existing original pointages if it
 				// exists
 				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, abs);
@@ -99,6 +102,9 @@ public class SaisieService implements ISaisieService {
 
 			for (HeureSupDto hs : jourDto.getHeuresSup()) {
 
+				if (hs.isaSupprimer())
+					continue;
+				
 				// Try to retrieve in the existing original pointages if it
 				// exists
 				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, hs);
@@ -125,11 +131,11 @@ public class SaisieService implements ISaisieService {
 
 				// if the new pointage has no idPointage, null qte, null
 				// datedebut and datefin, leave it (it is a template)
-				if (prime.getIdPointage() == null && prime.getHeureFin() == null
+				if (prime.isaSupprimer() || prime.getIdPointage() == null && prime.getHeureFin() == null
 						&& (prime.getQuantite() == null || prime.getQuantite().equals(0))) {
 					continue;
 				}
-
+				
 				// Try to retrieve in the existing original pointages if it
 				// exists
 				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, prime);
@@ -277,8 +283,12 @@ public class SaisieService implements ISaisieService {
 		if (ptg.getQuantite() != null)
 			return !ptg.getQuantite().equals(prime.getQuantite());
 
-		return !(ptg.getDateDebut().getTime() == prime.getHeureDebut().getTime() && ptg.getDateFin().getTime() == prime
-				.getHeureFin().getTime());
+		boolean dateDebutHasChanged = !((ptg.getDateDebut() == null && prime.getHeureDebut() == null) 
+				|| (ptg.getDateDebut() != null && prime.getHeureDebut() != null && ptg.getDateDebut().getTime() == prime.getHeureDebut().getTime()));
+		boolean dateFinHasChanged = !((ptg.getDateFin() == null && prime.getHeureFin() == null) 
+				|| (ptg.getDateFin() != null && prime.getHeureFin() != null && ptg.getDateFin().getTime() == prime.getHeureFin().getTime()));
+		
+		return dateDebutHasChanged || dateFinHasChanged;
 	}
 
 	protected boolean hasPointageChanged(Pointage ptg, AbsenceDto absence) {

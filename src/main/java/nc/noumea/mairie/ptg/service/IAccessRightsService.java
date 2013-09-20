@@ -6,6 +6,7 @@ import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 
 public interface IAccessRightsService {
@@ -14,7 +15,7 @@ public interface IAccessRightsService {
 
 	DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent);
 
-	void setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto);
+	ReturnMessageDto setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto);
 
 	List<AgentWithServiceDto> listAgentsApprobateurs();
 
