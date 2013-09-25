@@ -3,8 +3,6 @@ package nc.noumea.mairie.ptg.repository;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Query;
-
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
@@ -13,7 +11,6 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
-import nc.noumea.mairie.ptg.dto.VentilDto;
 
 public interface IVentilationRepository {
 

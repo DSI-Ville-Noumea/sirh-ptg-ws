@@ -66,4 +66,12 @@ privileged aspect RefPrime_Roo_JavaBean {
         this.mairiePrimeTableEnum = mairiePrimeTableEnum;
     }
     
+    public String RefPrime.getAide() {
+        return this.aide;
+    }
+    
+    public void RefPrime.setAide(String aide) {
+        this.aide = aide;
+    }
+    
 }

@@ -44,19 +44,29 @@ public class PrimeService implements IPrimeService {
 	}
 
 	@Override
-	public RefPrimeDto getPrime(Integer noRubr) {
+	public RefPrimeDto getPrimeWithNorubr(Integer noRubr) {
+		
 		List<RefPrime> result = pointageRepository.getRefPrimesListWithNoRubr(noRubr);
+		
+		if (result.size() == 0)
+			return null;
+		
 		return new RefPrimeDto(result.get(0));
 	}
 
 	@Override
-	public RefPrimeDto getPrimeWithIdRefPrime(Integer idRefPrime) {
-		List<RefPrime> result = pointageRepository.getRefPrimesListWithIdRefPrime(idRefPrime);
-		return new RefPrimeDto(result.get(0));
+	public RefPrimeDto getPrimeById(Integer idRefPrime) {
+		
+		RefPrime result = pointageRepository.getEntity(RefPrime.class, idRefPrime);
+		
+		if (result == null)
+			return null;
+		
+		return new RefPrimeDto(result);
 	}
 
 	@Override
-	public List<RefPrimeDto> getPrimes(Integer noRubr) {
+	public List<RefPrimeDto> getPrimesByNorubr(Integer noRubr) {
 
 		ArrayList<RefPrimeDto> res = new ArrayList<>();
 		List<RefPrime> result = pointageRepository.getRefPrimesListWithNoRubr(noRubr);
@@ -69,7 +79,7 @@ public class PrimeService implements IPrimeService {
 	@Override
 	public List<Integer> getPrimesId(Integer noRubr) {
 		List<Integer> res = new ArrayList<>();
-		for (RefPrimeDto p : getPrimes(noRubr)) {
+		for (RefPrimeDto p : getPrimesByNorubr(noRubr)) {
 			res.add(p.getIdRefPrime());
 		}
 		return res;

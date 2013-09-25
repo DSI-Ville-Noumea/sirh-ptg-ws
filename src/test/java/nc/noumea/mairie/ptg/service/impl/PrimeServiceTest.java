@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +57,7 @@ public class PrimeServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
 
 		// When
-		RefPrimeDto dto = service.getPrime(noRubr);
+		RefPrimeDto dto = service.getPrimeWithNorubr(noRubr);
 
 		// Then
 		assertEquals("TEST", dto.getLibelle());
@@ -85,7 +86,7 @@ public class PrimeServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
 
 		// When
-		List<RefPrimeDto> dto = service.getPrimes(noRubr);
+		List<RefPrimeDto> dto = service.getPrimesByNorubr(noRubr);
 
 		// Then
 		assertEquals("TEST", dto.get(0).getLibelle());
@@ -110,7 +111,7 @@ public class PrimeServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
 
 		// When
-		List<RefPrimeDto> dto = service.getPrimes(idRefPrime);
+		List<RefPrimeDto> dto = service.getPrimesByNorubr(idRefPrime);
 
 		// Then
 		assertEquals("TEST", dto.get(0).getLibelle());
@@ -135,4 +136,39 @@ public class PrimeServiceTest {
 		assertEquals("TEST", dto.get(0).getLibelle());
 	}
 
+	@Test
+	public void getPrimeWithIdRefPrime_OneResult_ReturnDto() {
+		
+		// Given
+		RefPrime rp = new RefPrime();
+		rp.setLibelle("titre");
+		
+		// When
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(RefPrime.class, 99)).thenReturn(rp);
+
+		PrimeService service = new PrimeService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		
+		// Then
+		RefPrimeDto dto = service.getPrimeById(99);
+		
+		assertEquals("titre", dto.getLibelle());
+	}
+	
+	@Test
+	public void getPrimeWithIdRefPrime_NoResults_Returnnull() {
+		
+		// When
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(RefPrime.class, 99)).thenReturn(null);
+
+		PrimeService service = new PrimeService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		
+		// Then
+		RefPrimeDto dto = service.getPrimeById(99);
+		
+		assertNull(dto);
+	}
 }

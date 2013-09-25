@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import flexjson.JSONSerializer;
-import java.util.ArrayList;
 
 @Controller
 @RequestMapping("/primes")
@@ -72,11 +71,11 @@ public class PrimeController {
 	@ResponseBody
 	@RequestMapping(value = "/getPrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getPrime(@RequestParam("noRubr") Integer noRubr) {
+	public ResponseEntity<String> getPrimeFromNoRubr(@RequestParam("noRubr") Integer noRubr) {
 
-		logger.debug("entered GET [primes/getPrime] => getPrime with parameters noRubr = {}", noRubr);
+		logger.debug("entered GET [primes/getPrime] => getPrimeFromNoRubr with parameter noRubr = {}", noRubr);
 
-		RefPrimeDto result = primeService.getPrime(noRubr);
+		RefPrimeDto result = primeService.getPrimeWithNorubr(noRubr);
 
 		if (result == null) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -87,20 +86,18 @@ public class PrimeController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/getPrimeFromIdRefPrime", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@RequestMapping(value = { "/getPrimeFromIdRefPrime", "/detail" }, produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getPrimeFromIdRefPrime(@RequestParam("idRefPrime") Integer idRefPrime) {
 
-		logger.debug("entered GET [primes] => getPrimeFromIdRefPrime with parameters idRefPrime = {}", idRefPrime);
+		logger.debug("entered GET [primes/getPrimeFromIdRefPrime] or [primes/detail] => getPrimeFromIdRefPrime with parameters idRefPrime = {}", idRefPrime);
 
-		RefPrimeDto result = primeService.getPrimeWithIdRefPrime(idRefPrime);
-
-		if (result == null) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}
-
-		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		RefPrimeDto result = primeService.getPrimeById(idRefPrime);
+		
+		if (result == null)
+			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		
+		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").deepSerialize(result), HttpStatus.OK);
 	}
 
 	@ResponseBody
@@ -115,4 +112,5 @@ public class PrimeController {
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 		}
 	}
+	
 }

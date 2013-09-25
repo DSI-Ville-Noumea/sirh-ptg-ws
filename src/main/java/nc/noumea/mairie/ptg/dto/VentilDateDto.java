@@ -2,8 +2,6 @@ package nc.noumea.mairie.ptg.dto;
 
 import java.util.Date;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 

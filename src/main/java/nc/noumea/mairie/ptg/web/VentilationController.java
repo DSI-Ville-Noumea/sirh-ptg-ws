@@ -41,34 +41,6 @@ public class VentilationController {
 	private IVentilationService ventilationService;
 
 	@ResponseBody
-	@RequestMapping(value = "/run", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
-	@Transactional("ptgTransactionManager")
-	public ResponseEntity<String> runVentilation(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date ventilationDate,
-			@RequestParam(value = "typePointage", required = false) Integer idRefTypePointage,
-			@RequestParam(value = "statut") String statut, @RequestBody String agentsJson) {
-
-		logger.debug(
-				"entered POST [ventilation/run] => runVentilation with parameters date = {}, agents = {}, typePointage = {}, statut = {}",
-				ventilationDate, agentsJson, idRefTypePointage, statut);
-
-		// Deserializing integer list
-		List<Integer> agents = new JSONDeserializer<List<Integer>>().use(null, ArrayList.class)
-				.use("values", Integer.class).deserialize(agentsJson);
-
-		// Running ventilation
-		ReturnMessageDto result = ventilationService.processVentilation(idAgent, agents, ventilationDate,
-				AgentStatutEnum.valueOf(statut), RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage));
-
-		if (result.getErrors().size() != 0) {
-			return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").deepSerialize(result),
-					HttpStatus.CONFLICT);
-		}
-
-		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").deepSerialize(result), HttpStatus.OK);
-	}
-
-	@ResponseBody
 	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> startVentilation(@RequestParam("idAgent") Integer idAgent,

@@ -44,24 +44,6 @@ public class ExportPaieController {
 	private HelperService helperService;
 	
 	@ResponseBody
-	@RequestMapping(value = "/run", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(value = "chainedTransactionManager")
-	public ResponseEntity<String> runExportToPaie(
-			@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("statut") String statut) {
-
-		logger.debug("entered GET [exportPaie/run] => runExportToPaie with parameters idAgent = {}, statut = {}",
-				idAgent, statut);
-		
-		ReturnMessageDto result = exportPaieService.exportToPaie(idAgent, AgentStatutEnum.valueOf(statut));
-		
-		if (result.getErrors().size() != 0)
-			return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.CONFLICT);
-		
-		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
-	}
-	
-	@ResponseBody
 	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(value = "chainedTransactionManager")
 	public ResponseEntity<String> startExportPaie(

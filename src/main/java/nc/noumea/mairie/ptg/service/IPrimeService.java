@@ -16,12 +16,11 @@ public interface IPrimeService {
 
 	public List<RefPrimeDto> getPrimeList();
 
-	public RefPrimeDto getPrime(Integer noRubr);
+	public RefPrimeDto getPrimeWithNorubr(Integer noRubr);
 
-	public RefPrimeDto getPrimeWithIdRefPrime(Integer idRefPrime);
+	public RefPrimeDto getPrimeById(Integer idRefPrime);
 
-	public List<RefPrimeDto> getPrimes(Integer noRubr);
+	public List<RefPrimeDto> getPrimesByNorubr(Integer noRubr);
 
 	public List<Integer> getPrimesId(Integer noRubr);
-
 }

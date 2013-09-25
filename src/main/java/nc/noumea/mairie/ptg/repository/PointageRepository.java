@@ -223,13 +223,6 @@ public class PointageRepository implements IPointageRepository {
     }
 
     @Override
-    public List<RefPrime> getRefPrimesListWithIdRefPrime(Integer idRefPrime) {
-        TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getRefPrimesByIdRefPrime", RefPrime.class);
-        query.setParameter("idRefPrime", idRefPrime);
-        return query.getResultList();
-    }
-    
-    @Override
 	public boolean isPrimeSurPointageouPointageCalcule(Integer idAgent,
 			Integer idRefPrime) {
 

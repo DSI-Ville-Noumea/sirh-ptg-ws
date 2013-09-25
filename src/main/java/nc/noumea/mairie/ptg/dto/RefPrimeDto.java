@@ -11,8 +11,10 @@ public class RefPrimeDto {
 	private String typeSaisie;
 	private boolean calculee;
 	private String statut;
-
+	private String aide;
+	
 	public RefPrimeDto() {
+		
 	}
 
 	public RefPrimeDto(RefPrime prime) {
@@ -20,12 +22,16 @@ public class RefPrimeDto {
 		numRubrique = prime.getNoRubr();
 		libelle = prime.getLibelle();
 		description = prime.getDescription();
+		aide = prime.getAide();
+		
 		if (prime.getTypeSaisie() == null) {
 			typeSaisie = "null";
 		} else {
 			typeSaisie = prime.getTypeSaisie().name();
 		}
+		
 		calculee = prime.isCalculee();
+		
 		if (prime.getStatut() == null) {
 			statut = "null";
 		} else {
@@ -99,4 +105,11 @@ public class RefPrimeDto {
 		this.typeSaisie = typeSaisie;
 	}
 
+	public String getAide() {
+		return aide;
+	}
+
+	public void setAide(String aide) {
+		this.aide = aide;
+	}
 }
