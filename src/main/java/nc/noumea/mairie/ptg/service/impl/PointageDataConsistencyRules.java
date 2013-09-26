@@ -14,10 +14,12 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
+import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
 import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	@Autowired
 	private HelperService helperService;
 
+	@Autowired
+	private IHolidayService holidayService;
+	
 	//-- MESSAGES --//
 	public static final String BASE_HOR_MAX = "L'agent dépasse sa base horaire";
 	public static final String RECUP_MSG = "%s : L'agent est en récupération sur cette période.";
@@ -157,17 +162,66 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
+	public ReturnMessageDto checkPrime7650(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
+
+		for (Pointage ptg : pointages) {
+			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7650))
+				continue;
+
+			DateTime deb = new DateTime(ptg.getDateDebut());
+
+			if (deb.getDayOfWeek() == DateTimeConstants.SATURDAY || deb.getDayOfWeek() == DateTimeConstants.SUNDAY)
+				srm.getErrors().add(String.format("La prime 7650 du %s n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.", deb.toString("dd/MM/yyyy")));
+			
+		}
+		
+		return srm;
+	}
+	
+	@Override
 	public ReturnMessageDto checkPrime7651(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		for (Pointage ptg : pointages) {
+			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7651))
+				continue;
+
+			DateTime deb = new DateTime(ptg.getDateDebut());
+			
+			if (deb.getDayOfWeek() != DateTimeConstants.SATURDAY && deb.getDayOfWeek() != DateTimeConstants.SUNDAY
+					&& !holidayService.isHoliday(deb) && !holidayService.isHoliday(deb.plusDays(1)))
+				srm.getErrors()
+						.add(String
+								.format("La prime 7651 du %s n'est pas valide. Elle ne peut être saisie qu'un samedi et dimanche, ou alors une veille et jour férié.",
+										deb.toString("dd/MM/yyyy")));
+			
+		}
+		
+		
+		return srm;
 	}
 
 	@Override
 	public ReturnMessageDto checkPrime7652(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages) {
-		// TODO Auto-generated method stub
-		return null;
+
+		for (Pointage ptg : pointages) {
+			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7652))
+				continue;
+
+			DateTime deb = new DateTime(ptg.getDateDebut());
+			
+			if (deb.getDayOfWeek() != DateTimeConstants.SUNDAY
+					&& !holidayService.isHoliday(deb))
+				srm.getErrors()
+						.add(String
+								.format("La prime 7652 du %s n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.",
+										deb.toString("dd/MM/yyyy")));
+			
+		}
+		
+		return srm;
 	}
 	
 	//-- Helpers --//
@@ -266,6 +320,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages);
 		checkAgentINAAndHSup(srm, idAgent, dateLundi, pointages);
 		checkAgentInactivity(srm, idAgent, dateLundi, pointages);
+		checkPrime7650(srm, idAgent, dateLundi, pointages);
+		checkPrime7651(srm, idAgent, dateLundi, pointages);
+		checkPrime7652(srm, idAgent, dateLundi, pointages);
 	}
 
 }
