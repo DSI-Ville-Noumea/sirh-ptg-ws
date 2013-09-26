@@ -668,6 +668,7 @@ HTTP Status code OK : 200
         "libelle": "PRIME DE PERMANENCE",
         "numRubrique": 7120,
         "statut": "F",
+        "aide": "le texte de l'aide",
         "typeSaisie": "CASE_A_COCHER"
     },
     {
@@ -677,6 +678,7 @@ HTTP Status code OK : 200
         "libelle": "INDEMNITE D'ASTREINTE",
         "numRubrique": 7121,
         "statut": "C",
+        "aide": "le texte de l'aide",
         "typeSaisie": "CASE_A_COCHER"
     },
     {
@@ -686,6 +688,7 @@ HTTP Status code OK : 200
         "libelle": "INDEMNITE DE PERMANENCE CFM",
         "numRubrique": 7123,
         "statut": "CC",
+        "aide": "le texte de l'aide",
         "typeSaisie": "CASE_A_COCHER"
     },
 	...
@@ -719,6 +722,7 @@ HTTP Status code OK : 200
         "libelle": "INDEMNITE D'ASTREINTE",
         "numRubrique": 7121,
         "statut": "CC",
+        "aide": "le texte de l'aide",
         "typeSaisie": "CASE_A_COCHER"
     },
     {
@@ -728,6 +732,7 @@ HTTP Status code OK : 200
         "libelle": "INDEMNITE DE PERMANENCE CFM",
         "numRubrique": 7123,
         "statut": "CC",
+        "aide": "le texte de l'aide",
         "typeSaisie": "CASE_A_COCHER"
     },
 	...
@@ -759,6 +764,7 @@ HTTP Status code OK : 200
        "libelle": "INDEMNITE PARTICIPATION AUTOPSIES TARIF II",
        "numRubrique": 7710,
        "statut": "F",
+       "aide": "le texte de l'aide",
        "typeSaisie": "NB_INDEMNITES"
     }
 +-------------------------+
@@ -787,8 +793,3 @@ HTTP Status code OK : 200
   
   * 204 si pas utilisée
  
- 
- 
- 
-
-

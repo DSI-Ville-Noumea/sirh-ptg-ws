@@ -33,6 +33,7 @@
         </menu>
 		<menu name="Conception">
         	<item name="SIRH API Doc" href="conception/sirh-api.html"/>
+        	<item name="Kiosque API Doc" href="conception/kiosque-api.html"/>
 		</menu>
         <menu ref="reports"/>
     </body>
