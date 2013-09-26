@@ -54,11 +54,6 @@ public class PointageCalculeService implements IPointageCalculeService {
 				case 7713:
 					pointagesCalcules.addAll(generatePointage7711_12_13(idAgent, dateLundi, prime, agentPointages));
 					break;
-				case 7720:
-				case 7721:
-				case 7722:
-					pointagesCalcules.addAll(generatePointage7720_21_22(idAgent, dateLundi, prime, agentPointages));
-					continue;
 			}
 		}
 		
@@ -123,20 +118,6 @@ public class PointageCalculeService implements IPointageCalculeService {
 		}
 		
 		return result;
-	}
-	
-	public List<PointageCalcule> generatePointage7720_21_22(Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
-
-		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
-		
-		for (Pointage ptg : getPointagesPrime(pointages, 7701)) {
-			PointageCalcule existingPc = returnOrCreateNewPointageWithPrime(null, ptg, prime);
-			existingPc.addQuantite(ptg.getQuantite());
-			result.add(existingPc);
-		}
-		
-		return result;
-		
 	}
 	
 	private List<Pointage> getPointagesPrime(List<Pointage> pointages, Integer noRubr) {

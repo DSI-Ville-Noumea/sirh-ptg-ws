@@ -162,7 +162,7 @@ public class PointageRepository implements IPointageRepository {
 	public List<PointageCalcule> getPointagesCalculesVentilesForAgent(Integer idAgent, Integer idVentilDate) {
 
     	TypedQuery<PointageCalcule> query = ptgEntityManager.createQuery(
-    			"select ptg from PointageCalcule p where p.idAgent = :idAgent and p.lastVentilDate.idVentilDate = :idVentilDate", PointageCalcule.class);
+    			"select p from PointageCalcule p where p.idAgent = :idAgent and p.lastVentilDate.idVentilDate = :idVentilDate", PointageCalcule.class);
         query.setParameter("idAgent", idAgent);
         query.setParameter("idVentilDate", idVentilDate);
 

@@ -39,60 +39,6 @@ public class PointageCalculeServiceTest {
 	}
 	
 	@Test
-	public void generatePointage7720_21_22_7720_With1Pointage7701() {
-		
-		// Given
-		Date dateLundi = new LocalDate(2013, 7, 8).toDate();
-		
-		Pointage p1 = new Pointage();
-		p1.setIdAgent(9008767);
-		p1.setDateLundi(dateLundi);
-		p1.setDateDebut(new LocalDate(2013, 7, 9).toDate());
-		p1.setQuantite(2);
-		p1.setType(prime);
-		RefPrime pr1 = new RefPrime();
-		pr1.setNoRubr(7701);
-		p1.setRefPrime(pr1);
-		
-		Pointage p2 = new Pointage();
-		p2.setDateLundi(dateLundi);
-		p2.setDateDebut(new LocalDate(2013, 7, 10).toDate());
-		p2.setQuantite(2);
-		p2.setType(prime);
-		RefPrime pr2 = new RefPrime();
-		pr2.setNoRubr(7702);
-		p2.setRefPrime(pr2);
-		
-		Pointage p3 = new Pointage();
-		p3.setDateLundi(dateLundi);
-		p3.setDateDebut(new DateTime(2013, 7, 10, 9, 0, 0).toDate());
-		p3.setDateDebut(new DateTime(2013, 7, 10, 10, 0, 0).toDate());
-		p3.setType(abs);
-		
-		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME.getValue())).thenReturn(prime);
-		
-		PointageCalculeService service = new PointageCalculeService();
-		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		
-		RefPrime rp7720 = new RefPrime();
-		rp7720.setNoRubr(7720);
-		
-		// When
-		List<PointageCalcule> result = service.generatePointage7720_21_22(p1.getIdAgent(), dateLundi, rp7720, Arrays.asList(p1, p2, p3));
-		
-		// Then
-		assertEquals(1, result.size());
-		assertEquals(rp7720, result.get(0).getRefPrime());
-		assertEquals(dateLundi, result.get(0).getDateLundi());
-		assertEquals(p1.getDateDebut(), result.get(0).getDateDebut());
-		assertEquals(2, (int) result.get(0).getQuantite());
-		assertEquals(9008767, (int) result.get(0).getIdAgent());
-		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
-		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
-	}
-	
-	@Test
 	public void generatePointage7711withOne7715_Having3hoursNuit_And1HourDay() {
 		
 		// Given
