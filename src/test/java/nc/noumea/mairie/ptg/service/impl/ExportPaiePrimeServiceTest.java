@@ -502,6 +502,7 @@ public class ExportPaiePrimeServiceTest {
 		RefPrime rp = new RefPrime();
 		rp.setNoRubr(7701);
 		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		VentilPrime vp = new VentilPrime();
 		vp.setRefPrime(rp);
 		vp.setQuantite(2);
@@ -550,6 +551,7 @@ public class ExportPaiePrimeServiceTest {
 		RefPrime rp = new RefPrime();
 		rp.setNoRubr(7701);
 		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		VentilPrime vp = new VentilPrime();
 		vp.setRefPrime(rp);
 		vp.setQuantite(2);
@@ -602,6 +604,7 @@ public class ExportPaiePrimeServiceTest {
 		RefPrime rp = new RefPrime();
 		rp.setNoRubr(7701);
 		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		VentilPrime vp = new VentilPrime();
 		vp.setRefPrime(rp);
 		vp.setQuantite(0);
@@ -641,5 +644,91 @@ public class ExportPaiePrimeServiceTest {
 		// Then
 		assertEquals(0, result.size());
 		Mockito.verify(existingSpprim, Mockito.times(1)).remove();
+	}
+	
+	@Test
+	public void exportPrimesMoisToPaie_1NewVentilPrimeNB_HEURES_CreateRecord() {
+		
+		// Given
+		RefPrime rp = new RefPrime();
+		rp.setNoRubr(7720);
+		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		VentilPrime vp = new VentilPrime();
+		vp.setRefPrime(rp);
+		vp.setQuantite(90);
+		vp.setIdAgent(9009898);
+		vp.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
+
+		List<VentilPrime> ventilPrimesByDateAsc = Arrays.asList(vp);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9009898)).thenReturn(9898);
+		Mockito.when(hS.getIntegerDateMairieFromDate(vp.getDateDebutMois())).thenReturn(20130801);
+		Mockito.when(hS.getIntegerDateMairieFromDate(new LocalDate(2013, 9, 1).toDate())).thenReturn(20130901);
+		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(90)).thenReturn(1.3d);
+		
+		IExportPaieRepository epR = Mockito.mock(IExportPaieRepository.class);
+		Mockito.when(epR.getSpprimForDayAgentAndNorubr(9009898, vp.getDateDebutMois(), rp.getNoRubr())).thenReturn(null);
+		
+		ExportPaiePrimeService service = new ExportPaiePrimeService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "exportPaieRepository", epR);
+		
+		// When
+		List<Spprim> result = service.exportPrimesMoisToPaie(ventilPrimesByDateAsc);
+		
+		// Then
+		assertEquals(1, result.size());
+		assertEquals(2d, result.get(0).getMontantPrime(), 0);
+		assertEquals(20130801, (int) result.get(0).getId().getDateDebut());
+		assertEquals(20130901, (int) result.get(0).getDateFin());
+		assertEquals(9898, (int) result.get(0).getId().getNomatr());
+		assertEquals(7720, (int) result.get(0).getId().getNoRubr());
+	}
+	
+	@Test
+	public void exportPrimesMoisToPaie_1VentilPrimeNB_HEURES_UpdateExistingRecord() {
+		
+		// Given
+		RefPrime rp = new RefPrime();
+		rp.setNoRubr(7720);
+		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		VentilPrime vp = new VentilPrime();
+		vp.setRefPrime(rp);
+		vp.setQuantite(75);
+		vp.setIdAgent(9009898);
+		vp.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
+
+		List<VentilPrime> ventilPrimesByDateAsc = Arrays.asList(vp);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9009898)).thenReturn(9898);
+		Mockito.when(hS.getIntegerDateMairieFromDate(vp.getDateDebutMois())).thenReturn(20130801);
+		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(75)).thenReturn(1.15d);
+		
+		Spprim existingSpprim = new Spprim();
+		existingSpprim.setMontantPrime(2);
+		existingSpprim.setId(new SpprimId(9898, 20130801, 7720));
+		existingSpprim.setDateFin(20130901);
+		IExportPaieRepository epR = Mockito.mock(IExportPaieRepository.class);
+		Mockito.when(epR.getSpprimForDayAgentAndNorubr(9009898, vp.getDateDebutMois(), rp.getNoRubr())).thenReturn(existingSpprim);
+		
+		ExportPaiePrimeService service = new ExportPaiePrimeService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "exportPaieRepository", epR);
+		
+		// When
+		List<Spprim> result = service.exportPrimesMoisToPaie(ventilPrimesByDateAsc);
+		
+		// Then
+		assertEquals(1, result.size());
+		assertEquals(existingSpprim, result.get(0));
+		assertEquals(2d, result.get(0).getMontantPrime(), 0);
+		assertEquals(20130801, (int) result.get(0).getId().getDateDebut());
+		assertEquals(20130901, (int) result.get(0).getDateFin());
+		assertEquals(9898, (int) result.get(0).getId().getNomatr());
+		assertEquals(7720, (int) result.get(0).getId().getNoRubr());
 	}
 }

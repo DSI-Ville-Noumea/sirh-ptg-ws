@@ -12,6 +12,7 @@ import nc.noumea.mairie.ptg.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.repository.IExportPaieRepository;
 import nc.noumea.mairie.ptg.service.IExportPaiePrimeService;
@@ -150,7 +151,13 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 			Spprim pri = findOrCreateSpprimmRecord(ventilPrime.getIdAgent(), ventilPrime.getDateDebutMois(), ventilPrime.getRefPrime().getNoRubr());
 			
 			// Fill in the number of Primes for the month
-			pri.setMontantPrime(ventilPrime.getQuantite());
+			double qte = 0;
+			if (ventilPrime.getRefPrime().getTypeSaisie() == TypeSaisieEnum.NB_HEURES)
+				qte = helperService.convertMinutesToMairieNbHeuresFormat(ventilPrime.getQuantite());
+			else
+				qte = ventilPrime.getQuantite();
+			
+			pri.setMontantPrime(Math.ceil(qte));
 			
 			// Add the item to the list of hre modified/created
 			if (pri.getMontantPrime() != 0)
