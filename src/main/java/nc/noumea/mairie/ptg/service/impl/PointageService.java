@@ -311,7 +311,8 @@ public class PointageService implements IPointageService {
 		return filterOldPointagesAndEtatFromList(agentPointages, Arrays.asList(EtatPointageEnum.VENTILE));
 	}
 	
-	protected List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats) {
+	@Override
+	public List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats) {
 
 		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
 

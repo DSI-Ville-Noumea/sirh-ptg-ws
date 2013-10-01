@@ -137,8 +137,8 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("AND p.DATE_LUNDI = :dateLundi ");
 		sb.append("AND (p.ID_TYPE_POINTAGE = :typePointageHSUP OR p.ID_TYPE_POINTAGE = :typePointageABS) ");
 		sb.append("AND (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ");
-		sb.append("OR ep.etat = :ventile) ");
-		sb.append("ORDER BY id_pointage DESC ");
+		sb.append("ep.etat IN (:ventile, :valide, :journalise)) ");
+		sb.append("ORDER BY id_pointage ASC ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
 		q.setParameter("idAgent", idAgent);
@@ -149,6 +149,8 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("ventile", EtatPointageEnum.VENTILE.getCodeEtat());
 		q.setParameter("typePointageHSUP", RefTypePointageEnum.H_SUP.getValue());
 		q.setParameter("typePointageABS", RefTypePointageEnum.ABSENCE.getValue());
+		q.setParameter("valide", EtatPointageEnum.VALIDE.getCodeEtat());
+		q.setParameter("journalise", EtatPointageEnum.JOURNALISE.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
 		List<Pointage> result = q.getResultList();
@@ -175,8 +177,8 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("AND extract(MONTH FROM p.DATE_DEBUT) = :month ");
 		sb.append("AND (p.ID_TYPE_POINTAGE = :typePointagePRIME) ");
 		sb.append("AND (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ");
-		sb.append("OR ep.etat = :ventile) ");
-		sb.append("ORDER BY id_pointage DESC ");
+		sb.append("OR ep.etat IN (:ventile, :valide, :journalise)) ");
+		sb.append("ORDER BY id_pointage ASC ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
 		q.setParameter("idAgent", idAgent);
@@ -186,6 +188,8 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("approuve", EtatPointageEnum.APPROUVE.getCodeEtat());
 		q.setParameter("ventile", EtatPointageEnum.VENTILE.getCodeEtat());
 		q.setParameter("typePointagePRIME", RefTypePointageEnum.PRIME.getValue());
+		q.setParameter("valide", EtatPointageEnum.VALIDE.getCodeEtat());
+		q.setParameter("journalise", EtatPointageEnum.JOURNALISE.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
 		List<Pointage> result = q.getResultList();
@@ -206,12 +210,12 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("FROM ptg_etat_pointage epmax ");
 		sb.append("INNER JOIN ptg_pointage ptg ON ptg.id_pointage = epmax.id_pointage ");
 		sb.append("WHERE ptg.id_agent = :idAgent ");
-		sb.append("GROUP BY epmax.id_pointage)  ");
+		sb.append("GROUP BY epmax.id_pointage) ");
 		sb.append("maxEtats ON maxEtats.maxIdEtatPointage = ep.id_etat_pointage AND maxEtats.id_pointage = ep.id_pointage ");
 		sb.append("WHERE p.ID_AGENT = :idAgent ");
 		sb.append("AND p.DATE_LUNDI = :dateLundi ");
 		sb.append("AND (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ");
-		sb.append("OR ep.etat = :ventile) ");
+		sb.append("OR ep.etat IN (:ventile, :valide, :journalise)) ");
 		sb.append("ORDER BY id_pointage DESC ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
@@ -221,6 +225,8 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("toEtatDate", toEtatDate);
 		q.setParameter("approuve", EtatPointageEnum.APPROUVE.getCodeEtat());
 		q.setParameter("ventile", EtatPointageEnum.VENTILE.getCodeEtat());
+		q.setParameter("valide", EtatPointageEnum.VALIDE.getCodeEtat());
+		q.setParameter("journalise", EtatPointageEnum.JOURNALISE.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
 		List<Pointage> result = q.getResultList();

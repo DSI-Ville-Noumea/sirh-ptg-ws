@@ -135,4 +135,12 @@ public interface IPointageService {
 	 * @return
 	 */
 	boolean isPrimeUtiliseePointage(Integer idAgent, List<Integer> refPrimes);
+	
+	/**
+	 * Filters Pointages by removing parents from the list.
+	 * @param pointages - It is mandatory that the pointages are sorted by idPointage asc
+	 * @param etats - Optional list of Etats to keep. If null, no filter will be applied
+	 * @return
+	 */
+	List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats);
 }

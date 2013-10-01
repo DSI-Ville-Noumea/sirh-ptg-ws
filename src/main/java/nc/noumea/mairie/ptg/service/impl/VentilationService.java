@@ -29,6 +29,7 @@ import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
+import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
@@ -68,6 +69,9 @@ public class VentilationService implements IVentilationService {
 	@Autowired
 	private IPointageCalculeService pointageCalculeService;
 
+	@Autowired
+	private IPointageService pointageService;
+	
 	@Autowired
 	private HelperService helperService;
 
@@ -349,13 +353,17 @@ public class VentilationService implements IVentilationService {
 
 		logger.debug("Ventilation of HSUPs and ABS pointages for date monday [{}]...", dateLundi);
 
+		// Retrieve all pointages for that period
 		List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesAbsenceAndHSupForVentilation(
 				idAgent, fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
 
+		// Then filter them (if they have parent pointages to be excluded for ex.)
+		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(agentsPointageForPeriod, null);
+		
 		boolean has1150Prime = sirhRepository.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
-				agentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime);
-		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, agentsPointageForPeriod, dateLundi);
+				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime);
+		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod, dateLundi);
 
 		// persisting all the generated entities linking them to the current
 		// ventil date
@@ -369,7 +377,7 @@ public class VentilationService implements IVentilationService {
 			vAbs.persist();
 		}
 
-		return agentsPointageForPeriod;
+		return filteredAgentsPointageForPeriod;
 	}
 
 	protected List<Pointage> processPrimesVentilationForMonthAndAgent(VentilDate ventilDate, Integer idAgent,
@@ -379,13 +387,16 @@ public class VentilationService implements IVentilationService {
 
 		List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesPrimeForVentilation(idAgent,
 				fromVentilDate, ventilDate.getDateVentilation(), dateDebutMois);
+		
+		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(agentsPointageForPeriod, null);
+		
 		List<PointageCalcule> agentsPointagesCalculesForPeriod = ventilationRepository
 				.getListPointagesCalculesPrimeForVentilation(idAgent, dateDebutMois);
 
 		// Ventilate pointages per type
 		List<VentilPrime> primesVentilees = new ArrayList<VentilPrime>();
 
-		primesVentilees.addAll(ventilationPrimeService.processPrimesAgent(idAgent, agentsPointageForPeriod,
+		primesVentilees.addAll(ventilationPrimeService.processPrimesAgent(idAgent, filteredAgentsPointageForPeriod,
 				dateDebutMois));
 		primesVentilees.addAll(ventilationPrimeService.processPrimesCalculeesAgent(idAgent,
 				agentsPointagesCalculesForPeriod, dateDebutMois));
@@ -404,7 +415,7 @@ public class VentilationService implements IVentilationService {
 			ptgC.setLastVentilDate(ventilDate);
 		}
 		
-		return agentsPointageForPeriod;
+		return filteredAgentsPointageForPeriod;
 	}
 
 	/**
@@ -489,7 +500,11 @@ public class VentilationService implements IVentilationService {
 				ptg.getVentilations().add(ventilDate);
 			}
 
-			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.VENTILE) {
+			EtatPointageEnum currentEtat = ptg.getLatestEtatPointage().getEtat();
+			
+			if (currentEtat == EtatPointageEnum.VENTILE
+					|| currentEtat == EtatPointageEnum.VALIDE
+					|| currentEtat == EtatPointageEnum.JOURNALISE) {
 				continue;
 			}
 
