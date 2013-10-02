@@ -18,6 +18,7 @@ import nc.noumea.mairie.domain.Spphre;
 import nc.noumea.mairie.domain.Sppprm;
 import nc.noumea.mairie.domain.Spprim;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
@@ -49,11 +50,17 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class ExportPaieServiceTest {
 
 	@Test
-	public void markPointagesAsValidated_2Pointages_AddEtatPointage() {
+	public void markPointagesAsValidated_2Pointages_1IsJOURNALISE_AddEtatPointageExceptJOURNALISE() {
 		
 		// Given
 		Pointage p1 = new Pointage();
+		EtatPointage ep1 = new EtatPointage();
+		ep1.setEtat(EtatPointageEnum.VENTILE);
+		p1.getEtats().add(ep1);
 		Pointage p2 = new Pointage();
+		EtatPointage ep2 = new EtatPointage();
+		ep2.setEtat(EtatPointageEnum.JOURNALISE);
+		p2.getEtats().add(ep2);
 		Date date = new DateTime(2013, 7, 8, 18, 9, 0).toDate();
 		
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -66,14 +73,11 @@ public class ExportPaieServiceTest {
 		service.markPointagesAsValidated(Arrays.asList(p1, p2), 9008799);
 		
 		// Then
-		assertEquals(date, p1.getEtats().get(0).getDateEtat());
-		assertEquals(date, p1.getEtats().get(0).getDateMaj());
-		assertEquals(9008799, (int) p1.getEtats().get(0).getIdAgent());
-		assertEquals(EtatPointageEnum.VALIDE, p1.getEtats().get(0).getEtat());
-		assertEquals(date, p2.getEtats().get(0).getDateEtat());
-		assertEquals(date, p2.getEtats().get(0).getDateMaj());
-		assertEquals(9008799, (int) p2.getEtats().get(0).getIdAgent());
-		assertEquals(EtatPointageEnum.VALIDE, p2.getEtats().get(0).getEtat());
+		assertEquals(date, p1.getEtats().get(1).getDateEtat());
+		assertEquals(date, p1.getEtats().get(1).getDateMaj());
+		assertEquals(9008799, (int) p1.getEtats().get(1).getIdAgent());
+		assertEquals(EtatPointageEnum.VALIDE, p1.getEtats().get(1).getEtat());
+		assertEquals(EtatPointageEnum.JOURNALISE, p2.getEtats().get(0).getEtat());
 	}
 	
 	@Test
@@ -81,7 +85,9 @@ public class ExportPaieServiceTest {
 		
 		// Given
 		PointageCalcule p1 = new PointageCalcule();
+		p1.setEtat(EtatPointageEnum.VENTILE);
 		PointageCalcule p2 = new PointageCalcule();
+		p2.setEtat(EtatPointageEnum.JOURNALISE);
 		
 		ExportPaieService service = new ExportPaieService();
 		
@@ -90,7 +96,7 @@ public class ExportPaieServiceTest {
 		
 		// Then
 		assertEquals(EtatPointageEnum.VALIDE, p1.getEtat());
-		assertEquals(EtatPointageEnum.VALIDE, p2.getEtat());
+		assertEquals(EtatPointageEnum.JOURNALISE, p2.getEtat());
 	}
 	
 	@Test

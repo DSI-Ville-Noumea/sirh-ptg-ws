@@ -308,7 +308,8 @@ public class PointageService implements IPointageService {
 		logger.debug("Found {} Pointage for agent {} and ventil date {} as of {}", agentPointages.size(), idAgent,
 				ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
 
-		return filterOldPointagesAndEtatFromList(agentPointages, Arrays.asList(EtatPointageEnum.VENTILE));
+		return filterOldPointagesAndEtatFromList(agentPointages,
+				Arrays.asList(EtatPointageEnum.VENTILE, EtatPointageEnum.VALIDE, EtatPointageEnum.JOURNALISE));
 	}
 	
 	@Override

@@ -262,6 +262,10 @@ public class ExportPaieService implements IExportPaieService {
 		Date currentDate = helperService.getCurrentDate();
 		
 		for (Pointage ptg : pointages) {
+
+			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.JOURNALISE)
+				continue;
+			
 			EtatPointage ep = new EtatPointage();
 			ep.setDateEtat(currentDate);
 			ep.setDateMaj(currentDate);
@@ -278,6 +282,9 @@ public class ExportPaieService implements IExportPaieService {
 	 */
 	protected void markPointagesCalculesAsValidated(List<PointageCalcule> pointagesCalcules) {
 		for (PointageCalcule ptgC : pointagesCalcules) {
+			if (ptgC.getEtat() == EtatPointageEnum.JOURNALISE)
+				continue;
+			
 			ptgC.setEtat(EtatPointageEnum.VALIDE);
 		}
 	}
