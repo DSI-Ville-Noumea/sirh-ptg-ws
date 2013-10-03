@@ -198,7 +198,7 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(new ArrayList<Droit>());
 		Mockito.when(arRepo.isUserOperator(9005138)).thenReturn(false);
-		Mockito.doAnswer(new Answer() {
+		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
 				Droit obj = (Droit) args[0];
@@ -240,7 +240,7 @@ public class AccessRightsServiceTest {
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(Arrays.asList(dd));
-		Mockito.doAnswer(new Answer() {
+		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				Object[] args = invocation.getArguments();
 				Droit obj = (Droit) args[0];
@@ -481,7 +481,6 @@ public class AccessRightsServiceTest {
 		// see callback for persisEntity
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Test
 	public void setAgentsToApprove_1ExistingAgent_DoNothing() {
 

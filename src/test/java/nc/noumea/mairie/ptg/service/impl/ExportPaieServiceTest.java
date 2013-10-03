@@ -209,7 +209,7 @@ public class ExportPaieServiceTest {
 		ReflectionTestUtils.setField(service, "paieWorkflowService", pwfs);
 		
 		// When
-		CanStartWorkflowPaieActionDto result = service.canStartExportPaieActionDto(chainePaie);
+		CanStartWorkflowPaieActionDto result = service.canStartExportPaieAction(chainePaie);
 		
 		// Then
 		assertTrue(result.isCanStartExportPaieAction());

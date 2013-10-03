@@ -82,4 +82,22 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 		}
 		
 	}
+	
+	@Override
+	public boolean canChangeStateToExportEtatPayeurStarted(TypeChainePaieEnum chainePaie) {
+
+		SpWFPaie state = getCurrentState(chainePaie);
+		
+		return canChangeStateToExportEtatPayeurStarted(state.getEtat());
+	}
+	
+	protected boolean canChangeStateToExportEtatPayeurStarted(SpWFEtat currentState) {
+
+		switch (currentState.getCodeEtat()) {
+			case 6: // Journal terminé
+				return true;
+			default:
+				return false;
+		}
+	}
 }

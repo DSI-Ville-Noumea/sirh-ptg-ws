@@ -354,7 +354,7 @@ public class ExportPaieService implements IExportPaieService {
 	}
 
 	@Override
-	public CanStartWorkflowPaieActionDto canStartExportPaieActionDto(TypeChainePaieEnum chainePaie) {
+	public CanStartWorkflowPaieActionDto canStartExportPaieAction(TypeChainePaieEnum chainePaie) {
 		CanStartWorkflowPaieActionDto result = new CanStartWorkflowPaieActionDto();
 		result.setCanStartExportPaieAction(paieWorkflowService.canChangeStateToExportPaieStarted(chainePaie));
 		return result;

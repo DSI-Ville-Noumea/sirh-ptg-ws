@@ -28,7 +28,7 @@ public interface IExportPaieService {
 	 * @param chainePaie
 	 * @return
 	 */
-	CanStartWorkflowPaieActionDto canStartExportPaieActionDto(TypeChainePaieEnum chainePaie);
+	CanStartWorkflowPaieActionDto canStartExportPaieAction(TypeChainePaieEnum chainePaie);
 	
 	/**
 	 * This method processes one ExportPaieTask by exporting the Pointages of the tasks' agent

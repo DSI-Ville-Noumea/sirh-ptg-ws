@@ -205,6 +205,70 @@ public class PaieWorkflowServiceTest {
 	}
 	
 	@Test
+	public void canChangeStateToExportEtatPayeurStarted_stateIs6_true() {
+		
+		// Given
+		SpWFEtat etat = new SpWFEtat();
+		etat.setCodeEtat(6);
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		
+		// Then
+		assertTrue(service.canChangeStateToExportEtatPayeurStarted(etat));
+	}
+	
+	@Test
+	public void canChangeStateToExportEtatPayeurStarted_stateIsOtherThan6_false() {
+		
+		// Given
+		SpWFEtat etat = new SpWFEtat();
+		etat.setCodeEtat(7);
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		
+		// Then
+		assertFalse(service.canChangeStateToExportEtatPayeurStarted(etat));
+	}
+	
+	@Test
+	public void canChangeStateToExportEtatPayeurStarted_stateIsValid_returnTrue() {
+		
+		// Given
+		SpWFPaie shc = new SpWFPaie();
+		SpWFEtat etat = new SpWFEtat();
+		etat.setCodeEtat(6);
+		shc.setEtat(etat);
+		
+		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
+		Mockito.when(wfR.readCurrentState(TypeChainePaieEnum.SHC)).thenReturn(shc);
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
+		
+		// Then
+		assertTrue(service.canChangeStateToExportEtatPayeurStarted(TypeChainePaieEnum.SHC));
+	}
+	
+	@Test
+	public void canChangeStateToExportEtatPayeurStarted_stateIsNotValid_returnFalse() {
+		
+		// Given
+		SpWFPaie shc = new SpWFPaie();
+		SpWFEtat etat = new SpWFEtat();
+		etat.setCodeEtat(1);
+		shc.setEtat(etat);
+		
+		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
+		Mockito.when(wfR.readCurrentState(TypeChainePaieEnum.SHC)).thenReturn(shc);
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
+		
+		// Then
+		assertFalse(service.canChangeStateToExportEtatPayeurStarted(TypeChainePaieEnum.SHC));
+	}
+	
+	@Test
 	public void changeStateToExportPaieDone_StateIsNotValid_ThrowException() {
 		
 		// Given

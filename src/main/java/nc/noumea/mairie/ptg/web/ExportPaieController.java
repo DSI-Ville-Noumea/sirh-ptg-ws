@@ -88,7 +88,7 @@ public class ExportPaieController {
 		logger.debug("entered GET [exportPaie/canStartExportPaie] => canStartExportPaie with parameter statut = {}", statut);
 		
 		CanStartWorkflowPaieActionDto result = exportPaieService
-				.canStartExportPaieActionDto(helperService.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
+				.canStartExportPaieAction(helperService.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
         
 		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
 		

@@ -8,5 +8,6 @@ public interface IPaieWorkflowService {
 	SpWFPaie getCurrentState(TypeChainePaieEnum chainePaie);
 	void changeStateToExportPaieStarted(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException;
 	boolean canChangeStateToExportPaieStarted(TypeChainePaieEnum chainePaie);
+	boolean canChangeStateToExportEtatPayeurStarted(TypeChainePaieEnum chainePaie);
 	void changeStateToExportPaieDone(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException;
 }
