@@ -687,9 +687,98 @@ public class SaisieServiceTest {
 		// Given
 		Pointage ptg = new Pointage();
 		ptg.setQuantite(1);
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(ep);
 		
 		PrimeDto prime = new PrimeDto();
 		prime.setQuantite(1);
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertFalse(service.hasPointageChanged(ptg, prime));
+	}
+	
+	@Test
+	public void hasPointageChanged_PrimeMotifHasChangedEtatIsSaisi_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setQuantite(1);
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(ep);
+		
+		PrimeDto prime = new PrimeDto();
+		prime.setQuantite(1);
+		prime.setMotif("coucou");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, prime));
+	}
+	
+	@Test
+	public void hasPointageChanged_PrimeCommentaireHasChangedEtatIsSaisi_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setQuantite(1);
+		ptg.setCommentaire(new PtgComment("aaa"));
+		ptg.setMotif(new PtgComment("aaa"));
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(ep);
+		
+		PrimeDto prime = new PrimeDto();
+		prime.setQuantite(1);
+		prime.setCommentaire("coucou");
+		prime.setMotif("aaa");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, prime));
+	}
+	
+	@Test
+	public void hasPointageChanged_PrimeMotifHasChangedEtatisNotSaisi_ReturnFalse() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setQuantite(1);
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.APPROUVE);
+		ptg.getEtats().add(ep);
+		
+		PrimeDto prime = new PrimeDto();
+		prime.setQuantite(1);
+		prime.setMotif("coucou");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertFalse(service.hasPointageChanged(ptg, prime));
+	}
+	
+	@Test
+	public void hasPointageChanged_PrimeCommentaireHasChangedEtatisNotSaisi_ReturnFalse() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setQuantite(1);
+		ptg.setCommentaire(new PtgComment("aaa"));
+		ptg.setMotif(new PtgComment("aaa"));
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.APPROUVE);
+		ptg.getEtats().add(ep);
+		
+		PrimeDto prime = new PrimeDto();
+		prime.setQuantite(1);
+		prime.setCommentaire("coucou");
+		prime.setMotif("aaa");
 		
 		SaisieService service = new SaisieService();
 		
@@ -702,6 +791,9 @@ public class SaisieServiceTest {
 
 		// Given
 		Pointage ptg = new Pointage();
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(ep);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 		
@@ -754,6 +846,9 @@ public class SaisieServiceTest {
 
 		// Given
 		Pointage ptg = new Pointage();
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(ep);
 		ptg.setAbsenceConcertee(true);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
@@ -810,10 +905,115 @@ public class SaisieServiceTest {
 	}
 	
 	@Test
+	public void hasPointageChanged_AbsenceMotifHasChangedEtatIsSaisi_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(ep);
+		ptg.setAbsenceConcertee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		AbsenceDto abs = new AbsenceDto();
+		abs.setConcertee(true);
+		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		abs.setMotif("coucou");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, abs));
+	}
+	
+	@Test
+	public void hasPointageChanged_AbsenceCommentaireHasChangedEtatIsSaisi_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setCommentaire(new PtgComment("aaa"));
+		ptg.setMotif(new PtgComment("aaa"));
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(ep);
+		ptg.setAbsenceConcertee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		AbsenceDto abs = new AbsenceDto();
+		abs.setConcertee(true);
+		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		abs.setCommentaire("coucou");
+		abs.setMotif("aaa");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, abs));
+	}
+	
+	@Test
+	public void hasPointageChanged_AbsenceMotifHasChangedEtatisNotSaisi_ReturnFalse() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.APPROUVE);
+		ptg.getEtats().add(ep);
+		ptg.setAbsenceConcertee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		AbsenceDto abs = new AbsenceDto();
+		abs.setConcertee(true);
+		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		abs.setMotif("coucou");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertFalse(service.hasPointageChanged(ptg, abs));
+	}
+	
+	@Test
+	public void hasPointageChanged_AbsenceCommentaireHasChangedEtatisNotSaisi_ReturnFalse() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setCommentaire(new PtgComment("aaa"));
+		ptg.setMotif(new PtgComment("aaa"));
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.APPROUVE);
+		ptg.getEtats().add(ep);
+		ptg.setAbsenceConcertee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		AbsenceDto abs = new AbsenceDto();
+		abs.setConcertee(true);
+		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		abs.setCommentaire("coucou");
+		abs.setMotif("aaa");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertFalse(service.hasPointageChanged(ptg, abs));
+	}
+	
+	@Test
 	public void hasPointageChanged_HSupHasNotChanged_ReturnFalse() {
 
 		// Given
 		Pointage ptg = new Pointage();
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(ep);
 		ptg.setHeureSupRecuperee(true);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
@@ -867,6 +1067,108 @@ public class SaisieServiceTest {
 		
 		// Then
 		assertTrue(service.hasPointageChanged(ptg, hSup));
+	}
+	
+	@Test
+	public void hasPointageChanged_HSupMotifHasChangedEtatIsSaisi_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(ep);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		HeureSupDto hSup = new HeureSupDto();
+		hSup.setRecuperee(true);
+		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		hSup.setMotif("coucou");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, hSup));
+	}
+	
+	@Test
+	public void hasPointageChanged_HSupCommentaireHasChangedEtatIsSaisi_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setCommentaire(new PtgComment("aaa"));
+		ptg.setMotif(new PtgComment("aaa"));
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.SAISI);
+		ptg.getEtats().add(ep);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		HeureSupDto hSup = new HeureSupDto();
+		hSup.setRecuperee(true);
+		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		hSup.setCommentaire("coucou");
+		hSup.setMotif("aaa");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, hSup));
+	}
+	
+	@Test
+	public void hasPointageChanged_HSupMotifHasChangedEtatisNotSaisi_ReturnFalse() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.APPROUVE);
+		ptg.getEtats().add(ep);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		HeureSupDto hSup = new HeureSupDto();
+		hSup.setRecuperee(true);
+		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		hSup.setMotif("coucou");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertFalse(service.hasPointageChanged(ptg, hSup));
+	}
+	
+	@Test
+	public void hasPointageChanged_HSupCommentaireHasChangedEtatisNotSaisi_ReturnFalse() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setCommentaire(new PtgComment("aaa"));
+		ptg.setMotif(new PtgComment("aaa"));
+		EtatPointage ep = new EtatPointage();
+		ep.setEtat(EtatPointageEnum.APPROUVE);
+		ptg.getEtats().add(ep);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		
+		HeureSupDto hSup = new HeureSupDto();
+		hSup.setRecuperee(true);
+		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+		hSup.setCommentaire("coucou");
+		hSup.setMotif("aaa");
+		
+		SaisieService service = new SaisieService();
+		
+		// Then
+		assertFalse(service.hasPointageChanged(ptg, hSup));
 	}
 	
 	@Test

@@ -281,32 +281,46 @@ public class SaisieService implements ISaisieService {
 	protected boolean hasPointageChanged(Pointage ptg, PrimeDto prime) {
 
 		if (ptg.getQuantite() != null)
-			return !ptg.getQuantite().equals(prime.getQuantite());
+			return (!ptg.getQuantite().equals(prime.getQuantite()) || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
+					&& hasTextChanged(ptg, prime));
 
 		boolean dateDebutHasChanged = !((ptg.getDateDebut() == null && prime.getHeureDebut() == null) 
 				|| (ptg.getDateDebut() != null && prime.getHeureDebut() != null && ptg.getDateDebut().getTime() == prime.getHeureDebut().getTime()));
 		boolean dateFinHasChanged = !((ptg.getDateFin() == null && prime.getHeureFin() == null) 
 				|| (ptg.getDateFin() != null && prime.getHeureFin() != null && ptg.getDateFin().getTime() == prime.getHeureFin().getTime()));
 		
-		return dateDebutHasChanged || dateFinHasChanged;
+		return (dateDebutHasChanged || dateFinHasChanged || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
+				&& hasTextChanged(ptg, prime));
 	}
 
 	protected boolean hasPointageChanged(Pointage ptg, AbsenceDto absence) {
 
-		return !(ptg.getAbsenceConcertee().equals(absence.getConcertee())
+		boolean hasBeenModified = !(ptg.getAbsenceConcertee().equals(absence.getConcertee())
 				&& ptg.getDateDebut().getTime() == absence.getHeureDebut().getTime() && ptg.getDateFin().getTime() == absence
 				.getHeureFin().getTime());
+
+		return (hasBeenModified || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
+				&& hasTextChanged(ptg, absence));
 	}
 
 	protected boolean hasPointageChanged(Pointage ptg, HeureSupDto hSup) {
 
-		return !(ptg.getHeureSupRecuperee().equals(hSup.getRecuperee())
+		boolean hasBeenModified = !(ptg.getHeureSupRecuperee().equals(hSup.getRecuperee())
 				&& ptg.getDateDebut().getTime() == hSup.getHeureDebut().getTime() && ptg.getDateFin().getTime() == hSup
 				.getHeureFin().getTime());
+
+		return (hasBeenModified || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
+				&& hasTextChanged(ptg, hSup));
 	}
-
-	protected boolean hasTextChanged(Pointage ptg, PointageDto dto) {
-		return !(ptg.getMotif().equals(dto.getMotif()) && ptg.getCommentaire().equals(dto.getCommentaire()));
-
+	
+	protected boolean hasTextChanged(Pointage ptg, PointageDto pointageDto) {
+		
+		boolean motifHasChanged = (ptg.getMotif() == null  && pointageDto.getMotif() != null && !pointageDto.getMotif().equals("")
+				|| (ptg.getMotif() != null && !ptg.getMotif().getText().equals(pointageDto.getMotif())));
+		
+		boolean commentHasChanged = (ptg.getCommentaire() == null  && pointageDto.getCommentaire() != null && !pointageDto.getCommentaire().equals("")
+				|| (ptg.getCommentaire() != null && !ptg.getCommentaire().getText().equals(pointageDto.getCommentaire())));
+		
+		return motifHasChanged || commentHasChanged;
 	}
 }
