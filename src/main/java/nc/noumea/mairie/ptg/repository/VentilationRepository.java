@@ -137,7 +137,7 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("AND p.DATE_LUNDI = :dateLundi ");
 		sb.append("AND (p.ID_TYPE_POINTAGE = :typePointageHSUP OR p.ID_TYPE_POINTAGE = :typePointageABS) ");
 		sb.append("AND (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ");
-		sb.append("ep.etat IN (:ventile, :valide, :journalise)) ");
+		sb.append("OR ep.etat IN (:ventile, :valide, :journalise)) ");
 		sb.append("ORDER BY id_pointage ASC ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
