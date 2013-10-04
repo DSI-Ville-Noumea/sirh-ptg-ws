@@ -91,4 +91,11 @@ public class ExportPaieRepository implements IExportPaieRepository {
 		
 		return result.get(0);
 	}
+
+	@Override
+	public void removeIfExists(Object entity) {
+
+//if (mairieEntityManager.)
+		
+	}
 }

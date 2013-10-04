@@ -137,7 +137,7 @@ public class VentilationPrimeServiceTest {
 		
 		RefPrime refPrime3 = new RefPrime();
 		refPrime3.setIdRefPrime(8909);
-		refPrime3.setNoRubr(7701);
+		refPrime3.setNoRubr(7715);
 		refPrime3.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 		
 		Pointage p1 = new Pointage();

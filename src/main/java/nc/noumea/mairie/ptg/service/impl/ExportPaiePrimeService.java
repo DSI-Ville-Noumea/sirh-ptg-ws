@@ -42,7 +42,11 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 				continue;
 			
 			// Fetch or create Sppprm
-			Sppprm prm = findOrCreateSppprmRecord(modifiedOrAddedSppprm, ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getNoRubr());
+			Sppprm prm = findOrCreateSppprmRecord(modifiedOrAddedSppprm, ptg.getIdAgent(), ptg.getDateDebut(), ptg
+					.getRefPrime().getNoRubr(), ptg.getQuantite());
+
+			if (prm == null)
+				continue;
 			
 			switch (ptg.getRefPrime().getTypeSaisie()) {
 				case NB_HEURES:
@@ -80,7 +84,11 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 				continue;
 			
 			// Fetch or create Sppprm
-			Sppprm prm = findOrCreateSppprmRecord(modifiedOrAddedSppprm, ptgC.getIdAgent(), ptgC.getDateDebut(), ptgC.getRefPrime().getNoRubr());
+			Sppprm prm = findOrCreateSppprmRecord(modifiedOrAddedSppprm, ptgC.getIdAgent(), ptgC.getDateDebut(), ptgC
+					.getRefPrime().getNoRubr(), ptgC.getQuantite());
+		
+			if (prm == null)
+				continue;
 			
 			switch (ptgC.getRefPrime().getTypeSaisie()) {
 				case NB_HEURES:
@@ -107,7 +115,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 		
 	}
 	
-	protected Sppprm findOrCreateSppprmRecord(List<Sppprm> existingRecords, Integer idAgent, Date dateJour, Integer norubr) {
+	protected Sppprm findOrCreateSppprmRecord(List<Sppprm> existingRecords, Integer idAgent, Date dateJour, Integer norubr, Integer qte) {
 		
 		Sppprm prm = null;
 		
@@ -126,13 +134,14 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 		// Then Look for an exising record already existing in the DB
 		prm = exportPaieRepository.getSppprmForDayAgentAndNorubr(idAgent, dateJour, norubr);
 		
-		// At last create a new record
-		if (prm == null) {
+		// At last create a new record, only if the qte is different than 0
+		if (prm == null && !qte.equals(0)) {
 			prm = new Sppprm();
 			prm.setId(new SppprmId(nomatr, dateJourMairie, norubr));
 		}
 		
-		existingRecords.add(prm);
+		if (prm != null)
+			existingRecords.add(prm);
 		
 		return prm;
 	}
@@ -148,7 +157,11 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 				continue;
 			
 			// Fetch or create Spprim
-			Spprim pri = findOrCreateSpprimmRecord(ventilPrime.getIdAgent(), ventilPrime.getDateDebutMois(), ventilPrime.getRefPrime().getNoRubr());
+			Spprim pri = findOrCreateSpprimmRecord(ventilPrime.getIdAgent(), ventilPrime.getDateDebutMois(),
+					ventilPrime.getRefPrime().getNoRubr(), ventilPrime.getQuantite());
+			
+			if (pri == null)
+				continue;
 			
 			// Fill in the number of Primes for the month
 			double qte = 0;
@@ -169,7 +182,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 		return pris;
 	}
 	
-	protected Spprim findOrCreateSpprimmRecord(Integer idAgent, Date dateDebutMois, Integer norubr) {
+	protected Spprim findOrCreateSpprimmRecord(Integer idAgent, Date dateDebutMois, Integer norubr, Integer qte) {
 		
 		Spprim pri = null;
 		
@@ -180,7 +193,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 		pri = exportPaieRepository.getSpprimForDayAgentAndNorubr(idAgent, dateDebutMois, norubr);
 		
 		// At last create a new record
-		if (pri == null) {
+		if (pri == null && !qte.equals(0)) {
 			pri = new Spprim();
 			pri.setId(new SpprimId(nomatr, dateDebMoisMairie, norubr));
 			Date dateFinMois = new LocalDate(dateDebutMois).plusMonths(1).withDayOfMonth(1).toDate();

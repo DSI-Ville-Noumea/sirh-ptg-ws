@@ -80,7 +80,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 			if (prime.getNoRubr().equals(7712)
 					&& (datePointage.getDayOfWeek() == DateTimeConstants.SUNDAY || holidayService.isHoliday(datePointage))) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
-				existingPc = returnOrCreateNewPointageWithPrime(null, ptg, prime);
+				existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
 				existingPc.addQuantite((int) totalMinutes);
 
 				if (!result.contains(existingPc))
@@ -91,7 +91,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 			
 			if (prime.getNoRubr().equals(7711)) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
-				existingPc = returnOrCreateNewPointageWithPrime(null, ptg, prime);
+				existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
 				existingPc.addQuantite((int) (totalMinutes - dayMinutes));
 
 				if (!result.contains(existingPc))
