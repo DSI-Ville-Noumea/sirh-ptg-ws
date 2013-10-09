@@ -94,7 +94,7 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 	protected boolean canChangeStateToExportEtatPayeurStarted(SpWFEtat currentState) {
 
 		switch (currentState.getCodeEtat()) {
-			case 6: // Journal terminé
+			case 8: // Pré-gen. comptable terminée
 				return true;
 			default:
 				return false;

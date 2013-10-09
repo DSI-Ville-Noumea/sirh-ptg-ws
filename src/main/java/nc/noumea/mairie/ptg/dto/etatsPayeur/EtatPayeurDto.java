@@ -1,7 +1,11 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 public class EtatPayeurDto {
 
@@ -17,6 +21,13 @@ public class EtatPayeurDto {
 		absences = new ArrayList<AbsencesEtatPayeurDto>();
 		heuresSup = new ArrayList<HeuresSupEtatPayeurDto>();
 		primes = new ArrayList<PrimesEtatPayeurDto>();
+	}
+	
+	public EtatPayeurDto(TypeChainePaieEnum chainePaie, AgentStatutEnum statut, Date firstDayOfPeriod) {
+		this();
+		this.chainePaie = chainePaie.toString();
+		this.statut = statut.toString();
+//		this.periode = chainePaie.toString();
 	}
 
 	public String getChainePaie() {

@@ -209,7 +209,7 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(6);
+		etat.setCodeEtat(8);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
@@ -236,7 +236,7 @@ public class PaieWorkflowServiceTest {
 		// Given
 		SpWFPaie shc = new SpWFPaie();
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(6);
+		etat.setCodeEtat(8);
 		shc.setEtat(etat);
 		
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
