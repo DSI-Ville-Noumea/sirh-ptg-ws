@@ -21,3 +21,7 @@ DELETE FROM PTG_POINTAGE WHERE ID_REF_PRIME in (SELECT ID_REF_PRIME FROM PTG_REF
 DELETE FROM PTG_REF_PRIME WHERE NORUBR IN (7701);
 
 commit;
+
+UPDATE PTG_REF_PRIME SET AIDE = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse rutrum augue nec congue imperdiet. In orci augue, elementum quis tristique at, egestas volutpat massa. Phasellus lacinia condimentum fringilla. Quisque porttitor congue erat ultricies iaculis. Donec dapibus ultrices laoreet nullam.' WHERE IS_CALCULEE = 0;
+
+commit;
