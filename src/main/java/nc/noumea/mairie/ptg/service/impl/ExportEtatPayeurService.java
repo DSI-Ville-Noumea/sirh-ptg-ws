@@ -19,5 +19,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		return result;
 	}
 
-	
+	public void exportEtatsPayeur() {
+		
+	}
 }
