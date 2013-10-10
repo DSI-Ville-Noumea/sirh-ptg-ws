@@ -398,18 +398,22 @@ public class VentilationRepository implements IVentilationRepository {
 
 		return ((long) q.getSingleResult() == 0);
 	}
-	
+
 	@Override
-	public VentilAbsence getPriorVentilAbsenceForAgentAndDate(Integer idAgent, Date dateLundi, VentilAbsence latestVentilAbsence) {
-		
-		TypedQuery<VentilAbsence> q = ptgEntityManager.createQuery("", VentilAbsence.class);
+	public VentilAbsence getPriorVentilAbsenceForAgentAndDate(Integer idAgent, Date dateLundi,
+			VentilAbsence latestVentilAbsence) {
+
+		TypedQuery<VentilAbsence> q = ptgEntityManager
+				.createQuery(
+						"select va from VentilAbsence va where va.idVentilAbsence != :idLatestVentilAbsence and va.idAgent = :idAgent and va.dateLundi = :dateLundi",
+						VentilAbsence.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateLundi", dateLundi);
 		q.setParameter("idLatestVentilAbsence", latestVentilAbsence.getIdVentilAbsence());
 		q.setMaxResults(1);
-		
+
 		List<VentilAbsence> vas = q.getResultList();
-		
+
 		return vas.size() != 0 ? vas.get(0) : null;
 	}
 
@@ -425,6 +429,5 @@ public class VentilationRepository implements IVentilationRepository {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
+
 }
