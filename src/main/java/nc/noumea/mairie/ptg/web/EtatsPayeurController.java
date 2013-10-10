@@ -53,7 +53,7 @@ public class EtatsPayeurController {
 
 		AgentStatutEnum statut = AgentStatutEnum.valueOf(statutString);
 		
-		EtatPayeurDto result = exportEtatPayeurService.getAbsencesEtatPayeurDataForStatut(statut);
+		EtatPayeurDto result = exportEtatPayeurService.getHeuresSupEtatPayeurDataForStatut(statut);
 		
 		return new ModelAndView("xmlView", "object", result);
 	}
