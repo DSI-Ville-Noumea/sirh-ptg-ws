@@ -148,5 +148,17 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		
 		return q.getResultList();
 	}
+
+	@Override
+	public Integer getAgentsApprobateur(Integer idAgent) {
+		
+		TypedQuery<Integer> q = ptgEntityManager.createNamedQuery("getAgentsApprobateur", Integer.class);
+		q.setParameter("idAgent", idAgent);
+		q.setMaxResults(1);
+		
+		List<Integer> results = q.getResultList();
+		
+		return results.size() != 0 ? results.get(0) : null;
+	}
 	
 }

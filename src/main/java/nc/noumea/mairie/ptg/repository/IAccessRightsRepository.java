@@ -32,4 +32,11 @@ public interface IAccessRightsRepository {
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent);
 	
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
+	
+	/**
+	 * Returns the Id Agent of the Approbateur of a given Agent
+	 * @param idAgent
+	 * @return
+	 */
+	Integer getAgentsApprobateur(Integer idAgent);
 }

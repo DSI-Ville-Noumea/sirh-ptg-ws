@@ -418,14 +418,14 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public VentilHsup getPriorVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilAbsence latestVentilAbsence) {
+	public VentilHsup getPriorVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilHsup latestVentilAbsence) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public VentilPrime getPriorVentilPrimeForAgentAndDate(Integer idAgent, Date dateDebMois,
-			VentilAbsence latestVentilAbsence) {
+			VentilPrime latestVentilAbsence) {
 		// TODO Auto-generated method stub
 		return null;
 	}

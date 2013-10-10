@@ -15,10 +15,31 @@ public interface IExportEtatPayeurService {
 	 */
 	CanStartWorkflowPaieActionDto canStartExportEtatPayeurAction(TypeChainePaieEnum chainePaie);
 
+	/**
+	 * Retrieves the Absences data for Etat Payeur report based on the Statut given
+	 * as parameter. This method relies on a Ventilation being still open and not paid.
+	 * The aggregation is done by Week.
+	 * @param statut
+	 * @return The list of Absences formatted for a reporting engine
+	 */
 	EtatPayeurDto getAbsencesEtatPayeurDataForStatut(AgentStatutEnum statut);
 	
+	/**
+	 * Retrieves the HeuresSup data for Etat Payeur report based on the Statut given
+	 * as parameter. This method relies on a Ventilation being still open and not paid.
+	 * The aggregation is done by Week.
+	 * @param statut
+	 * @return The list of Heures Sup formatted for a reporting engine
+	 */
 	EtatPayeurDto getHeuresSupEtatPayeurDataForStatut(AgentStatutEnum statut);
 	
+	/**
+	 * Retrieves the Primes data for Etat Payeur report based on the Statut given
+	 * as parameter. This method relies on a Ventilation being still open and not paid.
+	 * The aggregation is done by Month.
+	 * @param statut
+	 * @return The list of Primes formatted for a reporting engine
+	 */
 	EtatPayeurDto getPrimesEtatPayeurDataForStatut(AgentStatutEnum statut);
 	
 }

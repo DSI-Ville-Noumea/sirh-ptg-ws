@@ -46,7 +46,7 @@ public interface IVentilationRepository {
     
     VentilAbsence getPriorVentilAbsenceForAgentAndDate(Integer idAgent, Date dateLundi, VentilAbsence latestVentilAbsence);
     
-    VentilHsup getPriorVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilAbsence latestVentilAbsence);
+    VentilHsup getPriorVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilHsup latestVentilAbsence);
     
-    VentilPrime getPriorVentilPrimeForAgentAndDate(Integer idAgent, Date dateDebMois, VentilAbsence latestVentilAbsence);
+    VentilPrime getPriorVentilPrimeForAgentAndDate(Integer idAgent, Date dateDebMois, VentilPrime latestVentilAbsence);
 }
