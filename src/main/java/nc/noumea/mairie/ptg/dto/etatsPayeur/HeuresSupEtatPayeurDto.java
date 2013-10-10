@@ -1,5 +1,8 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
+import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
+
 public class HeuresSupEtatPayeurDto extends AbstractItemEtatPayeurDto {
 
 	private String horsContrat;
@@ -15,6 +18,37 @@ public class HeuresSupEtatPayeurDto extends AbstractItemEtatPayeurDto {
 	private String complementaires;
 	private String simples;
 	private String composees;
+
+	public HeuresSupEtatPayeurDto() {
+
+	}
+
+	public HeuresSupEtatPayeurDto(VentilHsup vh, HelperService hS) {
+
+		this(vh, null, hS);
+
+	}
+
+	public HeuresSupEtatPayeurDto(VentilHsup vhNew, VentilHsup vhOld, HelperService hS) {
+
+		super(vhNew);
+
+		horsContrat = hS.formatMinutesToString(vhNew.getMHorsContrat() - (vhOld != null ? vhOld.getMHorsContrat() : 0));
+		sup = hS.formatMinutesToString(vhNew.getMSup() - (vhOld != null ? vhOld.getMSup() : 0));
+		sup25 = hS.formatMinutesToString((int) vhNew.getMSup25() - (vhOld != null ? vhOld.getMSup25() : 0));
+		sup50 = hS.formatMinutesToString(vhNew.getMSup50() - (vhOld != null ? vhOld.getMSup50() : 0));
+		djf = hS.formatMinutesToString(vhNew.getMsdjf() - (vhOld != null ? vhOld.getMsdjf() : 0));
+		djf25 = hS.formatMinutesToString(vhNew.getMsdjf25() - (vhOld != null ? vhOld.getMsdjf25() : 0));
+		djf50 = hS.formatMinutesToString(vhNew.getMsdjf50() - (vhOld != null ? vhOld.getMsdjf50() : 0));
+		h1Mai = hS.formatMinutesToString(vhNew.getMMai() - (vhOld != null ? vhOld.getMMai() : 0));
+		nuit = hS.formatMinutesToString(vhNew.getMsNuit() - (vhOld != null ? vhOld.getMsNuit() : 0));
+		normales = hS.formatMinutesToString(vhNew.getMNormales() - (vhOld != null ? vhOld.getMNormales() : 0));
+		complementaires = hS.formatMinutesToString(vhNew.getMComplementaires()
+				- (vhOld != null ? vhOld.getMComplementaires() : 0));
+		simples = hS.formatMinutesToString(vhNew.getMSimple() - (vhOld != null ? vhOld.getMSimple() : 0));
+		composees = hS.formatMinutesToString(vhNew.getMComposees() - (vhOld != null ? vhOld.getMComposees() : 0));
+
+	}
 
 	public String getHorsContrat() {
 		return horsContrat;

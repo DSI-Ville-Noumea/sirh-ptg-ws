@@ -103,11 +103,15 @@ public class HelperService {
 	}
 	
 	public String formatMinutesToString(Integer minutes) {
-		int nbMinutesModulo = minutes % 60;
-		int nbHours = minutes / 60;
+		
+		int absMinutes = Math.abs(minutes);
+		int nbMinutesModulo = absMinutes % 60;
+		int nbHours = absMinutes / 60;
 
 		StringBuilder sb = new StringBuilder();
-
+		if (minutes < 0)
+			sb.append("- ");
+			
 		if (nbHours > 0)
 			sb.append(String.format("%sh", nbHours));
 

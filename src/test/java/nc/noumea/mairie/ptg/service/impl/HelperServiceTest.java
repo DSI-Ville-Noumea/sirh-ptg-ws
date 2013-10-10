@@ -228,6 +228,39 @@ public class HelperServiceTest {
 	}
 	
 	@Test
+	public void formatMinutesToString_NegativeHoursWithoutMinutes() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals("- 2h", service.formatMinutesToString(-120));
+		
+	}
+	
+	@Test
+	public void formatMinutesToString_NegativeHoursWithMinutes() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals("- 4h30m", service.formatMinutesToString(-270));
+		
+	}
+	
+	@Test
+	public void formatMinutesToString_NegativeMinutesWithoutHours() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals("- 15m", service.formatMinutesToString(-15));
+		
+	}
+	
+	@Test
 	public void formatMinutesToString_PeriodHoursWithoutMinutes() {
 		
 		// Given

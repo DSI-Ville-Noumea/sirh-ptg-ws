@@ -14,6 +14,10 @@
 		<property name="classesToBeBound">
 			<list>
 				<value>nc.noumea.mairie.ptg.dto.FichePointageListDto</value>
+				<value>nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto</value>
+				<value>nc.noumea.mairie.ptg.dto.etatsPayeur.AbsencesEtatPayeurDto</value>
+				<value>nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto</value>
+				<value>nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto</value>
 			</list>
 		</property>
 	</bean>

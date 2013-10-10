@@ -1,12 +1,17 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
+@XmlRootElement
 public class EtatPayeurDto {
 
 	private String chainePaie;
@@ -27,7 +32,8 @@ public class EtatPayeurDto {
 		this();
 		this.chainePaie = chainePaie.toString();
 		this.statut = statut.toString();
-//		this.periode = chainePaie.toString();
+		SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.FRENCH);
+		this.periode = sdf.format(firstDayOfPeriod);
 	}
 
 	public String getChainePaie() {

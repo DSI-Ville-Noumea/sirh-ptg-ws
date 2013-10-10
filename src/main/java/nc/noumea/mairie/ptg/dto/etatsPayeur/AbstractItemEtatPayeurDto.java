@@ -1,8 +1,17 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
+import nc.noumea.mairie.ptg.domain.VentilAbsence;
+import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.domain.VentilPrime;
 
 public abstract class AbstractItemEtatPayeurDto {
+
+	private static SimpleDateFormat periodWeekSdf = new SimpleDateFormat("'Sem' w");
+	private static SimpleDateFormat periodMonthSdf = new SimpleDateFormat("MMMM YYYY", Locale.FRENCH);
 
 	private String approbateurNom;
 	private String approbateurPrenom;
@@ -12,9 +21,31 @@ public abstract class AbstractItemEtatPayeurDto {
 	private String nom;
 	private String prenom;
 	private Integer idAgent;
-	
+
 	private Date date;
-	private String period;
+	private String periode;
+
+	public AbstractItemEtatPayeurDto() {
+
+	}
+
+	public AbstractItemEtatPayeurDto(VentilHsup vh) {
+		idAgent = vh.getIdAgent();
+		date = vh.getDateLundi();
+		periode = periodWeekSdf.format(date);
+	}
+
+	public AbstractItemEtatPayeurDto(VentilAbsence va) {
+		idAgent = va.getIdAgent();
+		date = va.getDateLundi();
+		periode = periodWeekSdf.format(date);
+	}
+
+	public AbstractItemEtatPayeurDto(VentilPrime vp) {
+		idAgent = vp.getIdAgent();
+		date = vp.getDateDebutMois();
+		periode = periodMonthSdf.format(date);
+	}
 
 	public String getApprobateurNom() {
 		return approbateurNom;
@@ -80,11 +111,11 @@ public abstract class AbstractItemEtatPayeurDto {
 		this.date = date;
 	}
 
-	public String getPeriod() {
-		return period;
+	public String getPeriode() {
+		return periode;
 	}
 
-	public void setPeriod(String period) {
-		this.period = period;
+	public void setPeriode(String periode) {
+		this.periode = periode;
 	}
 }
