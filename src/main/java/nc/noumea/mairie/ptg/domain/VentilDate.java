@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
@@ -41,13 +42,16 @@ public class VentilDate {
     private boolean paye;
     
     @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<VentilAbsence> ventilAbsences;
+    @OrderBy("dateLundi asc, idAgent asc")
+    private Set<VentilAbsence> ventilAbsences = new HashSet<VentilAbsence>();
     
     @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<VentilHsup> ventilHsups;
+    @OrderBy("dateLundi asc, idAgent asc")
+    private Set<VentilHsup> ventilHsups = new HashSet<VentilHsup>();
     
     @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<VentilPrime> ventilPrimes;
+    @OrderBy("dateLundi asc, idAgent asc")
+    private Set<VentilPrime> ventilPrimes = new HashSet<VentilPrime>();
     
     @ManyToMany
     @JoinTable(

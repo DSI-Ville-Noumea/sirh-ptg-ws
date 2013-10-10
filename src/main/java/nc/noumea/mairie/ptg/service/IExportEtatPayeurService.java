@@ -1,7 +1,9 @@
 package nc.noumea.mairie.ptg.service;
 
+import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
+import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 
 public interface IExportEtatPayeurService {
 
@@ -12,4 +14,11 @@ public interface IExportEtatPayeurService {
 	 * @return
 	 */
 	CanStartWorkflowPaieActionDto canStartExportEtatPayeurAction(TypeChainePaieEnum chainePaie);
+
+	EtatPayeurDto getAbsencesEtatPayeurDataForStatut(AgentStatutEnum statut);
+	
+	EtatPayeurDto getHeuresSupEtatPayeurDataForStatut(AgentStatutEnum statut);
+	
+	EtatPayeurDto getPrimesEtatPayeurDataForStatut(AgentStatutEnum statut);
+	
 }

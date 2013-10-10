@@ -565,20 +565,20 @@ public class VentilationService implements IVentilationService {
 
 		switch (pointageType) {
 			case ABSENCE: {
-				for (VentilAbsence abs : ventilationRepository.getListOfVentilAbsenceForDateAgentAndType(idDateVentil,
+				for (VentilAbsence abs : ventilationRepository.getListOfVentilAbsenceForDateAgent(idDateVentil,
 						agents))
 					pointagesVentiles.add(new VentilAbsenceDto(abs));
 
 				break;
 			}
 			case H_SUP: {
-				for (VentilHsup hs : ventilationRepository.getListOfVentilHSForDateAgentAndType(idDateVentil, agents))
+				for (VentilHsup hs : ventilationRepository.getListOfVentilHSForDateAgent(idDateVentil, agents))
 					pointagesVentiles.add(new VentilHSupDto(hs));
 
 				break;
 			}
 			case PRIME: {
-				for (VentilPrime prime : ventilationRepository.getListOfVentilPrimeForDateAgentAndType(idDateVentil,
+				for (VentilPrime prime : ventilationRepository.getListOfVentilPrimeForDateAgent(idDateVentil,
 						agents))
 					pointagesVentiles.add(new VentilPrimeDto(prime, helperService));
 

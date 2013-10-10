@@ -296,7 +296,7 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilAbsence> getListOfVentilAbsenceForDateAgentAndType(Integer ventilDateId, List<Integer> agentIds) {
+	public List<VentilAbsence> getListOfVentilAbsenceForDateAgent(Integer ventilDateId, List<Integer> agentIds) {
 		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
 		List<Integer> agentIdsReduite = null;
 
@@ -318,7 +318,7 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilPrime> getListOfVentilPrimeForDateAgentAndType(Integer ventilDateId, List<Integer> agentIds) {
+	public List<VentilPrime> getListOfVentilPrimeForDateAgent(Integer ventilDateId, List<Integer> agentIds) {
 		List<VentilPrime> resultat = new ArrayList<VentilPrime>();
 		List<Integer> agentIdsReduite = null;
 
@@ -340,7 +340,7 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilHsup> getListOfVentilHSForDateAgentAndType(Integer ventilDateId, List<Integer> agentIds) {
+	public List<VentilHsup> getListOfVentilHSForDateAgent(Integer ventilDateId, List<Integer> agentIds) {
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
 		List<Integer> agentIdsReduite = null;
 
@@ -398,4 +398,33 @@ public class VentilationRepository implements IVentilationRepository {
 
 		return ((long) q.getSingleResult() == 0);
 	}
+	
+	@Override
+	public VentilAbsence getPriorVentilAbsenceForAgentAndDate(Integer idAgent, Date dateLundi, VentilAbsence latestVentilAbsence) {
+		
+		TypedQuery<VentilAbsence> q = ptgEntityManager.createQuery("", VentilAbsence.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateLundi", dateLundi);
+		q.setParameter("idLatestVentilAbsence", latestVentilAbsence.getIdVentilAbsence());
+		q.setMaxResults(1);
+		
+		List<VentilAbsence> vas = q.getResultList();
+		
+		return vas.size() != 0 ? vas.get(0) : null;
+	}
+
+	@Override
+	public VentilHsup getPriorVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilAbsence latestVentilAbsence) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public VentilPrime getPriorVentilPrimeForAgentAndDate(Integer idAgent, Date dateDebMois,
+			VentilAbsence latestVentilAbsence) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
 }
