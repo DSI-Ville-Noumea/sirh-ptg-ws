@@ -418,16 +418,38 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public VentilHsup getPriorVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilHsup latestVentilAbsence) {
-		// TODO Auto-generated method stub
-		return null;
+	public VentilHsup getPriorVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilHsup latestVentilHsup) {
+
+		TypedQuery<VentilHsup> q = ptgEntityManager
+				.createQuery(
+						"select vh from VentilHsup vh where vh.idVentilHSup != :idLatestVentilHSup and vh.idAgent = :idAgent and vh.dateLundi = :dateLundi",
+						VentilHsup.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateLundi", dateLundi);
+		q.setParameter("idLatestVentilHSup", latestVentilHsup.getIdVentilHSup());
+		q.setMaxResults(1);
+
+		List<VentilHsup> vas = q.getResultList();
+
+		return vas.size() != 0 ? vas.get(0) : null;
 	}
 
 	@Override
 	public VentilPrime getPriorVentilPrimeForAgentAndDate(Integer idAgent, Date dateDebMois,
-			VentilPrime latestVentilAbsence) {
-		// TODO Auto-generated method stub
-		return null;
+			VentilPrime latestVentilPrime) {
+
+		TypedQuery<VentilPrime> q = ptgEntityManager
+				.createQuery(
+						"select vp from VentilPrime vp where vp.idVentilPrime != :idLatestVentilPrime and vp.idAgent = :idAgent and vp.dateDebutMois = :dateDebutMois",
+						VentilPrime.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateDebutMois", dateDebMois);
+		q.setParameter("idLatestVentilPrime", latestVentilPrime.getIdVentilPrime());
+		q.setMaxResults(1);
+
+		List<VentilPrime> vas = q.getResultList();
+
+		return vas.size() != 0 ? vas.get(0) : null;
 	}
 
 }

@@ -8,11 +8,13 @@ import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbsencesEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbstractItemEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
+import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
@@ -145,8 +147,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 						vh.getIdAgent(), vh.getDateLundi(),	vh);
 			}
 
-			// 3. Then create the DTOs for HSups if the value is other than 0
-			// or different from previous one
+			// 3. Then create the DTOs for HSups
 			HeuresSupEtatPayeurDto dto = new HeuresSupEtatPayeurDto(vh, vhOld, helperService);
 			fillAgentsData(dto);
 			result.getHeuresSup().add(dto);
@@ -157,8 +158,49 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 	@Override
 	public EtatPayeurDto getPrimesEtatPayeurDataForStatut(AgentStatutEnum statut) {
-		// TODO Auto-generated method stub
-		return null;
+
+		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
+
+		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, false);
+
+		if (toVentilDate == null) {
+			logger.error(
+					"Impossible to retrieve data for Etats Payeur, there is no unpaid ventilation for TypeChainePaie [{}]",
+					chainePaie);
+			return new EtatPayeurDto();
+		}
+
+		EtatPayeurDto result = new EtatPayeurDto(chainePaie, statut, toVentilDate.getDateVentilation());
+
+		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, true);
+
+		// For all VentilAbsences of this ventilation ordered by dateLundi asc
+		for (VentilPrime vp : toVentilDate.getVentilPrimes()) {
+
+			// 1. Verify whether this agent is eligible, through its
+			// AgentStatutEnum (Spcarr)
+			if (!isAgentEligibleToVentilation(vp.getIdAgent(), statut, toVentilDate.getDateVentilation())) {
+				logger.info("Agent {} not eligible for Etats payeurs (status not matching), skipping to next.",
+						vp.getIdAgent());
+				continue;
+			}
+
+			// 2. If the period concerns a date prior to ventilation, fetch the
+			// second last ventilated item to
+			// output the difference
+			VentilPrime vpOld = null;
+			if (vp.getDateDebutMois().before(fromVentilDate.getDateVentilation())) {
+				vpOld = ventilationRepository.getPriorVentilPrimeForAgentAndDate(
+						vp.getIdAgent(), vp.getDateDebutMois(),	vp);
+			}
+
+			// 3. Then create the DTOs for Primes 
+			PrimesEtatPayeurDto dto = new PrimesEtatPayeurDto(vp, vpOld, helperService);
+			fillAgentsData(dto);
+			result.getPrimes().add(dto);
+		}
+
+		return result;
 	}
 
 	/**

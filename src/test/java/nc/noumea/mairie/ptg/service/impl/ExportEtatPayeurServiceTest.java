@@ -6,13 +6,17 @@ import static org.junit.Assert.assertTrue;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbsencesEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
+import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
@@ -353,7 +357,7 @@ public class ExportEtatPayeurServiceTest {
 	}
 	
 	@Test
-	public void getHeuresSupEtatPayeurDataForStatut_1Agents1VentilAbsenceRappel_OutputDifferenceInDTO() {
+	public void getHeuresSupEtatPayeurDataForStatut_1Agents1VentilHSupRappel_OutputDifferenceInDTO() {
 		
 		// Given
 		VentilDate toVentilDate = new VentilDate();
@@ -412,6 +416,179 @@ public class ExportEtatPayeurServiceTest {
 		assertEquals("30m", result.getHeuresSup().get(0).getH1Mai());
 		
 		Mockito.verify(service, Mockito.times(1)).fillAgentsData(Mockito.any(HeuresSupEtatPayeurDto.class));
+	}
+	
+	@Test
+	public void getPrimesEtatPayeurDataForStatut_2Agents_ReturnFilledDTO() {
+		
+		// Given
+		VentilDate toVentilDate = new VentilDate();
+		toVentilDate.setDateVentilation(new DateTime(2013, 9, 1, 23, 59, 9).toDate());
+		VentilDate fromVentilDate = new VentilDate();
+		fromVentilDate.setDateVentilation(new DateTime(2013, 9, 29, 23, 59, 9).toDate());
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		
+		VentilPrime vp1 = new VentilPrime();
+		vp1.setDateDebutMois(new LocalDate(2013, 9, 2).toDate());
+		vp1.setIdAgent(9008989);
+		vp1.setRefPrime(new RefPrime());
+		vp1.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		vp1.setQuantite(12);
+		toVentilDate.getVentilPrimes().add(vp1);
+		
+		VentilPrime vp2 = new VentilPrime();
+		vp2.setDateDebutMois(new LocalDate(2013, 9, 2).toDate());
+		vp2.setIdAgent(9006767);
+		vp2.setRefPrime(new RefPrime());
+		vp2.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		vp2.setQuantite(24);
+		toVentilDate.getVentilPrimes().add(vp2);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9006767)).thenReturn(6767);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
+		
+		Spcarr spcarr1 = new Spcarr();
+		spcarr1.setCdcate(1);
+		Spcarr spcarr2 = new Spcarr();
+		spcarr2.setCdcate(1);
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
+		Mockito.when(sR.getAgentCurrentCarriere(6767, toVentilDate.getDateVentilation())).thenReturn(spcarr2);
+		
+		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
+		Mockito.doNothing().when(service).fillAgentsData(Mockito.any(PrimesEtatPayeurDto.class));
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		
+		// When
+		EtatPayeurDto result = service.getPrimesEtatPayeurDataForStatut(statut);
+		
+		// Then
+		assertEquals("SCV", result.getChainePaie());
+		assertEquals("septembre 2013", result.getPeriode());
+		assertEquals("F", result.getStatut());
+
+		assertEquals(0, result.getAbsences().size());
+		assertEquals(2, result.getPrimes().size());
+		assertEquals(0, result.getHeuresSup().size());
+		
+		Mockito.verify(service, Mockito.times(2)).fillAgentsData(Mockito.any(PrimesEtatPayeurDto.class));
+	}
+	
+	@Test
+	public void getPrimesEtatPayeurDataForStatut_1Agents_NotRightStatus_ReturnFilledWith0ItemsDTO() {
+		
+		// Given
+		VentilDate toVentilDate = new VentilDate();
+		toVentilDate.setDateVentilation(new DateTime(2013, 9, 1, 23, 59, 9).toDate());
+		VentilDate fromVentilDate = new VentilDate();
+		fromVentilDate.setDateVentilation(new DateTime(2013, 9, 29, 23, 59, 9).toDate());
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		
+		VentilPrime vp1 = new VentilPrime();
+		vp1.setDateDebutMois(new LocalDate(2013, 9, 2).toDate());
+		vp1.setIdAgent(9008989);
+		toVentilDate.getVentilPrimes().add(vp1);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
+		
+		Spcarr spcarr1 = new Spcarr();
+		spcarr1.setCdcate(7);
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
+		
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		
+		// When
+		EtatPayeurDto result = service.getPrimesEtatPayeurDataForStatut(statut);
+		
+		// Then
+		assertEquals("SCV", result.getChainePaie());
+		assertEquals("septembre 2013", result.getPeriode());
+		assertEquals("F", result.getStatut());
+
+		assertEquals(0, result.getAbsences().size());
+		assertEquals(0, result.getPrimes().size());
+		assertEquals(0, result.getHeuresSup().size());
+	}
+	
+	@Test
+	public void getPrimesEtatPayeurDataForStatut_1Agents1VentilHSupRappel_OutputDifferenceInDTO() {
+		
+		// Given
+		VentilDate toVentilDate = new VentilDate();
+		toVentilDate.setDateVentilation(new DateTime(2013, 9, 1, 23, 59, 9).toDate());
+		VentilDate fromVentilDate = new VentilDate();
+		fromVentilDate.setDateVentilation(new DateTime(2013, 9, 29, 23, 59, 9).toDate());
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		
+		VentilPrime vp1 = new VentilPrime();
+		vp1.setDateDebutMois(new LocalDate(2013, 8, 26).toDate());
+		vp1.setQuantite(23);
+		vp1.setIdAgent(9008989);
+		vp1.setRefPrime(new RefPrime());
+		vp1.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		vp1.getRefPrime().setLibelle("libelle");
+		toVentilDate.getVentilPrimes().add(vp1);
+		
+		VentilPrime vpOld = new VentilPrime();
+		vpOld.setDateDebutMois(new LocalDate(2013, 8, 26).toDate());
+		vpOld.setQuantite(32);
+		vpOld.setRefPrime(new RefPrime());
+		vpOld.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		vpOld.setIdAgent(9008989);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
+		Mockito.when(vR.getPriorVentilPrimeForAgentAndDate(vp1.getIdAgent(), vp1.getDateDebutMois(), vp1)).thenReturn(vpOld);
+		
+		Spcarr spcarr1 = new Spcarr();
+		spcarr1.setCdcate(1);
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
+		
+		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
+		Mockito.doNothing().when(service).fillAgentsData(Mockito.any(PrimesEtatPayeurDto.class));
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		
+		// When
+		EtatPayeurDto result = service.getPrimesEtatPayeurDataForStatut(statut);
+		
+		// Then
+		assertEquals("SCV", result.getChainePaie());
+		assertEquals("septembre 2013", result.getPeriode());
+		assertEquals("F", result.getStatut());
+
+		assertEquals(0, result.getAbsences().size());
+		assertEquals(1, result.getPrimes().size());
+		assertEquals("libelle", result.getPrimes().get(0).getType());
+		assertEquals("-9", result.getPrimes().get(0).getQuantite());
+		assertEquals(0, result.getHeuresSup().size());
+		
+		Mockito.verify(service, Mockito.times(1)).fillAgentsData(Mockito.any(PrimesEtatPayeurDto.class));
 	}
 	
 	@Test

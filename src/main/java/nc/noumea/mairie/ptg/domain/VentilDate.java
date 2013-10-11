@@ -50,7 +50,7 @@ public class VentilDate {
     private Set<VentilHsup> ventilHsups = new HashSet<VentilHsup>();
     
     @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy("dateLundi asc, idAgent asc")
+    @OrderBy("dateDebutMois asc, idAgent asc")
     private Set<VentilPrime> ventilPrimes = new HashSet<VentilPrime>();
     
     @ManyToMany

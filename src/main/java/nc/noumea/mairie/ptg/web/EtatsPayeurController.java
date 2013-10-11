@@ -58,4 +58,20 @@ public class EtatsPayeurController {
 		return new ModelAndView("xmlView", "object", result);
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "/xml/getPrimes", produces = "application/xml", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ModelAndView getXmlEtatsPayeurPrimes(@RequestParam("statut") String statutString) throws ParseException {
+
+		logger.debug(
+				"entered GET [etatsPayeur/xml/getPrimes] => getXmlEtatsPayeurPrimes with parameter statut = {}",
+				statutString);
+
+		AgentStatutEnum statut = AgentStatutEnum.valueOf(statutString);
+		
+		EtatPayeurDto result = exportEtatPayeurService.getPrimesEtatPayeurDataForStatut(statut);
+		
+		return new ModelAndView("xmlView", "object", result);
+	}
+	
 }
