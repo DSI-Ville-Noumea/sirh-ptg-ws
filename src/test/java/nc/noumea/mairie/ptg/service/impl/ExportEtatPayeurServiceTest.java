@@ -3,6 +3,9 @@ package nc.noumea.mairie.ptg.service.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Date;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
@@ -12,6 +15,7 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbsencesEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
@@ -22,6 +26,7 @@ import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -601,20 +606,30 @@ public class ExportEtatPayeurServiceTest {
 		Agent ag1 = new Agent();
 		ag1.setNomUsage("nomusage1");
 		ag1.setPrenomUsage("prenomusage1");
-		Agent ag2 = new Agent();
-		ag2.setNomUsage("nomusage2");
-		ag2.setPrenomUsage("prenomusage2");
 		
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgent(9008888)).thenReturn(ag1);
-		Mockito.when(sR.getAgent(9009999)).thenReturn(ag2);
 		
 		IAccessRightsRepository aR = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(aR.getAgentsApprobateur(9008888)).thenReturn(9009999);
 		
+		Date currentDate = new LocalDate(2013, 7, 8).toDate();
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+		
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setNom("nomusage2");
+		agDto.setPrenom("prenomusage2");
+		agDto.setCodeService("CODE");
+		agDto.setService("Label");
+		ISirhWSConsumer swc = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(swc.getAgentService(9009999, currentDate)).thenReturn(agDto);
+		
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		ReflectionTestUtils.setField(service, "accessRightRepository", aR);
 		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", swc);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
 		service.fillAgentsData(va);
@@ -626,6 +641,7 @@ public class ExportEtatPayeurServiceTest {
 		assertEquals(9009999, (int) va.getApprobateurIdAgent());
 		assertEquals("nomusage2", va.getApprobateurNom());
 		assertEquals("prenomusage2", va.getApprobateurPrenom());
+		assertEquals("CODE - Label", va.getApprobateurServiceLabel());
 		
 	}
 	

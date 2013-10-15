@@ -9,6 +9,7 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbsencesEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbstractItemEtatPayeurDto;
@@ -21,6 +22,7 @@ import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	
 	@Autowired
 	private IAccessRightsRepository accessRightRepository;
+	
+	@Autowired
+	private ISirhWSConsumer sirhWsConsumer;
 
 	@Override
 	public CanStartWorkflowPaieActionDto canStartExportEtatPayeurAction(TypeChainePaieEnum chainePaie) {
@@ -219,10 +224,11 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		if (idAgentApprobateur == null)
 			return;
 		
-		Agent agAppro = sirhRepository.getAgent(idAgentApprobateur);
+		AgentWithServiceDto agApproDto = sirhWsConsumer.getAgentService(idAgentApprobateur, helperService.getCurrentDate());
 		item.setApprobateurIdAgent(idAgentApprobateur);
-		item.setApprobateurNom(agAppro.getDisplayNom());
-		item.setApprobateurPrenom(agAppro.getDisplayPrenom());
+		item.setApprobateurNom(agApproDto.getNom());
+		item.setApprobateurPrenom(agApproDto.getPrenom());
+		item.setApprobateurServiceLabel(String.format("%s - %s", agApproDto.getCodeService(), agApproDto.getService()));
 	}
 	
 	/**
