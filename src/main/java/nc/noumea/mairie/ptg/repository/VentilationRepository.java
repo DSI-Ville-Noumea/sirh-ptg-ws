@@ -404,8 +404,7 @@ public class VentilationRepository implements IVentilationRepository {
 			VentilAbsence latestVentilAbsence) {
 
 		TypedQuery<VentilAbsence> q = ptgEntityManager
-				.createQuery(
-						"select va from VentilAbsence va where va.idVentilAbsence != :idLatestVentilAbsence and va.idAgent = :idAgent and va.dateLundi = :dateLundi",
+				.createNamedQuery("getPriorVentilAbsenceForAgentAndDate",
 						VentilAbsence.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateLundi", dateLundi);
@@ -421,8 +420,8 @@ public class VentilationRepository implements IVentilationRepository {
 	public VentilHsup getPriorVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilHsup latestVentilHsup) {
 
 		TypedQuery<VentilHsup> q = ptgEntityManager
-				.createQuery(
-						"select vh from VentilHsup vh where vh.idVentilHSup != :idLatestVentilHSup and vh.idAgent = :idAgent and vh.dateLundi = :dateLundi",
+				.createNamedQuery(
+						"getPriorVentilHSupAgentAndDate",
 						VentilHsup.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateLundi", dateLundi);
@@ -439,8 +438,8 @@ public class VentilationRepository implements IVentilationRepository {
 			VentilPrime latestVentilPrime) {
 
 		TypedQuery<VentilPrime> q = ptgEntityManager
-				.createQuery(
-						"select vp from VentilPrime vp where vp.idVentilPrime != :idLatestVentilPrime and vp.idAgent = :idAgent and vp.dateDebutMois = :dateDebutMois",
+				.createNamedQuery(
+						"getPriorVentilPrimeForAgentAndDate",
 						VentilPrime.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateDebutMois", dateDebMois);

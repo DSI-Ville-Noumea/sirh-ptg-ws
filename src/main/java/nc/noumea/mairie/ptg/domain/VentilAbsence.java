@@ -7,6 +7,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -15,6 +16,7 @@ import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @RooJavaBean
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_VENTIL_ABSENCE", identifierField = "idVentilAbsence", identifierType = Integer.class, table = "PTG_VENTIL_ABSENCE", sequenceName = "PTG_S_VENTIL_ABSENCE")
+@NamedQuery(name = "getPriorVentilAbsenceForAgentAndDate", query = "select va from VentilAbsence va where va.idVentilAbsence != :idLatestVentilAbsence and va.idAgent = :idAgent and va.dateLundi = :dateLundi order by va.idVentilAbsence desc")
 public class VentilAbsence {
 
     @Column(name = "ID_AGENT")
