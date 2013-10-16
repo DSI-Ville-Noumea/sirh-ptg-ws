@@ -533,7 +533,7 @@ HTTP Status code OK : 200
 
 +-------------------------+
 {
-    "canStartExportPaieAction": true
+    "canStartAction": true
 }
 +-------------------------+
 
@@ -792,4 +792,33 @@ HTTP Status code OK : 200
   * 200 si utilisée
   
   * 204 si pas utilisée
+
+
+* Etats du Payeur
+
+** Vérifier la possibilité de lancer une edition des etats du payeur
+
+ <<URL>> : /etatsPayeur/canStartExportEtatsPayeur 
  
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut des agents dont les états du payeur sont à éditer. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Status :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "canStartAction": true
+}
++-------------------------+

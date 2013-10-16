@@ -212,7 +212,7 @@ public class ExportPaieServiceTest {
 		CanStartWorkflowPaieActionDto result = service.canStartExportPaieAction(chainePaie);
 		
 		// Then
-		assertTrue(result.isCanStartExportPaieAction());
+		assertTrue(result.isCanStartAction());
 	}
 	
 	@Test

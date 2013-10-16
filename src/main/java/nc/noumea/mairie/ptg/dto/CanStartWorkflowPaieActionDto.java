@@ -2,13 +2,13 @@ package nc.noumea.mairie.ptg.dto;
 
 public class CanStartWorkflowPaieActionDto {
 
-	private boolean canStartExportPaieAction;
+	private boolean canStartAction;
 
-	public boolean isCanStartExportPaieAction() {
-		return canStartExportPaieAction;
+	public boolean isCanStartAction() {
+		return canStartAction;
 	}
 
-	public void setCanStartExportPaieAction(boolean canStartExportPaieAction) {
-		this.canStartExportPaieAction = canStartExportPaieAction;
+	public void setCanStartAction(boolean canStartAction) {
+		this.canStartAction = canStartAction;
 	}
 }

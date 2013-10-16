@@ -55,7 +55,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	@Override
 	public CanStartWorkflowPaieActionDto canStartExportEtatPayeurAction(TypeChainePaieEnum chainePaie) {
 		CanStartWorkflowPaieActionDto result = new CanStartWorkflowPaieActionDto();
-		result.setCanStartExportPaieAction(paieWorkflowService.canChangeStateToExportEtatPayeurStarted(chainePaie));
+		result.setCanStartAction(paieWorkflowService.canChangeStateToExportEtatPayeurStarted(chainePaie));
 		return result;
 	}
 
