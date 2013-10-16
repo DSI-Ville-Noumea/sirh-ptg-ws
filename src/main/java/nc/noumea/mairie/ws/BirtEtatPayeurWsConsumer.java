@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.service.impl;
+package nc.noumea.mairie.ws;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.service.IEtatPayeurService;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-public class EtatPayeurService implements IEtatPayeurService {
+public class BirtEtatPayeurWsConsumer implements IBirtEtatPayeurWsConsumer {
 
 	@Autowired
 	@Qualifier("reportingBaseUrl")

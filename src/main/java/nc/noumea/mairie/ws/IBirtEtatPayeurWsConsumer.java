@@ -1,7 +1,7 @@
-package nc.noumea.mairie.ptg.service;
+package nc.noumea.mairie.ws;
 
 
-public interface IEtatPayeurService {
+public interface IBirtEtatPayeurWsConsumer {
 
 	byte[] getFichesEtatsPayeurByStatutAsByteArray(Integer typeFicheEtatPayeur, String statut) throws Exception;
 }
