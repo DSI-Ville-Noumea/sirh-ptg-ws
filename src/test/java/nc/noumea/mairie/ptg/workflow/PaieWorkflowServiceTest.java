@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import nc.noumea.mairie.domain.SpWFEtat;
 import nc.noumea.mairie.domain.SpWFPaie;
+import nc.noumea.mairie.domain.SpWfEtatEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.repository.IPaieWorkflowRepository;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
@@ -54,7 +55,7 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(0);
+		etat.setCodeEtat(SpWfEtatEnum.PRET);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
@@ -67,7 +68,7 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(1);
+		etat.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
@@ -80,7 +81,7 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(2);
+		etat.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
@@ -93,7 +94,7 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(3);
+		etat.setCodeEtat(SpWfEtatEnum.CALCUL_SALAIRE_EN_COURS);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
@@ -106,7 +107,7 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(4);
+		etat.setCodeEtat(SpWfEtatEnum.CALCUL_SALAIRE_TERMINE);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
@@ -119,7 +120,7 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(5);
+		etat.setCodeEtat(SpWfEtatEnum.JOURNAL_EN_COURS);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
@@ -132,7 +133,7 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(6);
+		etat.setCodeEtat(SpWfEtatEnum.JOURNAL_TERMINE);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
@@ -145,7 +146,7 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(7);
+		etat.setCodeEtat(SpWfEtatEnum.PRE_GEN_COMPTABLE_EN_COURS);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
@@ -158,7 +159,7 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(8);
+		etat.setCodeEtat(SpWfEtatEnum.PRE_GEN_COMPTABLE_TERMINEE);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
@@ -172,7 +173,7 @@ public class PaieWorkflowServiceTest {
 		// Given
 		SpWFPaie shc = new SpWFPaie();
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(0);
+		etat.setCodeEtat(SpWfEtatEnum.PRET);
 		shc.setEtat(etat);
 		
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
@@ -191,7 +192,7 @@ public class PaieWorkflowServiceTest {
 		// Given
 		SpWFPaie shc = new SpWFPaie();
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(1);
+		etat.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS);
 		shc.setEtat(etat);
 		
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
@@ -209,12 +210,12 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(8);
+		etat.setCodeEtat(SpWfEtatEnum.PRE_GEN_COMPTABLE_TERMINEE);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
 		// Then
-		assertTrue(service.canChangeStateToExportEtatPayeurStarted(etat));
+		assertTrue(service.canChangeStateToExportEtatsPayeurStarted(etat));
 	}
 	
 	@Test
@@ -222,12 +223,12 @@ public class PaieWorkflowServiceTest {
 		
 		// Given
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(7);
+		etat.setCodeEtat(SpWfEtatEnum.PRE_GEN_COMPTABLE_EN_COURS);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		
 		// Then
-		assertFalse(service.canChangeStateToExportEtatPayeurStarted(etat));
+		assertFalse(service.canChangeStateToExportEtatsPayeurStarted(etat));
 	}
 	
 	@Test
@@ -236,7 +237,7 @@ public class PaieWorkflowServiceTest {
 		// Given
 		SpWFPaie shc = new SpWFPaie();
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(8);
+		etat.setCodeEtat(SpWfEtatEnum.PRE_GEN_COMPTABLE_TERMINEE);
 		shc.setEtat(etat);
 		
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
@@ -246,7 +247,7 @@ public class PaieWorkflowServiceTest {
 		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
 		
 		// Then
-		assertTrue(service.canChangeStateToExportEtatPayeurStarted(TypeChainePaieEnum.SHC));
+		assertTrue(service.canChangeStateToExportEtatsPayeurStarted(TypeChainePaieEnum.SHC));
 	}
 	
 	@Test
@@ -255,7 +256,7 @@ public class PaieWorkflowServiceTest {
 		// Given
 		SpWFPaie shc = new SpWFPaie();
 		SpWFEtat etat = new SpWFEtat();
-		etat.setCodeEtat(1);
+		etat.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS);
 		shc.setEtat(etat);
 		
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
@@ -265,7 +266,7 @@ public class PaieWorkflowServiceTest {
 		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
 		
 		// Then
-		assertFalse(service.canChangeStateToExportEtatPayeurStarted(TypeChainePaieEnum.SHC));
+		assertFalse(service.canChangeStateToExportEtatsPayeurStarted(TypeChainePaieEnum.SHC));
 	}
 	
 	@Test
@@ -275,16 +276,14 @@ public class PaieWorkflowServiceTest {
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SHC;
 		
 		SpWFEtat e0 = new SpWFEtat();
-		e0.setCodeEtat(0);
-		e0.setLibelleEtat("ZERO");
+		e0.setCodeEtat(SpWfEtatEnum.PRET);
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e0);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
 		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
 		SpWFEtat e2 = new SpWFEtat();
-		e2.setCodeEtat(2);
-		e2.setLibelleEtat("DEUX");
-		Mockito.when(wfR.getEtat(2)).thenReturn(e2);
+		e2.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE);
+		Mockito.when(wfR.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE)).thenReturn(e2);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
@@ -295,7 +294,7 @@ public class PaieWorkflowServiceTest {
 		} catch (WorkflowInvalidStateException ex) {
 
 			// Then
-			assertEquals("Impossible de passer à l'état [2: DEUX] car l'état en cours est [0: ZERO]", ex.getMessage());
+			assertEquals("Impossible de passer à l'état [2 : ECRITURE_POINTAGES_TERMINEE] car l'état en cours est [0 : PRET]", ex.getMessage());
 			return;
 		}
 		
@@ -309,16 +308,16 @@ public class PaieWorkflowServiceTest {
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SHC;
 		
 		SpWFEtat e1 = new SpWFEtat();
-		e1.setCodeEtat(1);
+		e1.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS);
 		e1.setLibelleEtat("UN");
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e1);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
 		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
 		SpWFEtat e2 = new SpWFEtat();
-		e2.setCodeEtat(2);
+		e2.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE);
 		e2.setLibelleEtat("DEUX");
-		Mockito.when(wfR.getEtat(2)).thenReturn(e2);
+		Mockito.when(wfR.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE)).thenReturn(e2);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013, 4, 5).toDate());
@@ -341,16 +340,14 @@ public class PaieWorkflowServiceTest {
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SHC;
 		
 		SpWFEtat e3 = new SpWFEtat();
-		e3.setCodeEtat(3);
-		e3.setLibelleEtat("TROIS");
+		e3.setCodeEtat(SpWfEtatEnum.CALCUL_SALAIRE_EN_COURS);
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e3);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
 		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
 		SpWFEtat e1 = new SpWFEtat();
-		e1.setCodeEtat(1);
-		e1.setLibelleEtat("UN");
-		Mockito.when(wfR.getEtat(1)).thenReturn(e1);
+		e1.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS);
+		Mockito.when(wfR.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS)).thenReturn(e1);
 		
 		PaieWorkflowService service = new PaieWorkflowService();
 		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
@@ -361,7 +358,7 @@ public class PaieWorkflowServiceTest {
 		} catch (WorkflowInvalidStateException ex) {
 
 			// Then
-			assertEquals("Impossible de passer à l'état [1: UN] car l'état en cours est [3: TROIS]", ex.getMessage());
+			assertEquals("Impossible de passer à l'état [1 : ECRITURE_POINTAGES_EN_COURS] car l'état en cours est [3 : CALCUL_SALAIRE_EN_COURS]", ex.getMessage());
 			return;
 		}
 		
@@ -375,16 +372,16 @@ public class PaieWorkflowServiceTest {
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SHC;
 		
 		SpWFEtat e2 = new SpWFEtat();
-		e2.setCodeEtat(2);
+		e2.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE);
 		e2.setLibelleEtat("DEUX");
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e2);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
 		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
 		SpWFEtat e1 = new SpWFEtat();
-		e1.setCodeEtat(1);
+		e1.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS);
 		e1.setLibelleEtat("UN");
-		Mockito.when(wfR.getEtat(1)).thenReturn(e1);
+		Mockito.when(wfR.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS)).thenReturn(e1);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013, 4, 5).toDate());
@@ -397,6 +394,132 @@ public class PaieWorkflowServiceTest {
 		service.changeStateToExportPaieStarted(chainePaie);
 				
 		assertEquals(e1, state.getEtat());
+		assertEquals(new LocalDate(2013, 4, 5).toDate(), state.getDateMaj());
+	}
+	
+	@Test
+	public void changeStateToExportEtatsPayeurDone_StateIsNotValid_ThrowException() {
+		
+		// Given
+		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SHC;
+		
+		SpWFEtat e0 = new SpWFEtat();
+		e0.setCodeEtat(SpWfEtatEnum.PRET);
+		SpWFPaie state = new SpWFPaie();
+		state.setEtat(e0);
+		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
+		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		SpWFEtat e9 = new SpWFEtat();
+		e9.setCodeEtat(SpWfEtatEnum.ETATS_PAYEUR_TERMINES);
+		Mockito.when(wfR.getEtat(SpWfEtatEnum.ETATS_PAYEUR_TERMINES)).thenReturn(e9);
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
+		
+		// When
+		try {
+			service.changeStateToExportEtatsPayeurDone(chainePaie);
+		} catch (WorkflowInvalidStateException ex) {
+
+			// Then
+			assertEquals("Impossible de passer à l'état [10 : ETATS_PAYEUR_TERMINES] car l'état en cours est [0 : PRET]", ex.getMessage());
+			return;
+		}
+		
+		fail("Should have thrown a WorkflowInvalidStateException");
+	}
+	
+	@Test
+	public void changeStateToExportEtatsPayeurDone_StateIsValid_UpdateState() throws WorkflowInvalidStateException {
+		
+		// Given
+		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SHC;
+		
+		SpWFEtat e1 = new SpWFEtat();
+		e1.setCodeEtat(SpWfEtatEnum.ETATS_PAYEUR_EN_COURS);
+		SpWFPaie state = new SpWFPaie();
+		state.setEtat(e1);
+		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
+		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		SpWFEtat e9 = new SpWFEtat();
+		e9.setCodeEtat(SpWfEtatEnum.ETATS_PAYEUR_TERMINES);
+		Mockito.when(wfR.getEtat(SpWfEtatEnum.ETATS_PAYEUR_TERMINES)).thenReturn(e9);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013, 4, 5).toDate());
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		service.changeStateToExportEtatsPayeurDone(chainePaie);
+				
+		assertEquals(e9, state.getEtat());
+		assertEquals(new LocalDate(2013, 4, 5).toDate(), state.getDateMaj());
+	}
+	
+	@Test
+	public void changeStateToExportEtatsPayeurStarted_StateIsNotValid_ThrowException() {
+		
+		// Given
+		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SHC;
+		
+		SpWFEtat e3 = new SpWFEtat();
+		e3.setCodeEtat(SpWfEtatEnum.CALCUL_SALAIRE_EN_COURS);
+		SpWFPaie state = new SpWFPaie();
+		state.setEtat(e3);
+		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
+		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		SpWFEtat e8 = new SpWFEtat();
+		e8.setCodeEtat(SpWfEtatEnum.ETATS_PAYEUR_EN_COURS);
+		Mockito.when(wfR.getEtat(SpWfEtatEnum.ETATS_PAYEUR_EN_COURS)).thenReturn(e8);
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
+		
+		// When
+		try {
+			service.changeStateToExportEtatsPayeurStarted(chainePaie);
+		} catch (WorkflowInvalidStateException ex) {
+
+			// Then
+			assertEquals("Impossible de passer à l'état [9 : ETATS_PAYEUR_EN_COURS] car l'état en cours est [3 : CALCUL_SALAIRE_EN_COURS]", ex.getMessage());
+			return;
+		}
+		
+		fail("Should have thrown a WorkflowInvalidStateException");
+	}
+	
+	@Test
+	public void changeStateToExportEtatsPayeurStarted_StateIsValid_UpdateState() throws WorkflowInvalidStateException {
+		
+		// Given
+		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SHC;
+		
+		SpWFEtat e2 = new SpWFEtat();
+		e2.setCodeEtat(SpWfEtatEnum.PRE_GEN_COMPTABLE_TERMINEE);
+		e2.setLibelleEtat("HUIT");
+		SpWFPaie state = new SpWFPaie();
+		state.setEtat(e2);
+		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
+		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		SpWFEtat e8 = new SpWFEtat();
+		e8.setCodeEtat(SpWfEtatEnum.ETATS_PAYEUR_EN_COURS);
+		e8.setLibelleEtat("NEUF");
+		Mockito.when(wfR.getEtat(SpWfEtatEnum.ETATS_PAYEUR_EN_COURS)).thenReturn(e8);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013, 4, 5).toDate());
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		service.changeStateToExportEtatsPayeurStarted(chainePaie);
+				
+		assertEquals(e8, state.getEtat());
 		assertEquals(new LocalDate(2013, 4, 5).toDate(), state.getDateMaj());
 	}
 }

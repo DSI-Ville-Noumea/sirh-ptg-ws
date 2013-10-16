@@ -11,6 +11,7 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbsencesEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbstractItemEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
@@ -21,6 +22,7 @@ import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
+import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 import nc.noumea.mairie.sirh.domain.Agent;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -55,7 +57,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	@Override
 	public CanStartWorkflowPaieActionDto canStartExportEtatPayeurAction(TypeChainePaieEnum chainePaie) {
 		CanStartWorkflowPaieActionDto result = new CanStartWorkflowPaieActionDto();
-		result.setCanStartAction(paieWorkflowService.canChangeStateToExportEtatPayeurStarted(chainePaie));
+		result.setCanStartAction(paieWorkflowService.canChangeStateToExportEtatsPayeurStarted(chainePaie));
 		return result;
 	}
 
@@ -243,5 +245,33 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
 		AgentStatutEnum agentStatus = carr != null ? carr.getStatutCarriere() : null;
 		return agentStatus == statut;
+	}
+
+	@Override
+	public ReturnMessageDto startExportEtatsPayeur(Integer agentIdExporting, AgentStatutEnum statut) {
+		
+		logger.info("Starting exportEtatsPayeurs of Pointages for Agents statut [{}], asked by [{}]", 
+				agentIdExporting, statut);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		// 1. Call workflow to make sure we can start the export process
+		try {
+			paieWorkflowService.changeStateToExportPaieStarted(helperService.getTypeChainePaieFromStatut(statut));
+		} catch (WorkflowInvalidStateException e) {
+			logger.error("Could not start exportPaie process: {}", e.getMessage());
+			result.getErrors().add(e.getMessage());
+			return result;
+		}
+		
+		exportEtatsPayeur(agentIdExporting, statut);
+				
+        logger.info("Added exportEtatPayeur task.");
+        
+        return result;
+	}
+	
+	public void exportEtatsPayeur(Integer agentIdExporting, AgentStatutEnum statut) {
+		
 	}
 }

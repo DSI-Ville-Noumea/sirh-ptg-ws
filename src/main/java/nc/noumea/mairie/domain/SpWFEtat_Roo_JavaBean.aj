@@ -4,14 +4,15 @@
 package nc.noumea.mairie.domain;
 
 import nc.noumea.mairie.domain.SpWFEtat;
+import nc.noumea.mairie.domain.SpWfEtatEnum;
 
 privileged aspect SpWFEtat_Roo_JavaBean {
     
-    public Integer SpWFEtat.getCodeEtat() {
+    public SpWfEtatEnum SpWFEtat.getCodeEtat() {
         return this.codeEtat;
     }
     
-    public void SpWFEtat.setCodeEtat(Integer codeEtat) {
+    public void SpWFEtat.setCodeEtat(SpWfEtatEnum codeEtat) {
         this.codeEtat = codeEtat;
     }
     

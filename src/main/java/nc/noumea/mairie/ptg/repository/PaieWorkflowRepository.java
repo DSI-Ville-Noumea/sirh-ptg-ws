@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.SpWFEtat;
 import nc.noumea.mairie.domain.SpWFPaie;
+import nc.noumea.mairie.domain.SpWfEtatEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 import org.springframework.stereotype.Repository;
@@ -35,7 +36,7 @@ public class PaieWorkflowRepository implements IPaieWorkflowRepository {
 	}
 
 	@Override
-	public SpWFEtat getEtat(Integer codeEtat) {
+	public SpWFEtat getEtat(SpWfEtatEnum codeEtat) {
 		return entityManager.find(SpWFEtat.class, codeEtat);
 	}
 }

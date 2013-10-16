@@ -1,6 +1,8 @@
 package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
@@ -16,7 +18,8 @@ public class SpWFEtat {
 	@Id
 	@NotNull
 	@Column(name = "CDETAT", columnDefinition = "numeric")
-	private Integer codeEtat;
+	@Enumerated(EnumType.ORDINAL)
+	private SpWfEtatEnum codeEtat;
 
 	@NotNull
 	@Column(name = "LIBETAT", columnDefinition = "char")

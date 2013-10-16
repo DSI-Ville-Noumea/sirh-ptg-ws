@@ -42,7 +42,7 @@ public class ExportEtatPayeurServiceTest {
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
 		
 		IPaieWorkflowService pwfs = Mockito.mock(IPaieWorkflowService.class);
-		Mockito.when(pwfs.canChangeStateToExportEtatPayeurStarted(chainePaie)).thenReturn(true);
+		Mockito.when(pwfs.canChangeStateToExportEtatsPayeurStarted(chainePaie)).thenReturn(true);
 		
 		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		ReflectionTestUtils.setField(service, "paieWorkflowService", pwfs);

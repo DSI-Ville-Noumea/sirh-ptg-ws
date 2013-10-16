@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.service;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 
 public interface IExportEtatPayeurService {
@@ -42,4 +43,11 @@ public interface IExportEtatPayeurService {
 	 */
 	EtatPayeurDto getPrimesEtatPayeurDataForStatut(AgentStatutEnum statut);
 	
+	/**
+	 * Starts the exportation of Etats Payeurs for a given Agent Statut
+	 * @param agentIdExporting
+	 * @param statut
+	 * @return
+	 */
+	ReturnMessageDto startExportEtatsPayeur(Integer agentIdExporting, AgentStatutEnum statut);
 }

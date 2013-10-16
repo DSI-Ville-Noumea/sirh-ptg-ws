@@ -7,6 +7,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import nc.noumea.mairie.domain.SpWFEtat;
+import nc.noumea.mairie.domain.SpWfEtatEnum;
 import org.springframework.transaction.annotation.Transactional;
 
 privileged aspect SpWFEtat_Roo_Jpa_ActiveRecord {
@@ -28,7 +29,7 @@ privileged aspect SpWFEtat_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM SpWFEtat o", SpWFEtat.class).getResultList();
     }
     
-    public static SpWFEtat SpWFEtat.findSpWFEtat(Integer codeEtat) {
+    public static SpWFEtat SpWFEtat.findSpWFEtat(SpWfEtatEnum codeEtat) {
         if (codeEtat == null) return null;
         return entityManager().find(SpWFEtat.class, codeEtat);
     }

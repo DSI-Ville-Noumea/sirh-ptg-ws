@@ -6,8 +6,10 @@ import nc.noumea.mairie.domain.TypeChainePaieEnum;
 public interface IPaieWorkflowService {
 
 	SpWFPaie getCurrentState(TypeChainePaieEnum chainePaie);
-	void changeStateToExportPaieStarted(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException;
 	boolean canChangeStateToExportPaieStarted(TypeChainePaieEnum chainePaie);
-	boolean canChangeStateToExportEtatPayeurStarted(TypeChainePaieEnum chainePaie);
+	boolean canChangeStateToExportEtatsPayeurStarted(TypeChainePaieEnum chainePaie);
+	void changeStateToExportPaieStarted(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException;
+	void changeStateToExportEtatsPayeurStarted(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException;
 	void changeStateToExportPaieDone(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException;
+	void changeStateToExportEtatsPayeurDone(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException;
 }

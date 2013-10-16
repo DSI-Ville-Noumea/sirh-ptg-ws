@@ -2,6 +2,7 @@ package nc.noumea.mairie.ptg.repository;
 
 import nc.noumea.mairie.domain.SpWFEtat;
 import nc.noumea.mairie.domain.SpWFPaie;
+import nc.noumea.mairie.domain.SpWfEtatEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 public interface IPaieWorkflowRepository {
@@ -11,7 +12,7 @@ public interface IPaieWorkflowRepository {
 	 * @param codeEtat
 	 * @return
 	 */
-	SpWFEtat getEtat(Integer codeEtat);
+	SpWFEtat getEtat(SpWfEtatEnum codeEtat);
 	
 	/**
 	 * Reads the current state of the workflow for the given Chaine Paie (SHC, SCV)
