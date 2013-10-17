@@ -61,4 +61,8 @@
 		description="BIRT report viewer base URL for SIRH reporting"
 		value="http://172.16.24.19:8085/birt/" override="false" />
 		
+	<Environment name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR" type="java.lang.String"
+		description="SIRH Etat Payeur File Path"
+		value="http://172.16.24.19:8085/fichier_etat_payeur/" override="false" />
+		
 </Context>

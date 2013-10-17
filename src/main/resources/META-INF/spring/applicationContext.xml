@@ -106,4 +106,6 @@
 	
 	<jee:jndi-lookup id="reportingBaseUrl" jndi-name="REPORTING_BASE_URL" expected-type="java.lang.String"/>
 	
+	<jee:jndi-lookup id="sirhFileEtatPayeurPath" jndi-name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR" expected-type="java.lang.String"/>
+	
 </beans>

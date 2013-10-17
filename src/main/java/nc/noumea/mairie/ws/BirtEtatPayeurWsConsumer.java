@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ws;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,11 +12,13 @@ import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
+@Service
 public class BirtEtatPayeurWsConsumer implements IBirtEtatPayeurWsConsumer {
 
 	@Autowired
