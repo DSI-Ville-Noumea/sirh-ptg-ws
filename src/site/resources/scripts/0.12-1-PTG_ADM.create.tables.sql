@@ -10,6 +10,7 @@ CREATE TABLE PTG_ETAT_PAYEUR
    DATE_ETAT_PAYEUR DATE not null,
    LABEL VARCHAR2(100) not null, 
    FICHIER VARCHAR2(100) not null,
+   VERSION NUMBER default 0 not null,
    constraint PK_PTG_ETAT_PAYEUR
    primary key (ID_ETAT_PAYEUR),
    constraint FK2_PTG_TYPE_POINTAGE

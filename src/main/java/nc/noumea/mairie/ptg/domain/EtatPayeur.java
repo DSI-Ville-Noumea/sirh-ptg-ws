@@ -22,8 +22,8 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_ETAT_PAYEUR", identifierField = "idEtatPayeur", identifierType = Integer.class, table = "PTG_ETAT_PAYEUR", sequenceName = "PTG_S_ETAT_PAYEUR")
 @NamedQueries({
-	@NamedQuery(name = "getListEditionsEtatPayeurByStatut", query = "select ptg from Pointage ptg JOIN FETCH ptg.type where ptg.statut = :statut order by ptg.dateEtatPayeur desc"),
-	@NamedQuery(name = "getEtatPayeurById", query = "select ptg from Pointage ptg JOIN FETCH ptg.type where ptg.idEtatPayeur = :idEtatPayeur")
+	@NamedQuery(name = "getListEditionsEtatPayeurByStatut", query = "select ep from EtatPayeur ep JOIN FETCH ep.type where ep.statut = :statut order by ep.dateEtatPayeur desc"),
+	@NamedQuery(name = "getEtatPayeurById", query = "select ep from EtatPayeur ep JOIN FETCH ep.type where ep.idEtatPayeur = :idEtatPayeur")
 })
 public class EtatPayeur {
 	
