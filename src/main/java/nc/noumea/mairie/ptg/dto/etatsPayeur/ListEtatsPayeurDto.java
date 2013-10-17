@@ -4,8 +4,6 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-import nc.noumea.mairie.ptg.domain.EtatPayeur;
-
 @XmlRootElement
 public class ListEtatsPayeurDto {
 

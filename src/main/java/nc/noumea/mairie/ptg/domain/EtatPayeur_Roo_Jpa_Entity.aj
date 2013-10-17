@@ -23,18 +23,18 @@ privileged aspect EtatPayeur_Roo_Jpa_Entity {
     @SequenceGenerator(name = "etatPayeurGen", sequenceName = "PTG_S_ETAT_PAYEUR")
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "etatPayeurGen")
     @Column(name = "ID_ETAT_PAYEUR")
-    private Integer EtatPayeur.idEtatPayeur_;
+    private Integer EtatPayeur.idEtatPayeur;
     
     @Version
     @Column(name = "version")
     private Integer EtatPayeur.version;
     
-    public Integer EtatPayeur.getIdEtatPayeur_() {
-        return this.idEtatPayeur_;
+    public Integer EtatPayeur.getIdEtatPayeur() {
+        return this.idEtatPayeur;
     }
     
-    public void EtatPayeur.setIdEtatPayeur_(Integer id) {
-        this.idEtatPayeur_ = id;
+    public void EtatPayeur.setIdEtatPayeur(Integer id) {
+        this.idEtatPayeur = id;
     }
     
     public Integer EtatPayeur.getVersion() {

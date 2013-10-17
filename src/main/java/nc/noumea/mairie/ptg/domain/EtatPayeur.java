@@ -11,7 +11,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 
@@ -28,10 +27,6 @@ import org.springframework.roo.addon.tostring.RooToString;
 })
 public class EtatPayeur {
 	
-	@NotNull
-	@Column(name = "ID_ETAT_PAYEUR")
-	private Integer idEtatPayeur;
-
 	@Column(name = "STATUT")
 	@Enumerated(EnumType.STRING)
 	private AgentStatutEnum statut;

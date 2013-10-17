@@ -28,9 +28,9 @@ privileged aspect EtatPayeur_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM EtatPayeur o", EtatPayeur.class).getResultList();
     }
     
-    public static EtatPayeur EtatPayeur.findEtatPayeur(Integer idEtatPayeur_) {
-        if (idEtatPayeur_ == null) return null;
-        return entityManager().find(EtatPayeur.class, idEtatPayeur_);
+    public static EtatPayeur EtatPayeur.findEtatPayeur(Integer idEtatPayeur) {
+        if (idEtatPayeur == null) return null;
+        return entityManager().find(EtatPayeur.class, idEtatPayeur);
     }
     
     public static List<EtatPayeur> EtatPayeur.findEtatPayeurEntries(int firstResult, int maxResults) {
@@ -49,7 +49,7 @@ privileged aspect EtatPayeur_Roo_Jpa_ActiveRecord {
         if (this.entityManager.contains(this)) {
             this.entityManager.remove(this);
         } else {
-            EtatPayeur attached = EtatPayeur.findEtatPayeur(this.idEtatPayeur_);
+            EtatPayeur attached = EtatPayeur.findEtatPayeur(this.idEtatPayeur);
             this.entityManager.remove(attached);
         }
     }
