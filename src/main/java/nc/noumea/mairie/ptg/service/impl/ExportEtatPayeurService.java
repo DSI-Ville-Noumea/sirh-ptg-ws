@@ -384,6 +384,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		ep.setDateEtatPayeur(new LocalDate(date).withDayOfMonth(1).toDate());
 		ep.setStatut(statut);
 		ep.setType(pointageRepository.getEntity(RefTypePointage.class, type.getValue()));
+		ep.setIdAgent(idAgent);
+		ep.setDateEdition(helperService.getCurrentDate());
 		
 		logger.info("Downloading report named [{}]...", ep.getFichier());
 		birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(type, statut.toString(), ep.getFichier());

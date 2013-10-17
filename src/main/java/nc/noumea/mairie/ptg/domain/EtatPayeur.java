@@ -11,6 +11,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 
@@ -38,6 +39,14 @@ public class EtatPayeur {
 	@Column(name = "DATE_ETAT_PAYEUR")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateEtatPayeur;
+	
+	@NotNull
+	@Column(name = "ID_AGENT")
+	private Integer idAgent;
+	
+	@Column(name = "DATE_EDITION")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateEdition;
 	
 	@Column(name = "LABEL", columnDefinition = "NVARCHAR2")
 	private String label;

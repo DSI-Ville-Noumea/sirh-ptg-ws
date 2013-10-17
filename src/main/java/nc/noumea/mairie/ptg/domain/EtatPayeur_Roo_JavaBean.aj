@@ -34,6 +34,22 @@ privileged aspect EtatPayeur_Roo_JavaBean {
         this.dateEtatPayeur = dateEtatPayeur;
     }
     
+    public Integer EtatPayeur.getIdAgent() {
+        return this.idAgent;
+    }
+    
+    public void EtatPayeur.setIdAgent(Integer idAgent) {
+        this.idAgent = idAgent;
+    }
+    
+    public Date EtatPayeur.getDateEdition() {
+        return this.dateEdition;
+    }
+    
+    public void EtatPayeur.setDateEdition(Date dateEdition) {
+        this.dateEdition = dateEdition;
+    }
+    
     public String EtatPayeur.getLabel() {
         return this.label;
     }

@@ -707,9 +707,13 @@ public class ExportEtatPayeurServiceTest {
 		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pR.getEntity(RefTypePointage.class, RefTypePointageEnum.H_SUP.getValue())).thenReturn(rp);
 		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 9, 2, 8, 7, 45).toDate());
+		
 		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		ReflectionTestUtils.setField(service, "birtEtatsPayeurWsConsumer", wsC);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 		
 		// When
 		EtatPayeur result = service.exportEtatPayeur(idAgent, typeEtat, statut, date);
@@ -720,6 +724,8 @@ public class ExportEtatPayeurServiceTest {
 		assertEquals("2013-02-F-H_SUP.pdf", result.getFichier());
 		assertEquals(statut, result.getStatut());
 		assertEquals(new LocalDate(2013, 2, 1).toDate(), result.getDateEtatPayeur());
+		assertEquals(idAgent, result.getIdAgent());
+		assertEquals(new DateTime(2013, 9, 2, 8, 7, 45).toDate(), result.getDateEdition());
 		
 		Mockito.verify(wsC, Mockito.times(1)).downloadEtatPayeurByStatut(typeEtat, statut.toString(), "2013-02-F-H_SUP.pdf");
 	}
