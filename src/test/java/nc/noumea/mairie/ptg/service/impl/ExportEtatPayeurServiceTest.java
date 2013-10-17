@@ -5,13 +5,19 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPayeur;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
@@ -775,6 +781,56 @@ public class ExportEtatPayeurServiceTest {
 	}
 	
 	@Test
+	public void markPointagesAsJournalises_AddJournaliseStateToPointages() {
+		
+		// Given
+		Pointage p1 = new Pointage();
+		p1.getEtats().add(new EtatPointage());
+		p1.getEtats().get(0).setEtat(EtatPointageEnum.VALIDE);
+
+		Pointage p2 = new Pointage();
+		p2.getEtats().add(new EtatPointage());
+		p2.getEtats().get(0).setEtat(EtatPointageEnum.JOURNALISE);
+		
+		Integer idAgent = 9008765;
+		
+		Date date = new LocalDate(2013, 9, 2).toDate();
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(date);
+		
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		service.markPointagesAsJournalises(new HashSet<Pointage>(Arrays.asList(p1, p2)), idAgent);
+		
+		// Then
+		assertEquals(2, p1.getEtats().size());
+		assertEquals(idAgent, p1.getEtats().get(1).getIdAgent());
+		assertEquals(EtatPointageEnum.JOURNALISE, p1.getEtats().get(1).getEtat());
+		assertEquals(date, p1.getEtats().get(1).getDateEtat());
+		assertEquals(date, p1.getEtats().get(1).getDateMaj());
+		assertEquals(1, p2.getEtats().size());
+	}
+	
+	@Test
+	public void markPointagesCalculesAsJournalises_AddJournaliseStateToPointages() {
+		
+		// Given
+		PointageCalcule p1 = new PointageCalcule();
+		p1.setEtat(EtatPointageEnum.VALIDE);
+		
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
+		
+		// When
+		service.markPointagesCalculesAsJournalises(new HashSet<PointageCalcule>(Arrays.asList(p1)));
+		
+		// Then
+		assertEquals(EtatPointageEnum.JOURNALISE, p1.getEtat());
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
 	public void exportEtatsPayeur_CallEtatPayeursAndSendRecupsToAbs() throws WorkflowInvalidStateException {
 		
 		// Given
@@ -810,6 +866,8 @@ public class ExportEtatPayeurServiceTest {
 		
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doReturn(eps).when(service).callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, statut, ventilationDate);
+		Mockito.doNothing().when(service).markPointagesAsJournalises(Mockito.anySet(), Mockito.anyInt());
+		Mockito.doNothing().when(service).markPointagesCalculesAsJournalises(Mockito.anySet());
 		ReflectionTestUtils.setField(service, "absWsConsumer", ac);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -819,8 +877,13 @@ public class ExportEtatPayeurServiceTest {
 		service.exportEtatsPayeur(idAgentExporting, statut);
 		
 		// Then
+		assertTrue(vd.isPaye());
+		
 		Mockito.verify(ep, Mockito.times(1)).persist();
 		Mockito.verify(ac, Mockito.times(1)).addRecuperationsToAgent(9009999, vh2.getDateLundi(), 90);
 		Mockito.verify(pS, Mockito.times(1)).changeStateToExportEtatsPayeurDone(chainePaie);
+		Mockito.verify(service, Mockito.times(1)).markPointagesAsJournalises(Mockito.anySet(), Mockito.anyInt());
+		Mockito.verify(service, Mockito.times(1)).markPointagesCalculesAsJournalises(Mockito.anySet());
+
 	}
 }

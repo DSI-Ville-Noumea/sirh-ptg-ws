@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -491,7 +492,7 @@ public class ExportPaieServiceTest {
 	}
 	
 	@Test
-	public void stopExportToPaie_validState_UpdateVentilDate() throws WorkflowInvalidStateException {
+	public void stopExportToPaie_validState_DontUpdateVentilDate() throws WorkflowInvalidStateException {
 	
 		// Given
 		IPaieWorkflowService wfS = Mockito.mock(IPaieWorkflowService.class);
@@ -509,7 +510,7 @@ public class ExportPaieServiceTest {
 		service.stopExportToPaie(TypeChainePaieEnum.SCV);
 
 		// Then
-		assertTrue(vd.isPaye());
+		assertFalse(vd.isPaye());
 		Mockito.verify(wfS, Mockito.times(1)).changeStateToExportPaieDone(TypeChainePaieEnum.SCV);
 	}
 }

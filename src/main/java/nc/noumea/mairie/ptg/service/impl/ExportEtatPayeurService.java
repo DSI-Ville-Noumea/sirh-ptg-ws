@@ -4,11 +4,16 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPayeur;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
@@ -292,9 +297,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			result.getErrors().add(e.getMessage());
 			return result;
 		}
-				
-        logger.info("Added exportEtatPayeur task.");
-        
+		
         return result;
 	}
 	
@@ -303,27 +306,44 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		
 		// 1. Retrieve latest ventilDate in order to date the reports
 		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
+		logger.info("Retrieving latest ventilation date for chaine paie [{}]", chainePaie);
 		VentilDate vd = ventilationRepository.getLatestVentilDate(helperService.getTypeChainePaieFromStatut(statut), false);
 		
 		// 2. Call Birt and store files
+		logger.info("Calling Birt reports...");
 		List<EtatPayeur> etats = callBirtEtatsPayeurForChainePaie(agentIdExporting, chainePaie, statut, vd.getDateVentilation());
 		
 		// 3. Update Recups through SIRH-ABS-WS
+		logger.info("Updating recuperations by calling SIRH-ABS-WS...");
 		for (VentilHsup vh : vd.getVentilHsups()) {
 			if (vh.getMRecuperees() == 0)
 				continue;
 			// TODO: add coeff. calculation
+			
 			int nbMinutesRecupereesTotal = vh.getMRecuperees();
 			absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(), vh.getDateLundi(), nbMinutesRecupereesTotal);
 		}
 		
 		// 4. Save records for exported files
+		logger.info("Saving generated reports...");
 		for (EtatPayeur etat : etats) {
 			etat.persist();
 		}
 		
-		// 5. Set workflow as a done task
+		// 5. Set all related pointages as Journalise
+		logger.info("Marking pointages as JOURNALISES...");
+		markPointagesAsJournalises(vd.getPointages(), agentIdExporting);
+		markPointagesCalculesAsJournalises(vd.getPointagesCalcules());
+		
+		// 6. Set VentilDate as Payee
+		logger.info("Setting Ventilation as PAYE");
+		vd.setPaye(true);
+		
+		// 7. Set workflow as a done task
+		logger.info("Updating workflow by setting state to [ETATS_PAYEURS_TERMINES]");
 		paieWorkflowService.changeStateToExportEtatsPayeurDone(helperService.getTypeChainePaieFromStatut(statut));
+		
+		logger.info("Export Etats Payeurs done.");
 	}
 	
 	protected List<EtatPayeur> callBirtEtatsPayeurForChainePaie(Integer agentIdExporting, TypeChainePaieEnum chainePaie, AgentStatutEnum statut, Date ventilationDate) {
@@ -365,8 +385,47 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		ep.setStatut(statut);
 		ep.setType(pointageRepository.getEntity(RefTypePointage.class, type.getValue()));
 		
+		logger.info("Downloading report named [{}]...", ep.getFichier());
 		birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(type, statut.toString(), ep.getFichier());
-
+		logger.info("Downloading report [{}] done.", ep.getFichier());
+		
 		return ep;
+	}
+
+	/**
+	 * Updates each pointage to set them as VALIDE state after being exported to Paie
+	 * @param pointages
+	 * @param idAgent 
+	 */
+	protected void markPointagesAsJournalises(Set<Pointage> pointages, int idAgent) {
+		
+		Date currentDate = helperService.getCurrentDate();
+		
+		for (Pointage ptg : pointages) {
+
+			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.JOURNALISE)
+				continue;
+			
+			EtatPointage ep = new EtatPointage();
+			ep.setDateEtat(currentDate);
+			ep.setDateMaj(currentDate);
+			ep.setPointage(ptg);
+			ep.setEtat(EtatPointageEnum.JOURNALISE);
+			ep.setIdAgent(idAgent);
+			ptg.getEtats().add(ep);
+		}
+	}
+	
+	/**
+	 * Updates each pointage calcule to set them as VALIDE state
+	 * @param pointages
+	 */
+	protected void markPointagesCalculesAsJournalises(Set<PointageCalcule> pointagesCalcules) {
+		for (PointageCalcule ptgC : pointagesCalcules) {
+			if (ptgC.getEtat() == EtatPointageEnum.JOURNALISE)
+				continue;
+			
+			ptgC.setEtat(EtatPointageEnum.JOURNALISE);
+		}
 	}
 }

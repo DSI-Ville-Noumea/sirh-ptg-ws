@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,8 @@ import com.sun.jersey.api.client.ClientResponse;
 @Service
 public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 
+	private Logger logger = LoggerFactory.getLogger(AbsWsConsumer.class);
+	
 	@Autowired
 	@Qualifier("sirhAbsWsBaseUrl")
 	private String sirhAbsWsBaseUrl;
@@ -23,6 +27,8 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	@Override
 	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes) {
 
+		logger.info("Updating recuperations for Agent [{}] Date Monday [{}] with value [{}]...", idAgent, dateLundi, minutes);
+		
 		String url = String.format(sirhAbsWsBaseUrl + addRecuperationsUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
