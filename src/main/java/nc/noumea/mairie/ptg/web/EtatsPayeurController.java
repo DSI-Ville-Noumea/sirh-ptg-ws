@@ -133,7 +133,17 @@ public class EtatsPayeurController {
 		if (!accessRightService.canUserAccessPrint(convertedIdAgent))
 			throw new AccessForbiddenException();
 		
-		EtatPayeur etatPayeur = etatPayeurService.getEtatPayeurByIdEtatPayeur(idEtatPayeur);
+		EtatPayeur etatPayeur = null;
+		try {
+			etatPayeur = etatPayeurService.getEtatPayeurByIdEtatPayeur(idEtatPayeur);
+		} catch (org.springframework.dao.EmptyResultDataAccessException e) {
+			logger.error(e.getMessage(), e);
+			return new ResponseEntity<byte[]>(HttpStatus.NO_CONTENT);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
 		
 		byte[] responseData = null;
 		try {
