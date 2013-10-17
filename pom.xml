@@ -306,6 +306,11 @@
             <artifactId>commons-io</artifactId>
             <version>2.4</version>
         </dependency>
+        <dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-vfs2</artifactId>
+			<version>2.0</version>
+		</dependency>
     </dependencies>
     <build>
 		<finalName>sirh-ptg-ws##${maven.build.timestamp}-${project.version}</finalName>

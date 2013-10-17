@@ -1,14 +1,18 @@
 package nc.noumea.mairie.ws;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
-
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.vfs2.FileObject;
+import org.apache.commons.vfs2.FileSystemManager;
+import org.apache.commons.vfs2.VFS;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -19,7 +23,7 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
 @Service
-public class BirtEtatPayeurWsConsumer implements IBirtEtatPayeurWsConsumer {
+public class BirtEtatsPayeurWsConsumer implements IBirtEtatsPayeurWsConsumer {
 
 	@Autowired
 	@Qualifier("reportingBaseUrl")
@@ -28,6 +32,10 @@ public class BirtEtatPayeurWsConsumer implements IBirtEtatPayeurWsConsumer {
 	@Autowired
 	@Qualifier("reportServerPath")
 	private String reportServerPath;
+	
+	@Autowired
+	@Qualifier("sirhFileEtatPayeurPath")
+	private String storagePath;
 
 	private static final String REPORT_PAGE = "frameset";
 	private static final String PARAM_REPORT = "__report";
@@ -77,6 +85,42 @@ public class BirtEtatPayeurWsConsumer implements IBirtEtatPayeurWsConsumer {
 		return reponseData;
 	}
 	
+	public void readAndSaveResponseAsFile(ClientResponse response, Map<String, String> reportParameters, String fileName) throws Exception {
+
+		if (response.getStatus() != HttpStatus.OK.value()) {
+			throw new Exception(String.format("An error occured while querying the reporting server '%s' with ids '%s'. HTTP Status code is : %s.",
+					reportingBaseUrl, getListOfParamsFromMap(reportParameters), response.getStatus()));
+		}
+		
+		InputStream is = response.getEntityInputStream();
+		
+		BufferedOutputStream bos = null;
+		FileObject pdfFile = null;
+		String targetPath = String.format("%s%s", storagePath, fileName);
+		
+		try {
+			FileSystemManager fsManager = VFS.getManager();
+			pdfFile = fsManager.resolveFile(targetPath);
+			bos = new BufferedOutputStream(pdfFile.getContent().getOutputStream());
+			IOUtils.copy(is, bos);
+			
+		} catch (Exception e) {
+			throw new Exception(
+					String.format(
+							"An error occured while writing the downloaded file to the following path '%s'.",
+							targetPath), e);
+		} finally {
+			
+			IOUtils.closeQuietly(bos);
+			IOUtils.closeQuietly(is);
+			
+			if (pdfFile != null) {
+				pdfFile.close();
+			}
+		}
+		
+	}
+	
 	private String getListOfParamsFromMap(Map<String, String> reportParameters) {
 
 		StringBuilder sb = new StringBuilder();
@@ -121,6 +165,30 @@ public class BirtEtatPayeurWsConsumer implements IBirtEtatPayeurWsConsumer {
 		ClientResponse response = createAndFireRequest(map, nomFichier, "PDF");
 
 		return readResponseAsByteArray(response, map);
+	}
+
+	@Override
+	public void downloadEtatPayeurByStatut(RefTypePointageEnum typeEtat, String statut, String fileName) throws Exception {
+
+		String reportName = null;
+		
+		switch (typeEtat) {
+			case ABSENCE:
+				reportName = FICHE_ETAT_PAYEUR_ABSENCES;
+				break;
+			case  H_SUP:
+				reportName = FICHE_ETAT_PAYEUR_HEURES_SUP;
+				break;
+			case  PRIME:
+				reportName = FICHE_ETAT_PAYEUR_PRIMES;
+				break;
+		}
+		
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("statut", statut);
+		
+		ClientResponse response = createAndFireRequest(map, reportName, "PDF");
+		readAndSaveResponseAsFile(response, map, fileName);
 	}
 
 }

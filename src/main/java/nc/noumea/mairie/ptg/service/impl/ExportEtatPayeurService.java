@@ -1,10 +1,16 @@
 package nc.noumea.mairie.ptg.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.domain.EtatPayeur;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
@@ -18,14 +24,18 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
+import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.ws.IAbsWsConsumer;
+import nc.noumea.mairie.ws.IBirtEtatsPayeurWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +54,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 	@Autowired
 	private IVentilationRepository ventilationRepository;
+	
+	@Autowired
+	private IPointageRepository pointageRepository;
 
 	@Autowired
 	private ISirhRepository sirhRepository;
@@ -53,7 +66,15 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
+	
+	@Autowired
+	private IBirtEtatsPayeurWsConsumer birtEtatsPayeurWsConsumer;
+	
+	@Autowired
+	private IAbsWsConsumer absWsConsumer;
 
+	private static SimpleDateFormat sfd = new SimpleDateFormat("YYYY-MM");
+	
 	@Override
 	public CanStartWorkflowPaieActionDto canStartExportEtatPayeurAction(TypeChainePaieEnum chainePaie) {
 		CanStartWorkflowPaieActionDto result = new CanStartWorkflowPaieActionDto();
@@ -255,23 +276,97 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		
 		ReturnMessageDto result = new ReturnMessageDto();
 		
-		// 1. Call workflow to make sure we can start the export process
+		// 1. Call workflow to make sure we can start the export Etats Payeurs process
 		try {
-			paieWorkflowService.changeStateToExportPaieStarted(helperService.getTypeChainePaieFromStatut(statut));
+			paieWorkflowService.changeStateToExportEtatsPayeurStarted(helperService.getTypeChainePaieFromStatut(statut));
 		} catch (WorkflowInvalidStateException e) {
-			logger.error("Could not start exportPaie process: {}", e.getMessage());
+			logger.error("Could not start exportEtatsPayeur process: {}", e.getMessage());
 			result.getErrors().add(e.getMessage());
 			return result;
 		}
 		
-		exportEtatsPayeur(agentIdExporting, statut);
+		try {
+			exportEtatsPayeur(agentIdExporting, statut);
+		} catch (WorkflowInvalidStateException e) {
+			logger.error("Could not stop exportEtatsPayeur process: {}", e.getMessage());
+			result.getErrors().add(e.getMessage());
+			return result;
+		}
 				
         logger.info("Added exportEtatPayeur task.");
         
         return result;
 	}
 	
-	public void exportEtatsPayeur(Integer agentIdExporting, AgentStatutEnum statut) {
+	@Override
+	public void exportEtatsPayeur(Integer agentIdExporting, AgentStatutEnum statut) throws WorkflowInvalidStateException {
 		
+		// 1. Retrieve latest ventilDate in order to date the reports
+		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
+		VentilDate vd = ventilationRepository.getLatestVentilDate(helperService.getTypeChainePaieFromStatut(statut), false);
+		
+		// 2. Call Birt and store files
+		List<EtatPayeur> etats = callBirtEtatsPayeurForChainePaie(agentIdExporting, chainePaie, statut, vd.getDateVentilation());
+		
+		// 3. Update Recups through SIRH-ABS-WS
+		for (VentilHsup vh : vd.getVentilHsups()) {
+			if (vh.getMRecuperees() == 0)
+				continue;
+			// TODO: add coeff. calculation
+			int nbMinutesRecupereesTotal = vh.getMRecuperees();
+			absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(), vh.getDateLundi(), nbMinutesRecupereesTotal);
+		}
+		
+		// 4. Save records for exported files
+		for (EtatPayeur etat : etats) {
+			etat.persist();
+		}
+		
+		// 5. Set workflow as a done task
+		paieWorkflowService.changeStateToExportEtatsPayeurDone(helperService.getTypeChainePaieFromStatut(statut));
+	}
+	
+	protected List<EtatPayeur> callBirtEtatsPayeurForChainePaie(Integer agentIdExporting, TypeChainePaieEnum chainePaie, AgentStatutEnum statut, Date ventilationDate) {
+		
+		List<EtatPayeur> etats = new ArrayList<EtatPayeur>();
+		
+		try {
+			switch (chainePaie) {
+				case SCV:
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.ABSENCE, AgentStatutEnum.CC, ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.H_SUP, AgentStatutEnum.CC, ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.PRIME, AgentStatutEnum.CC, ventilationDate));
+					break;
+
+				case SHC:
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.ABSENCE, AgentStatutEnum.F, ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.H_SUP, AgentStatutEnum.F, ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.PRIME, AgentStatutEnum.F, ventilationDate));
+					
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.ABSENCE, AgentStatutEnum.C, ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.H_SUP, AgentStatutEnum.C, ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.PRIME, AgentStatutEnum.C, ventilationDate));
+					break;
+					
+			}
+		} catch (Exception ex) {
+			logger.error("An error occured when exporting Etats payeurs", ex);
+		}
+		
+		return etats;
+	}
+	
+	protected EtatPayeur exportEtatPayeur(Integer idAgent, RefTypePointageEnum type, AgentStatutEnum statut, Date date) throws Exception {
+		
+		EtatPayeur ep = new EtatPayeur();
+		ep.setFichier(String.format("%s-%s-%s.pdf", sfd.format(date), statut, type));
+		ep.setLabel(String.format("%s-%s-%s", sfd.format(date), statut, type));
+		ep.setDateEtatPayeur(new LocalDate(date).withDayOfMonth(1).toDate());
+		ep.setStatut(statut);
+		ep.setType(pointageRepository.getEntity(RefTypePointage.class, type.getValue()));
+		
+		birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(type, statut.toString(), ep.getFichier());
+
+		return ep;
 	}
 }

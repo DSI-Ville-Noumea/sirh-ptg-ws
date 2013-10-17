@@ -12,14 +12,11 @@ import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 
 import org.joda.time.LocalDate;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+//@RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"/META-INF/spring/applicationContext-test.xml"})
 public class EtatPayeurRepositoryTest {
 
@@ -29,7 +26,7 @@ public class EtatPayeurRepositoryTest {
 	@PersistenceContext(unitName = "ptgPersistenceUnit")
 	EntityManager ptgEntityManager;
 	
-	@Test
+//	@Test
 	@Transactional("ptgTransactionManager")
 	public void getEtatPayeurById() {
 		
@@ -47,7 +44,7 @@ public class EtatPayeurRepositoryTest {
 		assertEquals("testUnit.pdf", result.getFichier());
 	}
 	
-	@Test
+//	@Test
 	@Transactional("ptgTransactionManager")
 	public void getListEditionEtatPayeur() {
 		

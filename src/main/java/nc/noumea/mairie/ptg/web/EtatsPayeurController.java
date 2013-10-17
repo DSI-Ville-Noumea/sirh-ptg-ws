@@ -7,6 +7,7 @@ import java.util.List;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.ListEtatsPayeurDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
@@ -124,7 +125,7 @@ public class EtatsPayeurController {
 			@RequestParam("idEtatPayeur") Integer idEtatPayeur, @RequestParam("idAgent") Integer idAgent) {
 		
 		logger.debug(
-				"entered GET [edition/downloadFicheEtatsPayeur] => downloadFicheEtatsPayeur with parameters idEtatPayeur = {}, idAgent = {}",
+				"entered GET [etatsPayeur/downloadFicheEtatsPayeur] => downloadFicheEtatsPayeur with parameters idEtatPayeur = {}, idAgent = {}",
 				idEtatPayeur, idAgent);
 		
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
@@ -156,7 +157,7 @@ public class EtatsPayeurController {
 	public ResponseEntity<String> getListEtatsPayeurByStatut(@RequestParam(value = "statutAgent", required = true) String statutString) {
 
 		logger.debug(
-				"entered GET [listEtatsPayeur] => getListEtatsPayeurByStatut with parameters  statutAgent = {}",
+				"entered GET [etatsPayeur/listEtatsPayeur] => getListEtatsPayeurByStatut with parameters  statutAgent = {}",
 				statutString);
 		
 		AgentStatutEnum statut = AgentStatutEnum.valueOf(statutString);
@@ -172,4 +173,23 @@ public class EtatsPayeurController {
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 	
+	@ResponseBody
+	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(value = "ptgTransactionManager")
+	public ResponseEntity<String> startExportEtatsPayeur(
+			@RequestParam(value = "idAgent", required = true) Integer idAgentExporting,
+			@RequestParam(value = "statut", required = true) String statutString) {
+
+		logger.debug(
+				"entered GET [etatsPayeur/runExportEtatsPayeur] => runExportEtatsPayeur with parameters  statut = {}",
+				statutString);
+		
+		AgentStatutEnum statut = AgentStatutEnum.valueOf(statutString);
+		
+		ReturnMessageDto result = exportEtatPayeurService.startExportEtatsPayeur(idAgentExporting, statut);
+		
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
 }

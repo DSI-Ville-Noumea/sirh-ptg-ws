@@ -5,6 +5,7 @@ import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
+import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 
 public interface IExportEtatPayeurService {
 
@@ -50,4 +51,14 @@ public interface IExportEtatPayeurService {
 	 * @return
 	 */
 	ReturnMessageDto startExportEtatsPayeur(Integer agentIdExporting, AgentStatutEnum statut);
+	
+	/**
+	 * Process exporting Etats payeurs of a ChainePaie depending on given Statut as parameter
+	 * This process also create records for each report being generated and copied to the storagePath
+	 * At the end, the process updates the Paie workflow status to "Export Etats Payeur Done".
+	 * @param agentIdExporting
+	 * @param statut
+	 * @throws WorkflowInvalidStateException
+	 */
+	void exportEtatsPayeur(Integer agentIdExporting, AgentStatutEnum statut) throws WorkflowInvalidStateException;
 }
