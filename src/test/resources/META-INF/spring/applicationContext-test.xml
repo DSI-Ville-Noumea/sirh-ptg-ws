@@ -97,4 +97,6 @@
 	
 	<bean class="java.lang.String" id="reportingBaseUrl" />
 	
+	<bean class="java.lang.String" id="sirhFileEtatPayeurPath" />
+	
 </beans>

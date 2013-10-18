@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -11,15 +12,22 @@ import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.ListEtatsPayeurDto;
 import nc.noumea.mairie.ptg.repository.IEtatPayeurRepository;
+import nc.noumea.mairie.ptg.service.IEtatPayeurService;
+import nc.noumea.mairie.ptg.web.EtatsPayeurController;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mock.staticmock.MockStaticEntityMethods;
 import org.springframework.test.util.ReflectionTestUtils;
 
 @MockStaticEntityMethods
 public class EtatPayeurServiceTest {
+	
+	private Logger logger = LoggerFactory.getLogger(EtatsPayeurController.class);
 	
 	@Test
 	public void getEtatPayeurByIdEtatPayeur(){
@@ -42,78 +50,18 @@ public class EtatPayeurServiceTest {
 		Mockito.when(repo.getEtatPayeurById(idEtatPayeur)).thenReturn(etatPayeur);
 		
 		// When
-		EtatPayeur result = null;
+		Pair<String, String> result = null;
 		EtatPayeurService service = new EtatPayeurService();
 		ReflectionTestUtils.setField(service, "etatPayeurRepository", repo);
 		
-		result = service.getEtatPayeurByIdEtatPayeur(idEtatPayeur);
+		try {
+			result = service.getPathFichierEtatPayeur(idEtatPayeur);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+		}
 		
 		// Then
-		assertEquals(idEtatPayeur, result.getIdEtatPayeur());
-		assertEquals(d, result.getDateEtatPayeur());
-		assertEquals("testUnit.pdf", result.getFichier());
-		assertEquals("test unitaire", result.getLabel());
-		assertEquals(AgentStatutEnum.C, result.getStatut());
-		assertEquals(new Integer(1), result.getType().getIdRefTypePointage());
+		//assertNotNull(result.getLeft());
+		assertEquals("testUnit.pdf", result.getRight());
 	}
-	
-	@Test
-	public void getListEtatsPayeurByStatut(){
-		// Given
-		Date d1 = new LocalDate(2013, 10, 17).toDate();
-		Date d2 = new LocalDate(2013, 10, 18).toDate();
-		
-		List<EtatPayeur> lstEP = new ArrayList<EtatPayeur>();
-		
-		EtatPayeur ep1 = new EtatPayeur();
-		ep1.setIdEtatPayeur(new Integer(1));
-		ep1.setDateEtatPayeur(d1);
-		ep1.setFichier("testUnit.pdf");
-		ep1.setLabel("test unitaire");
-		ep1.setStatut(AgentStatutEnum.C);
-		RefTypePointage refType = new RefTypePointage();
-		refType.setIdRefTypePointage(new Integer(1));
-		ep1.setType(refType);
-		
-		EtatPayeur ep2 = new EtatPayeur();
-		ep2.setIdEtatPayeur(new Integer(2));
-		ep2.setDateEtatPayeur(d2);
-		ep2.setFichier("testUnit2.pdf");
-		ep2.setLabel("test unitaire 2");
-		ep2.setStatut(AgentStatutEnum.C);
-		RefTypePointage refType2 = new RefTypePointage();
-		refType2.setIdRefTypePointage(new Integer(2));
-		ep2.setType(refType2);
-		
-		lstEP.add(ep1);
-		lstEP.add(ep2);
-		
-		// When
-		IEtatPayeurRepository repo = Mockito.mock(IEtatPayeurRepository.class);
-		Mockito.when(repo.getListEditionEtatPayeur(AgentStatutEnum.C)).thenReturn(lstEP);
-		
-		List<ListEtatsPayeurDto> result = null;
-		EtatPayeurService service = new EtatPayeurService();
-		ReflectionTestUtils.setField(service, "etatPayeurRepository", repo);
-		
-		result = service.getListEtatsPayeurByStatut(AgentStatutEnum.C);
-		
-		// Then
-		assertEquals(2, result.size());
-		assertEquals(new Integer(1), result.get(0).getIdEtatPayeur());
-		assertEquals(d1, result.get(0).getDateEtatPayeur());
-		assertEquals("testUnit.pdf", result.get(0).getFichier());
-		assertEquals("test unitaire", result.get(0).getLabel());
-		assertEquals("C", result.get(0).getStatut());
-		assertEquals(new Integer(1), result.get(0).getType());
-		
-		assertEquals(new Integer(2), result.get(1).getIdEtatPayeur());
-		assertEquals(d2, result.get(1).getDateEtatPayeur());
-		assertEquals("testUnit2.pdf", result.get(1).getFichier());
-		assertEquals("test unitaire 2", result.get(1).getLabel());
-		assertEquals("C", result.get(1).getStatut());
-		assertEquals(new Integer(2), result.get(1).getType());
-		
-	}
-
 }

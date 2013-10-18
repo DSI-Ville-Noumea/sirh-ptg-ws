@@ -1,7 +1,6 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +10,7 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.ListEtatsPayeurDto;
 import nc.noumea.mairie.ptg.repository.IEtatPayeurRepository;
 import nc.noumea.mairie.ptg.service.IEtatPayeurService;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,30 +56,16 @@ public class EtatPayeurService implements IEtatPayeurService {
 	}
 	
 	@Override
-	public EtatPayeur getEtatPayeurByIdEtatPayeur(Integer idEtatPayeur) {
+	public Pair<String, String> getPathFichierEtatPayeur(Integer idEtatPayeur) throws Exception {
 		
-		logger.debug("getEtatPayeurByIdEtatPayeur with idEtatPayeur {}" + idEtatPayeur);
+		logger.debug("downloadFichierEtatPayeur with idEtatPayeur {}" + idEtatPayeur);
 		
-		return etatPayeurRepository.getEtatPayeurById(idEtatPayeur);
-	}
-	
-	@Override
-	public byte[] downloadFichierEtatPayeur(String nomFichier) throws Exception {
+		EtatPayeur etatPayeur = etatPayeurRepository.getEtatPayeurById(idEtatPayeur);
 		
 		// on verifie que les repertoires existent
 		verifieRepertoire(sirhFileEtatPayeurPath);
 	    
-		byte[] byteBuffer = null;
-		File newFile = new File(sirhFileEtatPayeurPath + "/" + nomFichier);
-		FileInputStream in = new FileInputStream(newFile);
-		
-		try {
-			byteBuffer = IOUtils.toByteArray(in);
-		} finally {
-			in.close();
-		}
-		
-		return byteBuffer;
+		return Pair.of(sirhFileEtatPayeurPath, etatPayeur.getFichier());
 	}
 	
 	private void verifieRepertoire(String fileEtatPayeurPath) throws Exception {

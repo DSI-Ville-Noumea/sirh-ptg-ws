@@ -1,11 +1,13 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
-import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
@@ -18,6 +20,8 @@ import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,42 +127,38 @@ public class EtatsPayeurController {
 	@RequestMapping(value = "/downloadFicheEtatsPayeur", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<byte[]> downloadFicheEtatsPayeur(
-			@RequestParam("idEtatPayeur") Integer idEtatPayeur, @RequestParam("idAgent") Integer idAgent) {
+			@RequestParam("idEtatPayeur") Integer idEtatPayeur) {
 		
 		logger.debug(
-				"entered GET [etatsPayeur/downloadFicheEtatsPayeur] => downloadFicheEtatsPayeur with parameters idEtatPayeur = {}, idAgent = {}",
-				idEtatPayeur, idAgent);
+				"entered GET [etatsPayeur/downloadFicheEtatsPayeur] => downloadFicheEtatsPayeur with parameters idEtatPayeur = {}",
+				idEtatPayeur);
 		
-		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-
-		if (!accessRightService.canUserAccessPrint(convertedIdAgent))
-			throw new AccessForbiddenException();
-		
-		EtatPayeur etatPayeur = null;
+		Pair<String, String> pathFichier = null;
 		try {
-			etatPayeur = etatPayeurService.getEtatPayeurByIdEtatPayeur(idEtatPayeur);
-		} catch (org.springframework.dao.EmptyResultDataAccessException e) {
-			logger.error(e.getMessage(), e);
-			return new ResponseEntity<byte[]>(HttpStatus.NO_CONTENT);
+			pathFichier = etatPayeurService.getPathFichierEtatPayeur(idEtatPayeur);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		
-		byte[] responseData = null;
+		byte[] reponseData = null;
 		try {
-			responseData = etatPayeurService.downloadFichierEtatPayeur(etatPayeur.getFichier());
-		} catch (Exception e) {
+			FileInputStream newFile = new FileInputStream(pathFichier.getLeft() + "/" + pathFichier.getRight());
+			reponseData = IOUtils.toByteArray(newFile);
+		} catch (FileNotFoundException e) {
+			logger.error(e.getMessage(), e);
+			return new ResponseEntity<byte[]>(HttpStatus.NO_CONTENT);
+		} catch (IOException e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/pdf");
-		headers.add("Content-Disposition", String.format("attachment; filename=\""+etatPayeur.getFichier()+"\""));
+		headers.add("Content-Disposition", String.format("attachment; filename=\"" + pathFichier.getRight() + "\""));
 
-		return new ResponseEntity<byte[]>(responseData, headers, HttpStatus.OK);
+		return new ResponseEntity<byte[]>(reponseData, headers, HttpStatus.OK);
 	}
 	
 	
