@@ -186,7 +186,7 @@ public class EtatsPayeurController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(value = "ptgTransactionManager")
+	@Transactional(value = "chainedTransactionManager")
 	public ResponseEntity<String> startExportEtatsPayeur(
 			@RequestParam(value = "idAgent", required = true) Integer idAgentExporting,
 			@RequestParam(value = "statut", required = true) String statutString) {
@@ -209,7 +209,7 @@ public class EtatsPayeurController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/startExportTask", method = RequestMethod.GET)
-	@Transactional(value = "chainedTransactionManager")
+	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> startExportEtatsPayeurTask(
 			@RequestParam(value = "idExportEtatsPayeurTask", required = true) Integer idExportEtatsPayeurTask) {
 
