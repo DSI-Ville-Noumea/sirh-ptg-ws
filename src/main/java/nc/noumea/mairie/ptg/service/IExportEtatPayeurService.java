@@ -60,5 +60,23 @@ public interface IExportEtatPayeurService {
 	 * @param statut
 	 * @throws WorkflowInvalidStateException
 	 */
-	void exportEtatsPayeur(Integer agentIdExporting, AgentStatutEnum statut) throws WorkflowInvalidStateException;
+	//void exportEtatsPayeur(Integer agentIdExporting, AgentStatutEnum statut) throws WorkflowInvalidStateException;
+	
+	/**
+	 * Starts the process of Exporting Etats Payeurs of a ChainePaie. This will download all chainePaie
+	 * related reports and store them in a shared directory. It will also call SIRH-ABS-WS to update
+	 * each agent's recuperations with what has been paid.
+	 * Called by SIRH-JOBS
+	 * @param idExportEtatsPayeurTask
+	 */
+	void exportEtatsPayeur(Integer idExportEtatsPayeurTask);
+	
+	/**
+	 * Terminates the process of Exporting Etats Payeurs of a ChainePaie. This will mark all related
+	 * as JOURNALISE, set the VentilDate as PAYE, set the Paie Workflow state to EXPORT_ETATS_PAYEUR_TERMINE
+	 * Called by SIRH-JOBS
+	 * @param idExportEtatsPayeurTask
+	 * @throws WorkflowInvalidStateException
+	 */
+	void stopExportEtatsPayeur(Integer idExportEtatsPayeurTask) throws WorkflowInvalidStateException;
 }

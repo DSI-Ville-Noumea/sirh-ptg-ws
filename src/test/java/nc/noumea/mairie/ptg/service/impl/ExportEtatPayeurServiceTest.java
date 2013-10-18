@@ -16,6 +16,7 @@ import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.ExportEtatsPayeurTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
@@ -28,6 +29,7 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbsencesEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
@@ -47,6 +49,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class ExportEtatPayeurServiceTest {
@@ -745,7 +749,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.doReturn(new EtatPayeur()).when(service).exportEtatPayeur(idAgentExporting, RefTypePointageEnum.PRIME, statut, ventilationDate);
 		
 		// When
-		List<EtatPayeur> result = service.callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, statut, ventilationDate);
+		List<EtatPayeur> result = service.callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, ventilationDate);
 		
 		// Then
 		assertEquals(3, result.size());
@@ -773,7 +777,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.doReturn(new EtatPayeur()).when(service).exportEtatPayeur(idAgentExporting, RefTypePointageEnum.PRIME, AgentStatutEnum.C, ventilationDate);
 		
 		// When
-		List<EtatPayeur> result = service.callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, statut, ventilationDate);
+		List<EtatPayeur> result = service.callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, ventilationDate);
 		
 		// Then
 		assertEquals(6, result.size());
@@ -826,16 +830,19 @@ public class ExportEtatPayeurServiceTest {
 		PointageCalcule p1 = new PointageCalcule();
 		p1.setEtat(EtatPointageEnum.VALIDE);
 		
+		PointageCalcule p2 = new PointageCalcule();
+		p2.setEtat(EtatPointageEnum.JOURNALISE);
+		
 		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		
 		// When
-		service.markPointagesCalculesAsJournalises(new HashSet<PointageCalcule>(Arrays.asList(p1)));
+		service.markPointagesCalculesAsJournalises(new HashSet<PointageCalcule>(Arrays.asList(p1, p2)));
 		
 		// Then
 		assertEquals(EtatPointageEnum.JOURNALISE, p1.getEtat());
+		assertEquals(EtatPointageEnum.JOURNALISE, p2.getEtat());
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Test
 	public void exportEtatsPayeur_CallEtatPayeursAndSendRecupsToAbs() throws WorkflowInvalidStateException {
 		
@@ -844,7 +851,7 @@ public class ExportEtatPayeurServiceTest {
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SHC;
 		AgentStatutEnum statut = AgentStatutEnum.C;
 		Date ventilationDate = new LocalDate(2013, 02, 25).toDate();
-
+		
 		VentilDate vd = new VentilDate();
 		vd.setDateVentilation(ventilationDate);
 		VentilHsup vh = new VentilHsup();
@@ -855,15 +862,21 @@ public class ExportEtatPayeurServiceTest {
 		vh2.setDateLundi(new LocalDate(2013, 9, 2).toDate());
 		vd.getVentilHsups().add(vh2);
 		
+		ExportEtatsPayeurTask task = new ExportEtatsPayeurTask();
+		task.setIdAgent(idAgentExporting);
+		task.setTypeChainePaie(chainePaie);
+		task.setVentilDate(vd);
+
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(chainePaie);
 		
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(chainePaie, false)).thenReturn(vd);
 		
-		IAbsWsConsumer ac = Mockito.mock(IAbsWsConsumer.class);
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
 		
-		IPaieWorkflowService pS = Mockito.mock(IPaieWorkflowService.class);
+		IAbsWsConsumer ac = Mockito.mock(IAbsWsConsumer.class);
 		
 		List<EtatPayeur> eps = new ArrayList<EtatPayeur>();
 		EtatPayeur ep = Mockito.spy(new EtatPayeur());
@@ -871,25 +884,243 @@ public class ExportEtatPayeurServiceTest {
 		eps.add(ep);
 		
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
-		Mockito.doReturn(eps).when(service).callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, statut, ventilationDate);
+		Mockito.doReturn(eps).when(service).callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, ventilationDate);
+		ReflectionTestUtils.setField(service, "absWsConsumer", ac);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		
+		// When
+		service.exportEtatsPayeur(99);
+		
+		// Then
+		Mockito.verify(ep, Mockito.times(1)).persist();
+		Mockito.verify(ac, Mockito.times(1)).addRecuperationsToAgent(9009999, vh2.getDateLundi(), 90);
+	}
+	
+	@Test
+	public void exportEtatsPayeur_NoExistingTask_Return() {
+		
+		// Given
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(null);
+		
+		IAbsWsConsumer ac = Mockito.mock(IAbsWsConsumer.class);
+		
+		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
+		ReflectionTestUtils.setField(service, "absWsConsumer", ac);
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		
+		// When
+		service.exportEtatsPayeur(99);
+		
+		// Then
+		Mockito.verify(ac, Mockito.never()).addRecuperationsToAgent(9009999, null, 90);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void stopExportEtatsPayeur_markPointagesAsJournalise_SetPayeAsTrue_changeWFState() throws WorkflowInvalidStateException {
+		
+		// Given
+		VentilDate vd = new VentilDate();
+		VentilHsup vh = new VentilHsup();
+		vd.getVentilHsups().add(vh);
+		VentilHsup vh2 = new VentilHsup();
+		vh2.setMRecuperees(90);
+		vh2.setIdAgent(9009999);
+		vh2.setDateLundi(new LocalDate(2013, 9, 2).toDate());
+		vd.getVentilHsups().add(vh2);
+		
+		ExportEtatsPayeurTask task = new ExportEtatsPayeurTask();
+		task.setIdAgent(9009999);
+		task.setVentilDate(vd);
+		task.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
+		
+		IPaieWorkflowService pS = Mockito.mock(IPaieWorkflowService.class);
+		
+		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doNothing().when(service).markPointagesAsJournalises(Mockito.anySet(), Mockito.anyInt());
 		Mockito.doNothing().when(service).markPointagesCalculesAsJournalises(Mockito.anySet());
-		ReflectionTestUtils.setField(service, "absWsConsumer", ac);
-		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "paieWorkflowService", pS);
 		
 		// When
-		service.exportEtatsPayeur(idAgentExporting, statut);
+		service.stopExportEtatsPayeur(99);
 		
 		// Then
 		assertTrue(vd.isPaye());
 		
-		Mockito.verify(ep, Mockito.times(1)).persist();
-		Mockito.verify(ac, Mockito.times(1)).addRecuperationsToAgent(9009999, vh2.getDateLundi(), 90);
-		Mockito.verify(pS, Mockito.times(1)).changeStateToExportEtatsPayeurDone(chainePaie);
+		Mockito.verify(pS, Mockito.times(1)).changeStateToExportEtatsPayeurDone(TypeChainePaieEnum.SCV);
 		Mockito.verify(service, Mockito.times(1)).markPointagesAsJournalises(Mockito.anySet(), Mockito.anyInt());
 		Mockito.verify(service, Mockito.times(1)).markPointagesCalculesAsJournalises(Mockito.anySet());
-
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void stopExportEtatsPayeur_NoExistingTask_Return() throws WorkflowInvalidStateException {
+		
+		// Given
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(null);
+		
+		IPaieWorkflowService pS = Mockito.mock(IPaieWorkflowService.class);
+		
+		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pS);
+		
+		// When
+		service.stopExportEtatsPayeur(99);
+		
+		// Then
+		Mockito.verify(pS, Mockito.never()).changeStateToExportEtatsPayeurDone(TypeChainePaieEnum.SCV);
+		Mockito.verify(service, Mockito.never()).markPointagesAsJournalises(Mockito.anySet(), Mockito.anyInt());
+		Mockito.verify(service, Mockito.never()).markPointagesCalculesAsJournalises(Mockito.anySet());
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void stopExportEtatsPayeur_ExistingTaskVentilDAteIsAlreadyPaid_Return() throws WorkflowInvalidStateException {
+		
+		// Given
+		VentilDate vd = new VentilDate();
+		vd.setPaye(true);
+		ExportEtatsPayeurTask task = new ExportEtatsPayeurTask();
+		task.setVentilDate(vd);
+		
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
+		
+		IPaieWorkflowService pS = Mockito.mock(IPaieWorkflowService.class);
+		
+		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pS);
+		
+		// When
+		service.stopExportEtatsPayeur(99);
+		
+		// Then
+		Mockito.verify(pS, Mockito.never()).changeStateToExportEtatsPayeurDone(TypeChainePaieEnum.SCV);
+		Mockito.verify(service, Mockito.never()).markPointagesAsJournalises(Mockito.anySet(), Mockito.anyInt());
+		Mockito.verify(service, Mockito.never()).markPointagesCalculesAsJournalises(Mockito.anySet());
+		
+	}
+	
+	@Test
+	public void startExportEtatsPayeur_NoUnpaidVentilation_ReturnErrorMessage() {
+		
+		// Given
+		Integer idAgentExporting = 9007654;
+		AgentStatutEnum statut = AgentStatutEnum.C;
+		Date date = new DateTime(2013, 4, 5, 8, 7, 9).toDate();
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SHC);
+		Mockito.when(hS.getCurrentDate()).thenReturn(date);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(null);
+		
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		
+		// When
+		ReturnMessageDto result = service.startExportEtatsPayeur(idAgentExporting, statut);
+		
+		// Then
+		assertEquals(0, result.getInfos().size());
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Aucune ventilation n'existe pour le statut [C].", result.getErrors().get(0));
+	}
+	
+	@Test
+	public void startExportEtatsPayeur_1VentilDateButStatusIsNotOK_ReturnErrorMessage() throws WorkflowInvalidStateException {
+		
+		// Given
+		Integer idAgentExporting = 9007654;
+		AgentStatutEnum statut = AgentStatutEnum.C;
+		Date date = new DateTime(2013, 4, 5, 8, 7, 9).toDate();
+		
+		VentilDate vd = new VentilDate();
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SHC);
+		Mockito.when(hS.getCurrentDate()).thenReturn(date);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(vd);
+		
+		IPaieWorkflowService wS = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.doThrow(new WorkflowInvalidStateException("message")).when(wS).changeStateToExportEtatsPayeurStarted(TypeChainePaieEnum.SHC);
+		
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", wS);
+		
+		// When
+		ReturnMessageDto result = service.startExportEtatsPayeur(idAgentExporting, statut);
+		
+		// Then
+		assertEquals(0, result.getInfos().size());
+		assertEquals(1, result.getErrors().size());
+		assertEquals("message", result.getErrors().get(0));
+	}
+	
+	@Test
+	public void startExportEtatsPayeur_StartExport_ReturnErrorMessage() throws WorkflowInvalidStateException {
+		
+		// Given
+		Integer idAgentExporting = 9007654;
+		AgentStatutEnum statut = AgentStatutEnum.C;
+		final Date date = new DateTime(2013, 4, 5, 8, 7, 9).toDate();
+		
+		final VentilDate vd = new VentilDate();
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SHC);
+		Mockito.when(hS.getCurrentDate()).thenReturn(date);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(vd);
+		
+		IPaieWorkflowService wS = Mockito.mock(IPaieWorkflowService.class);
+		
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ExportEtatsPayeurTask arg = (ExportEtatsPayeurTask) args[0];
+
+				assertEquals(9007654, (int) arg.getIdAgent());
+				assertEquals(date, arg.getDateCreation());
+				assertEquals(TypeChainePaieEnum.SHC, arg.getTypeChainePaie());
+				assertEquals(vd, arg.getVentilDate());
+				assertNull(arg.getDateExport());
+				assertNull(arg.getTaskStatus());
+				return true;
+			}
+		}).when(pR).persisEntity(Mockito.isA(ExportEtatsPayeurTask.class));
+		
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", wS);
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		
+		// When
+		ReturnMessageDto result = service.startExportEtatsPayeur(idAgentExporting, statut);
+		
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals("L'export des Etats du Payeur pour la chaine paie [SHC] a bien été lancé.", result.getInfos().get(0));
+	}
+	
 }

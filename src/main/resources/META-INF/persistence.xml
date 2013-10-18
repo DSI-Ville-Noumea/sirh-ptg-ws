@@ -22,6 +22,7 @@
         <class>nc.noumea.mairie.ptg.domain.VentilTask</class>
         <class>nc.noumea.mairie.ptg.domain.ExportPaieTask</class>
         <class>nc.noumea.mairie.ptg.domain.EtatPayeur</class>
+        <class>nc.noumea.mairie.ptg.domain.ExportEtatsPayeurTask</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect"/>
