@@ -822,3 +822,95 @@ HTTP Status code OK : 200
     "canStartAction": true
 }
 +-------------------------+
+
+
+** Lancer une exportation des états du payeur (lancer le traitement asynchrone)
+
+ Note: Cet appel de web service n'effectue pas le traitement d'édition des états. Il programme la tâche en BDD et c'est un Job (SIRH-JOBS) qui l'effectuera (via un appel au WS ci-dessous etatsPayeur/startExportTask).
+
+ <<URL>> : /etatsPayeur/start
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : L'Id de l'agent lancant l'export (matricule au format 900xxxx)
+
+  * <<statut>> : Le statut des agents à ventiler. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si une erreur fonctionnelle car l'export n'a pas pu être lancée :
+
++-------------------------+
+ HTTP Status code CONFLICT : 409
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "erreurs" :
+    [
+        "erreur 1",
+        "erreur 2"
+    ],
+    "infos" : 
+    [
+        "Agent 9008765",
+        "Agent 9008769"
+    ]
+}
++-------------------------+
+
+
+** Exécuter une tâche d'export des états payeur (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS d'export des états du payeur.>>
+ Note: Cet appel de web service vise à effectuer une tâche d'export des états.
+
+ <<URL>> : /etatsPayeur/startExportTask
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idExportEtatsPayeurTask>> : L'Id de la tâche d'export (préalablement créée via un appel à /etatsPayeur/start)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+
+** Terminer une tâche d'export des états payeur (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS d'export des états du payeur.>>
+ Note: Cet appel de web service vise à terminer une tâche d'export des états.
+
+ <<URL>> : /etatsPayeur/finishExportTask
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idExportEtatsPayeurTask>> : L'Id de la tâche d'export (préalablement créée via un appel à /etatsPayeur/start)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+ 

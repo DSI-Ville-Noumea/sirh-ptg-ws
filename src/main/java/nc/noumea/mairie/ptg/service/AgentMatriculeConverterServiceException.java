@@ -1,6 +1,6 @@
 package nc.noumea.mairie.ptg.service;
 
-public class AgentMatriculeConverterServiceException extends Exception {
+public class AgentMatriculeConverterServiceException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 	

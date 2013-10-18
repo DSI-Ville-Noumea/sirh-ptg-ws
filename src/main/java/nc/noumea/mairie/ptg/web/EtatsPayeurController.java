@@ -16,6 +16,7 @@ import nc.noumea.mairie.ptg.service.IEtatPayeurService;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
+import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -200,6 +201,39 @@ public class EtatsPayeurController {
 		
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
+		if (result.getErrors().size() != 0)
+			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+		
 		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/startExportTask", method = RequestMethod.GET)
+	@Transactional(value = "chainedTransactionManager")
+	public ResponseEntity<String> startExportEtatsPayeurTask(
+			@RequestParam(value = "idExportEtatsPayeurTask", required = true) Integer idExportEtatsPayeurTask) {
+
+		logger.debug(
+				"entered GET [etatsPayeur/startExportTask] => startExportEtatsPayeurTask with parameter idExportEtatsPayeurTask = {}",
+				idExportEtatsPayeurTask);
+		
+		exportEtatPayeurService.exportEtatsPayeur(idExportEtatsPayeurTask);
+		
+		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/finishExportTask", method = RequestMethod.GET)
+	@Transactional(value = "chainedTransactionManager")
+	public ResponseEntity<String> finishExportEtatsPayeurTask(
+			@RequestParam(value = "idExportEtatsPayeurTask", required = true) Integer idExportEtatsPayeurTask) throws WorkflowInvalidStateException {
+
+		logger.debug(
+				"entered GET [etatsPayeur/finishExportTask] => finishExportEtatsPayeurTask with parameter idExportEtatsPayeurTask = {}",
+				idExportEtatsPayeurTask);
+		
+		exportEtatPayeurService.stopExportEtatsPayeur(idExportEtatsPayeurTask);
+		
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 }
