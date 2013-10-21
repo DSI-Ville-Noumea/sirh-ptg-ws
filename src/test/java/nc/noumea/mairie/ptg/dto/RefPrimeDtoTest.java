@@ -36,4 +36,30 @@ public class RefPrimeDtoTest {
 		assertEquals(result.getAide(), ref.getAide());
 	}
 
+	@Test
+	public void ctor_withRefPrimeDto() {
+		
+		// Given
+		RefPrimeDto ref = new RefPrimeDto();
+		ref.setCalculee(false);
+		ref.setIdRefPrime(654654);
+		ref.setDescription("description");
+		ref.setLibelle("libelle");
+		ref.setStatut("F");
+		ref.setTypeSaisie("0");
+		ref.setNumRubrique(667);
+		
+		// When
+		RefPrimeDto result = new RefPrimeDto(ref);
+
+		// Then		
+		assertEquals(result.getStatut(), ref.getStatut());
+		assertEquals(result.isCalculee(), ref.isCalculee());
+		assertEquals(result.getDescription(), ref.getDescription());
+		assertEquals(result.getTypeSaisie(), ref.getTypeSaisie());
+		assertEquals(result.getLibelle(), ref.getLibelle());
+		assertEquals(result.getNumRubrique(), ref.getNumRubrique());
+		assertEquals(result.getIdRefPrime(), ref.getIdRefPrime());
+	}
+
 }
