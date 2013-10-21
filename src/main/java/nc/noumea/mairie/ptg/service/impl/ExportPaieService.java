@@ -182,64 +182,6 @@ public class ExportPaieService implements IExportPaieService {
 	}
 	
 	/**
-	 * This method stays here only for development purposes (it is deprecated for any other use).
-	 * This is why it is marked as deprecated.
-	 */
-	@Override
-	@Deprecated
-	public ReturnMessageDto exportToPaie(Integer agentIdValidating, AgentStatutEnum statut) {
-		
-		logger.info("Starting exportation to Paie with status [{}]", statut);
-		
-		ReturnMessageDto result = new ReturnMessageDto();
-		
-		// 1. Retrieve eligible ventilation in order to get dates
-		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
-		VentilDate ventilDate = ventilationRepository.getLatestVentilDate(chainePaie, false);
-		
-		// If no ventilation has ever been ran, return now
-		if (ventilDate == null) {
-			logger.info("No unpaid ventilation date found. Nothing to export. Stopping process here.");
-			result.getInfos().add(String.format("Aucune ventilation n'existe pour le statut [%s].", statut));
-			return result;
-		}
-		
-		// 2. retrieve list of Agent from pointages
-		List<Integer> idAgents = ventilationRepository.getListIdAgentsForExportPaie(ventilDate.getIdVentilDate());
-		
-		logger.info("Found {} agents to export pointages for (based on all available pointages for export and before agent filtering).", idAgents.size());
-		int nbProcessedAgents = 0;
-		
-		for (Integer idAgent : idAgents) {
-			
-			// 3. Verify whether this agent is eligible, through its Status (Spcarr)
-			if (!isAgentEligibleToExport(idAgent, statut, ventilDate.getDateVentilation())) {
-				logger.info("Agent {} not eligible for export (status not matching), skipping to next.", idAgent);
-				continue;
-			}
-			
-			nbProcessedAgents++;
-			logger.debug("Exporting pointages of agent {} [#{}]...", idAgent, nbProcessedAgents);
-			
-			// 4. Retrieve all pointages that have been ventilated
-			List<Pointage> ventilatedPointages = pointageService.getPointagesVentilesForAgent(idAgent, ventilDate);
-			
-			// 5. Export absences
-			persistSppac(exportPaieAbsenceService.exportAbsencesToPaie(ventilatedPointages));
-			
-			// 6. Mark pointages as validated
-			markPointagesAsValidated(ventilatedPointages, agentIdValidating);
-			
-			// 7. Update SPMATR with oldest pointage month
-			updateSpmatrForAgentAndPointages(idAgent, chainePaie, ventilatedPointages);
-		}
-		
-		logger.info("Exported pointages of {} agents with status {}", nbProcessedAgents, statut);
-		
-		return result;
-	}
-	
-	/**
 	 * Returns whether or not an agent is eligible to ventilation considering its
 	 * status (F, C or CC) we are currently ventilating
 	 * @param idAgent

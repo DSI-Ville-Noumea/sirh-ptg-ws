@@ -19,9 +19,6 @@ public interface IExportPaieService {
 	 */
 	ReturnMessageDto startExportToPaie(Integer agentIdValidating, AgentStatutEnum statut);
 	
-	@Deprecated
-	ReturnMessageDto exportToPaie(Integer agentIdValidating, AgentStatutEnum statut);
-	
 	/**
 	 * Returns whether or not it is possible to start an ExportPaie process (if the Paie 
 	 * workflow is ready for this action).

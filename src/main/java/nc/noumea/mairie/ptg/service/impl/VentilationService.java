@@ -71,7 +71,7 @@ public class VentilationService implements IVentilationService {
 
 	@Autowired
 	private IPointageService pointageService;
-	
+
 	@Autowired
 	private HelperService helperService;
 
@@ -221,105 +221,6 @@ public class VentilationService implements IVentilationService {
 		logger.info("Ventilation of idVentilTask [{}] done.", idVentilTask);
 	}
 
-	/**
-	 * This method stays here only for development purposes (it is deprecated
-	 * for any other use). This is why it is marked as deprecated.
-	 */
-	@Override
-	@Deprecated
-	public ReturnMessageDto processVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate,
-			AgentStatutEnum statut, RefTypePointageEnum pointageType) {
-
-		logger.info("Starting ventilation of Pointages for Agents [{}], date [{}], status [{}] and pointage type [{}]",
-				agents, ventilationDate, statut, pointageType);
-
-		ReturnMessageDto result = new ReturnMessageDto();
-
-		// Retrieving the current ventilation dates (from / to)
-		TypeChainePaieEnum typeChainePaie = helperService.getTypeChainePaieFromStatut(statut);
-		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, true);
-		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, false);
-
-		if (toVentilDate == null) {
-			logger.info("No unpaid ventilation date found for statut. Creating a new one...");
-			toVentilDate = new VentilDate();
-			toVentilDate.setDateVentilation(new DateTime(ventilationDate).withHourOfDay(23).withMinuteOfHour(59)
-					.toDate());
-			toVentilDate.setPaye(false);
-			toVentilDate.setTypeChainePaie(typeChainePaie);
-			toVentilDate.persist();
-		}
-
-		// If no agents were set as parameters, we need to take everyone
-		// concerned
-		if (agents.size() == 0) {
-			agents = ventilationRepository.getListIdAgentsForVentilationByDateAndEtat(
-					fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
-		}
-
-		logger.info("Found {} agents to ventilate pointages for (based on available pointages).", agents.size());
-		int nbProcessedAgents = 0;
-
-		// For all seleted agents, proceed to ventilation
-		for (Integer agent : agents) {
-			// 1. Verify whether this agent is eligible, through its Status
-			// (Spcarr)
-			Spcarr carr = isAgentEligibleToVentilation(agent, statut, toVentilDate.getDateVentilation());
-			if (carr == null) {
-				logger.info("Agent {} not eligible for ventilation (status not matching), skipping to next.", agent);
-				continue;
-			}
-
-			nbProcessedAgents++;
-			logger.debug("Ventilating pointages of agent {} [#{}]...", agent, nbProcessedAgents);
-
-			// 2. remove existing ventilations
-			removePreviousVentilations(toVentilDate, agent, pointageType);
-
-			// 3. select all distinct dates of pointages needing ventilation
-			List<Date> pointagesToVentilateDates = ventilationRepository.getDistinctDatesOfPointages(agent,
-					fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
-
-			List<Pointage> pointagesVentiles = new ArrayList<Pointage>();
-
-			// 4. Ventilation of H_SUP and ABS
-			if (pointageType == null || pointageType == RefTypePointageEnum.ABSENCE
-					|| pointageType == RefTypePointageEnum.H_SUP) {
-				for (Date dateLundi : getDistinctDateLundiFromListOfDates(pointagesToVentilateDates)) {
-					pointagesVentiles.addAll(processHSupAndAbsVentilationForWeekAndAgent(toVentilDate, agent, carr,
-							dateLundi, fromVentilDate.getDateVentilation()));
-				}
-			}
-
-			// 5. Pointages generated (Primes)
-			for (Date dateLundi : getDistinctDateLundiFromListOfDates(pointagesToVentilateDates)) {
-				// 5.1 Remove previously calculated Pointages (Primes)
-				removePreviousCalculatedPointages(agent, dateLundi);
-
-				// 5.2 Calculate pointages for week
-				calculatePointages(agent, dateLundi, fromVentilDate.getDateVentilation(),
-						toVentilDate.getDateVentilation());
-			}
-
-			// 6. Ventilation of PRIMES
-			if (pointageType == null || pointageType == RefTypePointageEnum.PRIME) {
-				for (Date dateDebutMois : getDistinctDateDebutMoisFromListOfDates(pointagesToVentilateDates)) {
-
-					pointagesVentiles.addAll(processPrimesVentilationForMonthAndAgent(toVentilDate, agent,
-							dateDebutMois, fromVentilDate.getDateVentilation()));
-				}
-			}
-
-			// 7. Mark pointages as etat VENTILE and add this VentilDate to
-			// their list of ventilations
-			markPointagesAsVentile(pointagesVentiles, agent, toVentilDate);
-		}
-
-		logger.info("Successfully ventilated pointages of {} agents.", nbProcessedAgents);
-
-		return result;
-	}
-
 	protected List<Date> getDistinctDateLundiFromListOfDates(List<Date> dates) {
 
 		List<Date> result = new ArrayList<Date>();
@@ -357,13 +258,16 @@ public class VentilationService implements IVentilationService {
 		List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesAbsenceAndHSupForVentilation(
 				idAgent, fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
 
-		// Then filter them (if they have parent pointages to be excluded for ex.)
-		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(agentsPointageForPeriod, null);
-		
+		// Then filter them (if they have parent pointages to be excluded for
+		// ex.)
+		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(
+				agentsPointageForPeriod, null);
+
 		boolean has1150Prime = sirhRepository.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
 				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime);
-		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod, dateLundi);
+		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod,
+				dateLundi);
 
 		// persisting all the generated entities linking them to the current
 		// ventil date
@@ -387,9 +291,10 @@ public class VentilationService implements IVentilationService {
 
 		List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesPrimeForVentilation(idAgent,
 				fromVentilDate, ventilDate.getDateVentilation(), dateDebutMois);
-		
-		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(agentsPointageForPeriod, null);
-		
+
+		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(
+				agentsPointageForPeriod, null);
+
 		List<PointageCalcule> agentsPointagesCalculesForPeriod = ventilationRepository
 				.getListPointagesCalculesPrimeForVentilation(idAgent, dateDebutMois);
 
@@ -408,13 +313,14 @@ public class VentilationService implements IVentilationService {
 			v.persist();
 		}
 
-		// Because Pointages Calcules are not modifiable by anyone, we directly mark them
+		// Because Pointages Calcules are not modifiable by anyone, we directly
+		// mark them
 		// as ventilated and set their VentilDate to the current one
 		for (PointageCalcule ptgC : agentsPointagesCalculesForPeriod) {
 			ptgC.setEtat(EtatPointageEnum.VENTILE);
 			ptgC.setLastVentilDate(ventilDate);
 		}
-		
+
 		return filteredAgentsPointageForPeriod;
 	}
 
@@ -501,9 +407,8 @@ public class VentilationService implements IVentilationService {
 			}
 
 			EtatPointageEnum currentEtat = ptg.getLatestEtatPointage().getEtat();
-			
-			if (currentEtat == EtatPointageEnum.VENTILE
-					|| currentEtat == EtatPointageEnum.VALIDE
+
+			if (currentEtat == EtatPointageEnum.VENTILE || currentEtat == EtatPointageEnum.VALIDE
 					|| currentEtat == EtatPointageEnum.JOURNALISE) {
 				continue;
 			}
@@ -565,8 +470,7 @@ public class VentilationService implements IVentilationService {
 
 		switch (pointageType) {
 			case ABSENCE: {
-				for (VentilAbsence abs : ventilationRepository.getListOfVentilAbsenceForDateAgent(idDateVentil,
-						agents))
+				for (VentilAbsence abs : ventilationRepository.getListOfVentilAbsenceForDateAgent(idDateVentil, agents))
 					pointagesVentiles.add(new VentilAbsenceDto(abs));
 
 				break;
@@ -578,8 +482,7 @@ public class VentilationService implements IVentilationService {
 				break;
 			}
 			case PRIME: {
-				for (VentilPrime prime : ventilationRepository.getListOfVentilPrimeForDateAgent(idDateVentil,
-						agents))
+				for (VentilPrime prime : ventilationRepository.getListOfVentilPrimeForDateAgent(idDateVentil, agents))
 					pointagesVentiles.add(new VentilPrimeDto(prime, helperService));
 
 				break;

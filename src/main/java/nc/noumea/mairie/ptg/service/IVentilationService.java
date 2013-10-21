@@ -57,11 +57,6 @@ public interface IVentilationService {
 	 */
 	void processVentilationForAgent(Integer idVentilTask);
 
-	@Deprecated
-	ReturnMessageDto processVentilation(Integer idAgent, List<Integer> agents,
-			Date ventilationDate, AgentStatutEnum statut,
-			RefTypePointageEnum pointageType);
-
 	List<VentilDto> showVentilation(Integer idDateVentil, List<Integer> agents,
 			RefTypePointageEnum pointageType);
 
