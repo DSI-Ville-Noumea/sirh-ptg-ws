@@ -10,13 +10,17 @@ public class ListEtatsPayeurDtoTest {
 	@Test
 	public void ListEtatsPayeurDto() {
 		
-		ListEtatsPayeurDto dto = new ListEtatsPayeurDto(new Integer(1), "C", new Integer(2), new Date(), "test label", "test.pdf");
+		Date date = new Date();
+		
+		ListEtatsPayeurDto dto = new ListEtatsPayeurDto(new Integer(1), "C", new Integer(2), date, "test label", "test.pdf", 1234, date);
 		
 		assertEquals(new Integer(1), dto.getIdEtatPayeur());
 		assertEquals("C", dto.getStatut());
 		assertEquals(new Integer(2), dto.getType());
-		assertEquals(new Date(), dto.getDateEtatPayeur());
+		assertEquals(date, dto.getDateEtatPayeur());
 		assertEquals("test label", dto.getLabel());
 		assertEquals("test.pdf", dto.getFichier());
+		assertEquals(new Integer(1234),  dto.getIdAgent());
+		assertEquals(date, dto.getDateEdition());
 	}
 }

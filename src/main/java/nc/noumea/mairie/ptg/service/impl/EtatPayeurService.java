@@ -46,7 +46,7 @@ public class EtatPayeurService implements IEtatPayeurService {
 				etatsPayeurDto = new ListEtatsPayeurDto(
 						etatPayeur.getIdEtatPayeur(), etatPayeur.getStatut().toString(),
 						etatPayeur.getType().getIdRefTypePointage(), etatPayeur.getDateEtatPayeur(),
-						etatPayeur.getLabel(), etatPayeur.getFichier());
+						etatPayeur.getLabel(), etatPayeur.getFichier(), etatPayeur.getIdAgent(), etatPayeur.getDateEdition());
 				
 				listEtatsPayeurDto.add(etatsPayeurDto);
 			}
@@ -72,7 +72,7 @@ public class EtatPayeurService implements IEtatPayeurService {
 		// on verifie que le repertoire source existe
 		File dossierParent = new File(fileEtatPayeurPath);
 		if (!dossierParent.exists()) {
-			throw new Exception("Le repertoire de stockage " + fileEtatPayeurPath + "n'existe pas");
+			throw new Exception("Le repertoire de stockage " + fileEtatPayeurPath + " n'existe pas");
 		}
 	}
 	
