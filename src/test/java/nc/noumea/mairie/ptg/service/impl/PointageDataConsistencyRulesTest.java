@@ -1561,4 +1561,63 @@ public class PointageDataConsistencyRulesTest {
 		assertEquals("La prime 7652 du 28/09/2013 n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.", result.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 	}
+	
+	@Test
+	public void checkPrime7704_PointageQuantite_NotOk() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		Date dateLundi = new LocalDate(2013, 9, 23).toDate();
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		Pointage p4 = new Pointage();
+		p4.setType(new RefTypePointage());
+		p4.getType().setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		p4.setRefPrime(new RefPrime());
+		p4.getRefPrime().setNoRubr(7704);
+		p4.setDateDebut(new LocalDate(2013, 9, 28).toDate());
+		p4.setQuantite(3);
+		p4.setDateLundi(dateLundi);
+
+		List<Pointage> ptgs = Arrays.asList( p4);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		
+		// When
+		service.checkPrime7704(result, idAgent, dateLundi, ptgs);
+		
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals("La prime 7704 du 28/09/2013 n'est pas valide. Sa quantité ne peut être supérieur à 2.", result.getErrors().get(0));
+		assertEquals(0, result.getInfos().size());
+	}
+	
+	@Test
+	public void checkPrime7704_PointageQuantite_Ok() {
+		
+		// Given
+		Integer idAgent = 9008765;
+		Date dateLundi = new LocalDate(2013, 9, 23).toDate();
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		Pointage p4 = new Pointage();
+		p4.setType(new RefTypePointage());
+		p4.getType().setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		p4.setRefPrime(new RefPrime());
+		p4.getRefPrime().setNoRubr(7704);
+		p4.setDateDebut(new LocalDate(2013, 9, 28).toDate());
+		p4.setQuantite(2);
+		p4.setDateLundi(dateLundi);
+
+		List<Pointage> ptgs = Arrays.asList( p4);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		
+		// When
+		service.checkPrime7704(result, idAgent, dateLundi, ptgs);
+		
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+	}
 }

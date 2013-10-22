@@ -223,6 +223,27 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		
 		return srm;
 	}
+
+	@Override
+	public ReturnMessageDto checkPrime7704(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
+
+		for (Pointage ptg : pointages) {
+			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7704))
+				continue;
+
+			DateTime deb = new DateTime(ptg.getDateDebut());
+			
+			if (ptg.getQuantite()>2)
+				srm.getErrors()
+						.add(String
+								.format("La prime 7704 du %s n'est pas valide. Sa quantité ne peut être supérieur à 2.",
+										deb.toString("dd/MM/yyyy")));
+			
+		}
+		
+		return srm;
+	}
 	
 	//-- Helpers --//
 	
@@ -323,6 +344,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkPrime7650(srm, idAgent, dateLundi, pointages);
 		checkPrime7651(srm, idAgent, dateLundi, pointages);
 		checkPrime7652(srm, idAgent, dateLundi, pointages);
+		checkPrime7704(srm, idAgent, dateLundi, pointages);
 	}
 
 }
