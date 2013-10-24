@@ -4,6 +4,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,7 +97,7 @@ public class BirtEtatsPayeurWsConsumer implements IBirtEtatsPayeurWsConsumer {
 		
 		BufferedOutputStream bos = null;
 		FileObject pdfFile = null;
-		String targetPath = String.format("%s%s", storagePath, fileName);
+		String targetPath = Paths.get(storagePath, fileName).toString();
 		
 		try {
 			FileSystemManager fsManager = VFS.getManager();

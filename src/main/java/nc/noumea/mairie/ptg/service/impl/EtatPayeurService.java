@@ -58,7 +58,7 @@ public class EtatPayeurService implements IEtatPayeurService {
 	@Override
 	public Pair<String, String> getPathFichierEtatPayeur(Integer idEtatPayeur) throws Exception {
 		
-		logger.debug("downloadFichierEtatPayeur with idEtatPayeur {}" + idEtatPayeur);
+		logger.debug("downloadFichierEtatPayeur with idEtatPayeur {}", idEtatPayeur);
 		
 		EtatPayeur etatPayeur = etatPayeurRepository.getEtatPayeurById(idEtatPayeur);
 		

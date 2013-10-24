@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.web;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -144,7 +145,8 @@ public class EtatsPayeurController {
 		
 		byte[] reponseData = null;
 		try {
-			FileInputStream newFile = new FileInputStream(pathFichier.getLeft() + "/" + pathFichier.getRight());
+			FileInputStream newFile = new FileInputStream(Paths.get(pathFichier.getLeft(), pathFichier.getRight())
+					.toString());
 			reponseData = IOUtils.toByteArray(newFile);
 		} catch (FileNotFoundException e) {
 			logger.error(e.getMessage(), e);
