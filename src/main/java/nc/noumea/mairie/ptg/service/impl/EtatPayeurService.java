@@ -8,7 +8,9 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.ListEtatsPayeurDto;
 import nc.noumea.mairie.ptg.repository.IEtatPayeurRepository;
+import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IEtatPayeurService;
+import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -28,6 +30,9 @@ public class EtatPayeurService implements IEtatPayeurService {
 	
 	@Autowired
 	private IEtatPayeurRepository etatPayeurRepository;
+	
+	@Autowired
+	private ISirhRepository sirhRepository;
 
 	@Override
 	public List<ListEtatsPayeurDto> getListEtatsPayeurByStatut(
@@ -40,13 +45,20 @@ public class EtatPayeurService implements IEtatPayeurService {
 
 		List<EtatPayeur> listEtatsPayeur = etatPayeurRepository
 				.getListEditionEtatPayeur(statutAgent);
-
+		
+		Agent agent = null;
+		
 		if (null != listEtatsPayeur) {
 			for (EtatPayeur etatPayeur : listEtatsPayeur) {
+				
+				agent = new Agent();
+				agent = sirhRepository.getAgent(etatPayeur.getIdAgent());
+				
 				etatsPayeurDto = new ListEtatsPayeurDto(
 						etatPayeur.getIdEtatPayeur(), etatPayeur.getStatut().toString(),
 						etatPayeur.getType().getIdRefTypePointage(), etatPayeur.getDateEtatPayeur(),
-						etatPayeur.getLabel(), etatPayeur.getFichier(), etatPayeur.getIdAgent(), etatPayeur.getDateEdition());
+						etatPayeur.getLabel(), etatPayeur.getFichier(), etatPayeur.getIdAgent(), etatPayeur.getDateEdition(), 
+						agent.getDisplayNom(), agent.getDisplayPrenom());
 				
 				listEtatsPayeurDto.add(etatsPayeurDto);
 			}

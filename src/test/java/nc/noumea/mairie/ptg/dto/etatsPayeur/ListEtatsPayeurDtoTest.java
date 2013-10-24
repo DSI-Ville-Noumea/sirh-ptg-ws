@@ -12,7 +12,7 @@ public class ListEtatsPayeurDtoTest {
 		
 		Date date = new Date();
 		
-		ListEtatsPayeurDto dto = new ListEtatsPayeurDto(new Integer(1), "C", new Integer(2), date, "test label", "test.pdf", 1234, date);
+		ListEtatsPayeurDto dto = new ListEtatsPayeurDto(new Integer(1), "C", new Integer(2), date, "test label", "test.pdf", 1234, date, "nom", "prenom");
 		
 		assertEquals(new Integer(1), dto.getIdEtatPayeur());
 		assertEquals("C", dto.getStatut());
@@ -22,5 +22,7 @@ public class ListEtatsPayeurDtoTest {
 		assertEquals("test.pdf", dto.getFichier());
 		assertEquals(new Integer(1234),  dto.getIdAgent());
 		assertEquals(date, dto.getDateEdition());
+		assertEquals("nom", dto.getDisplayNom());
+		assertEquals("prenom", dto.getDisplayPrenom());
 	}
 }

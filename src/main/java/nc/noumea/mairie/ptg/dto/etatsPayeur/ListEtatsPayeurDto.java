@@ -15,13 +15,16 @@ public class ListEtatsPayeurDto {
 	private String fichier;
 	private Integer idAgent;
 	private Date dateEdition;
+	private String displayNom;
+	private String displayPrenom;
 	
 	public ListEtatsPayeurDto(){
 		
 	}
 	
 	public ListEtatsPayeurDto(Integer idEtatPayeur, String statut, Integer type, 
-			Date dateEtatPayeur, String label, String fichier, Integer idAgent, Date dateEdition) { 
+			Date dateEtatPayeur, String label, String fichier, Integer idAgent, Date dateEdition, 
+			String displayNom, String displayPrenom) { 
 		this.idEtatPayeur = idEtatPayeur;
 		this.statut = statut;
 		this.type = type;
@@ -30,6 +33,8 @@ public class ListEtatsPayeurDto {
 		this.fichier = fichier;
 		this.idAgent = idAgent;
 		this.dateEdition = dateEdition;
+		this.displayNom = displayNom;
+		this.displayPrenom = displayPrenom;
 	}
 
 	public Integer getIdEtatPayeur() {
@@ -95,6 +100,23 @@ public class ListEtatsPayeurDto {
 	public void setDateEdition(Date dateEdition) {
 		this.dateEdition = dateEdition;
 	}
+
+	public String getDisplayNom() {
+		return displayNom;
+	}
+
+	public void setDisplayNom(String displayNom) {
+		this.displayNom = displayNom;
+	}
+
+	public String getDisplayPrenom() {
+		return displayPrenom;
+	}
+
+	public void setDisplayPrenom(String displayPrenom) {
+		this.displayPrenom = displayPrenom;
+	}
+	
 	
 	
 }
