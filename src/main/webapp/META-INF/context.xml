@@ -62,7 +62,8 @@
 		value="http://172.16.24.19:8085/birt/" override="false" />
 		
 	<Environment name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR" type="java.lang.String"
-		description="SIRH Etat Payeur File Path" value="/home/sirh/sirhdata/etatspayeur/" override="false" />
-		<!-- value="C:\Users\rebjo84\Documents\etatPayeur" override="false" /> -->
+		description="SIRH Etat Payeur File Path" 
+		value="file://///cristal/drh$/DRH/SIRH-document/DEV/Document_Associe/Pointages" override="false" />
+<!-- 		value="file:///mnt/sirh-document/Document_Associe/Pointages/" override="false" /> -->
 		 		
 </Context>
