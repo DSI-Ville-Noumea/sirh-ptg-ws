@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <changeSet author="rayni84" id="37e461f4-34aa-45e7-9ec2-c111864b3e6f-1">
+        <insert tableName="PTG_REF_ETAT"><column name="ID_REF_ETAT" value="0"/><column name="LABEL" value="Saisi"/></insert>
+        <insert tableName="PTG_REF_ETAT"><column name="ID_REF_ETAT" value="1"/><column name="LABEL" value="Approuvé"/></insert>
+        <insert tableName="PTG_REF_ETAT"><column name="ID_REF_ETAT" value="2"/><column name="LABEL" value="Refusé"/></insert>
+        <insert tableName="PTG_REF_ETAT"><column name="ID_REF_ETAT" value="3"/><column name="LABEL" value="Refusé définitivement"/></insert>
+        <insert tableName="PTG_REF_ETAT"><column name="ID_REF_ETAT" value="4"/><column name="LABEL" value="Ventilé"/></insert>
+        <insert tableName="PTG_REF_ETAT"><column name="ID_REF_ETAT" value="5"/><column name="LABEL" value="Rejeté"/></insert>
+        <insert tableName="PTG_REF_ETAT"><column name="ID_REF_ETAT" value="6"/><column name="LABEL" value="Rejeté définitivement"/></insert>
+        <insert tableName="PTG_REF_ETAT"><column name="ID_REF_ETAT" value="7"/><column name="LABEL" value="Validé"/></insert>
+        <insert tableName="PTG_REF_ETAT"><column name="ID_REF_ETAT" value="8"/><column name="LABEL" value="En attente"/></insert>
+        <insert tableName="PTG_REF_ETAT"><column name="ID_REF_ETAT" value="9"/><column name="LABEL" value="Journalisé"/></insert>
+    </changeSet>
+
+    <changeSet author="rayni84" id="37e461f4-34aa-45e7-9ec2-c111864b3e6f-2">
+        
+    </changeSet>
+    
+</databaseChangeLog>
