@@ -7,6 +7,14 @@ import nc.noumea.mairie.ptg.domain.PtgComment;
 
 privileged aspect PtgComment_Roo_JavaBean {
     
+    public Integer PtgComment.getIdPtgComment() {
+        return this.idPtgComment;
+    }
+    
+    public void PtgComment.setIdPtgComment(Integer idPtgComment) {
+        this.idPtgComment = idPtgComment;
+    }
+    
     public String PtgComment.getText() {
         return this.text;
     }

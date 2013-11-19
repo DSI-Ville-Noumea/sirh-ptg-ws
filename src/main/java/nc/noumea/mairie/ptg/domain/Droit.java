@@ -6,6 +6,9 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -24,7 +27,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_DROIT", identifierField = "idDroit", identifierType = Integer.class, table = "PTG_DROIT", sequenceName = "PTG_S_DROIT")
+@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_DROIT")
 @NamedQueries({
 		@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
 		@NamedQuery(name = "getAgentsApprobateurs", query = "from Droit d where d.approbateur = true"),
@@ -32,6 +35,11 @@ import org.springframework.roo.addon.tostring.RooToString;
 		@NamedQuery(name = "getAgentsApprobateur", query = "select d.idAgent from Droit d inner join d.agents da where da.idAgent = :idAgent and d.approbateur = 1") })
 public class Droit {
 
+	@Id 
+	@Column(name = "ID_DROIT")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idDroit;
+	
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;

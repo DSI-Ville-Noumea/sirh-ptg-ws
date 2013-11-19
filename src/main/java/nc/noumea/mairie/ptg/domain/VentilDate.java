@@ -9,6 +9,9 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -25,9 +28,14 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @RooJavaBean
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_VENTIL_DATE", identifierField = "idVentilDate", identifierType = Integer.class, table = "PTG_VENTIL_DATE", sequenceName = "PTG_S_VENTIL_DATE")
+@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_VENTIL_DATE")
 public class VentilDate {
 
+	@Id 
+	@Column(name = "ID_VENTIL_DATE")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idVentilDate;
+	
     @Column(name = "DATE_VENTIL")
     @NotNull
     @Temporal(TemporalType.TIMESTAMP)
@@ -53,7 +61,7 @@ public class VentilDate {
     @OrderBy("dateDebutMois asc, idAgent asc")
     private Set<VentilPrime> ventilPrimes = new HashSet<VentilPrime>();
     
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "PTG_POINTAGE_VENTIL_DATE",
             inverseJoinColumns =

@@ -4,7 +4,11 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -20,13 +24,18 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_DROITS_AGENT", identifierField = "idDroitsAgent", identifierType = Integer.class, table = "PTG_DROITS_AGENT", sequenceName = "PTG_S_DROITS_AGENT")
+@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_DROITS_AGENT")
 @NamedQueries({
 		@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "from DroitsAgent da INNER JOIN FETCH da.droits d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
 		@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "from DroitsAgent da INNER JOIN FETCH da.droits d where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.codeService = :codeService")
 })
 public class DroitsAgent {
 
+	@Id 
+	@Column(name = "ID_DROITS_AGENT")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idDroitsAgent;
+	
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
@@ -41,7 +50,7 @@ public class DroitsAgent {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
 	
-	@ManyToMany
+	@ManyToMany(cascade = CascadeType.PERSIST)
 	@JoinTable(
 			name = "PTG_DROIT_DROITS_AGENT", 
 			inverseJoinColumns = @JoinColumn(name = "ID_DROIT"), 

@@ -5,10 +5,6 @@ package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import nc.noumea.mairie.ptg.domain.PtgComment;
@@ -19,23 +15,9 @@ privileged aspect PtgComment_Roo_Jpa_Entity {
     
     declare @type: PtgComment: @Table(name = "PTG_COMMENT");
     
-    @Id
-    @SequenceGenerator(name = "ptgCommentGen", sequenceName = "PTG_S_COMMENT")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ptgCommentGen")
-    @Column(name = "ID_COMMENT")
-    private Integer PtgComment.idPtgComment;
-    
     @Version
     @Column(name = "version")
     private Integer PtgComment.version;
-    
-    public Integer PtgComment.getIdPtgComment() {
-        return this.idPtgComment;
-    }
-    
-    public void PtgComment.setIdPtgComment(Integer id) {
-        this.idPtgComment = id;
-    }
     
     public Integer PtgComment.getVersion() {
         return this.version;

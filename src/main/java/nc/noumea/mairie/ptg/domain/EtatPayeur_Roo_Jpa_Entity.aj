@@ -5,10 +5,6 @@ package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import nc.noumea.mairie.ptg.domain.EtatPayeur;
@@ -19,23 +15,9 @@ privileged aspect EtatPayeur_Roo_Jpa_Entity {
     
     declare @type: EtatPayeur: @Table(name = "PTG_ETAT_PAYEUR");
     
-    @Id
-    @SequenceGenerator(name = "etatPayeurGen", sequenceName = "PTG_S_ETAT_PAYEUR")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "etatPayeurGen")
-    @Column(name = "ID_ETAT_PAYEUR")
-    private Integer EtatPayeur.idEtatPayeur;
-    
     @Version
     @Column(name = "version")
     private Integer EtatPayeur.version;
-    
-    public Integer EtatPayeur.getIdEtatPayeur() {
-        return this.idEtatPayeur;
-    }
-    
-    public void EtatPayeur.setIdEtatPayeur(Integer id) {
-        this.idEtatPayeur = id;
-    }
     
     public Integer EtatPayeur.getVersion() {
         return this.version;

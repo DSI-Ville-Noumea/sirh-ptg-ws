@@ -175,10 +175,10 @@ public class PointageRepository implements IPointageRepository {
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT ptg.* ");
         sb.append("FROM PTG_POINTAGE ptg ");
-        sb.append("WHERE to_date(PTG.DATE_DEBUT)>= :fromDate AND to_date(PTG.DATE_DEBUT)<= :toDate ");
+        sb.append("WHERE PTG.DATE_DEBUT >= :fromDate AND PTG.DATE_DEBUT <= :toDate ");
 
         if (idAgents != null && idAgents.size() > 0) {
-            sb.append("AND ptg.ID_AGENT IN (:idAgents) ");
+            sb.append("AND ptg.ID_AGENT IN (:idAgents) ");                                                                                                                       
         }
 
         if (idRefType != null) {

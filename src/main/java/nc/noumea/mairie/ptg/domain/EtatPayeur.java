@@ -5,6 +5,9 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -21,18 +24,23 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_ETAT_PAYEUR", identifierField = "idEtatPayeur", identifierType = Integer.class, table = "PTG_ETAT_PAYEUR", sequenceName = "PTG_S_ETAT_PAYEUR")
+@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_ETAT_PAYEUR")
 @NamedQueries({
 	@NamedQuery(name = "getListEditionsEtatPayeurByStatut", query = "select ep from EtatPayeur ep JOIN FETCH ep.type where ep.statut = :statut order by ep.dateEtatPayeur desc"),
 	@NamedQuery(name = "getEtatPayeurById", query = "select ep from EtatPayeur ep JOIN FETCH ep.type where ep.idEtatPayeur = :idEtatPayeur")
 })
 public class EtatPayeur {
 	
+	@Id 
+	@Column(name = "ID_ETAT_PAYEUR")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idEtatPayeur;
+	
 	@Column(name = "STATUT")
 	@Enumerated(EnumType.STRING)
 	private AgentStatutEnum statut;
 	
-	@OneToOne(optional = false)
+	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_TYPE_POINTAGE")
 	private RefTypePointage type;
 

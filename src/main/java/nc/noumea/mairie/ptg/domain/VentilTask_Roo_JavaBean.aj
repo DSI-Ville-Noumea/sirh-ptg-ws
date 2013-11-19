@@ -11,6 +11,14 @@ import nc.noumea.mairie.ptg.domain.VentilTask;
 
 privileged aspect VentilTask_Roo_JavaBean {
     
+    public Integer VentilTask.getIdVentilTask() {
+        return this.idVentilTask;
+    }
+    
+    public void VentilTask.setIdVentilTask(Integer idVentilTask) {
+        this.idVentilTask = idVentilTask;
+    }
+    
     public Integer VentilTask.getIdAgent() {
         return this.idAgent;
     }

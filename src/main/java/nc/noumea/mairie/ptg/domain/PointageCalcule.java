@@ -5,6 +5,9 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -19,9 +22,14 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_POINTAGE_CALCULE", identifierField = "idPointageCalcule", identifierType = Integer.class, table = "PTG_POINTAGE_CALCULE", sequenceName = "PTG_S_POINTAGE_CALCULE")
+@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_POINTAGE_CALCULE")
 public class PointageCalcule {
 
+	@Id 
+	@Column(name = "ID_POINTAGE_CALCULE")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idPointageCalcule;
+	
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;

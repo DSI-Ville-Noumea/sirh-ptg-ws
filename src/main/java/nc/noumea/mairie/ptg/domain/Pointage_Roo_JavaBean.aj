@@ -14,6 +14,14 @@ import nc.noumea.mairie.ptg.domain.VentilDate;
 
 privileged aspect Pointage_Roo_JavaBean {
     
+    public Integer Pointage.getIdPointage() {
+        return this.idPointage;
+    }
+    
+    public void Pointage.setIdPointage(Integer idPointage) {
+        this.idPointage = idPointage;
+    }
+    
     public Integer Pointage.getIdAgent() {
         return this.idAgent;
     }

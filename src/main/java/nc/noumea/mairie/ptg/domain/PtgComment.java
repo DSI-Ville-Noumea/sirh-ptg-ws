@@ -1,6 +1,9 @@
 package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Lob;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -9,9 +12,14 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_COMMENT", identifierField = "idPtgComment", identifierType = Integer.class, table = "PTG_COMMENT", sequenceName = "PTG_S_COMMENT")
+@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_COMMENT")
 public class PtgComment {
 
+	@Id 
+	@Column(name = "ID_COMMENT")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idPtgComment;
+	
 	@Column(name = "TEXT")
 	@Lob
 	private String text;

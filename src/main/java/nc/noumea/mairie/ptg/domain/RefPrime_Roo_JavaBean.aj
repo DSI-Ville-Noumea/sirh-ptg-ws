@@ -10,6 +10,14 @@ import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 
 privileged aspect RefPrime_Roo_JavaBean {
     
+    public Integer RefPrime.getIdRefPrime() {
+        return this.idRefPrime;
+    }
+    
+    public void RefPrime.setIdRefPrime(Integer idRefPrime) {
+        this.idRefPrime = idRefPrime;
+    }
+    
     public Integer RefPrime.getNoRubr() {
         return this.noRubr;
     }

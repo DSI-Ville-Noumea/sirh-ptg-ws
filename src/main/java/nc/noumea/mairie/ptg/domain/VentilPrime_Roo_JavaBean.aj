@@ -11,6 +11,14 @@ import nc.noumea.mairie.ptg.domain.VentilPrime;
 
 privileged aspect VentilPrime_Roo_JavaBean {
     
+    public Integer VentilPrime.getIdVentilPrime() {
+        return this.idVentilPrime;
+    }
+    
+    public void VentilPrime.setIdVentilPrime(Integer idVentilPrime) {
+        this.idVentilPrime = idVentilPrime;
+    }
+    
     public Integer VentilPrime.getIdAgent() {
         return this.idAgent;
     }

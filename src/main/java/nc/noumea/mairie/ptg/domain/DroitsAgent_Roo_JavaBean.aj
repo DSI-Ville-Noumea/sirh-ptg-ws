@@ -10,6 +10,14 @@ import nc.noumea.mairie.ptg.domain.DroitsAgent;
 
 privileged aspect DroitsAgent_Roo_JavaBean {
     
+    public Integer DroitsAgent.getIdDroitsAgent() {
+        return this.idDroitsAgent;
+    }
+    
+    public void DroitsAgent.setIdDroitsAgent(Integer idDroitsAgent) {
+        this.idDroitsAgent = idDroitsAgent;
+    }
+    
     public Integer DroitsAgent.getIdAgent() {
         return this.idAgent;
     }

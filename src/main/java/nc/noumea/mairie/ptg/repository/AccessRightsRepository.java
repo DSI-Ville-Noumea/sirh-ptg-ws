@@ -34,11 +34,15 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public boolean isUserApprobator(Integer idAgent) {
 		
-		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
-				"select sum(d.approbateur) from Droit d where d.idAgent = :idAgent", Boolean.class);
+		TypedQuery<Long> q = ptgEntityManager.createQuery(
+				"select count(*) from Droit d where d.approbateur is true and d.idAgent = :idAgent", Long.class);
 		q.setParameter("idAgent", idAgent);
 		
-		Boolean result = q.getSingleResult();
+		Boolean result = null;
+		if(null != q.getSingleResult()
+				&& 0 < q.getSingleResult().longValue()) {
+			result = true;
+		}
 		
 		return (result != null && result);
 	}
@@ -46,11 +50,15 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public boolean isUserApprobatorOrDelegataire(Integer idAgent) {
 		
-		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
-				"select sum(d.approbateur) from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent", Boolean.class);
+		TypedQuery<Long> q = ptgEntityManager.createQuery(
+				"select count(*) from Droit d where d.approbateur is true and (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent )", Long.class);
 		q.setParameter("idAgent", idAgent);
 		
-		Boolean result = q.getSingleResult();
+		Boolean result = null;
+		if(null != q.getSingleResult()
+				&& 0 < q.getSingleResult().longValue()) {
+			result = true;
+		}
 		
 		return (result != null && result);
 	}
@@ -58,11 +66,15 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public boolean isUserOperator(Integer idAgent) {
 		
-		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
-				"select sum(d.operateur) from Droit d where d.idAgent = :idAgent", Boolean.class);
+		TypedQuery<Long> q = ptgEntityManager.createQuery(
+				"select count(*) from Droit d where d.operateur is true and d.idAgent = :idAgent", Long.class);
 		q.setParameter("idAgent", idAgent);
 		
-		Boolean result = q.getSingleResult();
+		Boolean result = null;
+		if(null != q.getSingleResult()
+				&& 0 < q.getSingleResult().longValue()) {
+			result = true;
+		}
 		
 		return (result != null && result);
 	}
@@ -70,11 +82,15 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public boolean isUserApprobatorOrOperatorOrDelegataire(Integer idAgent) {
 		
-		TypedQuery<Boolean> q = ptgEntityManager.createQuery(
-				"select sum(d.operateur) + sum(d.approbateur) from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent", Boolean.class);
+		TypedQuery<Long> q = ptgEntityManager.createQuery(
+				"select count(*) from Droit d where (d.approbateur = true or d.operateur = true) and (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent )", Long.class);
 		q.setParameter("idAgent", idAgent);
 		
-		Boolean result = q.getSingleResult();
+		Boolean result = null;
+		if(null != q.getSingleResult()
+				&& 0 < q.getSingleResult().longValue()) {
+			result = true;
+		}
 		
 		return (result != null && result);
 	}

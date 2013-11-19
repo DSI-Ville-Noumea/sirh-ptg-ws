@@ -10,6 +10,14 @@ import nc.noumea.mairie.ptg.domain.VentilDate;
 
 privileged aspect VentilAbsence_Roo_JavaBean {
     
+    public Integer VentilAbsence.getIdVentilAbsence() {
+        return this.idVentilAbsence;
+    }
+    
+    public void VentilAbsence.setIdVentilAbsence(Integer idVentilAbsence) {
+        this.idVentilAbsence = idVentilAbsence;
+    }
+    
     public Integer VentilAbsence.getIdAgent() {
         return this.idAgent;
     }

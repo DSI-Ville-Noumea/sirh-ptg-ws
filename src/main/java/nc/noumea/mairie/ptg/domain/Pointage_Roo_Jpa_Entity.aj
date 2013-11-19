@@ -5,10 +5,6 @@ package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import nc.noumea.mairie.ptg.domain.Pointage;
@@ -19,23 +15,9 @@ privileged aspect Pointage_Roo_Jpa_Entity {
     
     declare @type: Pointage: @Table(name = "PTG_POINTAGE");
     
-    @Id
-    @SequenceGenerator(name = "pointageGen", sequenceName = "PTG_S_POINTAGE")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "pointageGen")
-    @Column(name = "ID_POINTAGE")
-    private Integer Pointage.idPointage;
-    
     @Version
     @Column(name = "version")
     private Integer Pointage.version;
-    
-    public Integer Pointage.getIdPointage() {
-        return this.idPointage;
-    }
-    
-    public void Pointage.setIdPointage(Integer id) {
-        this.idPointage = id;
-    }
     
     public Integer Pointage.getVersion() {
         return this.version;

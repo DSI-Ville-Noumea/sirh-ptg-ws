@@ -15,6 +15,14 @@ import nc.noumea.mairie.ptg.domain.VentilPrime;
 
 privileged aspect VentilDate_Roo_JavaBean {
     
+    public Integer VentilDate.getIdVentilDate() {
+        return this.idVentilDate;
+    }
+    
+    public void VentilDate.setIdVentilDate(Integer idVentilDate) {
+        this.idVentilDate = idVentilDate;
+    }
+    
     public Date VentilDate.getDateVentilation() {
         return this.dateVentilation;
     }

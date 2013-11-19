@@ -10,6 +10,14 @@ import nc.noumea.mairie.ptg.domain.VentilDate;
 
 privileged aspect ExportEtatsPayeurTask_Roo_JavaBean {
     
+    public Integer ExportEtatsPayeurTask.getIdExportEtatsPayeurTask() {
+        return this.idExportEtatsPayeurTask;
+    }
+    
+    public void ExportEtatsPayeurTask.setIdExportEtatsPayeurTask(Integer idExportEtatsPayeurTask) {
+        this.idExportEtatsPayeurTask = idExportEtatsPayeurTask;
+    }
+    
     public Integer ExportEtatsPayeurTask.getIdAgent() {
         return this.idAgent;
     }

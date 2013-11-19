@@ -51,7 +51,7 @@
 	<!-- Datasources and ORM -->
 	<bean id="ptgOracleDataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver"/>
-        <property name="url" value="jdbc:h2:mem:ptgtest;MODE=Oracle;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
+        <property name="url" value="jdbc:h2:mem:ptgtest;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"/>
         <property name="username" value="sa"/>
         <property name="password" value=""/>
     </bean>
@@ -99,4 +99,5 @@
 	
 	<bean class="java.lang.String" id="sirhFileEtatPayeurPath" />
 	
+	<bean class="java.lang.String" id="sirhAbsWsBaseUrl" />
 </beans>

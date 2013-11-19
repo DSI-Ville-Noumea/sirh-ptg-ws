@@ -5,10 +5,6 @@ package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
@@ -19,23 +15,9 @@ privileged aspect DroitsAgent_Roo_Jpa_Entity {
     
     declare @type: DroitsAgent: @Table(name = "PTG_DROITS_AGENT");
     
-    @Id
-    @SequenceGenerator(name = "droitsAgentGen", sequenceName = "PTG_S_DROITS_AGENT")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "droitsAgentGen")
-    @Column(name = "ID_DROITS_AGENT")
-    private Integer DroitsAgent.idDroitsAgent;
-    
     @Version
     @Column(name = "version")
     private Integer DroitsAgent.version;
-    
-    public Integer DroitsAgent.getIdDroitsAgent() {
-        return this.idDroitsAgent;
-    }
-    
-    public void DroitsAgent.setIdDroitsAgent(Integer id) {
-        this.idDroitsAgent = id;
-    }
     
     public Integer DroitsAgent.getVersion() {
         return this.version;

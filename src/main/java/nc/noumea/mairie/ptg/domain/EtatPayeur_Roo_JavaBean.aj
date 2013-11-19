@@ -10,6 +10,14 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 
 privileged aspect EtatPayeur_Roo_JavaBean {
     
+    public Integer EtatPayeur.getIdEtatPayeur() {
+        return this.idEtatPayeur;
+    }
+    
+    public void EtatPayeur.setIdEtatPayeur(Integer idEtatPayeur) {
+        this.idEtatPayeur = idEtatPayeur;
+    }
+    
     public AgentStatutEnum EtatPayeur.getStatut() {
         return this.statut;
     }

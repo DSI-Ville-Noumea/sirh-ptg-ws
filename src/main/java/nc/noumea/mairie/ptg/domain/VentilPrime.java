@@ -5,6 +5,9 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
@@ -16,10 +19,15 @@ import org.springframework.roo.addon.javabean.RooJavaBean;
 import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
 
 @RooJavaBean
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_VENTIL_PRIME", identifierField = "idVentilPrime", identifierType = Integer.class, table = "PTG_VENTIL_PRIME", sequenceName = "PTG_S_VENTIL_PRIME")
+@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_VENTIL_PRIME")
 @NamedQuery(name = "getPriorVentilPrimeForAgentAndDate", query = "select vp from VentilPrime vp where vp.idVentilPrime != :idLatestVentilPrime and vp.idAgent = :idAgent and vp.dateDebutMois = :dateDebutMois order by vp.idVentilPrime desc")
 public class VentilPrime {
 
+	@Id 
+	@Column(name = "ID_VENTIL_PRIME")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idVentilPrime;
+	
     @Column(name = "ID_AGENT")
     private Integer idAgent;
     

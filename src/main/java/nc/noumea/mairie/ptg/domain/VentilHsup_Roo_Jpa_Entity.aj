@@ -5,10 +5,6 @@ package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
@@ -19,23 +15,9 @@ privileged aspect VentilHsup_Roo_Jpa_Entity {
     
     declare @type: VentilHsup: @Table(name = "PTG_VENTIL_HSUP");
     
-    @Id
-    @SequenceGenerator(name = "ventilHsupGen", sequenceName = "PTG_S_VENTIL_HSUP")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "ventilHsupGen")
-    @Column(name = "ID_VENTIL_HSUP")
-    private Integer VentilHsup.idVentilHSup;
-    
     @Version
     @Column(name = "version")
     private Integer VentilHsup.version;
-    
-    public Integer VentilHsup.getIdVentilHSup() {
-        return this.idVentilHSup;
-    }
-    
-    public void VentilHsup.setIdVentilHSup(Integer id) {
-        this.idVentilHSup = id;
-    }
     
     public Integer VentilHsup.getVersion() {
         return this.version;

@@ -3,7 +3,7 @@
 
     <changeSet author="rayni84" id="b2a5b1b5-e475-4b12-a4d8-6469c678aa49-1">
         <createTable tableName="PTG_REF_ETAT">
-            <column name="ID_REF_ETAT" type="NUMBER(38, 0)">
+            <column name="ID_REF_ETAT" type="INT4">
                 <constraints nullable="false"/>
             </column>
             <column name="LABEL" type="NVARCHAR2(25)"/>
@@ -17,24 +17,24 @@
         <createSequence sequenceName="PTG_S_REF_PRIME"/>
         
         <createTable tableName="PTG_REF_PRIME">
-            <column name="ID_REF_PRIME" type="NUMBER(38, 0)">
+            <column name="ID_REF_PRIME" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="NORUBR" type="NUMBER(8, 0)">
+            <column name="NORUBR" type="INT4">
                 <constraints nullable="false"/>
             </column>
             <column name="LIBELLE" type="NVARCHAR2(50)"/>
             <column name="DESCRIPTION" type="NVARCHAR2(300)"/>
-            <column name="TYPE_SAISIE" type="NUMBER(1, 0)"/>
+            <column name="TYPE_SAISIE" type="INT4"/>
             <column name="AIDE" type="NVARCHAR2(300)"/>
             <column name="MAIRIE_PRIME" type="VARCHAR2(6)"/>
-            <column name="IS_CALCULEE" type="NUMBER(1, 0)">
+            <column name="IS_CALCULEE" type="BOOL">
                 <constraints nullable="false"/>
             </column>
             <column name="STATUT" type="VARCHAR2(2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="VERSION" type="NUMBER(38, 0)">
+            <column name="VERSION" type="INT4">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -47,7 +47,7 @@
     <changeSet author="rayni84" id="b2a5b1b5-e475-4b12-a4d8-6469c678aa49-3">
         
         <createTable tableName="PTG_REF_TYPE_POINTAGE">
-            <column name="ID_REF_TYPE_POINTAGE" type="NUMBER(38, 0)">
+            <column name="ID_REF_TYPE_POINTAGE" type="INT4">
                 <constraints nullable="false"/>
             </column>
             <column name="LABEL" type="NVARCHAR2(25)"/>
@@ -61,11 +61,11 @@
         <createSequence sequenceName="PTG_S_COMMENT"/>
         
         <createTable tableName="PTG_COMMENT">
-            <column name="ID_COMMENT" type="NUMBER(38, 0)">
+            <column name="ID_COMMENT" type="INT4">
                 <constraints nullable="false"/>
             </column>
             <column name="TEXT" type="CLOB"/>
-            <column name="VERSION" type="NUMBER(38, 0)">
+            <column name="VERSION" type="INT4">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -79,19 +79,19 @@
         <createSequence sequenceName="PTG_S_VENTIL_DATE"/>
         
         <createTable tableName="PTG_VENTIL_DATE">
-            <column name="ID_VENTIL_DATE" type="NUMBER(38, 0)">
+            <column name="ID_VENTIL_DATE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_VENTIL" type="date">
+            <column name="DATE_VENTIL" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="IS_PAYE" type="NUMBER(1, 0)">
+            <column name="IS_PAYE" type="BOOL">
                 <constraints nullable="false"/>
             </column>
             <column name="TYPE_CHAINE_PAIE" type="VARCHAR2(3)">
                 <constraints nullable="false"/>
             </column>
-            <column name="VERSION" type="NUMBER(38, 0)">
+            <column name="VERSION" type="INT4">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -105,31 +105,31 @@
         <createSequence sequenceName="PTG_S_VENTIL_TASK"/>
         
         <createTable tableName="PTG_VENTIL_TASK">
-            <column name="ID_VENTIL_TASK" type="NUMBER(38, 0)">
+            <column name="ID_VENTIL_TASK" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_AGENT" type="NUMBER(7, 0)">
+            <column name="ID_AGENT" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_AGENT_CREATION" type="NUMBER(7, 0)">
+            <column name="ID_AGENT_CREATION" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_CREATION" type="date">
+            <column name="DATE_CREATION" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
             <column name="TYPE_CHAINE_PAIE" type="VARCHAR2(3)">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_TYPE_POINTAGE" type="NUMBER(38, 0)"/>
-            <column name="ID_VENTIL_DATE_FROM" type="NUMBER(38, 0)">
+            <column name="ID_TYPE_POINTAGE" type="INT4"/>
+            <column name="ID_VENTIL_DATE_FROM" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_VENTIL_DATE_TO" type="NUMBER(38, 0)">
+            <column name="ID_VENTIL_DATE_TO" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_VENTILATION" type="date"/>
+            <column name="DATE_VENTILATION" type="TIMESTAMP"/>
             <column name="TASK_STATUS" type="VARCHAR2(255)"/>
-            <column name="VERSION" type="NUMBER(38)">
+            <column name="VERSION" type="INT4">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -158,22 +158,22 @@
         <createSequence sequenceName="PTG_S_VENTIL_ABSENCE"/>
         
         <createTable tableName="PTG_VENTIL_ABSENCE">
-            <column name="ID_VENTIL_ABSENCE" type="NUMBER(38, 0)">
+            <column name="ID_VENTIL_ABSENCE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_VENTIL_DATE" type="NUMBER(38, 0)">
+            <column name="ID_VENTIL_DATE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_AGENT" type="NUMBER(8, 0)">
+            <column name="ID_AGENT" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_LUNDI" type="date">
+            <column name="DATE_LUNDI" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="ETAT" type="NUMBER(38, 0)"/>
-            <column name="MINUTES_CONCERTEE" type="NUMBER(5, 0)"/>
-            <column name="MINUTES_NON_CONCERTEE" type="NUMBER(5, 0)"/>
-            <column name="VERSION" type="NUMBER(38, 0)"/>
+            <column name="ETAT" type="INT4"/>
+            <column name="MINUTES_CONCERTEE" type="INT4"/>
+            <column name="MINUTES_NON_CONCERTEE" type="INT4"/>
+            <column name="VERSION" type="INT4"/>
         </createTable>
         
         <addPrimaryKey columnNames="ID_VENTIL_ABSENCE" constraintName="PK_PTG_VENTIL_ABSENCE" tableName="PTG_VENTIL_ABSENCE"/>
@@ -195,46 +195,46 @@
         <createSequence sequenceName="PTG_S_VENTIL_HSUP"/>
         
         <createTable tableName="PTG_VENTIL_HSUP">
-            <column name="ID_VENTIL_HSUP" type="NUMBER(38, 0)">
+            <column name="ID_VENTIL_HSUP" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_VENTIL_DATE" type="NUMBER(38, 0)">
+            <column name="ID_VENTIL_DATE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_AGENT" type="NUMBER(8, 0)">
+            <column name="ID_AGENT" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_LUNDI" type="date">
+            <column name="DATE_LUNDI" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="M_ABS" type="NUMBER(5, 0)"/>
-            <column name="M_HORS_CONTRAT" type="NUMBER(5, 0)"/>
-            <column name="M_SUP" type="NUMBER(5, 0)"/>
-            <column name="M_SUP_25" type="NUMBER(5, 0)"/>
-            <column name="M_SUP_50" type="NUMBER(5, 0)"/>
-            <column name="M_DJF" type="NUMBER(5, 0)"/>
-            <column name="M_DJF_25" type="NUMBER(5, 0)"/>
-            <column name="M_DJF_50" type="NUMBER(5, 0)"/>
-            <column name="M_1_MAI" type="NUMBER(5, 0)"/>
-            <column name="M_NUIT" type="NUMBER(5, 0)"/>
-            <column name="M_NORMALES" type="NUMBER(5, 0)"/>
-            <column name="M_COMPLEMENTAIRES" type="NUMBER(5, 0)"/>
-            <column name="M_SIMPLES" type="NUMBER(5, 0)"/>
-            <column name="M_COMPOSEES" type="NUMBER(5, 0)"/>
-            <column name="M_RECUPEREES" type="NUMBER(5, 0)"/>
-            <column name="M_SUP_25_R" type="NUMBER(5, 0)"/>
-            <column name="M_SUP_50_R" type="NUMBER(5, 0)"/>
-            <column name="M_DJF_R" type="NUMBER(5, 0)"/>
-            <column name="M_DJF_25_R" type="NUMBER(5, 0)"/>
-            <column name="M_DJF_50_R" type="NUMBER(5, 0)"/>
-            <column name="M_1_MAI_R" type="NUMBER(5, 0)"/>
-            <column name="M_NUIT_R" type="NUMBER(5, 0)"/>
-            <column name="M_NORMALES_R" type="NUMBER(5, 0)"/>
-            <column name="M_COMPLEMENTAIRES_R" type="NUMBER(5, 0)"/>
-            <column name="M_SIMPLES_R" type="NUMBER(5, 0)"/>
-            <column name="M_COMPOSEES_R" type="NUMBER(5, 0)"/>
-            <column name="ETAT" type="NUMBER(38, 0)"/>
-            <column name="VERSION" type="NUMBER(38, 0)"/>
+            <column name="M_ABS" type="INT4"/>
+            <column name="M_HORS_CONTRAT" type="INT4"/>
+            <column name="M_SUP" type="INT4"/>
+            <column name="M_SUP_25" type="INT4"/>
+            <column name="M_SUP_50" type="INT4"/>
+            <column name="M_DJF" type="INT4"/>
+            <column name="M_DJF_25" type="INT4"/>
+            <column name="M_DJF_50" type="INT4"/>
+            <column name="M_1_MAI" type="INT4"/>
+            <column name="M_NUIT" type="INT4"/>
+            <column name="M_NORMALES" type="INT4"/>
+            <column name="M_COMPLEMENTAIRES" type="INT4"/>
+            <column name="M_SIMPLES" type="INT4"/>
+            <column name="M_COMPOSEES" type="INT4"/>
+            <column name="M_RECUPEREES" type="INT4"/>
+            <column name="M_SUP_25_R" type="INT4"/>
+            <column name="M_SUP_50_R" type="INT4"/>
+            <column name="M_DJF_R" type="INT4"/>
+            <column name="M_DJF_25_R" type="INT4"/>
+            <column name="M_DJF_50_R" type="INT4"/>
+            <column name="M_1_MAI_R" type="INT4"/>
+            <column name="M_NUIT_R" type="INT4"/>
+            <column name="M_NORMALES_R" type="INT4"/>
+            <column name="M_COMPLEMENTAIRES_R" type="INT4"/>
+            <column name="M_SIMPLES_R" type="INT4"/>
+            <column name="M_COMPOSEES_R" type="INT4"/>
+            <column name="ETAT" type="INT4"/>
+            <column name="VERSION" type="INT4"/>
         </createTable>
         
         <addPrimaryKey columnNames="ID_VENTIL_HSUP" constraintName="PK_PTG_VENTIL_HSUP" tableName="PTG_VENTIL_HSUP"/>
@@ -256,24 +256,24 @@
         <createSequence sequenceName="PTG_S_VENTIL_PRIME"/>
         
         <createTable tableName="PTG_VENTIL_PRIME">
-            <column name="ID_VENTIL_PRIME" type="NUMBER(38, 0)">
+            <column name="ID_VENTIL_PRIME" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_VENTIL_DATE" type="NUMBER(38, 0)">
+            <column name="ID_VENTIL_DATE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_AGENT" type="NUMBER(8, 0)">
+            <column name="ID_AGENT" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_DEBUT_MOIS" type="date">
+            <column name="DATE_DEBUT_MOIS" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_REF_PRIME" type="NUMBER(38, 0)">
+            <column name="ID_REF_PRIME" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="QUANTITE" type="NUMBER(7, 2)"/>
-            <column name="ETAT" type="NUMBER(38, 0)"/>
-            <column name="VERSION" type="NUMBER(38, 0)"/>
+            <column name="QUANTITE" type="INT4"/>
+            <column name="ETAT" type="INT4"/>
+            <column name="VERSION" type="INT4"/>
         </createTable>
         
         <addPrimaryKey columnNames="ID_VENTIL_PRIME" constraintName="PK_PTG_VENTIL_PRIME" tableName="PTG_VENTIL_PRIME"/>
@@ -300,27 +300,27 @@
         <createSequence sequenceName="PTG_S_POINTAGE_CALCULE"/>
         
         <createTable tableName="PTG_POINTAGE_CALCULE">
-            <column name="ID_POINTAGE_CALCULE" type="NUMBER(38, 0)">
+            <column name="ID_POINTAGE_CALCULE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_AGENT" type="NUMBER(7, 0)">
+            <column name="ID_AGENT" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_LUNDI" type="date">
+            <column name="DATE_LUNDI" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_DEBUT" type="date">
+            <column name="DATE_DEBUT" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_FIN" type="date"/>
-            <column name="QUANTITE" type="NUMBER(38, 0)"/>
-            <column name="ID_REF_TYPE_POINTAGE" type="NUMBER(38, 0)">
+            <column name="DATE_FIN" type="TIMESTAMP"/>
+            <column name="QUANTITE" type="INT4"/>
+            <column name="ID_REF_TYPE_POINTAGE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_REF_PRIME" type="NUMBER(38, 0)"/>
-            <column name="ETAT" type="NUMBER(38, 0)"/>
-            <column name="ID_VENTIL_DATE" type="NUMBER(38, 0)"/>
-            <column name="VERSION" type="NUMBER(38)">
+            <column name="ID_REF_PRIME" type="INT4"/>
+            <column name="ETAT" type="INT4"/>
+            <column name="ID_VENTIL_DATE" type="INT4"/>
+            <column name="VERSION" type="INT4">
                 <constraints nullable="false"/>
             </column>
             
@@ -355,30 +355,30 @@
         <createSequence sequenceName="PTG_S_POINTAGE"/>
         
         <createTable tableName="PTG_POINTAGE">
-            <column name="ID_POINTAGE" type="NUMBER(38, 0)">
+            <column name="ID_POINTAGE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_AGENT" type="NUMBER(7, 0)">
+            <column name="ID_AGENT" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_TYPE_POINTAGE" type="NUMBER(38, 0)">
+            <column name="ID_TYPE_POINTAGE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_LUNDI" type="date">
+            <column name="DATE_LUNDI" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_DEBUT" type="date">
+            <column name="DATE_DEBUT" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="DATE_FIN" type="date"/>
-            <column name="QUANTITE" type="NUMBER(38, 0)"/>
-            <column name="ID_POINTAGE_PARENT" type="NUMBER(38, 0)"/>
-            <column name="ID_REF_PRIME" type="NUMBER(38, 0)"/>
-            <column name="IS_HSUP_RECUPEREE" type="NUMBER(1, 0)"/>
-            <column name="IS_ABS_CONCERTEE" type="NUMBER(1, 0)"/>
-            <column name="ID_COMMENT_MOTIF" type="NUMBER(38, 0)"/>
-            <column name="ID_COMMENT_COMMENTAIRE" type="NUMBER(38, 0)"/>
-            <column name="VERSION" type="NUMBER(38)">
+            <column name="DATE_FIN" type="TIMESTAMP"/>
+            <column name="QUANTITE" type="INT4"/>
+            <column name="ID_POINTAGE_PARENT" type="INT4"/>
+            <column name="ID_REF_PRIME" type="INT4"/>
+            <column name="IS_HSUP_RECUPEREE" type="BOOL"/>
+            <column name="IS_ABS_CONCERTEE" type="BOOL"/>
+            <column name="ID_COMMENT_MOTIF" type="INT4"/>
+            <column name="ID_COMMENT_COMMENTAIRE" type="INT4"/>
+            <column name="VERSION" type="INT4">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -417,10 +417,10 @@
         <createSequence sequenceName="PTG_S_ETAT_POINTAGE"/>
         
         <createTable tableName="PTG_ETAT_POINTAGE">
-            <column name="ID_ETAT_POINTAGE" type="NUMBER(38, 0)">
+            <column name="ID_ETAT_POINTAGE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_POINTAGE" type="NUMBER(38, 0)">
+            <column name="ID_POINTAGE" type="INT4">
                 <constraints nullable="false"/>
             </column>
             <column name="DATE_ETAT" type="TIMESTAMP">
@@ -429,13 +429,13 @@
             <column name="DATE_MAJ" type="TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="ETAT" type="NUMBER(38, 0)">
+            <column name="ETAT" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_AGENT" type="NUMBER(8, 0)">
+            <column name="ID_AGENT" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="VERSION" type="NUMBER(38)">
+            <column name="VERSION" type="INT4">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -457,10 +457,10 @@
     
     <changeSet author="rayni84" id="b2a5b1b5-e475-4b12-a4d8-6469c678aa49-13">
         <createTable tableName="PTG_POINTAGE_VENTIL_DATE">
-            <column name="ID_POINTAGE" type="NUMBER(38, 0)">
+            <column name="ID_POINTAGE" type="INT4">
                 <constraints nullable="false"/>
             </column>
-            <column name="ID_VENTIL_DATE" type="NUMBER(38, 0)">
+            <column name="ID_VENTIL_DATE" type="INT4">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -478,5 +478,201 @@
             referencedColumnNames="ID_VENTIL_DATE" referencedTableName="PTG_VENTIL_DATE"/>
 
     </changeSet>
+	
+	
+	<changeSet author="rebjo84" id="b2a5b1b5-e475-4b12-a4d8-6469c678aa49-14">
+		<createSequence sequenceName="PTG_S_DROIT"/>
+	 
+        <createTable tableName="PTG_DROIT">
+            <column name="ID_DROIT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_MODIFICATION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_APPROBATEUR" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="IS_OPERATEUR" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT_DELEGATAIRE" type="INT4"/>
+            <column name="ID_DROIT_APPROBATEUR" type="INT4"/>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		<addPrimaryKey columnNames="ID_DROIT" constraintName="PK_PTG_DROIT" tableName="PTG_DROIT"/>
+		<addDefaultValue columnName="ID_DROIT" tableName="PTG_DROIT" defaultValueSequenceNext="PTG_S_DROIT" />
+		
+    </changeSet>
+	
+    <changeSet author="rebjo84" id="b2a5b1b5-e475-4b12-a4d8-6469c678aa49-15">
+		<createSequence sequenceName="PTG_S_DROITS_AGENT"/>
+	
+        <createTable tableName="PTG_DROITS_AGENT">
+            <column name="ID_DROITS_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4"/>
+            <column name="CODE_SERVICE" type="VARCHAR2(10)"/>
+            <column name="LIBELLE_SERVICE" type="VARCHAR2(50)"/>
+            <column name="DATE_MODIFICATION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		<addPrimaryKey columnNames="ID_DROITS_AGENT" constraintName="PK_PTG_DROITS_AGENT" tableName="PTG_DROITS_AGENT"/>
+		<addDefaultValue columnName="ID_DROITS_AGENT" tableName="PTG_DROITS_AGENT" defaultValueSequenceNext="PTG_S_DROITS_AGENT" />
+		
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="b2a5b1b5-e475-4b12-a4d8-6469c678aa49-16">
+        <createTable tableName="PTG_DROIT_DROITS_AGENT">
+            <column name="ID_DROIT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_DROITS_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		<addPrimaryKey columnNames="ID_DROIT, ID_DROITS_AGENT" constraintName="PK_DROIT_DROITS_AGENT" tableName="PTG_DROIT_DROITS_AGENT"/>
+		
+		<addForeignKeyConstraint 
+            constraintName="FK_PTG_DROIT_DROITS_AGENT_DROIT"
+            baseColumnNames="ID_DROIT" baseTableName="PTG_DROIT_DROITS_AGENT" 
+            referencedColumnNames="ID_DROIT" referencedTableName="PTG_DROIT"/>
+		<addForeignKeyConstraint 
+            constraintName="FK_PTG_DROIT_DROITS_AGENT_DROITS_AGENT"
+            baseColumnNames="ID_DROITS_AGENT" baseTableName="PTG_DROIT_DROITS_AGENT" 
+            referencedColumnNames="ID_DROITS_AGENT" referencedTableName="PTG_DROITS_AGENT"/>
+			
+    </changeSet>
     
+	<changeSet author="rebjo84" id="b2a5b1b5-e475-4b12-a4d8-6469c678aa49-17">
+		<createSequence sequenceName="PTG_S_ETAT_PAYEUR"/>
+	
+        <createTable tableName="PTG_ETAT_PAYEUR">
+            <column name="ID_ETAT_PAYEUR" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="STATUT" type="VARCHAR2(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_TYPE_POINTAGE" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_ETAT_PAYEUR" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LABEL" type="VARCHAR2(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FICHIER" type="VARCHAR2(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_EDITION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		<addPrimaryKey columnNames="ID_ETAT_PAYEUR" constraintName="PK_PTG_ETAT_PAYEUR" tableName="PTG_ETAT_PAYEUR"/>
+		<addDefaultValue columnName="ID_ETAT_PAYEUR" tableName="PTG_ETAT_PAYEUR" defaultValueSequenceNext="PTG_S_ETAT_PAYEUR" />
+		
+		<addForeignKeyConstraint 
+            constraintName="FK_PTG_ETAT_PAYEUR_TYPE_POINTAGE"
+            baseColumnNames="ID_TYPE_POINTAGE" baseTableName="PTG_ETAT_PAYEUR" 
+            referencedColumnNames="ID_REF_TYPE_POINTAGE" referencedTableName="PTG_REF_TYPE_POINTAGE" />
+		
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="b2a5b1b5-e475-4b12-a4d8-6469c678aa49-18">
+		<createSequence sequenceName="PTG_S_EXPORT_ETATS_PAYEUR_TASK"/>
+	
+        <createTable tableName="PTG_EXPORT_ETATS_PAYEUR_TASK">
+            <column name="ID_EXPORT_ETATS_PAYEUR_TASK" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_CREATION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_EXPORT" type="TIMESTAMP"/>
+            <column name="TYPE_CHAINE_PAIE" type="VARCHAR2(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_VENTIL_DATE" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TASK_STATUS" type="VARCHAR2(255)"/>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		<addPrimaryKey columnNames="ID_EXPORT_ETATS_PAYEUR_TASK" constraintName="PK_PTG_EXPORT_ETATS_TASK" tableName="PTG_EXPORT_ETATS_PAYEUR_TASK"/>
+		<addDefaultValue columnName="ID_EXPORT_ETATS_PAYEUR_TASK" tableName="PTG_EXPORT_ETATS_PAYEUR_TASK" defaultValueSequenceNext="PTG_S_EXPORT_ETATS_PAYEUR_TASK" />
+		
+		<addForeignKeyConstraint 
+            constraintName="FK_PTG_EXPORT_ETATS_PAYEUR_TASK_VENTIL_DATE"
+            baseColumnNames="ID_VENTIL_DATE" baseTableName="PTG_EXPORT_ETATS_PAYEUR_TASK" 
+            referencedColumnNames="ID_VENTIL_DATE" referencedTableName="PTG_VENTIL_DATE" />
+		
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="b2a5b1b5-e475-4b12-a4d8-6469c678aa49-19">
+		<createSequence sequenceName="PTG_S_EXPORT_PAIE_TASK"/>
+	
+        <createTable tableName="PTG_EXPORT_PAIE_TASK">
+            <column name="ID_EXPORT_PAIE_TASK" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT_CREATION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_CREATION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TYPE_CHAINE_PAIE" type="VARCHAR2(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_VENTIL_DATE" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_EXPORT" type="TIMESTAMP"/>
+            <column name="TASK_STATUS" type="VARCHAR2(255)"/>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+		
+		 <addPrimaryKey columnNames="ID_EXPORT_PAIE_TASK" constraintName="PK_PTG_EXPORT_PAIE_TASK" tableName="PTG_EXPORT_PAIE_TASK"/>
+		<addDefaultValue columnName="ID_EXPORT_PAIE_TASK" tableName="PTG_EXPORT_PAIE_TASK" defaultValueSequenceNext="PTG_S_EXPORT_PAIE_TASK" />
+		 
+		<addForeignKeyConstraint 
+            constraintName="FK_PTG_EXPORT_PAIE_TASK_VENTIL_DATE"
+            baseColumnNames="ID_VENTIL_DATE" baseTableName="PTG_EXPORT_PAIE_TASK" 
+            referencedColumnNames="ID_VENTIL_DATE" referencedTableName="PTG_VENTIL_DATE" />
+		
+    </changeSet>
+	
 </databaseChangeLog>

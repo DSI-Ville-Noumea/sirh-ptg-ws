@@ -10,6 +10,14 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 
 privileged aspect EtatPointage_Roo_JavaBean {
     
+    public Integer EtatPointage.getIdEtatPointage() {
+        return this.idEtatPointage;
+    }
+    
+    public void EtatPointage.setIdEtatPointage(Integer idEtatPointage) {
+        this.idEtatPointage = idEtatPointage;
+    }
+    
     public Pointage EtatPointage.getPointage() {
         return this.pointage;
     }

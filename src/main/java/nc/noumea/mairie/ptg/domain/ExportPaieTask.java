@@ -5,6 +5,9 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
@@ -17,9 +20,14 @@ import org.springframework.roo.addon.tostring.RooToString;
 
 @RooJavaBean
 @RooToString
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", identifierColumn = "ID_EXPORT_PAIE_TASK", identifierField = "idExportPaieTask", identifierType = Integer.class, table = "PTG_EXPORT_PAIE_TASK", sequenceName = "PTG_S_EXPORT_PAIE_TASK")
+@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_EXPORT_PAIE_TASK")
 public class ExportPaieTask {
 
+	@Id 
+	@Column(name = "ID_EXPORT_PAIE_TASK")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Integer idExportPaieTask;
+	
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;

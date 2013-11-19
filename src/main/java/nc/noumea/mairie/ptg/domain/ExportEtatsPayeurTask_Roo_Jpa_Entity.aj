@@ -5,10 +5,6 @@ package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import nc.noumea.mairie.ptg.domain.ExportEtatsPayeurTask;
@@ -19,23 +15,9 @@ privileged aspect ExportEtatsPayeurTask_Roo_Jpa_Entity {
     
     declare @type: ExportEtatsPayeurTask: @Table(name = "PTG_EXPORT_ETATS_PAYEUR_TASK");
     
-    @Id
-    @SequenceGenerator(name = "exportEtatsPayeurTaskGen", sequenceName = "PTG_S_EXPORT_ETATS_PAYEUR_TASK")
-    @GeneratedValue(strategy = GenerationType.AUTO, generator = "exportEtatsPayeurTaskGen")
-    @Column(name = "ID_EXPORT_ETATS_PAYEUR_TASK")
-    private Integer ExportEtatsPayeurTask.idExportEtatsPayeurTask;
-    
     @Version
     @Column(name = "version")
     private Integer ExportEtatsPayeurTask.version;
-    
-    public Integer ExportEtatsPayeurTask.getIdExportEtatsPayeurTask() {
-        return this.idExportEtatsPayeurTask;
-    }
-    
-    public void ExportEtatsPayeurTask.setIdExportEtatsPayeurTask(Integer id) {
-        this.idExportEtatsPayeurTask = id;
-    }
     
     public Integer ExportEtatsPayeurTask.getVersion() {
         return this.version;
