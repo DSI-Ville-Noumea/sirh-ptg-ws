@@ -170,41 +170,6 @@ public class PointageRepository implements IPointageRepository {
 	}
 
     @Override
-    public List<Pointage> getListPointagesNative(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT ptg.* ");
-        sb.append("FROM PTG_POINTAGE ptg ");
-        sb.append("WHERE PTG.DATE_DEBUT >= :fromDate AND PTG.DATE_DEBUT <= :toDate ");
-
-        if (idAgents != null && idAgents.size() > 0) {
-            sb.append("AND ptg.ID_AGENT IN (:idAgents) ");                                                                                                                       
-        }
-
-        if (idRefType != null) {
-            sb.append("AND ptg.ID_TYPE_POINTAGE = :idRefType ");
-        }
-
-        sb.append("ORDER BY ptg.ID_POINTAGE DESC");
-
-        Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
-        q.setParameter("fromDate", fromDate);
-        q.setParameter("toDate", toDate);
-
-        if (idAgents != null && idAgents.size() > 0) {
-            q.setParameter("idAgents", idAgents);
-        }
-
-        if (idRefType != null) {
-            q.setParameter("idRefType", idRefType);
-        }
-
-        @SuppressWarnings("unchecked")
-        List<Pointage> result = q.getResultList();
-        return result;
-    }
-
-    @Override
     public List<RefPrime> getRefPrimesListWithNoRubr(Integer noRubr) {
 
         TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getRefPrimesByNorubr", RefPrime.class);
