@@ -20,8 +20,7 @@ public class PtgComment {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idPtgComment;
 	
-	@Column(name = "TEXT")
-	@Lob
+	@Column(name = "TEXT", columnDefinition="text")
 	private String text;
 	
 	public PtgComment() {
