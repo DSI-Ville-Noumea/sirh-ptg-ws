@@ -543,46 +543,6 @@ public class PointageRepositoryTest {
 	
 	@Test
 	@Transactional("ptgTransactionManager")
-	public void getListPointagesNative() {
-		
-		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(1);
-		rtp.persist();
-		
-		Pointage p = new Pointage();
-		p.setAbsenceConcertee(false); 
-		p.setDateDebut(new LocalDate(2013, 7, 23).toDate());
-		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
-		p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p.setHeureSupRecuperee(true);
-		p.setIdAgent(9005138);
-		p.setType(rtp);
-		p.persist();
-		
-		Pointage p2 = new Pointage();
-		p2.setAbsenceConcertee(true); 
-		p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
-		p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
-		p2.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p2.setHeureSupRecuperee(false);
-		p2.setIdAgent(9005138);
-		p2.setType(rtp);
-		p2.persist();
-		
-		
-		List<Integer> listAgents = new ArrayList<Integer>();
-		listAgents.add(9005138);
-		List<Pointage> result = repository.getListPointagesNative(listAgents, new LocalDate(2013, 7, 21).toDate(), new LocalDate(2013, 7, 22).toDate(), new Integer(1));
-		
-		assertEquals(1, result.size());
-		assertEquals(true, result.get(0).getAbsenceConcertee());
-		assertEquals(false, result.get(0).getHeureSupRecuperee());
-		assertEquals(new LocalDate(2013, 7, 21).toDate(), result.get(0).getDateDebut());
-		assertEquals(new LocalDate(2013, 7, 30).toDate(), result.get(0).getDateFin());
-	}
-	
-	@Test
-	@Transactional("ptgTransactionManager")
 	public void getRefPrimesListWithNoRubr() {
 		
 		RefPrime rp = new RefPrime();
