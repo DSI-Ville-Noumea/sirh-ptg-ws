@@ -34,7 +34,7 @@ public class VentilationRepository implements IVentilationRepository {
 	public List<Date> getDistinctDatesOfPointages(Integer idAgent, Date fromEtatDate, Date toEtatDate) {
 
 		StringBuilder sb = new StringBuilder();
-		sb.append("SELECT distinct (to_date(p.date_debut)) ");
+		sb.append("SELECT distinct (p.date_debut) ");
 		sb.append("FROM PTG_ETAT_POINTAGE ep ");
 		sb.append("INNER JOIN PTG_POINTAGE p ON ep.ID_POINTAGE = p.ID_POINTAGE ");
 		sb.append("INNER JOIN ( ");
@@ -47,7 +47,7 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("WHERE p.ID_AGENT = :idAgent ");
 		sb.append("AND (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ");
 		sb.append("OR ep.etat = :ventile) ");
-		sb.append("ORDER BY (to_date(p.date_debut)) ASC ");
+		sb.append("ORDER BY (p.date_debut) ASC ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString());
 		q.setParameter("idAgent", idAgent);
@@ -85,10 +85,10 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("ventile", EtatPointageEnum.VENTILE.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
-		List<BigDecimal> rawResult = q.getResultList();
+		List<Integer> rawResult = q.getResultList();
 		List<Integer> result = new ArrayList<Integer>();
 
-		for (BigDecimal l : rawResult) {
+		for (Integer l : rawResult) {
 			result.add(l.intValue());
 		}
 

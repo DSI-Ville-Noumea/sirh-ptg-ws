@@ -34,7 +34,7 @@ public class PointageCalcule {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 
-	@OneToOne(optional = false)
+	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_REF_TYPE_POINTAGE")
 	private RefTypePointage type;
 	
