@@ -1,13 +1,11 @@
 package nc.noumea.mairie.ptg.repository;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;

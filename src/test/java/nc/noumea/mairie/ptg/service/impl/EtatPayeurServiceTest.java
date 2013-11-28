@@ -1,18 +1,11 @@
 package nc.noumea.mairie.ptg.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
-import nc.noumea.mairie.ptg.dto.etatsPayeur.ListEtatsPayeurDto;
 import nc.noumea.mairie.ptg.repository.IEtatPayeurRepository;
-import nc.noumea.mairie.ptg.service.IEtatPayeurService;
 import nc.noumea.mairie.ptg.web.EtatsPayeurController;
 
 import org.apache.commons.lang3.tuple.Pair;

@@ -1,9 +1,10 @@
 package nc.noumea.mairie.ptg.dto;
 
-import java.util.Date;
 import static org.junit.Assert.assertEquals;
+
+import java.util.Date;
+
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
-import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 
 import org.junit.Test;
