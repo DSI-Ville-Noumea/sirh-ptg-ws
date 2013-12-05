@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
@@ -234,8 +235,26 @@ public class EtatsPayeurController {
 				"entered GET [etatsPayeur/finishExportTask] => finishExportEtatsPayeurTask with parameter idExportEtatsPayeurTask = {}",
 				idExportEtatsPayeurTask);
 		
-		exportEtatPayeurService.stopExportEtatsPayeur(idExportEtatsPayeurTask);
+		exportEtatPayeurService.journalizeEtatsPayeur(idExportEtatsPayeurTask);
 		
 		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/stop", method = RequestMethod.GET)
+	@Transactional(value = "chainedTransactionManager")
+	public ResponseEntity<String> stopExportEtatsPayeur(@RequestParam("typeChainePaie") String typeChainePaie) throws WorkflowInvalidStateException {
+
+		logger.debug(
+				"entered GET [etatsPayeur/stopExportEtatsPayeur] => stopExportEtatsPayeur with parameter typeChainePaie = {}",
+				typeChainePaie);
+		
+		try {
+			exportEtatPayeurService.stopExportEtatsPayeur(TypeChainePaieEnum.valueOf(typeChainePaie));
+		} catch (WorkflowInvalidStateException e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+		}
+
+        return new ResponseEntity<String>(HttpStatus.OK);
 	}
 }

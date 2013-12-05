@@ -72,11 +72,18 @@ public interface IExportEtatPayeurService {
 	void exportEtatsPayeur(Integer idExportEtatsPayeurTask);
 	
 	/**
-	 * Terminates the process of Exporting Etats Payeurs of a ChainePaie. This will mark all related
-	 * as JOURNALISE, set the VentilDate as PAYE, set the Paie Workflow state to EXPORT_ETATS_PAYEUR_TERMINE
+	 * Terminates the process of Exporting Etats Payeurs of a ChainePaie. This will mark all related pointages
+	 * as JOURNALISE, set the VentilDate as PAYE
 	 * Called by SIRH-JOBS
 	 * @param idExportEtatsPayeurTask
 	 * @throws WorkflowInvalidStateException
 	 */
-	void stopExportEtatsPayeur(Integer idExportEtatsPayeurTask) throws WorkflowInvalidStateException;
+	void journalizeEtatsPayeur(Integer idExportEtatsPayeurTask) throws WorkflowInvalidStateException;
+	
+	/**
+	 * Terminates the process of Exporting Etats Payeurs of a ChainePaie. This will 
+	 * set the Paie Workflow state to EXPORT_ETATS_PAYEUR_TERMINE
+	 * Called by SIRH-JOBS
+	 */
+	void stopExportEtatsPayeur(TypeChainePaieEnum typeChainePaie) throws WorkflowInvalidStateException;
 }

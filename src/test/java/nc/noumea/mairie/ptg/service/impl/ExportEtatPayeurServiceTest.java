@@ -939,21 +939,17 @@ public class ExportEtatPayeurServiceTest {
 		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
 		
-		IPaieWorkflowService pS = Mockito.mock(IPaieWorkflowService.class);
-		
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doNothing().when(service).markPointagesAsJournalises(Mockito.anySet(), Mockito.anyInt());
 		Mockito.doNothing().when(service).markPointagesCalculesAsJournalises(Mockito.anySet());
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
-		ReflectionTestUtils.setField(service, "paieWorkflowService", pS);
 		
 		// When
-		service.stopExportEtatsPayeur(99);
+		service.journalizeEtatsPayeur(99);
 		
 		// Then
 		assertTrue(vd.isPaye());
 		
-		Mockito.verify(pS, Mockito.times(1)).changeStateToExportEtatsPayeurDone(TypeChainePaieEnum.SCV);
 		Mockito.verify(service, Mockito.times(1)).markPointagesAsJournalises(Mockito.anySet(), Mockito.anyInt());
 		Mockito.verify(service, Mockito.times(1)).markPointagesCalculesAsJournalises(Mockito.anySet());
 	}
@@ -973,7 +969,7 @@ public class ExportEtatPayeurServiceTest {
 		ReflectionTestUtils.setField(service, "paieWorkflowService", pS);
 		
 		// When
-		service.stopExportEtatsPayeur(99);
+		service.journalizeEtatsPayeur(99);
 		
 		// Then
 		Mockito.verify(pS, Mockito.never()).changeStateToExportEtatsPayeurDone(TypeChainePaieEnum.SCV);
@@ -1002,7 +998,7 @@ public class ExportEtatPayeurServiceTest {
 		ReflectionTestUtils.setField(service, "paieWorkflowService", pS);
 		
 		// When
-		service.stopExportEtatsPayeur(99);
+		service.journalizeEtatsPayeur(99);
 		
 		// Then
 		Mockito.verify(pS, Mockito.never()).changeStateToExportEtatsPayeurDone(TypeChainePaieEnum.SCV);
@@ -1123,4 +1119,20 @@ public class ExportEtatPayeurServiceTest {
 		assertEquals("L'export des Etats du Payeur pour la chaine paie [SHC] a bien été lancé.", result.getInfos().get(0));
 	}
 	
+	@Test
+	public void stopExportEtatsPayeur_SetEtatPayeurStateToDone() throws WorkflowInvalidStateException {
+	
+		// Given
+		IPaieWorkflowService pS = Mockito.mock(IPaieWorkflowService.class);
+		
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pS);
+		
+		// When
+		service.stopExportEtatsPayeur(TypeChainePaieEnum.SCV);
+		
+		// Then
+		Mockito.verify(pS, Mockito.times(1)).changeStateToExportEtatsPayeurDone(TypeChainePaieEnum.SCV);
+
+	}
 }

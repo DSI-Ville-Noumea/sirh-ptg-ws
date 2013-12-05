@@ -896,7 +896,7 @@ HTTP Status code OK : 200
 ** Terminer une tâche d'export des états payeur (appelé par SIRH-JOBS)
 
  <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS d'export des états du payeur.>>
- Note: Cet appel de web service vise à terminer une tâche d'export des états.
+ Note: Cet appel de web service vise à terminer la deuxième phase d'une tâche d'export des états.
 
  <<URL>> : /etatsPayeur/finishExportTask
  
@@ -913,4 +913,31 @@ HTTP Status code OK : 200
 +-------------------------+
  HTTP Status code OK : 200
 +-------------------------+
+
+
+** Mettre à jour l'état du workflow après export des états du payeur (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé uniquement par le Job SIRH-JOBS d'export des états du payeur.>>
+ Note: Cet appel de web service vise à terminé la phase d'exportation des états du payeur pour une chaine de paie donnée. Il consiste à mettre à jour le workflow de paie à l'état "Export état payeurs terminé".
+
+ <<URL>> : /etatsPayeur/stop
  
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<typeChainePaie>> : Le type de chaine paie pour laquelle faire la mise à jour (SCV, SHC)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si la mise à jour du workflow est impossible :
+
++-------------------------+
+ HTTP Status code CONFLICT : 409
++-------------------------+
