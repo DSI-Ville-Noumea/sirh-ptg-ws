@@ -38,7 +38,7 @@
 	<Resource name="jdbc/PTG_WS_DS1" auth="Container" type="javax.sql.DataSource"
 		maxActive="100" maxIdle="30" minIdle="0" validationQuery="select 1"
 		maxWait="10000" initialSize="1" username="ptg_adm" password="ptg_adm"
-		driverClassName="org.postgresql.Driver" url="jdbc:postgresql://localhost:5433/PTG"
+		driverClassName="org.postgresql.Driver" url="jdbc:postgresql://localhost:5432/sirh"
 		poolPreparedStatements="true" />
 
 	<Resource name="jdbc/PTG_WS_DS2" auth="Container" type="javax.sql.DataSource"
