@@ -22,6 +22,7 @@ import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.ReposCompTask;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
@@ -895,6 +896,73 @@ public class ExportEtatPayeurServiceTest {
 		// Then
 		Mockito.verify(ep, Mockito.times(1)).persist();
 		Mockito.verify(ac, Mockito.times(1)).addRecuperationsToAgent(9009999, vh2.getDateLundi(), 90);
+	}
+	
+	@Test
+	public void exportEtatsPayeur_CallEtatPayeursAndCreateRepoCompTasks() throws WorkflowInvalidStateException {
+		
+		// Given
+		Integer idAgentExporting = 9008987;
+		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SHC;
+		AgentStatutEnum statut = AgentStatutEnum.C;
+		Date ventilationDate = new LocalDate(2013, 02, 25).toDate();
+		
+		final VentilDate vd = new VentilDate();
+		vd.setDateVentilation(ventilationDate);
+		VentilHsup vh = new VentilHsup();
+		vd.getVentilHsups().add(vh);
+		VentilHsup vh2 = new VentilHsup();
+		vh2.setMSup(180);
+		vh2.setIdAgent(9009999);
+		vh2.setDateLundi(new LocalDate(2013, 9, 2).toDate());
+		vd.getVentilHsups().add(vh2);
+		
+		ExportEtatsPayeurTask task = new ExportEtatsPayeurTask();
+		task.setIdAgent(idAgentExporting);
+		task.setTypeChainePaie(chainePaie);
+		task.setVentilDate(vd);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(chainePaie);
+		final Date currentDate = new LocalDate(2013, 01, 13).toDate();
+		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(chainePaie, false)).thenReturn(vd);
+		
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				ReposCompTask arg = (ReposCompTask) args[0];
+
+				assertEquals(9009999, (int) arg.getIdAgent());
+				assertEquals(currentDate, arg.getDateCreation());
+				assertEquals(vd, arg.getVentilDate());
+				assertNull(arg.getDateCalcul());
+				assertNull(arg.getTaskStatus());
+				return true;
+			}
+		}).when(pR).persisEntity(Mockito.isA(ReposCompTask.class));
+		
+		
+		List<EtatPayeur> eps = new ArrayList<EtatPayeur>();
+		EtatPayeur ep = Mockito.spy(new EtatPayeur());
+		Mockito.doNothing().when(ep).persist();
+		eps.add(ep);
+		
+		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
+		Mockito.doReturn(eps).when(service).callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, ventilationDate);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		
+		// When
+		service.exportEtatsPayeur(99);
+		
+		// Then
+		Mockito.verify(ep, Mockito.times(1)).persist();
+		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompTask.class));
 	}
 	
 	@Test

@@ -17,6 +17,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.ReposCompTask;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
@@ -396,14 +397,30 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 		// 3. Update Recups through SIRH-ABS-WS
 		logger.info("Updating recuperations by calling SIRH-ABS-WS...");
+		List<Integer> idAgentsToProcessRCTasks = new ArrayList<Integer>();
+		
 		for (VentilHsup vh : vd.getVentilHsups()) {
-			if (vh.getMRecuperees() == 0)
-				continue;
-			// TODO: add coeff. calculation
 
-			int nbMinutesRecupereesTotal = vh.getMRecuperees();
-			absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(),
-					vh.getDateLundi(), nbMinutesRecupereesTotal);
+			if (vh.getMSup() != 0 && !idAgentsToProcessRCTasks.contains(vh.getIdAgent())) {
+				idAgentsToProcessRCTasks.add(vh.getIdAgent());
+			}
+
+			if (vh.getMRecuperees() != 0) {
+				// TODO: add coeff. calculation
+				int nbMinutesRecupereesTotal = vh.getMRecuperees();
+				absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(),
+						vh.getDateLundi(), nbMinutesRecupereesTotal);
+			}
+		}
+		
+		logger.info("Creating ReposComptTask for processing RCs via SIRH-JOBS...");
+		for (Integer idAgent : idAgentsToProcessRCTasks) {
+			ReposCompTask t = new ReposCompTask();
+			t.setIdAgent(idAgent);
+			t.setIdAgentCreation(task.getIdAgent());
+			t.setDateCreation(helperService.getCurrentDate());
+			t.setVentilDate(vd);
+			pointageRepository.persisEntity(t);
 		}
 
 		// 4. Save records for exported files
@@ -569,7 +586,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	public void stopExportEtatsPayeur(TypeChainePaieEnum typeChainePaie)
 			throws WorkflowInvalidStateException {
 
-		logger.info("Updating workflow by setting state to [ETATS_PAYEURS_TERMINES] for typeChainePaie {}...", typeChainePaie);
+		logger.info(
+				"Updating workflow by setting state to [ETATS_PAYEURS_TERMINES] for typeChainePaie {}...",
+				typeChainePaie);
 		paieWorkflowService.changeStateToExportEtatsPayeurDone(typeChainePaie);
 	}
 }
