@@ -41,7 +41,7 @@
         <site>
             <id>sirhptgws.website.prod</id>
             <name>SIRH PTG Website Prod</name>
-            <url>file:\\cristal\dsi$\DSI\PROJETS\doxia\sirh-ptg-ws</url>
+            <url>file:\\cristal\dsi$\DSI\PROJETS\doxia\SIRH-PTG-WS</url>
         </site>
     </distributionManagement>
 
