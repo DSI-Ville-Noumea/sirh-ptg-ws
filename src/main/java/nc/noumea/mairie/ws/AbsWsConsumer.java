@@ -44,4 +44,10 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 		readResponse(res, url);
 	}
 
+	@Override
+	public void addReposCompToAgent(Integer idAgent, Date dateLundi, Integer minutes) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
