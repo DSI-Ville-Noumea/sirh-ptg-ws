@@ -1,11 +1,15 @@
 package nc.noumea.mairie.ptg.repository;
 
 import java.math.BigInteger;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
+import nc.noumea.mairie.ptg.domain.ReposCompHisto;
 import nc.noumea.mairie.ptg.domain.ReposCompTask;
 
 import org.joda.time.DateTime;
@@ -37,6 +41,19 @@ public class ReposCompRepository implements IReposCompRepository {
 		BigInteger result = (BigInteger) q.getSingleResult();
 
 		return result.intValue();
+	}
+
+	@Override
+	public ReposCompHisto findReposCompHistoForAgentAndDate(Integer idAgent, Date dateLundi) {
+
+		TypedQuery<ReposCompHisto> q = ptgEntityManager.createNamedQuery("findReposCompHistoByAgentAndDate", ReposCompHisto.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateLundi", dateLundi);
+		q.setMaxResults(0);
+		
+		List<ReposCompHisto> r = q.getResultList();
+		
+		return r.size() == 0 ? null : r.get(0);
 	}
 
 }

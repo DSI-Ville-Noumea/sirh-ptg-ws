@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.repository;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -8,6 +9,7 @@ import javax.persistence.PersistenceContext;
 import nc.noumea.mairie.ptg.domain.ReposCompHisto;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,48 @@ public class ReposCompRepositoryTest {
 		Integer result = repository.countTotalHSupsSinceStartOfYear(9005138, 2013);
 		
 		assertEquals(240, (int) result);
+		
+		ptgEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void findReposCompHistoForAgentAndDate_HistoDoesNotExists_ReturnNull() {
+		
+		// Given
+		ReposCompHisto h1 = new ReposCompHisto();
+		h1.setIdAgent(9005138);;
+		h1.setDateLundi(new LocalDate(2013, 01, 07).toDate());
+		h1.setMBaseHoraire(2325);
+		h1.setMSup(60);
+		ptgEntityManager.persist(h1);
+		
+		// When
+		ReposCompHisto result = repository.findReposCompHistoForAgentAndDate(9005138, new LocalDate(2013, 12, 16).toDate());
+		
+		// Then
+		assertNull(result);
+		
+		ptgEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void findReposCompHistoForAgentAndDate_HistotExists_ReturnIt() {
+		
+		// Given
+		ReposCompHisto h1 = new ReposCompHisto();
+		h1.setIdAgent(9005138);;
+		h1.setDateLundi(new LocalDate(2013, 01, 07).toDate());
+		h1.setMBaseHoraire(2325);
+		h1.setMSup(60);
+		ptgEntityManager.persist(h1);
+		
+		// When
+		ReposCompHisto result = repository.findReposCompHistoForAgentAndDate(9005138, h1.getDateLundi());
+		
+		// Then
+		assertEquals(h1, result);
 		
 		ptgEntityManager.clear();
 	}

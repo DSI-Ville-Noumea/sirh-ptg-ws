@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spbase;
@@ -19,7 +20,9 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class ReposCompService implements IReposCompService {
 
 	private Logger logger = LoggerFactory.getLogger(ReposCompService.class);
@@ -41,8 +44,9 @@ public class ReposCompService implements IReposCompService {
 
 	@Autowired
 	private IAbsWsConsumer absWsConsumer;
-	
+
 	private static int MAX_MIN_PER_WEEK = 42 * 60; // 42h
+	private static int REPOS_COMP_COEF_THRESHOLD = 130 * 60; // 130h
 
 	@Override
 	public void processReposCompTask(Integer idReposCompTask) {
@@ -63,6 +67,11 @@ public class ReposCompService implements IReposCompService {
 				.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(task
 						.getIdAgent(), task.getVentilDate().getIdVentilDate());
 
+		if (hSs.size() == 0) {
+			logger.info("Agent {} does not have any HSUPS over ventilation period. Exiting process.", task.getIdAgent());
+			return;
+		}
+		
 		Integer totalMinutesOfYear = reposCompRepository
 				.countTotalHSupsSinceStartOfYear(task.getIdAgent(),
 						new DateTime(helperService.getCurrentDate()).getYear());
@@ -80,23 +89,15 @@ public class ReposCompService implements IReposCompService {
 					.convertMairieNbHeuresFormatToMinutes(base.getNbashh()) * spbhor
 					.getTaux());
 
-			//TODO Search if exists record for date
-			// if already existing, get old value, update it
-			// if new, store new record
-			ReposCompHisto histo = new ReposCompHisto();
-			histo.setIdAgent(task.getIdAgent());
-			histo.setDateLundi(vhs.getDateLundi());
-			histo.setMBaseHoraire(weekBase);
-			histo.setMSup(vhs.getMSup());
-			pointageRepository.persisEntity(histo);
+			ReposCompHisto histo = getOrCreateReposCompHisto(task.getIdAgent(), vhs.getDateLundi(), weekBase, vhs.getMSup());
 
 			// Adding the nb of HSups to the counter in order to not have to
 			// query again the db for total amount of Hsups over the year
-			totalMinutesOfYear += vhs.getMSup();
+			totalMinutesOfYear += histo.getMSup();
 			logger.info("Hsups: {} minutes. Total HSups count for year is {} minutes: {} hours.", 
-					vhs.getMSup(), totalMinutesOfYear, totalMinutesOfYear/60);
+					histo.getMSup(), totalMinutesOfYear, totalMinutesOfYear/60);
 			
-			int nbMinutesToCount = (weekBase + vhs.getMSup()) - MAX_MIN_PER_WEEK;
+			int nbMinutesToCount = (weekBase + histo.getMSup()) - MAX_MIN_PER_WEEK;
 
 			if (nbMinutesToCount <= 0) {
 				logger.info("Agent has not done more than 42H this week, no RC to add.");
@@ -105,14 +106,34 @@ public class ReposCompService implements IReposCompService {
 			
 			logger.info("Agent has done {} minutes more than 42H this week.", nbMinutesToCount);
 
-			int coef = totalMinutesOfYear > (130 * 60) ? 20	: 30;
-			int nbRecups = (nbMinutesToCount % 60) * coef;
+			int coef = totalMinutesOfYear > REPOS_COMP_COEF_THRESHOLD ? 20	: 30;
+			int nbRecups = (nbMinutesToCount / 60) * coef;
 
-			// call sirh-abs-ws to persist nbRecups
+			logger.info("Agent is accountable for {} minutes.", nbRecups);
+			
 			logger.info("Calling SIRH-ABS-WS to add {} minutes...", nbRecups);
-			absWsConsumer.addReposCompToAgent(task.getIdAgent(), vhs.getDateLundi(), nbRecups);
+			absWsConsumer.addReposCompToAgent(task.getIdAgent(), histo.getDateLundi(), nbRecups);
 		}
 
 		logger.info("Done processing ReposCompTask.");
+	}
+	
+	protected ReposCompHisto getOrCreateReposCompHisto(Integer idAgent, Date dateLundi, Integer weekBase, Integer mSups) {
+
+		ReposCompHisto histo = reposCompRepository.findReposCompHistoForAgentAndDate(idAgent, dateLundi);
+		
+		if (histo == null) {
+			histo = new ReposCompHisto();
+			histo.setIdAgent(idAgent);
+			histo.setDateLundi(dateLundi);
+			histo.setMBaseHoraire(weekBase);
+		}
+		
+		histo.setMSup(mSups);
+		
+		if (histo.getIdRcHisto() == null)
+			pointageRepository.persisEntity(histo);
+		
+		return histo;
 	}
 }

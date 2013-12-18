@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.roo.addon.javabean.RooJavaBean;
@@ -15,6 +16,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 @RooJavaBean
 @RooToString
 @RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_RC_HISTO")
+@NamedQuery(name = "findReposCompHistoByAgentAndDate", query = "select rch from ReposCompHisto rch where rch.idAgent = :idAgent and rch.dateLundi = :dateLundi")
 public class ReposCompHisto {
 
 	@Id
