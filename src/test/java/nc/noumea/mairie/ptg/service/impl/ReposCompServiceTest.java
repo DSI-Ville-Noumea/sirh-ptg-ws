@@ -19,6 +19,7 @@ import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -449,13 +450,14 @@ public class ReposCompServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		
 		// When
-		ReposCompHisto result = service.getOrCreateReposCompHisto(idAgent, dateLundi, 256, 60);
+		Pair<ReposCompHisto, Integer> result = service.getOrCreateReposCompHisto(idAgent, dateLundi, 256, 60);
 		
 		// Then
-		assertEquals(idAgent, result.getIdAgent());
-		assertEquals(dateLundi, result.getDateLundi());
-		assertEquals(256, (int) result.getMBaseHoraire());
-		assertEquals(60, (int) result.getMSup());
+		assertEquals(idAgent, result.getLeft().getIdAgent());
+		assertEquals(dateLundi, result.getLeft().getDateLundi());
+		assertEquals(256, (int) result.getLeft().getMBaseHoraire());
+		assertEquals(60, (int) result.getLeft().getMSup());
+		assertEquals(60, (int) result.getRight());
 		
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
 	}
@@ -484,13 +486,14 @@ public class ReposCompServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		
 		// When
-		ReposCompHisto result = service.getOrCreateReposCompHisto(idAgent, dateLundi, 256, 60);
+		Pair<ReposCompHisto, Integer> result = service.getOrCreateReposCompHisto(idAgent, dateLundi, 256, 60);
 		
 		// Then
-		assertEquals(idAgent, result.getIdAgent());
-		assertEquals(dateLundi, result.getDateLundi());
-		assertEquals(256, (int) result.getMBaseHoraire());
-		assertEquals(60, (int) result.getMSup());
+		assertEquals(idAgent, result.getLeft().getIdAgent());
+		assertEquals(dateLundi, result.getLeft().getDateLundi());
+		assertEquals(256, (int) result.getLeft().getMBaseHoraire());
+		assertEquals(60, (int) result.getLeft().getMSup());
+		assertEquals(-30, (int) result.getRight());
 		
 		Mockito.verify(pR, Mockito.never()).persisEntity(Mockito.isA(ReposCompHisto.class));
 		

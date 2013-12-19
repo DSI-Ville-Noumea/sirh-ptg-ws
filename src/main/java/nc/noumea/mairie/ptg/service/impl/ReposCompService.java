@@ -16,6 +16,8 @@ import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IReposCompService;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,15 +91,15 @@ public class ReposCompService implements IReposCompService {
 					.convertMairieNbHeuresFormatToMinutes(base.getNbashh()) * spbhor
 					.getTaux());
 
-			ReposCompHisto histo = getOrCreateReposCompHisto(task.getIdAgent(), vhs.getDateLundi(), weekBase, vhs.getMSup());
+			Pair<ReposCompHisto, Integer> histo = getOrCreateReposCompHisto(task.getIdAgent(), vhs.getDateLundi(), weekBase, vhs.getMSup());
 
 			// Adding the nb of HSups to the counter in order to not have to
 			// query again the db for total amount of Hsups over the year
-			totalMinutesOfYear += histo.getMSup();
+			totalMinutesOfYear += histo.getRight();
 			logger.info("Hsups: {} minutes. Total HSups count for year is {} minutes: {} hours.", 
-					histo.getMSup(), totalMinutesOfYear, totalMinutesOfYear/60);
+					histo.getLeft().getMSup(), totalMinutesOfYear, totalMinutesOfYear/60);
 			
-			int nbMinutesToCount = (weekBase + histo.getMSup()) - MAX_MIN_PER_WEEK;
+			int nbMinutesToCount = (weekBase + histo.getLeft().getMSup()) - MAX_MIN_PER_WEEK;
 
 			if (nbMinutesToCount <= 0) {
 				logger.info("Agent has not done more than 42H this week, no RC to add.");
@@ -112,13 +114,13 @@ public class ReposCompService implements IReposCompService {
 			logger.info("Agent is accountable for {} minutes.", nbRecups);
 			
 			logger.info("Calling SIRH-ABS-WS to add {} minutes...", nbRecups);
-			absWsConsumer.addReposCompToAgent(task.getIdAgent(), histo.getDateLundi(), nbRecups);
+			absWsConsumer.addReposCompToAgent(task.getIdAgent(), histo.getLeft().getDateLundi(), nbRecups);
 		}
 
 		logger.info("Done processing ReposCompTask.");
 	}
 	
-	protected ReposCompHisto getOrCreateReposCompHisto(Integer idAgent, Date dateLundi, Integer weekBase, Integer mSups) {
+	protected Pair<ReposCompHisto, Integer> getOrCreateReposCompHisto(Integer idAgent, Date dateLundi, Integer weekBase, Integer mSups) {
 
 		ReposCompHisto histo = reposCompRepository.findReposCompHistoForAgentAndDate(idAgent, dateLundi);
 		
@@ -129,11 +131,13 @@ public class ReposCompService implements IReposCompService {
 			histo.setMBaseHoraire(weekBase);
 		}
 		
+		int nbMinSupToAddToTotal = mSups - (histo.getMSup() == null ? 0 : histo.getMSup());
+		
 		histo.setMSup(mSups);
 		
 		if (histo.getIdRcHisto() == null)
 			pointageRepository.persisEntity(histo);
 		
-		return histo;
+		return new ImmutablePair<ReposCompHisto, Integer>(histo, nbMinSupToAddToTotal);
 	}
 }

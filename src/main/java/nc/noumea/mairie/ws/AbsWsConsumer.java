@@ -23,6 +23,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	private String sirhAbsWsBaseUrl;
 
 	private static final String addRecuperationsUrl = "recuperations/add";
+	private static final String addReposCompensateursUrl = "reposcomp/add";
 	
 	@Override
 	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes) {
@@ -46,7 +47,22 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 
 	@Override
 	public void addReposCompToAgent(Integer idAgent, Date dateLundi, Integer minutes) {
-		// TODO Auto-generated method stub
+
+		logger.info("Updating repos compensateurs for Agent [{}] Date Monday [{}] with value [{}]...", idAgent, dateLundi, minutes);
+		
+		String url = String.format(sirhAbsWsBaseUrl + addReposCompensateursUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		
+		parameters.put("idAgent", String.valueOf(idAgent));
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		parameters.put("dateLundi", sdf.format(dateLundi));
+		parameters.put("minutes", String.valueOf(minutes));
+
+		ClientResponse res = createAndFirePostRequest(parameters, url);
+
+		readResponse(res, url);
 		
 	}
 
