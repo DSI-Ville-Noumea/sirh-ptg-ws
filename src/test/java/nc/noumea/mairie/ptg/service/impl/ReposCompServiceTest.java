@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spbase;
-import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.ReposCompHisto;
 import nc.noumea.mairie.ptg.domain.ReposCompTask;
@@ -79,7 +78,7 @@ public class ReposCompServiceTest {
 	
 	@SuppressWarnings("rawtypes")
 	@Test
-	public void processReposCompTask_1HSupsNotAlreadyExisting_AgentHas0MinutesSinceYearStarted_HSisLessThan180m_CreateHistoAndDontCallABSWS() {
+	public void processReposCompTask_1HSupsNotAlreadyExisting_AgentHas0MinutesSinceYearStarted_HSisLessThan180m_CreateHistoAndCallABSWSWith0() {
 	
 		// Given
 		final ReposCompTask t = new ReposCompTask();
@@ -104,15 +103,12 @@ public class ReposCompServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013,1,1).toDate());
 		Mockito.when(hS.getMairieMatrFromIdAgent(t.getIdAgent())).thenReturn(5138);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(38.45d)).thenReturn(2325);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
 		
 		Spcarr carr = new Spcarr();
 		Spbase base = new Spbase();
-		base.setNbashh(38.45d);
+		base.setNbasch(39.00d);
 		carr.setSpbase(base);
-		Spbhor hor = new Spbhor();
-		hor.setTaux(1.0);
-		carr.setSpbhor(hor);
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 		
@@ -124,7 +120,7 @@ public class ReposCompServiceTest {
 		        ReposCompHisto h = (ReposCompHisto) args[0];
 		        assertEquals(h.getDateLundi(), hs.getDateLundi());
 		        assertEquals(h.getIdAgent(), t.getIdAgent());
-		        assertEquals((int) h.getMBaseHoraire(), 2325);
+		        assertEquals((int) h.getMBaseHoraire(), 2340);
 		        assertEquals((int) h.getMSup(), 180);
 		        return true;
 			}
@@ -145,7 +141,7 @@ public class ReposCompServiceTest {
 		
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
-		Mockito.verify(absWs, Mockito.never()).addReposCompToAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt());
+		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.eq(0));
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -166,7 +162,7 @@ public class ReposCompServiceTest {
 		
 		List<VentilHsup> hSs = new ArrayList<VentilHsup>();
 		final VentilHsup hs = new VentilHsup();
-		hs.setMSup(240);
+		hs.setMSup(225);
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
@@ -175,15 +171,12 @@ public class ReposCompServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013,1,1).toDate());
 		Mockito.when(hS.getMairieMatrFromIdAgent(t.getIdAgent())).thenReturn(5138);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(38.45d)).thenReturn(2325);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
 		
 		Spcarr carr = new Spcarr();
 		Spbase base = new Spbase();
-		base.setNbashh(38.45d);
+		base.setNbasch(39.00d);
 		carr.setSpbase(base);
-		Spbhor hor = new Spbhor();
-		hor.setTaux(1.0);
-		carr.setSpbhor(hor);
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 		
@@ -195,8 +188,8 @@ public class ReposCompServiceTest {
 		        ReposCompHisto h = (ReposCompHisto) args[0];
 		        assertEquals(h.getDateLundi(), hs.getDateLundi());
 		        assertEquals(h.getIdAgent(), t.getIdAgent());
-		        assertEquals((int) h.getMBaseHoraire(), 2325);
-		        assertEquals((int) h.getMSup(), 240);
+		        assertEquals((int) h.getMBaseHoraire(), 2340);
+		        assertEquals((int) h.getMSup(), 225);
 		        return true;
 			}
 		}).when(pR).persisEntity(Mockito.isA(ReposCompHisto.class));
@@ -246,15 +239,12 @@ public class ReposCompServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013,1,1).toDate());
 		Mockito.when(hS.getMairieMatrFromIdAgent(t.getIdAgent())).thenReturn(5138);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(38.45d)).thenReturn(2325);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
 		
 		Spcarr carr = new Spcarr();
 		Spbase base = new Spbase();
-		base.setNbashh(38.45d);
+		base.setNbasch(39.00d);
 		carr.setSpbase(base);
-		Spbhor hor = new Spbhor();
-		hor.setTaux(1.0);
-		carr.setSpbhor(hor);
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 		
@@ -266,7 +256,7 @@ public class ReposCompServiceTest {
 		        ReposCompHisto h = (ReposCompHisto) args[0];
 		        assertEquals(h.getDateLundi(), hs.getDateLundi());
 		        assertEquals(h.getIdAgent(), t.getIdAgent());
-		        assertEquals((int) h.getMBaseHoraire(), 2325);
+		        assertEquals((int) h.getMBaseHoraire(), 2340);
 		        assertEquals((int) h.getMSup(), 270);
 		        return true;
 			}
@@ -287,7 +277,7 @@ public class ReposCompServiceTest {
 		
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
-		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()), Mockito.eq(hs.getDateLundi()), Mockito.eq(30));
+		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()), Mockito.eq(hs.getDateLundi()), Mockito.eq(12));
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -317,15 +307,12 @@ public class ReposCompServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013,1,1).toDate());
 		Mockito.when(hS.getMairieMatrFromIdAgent(t.getIdAgent())).thenReturn(5138);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(38.45d)).thenReturn(2325);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
 		
 		Spcarr carr = new Spcarr();
 		Spbase base = new Spbase();
-		base.setNbashh(38.45d);
+		base.setNbasch(39.00d);
 		carr.setSpbase(base);
-		Spbhor hor = new Spbhor();
-		hor.setTaux(1.0);
-		carr.setSpbhor(hor);
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 		
@@ -337,7 +324,7 @@ public class ReposCompServiceTest {
 		        ReposCompHisto h = (ReposCompHisto) args[0];
 		        assertEquals(h.getDateLundi(), hs.getDateLundi());
 		        assertEquals(h.getIdAgent(), t.getIdAgent());
-		        assertEquals((int) h.getMBaseHoraire(), 2325);
+		        assertEquals((int) h.getMBaseHoraire(), 2340);
 		        assertEquals((int) h.getMSup(), 270);
 		        return true;
 			}
@@ -358,7 +345,7 @@ public class ReposCompServiceTest {
 		
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
-		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()), Mockito.eq(hs.getDateLundi()), Mockito.eq(20));
+		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()), Mockito.eq(hs.getDateLundi()), Mockito.eq(120));
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -375,7 +362,7 @@ public class ReposCompServiceTest {
 		Integer currentYear = 2013;
 		IReposCompRepository rcR = Mockito.mock(IReposCompRepository.class);
 		Mockito.when(rcR.getReposCompTask(15)).thenReturn(t);
-		Mockito.when(rcR.countTotalHSupsSinceStartOfYear(t.getIdAgent(), currentYear)).thenReturn(7605);
+		Mockito.when(rcR.countTotalHSupsSinceStartOfYear(t.getIdAgent(), currentYear)).thenReturn(7740);
 		
 		List<VentilHsup> hSs = new ArrayList<VentilHsup>();
 		final VentilHsup hs = new VentilHsup();
@@ -388,15 +375,12 @@ public class ReposCompServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013,1,1).toDate());
 		Mockito.when(hS.getMairieMatrFromIdAgent(t.getIdAgent())).thenReturn(5138);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(38.45d)).thenReturn(2325);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
 		
 		Spcarr carr = new Spcarr();
 		Spbase base = new Spbase();
-		base.setNbashh(38.45d);
+		base.setNbasch(39.00d);
 		carr.setSpbase(base);
-		Spbhor hor = new Spbhor();
-		hor.setTaux(1.0);
-		carr.setSpbhor(hor);
 		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 		
@@ -408,7 +392,7 @@ public class ReposCompServiceTest {
 		        ReposCompHisto h = (ReposCompHisto) args[0];
 		        assertEquals(hs.getDateLundi(), h.getDateLundi());
 		        assertEquals(t.getIdAgent(), h.getIdAgent());
-		        assertEquals(2325, (int) h.getMBaseHoraire());
+		        assertEquals(2340, (int) h.getMBaseHoraire());
 		        assertEquals(555, (int) h.getMSup());
 		        return true;
 			}
@@ -429,7 +413,7 @@ public class ReposCompServiceTest {
 		
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
-		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()), Mockito.eq(hs.getDateLundi()), Mockito.eq(120));
+		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()), Mockito.eq(hs.getDateLundi()), Mockito.eq(240));
 	}
 	
 	@Test

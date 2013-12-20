@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spbase;
-import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.ReposCompHisto;
 import nc.noumea.mairie.ptg.domain.ReposCompTask;
@@ -55,8 +54,7 @@ public class ReposCompService implements IReposCompService {
 
 		logger.info("Processing ReposCompTaskid {}...", idReposCompTask);
 
-		ReposCompTask task = reposCompRepository
-				.getReposCompTask(idReposCompTask);
+		ReposCompTask task = reposCompRepository.getReposCompTask(idReposCompTask);
 
 		if (task == null) {
 			logger.error("This Task cannot be found. Exiting process.");
@@ -64,80 +62,77 @@ public class ReposCompService implements IReposCompService {
 		}
 
 		logger.info("Agent {}.", task.getIdAgent());
-		
-		List<VentilHsup> hSs = ventilationRepository
-				.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(task
-						.getIdAgent(), task.getVentilDate().getIdVentilDate());
+
+		List<VentilHsup> hSs = ventilationRepository.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(
+				task.getIdAgent(), task.getVentilDate().getIdVentilDate());
 
 		if (hSs.size() == 0) {
 			logger.info("Agent {} does not have any HSUPS over ventilation period. Exiting process.", task.getIdAgent());
 			return;
 		}
-		
-		Integer totalMinutesOfYear = reposCompRepository
-				.countTotalHSupsSinceStartOfYear(task.getIdAgent(),
-						new DateTime(helperService.getCurrentDate()).getYear());
+
+		Integer totalMinutesOfYear = reposCompRepository.countTotalHSupsSinceStartOfYear(task.getIdAgent(),
+				new DateTime(helperService.getCurrentDate()).getYear());
 
 		for (VentilHsup vhs : hSs) {
-			
-			logger.info("Processing week {}", vhs.getDateLundi()); 
-			
-			Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-					helperService.getMairieMatrFromIdAgent(task.getIdAgent()),
-					vhs.getDateLundi());
-			Spbase base = carr.getSpbase();
-			Spbhor spbhor = carr.getSpbhor();
-			int weekBase = (int) (helperService
-					.convertMairieNbHeuresFormatToMinutes(base.getNbashh()) * spbhor
-					.getTaux());
 
-			Pair<ReposCompHisto, Integer> histo = getOrCreateReposCompHisto(task.getIdAgent(), vhs.getDateLundi(), weekBase, vhs.getMSup());
+			logger.info("Processing week {}", vhs.getDateLundi());
+
+			Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+					helperService.getMairieMatrFromIdAgent(task.getIdAgent()), vhs.getDateLundi());
+			Spbase base = carr.getSpbase();
+			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(base.getNbasch()));
+
+			Pair<ReposCompHisto, Integer> histo = getOrCreateReposCompHisto(task.getIdAgent(), vhs.getDateLundi(),
+					weekBase, vhs.getMSup());
 
 			// Adding the nb of HSups to the counter in order to not have to
 			// query again the db for total amount of Hsups over the year
 			totalMinutesOfYear += histo.getRight();
-			logger.info("Hsups: {} minutes. Total HSups count for year is {} minutes: {} hours.", 
-					histo.getLeft().getMSup(), totalMinutesOfYear, totalMinutesOfYear/60);
-			
-			int nbMinutesToCount = (weekBase + histo.getLeft().getMSup()) - MAX_MIN_PER_WEEK;
 
-			if (nbMinutesToCount <= 0) {
-				logger.info("Agent has not done more than 42H this week, no RC to add.");
-				continue;
-			}
-			
-			logger.info("Agent has done {} minutes more than 42H this week.", nbMinutesToCount);
+			logger.info("Hsups: {} minutes. Total HSups count for year is {} minutes: {} hours.", histo.getLeft()
+					.getMSup(), totalMinutesOfYear, totalMinutesOfYear / 60);
 
-			int coef = totalMinutesOfYear > REPOS_COMP_COEF_THRESHOLD ? 20	: 30;
-			int nbRecups = (nbMinutesToCount / 60) * coef;
+			int nbMinutesBeforeThreshold = (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD) > 0 ? 
+					(histo.getLeft().getMSup() - (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD)) : histo.getLeft().getMSup();
+			int nbMinutesAfterThreshold = totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD > 0 ?
+					histo.getLeft().getMSup() - nbMinutesBeforeThreshold : 0;
+			logger.info("Agent has done {} minutes over than 130H per year.", nbMinutesAfterThreshold);
+					
+			int nbMinutesBeforeThresholdToCount = (weekBase + nbMinutesBeforeThreshold) - MAX_MIN_PER_WEEK > 0 ? 
+					(weekBase + nbMinutesBeforeThreshold) - MAX_MIN_PER_WEEK  : 0;
+			logger.info("Agent has done {} minutes more than 42H this week.", nbMinutesBeforeThresholdToCount);
+			
+			int nbRecups = (nbMinutesBeforeThresholdToCount / 60) * 12 + (nbMinutesAfterThreshold /60) * 30;
 
 			logger.info("Agent is accountable for {} minutes.", nbRecups);
-			
+
 			logger.info("Calling SIRH-ABS-WS to add {} minutes...", nbRecups);
 			absWsConsumer.addReposCompToAgent(task.getIdAgent(), histo.getLeft().getDateLundi(), nbRecups);
 		}
 
 		logger.info("Done processing ReposCompTask.");
 	}
-	
-	protected Pair<ReposCompHisto, Integer> getOrCreateReposCompHisto(Integer idAgent, Date dateLundi, Integer weekBase, Integer mSups) {
+
+	protected Pair<ReposCompHisto, Integer> getOrCreateReposCompHisto(Integer idAgent, Date dateLundi,
+			Integer weekBase, Integer mSups) {
 
 		ReposCompHisto histo = reposCompRepository.findReposCompHistoForAgentAndDate(idAgent, dateLundi);
-		
+
 		if (histo == null) {
 			histo = new ReposCompHisto();
 			histo.setIdAgent(idAgent);
 			histo.setDateLundi(dateLundi);
 			histo.setMBaseHoraire(weekBase);
 		}
-		
+
 		int nbMinSupToAddToTotal = mSups - (histo.getMSup() == null ? 0 : histo.getMSup());
-		
+
 		histo.setMSup(mSups);
-		
+
 		if (histo.getIdRcHisto() == null)
 			pointageRepository.persisEntity(histo);
-		
+
 		return new ImmutablePair<ReposCompHisto, Integer>(histo, nbMinSupToAddToTotal);
 	}
 }
