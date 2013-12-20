@@ -941,3 +941,26 @@ HTTP Status code OK : 200
 +-------------------------+
  HTTP Status code CONFLICT : 409
 +-------------------------+
+
+* Calcul des repos compensateurs
+
+** Exécuter une tâche de calcul et exportation des repos compensateurs des agents (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS de calcul des repos compensateurs.>>
+ Note: Cet appel de web service vise à effectuer une tâche de calcul et export des repos compensateurs d'un agent.
+
+ <<URL>> : /reposcomp/startReposCompTask
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idReposCompTask>> : L'Id de la tâche de calcul (préalablement créée via l'export des états du payeur)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
