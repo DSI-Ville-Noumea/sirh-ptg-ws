@@ -84,12 +84,7 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("ventile", EtatPointageEnum.VENTILE.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
-		List<Integer> rawResult = q.getResultList();
-		List<Integer> result = new ArrayList<Integer>();
-
-		for (Integer l : rawResult) {
-			result.add(l.intValue());
-		}
+		List<Integer> result = q.getResultList();
 
 		return result;
 	}
