@@ -23,7 +23,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	private String sirhAbsWsBaseUrl;
 
 	private static final String addRecuperationsUrl = "recuperations/add";
-	private static final String addReposCompensateursUrl = "reposcomp/add";
+	private static final String addReposCompensateursUrl = "reposcomps/add";
 	
 	@Override
 	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes) {
