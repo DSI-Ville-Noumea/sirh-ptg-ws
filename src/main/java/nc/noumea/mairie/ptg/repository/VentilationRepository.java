@@ -108,12 +108,7 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("idVentilDate", idVentilDate);
 
 		@SuppressWarnings("unchecked")
-		List<BigDecimal> rawResult = q.getResultList();
-		List<Integer> result = new ArrayList<Integer>();
-
-		for (BigDecimal l : rawResult) {
-			result.add(l.intValue());
-		}
+		List<Integer> result = q.getResultList();
 
 		return result;
 	}
