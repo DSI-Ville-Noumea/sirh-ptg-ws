@@ -40,7 +40,7 @@ public class ReposCompRepository implements IReposCompRepository {
 
 		BigInteger result = (BigInteger) q.getSingleResult();
 
-		return result.intValue();
+		return result == null ? 0 : result.intValue();
 	}
 
 	@Override

@@ -68,6 +68,16 @@ public class ReposCompRepositoryTest {
 	
 	@Test
 	@Transactional("ptgTransactionManager")
+	public void countTotalHSupsSinceStartOfYear_noValues_CountOnlyCurrentYearHSups() {
+
+		Integer result = repository.countTotalHSupsSinceStartOfYear(9005138, 2013);
+		
+		assertEquals(0, (int) result);
+		
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
 	public void findReposCompHistoForAgentAndDate_HistoDoesNotExists_ReturnNull() {
 		
 		// Given
