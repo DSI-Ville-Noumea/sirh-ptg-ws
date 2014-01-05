@@ -62,6 +62,7 @@ public class ApprobationServiceTest {
 		ptg.setIdPointage(1);
 		ptg.setType(new RefTypePointage());
 		ptg.getType().setIdRefTypePointage(1);
+		ptg.setDateDebut(new Date());
 		EtatPointage etat = new EtatPointage();
 		etat.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		etat.setEtat(EtatPointageEnum.APPROUVE);
@@ -72,6 +73,7 @@ public class ApprobationServiceTest {
 		ptg2.setIdPointage(2);
 		ptg2.setType(new RefTypePointage());
 		ptg2.getType().setIdRefTypePointage(1);
+		ptg2.setDateDebut(new Date());
 		EtatPointage etat2 = new EtatPointage();
 		etat2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		etat2.setEtat(EtatPointageEnum.SAISI);
