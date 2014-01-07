@@ -620,8 +620,13 @@ public class ExportEtatPayeurServiceTest {
 	public void fillAgentsData_RetrieveApprobateurAndFillDataFromSirhRepo() {
 		
 		// Given
+		Date d = new Date();
+		
 		AbsencesEtatPayeurDto va = new AbsencesEtatPayeurDto();
 		va.setIdAgent(9008888);
+		va.setType("TYPE");
+		va.setQuantite("QUANTITE");
+		va.setDate(d);
 		
 		Agent ag1 = new Agent();
 		ag1.setNomUsage("nomusage1");
@@ -656,6 +661,9 @@ public class ExportEtatPayeurServiceTest {
 		
 		// Then
 		assertEquals(9008888, (int) va.getIdAgent());
+		assertEquals("TYPE",va.getType());
+		assertEquals("QUANTITE",va.getQuantite());
+		assertEquals(d,va.getDate());
 		assertEquals("nomusage1", va.getNom());
 		assertEquals("prenomusage1", va.getPrenom());
 		assertEquals(9009999, (int) va.getApprobateurIdAgent());

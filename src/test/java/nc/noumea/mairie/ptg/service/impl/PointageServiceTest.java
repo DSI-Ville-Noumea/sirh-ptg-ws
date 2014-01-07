@@ -62,6 +62,8 @@ public class PointageServiceTest {
 		SirhWsServiceDto siserv = new SirhWsServiceDto();
 		siserv.setService("SERVICE");
 		siserv.setServiceLibelle("LIB SERVICE");
+		siserv.setSigle("SIGLE");
+		siserv.setSigleParent("SIGLE PARENT");
 
 		SpcarrId carrId = new SpcarrId();
 		carrId.setNomatr(7654);
