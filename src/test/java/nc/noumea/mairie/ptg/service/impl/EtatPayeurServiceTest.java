@@ -14,10 +14,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mock.staticmock.MockStaticEntityMethods;
 import org.springframework.test.util.ReflectionTestUtils;
 
-@MockStaticEntityMethods
 public class EtatPayeurServiceTest {
 	
 	private Logger logger = LoggerFactory.getLogger(EtatsPayeurController.class);
