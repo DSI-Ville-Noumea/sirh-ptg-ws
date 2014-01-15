@@ -22,8 +22,8 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	@Qualifier("sirhAbsWsBaseUrl")
 	private String sirhAbsWsBaseUrl;
 
-	private static final String addRecuperationsUrl = "recuperations/add";
-	private static final String addReposCompensateursUrl = "reposcomps/add";
+	private static final String addRecuperationsUrl = "recuperations/addForPTG";
+	private static final String addReposCompensateursUrl = "reposcomps/addForPTG";
 	
 	@Override
 	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes) {
