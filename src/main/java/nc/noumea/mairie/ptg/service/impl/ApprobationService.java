@@ -2,8 +2,6 @@ package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -95,14 +93,6 @@ public class ApprobationService implements IApprobationService {
 		List<Pointage> pointages = pointageService.getLatestPointagesForAgentsAndDates(agentIds, fromDate,
 				new LocalDate(toDate).plusDays(1).toDate(), RefTypePointageEnum.getRefTypePointageEnum(idRefType),
 				idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)));
-		
-		Collections.sort(pointages, new Comparator<Object>() {
-			public int compare(Object o1, Object o2) {
-				Pointage s1 = (Pointage) o1;
-				Pointage s2 = (Pointage) o2;
-				return (s1.getDateDebut().compareTo(s2.getDateDebut()));
-			}
-		});
 
 		for (Pointage ptg : pointages) {
 			AgentDto agDto = new AgentDto(sirhRepository.getAgent(ptg.getIdAgent()));
