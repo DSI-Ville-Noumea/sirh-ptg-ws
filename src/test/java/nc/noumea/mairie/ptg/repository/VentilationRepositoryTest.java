@@ -335,13 +335,14 @@ public class VentilationRepositoryTest {
 		List<Pointage> result = repository.getListPointagesAbsenceAndHSupForVentilation(9008765, new LocalDate(2013, 7, 24).toDate(), new LocalDate(2013, 7, 26).toDate(), new LocalDate(2013, 7, 20).toDate());
 
 		assertEquals(2, result.size());
-		assertEquals(new DateTime(2013, 7, 22, 8, 0, 0).toDate(), result.get(0).getDateDebut());
-		assertTrue(result.get(0).getAbsenceConcertee());
-		assertEquals(RefTypePointageEnum.H_SUP, result.get(0).getTypePointageEnum());
+
+		assertEquals(new DateTime(2013, 7, 23, 8, 0, 0).toDate(), result.get(0).getDateDebut());
+		assertFalse(result.get(0).getAbsenceConcertee());
+		assertEquals(RefTypePointageEnum.ABSENCE, result.get(0).getTypePointageEnum());
 		
-		assertEquals(new DateTime(2013, 7, 23, 8, 0, 0).toDate(), result.get(1).getDateDebut());
-		assertFalse(result.get(1).getAbsenceConcertee());
-		assertEquals(RefTypePointageEnum.ABSENCE, result.get(1).getTypePointageEnum());
+		assertEquals(new DateTime(2013, 7, 22, 8, 0, 0).toDate(), result.get(1).getDateDebut());
+		assertTrue(result.get(1).getAbsenceConcertee());
+		assertEquals(RefTypePointageEnum.H_SUP, result.get(1).getTypePointageEnum());
 		
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
