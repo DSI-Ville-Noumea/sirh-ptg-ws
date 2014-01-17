@@ -370,7 +370,7 @@ public class PointageRepositoryTest {
 		p.persist();
 		
 		Pointage p2 = new Pointage();
-		p.setPointageParent(p);
+		p2.setPointageParent(p);
 		p2.setAbsenceConcertee(true); 
 		p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
 		p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
@@ -380,7 +380,7 @@ public class PointageRepositoryTest {
 		p2.setType(rtp);
 		p2.persist();
 		
-		List<Pointage> result = repository.getPointageArchives(p.getIdPointage());
+		List<Pointage> result = repository.getPointageArchives(p2.getIdPointage());
 		
 		assertEquals(2, result.size());
 		assertEquals(true, result.get(0).getAbsenceConcertee());

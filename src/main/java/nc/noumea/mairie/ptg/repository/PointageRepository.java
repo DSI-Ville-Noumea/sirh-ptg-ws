@@ -81,7 +81,7 @@ public class PointageRepository implements IPointageRepository {
 
         Query q = ptgEntityManager.createNativeQuery(
                 "WITH RECURSIVE pointagearchive AS ( (SELECT t1.* FROM PTG_POINTAGE t1 WHERE t1.ID_POINTAGE = :idPointage ) " +
-                "UNION ALL ( SELECT t2.* FROM PTG_POINTAGE AS t2 JOIN pointagearchive AS t3 ON (t2.ID_POINTAGE_PARENT = t3.ID_POINTAGE) ) ) " +
+                "UNION ALL ( SELECT t2.* FROM PTG_POINTAGE AS t2 JOIN pointagearchive AS t3 ON (t2.ID_POINTAGE = t3.ID_POINTAGE_PARENT) ) ) " +
                 "SELECT * FROM pointagearchive order by ID_POINTAGE desc",
                 Pointage.class);
         q.setParameter("idPointage", idPointage);
