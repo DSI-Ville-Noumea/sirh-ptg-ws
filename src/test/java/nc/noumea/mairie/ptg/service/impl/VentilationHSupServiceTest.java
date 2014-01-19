@@ -1285,7 +1285,7 @@ public class VentilationHSupServiceTest {
 		assertEquals(3 * 60, result.getMAbsences(), 0);
 		assertEquals(12 * 60, result.getMSup(), 0);
 
-		assertEquals(4 * 60, result.getMsNuit(), 0);
+		assertEquals(6 * 60, result.getMsNuit(), 0);
 		assertEquals(6 * 60, result.getMsdjf(), 0);
 		assertEquals(4 * 60, result.getMMai(), 0);
 		assertEquals(0 , result.getMComplementaires(), 0);
@@ -1400,7 +1400,7 @@ public class VentilationHSupServiceTest {
 		assertEquals(3 * 60, result.getMAbsences(), 0);
 		assertEquals(12 * 60, result.getMSup(), 0);
 
-		assertEquals(6 * 60, result.getMsNuit(), 0);
+		assertEquals(4 * 60, result.getMsNuit(), 0);
 		assertEquals(6 * 60, result.getMsdjf(), 0);
 		assertEquals(4 * 60, result.getMMai(), 0);
 		assertEquals(12 * 60, result.getMComplementaires(), 0);

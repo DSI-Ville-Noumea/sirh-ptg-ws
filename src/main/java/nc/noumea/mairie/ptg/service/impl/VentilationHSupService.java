@@ -29,10 +29,10 @@ public class VentilationHSupService implements IVentilationHSupService {
 	private static int HEURE_JOUR_FIN_F = 21;
 
 	private static int HEURE_JOUR_DEBUT_C = 4;
-	private static int HEURE_JOUR_FIN_C = 20;
+	private static int HEURE_JOUR_FIN_C = 22;
 
-	private static int HEURE_JOUR_DEBUT_CC = 5;
-	private static int HEURE_JOUR_FIN_CC = 22;
+	private static int HEURE_JOUR_DEBUT_CC = 4;
+	private static int HEURE_JOUR_FIN_CC = 20;
 	
 	private static int NB_HS_SIMPLE = 3 * 60;
 	private static int BASE_HEBDO_LEGALE = 39 * 60;
