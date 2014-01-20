@@ -14,6 +14,8 @@ privileged aspect Siserv_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager Siserv.entityManager;
     
+    public static final List<String> Siserv.fieldNames4OrderClauseFilter = java.util.Arrays.asList("servi", "liServ", "codeActif", "sigle", "parentSigle");
+    
     public static final EntityManager Siserv.entityManager() {
         EntityManager em = new Siserv().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect Siserv_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Siserv o", Siserv.class).getResultList();
     }
     
+    public static List<Siserv> Siserv.findAllSiservs(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Siserv o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Siserv.class).getResultList();
+    }
+    
     public static Siserv Siserv.findSiserv(String servi) {
         if (servi == null || servi.length() == 0) return null;
         return entityManager().find(Siserv.class, servi);
@@ -35,6 +48,17 @@ privileged aspect Siserv_Roo_Jpa_ActiveRecord {
     
     public static List<Siserv> Siserv.findSiservEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Siserv o", Siserv.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Siserv> Siserv.findSiservEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Siserv o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Siserv.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

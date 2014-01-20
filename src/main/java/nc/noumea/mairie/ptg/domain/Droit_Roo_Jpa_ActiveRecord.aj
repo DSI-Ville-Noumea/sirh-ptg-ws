@@ -14,6 +14,8 @@ privileged aspect Droit_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager Droit.entityManager;
     
+    public static final List<String> Droit.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idDroit", "idAgent", "dateModification", "approbateur", "operateur", "idAgentDelegataire", "droitApprobateur", "operateurs", "agents");
+    
     public static final EntityManager Droit.entityManager() {
         EntityManager em = new Droit().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect Droit_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Droit o", Droit.class).getResultList();
     }
     
+    public static List<Droit> Droit.findAllDroits(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Droit o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Droit.class).getResultList();
+    }
+    
     public static Droit Droit.findDroit(Integer idDroit) {
         if (idDroit == null) return null;
         return entityManager().find(Droit.class, idDroit);
@@ -35,6 +48,17 @@ privileged aspect Droit_Roo_Jpa_ActiveRecord {
     
     public static List<Droit> Droit.findDroitEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Droit o", Droit.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Droit> Droit.findDroitEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Droit o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Droit.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

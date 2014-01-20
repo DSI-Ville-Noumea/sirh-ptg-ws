@@ -14,6 +14,8 @@ privileged aspect PointageCalcule_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager PointageCalcule.entityManager;
     
+    public static final List<String> PointageCalcule.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idPointageCalcule", "idAgent", "type", "etat", "dateLundi", "dateDebut", "dateFin", "quantite", "refPrime", "lastVentilDate");
+    
     public static final EntityManager PointageCalcule.entityManager() {
         EntityManager em = new PointageCalcule().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect PointageCalcule_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM PointageCalcule o", PointageCalcule.class).getResultList();
     }
     
+    public static List<PointageCalcule> PointageCalcule.findAllPointageCalcules(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PointageCalcule o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, PointageCalcule.class).getResultList();
+    }
+    
     public static PointageCalcule PointageCalcule.findPointageCalcule(Integer idPointageCalcule) {
         if (idPointageCalcule == null) return null;
         return entityManager().find(PointageCalcule.class, idPointageCalcule);
@@ -35,6 +48,17 @@ privileged aspect PointageCalcule_Roo_Jpa_ActiveRecord {
     
     public static List<PointageCalcule> PointageCalcule.findPointageCalculeEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM PointageCalcule o", PointageCalcule.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<PointageCalcule> PointageCalcule.findPointageCalculeEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PointageCalcule o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, PointageCalcule.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

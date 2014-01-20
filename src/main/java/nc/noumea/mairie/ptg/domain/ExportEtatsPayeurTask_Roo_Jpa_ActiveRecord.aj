@@ -14,6 +14,8 @@ privileged aspect ExportEtatsPayeurTask_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager ExportEtatsPayeurTask.entityManager;
     
+    public static final List<String> ExportEtatsPayeurTask.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idExportEtatsPayeurTask", "idAgent", "dateCreation", "dateExport", "typeChainePaie", "ventilDate", "taskStatus");
+    
     public static final EntityManager ExportEtatsPayeurTask.entityManager() {
         EntityManager em = new ExportEtatsPayeurTask().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect ExportEtatsPayeurTask_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM ExportEtatsPayeurTask o", ExportEtatsPayeurTask.class).getResultList();
     }
     
+    public static List<ExportEtatsPayeurTask> ExportEtatsPayeurTask.findAllExportEtatsPayeurTasks(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM ExportEtatsPayeurTask o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, ExportEtatsPayeurTask.class).getResultList();
+    }
+    
     public static ExportEtatsPayeurTask ExportEtatsPayeurTask.findExportEtatsPayeurTask(Integer idExportEtatsPayeurTask) {
         if (idExportEtatsPayeurTask == null) return null;
         return entityManager().find(ExportEtatsPayeurTask.class, idExportEtatsPayeurTask);
@@ -35,6 +48,17 @@ privileged aspect ExportEtatsPayeurTask_Roo_Jpa_ActiveRecord {
     
     public static List<ExportEtatsPayeurTask> ExportEtatsPayeurTask.findExportEtatsPayeurTaskEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM ExportEtatsPayeurTask o", ExportEtatsPayeurTask.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<ExportEtatsPayeurTask> ExportEtatsPayeurTask.findExportEtatsPayeurTaskEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM ExportEtatsPayeurTask o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, ExportEtatsPayeurTask.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

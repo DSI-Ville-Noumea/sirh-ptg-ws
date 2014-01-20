@@ -14,6 +14,8 @@ privileged aspect RefPrime_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager RefPrime.entityManager;
     
+    public static final List<String> RefPrime.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idRefPrime", "noRubr", "libelle", "description", "typeSaisie", "calculee", "statut", "mairiePrimeTableEnum", "aide");
+    
     public static final EntityManager RefPrime.entityManager() {
         EntityManager em = new RefPrime().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect RefPrime_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM RefPrime o", RefPrime.class).getResultList();
     }
     
+    public static List<RefPrime> RefPrime.findAllRefPrimes(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM RefPrime o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, RefPrime.class).getResultList();
+    }
+    
     public static RefPrime RefPrime.findRefPrime(Integer idRefPrime) {
         if (idRefPrime == null) return null;
         return entityManager().find(RefPrime.class, idRefPrime);
@@ -35,6 +48,17 @@ privileged aspect RefPrime_Roo_Jpa_ActiveRecord {
     
     public static List<RefPrime> RefPrime.findRefPrimeEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM RefPrime o", RefPrime.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<RefPrime> RefPrime.findRefPrimeEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM RefPrime o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, RefPrime.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

@@ -15,6 +15,8 @@ privileged aspect Spcong_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager Spcong.entityManager;
     
+    public static final List<String> Spcong.fieldNames4OrderClauseFilter = java.util.Arrays.asList("id", "cdvali", "datfin", "codem1", "codem2");
+    
     public static final EntityManager Spcong.entityManager() {
         EntityManager em = new Spcong().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -29,6 +31,17 @@ privileged aspect Spcong_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Spcong o", Spcong.class).getResultList();
     }
     
+    public static List<Spcong> Spcong.findAllSpcongs(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spcong o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spcong.class).getResultList();
+    }
+    
     public static Spcong Spcong.findSpcong(SpcongId id) {
         if (id == null) return null;
         return entityManager().find(Spcong.class, id);
@@ -36,6 +49,17 @@ privileged aspect Spcong_Roo_Jpa_ActiveRecord {
     
     public static List<Spcong> Spcong.findSpcongEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Spcong o", Spcong.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Spcong> Spcong.findSpcongEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spcong o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spcong.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

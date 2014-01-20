@@ -14,6 +14,8 @@ privileged aspect Spbarem_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager Spbarem.entityManager;
     
+    public static final List<String> Spbarem.fieldNames4OrderClauseFilter = java.util.Arrays.asList("iban", "ina");
+    
     public static final EntityManager Spbarem.entityManager() {
         EntityManager em = new Spbarem().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect Spbarem_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Spbarem o", Spbarem.class).getResultList();
     }
     
+    public static List<Spbarem> Spbarem.findAllSpbarems(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spbarem o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spbarem.class).getResultList();
+    }
+    
     public static Spbarem Spbarem.findSpbarem(String iban) {
         if (iban == null || iban.length() == 0) return null;
         return entityManager().find(Spbarem.class, iban);
@@ -35,6 +48,17 @@ privileged aspect Spbarem_Roo_Jpa_ActiveRecord {
     
     public static List<Spbarem> Spbarem.findSpbaremEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Spbarem o", Spbarem.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Spbarem> Spbarem.findSpbaremEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spbarem o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spbarem.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

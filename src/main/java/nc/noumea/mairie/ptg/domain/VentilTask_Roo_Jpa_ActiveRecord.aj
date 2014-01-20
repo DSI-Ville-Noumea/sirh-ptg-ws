@@ -14,6 +14,8 @@ privileged aspect VentilTask_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager VentilTask.entityManager;
     
+    public static final List<String> VentilTask.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idVentilTask", "idAgent", "idAgentCreation", "dateCreation", "typeChainePaie", "refTypePointage", "ventilDateFrom", "ventilDateTo", "dateVentilation", "taskStatus");
+    
     public static final EntityManager VentilTask.entityManager() {
         EntityManager em = new VentilTask().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect VentilTask_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM VentilTask o", VentilTask.class).getResultList();
     }
     
+    public static List<VentilTask> VentilTask.findAllVentilTasks(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM VentilTask o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, VentilTask.class).getResultList();
+    }
+    
     public static VentilTask VentilTask.findVentilTask(Integer idVentilTask) {
         if (idVentilTask == null) return null;
         return entityManager().find(VentilTask.class, idVentilTask);
@@ -35,6 +48,17 @@ privileged aspect VentilTask_Roo_Jpa_ActiveRecord {
     
     public static List<VentilTask> VentilTask.findVentilTaskEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM VentilTask o", VentilTask.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<VentilTask> VentilTask.findVentilTaskEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM VentilTask o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, VentilTask.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

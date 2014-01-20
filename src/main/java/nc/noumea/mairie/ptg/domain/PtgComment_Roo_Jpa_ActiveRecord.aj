@@ -14,6 +14,8 @@ privileged aspect PtgComment_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager PtgComment.entityManager;
     
+    public static final List<String> PtgComment.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idPtgComment", "text");
+    
     public static final EntityManager PtgComment.entityManager() {
         EntityManager em = new PtgComment().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect PtgComment_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM PtgComment o", PtgComment.class).getResultList();
     }
     
+    public static List<PtgComment> PtgComment.findAllPtgComments(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PtgComment o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, PtgComment.class).getResultList();
+    }
+    
     public static PtgComment PtgComment.findPtgComment(Integer idPtgComment) {
         if (idPtgComment == null) return null;
         return entityManager().find(PtgComment.class, idPtgComment);
@@ -35,6 +48,17 @@ privileged aspect PtgComment_Roo_Jpa_ActiveRecord {
     
     public static List<PtgComment> PtgComment.findPtgCommentEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM PtgComment o", PtgComment.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<PtgComment> PtgComment.findPtgCommentEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM PtgComment o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, PtgComment.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

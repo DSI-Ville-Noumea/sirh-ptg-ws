@@ -14,6 +14,8 @@ privileged aspect JourFerie_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager JourFerie.entityManager;
     
+    public static final List<String> JourFerie.fieldNames4OrderClauseFilter = java.util.Arrays.asList("dateJour", "description", "typeJour");
+    
     public static final EntityManager JourFerie.entityManager() {
         EntityManager em = new JourFerie().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect JourFerie_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM JourFerie o", JourFerie.class).getResultList();
     }
     
+    public static List<JourFerie> JourFerie.findAllJourFeries(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM JourFerie o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, JourFerie.class).getResultList();
+    }
+    
     public static JourFerie JourFerie.findJourFerie(Integer idJourFerie) {
         if (idJourFerie == null) return null;
         return entityManager().find(JourFerie.class, idJourFerie);
@@ -35,6 +48,17 @@ privileged aspect JourFerie_Roo_Jpa_ActiveRecord {
     
     public static List<JourFerie> JourFerie.findJourFerieEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM JourFerie o", JourFerie.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<JourFerie> JourFerie.findJourFerieEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM JourFerie o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, JourFerie.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

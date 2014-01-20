@@ -15,6 +15,8 @@ privileged aspect SpWFPaie_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager SpWFPaie.entityManager;
     
+    public static final List<String> SpWFPaie.fieldNames4OrderClauseFilter = java.util.Arrays.asList("codeChaine", "etat", "dateMaj", "periodePaie");
+    
     public static final EntityManager SpWFPaie.entityManager() {
         EntityManager em = new SpWFPaie().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -29,6 +31,17 @@ privileged aspect SpWFPaie_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM SpWFPaie o", SpWFPaie.class).getResultList();
     }
     
+    public static List<SpWFPaie> SpWFPaie.findAllSpWFPaies(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM SpWFPaie o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, SpWFPaie.class).getResultList();
+    }
+    
     public static SpWFPaie SpWFPaie.findSpWFPaie(TypeChainePaieEnum codeChaine) {
         if (codeChaine == null) return null;
         return entityManager().find(SpWFPaie.class, codeChaine);
@@ -36,6 +49,17 @@ privileged aspect SpWFPaie_Roo_Jpa_ActiveRecord {
     
     public static List<SpWFPaie> SpWFPaie.findSpWFPaieEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM SpWFPaie o", SpWFPaie.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<SpWFPaie> SpWFPaie.findSpWFPaieEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM SpWFPaie o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, SpWFPaie.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

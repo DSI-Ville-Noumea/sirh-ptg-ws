@@ -14,6 +14,8 @@ privileged aspect Spbase_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager Spbase.entityManager;
     
+    public static final List<String> Spbase.fieldNames4OrderClauseFilter = java.util.Arrays.asList("cdBase", "liBase", "nbashh", "cdcbas", "nbahsa", "nbahdi", "nbahlu", "nbahma", "nbahme", "nbahje", "nbahve", "nbasch");
+    
     public static final EntityManager Spbase.entityManager() {
         EntityManager em = new Spbase().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect Spbase_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Spbase o", Spbase.class).getResultList();
     }
     
+    public static List<Spbase> Spbase.findAllSpbases(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spbase o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spbase.class).getResultList();
+    }
+    
     public static Spbase Spbase.findSpbase(String cdBase) {
         if (cdBase == null || cdBase.length() == 0) return null;
         return entityManager().find(Spbase.class, cdBase);
@@ -35,6 +48,17 @@ privileged aspect Spbase_Roo_Jpa_ActiveRecord {
     
     public static List<Spbase> Spbase.findSpbaseEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Spbase o", Spbase.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Spbase> Spbase.findSpbaseEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spbase o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spbase.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

@@ -14,6 +14,8 @@ privileged aspect RefTypePointage_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager RefTypePointage.entityManager;
     
+    public static final List<String> RefTypePointage.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idRefTypePointage", "label");
+    
     public static final EntityManager RefTypePointage.entityManager() {
         EntityManager em = new RefTypePointage().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect RefTypePointage_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM RefTypePointage o", RefTypePointage.class).getResultList();
     }
     
+    public static List<RefTypePointage> RefTypePointage.findAllRefTypePointages(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM RefTypePointage o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, RefTypePointage.class).getResultList();
+    }
+    
     public static RefTypePointage RefTypePointage.findRefTypePointage(Integer idRefTypePointage) {
         if (idRefTypePointage == null) return null;
         return entityManager().find(RefTypePointage.class, idRefTypePointage);
@@ -35,6 +48,17 @@ privileged aspect RefTypePointage_Roo_Jpa_ActiveRecord {
     
     public static List<RefTypePointage> RefTypePointage.findRefTypePointageEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM RefTypePointage o", RefTypePointage.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<RefTypePointage> RefTypePointage.findRefTypePointageEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM RefTypePointage o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, RefTypePointage.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

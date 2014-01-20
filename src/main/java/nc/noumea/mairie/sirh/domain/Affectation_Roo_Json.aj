@@ -13,27 +13,33 @@ import nc.noumea.mairie.sirh.domain.Affectation;
 privileged aspect Affectation_Roo_Json {
     
     public String Affectation.toJson() {
-        return new JSONSerializer().exclude("*.class").serialize(this);
+        return new JSONSerializer()
+        .exclude("*.class").serialize(this);
     }
     
     public String Affectation.toJson(String[] fields) {
-        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(this);
     }
     
     public static Affectation Affectation.fromJsonToAffectation(String json) {
-        return new JSONDeserializer<Affectation>().use(null, Affectation.class).deserialize(json);
+        return new JSONDeserializer<Affectation>()
+        .use(null, Affectation.class).deserialize(json);
     }
     
     public static String Affectation.toJsonArray(Collection<Affectation> collection) {
-        return new JSONSerializer().exclude("*.class").serialize(collection);
+        return new JSONSerializer()
+        .exclude("*.class").serialize(collection);
     }
     
     public static String Affectation.toJsonArray(Collection<Affectation> collection, String[] fields) {
-        return new JSONSerializer().include(fields).exclude("*.class").serialize(collection);
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(collection);
     }
     
     public static Collection<Affectation> Affectation.fromJsonArrayToAffectations(String json) {
-        return new JSONDeserializer<List<Affectation>>().use(null, ArrayList.class).use("values", Affectation.class).deserialize(json);
+        return new JSONDeserializer<List<Affectation>>()
+        .use("values", Affectation.class).deserialize(json);
     }
     
 }

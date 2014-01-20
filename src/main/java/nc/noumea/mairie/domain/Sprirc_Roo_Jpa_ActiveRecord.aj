@@ -15,6 +15,8 @@ privileged aspect Sprirc_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager Sprirc.entityManager;
     
+    public static final List<String> Sprirc.fieldNames4OrderClauseFilter = java.util.Arrays.asList("id", "cdvali", "datfin", "codem2", "nbRcp", "datRep", "codema");
+    
     public static final EntityManager Sprirc.entityManager() {
         EntityManager em = new Sprirc().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -29,6 +31,17 @@ privileged aspect Sprirc_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Sprirc o", Sprirc.class).getResultList();
     }
     
+    public static List<Sprirc> Sprirc.findAllSprircs(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Sprirc o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Sprirc.class).getResultList();
+    }
+    
     public static Sprirc Sprirc.findSprirc(SprircId id) {
         if (id == null) return null;
         return entityManager().find(Sprirc.class, id);
@@ -36,6 +49,17 @@ privileged aspect Sprirc_Roo_Jpa_ActiveRecord {
     
     public static List<Sprirc> Sprirc.findSprircEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Sprirc o", Sprirc.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Sprirc> Sprirc.findSprircEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Sprirc o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Sprirc.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

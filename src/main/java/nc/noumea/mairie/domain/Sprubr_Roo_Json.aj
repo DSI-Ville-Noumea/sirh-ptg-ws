@@ -13,27 +13,33 @@ import nc.noumea.mairie.domain.Sprubr;
 privileged aspect Sprubr_Roo_Json {
     
     public String Sprubr.toJson() {
-        return new JSONSerializer().exclude("*.class").serialize(this);
+        return new JSONSerializer()
+        .exclude("*.class").serialize(this);
     }
     
     public String Sprubr.toJson(String[] fields) {
-        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(this);
     }
     
     public static Sprubr Sprubr.fromJsonToSprubr(String json) {
-        return new JSONDeserializer<Sprubr>().use(null, Sprubr.class).deserialize(json);
+        return new JSONDeserializer<Sprubr>()
+        .use(null, Sprubr.class).deserialize(json);
     }
     
     public static String Sprubr.toJsonArray(Collection<Sprubr> collection) {
-        return new JSONSerializer().exclude("*.class").serialize(collection);
+        return new JSONSerializer()
+        .exclude("*.class").serialize(collection);
     }
     
     public static String Sprubr.toJsonArray(Collection<Sprubr> collection, String[] fields) {
-        return new JSONSerializer().include(fields).exclude("*.class").serialize(collection);
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(collection);
     }
     
     public static Collection<Sprubr> Sprubr.fromJsonArrayToSprubrs(String json) {
-        return new JSONDeserializer<List<Sprubr>>().use(null, ArrayList.class).use("values", Sprubr.class).deserialize(json);
+        return new JSONDeserializer<List<Sprubr>>()
+        .use("values", Sprubr.class).deserialize(json);
     }
     
 }

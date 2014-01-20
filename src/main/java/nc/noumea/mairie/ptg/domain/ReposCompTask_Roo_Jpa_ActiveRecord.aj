@@ -14,6 +14,8 @@ privileged aspect ReposCompTask_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager ReposCompTask.entityManager;
     
+    public static final List<String> ReposCompTask.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idRcTask", "idAgent", "idAgentCreation", "dateCreation", "ventilDate", "dateCalcul", "taskStatus");
+    
     public static final EntityManager ReposCompTask.entityManager() {
         EntityManager em = new ReposCompTask().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect ReposCompTask_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM ReposCompTask o", ReposCompTask.class).getResultList();
     }
     
+    public static List<ReposCompTask> ReposCompTask.findAllReposCompTasks(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM ReposCompTask o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, ReposCompTask.class).getResultList();
+    }
+    
     public static ReposCompTask ReposCompTask.findReposCompTask(Integer idRcTask) {
         if (idRcTask == null) return null;
         return entityManager().find(ReposCompTask.class, idRcTask);
@@ -35,6 +48,17 @@ privileged aspect ReposCompTask_Roo_Jpa_ActiveRecord {
     
     public static List<ReposCompTask> ReposCompTask.findReposCompTaskEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM ReposCompTask o", ReposCompTask.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<ReposCompTask> ReposCompTask.findReposCompTaskEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM ReposCompTask o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, ReposCompTask.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

@@ -14,6 +14,8 @@ privileged aspect VentilDate_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager VentilDate.entityManager;
     
+    public static final List<String> VentilDate.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idVentilDate", "dateVentilation", "typeChainePaie", "paye", "ventilAbsences", "ventilHsups", "ventilPrimes", "pointages", "pointagesCalcules");
+    
     public static final EntityManager VentilDate.entityManager() {
         EntityManager em = new VentilDate().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect VentilDate_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM VentilDate o", VentilDate.class).getResultList();
     }
     
+    public static List<VentilDate> VentilDate.findAllVentilDates(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM VentilDate o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, VentilDate.class).getResultList();
+    }
+    
     public static VentilDate VentilDate.findVentilDate(Integer idVentilDate) {
         if (idVentilDate == null) return null;
         return entityManager().find(VentilDate.class, idVentilDate);
@@ -35,6 +48,17 @@ privileged aspect VentilDate_Roo_Jpa_ActiveRecord {
     
     public static List<VentilDate> VentilDate.findVentilDateEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM VentilDate o", VentilDate.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<VentilDate> VentilDate.findVentilDateEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM VentilDate o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, VentilDate.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

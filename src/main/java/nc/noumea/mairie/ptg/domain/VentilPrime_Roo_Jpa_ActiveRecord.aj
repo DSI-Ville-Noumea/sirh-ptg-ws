@@ -14,6 +14,8 @@ privileged aspect VentilPrime_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager VentilPrime.entityManager;
     
+    public static final List<String> VentilPrime.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idVentilPrime", "idAgent", "dateDebutMois", "refPrime", "etat", "quantite", "ventilDate");
+    
     public static final EntityManager VentilPrime.entityManager() {
         EntityManager em = new VentilPrime().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect VentilPrime_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM VentilPrime o", VentilPrime.class).getResultList();
     }
     
+    public static List<VentilPrime> VentilPrime.findAllVentilPrimes(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM VentilPrime o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, VentilPrime.class).getResultList();
+    }
+    
     public static VentilPrime VentilPrime.findVentilPrime(Integer idVentilPrime) {
         if (idVentilPrime == null) return null;
         return entityManager().find(VentilPrime.class, idVentilPrime);
@@ -35,6 +48,17 @@ privileged aspect VentilPrime_Roo_Jpa_ActiveRecord {
     
     public static List<VentilPrime> VentilPrime.findVentilPrimeEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM VentilPrime o", VentilPrime.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<VentilPrime> VentilPrime.findVentilPrimeEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM VentilPrime o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, VentilPrime.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

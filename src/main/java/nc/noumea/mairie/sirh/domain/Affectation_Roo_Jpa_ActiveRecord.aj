@@ -14,6 +14,8 @@ privileged aspect Affectation_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager Affectation.entityManager;
     
+    public static final List<String> Affectation.fieldNames4OrderClauseFilter = java.util.Arrays.asList("agent", "fichePoste", "dateDebutAff", "dateFinAff", "tempsTravail", "fichePosteSecondaire");
+    
     public static final EntityManager Affectation.entityManager() {
         EntityManager em = new Affectation().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect Affectation_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Affectation o", Affectation.class).getResultList();
     }
     
+    public static List<Affectation> Affectation.findAllAffectations(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Affectation o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Affectation.class).getResultList();
+    }
+    
     public static Affectation Affectation.findAffectation(Integer idAffectation) {
         if (idAffectation == null) return null;
         return entityManager().find(Affectation.class, idAffectation);
@@ -35,6 +48,17 @@ privileged aspect Affectation_Roo_Jpa_ActiveRecord {
     
     public static List<Affectation> Affectation.findAffectationEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Affectation o", Affectation.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Affectation> Affectation.findAffectationEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Affectation o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Affectation.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

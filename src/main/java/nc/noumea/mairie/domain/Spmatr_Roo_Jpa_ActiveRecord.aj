@@ -14,6 +14,8 @@ privileged aspect Spmatr_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager Spmatr.entityManager;
     
+    public static final List<String> Spmatr.fieldNames4OrderClauseFilter = java.util.Arrays.asList("nomatr", "perpre", "perrap", "cdvali", "typeChainePaie");
+    
     public static final EntityManager Spmatr.entityManager() {
         EntityManager em = new Spmatr().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect Spmatr_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Spmatr o", Spmatr.class).getResultList();
     }
     
+    public static List<Spmatr> Spmatr.findAllSpmatrs(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spmatr o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spmatr.class).getResultList();
+    }
+    
     public static Spmatr Spmatr.findSpmatr(Integer nomatr) {
         if (nomatr == null) return null;
         return entityManager().find(Spmatr.class, nomatr);
@@ -35,6 +48,17 @@ privileged aspect Spmatr_Roo_Jpa_ActiveRecord {
     
     public static List<Spmatr> Spmatr.findSpmatrEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Spmatr o", Spmatr.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Spmatr> Spmatr.findSpmatrEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spmatr o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spmatr.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

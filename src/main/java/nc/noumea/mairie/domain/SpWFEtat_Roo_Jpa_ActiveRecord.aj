@@ -15,6 +15,8 @@ privileged aspect SpWFEtat_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager SpWFEtat.entityManager;
     
+    public static final List<String> SpWFEtat.fieldNames4OrderClauseFilter = java.util.Arrays.asList("codeEtat", "libelleEtat");
+    
     public static final EntityManager SpWFEtat.entityManager() {
         EntityManager em = new SpWFEtat().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -29,6 +31,17 @@ privileged aspect SpWFEtat_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM SpWFEtat o", SpWFEtat.class).getResultList();
     }
     
+    public static List<SpWFEtat> SpWFEtat.findAllSpWFEtats(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM SpWFEtat o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, SpWFEtat.class).getResultList();
+    }
+    
     public static SpWFEtat SpWFEtat.findSpWFEtat(SpWfEtatEnum codeEtat) {
         if (codeEtat == null) return null;
         return entityManager().find(SpWFEtat.class, codeEtat);
@@ -36,6 +49,17 @@ privileged aspect SpWFEtat_Roo_Jpa_ActiveRecord {
     
     public static List<SpWFEtat> SpWFEtat.findSpWFEtatEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM SpWFEtat o", SpWFEtat.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<SpWFEtat> SpWFEtat.findSpWFEtatEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM SpWFEtat o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, SpWFEtat.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

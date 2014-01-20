@@ -15,6 +15,8 @@ privileged aspect Spadmn_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager Spadmn.entityManager;
     
+    public static final List<String> Spadmn.fieldNames4OrderClauseFilter = java.util.Arrays.asList("id", "datfin", "cdpadm");
+    
     public static final EntityManager Spadmn.entityManager() {
         EntityManager em = new Spadmn().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -29,6 +31,17 @@ privileged aspect Spadmn_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Spadmn o", Spadmn.class).getResultList();
     }
     
+    public static List<Spadmn> Spadmn.findAllSpadmns(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spadmn o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spadmn.class).getResultList();
+    }
+    
     public static Spadmn Spadmn.findSpadmn(SpadmnId id) {
         if (id == null) return null;
         return entityManager().find(Spadmn.class, id);
@@ -36,6 +49,17 @@ privileged aspect Spadmn_Roo_Jpa_ActiveRecord {
     
     public static List<Spadmn> Spadmn.findSpadmnEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Spadmn o", Spadmn.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Spadmn> Spadmn.findSpadmnEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spadmn o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spadmn.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

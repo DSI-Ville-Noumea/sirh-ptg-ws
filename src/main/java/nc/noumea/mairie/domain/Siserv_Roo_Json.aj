@@ -13,27 +13,33 @@ import nc.noumea.mairie.domain.Siserv;
 privileged aspect Siserv_Roo_Json {
     
     public String Siserv.toJson() {
-        return new JSONSerializer().exclude("*.class").serialize(this);
+        return new JSONSerializer()
+        .exclude("*.class").serialize(this);
     }
     
     public String Siserv.toJson(String[] fields) {
-        return new JSONSerializer().include(fields).exclude("*.class").serialize(this);
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(this);
     }
     
     public static Siserv Siserv.fromJsonToSiserv(String json) {
-        return new JSONDeserializer<Siserv>().use(null, Siserv.class).deserialize(json);
+        return new JSONDeserializer<Siserv>()
+        .use(null, Siserv.class).deserialize(json);
     }
     
     public static String Siserv.toJsonArray(Collection<Siserv> collection) {
-        return new JSONSerializer().exclude("*.class").serialize(collection);
+        return new JSONSerializer()
+        .exclude("*.class").serialize(collection);
     }
     
     public static String Siserv.toJsonArray(Collection<Siserv> collection, String[] fields) {
-        return new JSONSerializer().include(fields).exclude("*.class").serialize(collection);
+        return new JSONSerializer()
+        .include(fields).exclude("*.class").serialize(collection);
     }
     
     public static Collection<Siserv> Siserv.fromJsonArrayToSiservs(String json) {
-        return new JSONDeserializer<List<Siserv>>().use(null, ArrayList.class).use("values", Siserv.class).deserialize(json);
+        return new JSONDeserializer<List<Siserv>>()
+        .use("values", Siserv.class).deserialize(json);
     }
     
 }

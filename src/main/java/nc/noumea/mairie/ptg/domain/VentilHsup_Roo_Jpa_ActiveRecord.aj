@@ -14,6 +14,8 @@ privileged aspect VentilHsup_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager VentilHsup.entityManager;
     
+    public static final List<String> VentilHsup.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idVentilHSup", "idAgent", "dateLundi", "mAbsences", "mHorsContrat", "mSup", "mSup25", "mSup25Recup", "mSup50", "mSup50Recup", "msdjf", "msdjfRecup", "msdjf25", "msdjf25Recup", "msdjf50", "msdjf50Recup", "mMai", "mMaiRecup", "msNuit", "msNuitRecup", "mNormales", "mNormalesRecup", "mComplementaires", "mComplementairesRecup", "mSimple", "mSimpleRecup", "mComposees", "mComposeesRecup", "mRecuperees", "etat", "ventilDate");
+    
     public static final EntityManager VentilHsup.entityManager() {
         EntityManager em = new VentilHsup().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect VentilHsup_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM VentilHsup o", VentilHsup.class).getResultList();
     }
     
+    public static List<VentilHsup> VentilHsup.findAllVentilHsups(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM VentilHsup o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, VentilHsup.class).getResultList();
+    }
+    
     public static VentilHsup VentilHsup.findVentilHsup(Integer idVentilHSup) {
         if (idVentilHSup == null) return null;
         return entityManager().find(VentilHsup.class, idVentilHSup);
@@ -35,6 +48,17 @@ privileged aspect VentilHsup_Roo_Jpa_ActiveRecord {
     
     public static List<VentilHsup> VentilHsup.findVentilHsupEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM VentilHsup o", VentilHsup.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<VentilHsup> VentilHsup.findVentilHsupEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM VentilHsup o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, VentilHsup.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

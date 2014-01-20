@@ -15,6 +15,8 @@ privileged aspect Spphre_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager Spphre.entityManager;
     
+    public static final List<String> Spphre.fieldNames4OrderClauseFilter = java.util.Arrays.asList("id", "spphreRecup", "nbh25", "nbh50", "nbhdim", "nbhmai", "nbhnuit", "nbhssimple", "nbhscomposees", "nbhcomplementaires");
+    
     public static final EntityManager Spphre.entityManager() {
         EntityManager em = new Spphre().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -29,6 +31,17 @@ privileged aspect Spphre_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Spphre o", Spphre.class).getResultList();
     }
     
+    public static List<Spphre> Spphre.findAllSpphres(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spphre o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spphre.class).getResultList();
+    }
+    
     public static Spphre Spphre.findSpphre(SpphreId id) {
         if (id == null) return null;
         return entityManager().find(Spphre.class, id);
@@ -36,6 +49,17 @@ privileged aspect Spphre_Roo_Jpa_ActiveRecord {
     
     public static List<Spphre> Spphre.findSpphreEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Spphre o", Spphre.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Spphre> Spphre.findSpphreEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spphre o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spphre.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

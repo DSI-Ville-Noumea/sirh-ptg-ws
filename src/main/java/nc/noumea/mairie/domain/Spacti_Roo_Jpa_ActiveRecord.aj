@@ -14,6 +14,8 @@ privileged aspect Spacti_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager Spacti.entityManager;
     
+    public static final List<String> Spacti.fieldNames4OrderClauseFilter = java.util.Arrays.asList("CODE_ACTIVITE_ABS_NON_CONCERTEE", "CODE_ACTIVITE_ABS_CONCERTEE", "codeActvite", "libelleActivite");
+    
     public static final EntityManager Spacti.entityManager() {
         EntityManager em = new Spacti().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect Spacti_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM Spacti o", Spacti.class).getResultList();
     }
     
+    public static List<Spacti> Spacti.findAllSpactis(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spacti o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spacti.class).getResultList();
+    }
+    
     public static Spacti Spacti.findSpacti(String codeActvite) {
         if (codeActvite == null || codeActvite.length() == 0) return null;
         return entityManager().find(Spacti.class, codeActvite);
@@ -35,6 +48,17 @@ privileged aspect Spacti_Roo_Jpa_ActiveRecord {
     
     public static List<Spacti> Spacti.findSpactiEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM Spacti o", Spacti.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<Spacti> Spacti.findSpactiEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM Spacti o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, Spacti.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

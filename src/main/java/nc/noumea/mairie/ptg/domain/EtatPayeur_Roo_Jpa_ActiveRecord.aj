@@ -14,6 +14,8 @@ privileged aspect EtatPayeur_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager EtatPayeur.entityManager;
     
+    public static final List<String> EtatPayeur.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idEtatPayeur", "statut", "type", "dateEtatPayeur", "idAgent", "dateEdition", "label", "fichier");
+    
     public static final EntityManager EtatPayeur.entityManager() {
         EntityManager em = new EtatPayeur().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect EtatPayeur_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM EtatPayeur o", EtatPayeur.class).getResultList();
     }
     
+    public static List<EtatPayeur> EtatPayeur.findAllEtatPayeurs(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM EtatPayeur o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, EtatPayeur.class).getResultList();
+    }
+    
     public static EtatPayeur EtatPayeur.findEtatPayeur(Integer idEtatPayeur) {
         if (idEtatPayeur == null) return null;
         return entityManager().find(EtatPayeur.class, idEtatPayeur);
@@ -35,6 +48,17 @@ privileged aspect EtatPayeur_Roo_Jpa_ActiveRecord {
     
     public static List<EtatPayeur> EtatPayeur.findEtatPayeurEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM EtatPayeur o", EtatPayeur.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<EtatPayeur> EtatPayeur.findEtatPayeurEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM EtatPayeur o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, EtatPayeur.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

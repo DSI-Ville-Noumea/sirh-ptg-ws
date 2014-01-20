@@ -14,6 +14,8 @@ privileged aspect ReposCompHisto_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager ReposCompHisto.entityManager;
     
+    public static final List<String> ReposCompHisto.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idRcHisto", "idAgent", "dateLundi", "mSup", "mBaseHoraire");
+    
     public static final EntityManager ReposCompHisto.entityManager() {
         EntityManager em = new ReposCompHisto().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect ReposCompHisto_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM ReposCompHisto o", ReposCompHisto.class).getResultList();
     }
     
+    public static List<ReposCompHisto> ReposCompHisto.findAllReposCompHistoes(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM ReposCompHisto o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, ReposCompHisto.class).getResultList();
+    }
+    
     public static ReposCompHisto ReposCompHisto.findReposCompHisto(Integer idRcHisto) {
         if (idRcHisto == null) return null;
         return entityManager().find(ReposCompHisto.class, idRcHisto);
@@ -35,6 +48,17 @@ privileged aspect ReposCompHisto_Roo_Jpa_ActiveRecord {
     
     public static List<ReposCompHisto> ReposCompHisto.findReposCompHistoEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM ReposCompHisto o", ReposCompHisto.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<ReposCompHisto> ReposCompHisto.findReposCompHistoEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM ReposCompHisto o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, ReposCompHisto.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

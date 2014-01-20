@@ -14,6 +14,8 @@ privileged aspect TypeJourFerie_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "sirhPersistenceUnit")
     transient EntityManager TypeJourFerie.entityManager;
     
+    public static final List<String> TypeJourFerie.fieldNames4OrderClauseFilter = java.util.Arrays.asList("libelle");
+    
     public static final EntityManager TypeJourFerie.entityManager() {
         EntityManager em = new TypeJourFerie().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect TypeJourFerie_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM TypeJourFerie o", TypeJourFerie.class).getResultList();
     }
     
+    public static List<TypeJourFerie> TypeJourFerie.findAllTypeJourFeries(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM TypeJourFerie o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, TypeJourFerie.class).getResultList();
+    }
+    
     public static TypeJourFerie TypeJourFerie.findTypeJourFerie(Integer idTypeJourFerie) {
         if (idTypeJourFerie == null) return null;
         return entityManager().find(TypeJourFerie.class, idTypeJourFerie);
@@ -35,6 +48,17 @@ privileged aspect TypeJourFerie_Roo_Jpa_ActiveRecord {
     
     public static List<TypeJourFerie> TypeJourFerie.findTypeJourFerieEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM TypeJourFerie o", TypeJourFerie.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<TypeJourFerie> TypeJourFerie.findTypeJourFerieEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM TypeJourFerie o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, TypeJourFerie.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional

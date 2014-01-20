@@ -14,6 +14,8 @@ privileged aspect VentilAbsence_Roo_Jpa_ActiveRecord {
     @PersistenceContext(unitName = "ptgPersistenceUnit")
     transient EntityManager VentilAbsence.entityManager;
     
+    public static final List<String> VentilAbsence.fieldNames4OrderClauseFilter = java.util.Arrays.asList("idVentilAbsence", "idAgent", "dateLundi", "minutesConcertee", "minutesNonConcertee", "etat", "ventilDate");
+    
     public static final EntityManager VentilAbsence.entityManager() {
         EntityManager em = new VentilAbsence().entityManager;
         if (em == null) throw new IllegalStateException("Entity manager has not been injected (is the Spring Aspects JAR configured as an AJC/AJDT aspects library?)");
@@ -28,6 +30,17 @@ privileged aspect VentilAbsence_Roo_Jpa_ActiveRecord {
         return entityManager().createQuery("SELECT o FROM VentilAbsence o", VentilAbsence.class).getResultList();
     }
     
+    public static List<VentilAbsence> VentilAbsence.findAllVentilAbsences(String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM VentilAbsence o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, VentilAbsence.class).getResultList();
+    }
+    
     public static VentilAbsence VentilAbsence.findVentilAbsence(Integer idVentilAbsence) {
         if (idVentilAbsence == null) return null;
         return entityManager().find(VentilAbsence.class, idVentilAbsence);
@@ -35,6 +48,17 @@ privileged aspect VentilAbsence_Roo_Jpa_ActiveRecord {
     
     public static List<VentilAbsence> VentilAbsence.findVentilAbsenceEntries(int firstResult, int maxResults) {
         return entityManager().createQuery("SELECT o FROM VentilAbsence o", VentilAbsence.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
+    }
+    
+    public static List<VentilAbsence> VentilAbsence.findVentilAbsenceEntries(int firstResult, int maxResults, String sortFieldName, String sortOrder) {
+        String jpaQuery = "SELECT o FROM VentilAbsence o";
+        if (fieldNames4OrderClauseFilter.contains(sortFieldName)) {
+            jpaQuery = jpaQuery + " ORDER BY " + sortFieldName;
+            if ("ASC".equalsIgnoreCase(sortOrder) || "DESC".equalsIgnoreCase(sortOrder)) {
+                jpaQuery = jpaQuery + " " + sortOrder;
+            }
+        }
+        return entityManager().createQuery(jpaQuery, VentilAbsence.class).setFirstResult(firstResult).setMaxResults(maxResults).getResultList();
     }
     
     @Transactional
