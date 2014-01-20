@@ -32,7 +32,7 @@ import org.springframework.roo.addon.tostring.RooToString;
 		@NamedQuery(name = "getAgentAccessRights", query = "from Droit d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
 		@NamedQuery(name = "getAgentsApprobateurs", query = "from Droit d where d.approbateur = true"),
 		@NamedQuery(name = "getAgentsOperateurs", query = "from Droit d where d.operateur = true"),
-		@NamedQuery(name = "getAgentsApprobateur", query = "select d.idAgent from Droit d inner join d.agents da where da.idAgent = :idAgent and d.approbateur = 1") })
+		@NamedQuery(name = "getAgentsApprobateur", query = "select d.idAgent from Droit d inner join d.agents da where da.idAgent = :idAgent and d.approbateur = true") })
 public class Droit {
 
 	@Id 
