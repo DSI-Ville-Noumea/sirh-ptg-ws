@@ -27,7 +27,7 @@ public class AbsencesEtatPayeurDtoTest {
 		// Then
 		assertEquals(9008767, (int) result.getIdAgent());
 		assertEquals(va.getDateLundi(), result.getDate());
-		assertEquals("Sem 40", result.getPeriode());
+		assertEquals("septembre 2013", result.getPeriode());
 
 		assertEquals("Absence de service fait", result.getType());
 		assertEquals("1h30", result.getQuantite());
@@ -50,7 +50,7 @@ public class AbsencesEtatPayeurDtoTest {
 		// Then
 		assertEquals(9008767, (int) result.getIdAgent());
 		assertEquals(va.getDateLundi(), result.getDate());
-		assertEquals("Sem 40", result.getPeriode());
+		assertEquals("septembre 2013", result.getPeriode());
 
 		assertEquals("Absence non concertée", result.getType());
 		assertEquals("1h30", result.getQuantite());
@@ -76,7 +76,7 @@ public class AbsencesEtatPayeurDtoTest {
 		// Then
 		assertEquals(9008767, (int) result.getIdAgent());
 		assertEquals(vaNew.getDateLundi(), result.getDate());
-		assertEquals("Sem 40", result.getPeriode());
+		assertEquals("septembre 2013", result.getPeriode());
 
 		assertEquals("Absence de service fait", result.getType());
 		assertEquals("1h", result.getQuantite());
@@ -102,7 +102,7 @@ public class AbsencesEtatPayeurDtoTest {
 		// Then
 		assertEquals(9008767, (int) result.getIdAgent());
 		assertEquals(vaNew.getDateLundi(), result.getDate());
-		assertEquals("Sem 40", result.getPeriode());
+		assertEquals("septembre 2013", result.getPeriode());
 
 		assertEquals("Absence non concertée", result.getType());
 		assertEquals("- 30m", result.getQuantite());

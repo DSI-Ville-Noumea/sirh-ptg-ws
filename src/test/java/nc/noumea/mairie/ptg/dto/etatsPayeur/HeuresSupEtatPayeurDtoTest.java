@@ -52,7 +52,7 @@ public class HeuresSupEtatPayeurDtoTest {
 		// Then
 		assertEquals(9008767, (int) result.getIdAgent());
 		assertEquals(vh.getDateLundi(), result.getDate());
-		assertEquals("Sem 40", result.getPeriode());
+		assertEquals("septembre 2013", result.getPeriode());
 		
 		assertEquals("10m", result.getComplementaires());
 		assertEquals("20m", result.getComposees());
@@ -118,7 +118,7 @@ public class HeuresSupEtatPayeurDtoTest {
 		// Then
 		assertEquals(9008767, (int) result.getIdAgent());
 		assertEquals(vhNew.getDateLundi(), result.getDate());
-		assertEquals("Sem 40", result.getPeriode());
+		assertEquals("septembre 2013", result.getPeriode());
 		
 		assertEquals("", result.getComplementaires());
 		assertEquals("", result.getComposees());

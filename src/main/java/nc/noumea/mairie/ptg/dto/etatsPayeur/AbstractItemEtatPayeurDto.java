@@ -10,7 +10,6 @@ import nc.noumea.mairie.ptg.domain.VentilPrime;
 
 public abstract class AbstractItemEtatPayeurDto {
 
-	private static SimpleDateFormat periodWeekSdf = new SimpleDateFormat("'Sem' w");
 	private static SimpleDateFormat periodMonthSdf = new SimpleDateFormat("MMMM YYYY", Locale.FRENCH);
 
 	private String approbateurNom;
@@ -32,13 +31,13 @@ public abstract class AbstractItemEtatPayeurDto {
 	public AbstractItemEtatPayeurDto(VentilHsup vh) {
 		idAgent = vh.getIdAgent();
 		date = vh.getDateLundi();
-		periode = periodWeekSdf.format(date);
+		periode = periodMonthSdf.format(date);
 	}
 
 	public AbstractItemEtatPayeurDto(VentilAbsence va) {
 		idAgent = va.getIdAgent();
 		date = va.getDateLundi();
-		periode = periodWeekSdf.format(date);
+		periode = periodMonthSdf.format(date);
 	}
 
 	public AbstractItemEtatPayeurDto(VentilPrime vp) {
