@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -8,17 +9,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_REF_PRIME")
+@Entity
+@Table(name = "PTG_REF_PRIME")
 @NamedQueries({
 		@NamedQuery(name = "getRefPrimesNotCalculated", query = "from RefPrime rf where rf.noRubr in (:noRubrList) and rf.statut = :statut and rf.calculee = false order by rf.noRubr"),
 		@NamedQuery(name = "getRefPrimesCalculated", query = "from RefPrime rf where rf.noRubr in (:noRubrList) and rf.statut = :statut and rf.calculee = true order by rf.noRubr"),
@@ -60,5 +58,90 @@ public class RefPrime {
 
 	@Column(name = "AIDE", columnDefinition = "nvarchar2")
 	private String aide;
+	
+	@Version
+    @Column(name = "version")
+	private Integer version;
 
+	public Integer getIdRefPrime() {
+		return idRefPrime;
+	}
+
+	public void setIdRefPrime(Integer idRefPrime) {
+		this.idRefPrime = idRefPrime;
+	}
+
+	public Integer getNoRubr() {
+		return noRubr;
+	}
+
+	public void setNoRubr(Integer noRubr) {
+		this.noRubr = noRubr;
+	}
+
+	public String getLibelle() {
+		return libelle;
+	}
+
+	public void setLibelle(String libelle) {
+		this.libelle = libelle;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public TypeSaisieEnum getTypeSaisie() {
+		return typeSaisie;
+	}
+
+	public void setTypeSaisie(TypeSaisieEnum typeSaisie) {
+		this.typeSaisie = typeSaisie;
+	}
+
+	public boolean isCalculee() {
+		return calculee;
+	}
+
+	public void setCalculee(boolean calculee) {
+		this.calculee = calculee;
+	}
+
+	public AgentStatutEnum getStatut() {
+		return statut;
+	}
+
+	public void setStatut(AgentStatutEnum statut) {
+		this.statut = statut;
+	}
+
+	public MairiePrimeTableEnum getMairiePrimeTableEnum() {
+		return mairiePrimeTableEnum;
+	}
+
+	public void setMairiePrimeTableEnum(MairiePrimeTableEnum mairiePrimeTableEnum) {
+		this.mairiePrimeTableEnum = mairiePrimeTableEnum;
+	}
+
+	public String getAide() {
+		return aide;
+	}
+
+	public void setAide(String aide) {
+		this.aide = aide;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+
+	
 }

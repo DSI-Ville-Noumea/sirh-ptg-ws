@@ -53,97 +53,97 @@ public class VentilationRepositoryTest {
 	public void getDistinctDatesOfPointages() {
 
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		rtp.persist();
+			rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		ptgEntityManager.persist(rtp);
 		
 		//ok
 		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9008761);
-		ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
-		ptg.setAbsenceConcertee(true);
-		ptg.setType(rtp);
-		ptg.persist();
+			ptg.setIdAgent(9008761);
+			ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+			ptg.setAbsenceConcertee(true);
+			ptg.setType(rtp);
+		ptgEntityManager.persist(ptg);
 		
 		EtatPointage ep = new EtatPointage();
-		ep.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep.setEtat(EtatPointageEnum.APPROUVE);
-		ep.setIdAgent(9008761);
-		ep.setPointage(ptg);
-		ep.persist();
+			ep.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep.setEtat(EtatPointageEnum.APPROUVE);
+			ep.setIdAgent(9008761);
+			ep.setPointage(ptg);
+		ptgEntityManager.persist(ep);
 		
 		RefTypePointage rtp2 = new RefTypePointage();
-		rtp2.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
-		rtp2.persist();
+			rtp2.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp2);
 		
 		// ok
 		Pointage ptg2 = new Pointage();
-		ptg2.setIdAgent(9008761);
-		ptg2.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg2.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg2.setAbsenceConcertee(false);
-		ptg2.setType(rtp2);
-		ptg2.persist();
+			ptg2.setIdAgent(9008761);
+			ptg2.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg2.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg2.setAbsenceConcertee(false);
+			ptg2.setType(rtp2);
+		ptgEntityManager.persist(ptg2);
 		
 		EtatPointage ep2 = new EtatPointage();
-		ep2.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep2.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep2.setEtat(EtatPointageEnum.VENTILE);
-		ep2.setIdAgent(9008761);
-		ep2.setPointage(ptg2);
-		ep2.persist();
+			ep2.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep2.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep2.setEtat(EtatPointageEnum.VENTILE);
+			ep2.setIdAgent(9008761);
+			ep2.setPointage(ptg2);
+		ptgEntityManager.persist(ep2);
 		
 		// etat different
 		Pointage ptg3 = new Pointage();
-		ptg3.setIdAgent(9008761);
-		ptg3.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg3.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg3.setAbsenceConcertee(false);
-		ptg3.setType(rtp);
-		ptg3.persist();
+			ptg3.setIdAgent(9008761);
+			ptg3.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg3.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg3.setAbsenceConcertee(false);
+			ptg3.setType(rtp);
+		ptgEntityManager.persist(ptg3);
 		
 		EtatPointage ep3 = new EtatPointage();
-		ep3.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep3.setEtat(EtatPointageEnum.EN_ATTENTE);
-		ep3.setIdAgent(9008761);
-		ep3.setPointage(ptg3);
-		ep3.persist();
+			ep3.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep3.setEtat(EtatPointageEnum.EN_ATTENTE);
+			ep3.setIdAgent(9008761);
+			ep3.setPointage(ptg3);
+		ptgEntityManager.persist(ep3);
 		
 		// id agent différent
 		Pointage ptg4 = new Pointage();
-		ptg4.setIdAgent(9008762);
-		ptg4.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg4.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg4.setAbsenceConcertee(false);
-		ptg4.setType(rtp);
-		ptg4.persist();
+			ptg4.setIdAgent(9008762);
+			ptg4.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg4.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg4.setAbsenceConcertee(false);
+			ptg4.setType(rtp);
+		ptgEntityManager.persist(ptg4);
 		
 		EtatPointage ep4 = new EtatPointage();
-		ep4.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep4.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep4.setEtat(EtatPointageEnum.APPROUVE);
-		ep4.setIdAgent(9008762);
-		ep4.setPointage(ptg4);
-		ep4.persist();
+			ep4.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep4.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep4.setEtat(EtatPointageEnum.APPROUVE);
+			ep4.setIdAgent(9008762);
+			ep4.setPointage(ptg4);
+		ptgEntityManager.persist(ep4);
 		
 		// hors date
 		Pointage ptg5 = new Pointage();
-		ptg5.setIdAgent(9008761);
-		ptg5.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg5.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg5.setAbsenceConcertee(false);
-		ptg5.setType(rtp);
-		ptg5.persist();
+			ptg5.setIdAgent(9008761);
+			ptg5.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg5.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg5.setAbsenceConcertee(false);
+			ptg5.setType(rtp);
+		ptgEntityManager.persist(ptg5);
 		
 		EtatPointage ep5 = new EtatPointage();
-		ep5.setDateEtat(new LocalDate(2013, 7, 29).toDate());
-		ep5.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep5.setEtat(EtatPointageEnum.APPROUVE);
-		ep5.setIdAgent(9008761);
-		ep5.setPointage(ptg5);
-		ep5.persist();
+			ep5.setDateEtat(new LocalDate(2013, 7, 29).toDate());
+			ep5.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep5.setEtat(EtatPointageEnum.APPROUVE);
+			ep5.setIdAgent(9008761);
+			ep5.setPointage(ptg5);
+		ptgEntityManager.persist(ep5);
 		
 		List<Date> result = repository.getDistinctDatesOfPointages(new Integer(9008761), new LocalDate(2013, 7, 24).toDate(), new LocalDate(2013, 7, 26).toDate());
 		
@@ -160,76 +160,76 @@ public class VentilationRepositoryTest {
 	public void getListIdAgentsForVentilationByDateAndEtat() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		rtp.persist();
+			rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		ptgEntityManager.persist(rtp);
 		
 		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9008761);
-		ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
-		ptg.setAbsenceConcertee(true);
-		ptg.setType(rtp);
-		ptg.persist();
+			ptg.setIdAgent(9008761);
+			ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+			ptg.setAbsenceConcertee(true);
+			ptg.setType(rtp);
+		ptgEntityManager.persist(ptg);
 		
 		EtatPointage ep = new EtatPointage();
-		ep.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep.setEtat(EtatPointageEnum.APPROUVE);
-		ep.setIdAgent(9008761);
-		ep.setPointage(ptg);
-		ep.persist();
+			ep.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep.setEtat(EtatPointageEnum.APPROUVE);
+			ep.setIdAgent(9008761);
+			ep.setPointage(ptg);
+		ptgEntityManager.persist(ep);
 		
 		RefTypePointage rtp2 = new RefTypePointage();
-		rtp2.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
-		rtp2.persist();
+			rtp2.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp2);
 		
 		Pointage ptg2 = new Pointage();
-		ptg2.setIdAgent(9008762);
-		ptg2.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg2.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg2.setAbsenceConcertee(false);
-		ptg2.setType(rtp2);
-		ptg2.persist();
+			ptg2.setIdAgent(9008762);
+			ptg2.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg2.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg2.setAbsenceConcertee(false);
+			ptg2.setType(rtp2);
+		ptgEntityManager.persist(ptg2);
 		
 		EtatPointage ep2 = new EtatPointage();
-		ep2.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep2.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep2.setEtat(EtatPointageEnum.VENTILE);
-		ep2.setIdAgent(9008762);
-		ep2.setPointage(ptg2);
-		ep2.persist();
+			ep2.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep2.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep2.setEtat(EtatPointageEnum.VENTILE);
+			ep2.setIdAgent(9008762);
+			ep2.setPointage(ptg2);
+		ptgEntityManager.persist(ep2);
 		
 		Pointage ptg3 = new Pointage();
-		ptg3.setIdAgent(9008763);
-		ptg3.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg3.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg3.setAbsenceConcertee(false);
-		ptg3.setType(rtp);
-		ptg3.persist();
+			ptg3.setIdAgent(9008763);
+			ptg3.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg3.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg3.setAbsenceConcertee(false);
+			ptg3.setType(rtp);
+		ptgEntityManager.persist(ptg3);
 		
 		EtatPointage ep3 = new EtatPointage();
-		ep3.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep3.setEtat(EtatPointageEnum.EN_ATTENTE);
-		ep3.setIdAgent(9008763);
-		ep3.setPointage(ptg3);
-		ep3.persist();
+			ep3.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep3.setEtat(EtatPointageEnum.EN_ATTENTE);
+			ep3.setIdAgent(9008763);
+			ep3.setPointage(ptg3);
+		ptgEntityManager.persist(ep3);
 		
 		Pointage ptg4 = new Pointage();
-		ptg4.setIdAgent(9008764);
-		ptg4.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg4.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg4.setAbsenceConcertee(false);
-		ptg4.setType(rtp);
-		ptg4.persist();
+			ptg4.setIdAgent(9008764);
+			ptg4.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg4.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg4.setAbsenceConcertee(false);
+			ptg4.setType(rtp);
+		ptgEntityManager.persist(ptg4);
 		
 		EtatPointage ep4 = new EtatPointage();
-		ep4.setDateEtat(new LocalDate(2013, 7, 29).toDate());
-		ep4.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep4.setEtat(EtatPointageEnum.APPROUVE);
-		ep4.setIdAgent(9008764);
-		ep4.setPointage(ptg4);
-		ep4.persist();
+			ep4.setDateEtat(new LocalDate(2013, 7, 29).toDate());
+			ep4.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep4.setEtat(EtatPointageEnum.APPROUVE);
+			ep4.setIdAgent(9008764);
+			ep4.setPointage(ptg4);
+		ptgEntityManager.persist(ep4);
 		
 		List<Integer> result = repository.getListIdAgentsForVentilationByDateAndEtat(new LocalDate(2013, 7, 24).toDate(), new LocalDate(2013, 7, 26).toDate());
 		
@@ -277,60 +277,60 @@ public class VentilationRepositoryTest {
 	public void getListPointagesAbsenceAndHSupForVentilation() {
 
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		rtp.persist();
+			rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		ptgEntityManager.persist(rtp);
 		
 		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9008765);
-		ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
-		ptg.setAbsenceConcertee(true);
-		ptg.setType(rtp);
-		ptg.persist();
+			ptg.setIdAgent(9008765);
+			ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+			ptg.setAbsenceConcertee(true);
+			ptg.setType(rtp);
+		ptgEntityManager.persist(ptg);
 		
 		RefTypePointage rtp2 = new RefTypePointage();
-		rtp2.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
-		rtp2.persist();
+			rtp2.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp2);
 		
 		Pointage ptg2 = new Pointage();
-		ptg2.setIdAgent(9008765);
-		ptg2.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg2.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg2.setAbsenceConcertee(false);
-		ptg2.setType(rtp2);
-		ptg2.persist();
+			ptg2.setIdAgent(9008765);
+			ptg2.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg2.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg2.setAbsenceConcertee(false);
+			ptg2.setType(rtp2);
+		ptgEntityManager.persist(ptg2);
 		
 		EtatPointage ep = new EtatPointage();
-		ep.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep.setEtat(EtatPointageEnum.APPROUVE);
-		ep.setIdAgent(9008765);
-		ep.setPointage(ptg);
-		ep.persist();
+			ep.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep.setEtat(EtatPointageEnum.APPROUVE);
+			ep.setIdAgent(9008765);
+			ep.setPointage(ptg);
+		ptgEntityManager.persist(ep);
 		
 		EtatPointage ep2 = new EtatPointage();
-		ep2.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep2.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep2.setEtat(EtatPointageEnum.APPROUVE);
-		ep2.setIdAgent(9008765);
-		ep2.setPointage(ptg2);
-		ep2.persist();
+			ep2.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep2.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep2.setEtat(EtatPointageEnum.APPROUVE);
+			ep2.setIdAgent(9008765);
+			ep2.setPointage(ptg2);
+		ptgEntityManager.persist(ep2);
 		
 		Pointage ptg3 = new Pointage();
-		ptg3.setIdAgent(9008765);
-		ptg3.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg3.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg3.setAbsenceConcertee(false);
-		ptg3.setType(rtp);
-		ptg3.persist();
+			ptg3.setIdAgent(9008765);
+			ptg3.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg3.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg3.setAbsenceConcertee(false);
+			ptg3.setType(rtp);
+		ptgEntityManager.persist(ptg3);
 		
 		EtatPointage ep3 = new EtatPointage();
-		ep3.setDateEtat(new LocalDate(2013, 7, 29).toDate());
-		ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep3.setEtat(EtatPointageEnum.APPROUVE);
-		ep3.setIdAgent(9008765);
-		ep3.setPointage(ptg3);
-		ep3.persist();
+			ep3.setDateEtat(new LocalDate(2013, 7, 29).toDate());
+			ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep3.setEtat(EtatPointageEnum.APPROUVE);
+			ep3.setIdAgent(9008765);
+			ep3.setPointage(ptg3);
+		ptgEntityManager.persist(ep3);
 		
 		List<Pointage> result = repository.getListPointagesAbsenceAndHSupForVentilation(9008765, new LocalDate(2013, 7, 24).toDate(), new LocalDate(2013, 7, 26).toDate(), new LocalDate(2013, 7, 20).toDate());
 
@@ -353,52 +353,52 @@ public class VentilationRepositoryTest {
 	public void getListPointagesPrimeForVentilation() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		rtp.persist();
+			rtp.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		ptgEntityManager.persist(rtp);
 		
 		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9008765);
-		ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
-		ptg.setAbsenceConcertee(true);
-		ptg.setType(rtp);
-		ptg.persist();
+			ptg.setIdAgent(9008765);
+			ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+			ptg.setAbsenceConcertee(true);
+			ptg.setType(rtp);
+		ptgEntityManager.persist(ptg);
 		
 		RefTypePointage rtp2 = new RefTypePointage();
-		rtp2.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
-		rtp2.persist();
+			rtp2.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp2);
 		
 		Pointage ptg2 = new Pointage();
-		ptg2.setIdAgent(9008765);
-		ptg2.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg2.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg2.setAbsenceConcertee(false);
-		ptg2.setType(rtp2);
-		ptg2.persist();
+			ptg2.setIdAgent(9008765);
+			ptg2.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg2.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg2.setAbsenceConcertee(false);
+			ptg2.setType(rtp2);
+		ptgEntityManager.persist(ptg2);
 		
 		EtatPointage ep = new EtatPointage();
-		ep.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep.setEtat(EtatPointageEnum.APPROUVE);
-		ep.setIdAgent(9008765);
-		ep.setPointage(ptg);
-		ep.persist();
+			ep.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep.setEtat(EtatPointageEnum.APPROUVE);
+			ep.setIdAgent(9008765);
+			ep.setPointage(ptg);
+		ptgEntityManager.persist(ep);
 		
 		EtatPointage ep2 = new EtatPointage();
-		ep2.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep2.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep2.setEtat(EtatPointageEnum.APPROUVE);
-		ep2.setIdAgent(9008765);
-		ep2.setPointage(ptg2);
-		ep2.persist();
+			ep2.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep2.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep2.setEtat(EtatPointageEnum.APPROUVE);
+			ep2.setIdAgent(9008765);
+			ep2.setPointage(ptg2);
+		ptgEntityManager.persist(ep2);
 		
 		EtatPointage ep3 = new EtatPointage();
-		ep3.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep3.setEtat(EtatPointageEnum.APPROUVE);
-		ep3.setIdAgent(9008765);
-		ep3.setPointage(ptg);
-		ep3.persist();
+			ep3.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep3.setEtat(EtatPointageEnum.APPROUVE);
+			ep3.setIdAgent(9008765);
+			ep3.setPointage(ptg);
+		ptgEntityManager.persist(ep3);
 		
 		List<Pointage> result = repository.getListPointagesPrimeForVentilation(9008765, new LocalDate(2013, 7, 24).toDate(), new LocalDate(2013, 7, 26).toDate(), new LocalDate(2013, 7, 20).toDate());
 
@@ -416,42 +416,42 @@ public class VentilationRepositoryTest {
 	public void getListPointagesForPrimesCalculees() {
 		
 		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9008765);
-		ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
-		ptg.setAbsenceConcertee(true);
-		ptg.persist();
+			ptg.setIdAgent(9008765);
+			ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+			ptg.setAbsenceConcertee(true);
+		ptgEntityManager.persist(ptg);
 		
 		Pointage ptg2 = new Pointage();
-		ptg2.setIdAgent(9008765);
-		ptg2.setDateLundi(new LocalDate(2013, 7, 20).toDate());
-		ptg2.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
-		ptg2.setAbsenceConcertee(false);
-		ptg2.persist();
+			ptg2.setIdAgent(9008765);
+			ptg2.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+			ptg2.setDateDebut(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+			ptg2.setAbsenceConcertee(false);
+		ptgEntityManager.persist(ptg2);
 		
 		EtatPointage ep = new EtatPointage();
-		ep.setDateEtat(new LocalDate(2013, 7, 22).toDate());
-		ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep.setEtat(EtatPointageEnum.APPROUVE);
-		ep.setIdAgent(9008765);
-		ep.setPointage(ptg);
-		ep.persist();
+			ep.setDateEtat(new LocalDate(2013, 7, 22).toDate());
+			ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep.setEtat(EtatPointageEnum.APPROUVE);
+			ep.setIdAgent(9008765);
+			ep.setPointage(ptg);
+		ptgEntityManager.persist(ep);
 		
 		EtatPointage ep2 = new EtatPointage();
-		ep2.setDateEtat(new LocalDate(2013, 7, 23).toDate());
-		ep2.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep2.setEtat(EtatPointageEnum.APPROUVE);
-		ep2.setIdAgent(9008765);
-		ep2.setPointage(ptg2);
-		ep2.persist();
+			ep2.setDateEtat(new LocalDate(2013, 7, 23).toDate());
+			ep2.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep2.setEtat(EtatPointageEnum.APPROUVE);
+			ep2.setIdAgent(9008765);
+			ep2.setPointage(ptg2);
+		ptgEntityManager.persist(ep2);
 		
 		EtatPointage ep3 = new EtatPointage();
-		ep3.setDateEtat(new LocalDate(2013, 7, 25).toDate());
-		ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
-		ep3.setEtat(EtatPointageEnum.APPROUVE);
-		ep3.setIdAgent(9008765);
-		ep3.setPointage(ptg);
-		ep3.persist();
+			ep3.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+			ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+			ep3.setEtat(EtatPointageEnum.APPROUVE);
+			ep3.setIdAgent(9008765);
+			ep3.setPointage(ptg);
+		ptgEntityManager.persist(ep3);
 		
 		List<Pointage> result = repository.getListPointagesForPrimesCalculees(9008765, new LocalDate(2013, 7, 24).toDate(), new LocalDate(2013, 7, 26).toDate(), new LocalDate(2013, 7, 20).toDate());
 		
@@ -468,73 +468,73 @@ public class VentilationRepositoryTest {
 	public void getListPointagesCalculesPrimeForVentilation() {
 
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
-		rtp.persist();
+			rtp.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp);
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(false);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(false);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		PointageCalcule pc = new PointageCalcule();
-		pc.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		pc.setDateFin(new LocalDate(2013, 7, 23).toDate());
-		pc.setDateLundi(new LocalDate(2013, 7, 24).toDate());
-		pc.setEtat(EtatPointageEnum.APPROUVE);
-		pc.setIdAgent(9005138);
-		pc.setLastVentilDate(vd);
-		pc.setQuantite(1);
-		pc.setRefPrime(rp);
-		pc.setType(rtp);
-		pc.persist();
+			pc.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			pc.setDateFin(new LocalDate(2013, 7, 23).toDate());
+			pc.setDateLundi(new LocalDate(2013, 7, 24).toDate());
+			pc.setEtat(EtatPointageEnum.APPROUVE);
+			pc.setIdAgent(9005138);
+			pc.setLastVentilDate(vd);
+			pc.setQuantite(1);
+			pc.setRefPrime(rp);
+			pc.setType(rtp);
+		ptgEntityManager.persist(pc);
 		
 		PointageCalcule pc2 = new PointageCalcule();
-		pc2.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		pc2.setDateFin(new LocalDate(2013, 7, 23).toDate());
-		pc2.setDateLundi(new LocalDate(2013, 7, 24).toDate());
-		pc2.setEtat(EtatPointageEnum.REJETE_DEFINITIVEMENT);
-		pc2.setIdAgent(9005139);
-		pc2.setLastVentilDate(vd);
-		pc2.setQuantite(2);
-		pc2.setRefPrime(rp);
-		pc2.setType(rtp);
-		pc2.persist();
+			pc2.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			pc2.setDateFin(new LocalDate(2013, 7, 23).toDate());
+			pc2.setDateLundi(new LocalDate(2013, 7, 24).toDate());
+			pc2.setEtat(EtatPointageEnum.REJETE_DEFINITIVEMENT);
+			pc2.setIdAgent(9005139);
+			pc2.setLastVentilDate(vd);
+			pc2.setQuantite(2);
+			pc2.setRefPrime(rp);
+			pc2.setType(rtp);
+		ptgEntityManager.persist(pc2);
 		
 		PointageCalcule pc3 = new PointageCalcule();
-		pc3.setDateDebut(new LocalDate(2013, 6, 22).toDate());
-		pc3.setDateFin(new LocalDate(2013, 7, 23).toDate());
-		pc3.setDateLundi(new LocalDate(2013, 7, 24).toDate());
-		pc3.setEtat(EtatPointageEnum.EN_ATTENTE);
-		pc3.setIdAgent(9005138);
-		pc3.setLastVentilDate(vd);
-		pc3.setQuantite(3);
-		pc3.setRefPrime(rp);
-		pc3.setType(rtp);
-		pc3.persist();
+			pc3.setDateDebut(new LocalDate(2013, 6, 22).toDate());
+			pc3.setDateFin(new LocalDate(2013, 7, 23).toDate());
+			pc3.setDateLundi(new LocalDate(2013, 7, 24).toDate());
+			pc3.setEtat(EtatPointageEnum.EN_ATTENTE);
+			pc3.setIdAgent(9005138);
+			pc3.setLastVentilDate(vd);
+			pc3.setQuantite(3);
+			pc3.setRefPrime(rp);
+			pc3.setType(rtp);
+		ptgEntityManager.persist(pc3);
 		
 		PointageCalcule pc4 = new PointageCalcule();
-		pc4.setDateDebut(new LocalDate(2013, 8, 22).toDate());
-		pc4.setDateFin(new LocalDate(2013, 7, 23).toDate());
-		pc4.setDateLundi(new LocalDate(2013, 7, 24).toDate());
-		pc4.setEtat(EtatPointageEnum.REFUSE_DEFINITIVEMENT);
-		pc4.setIdAgent(9005138);
-		pc4.setLastVentilDate(vd);
-		pc4.setQuantite(4);
-		pc4.setRefPrime(rp);
-		pc4.setType(rtp);
-		pc4.persist();
+			pc4.setDateDebut(new LocalDate(2013, 8, 22).toDate());
+			pc4.setDateFin(new LocalDate(2013, 7, 23).toDate());
+			pc4.setDateLundi(new LocalDate(2013, 7, 24).toDate());
+			pc4.setEtat(EtatPointageEnum.REFUSE_DEFINITIVEMENT);
+			pc4.setIdAgent(9005138);
+			pc4.setLastVentilDate(vd);
+			pc4.setQuantite(4);
+			pc4.setRefPrime(rp);
+			pc4.setType(rtp);
+		ptgEntityManager.persist(pc4);
 		
 		List<PointageCalcule> result = repository.getListPointagesCalculesPrimeForVentilation(new Integer(9005138), new LocalDate(2013, 7, 23).toDate());
 		
@@ -551,10 +551,10 @@ public class VentilationRepositoryTest {
 	public void getLatestVentilDaten() {
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		VentilDate result = repository.getLatestVentilDate(TypeChainePaieEnum.SCV, true);
 		VentilDate noResult = repository.getLatestVentilDate(TypeChainePaieEnum.SCV, false);
@@ -575,45 +575,45 @@ public class VentilationRepositoryTest {
 	public void removeVentilationsForDateAgentAndType() {
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		VentilPrime vp = new VentilPrime();
-		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp.setEtat(EtatPointageEnum.APPROUVE);
-		vp.setIdAgent(9005138);
-		vp.setQuantite(1);
-		vp.setVentilDate(vd);
-		vp.persist();
+			vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+			vp.setEtat(EtatPointageEnum.APPROUVE);
+			vp.setIdAgent(9005138);
+			vp.setQuantite(1);
+			vp.setVentilDate(vd);
+		ptgEntityManager.persist(vp);
 		
 		VentilHsup vh = new VentilHsup();
-		vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh.setEtat(EtatPointageEnum.APPROUVE);
-		vh.setIdAgent(9005139);
-		vh.setMAbsences(0);
-		vh.setMComplementaires(1);
-		vh.setMComplementairesRecup(0);
-		vh.setMComposees(1);
-		vh.setMComposeesRecup(0);
-		vh.setMHorsContrat(1);
-		vh.setVentilDate(vd);
-		vh.persist();
+			vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			vh.setEtat(EtatPointageEnum.APPROUVE);
+			vh.setIdAgent(9005139);
+			vh.setMAbsences(0);
+			vh.setMComplementaires(1);
+			vh.setMComplementairesRecup(0);
+			vh.setMComposees(1);
+			vh.setMComposeesRecup(0);
+			vh.setMHorsContrat(1);
+			vh.setVentilDate(vd);
+		ptgEntityManager.persist(vh);
 		
 		VentilAbsence va = new VentilAbsence();
-		va.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		va.setEtat(EtatPointageEnum.APPROUVE);
-		va.setIdAgent(9005140);
-		va.setMinutesConcertee(10);
-		va.setMinutesNonConcertee(10);
-		va.setVentilDate(vd);
-		va.persist();
+			va.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			va.setEtat(EtatPointageEnum.APPROUVE);
+			va.setIdAgent(9005140);
+			va.setMinutesConcertee(10);
+			va.setMinutesNonConcertee(10);
+			va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
 		
 		List<Integer> listAgents = new ArrayList<Integer>();
-		listAgents.add(9005138);
-		listAgents.add(9005139);
-		listAgents.add(9005140);
+			listAgents.add(9005138);
+			listAgents.add(9005139);
+			listAgents.add(9005140);
 		
 		List<VentilAbsence> resultAbs = repository.getListOfVentilAbsenceForDateAgent(vd.getIdVentilDate(), listAgents);
 		assertEquals(1, resultAbs.size());
@@ -646,28 +646,28 @@ public class VentilationRepositoryTest {
 	public void getListOfVentilAbsenceForDateAgent() {
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		VentilAbsence va = new VentilAbsence();
-		va.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		va.setEtat(EtatPointageEnum.APPROUVE);
-		va.setIdAgent(9005139);
-		va.setMinutesConcertee(10);
-		va.setMinutesNonConcertee(10);
-		va.setVentilDate(vd);
-		va.persist();
+			va.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			va.setEtat(EtatPointageEnum.APPROUVE);
+			va.setIdAgent(9005139);
+			va.setMinutesConcertee(10);
+			va.setMinutesNonConcertee(10);
+			va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
 		
 		VentilAbsence va2 = new VentilAbsence();
-		va2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		va2.setEtat(EtatPointageEnum.EN_ATTENTE);
-		va2.setIdAgent(9005140);
-		va2.setMinutesConcertee(10);
-		va2.setMinutesNonConcertee(10);
-		va2.setVentilDate(vd);
-		va2.persist();
+			va2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			va2.setEtat(EtatPointageEnum.EN_ATTENTE);
+			va2.setIdAgent(9005140);
+			va2.setMinutesConcertee(10);
+			va2.setMinutesNonConcertee(10);
+			va2.setVentilDate(vd);
+		ptgEntityManager.persist(va2);
 		
 		List<Integer> listAgents = new ArrayList<Integer>();
 		listAgents.add(9005139);
@@ -691,26 +691,26 @@ public class VentilationRepositoryTest {
 	public void getListOfVentilPrimeForDateAgent() {
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		VentilPrime vp = new VentilPrime();
-		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp.setEtat(EtatPointageEnum.APPROUVE);
-		vp.setIdAgent(9005138);
-		vp.setQuantite(3);
-		vp.setVentilDate(vd);
-		vp.persist();
+			vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+			vp.setEtat(EtatPointageEnum.APPROUVE);
+			vp.setIdAgent(9005138);
+			vp.setQuantite(3);
+			vp.setVentilDate(vd);
+		ptgEntityManager.persist(vp);
 		
 		VentilPrime vp2 = new VentilPrime();
-		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp2.setEtat(EtatPointageEnum.SAISI);
-		vp2.setIdAgent(9005139);
-		vp2.setQuantite(1);
-		vp2.setVentilDate(vd);
-		vp2.persist();
+			vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+			vp2.setEtat(EtatPointageEnum.SAISI);
+			vp2.setIdAgent(9005139);
+			vp2.setQuantite(1);
+			vp2.setVentilDate(vd);
+		ptgEntityManager.persist(vp2);
 		
 		List<Integer> listAgents = new ArrayList<Integer>();
 		listAgents.add(9005138);
@@ -736,36 +736,36 @@ public class VentilationRepositoryTest {
 	public void getListOfVentilHSForDateAgent() {
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		VentilHsup vh = new VentilHsup();
-		vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh.setEtat(EtatPointageEnum.VALIDE);
-		vh.setIdAgent(9005138);
-		vh.setMAbsences(3);
-		vh.setMComplementaires(1);
-		vh.setMComplementairesRecup(0);
-		vh.setMComposees(5);
-		vh.setMComposeesRecup(1);
-		vh.setMHorsContrat(1);
-		vh.setVentilDate(vd);
-		vh.persist();
+			vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			vh.setEtat(EtatPointageEnum.VALIDE);
+			vh.setIdAgent(9005138);
+			vh.setMAbsences(3);
+			vh.setMComplementaires(1);
+			vh.setMComplementairesRecup(0);
+			vh.setMComposees(5);
+			vh.setMComposeesRecup(1);
+			vh.setMHorsContrat(1);
+			vh.setVentilDate(vd);
+		ptgEntityManager.persist(vh);
 		
 		VentilHsup vh2 = new VentilHsup();
-		vh2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh2.setEtat(EtatPointageEnum.APPROUVE);
-		vh2.setIdAgent(9005139);
-		vh2.setMAbsences(0);
-		vh2.setMComplementaires(1);
-		vh2.setMComplementairesRecup(0);
-		vh2.setMComposees(1);
-		vh2.setMComposeesRecup(0);
-		vh2.setMHorsContrat(11);
-		vh2.setVentilDate(vd);
-		vh2.persist();
+			vh2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			vh2.setEtat(EtatPointageEnum.APPROUVE);
+			vh2.setIdAgent(9005139);
+			vh2.setMAbsences(0);
+			vh2.setMComplementaires(1);
+			vh2.setMComplementairesRecup(0);
+			vh2.setMComposees(1);
+			vh2.setMComposeesRecup(0);
+			vh2.setMHorsContrat(11);
+			vh2.setVentilDate(vd);
+		ptgEntityManager.persist(vh2);
 		
 		List<Integer> listAgents = new ArrayList<Integer>();
 		listAgents.add(9005138);
@@ -796,55 +796,55 @@ public class VentilationRepositoryTest {
 	public void getListVentilHSupForAgentAndVentilDateOrderByDateAsc() {
 
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		VentilDate vd2 = new VentilDate();
-		vd2.setDateVentilation(new LocalDate(2013, 7, 24).toDate());
-		vd2.setPaye(true);
-		vd2.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd2.persist();
+			vd2.setDateVentilation(new LocalDate(2013, 7, 24).toDate());
+			vd2.setPaye(true);
+			vd2.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd2);
 		
 		VentilHsup vh = new VentilHsup();
-		vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh.setEtat(EtatPointageEnum.VALIDE);
-		vh.setIdAgent(9005138);
-		vh.setMAbsences(3);
-		vh.setMComplementaires(1);
-		vh.setMComplementairesRecup(0);
-		vh.setMComposees(5);
-		vh.setMComposeesRecup(1);
-		vh.setMHorsContrat(1);
-		vh.setVentilDate(vd);
-		vh.persist();
+			vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			vh.setEtat(EtatPointageEnum.VALIDE);
+			vh.setIdAgent(9005138);
+			vh.setMAbsences(3);
+			vh.setMComplementaires(1);
+			vh.setMComplementairesRecup(0);
+			vh.setMComposees(5);
+			vh.setMComposeesRecup(1);
+			vh.setMHorsContrat(1);
+			vh.setVentilDate(vd);
+		ptgEntityManager.persist(vh);
 		
 		VentilHsup vh2 = new VentilHsup();
-		vh2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh2.setEtat(EtatPointageEnum.APPROUVE);
-		vh2.setIdAgent(9005138);
-		vh2.setMAbsences(0);
-		vh2.setMComplementaires(1);
-		vh2.setMComplementairesRecup(0);
-		vh2.setMComposees(1);
-		vh2.setMComposeesRecup(0);
-		vh2.setMHorsContrat(11);
-		vh2.setVentilDate(vd);
-		vh2.persist();
+			vh2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			vh2.setEtat(EtatPointageEnum.APPROUVE);
+			vh2.setIdAgent(9005138);
+			vh2.setMAbsences(0);
+			vh2.setMComplementaires(1);
+			vh2.setMComplementairesRecup(0);
+			vh2.setMComposees(1);
+			vh2.setMComposeesRecup(0);
+			vh2.setMHorsContrat(11);
+			vh2.setVentilDate(vd);
+		ptgEntityManager.persist(vh2);
 		
 		VentilHsup vh3 = new VentilHsup();
-		vh3.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh3.setEtat(EtatPointageEnum.SAISI);
-		vh3.setIdAgent(9005138);
-		vh3.setMAbsences(10);
-		vh3.setMComplementaires(1);
-		vh3.setMComplementairesRecup(0);
-		vh3.setMComposees(1);
-		vh3.setMComposeesRecup(0);
-		vh3.setMHorsContrat(11);
-		vh3.setVentilDate(vd2);
-		vh3.persist();
+			vh3.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			vh3.setEtat(EtatPointageEnum.SAISI);
+			vh3.setIdAgent(9005138);
+			vh3.setMAbsences(10);
+			vh3.setMComplementaires(1);
+			vh3.setMComplementairesRecup(0);
+			vh3.setMComposees(1);
+			vh3.setMComposeesRecup(0);
+			vh3.setMHorsContrat(11);
+			vh3.setVentilDate(vd2);
+		ptgEntityManager.persist(vh3);
 		
 		List<VentilHsup> result = repository.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(new Integer(9005138), vd.getIdVentilDate());
 
@@ -864,54 +864,54 @@ public class VentilationRepositoryTest {
 	public void getListVentilPrimesMoisForAgentAndVentilDateOrderByDateAsc() {
 
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(false);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(false);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		VentilDate vd2 = new VentilDate();
-		vd2.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd2.setPaye(true);
-		vd2.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd2.persist();
+			vd2.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd2.setPaye(true);
+			vd2.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd2);
 		
 		VentilPrime vp = new VentilPrime();
-		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp.setEtat(EtatPointageEnum.APPROUVE);
-		vp.setIdAgent(9005138);
-		vp.setQuantite(3);
-		vp.setVentilDate(vd);
-		vp.setRefPrime(rp);
-		vp.persist();
+			vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+			vp.setEtat(EtatPointageEnum.APPROUVE);
+			vp.setIdAgent(9005138);
+			vp.setQuantite(3);
+			vp.setVentilDate(vd);
+			vp.setRefPrime(rp);
+		ptgEntityManager.persist(vp);
 		
 		VentilPrime vp2 = new VentilPrime();
-		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp2.setEtat(EtatPointageEnum.SAISI);
-		vp2.setIdAgent(9005138);
-		vp2.setQuantite(1);
-		vp2.setVentilDate(vd);
-		vp2.setRefPrime(rp);
-		vp2.persist();
+			vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+			vp2.setEtat(EtatPointageEnum.SAISI);
+			vp2.setIdAgent(9005138);
+			vp2.setQuantite(1);
+			vp2.setVentilDate(vd);
+			vp2.setRefPrime(rp);
+		ptgEntityManager.persist(vp2);
 		
 		VentilPrime vp3 = new VentilPrime();
-		vp3.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp3.setEtat(EtatPointageEnum.REFUSE_DEFINITIVEMENT);
-		vp3.setIdAgent(9005138);
-		vp3.setQuantite(10);
-		vp3.setVentilDate(vd2);
-		vp3.setRefPrime(rp);
-		vp3.persist();
+			vp3.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+			vp3.setEtat(EtatPointageEnum.REFUSE_DEFINITIVEMENT);
+			vp3.setIdAgent(9005138);
+			vp3.setQuantite(10);
+			vp3.setVentilDate(vd2);
+			vp3.setRefPrime(rp);
+		ptgEntityManager.persist(vp3);
 		
 		List<VentilPrime> result = repository.getListVentilPrimesMoisForAgentAndVentilDateOrderByDateAsc(new Integer(9005138), vd.getIdVentilDate());
 		
@@ -931,37 +931,37 @@ public class VentilationRepositoryTest {
 	public void canStartVentilation() {
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
-		rtp.persist();
+			rtp.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp);
 		
 		VentilDate vdFrom = new VentilDate();
-		vdFrom.setDateVentilation(new LocalDate(2013, 7, 20).toDate());
-		vdFrom.setPaye(true);
-		vdFrom.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vdFrom.persist();
+			vdFrom.setDateVentilation(new LocalDate(2013, 7, 20).toDate());
+			vdFrom.setPaye(true);
+			vdFrom.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vdFrom);
 		
 		VentilDate vdTo = new VentilDate();
-		vdTo.setDateVentilation(new LocalDate(2013, 7, 20).toDate());
-		vdTo.setPaye(true);
-		vdTo.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vdTo.persist();
+			vdTo.setDateVentilation(new LocalDate(2013, 7, 20).toDate());
+			vdTo.setPaye(true);
+			vdTo.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vdTo);
 		
 		VentilTask vt = new VentilTask();
-		vt.setDateCreation(new LocalDate(2013, 7, 23).toDate());
-		vt.setDateVentilation(null);
-		vt.setIdAgent(9005138);
-		vt.setIdAgentCreation(9005138); 
-		vt.setTaskStatus(null);
-		vt.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vt.setVentilDateFrom(vdFrom);
-		vt.setVentilDateTo(vdTo);
-		vt.persist();
+			vt.setDateCreation(new LocalDate(2013, 7, 23).toDate());
+			vt.setDateVentilation(null);
+			vt.setIdAgent(9005138);
+			vt.setIdAgentCreation(9005138); 
+			vt.setTaskStatus(null);
+			vt.setTypeChainePaie(TypeChainePaieEnum.SCV);
+			vt.setVentilDateFrom(vdFrom);
+			vt.setVentilDateTo(vdTo);
+		ptgEntityManager.persist(vt);
 		
 		boolean resultTrue = repository.canStartVentilation(TypeChainePaieEnum.SHC);
 		boolean resultFalse = repository.canStartVentilation(TypeChainePaieEnum.SCV);
@@ -978,28 +978,28 @@ public class VentilationRepositoryTest {
 	public void getPriorVentilAbsenceForAgentAndDate() {
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		VentilAbsence va = new VentilAbsence();
-		va.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		va.setEtat(EtatPointageEnum.APPROUVE);
-		va.setIdAgent(9005139);
-		va.setMinutesConcertee(10);
-		va.setMinutesNonConcertee(10);
-		va.setVentilDate(vd);
-		va.persist();
+			va.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			va.setEtat(EtatPointageEnum.APPROUVE);
+			va.setIdAgent(9005139);
+			va.setMinutesConcertee(10);
+			va.setMinutesNonConcertee(10);
+			va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
 		
 		VentilAbsence va2 = new VentilAbsence();
-		va2.setDateLundi(new LocalDate(2013, 7, 24).toDate());
-		va2.setEtat(EtatPointageEnum.EN_ATTENTE);
-		va2.setIdAgent(9005140);
-		va2.setMinutesConcertee(10);
-		va2.setMinutesNonConcertee(10);
-		va2.setVentilDate(vd);
-		va2.persist();
+			va2.setDateLundi(new LocalDate(2013, 7, 24).toDate());
+			va2.setEtat(EtatPointageEnum.EN_ATTENTE);
+			va2.setIdAgent(9005140);
+			va2.setMinutesConcertee(10);
+			va2.setMinutesNonConcertee(10);
+			va2.setVentilDate(vd);
+		ptgEntityManager.persist(va2);
 		
 		VentilAbsence result = repository.getPriorVentilAbsenceForAgentAndDate(new Integer(9005139), new LocalDate(2013, 7, 23).toDate(), va2);
 
@@ -1020,36 +1020,36 @@ public class VentilationRepositoryTest {
 	public void getPriorVentilHSupAgentAndDate() {
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		VentilHsup vh = new VentilHsup();
-		vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh.setEtat(EtatPointageEnum.VALIDE);
-		vh.setIdAgent(9005138);
-		vh.setMAbsences(3);
-		vh.setMComplementaires(1);
-		vh.setMComplementairesRecup(0);
-		vh.setMComposees(5);
-		vh.setMComposeesRecup(1);
-		vh.setMHorsContrat(1);
-		vh.setVentilDate(vd);
-		vh.persist();
+			vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+			vh.setEtat(EtatPointageEnum.VALIDE);
+			vh.setIdAgent(9005138);
+			vh.setMAbsences(3);
+			vh.setMComplementaires(1);
+			vh.setMComplementairesRecup(0);
+			vh.setMComposees(5);
+			vh.setMComposeesRecup(1);
+			vh.setMHorsContrat(1);
+			vh.setVentilDate(vd);
+		ptgEntityManager.persist(vh);
 		
 		VentilHsup vh2 = new VentilHsup();
-		vh2.setDateLundi(new LocalDate(2013, 7, 24).toDate());
-		vh2.setEtat(EtatPointageEnum.APPROUVE);
-		vh2.setIdAgent(9005139);
-		vh2.setMAbsences(0);
-		vh2.setMComplementaires(1);
-		vh2.setMComplementairesRecup(0);
-		vh2.setMComposees(1);
-		vh2.setMComposeesRecup(0);
-		vh2.setMHorsContrat(11);
-		vh2.setVentilDate(vd);
-		vh2.persist();
+			vh2.setDateLundi(new LocalDate(2013, 7, 24).toDate());
+			vh2.setEtat(EtatPointageEnum.APPROUVE);
+			vh2.setIdAgent(9005139);
+			vh2.setMAbsences(0);
+			vh2.setMComplementaires(1);
+			vh2.setMComplementairesRecup(0);
+			vh2.setMComposees(1);
+			vh2.setMComposeesRecup(0);
+			vh2.setMHorsContrat(11);
+			vh2.setVentilDate(vd);
+		ptgEntityManager.persist(vh2);
 		
 		VentilHsup result = repository.getPriorVentilHSupAgentAndDate(new Integer(9005138), new LocalDate(2013, 7, 23).toDate(), vh2);
 
@@ -1070,26 +1070,26 @@ public class VentilationRepositoryTest {
 	public void getPriorVentilPrimeForAgentAndDate() {
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 
 		VentilPrime vp = new VentilPrime();
-		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp.setEtat(EtatPointageEnum.APPROUVE);
-		vp.setIdAgent(9005138);
-		vp.setQuantite(3);
-		vp.setVentilDate(vd);
-		vp.persist();
+			vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+			vp.setEtat(EtatPointageEnum.APPROUVE);
+			vp.setIdAgent(9005138);
+			vp.setQuantite(3);
+			vp.setVentilDate(vd);
+		ptgEntityManager.persist(vp);
 		
 		VentilPrime vp2 = new VentilPrime();
-		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp2.setEtat(EtatPointageEnum.EN_ATTENTE);
-		vp2.setIdAgent(9005138);
-		vp2.setQuantite(3);
-		vp2.setVentilDate(vd);
-		vp2.persist();
+			vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+			vp2.setEtat(EtatPointageEnum.EN_ATTENTE);
+			vp2.setIdAgent(9005138);
+			vp2.setQuantite(3);
+			vp2.setVentilDate(vd);
+		ptgEntityManager.persist(vp2);
 		
 		VentilPrime result = repository.getPriorVentilPrimeForAgentAndDate(new Integer(9005138), new LocalDate(2013, 7, 23).toDate(), vp2);
 		

@@ -1,18 +1,13 @@
 package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.json.RooJson;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJson
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SISERV", versionField = "")
+@Entity
+@Table(name = "SISERV")
 public class Siserv {
 
 	@Id
@@ -34,4 +29,46 @@ public class Siserv {
 	@NotNull
 	@Column(name = "DEPEND", columnDefinition = "char")
 	private String parentSigle;
+
+	public String getServi() {
+		return servi;
+	}
+
+	public void setServi(String servi) {
+		this.servi = servi;
+	}
+
+	public String getLiServ() {
+		return liServ;
+	}
+
+	public void setLiServ(String liServ) {
+		this.liServ = liServ;
+	}
+
+	public String getCodeActif() {
+		return codeActif;
+	}
+
+	public void setCodeActif(String codeActif) {
+		this.codeActif = codeActif;
+	}
+
+	public String getSigle() {
+		return sigle;
+	}
+
+	public void setSigle(String sigle) {
+		this.sigle = sigle;
+	}
+
+	public String getParentSigle() {
+		return parentSigle;
+	}
+
+	public void setParentSigle(String parentSigle) {
+		this.parentSigle = parentSigle;
+	}
+	
+	
 }

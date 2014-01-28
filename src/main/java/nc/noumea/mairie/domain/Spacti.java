@@ -1,13 +1,12 @@
 package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-
-@RooJavaBean
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPACTI", versionField = "")
+@Entity
+@Table(name = "SPACTI")
 public class Spacti {
 
 	public static String CODE_ACTIVITE_ABS_NON_CONCERTEE = "A01";
@@ -19,4 +18,22 @@ public class Spacti {
 	
 	@Column(name = "LIACTI", columnDefinition = "char")
 	private String libelleActivite;
+
+	public String getCodeActvite() {
+		return codeActvite;
+	}
+
+	public void setCodeActvite(String codeActvite) {
+		this.codeActvite = codeActvite;
+	}
+
+	public String getLibelleActivite() {
+		return libelleActivite;
+	}
+
+	public void setLibelleActivite(String libelleActivite) {
+		this.libelleActivite = libelleActivite;
+	}
+	
+	
 }

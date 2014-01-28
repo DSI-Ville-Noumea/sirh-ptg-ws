@@ -64,7 +64,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 			// If quantity is 0, remove this record from the list of Sppprm
 			if (prm.getNbPrime() == 0) {
 				modifiedOrAddedSppprm.remove(prm);
-				prm.remove();
+				exportPaieRepository.removeEntity(prm);
 			}
 
 		}
@@ -106,7 +106,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 			// If quantity is 0, remove this record from the list of Sppprm
 			if (prm.getNbPrime() == 0) {
 				modifiedOrAddedSppprm.remove(prm);
-				prm.remove();
+				exportPaieRepository.removeEntity(prm);
 			}
 
 		}
@@ -176,7 +176,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 			if (pri.getMontantPrime() != 0)
 				pris.add(pri);
 			else
-				pri.remove();
+				exportPaieRepository.removeEntity(pri);
 		}
 		
 		return pris;

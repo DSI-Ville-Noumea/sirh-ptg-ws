@@ -119,7 +119,7 @@ public class PointageService implements IPointageService {
 		for (String id : csvIdAgents.split(",")) {
 			Integer convertedId = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(Integer
 					.valueOf(id));
-			Agent ag = Agent.findAgent(convertedId);
+			Agent ag = sirhRepository.getAgent(convertedId);
 			if (ag != null) {
 				listAgent.add(ag);
 			}
@@ -248,7 +248,7 @@ public class PointageService implements IPointageService {
 	@Override
 	public List<RefEtatDto> getRefEtats() {
 		List<RefEtatDto> res = new ArrayList<RefEtatDto>();
-		List<RefEtat> refEtats = RefEtat.findAllRefEtats();
+		List<RefEtat> refEtats = pointageRepository.findAllRefEtats();
 		for (RefEtat etat : refEtats) {
 			RefEtatDto dto = new RefEtatDto(etat);
 			res.add(dto);
@@ -259,7 +259,7 @@ public class PointageService implements IPointageService {
 	@Override
 	public List<RefTypePointageDto> getRefTypesPointage() {
 		List<RefTypePointageDto> res = new ArrayList<RefTypePointageDto>();
-		List<RefTypePointage> refTypePointage = RefTypePointage.findAllRefTypePointages();
+		List<RefTypePointage> refTypePointage = pointageRepository.findAllRefTypePointages();
 		for (RefTypePointage type : refTypePointage) {
 			RefTypePointageDto dto = new RefTypePointageDto(type);
 			res.add(dto);

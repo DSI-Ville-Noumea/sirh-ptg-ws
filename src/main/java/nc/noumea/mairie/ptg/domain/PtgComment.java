@@ -1,17 +1,15 @@
 package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Version;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_COMMENT")
+@Entity
+@Table(name = "PTG_COMMENT")
 public class PtgComment {
 
 	@Id 
@@ -22,6 +20,10 @@ public class PtgComment {
 	@Column(name = "TEXT", columnDefinition="text")
 	private String text;
 	
+	@Version
+    @Column(name = "version")
+	private Integer version;
+	
 	public PtgComment() {
 		
 	}
@@ -29,4 +31,30 @@ public class PtgComment {
 	public PtgComment(String comment) {
 		this.text = comment;
 	}
+
+	public Integer getIdPtgComment() {
+		return idPtgComment;
+	}
+
+	public void setIdPtgComment(Integer idPtgComment) {
+		this.idPtgComment = idPtgComment;
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+	
+	
 }

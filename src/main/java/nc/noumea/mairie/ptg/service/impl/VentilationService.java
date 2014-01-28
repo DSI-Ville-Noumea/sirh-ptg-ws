@@ -273,12 +273,12 @@ public class VentilationService implements IVentilationService {
 		// ventil date
 		if (hSupsVentilees != null) {
 			hSupsVentilees.setVentilDate(ventilDate);
-			hSupsVentilees.persist();
+			ventilationRepository.persistEntity(hSupsVentilees);
 		}
 
 		if (vAbs != null) {
 			vAbs.setVentilDate(ventilDate);
-			vAbs.persist();
+			ventilationRepository.persistEntity(vAbs);
 		}
 
 		return filteredAgentsPointageForPeriod;
@@ -310,7 +310,7 @@ public class VentilationService implements IVentilationService {
 		// ventil date
 		for (VentilPrime v : primesVentilees) {
 			v.setVentilDate(ventilDate);
-			v.persist();
+			ventilationRepository.persistEntity(v);
 		}
 
 		// Because Pointages Calcules are not modifiable by anyone, we directly
@@ -381,7 +381,7 @@ public class VentilationService implements IVentilationService {
 				dateLundi, ptgs));
 
 		for (PointageCalcule ptgC : result) {
-			ptgC.persist();
+			ventilationRepository.persistEntity(ptgC);
 		}
 	}
 
@@ -505,5 +505,10 @@ public class VentilationService implements IVentilationService {
 			logger.debug("La ventilation pour le statut [{}] est en cours.", statut);
 
 		return result;
+	}
+	
+	@Override
+	public VentilTask findVentilTask(Integer idVentilTask) {
+		return pointageRepository.getEntity(VentilTask.class, idVentilTask);
 	}
 }

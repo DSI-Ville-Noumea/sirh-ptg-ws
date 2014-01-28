@@ -6,7 +6,6 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.domain.VentilTask;
 import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.VentilDateDto;
@@ -91,7 +90,7 @@ public class VentilationController {
 
 		logger.debug("entered GET [ventilation/processTask] => processTask with parameters idVentilTask = {}", idVentilTask);
 
-		if (VentilTask.findVentilTask(idVentilTask) == null)
+		if (ventilationService.findVentilTask(idVentilTask) == null)
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
 
 		ventilationService.processVentilationForAgent(idVentilTask);

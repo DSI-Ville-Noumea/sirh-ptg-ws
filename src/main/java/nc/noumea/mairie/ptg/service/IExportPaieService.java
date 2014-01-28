@@ -2,6 +2,7 @@ package nc.noumea.mairie.ptg.service;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
@@ -40,4 +41,6 @@ public interface IExportPaieService {
 	 * @param typeChainePaie
 	 */
 	void stopExportToPaie(TypeChainePaieEnum typeChainePaie) throws WorkflowInvalidStateException;
+	
+	ExportPaieTask findExportPaieTask(Integer idExportPaieTask);
 }

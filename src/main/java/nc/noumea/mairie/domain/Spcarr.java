@@ -2,23 +2,18 @@ package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.json.RooJson;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJson
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPCARR", versionField = "")
+@Entity
+@Table(name = "SPCARR")
 @NamedQueries({
 	@NamedQuery(name = "getCurrentCarriere", query = "select carr from Spcarr carr where carr.id.nomatr = :nomatr and carr.id.datdeb <= :todayFormatMairie and (carr.dateFin = 0 or carr.dateFin >= :todayFormatMairie)")
 })
@@ -91,4 +86,53 @@ public class Spcarr {
 				return null;
 		}
 	}
+
+	public SpcarrId getId() {
+		return id;
+	}
+
+	public void setId(SpcarrId id) {
+		this.id = id;
+	}
+
+	public Integer getDateFin() {
+		return dateFin;
+	}
+
+	public void setDateFin(Integer dateFin) {
+		this.dateFin = dateFin;
+	}
+
+	public Integer getCdcate() {
+		return cdcate;
+	}
+
+	public void setCdcate(Integer cdcate) {
+		this.cdcate = cdcate;
+	}
+
+	public Spbhor getSpbhor() {
+		return spbhor;
+	}
+
+	public void setSpbhor(Spbhor spbhor) {
+		this.spbhor = spbhor;
+	}
+
+	public Spbarem getSpbarem() {
+		return spbarem;
+	}
+
+	public void setSpbarem(Spbarem spbarem) {
+		this.spbarem = spbarem;
+	}
+
+	public Spbase getSpbase() {
+		return spbase;
+	}
+
+	public void setSpbase(Spbase spbase) {
+		this.spbase = spbase;
+	}
+	
 }

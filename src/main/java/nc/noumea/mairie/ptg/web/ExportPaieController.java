@@ -5,7 +5,6 @@ import java.util.Date;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.SpWFPaie;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
-import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IExportPaieService;
@@ -104,7 +103,7 @@ public class ExportPaieController {
 		logger.debug("entered GET [exportPaie/processTask] => processTask with parameters idExportPaieTask = {}",
 				idExportPaieTask);
 		
-		if (ExportPaieTask.findExportPaieTask(idExportPaieTask) == null)
+		if (exportPaieService.findExportPaieTask(idExportPaieTask) == null)
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
 		
 		exportPaieService.processExportPaieForAgent(idExportPaieTask);

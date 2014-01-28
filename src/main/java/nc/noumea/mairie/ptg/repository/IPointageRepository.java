@@ -6,7 +6,9 @@ import java.util.List;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
+import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
 
 public interface IPointageRepository {
 
@@ -37,6 +39,12 @@ public interface IPointageRepository {
     <T> T getEntity(Class<T> Tclass, Object Id);
     
     void persisEntity(Object entity);
+    
+    void removeEntity(Object entity);
 
 	boolean isPrimeSurPointageouPointageCalcule(Integer idAgent, Integer idRefPrime);
+	
+	List<RefEtat> findAllRefEtats();
+	
+	List<RefTypePointage> findAllRefTypePointages();
 }

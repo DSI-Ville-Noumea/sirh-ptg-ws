@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.VentilTask;
 import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.VentilDateDto;
@@ -61,4 +62,6 @@ public interface IVentilationService {
 			RefTypePointageEnum pointageType);
 
 	VentilDateDto getVentilationEnCoursForStatut(AgentStatutEnum statut);
+	
+	VentilTask findVentilTask(Integer idVentilTask);
 }

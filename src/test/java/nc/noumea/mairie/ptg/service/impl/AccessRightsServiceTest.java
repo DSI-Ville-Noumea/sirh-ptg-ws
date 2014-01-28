@@ -230,43 +230,46 @@ public class AccessRightsServiceTest {
 	public void setAgentsApprobateurs_1inList_nonExisting() {
 		// Given
 		AgentWithServiceDto agentDto = new AgentWithServiceDto();
-		agentDto.setIdAgent(9005138);
+			agentDto.setIdAgent(9005138);
 
 		Droit dd = Mockito.spy(new Droit());
-		Mockito.doNothing().when(dd).remove();
-		dd.setIdAgent(5);
+			dd.setIdAgent(5);
 
 		final Date d = new Date();
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(Arrays.asList(dd));
-		Mockito.doAnswer(new Answer<Object>() {
-			public Object answer(InvocationOnMock invocation) {
-				Object[] args = invocation.getArguments();
-				Droit obj = (Droit) args[0];
-
-				assertEquals(9005138, (int) obj.getIdAgent());
-				assertEquals(d, obj.getDateModification());
-				assertTrue(obj.isApprobateur());
-
-				return true;
-
-			}
-		}).when(arRepo).persisEntity(Mockito.any(Droit.class));
+			Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(Arrays.asList(dd));
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					Object[] args = invocation.getArguments();
+					Droit obj = (Droit) args[0];
+	
+					assertEquals(9005138, (int) obj.getIdAgent());
+					assertEquals(d, obj.getDateModification());
+					assertTrue(obj.isApprobateur());
+	
+					return true;
+				}
+			}).when(arRepo).persisEntity(Mockito.any(Droit.class));
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return true;
+				}
+			}).when(arRepo).removeEntity(Mockito.any(Droit.class));
 
 		HelperService helpServ = Mockito.mock(HelperService.class);
-		Mockito.when(helpServ.getCurrentDate()).thenReturn(d);
+			Mockito.when(helpServ.getCurrentDate()).thenReturn(d);
 
 		AccessRightsService service = new AccessRightsService();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "helperService", helpServ);
+			ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+			ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
 		service.setApprobateurs(Arrays.asList(agentDto));
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
-		Mockito.verify(dd, Mockito.times(1)).remove();
+		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(Droit.class)); 
 	}
 
 	@Test
@@ -321,53 +324,61 @@ public class AccessRightsServiceTest {
 	public void setAgentsApprobateurs_SuppressionDtoEmpty() {
 		// Given
 		Droit d = Mockito.spy(new Droit());
-		Mockito.doNothing().when(d).remove();
-		d.setIdAgent(9005138);
-		d.setApprobateur(true);
+			d.setIdAgent(9005138);
+			d.setApprobateur(true);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(Arrays.asList(d));
+			Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(Arrays.asList(d));
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return true;
+				}
+			}).when(arRepo).removeEntity(Mockito.any(Droit.class));
 
 		AccessRightsService service = new AccessRightsService();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+			ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
 		service.setApprobateurs(new ArrayList<AgentWithServiceDto>());
 
 		// Then
 		Mockito.verify(arRepo, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
-		Mockito.verify(d, Mockito.times(1)).remove();
+		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(Droit.class));
 	}
 
 	@Test
 	public void setAgentsApprobateurs_Suppression() {
 		// Given
 		AgentWithServiceDto agentDto = new AgentWithServiceDto();
-		agentDto.setIdAgent(9005131);
+			agentDto.setIdAgent(9005131);
 
 		Droit d = Mockito.spy(new Droit());
-		Mockito.doNothing().when(d).remove();
-		d.setIdAgent(9005138);
-		d.setApprobateur(true);
+			d.setIdAgent(9005138);
+			d.setApprobateur(true);
 
 		Date date = new Date();
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(Arrays.asList(d));
+			Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(Arrays.asList(d));
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return true;
+				}
+			}).when(arRepo).removeEntity(Mockito.any(Droit.class));
 
 		HelperService helpServ = Mockito.mock(HelperService.class);
-		Mockito.when(helpServ.getCurrentDate()).thenReturn(date);
+			Mockito.when(helpServ.getCurrentDate()).thenReturn(date);
 
 		AccessRightsService service = new AccessRightsService();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "helperService", helpServ);
+			ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+			ReflectionTestUtils.setField(service, "helperService", helpServ);
 
 		// When
 		service.setApprobateurs(Arrays.asList(agentDto));
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
-		Mockito.verify(d, Mockito.times(1)).remove();
+		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(Droit.class));
 	}
 
 	@Test
@@ -530,30 +541,33 @@ public class AccessRightsServiceTest {
 		List<AgentDto> agsDto = new ArrayList<AgentDto>();
 
 		DroitsAgent fda = Mockito.spy(new DroitsAgent());
-		fda.setIdAgent(9008765);
-		fda.setCodeService("CODE");
-		fda.setLibelleService("service");
-		Mockito.doNothing().when(fda).remove();
+			fda.setIdAgent(9008765);
+			fda.setCodeService("CODE");
+			fda.setLibelleService("service");
 
 		Droit droit = new Droit();
 		droit.getAgents().add(fda);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(777)).thenReturn(droit);
-
+			Mockito.when(arRepo.getAgentDroitApprobateurOrOperateurFetchAgents(777)).thenReturn(droit);
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return true;
+				}
+			}).when(arRepo).removeEntity(Mockito.any(Droit.class));
+			
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
-		agDto.setIdAgent(9008765);
+			agDto.setIdAgent(9008765);
 
 		AccessRightsService service = new AccessRightsService();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+			ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
 		service.setAgentsToApprove(777, agsDto);
 
 		// Then
 		assertEquals(0, fda.getDroits().size());
-		Mockito.verify(fda, Mockito.times(1)).remove();
-
+		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(DroitsAgent.class));
 	}
 
 	@Test
@@ -878,16 +892,20 @@ public class AccessRightsServiceTest {
 		Droit droitAppro = new Droit();
 
 		Droit droitOpe = Mockito.spy(new Droit());
-		droitOpe.setIdAgent(9009999);
-		droitOpe.setDateModification(previousDate);
-		droitAppro.getOperateurs().add(droitOpe);
-		Mockito.doNothing().when(droitOpe).remove();
+			droitOpe.setIdAgent(9009999);
+			droitOpe.setDateModification(previousDate);
+			droitAppro.getOperateurs().add(droitOpe);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
-
+			Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return true;
+				}
+			}).when(arRepo).removeEntity(Mockito.any(Droit.class));
+		
 		AccessRightsService service = new AccessRightsService();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+			ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
 
@@ -898,7 +916,7 @@ public class AccessRightsServiceTest {
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertEquals(0, droitAppro.getOperateurs().size());
-		Mockito.verify(droitOpe, Mockito.times(1)).remove();
+		Mockito.verify(arRepo, Mockito.times(1)).removeEntity(Mockito.isA(Droit.class));
 	}
 
 	@Test

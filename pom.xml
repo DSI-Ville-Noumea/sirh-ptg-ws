@@ -10,7 +10,6 @@
         <aspectj.version>1.7.2.RELEASE</aspectj.version>
         <java.version>7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <roo.version>1.2.5.RELEASE</roo.version>
         <slf4j.version>1.7.5</slf4j.version>
         <spring.version>4.0.0.RELEASE</spring.version>
     </properties>
@@ -55,11 +54,6 @@
             <name>Spring Maven Milestone Repository</name>
             <url>http://maven.springframework.org/milestone</url>
         </repository>
-        <repository>
-            <id>spring-roo-repository</id>
-            <name>Spring Roo Repository</name>
-            <url>http://spring-roo-repository.springsource.org/release</url>
-        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -72,11 +66,6 @@
             <id>spring-maven-milestone</id>
             <name>Spring Maven Milestone Repository</name>
             <url>http://maven.springframework.org/milestone</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>spring-roo-repository</id>
-            <name>Spring Roo Repository</name>
-            <url>http://spring-roo-repository.springsource.org/release</url>
         </pluginRepository>
     </pluginRepositories>
 
@@ -119,12 +108,6 @@
         </dependency>
 
         <!-- ROO dependencies -->
-        <dependency>
-            <groupId>org.springframework.roo</groupId>
-            <artifactId>org.springframework.roo.annotations</artifactId>
-            <version>${roo.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-oxm</artifactId>
@@ -390,11 +373,6 @@
                                     <format>xml</format>
                                     <format>html</format>
                                 </formats>
-                                <instrumentation>
-                                    <excludes>
-                                        <exclude>**/*_Roo_*.*</exclude>
-                                    </excludes>
-                                </instrumentation>
                             </configuration>
                         </plugin>
                         <plugin>
@@ -487,9 +465,6 @@
                 <configuration>
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <excludes>
-                        <exclude>**/*_Roo_*</exclude>
-                    </excludes>
                     <argLine>-XX:-UseSplitVerifier</argLine>
                 </configuration>
             </plugin>
@@ -526,7 +501,6 @@
                     </additionalBuildcommands>
                     <additionalProjectnatures>
                         <projectnature>org.eclipse.ajdt.ui.ajnature</projectnature>
-                        <projectnature>com.springsource.sts.roo.core.nature</projectnature>
                         <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
                     </additionalProjectnatures>
                 </configuration>

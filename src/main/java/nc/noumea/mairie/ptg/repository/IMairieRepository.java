@@ -8,5 +8,7 @@ public interface IMairieRepository {
 	
 	void persistEntity(Object entity);
 	
+	void removeEntity(Object obj);
+	
 	Spmatr findSpmatrForAgent(Integer idAgent);
 }

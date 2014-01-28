@@ -8,6 +8,7 @@ import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
+import nc.noumea.mairie.sirh.domain.Agent;
 
 public interface IAccessRightsService {
 
@@ -40,5 +41,7 @@ public interface IAccessRightsService {
 	boolean canUserAccessVisualisation(Integer idAgent);
 	
 	boolean canUserAccessAppro(Integer idAgent);
+	
+	Agent findAgent(Integer idAgent);
 
 }

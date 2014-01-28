@@ -49,7 +49,7 @@ public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
 			
 			if (act.getNbHeures() == 0d) {
 				modifiedOrAddedSppact.remove(act);
-				act.remove();
+				mairieRepository.removeEntity(act);
 			}
 		}
 		

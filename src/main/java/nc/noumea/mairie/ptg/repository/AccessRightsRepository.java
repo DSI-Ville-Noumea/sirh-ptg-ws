@@ -18,6 +18,11 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	private EntityManager ptgEntityManager;
 	
 	@Override
+	public void removeEntity(Object obj) {
+		ptgEntityManager.remove(obj);
+	}
+	
+	@Override
 	public List<Droit> getAgentAccessRights(int idAgent) {
 		
 		TypedQuery<Droit> q = ptgEntityManager.createNamedQuery("getAgentAccessRights", Droit.class);

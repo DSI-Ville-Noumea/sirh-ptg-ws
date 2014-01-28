@@ -147,7 +147,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		for (Droit droitOperateurToDelete : originalOperateurs) {
 			droitApprobateur.getOperateurs().remove(droitOperateurToDelete);
-			droitOperateurToDelete.remove();
+			accessRightsRepository.removeEntity(droitOperateurToDelete); 
 		}
 		
 		return result;
@@ -232,10 +232,10 @@ public class AccessRightsService implements IAccessRightsService {
 			// in for
 			for (DroitsAgent agentSaisiToDelete : droitToDelete.getAgents()) {
 				agentSaisiToDelete.getDroits().clear();
-				agentSaisiToDelete.remove();
+				accessRightsRepository.removeEntity(agentSaisiToDelete);
 			}
 			// Then we delete the approbateur
-			droitToDelete.remove();
+			accessRightsRepository.removeEntity(droitToDelete);
 		}
 		return listeAgentErreur;
 
@@ -330,7 +330,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		for (DroitsAgent agToDelete : agentsToDelete) {
 			agToDelete.getDroits().clear();
-			agToDelete.remove();
+			accessRightsRepository.removeEntity(agToDelete);
 		}
 	}
 
@@ -399,5 +399,10 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		return result;
+	}
+	
+	@Override
+	public Agent findAgent(Integer idAgent) {
+		return sirhRepository.getAgent(idAgent);
 	}
 }

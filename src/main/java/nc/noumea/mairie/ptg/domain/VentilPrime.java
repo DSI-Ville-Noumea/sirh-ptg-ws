@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.domain;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -11,15 +12,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.Version;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-
-@RooJavaBean
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_VENTIL_PRIME")
+@Entity
+@Table(name = "PTG_VENTIL_PRIME") 
 @NamedQuery(name = "getPriorVentilPrimeForAgentAndDate", query = "select vp from VentilPrime vp where vp.idVentilPrime != :idLatestVentilPrime and vp.idAgent = :idAgent and vp.dateDebutMois = :dateDebutMois order by vp.idVentilPrime desc")
 public class VentilPrime {
 
@@ -50,6 +50,10 @@ public class VentilPrime {
     @JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
     private VentilDate ventilDate;
 
+    @Version
+    @Column(name = "version")
+	private Integer version;
+    
     @Transient
     public void addQuantite(Integer quantite) {
         if (this.quantite == null) {
@@ -61,4 +65,70 @@ public class VentilPrime {
     public Integer getIdRefPrime() {
         return refPrime.getIdRefPrime();
     }
+
+	public Integer getIdVentilPrime() {
+		return idVentilPrime;
+	}
+
+	public void setIdVentilPrime(Integer idVentilPrime) {
+		this.idVentilPrime = idVentilPrime;
+	}
+
+	public Integer getIdAgent() {
+		return idAgent;
+	}
+
+	public void setIdAgent(Integer idAgent) {
+		this.idAgent = idAgent;
+	}
+
+	public Date getDateDebutMois() {
+		return dateDebutMois;
+	}
+
+	public void setDateDebutMois(Date dateDebutMois) {
+		this.dateDebutMois = dateDebutMois;
+	}
+
+	public RefPrime getRefPrime() {
+		return refPrime;
+	}
+
+	public void setRefPrime(RefPrime refPrime) {
+		this.refPrime = refPrime;
+	}
+
+	public EtatPointageEnum getEtat() {
+		return etat;
+	}
+
+	public void setEtat(EtatPointageEnum etat) {
+		this.etat = etat;
+	}
+
+	public Integer getQuantite() {
+		return quantite;
+	}
+
+	public void setQuantite(Integer quantite) {
+		this.quantite = quantite;
+	}
+
+	public VentilDate getVentilDate() {
+		return ventilDate;
+	}
+
+	public void setVentilDate(VentilDate ventilDate) {
+		this.ventilDate = ventilDate;
+	}
+
+	public Integer getVersion() {
+		return version;
+	}
+
+	public void setVersion(Integer version) {
+		this.version = version;
+	}
+    
+    
 }

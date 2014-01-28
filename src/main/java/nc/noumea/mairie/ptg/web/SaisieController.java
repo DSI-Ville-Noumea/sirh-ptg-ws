@@ -9,7 +9,6 @@ import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.ISaisieService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ public class SaisieController {
 		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		int convertedagent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agent);
 
-		if (Agent.findAgent(convertedagent) == null) {
+		if (accessRightService.findAgent(convertedagent) == null) {
 			throw new NotFoundException();
 		}
 
@@ -85,7 +84,7 @@ public class SaisieController {
 		int convertedagent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(dto.getAgent()
 				.getIdAgent());
 
-		if (Agent.findAgent(convertedagent) == null) {
+		if (accessRightService.findAgent(convertedagent) == null) {
 			throw new NotFoundException();
 		}
 

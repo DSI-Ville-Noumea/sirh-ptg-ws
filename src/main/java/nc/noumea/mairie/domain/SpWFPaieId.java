@@ -9,9 +9,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-@RooJavaBean
 @Embeddable
 public class SpWFPaieId implements Serializable {
 
@@ -37,5 +34,22 @@ public class SpWFPaieId implements Serializable {
 	@Column(name = "CDCHAINE", columnDefinition = "char")
 	@Enumerated(EnumType.STRING)
 	private TypeChainePaieEnum codeChaine;
+
+	public SpWFEtat getEtat() {
+		return etat;
+	}
+
+	public void setEtat(SpWFEtat etat) {
+		this.etat = etat;
+	}
+
+	public TypeChainePaieEnum getCodeChaine() {
+		return codeChaine;
+	}
+
+	public void setCodeChaine(TypeChainePaieEnum codeChaine) {
+		this.codeChaine = codeChaine;
+	}
+	
 	
 }

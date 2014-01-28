@@ -426,7 +426,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		// 4. Save records for exported files
 		logger.info("Saving generated reports...");
 		for (EtatPayeur etat : etats) {
-			etat.persist();
+			pointageRepository.persisEntity(etat);
 		}
 
 		logger.info("Export Etats Payeurs done.");

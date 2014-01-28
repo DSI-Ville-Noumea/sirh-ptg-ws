@@ -5,9 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-@RooJavaBean
 @Embeddable
 public class SppprmId implements Serializable {
 
@@ -44,4 +41,30 @@ public class SppprmId implements Serializable {
 	
 	@Column(name = "NORUBR", columnDefinition = "numeric")
 	private Integer noRubr;
+
+	public Integer getNomatr() {
+		return nomatr;
+	}
+
+	public void setNomatr(Integer nomatr) {
+		this.nomatr = nomatr;
+	}
+
+	public Integer getDatJour() {
+		return datJour;
+	}
+
+	public void setDatJour(Integer datJour) {
+		this.datJour = datJour;
+	}
+
+	public Integer getNoRubr() {
+		return noRubr;
+	}
+
+	public void setNoRubr(Integer noRubr) {
+		this.noRubr = noRubr;
+	}
+	
+	
 }

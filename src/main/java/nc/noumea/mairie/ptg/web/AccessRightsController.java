@@ -10,7 +10,6 @@ import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.sirh.domain.Agent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +48,7 @@ public class AccessRightsController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (Agent.findAgent(convertedIdAgent) == null)
+		if (accessRightService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
 		AccessRightsDto result = accessRightService.getAgentAccessRights(convertedIdAgent);
@@ -210,7 +209,7 @@ public class AccessRightsController {
 
 		int convertedIdOperateur = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idOperateur);
 
-		if (Agent.findAgent(convertedIdOperateur) == null)
+		if (accessRightService.findAgent(convertedIdOperateur) == null)
 			throw new NotFoundException();
 
 		List<AgentDto> agDtos = new JSONDeserializer<List<AgentDto>>().use(null, ArrayList.class).use("values", AgentDto.class)

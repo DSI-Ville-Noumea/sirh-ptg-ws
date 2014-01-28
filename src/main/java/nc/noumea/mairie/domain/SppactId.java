@@ -8,9 +8,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-@RooJavaBean
 @Embeddable
 public class SppactId implements Serializable {
 
@@ -48,4 +45,30 @@ public class SppactId implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CDACT3", referencedColumnName = "CDACT3", columnDefinition = "char")
 	private Spacti activite;
+
+	public Integer getNomatr() {
+		return nomatr;
+	}
+
+	public void setNomatr(Integer nomatr) {
+		this.nomatr = nomatr;
+	}
+
+	public Integer getDateJour() {
+		return dateJour;
+	}
+
+	public void setDateJour(Integer dateJour) {
+		this.dateJour = dateJour;
+	}
+
+	public Spacti getActivite() {
+		return activite;
+	}
+
+	public void setActivite(Spacti activite) {
+		this.activite = activite;
+	}
+	
+	
 }

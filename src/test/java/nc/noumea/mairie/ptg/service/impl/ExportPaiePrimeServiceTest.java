@@ -24,6 +24,8 @@ import org.joda.time.LocalDate;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class ExportPaiePrimeServiceTest {
@@ -230,50 +232,55 @@ public class ExportPaiePrimeServiceTest {
 		
 		// Given
 		Pointage p1 = new Pointage();
-		p1.setType(hSup);
+			p1.setType(hSup);
 		
 		RefPrime rp = new RefPrime();
-		rp.setNoRubr(7701);
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setTypeSaisie(TypeSaisieEnum.CASE_A_COCHER);
+			rp.setNoRubr(7701);
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setTypeSaisie(TypeSaisieEnum.CASE_A_COCHER);
 		Pointage p2 = new Pointage();
-		p2.setRefPrime(rp);
-		p2.setType(pri);
-		p2.setQuantite(0);
-		p2.setIdAgent(9009898);
-		p2.setDateDebut(new DateTime(2013, 8, 9, 19, 5, 23).toDate());
+			p2.setRefPrime(rp);
+			p2.setType(pri);
+			p2.setQuantite(0);
+			p2.setIdAgent(9009898);
+			p2.setDateDebut(new DateTime(2013, 8, 9, 19, 5, 23).toDate());
 		
 		RefPrime rp2 = new RefPrime();
-		rp2.setNoRubr(7750);
-		rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+			rp2.setNoRubr(7750);
+			rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
 		Pointage p3 = new Pointage();
-		p3.setRefPrime(rp2);
-		p3.setType(pri);
-		p3.setQuantite(4);
+			p3.setRefPrime(rp2);
+			p3.setType(pri);
+			p3.setQuantite(4);
 		
 		List<Pointage> pointagesOrderedByDateAsc = Arrays.asList(p1, p2, p3);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getMairieMatrFromIdAgent(9009898)).thenReturn(9898);
-		Mockito.when(hS.getIntegerDateMairieFromDate(p2.getDateDebut())).thenReturn(20130809);
+			Mockito.when(hS.getMairieMatrFromIdAgent(9009898)).thenReturn(9898);
+			Mockito.when(hS.getIntegerDateMairieFromDate(p2.getDateDebut())).thenReturn(20130809);
 		
 		Sppprm existingSppprm = Mockito.spy(new Sppprm());
-		Mockito.doNothing().when(existingSppprm).remove();
-		existingSppprm.setNbPrime(7);
-		existingSppprm.setId(new SppprmId(9898, 20130809, 7701));
-		IExportPaieRepository epR = Mockito.mock(IExportPaieRepository.class);
-		Mockito.when(epR.getSppprmForDayAgentAndNorubr(9009898, p2.getDateDebut(), rp.getNoRubr())).thenReturn(existingSppprm);
+			existingSppprm.setNbPrime(7);
+			existingSppprm.setId(new SppprmId(9898, 20130809, 7701));
 		
+		IExportPaieRepository epR = Mockito.mock(IExportPaieRepository.class);
+			Mockito.when(epR.getSppprmForDayAgentAndNorubr(9009898, p2.getDateDebut(), rp.getNoRubr())).thenReturn(existingSppprm);
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return true;
+				}
+			}).when(epR).removeEntity(Mockito.isA(Sppprm.class));
+			
 		ExportPaiePrimeService service = new ExportPaiePrimeService();
-		ReflectionTestUtils.setField(service, "helperService", hS);
-		ReflectionTestUtils.setField(service, "exportPaieRepository", epR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "exportPaieRepository", epR);
 		
 		// When
 		List<Sppprm> result = service.exportPrimesJourToPaie(pointagesOrderedByDateAsc);
 		
 		// Then
 		assertEquals(0, result.size());
-		Mockito.verify(existingSppprm, Mockito.times(1)).remove();
+		Mockito.verify(epR, Mockito.times(1)).removeEntity(Mockito.isA(Sppprm.class));
 	}
 	
 	@Test
@@ -452,47 +459,52 @@ public class ExportPaiePrimeServiceTest {
 		
 		// Given
 		RefPrime rp = new RefPrime();
-		rp.setNoRubr(7701);
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setTypeSaisie(TypeSaisieEnum.CASE_A_COCHER);
+			rp.setNoRubr(7701);
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setTypeSaisie(TypeSaisieEnum.CASE_A_COCHER);
 		PointageCalcule p2 = new PointageCalcule();
-		p2.setRefPrime(rp);
-		p2.setType(pri);
-		p2.setQuantite(0);
-		p2.setIdAgent(9009898);
-		p2.setDateDebut(new DateTime(2013, 8, 9, 19, 5, 23).toDate());
+			p2.setRefPrime(rp);
+			p2.setType(pri);
+			p2.setQuantite(0);
+			p2.setIdAgent(9009898);
+			p2.setDateDebut(new DateTime(2013, 8, 9, 19, 5, 23).toDate());
 		
 		RefPrime rp2 = new RefPrime();
-		rp2.setNoRubr(7750);
-		rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+			rp2.setNoRubr(7750);
+			rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
 		PointageCalcule p3 = new PointageCalcule();
-		p3.setRefPrime(rp2);
-		p3.setType(pri);
-		p3.setQuantite(4);
+			p3.setRefPrime(rp2);
+			p3.setType(pri);
+			p3.setQuantite(4);
 		
 		List<PointageCalcule> pointagesOrderedByDateAsc = Arrays.asList(p2, p3);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getMairieMatrFromIdAgent(9009898)).thenReturn(9898);
-		Mockito.when(hS.getIntegerDateMairieFromDate(p2.getDateDebut())).thenReturn(20130809);
+			Mockito.when(hS.getMairieMatrFromIdAgent(9009898)).thenReturn(9898);
+			Mockito.when(hS.getIntegerDateMairieFromDate(p2.getDateDebut())).thenReturn(20130809);
 		
 		Sppprm existingSppprm = Mockito.spy(new Sppprm());
-		Mockito.doNothing().when(existingSppprm).remove();
-		existingSppprm.setNbPrime(7);
-		existingSppprm.setId(new SppprmId(9898, 20130809, 7701));
-		IExportPaieRepository epR = Mockito.mock(IExportPaieRepository.class);
-		Mockito.when(epR.getSppprmForDayAgentAndNorubr(9009898, p2.getDateDebut(), rp.getNoRubr())).thenReturn(existingSppprm);
+			existingSppprm.setNbPrime(7);
+			existingSppprm.setId(new SppprmId(9898, 20130809, 7701));
 		
+		IExportPaieRepository epR = Mockito.mock(IExportPaieRepository.class);
+			Mockito.when(epR.getSppprmForDayAgentAndNorubr(9009898, p2.getDateDebut(), rp.getNoRubr())).thenReturn(existingSppprm);
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return true;
+				}
+			}).when(epR).removeEntity(Mockito.isA(Sppprm.class));
+			
 		ExportPaiePrimeService service = new ExportPaiePrimeService();
-		ReflectionTestUtils.setField(service, "helperService", hS);
-		ReflectionTestUtils.setField(service, "exportPaieRepository", epR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "exportPaieRepository", epR);
 		
 		// When
 		List<Sppprm> result = service.exportPrimesCalculeesJourToPaie(pointagesOrderedByDateAsc);
 		
 		// Then
 		assertEquals(0, result.size());
-		Mockito.verify(existingSppprm, Mockito.times(1)).remove();
+		Mockito.verify(epR, Mockito.times(1)).removeEntity(Mockito.isA(Sppprm.class));
 	}
 	
 	@Test
@@ -602,48 +614,53 @@ public class ExportPaiePrimeServiceTest {
 		
 		// Given
 		RefPrime rp = new RefPrime();
-		rp.setNoRubr(7701);
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+			rp.setNoRubr(7701);
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		VentilPrime vp = new VentilPrime();
-		vp.setRefPrime(rp);
-		vp.setQuantite(0);
-		vp.setIdAgent(9009898);
-		vp.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
+			vp.setRefPrime(rp);
+			vp.setQuantite(0);
+			vp.setIdAgent(9009898);
+			vp.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 		
 		RefPrime rp2 = new RefPrime();
-		rp2.setNoRubr(7701);
-		rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp2.setNoRubr(7701);
+			rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
 		VentilPrime vp2 = new VentilPrime();
-		vp2.setRefPrime(rp2);
-		vp2.setQuantite(2);
-		vp2.setIdAgent(9009898);
-		vp2.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
+			vp2.setRefPrime(rp2);
+			vp2.setQuantite(2);
+			vp2.setIdAgent(9009898);
+			vp2.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 
 		List<VentilPrime> ventilPrimesByDateAsc = Arrays.asList(vp, vp2);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getMairieMatrFromIdAgent(9009898)).thenReturn(9898);
-		Mockito.when(hS.getIntegerDateMairieFromDate(vp.getDateDebutMois())).thenReturn(20130801);
+			Mockito.when(hS.getMairieMatrFromIdAgent(9009898)).thenReturn(9898);
+			Mockito.when(hS.getIntegerDateMairieFromDate(vp.getDateDebutMois())).thenReturn(20130801);
 		
 		Spprim existingSpprim = Mockito.spy(new Spprim());
-		Mockito.doNothing().when(existingSpprim).remove();
-		existingSpprim.setMontantPrime(7);
-		existingSpprim.setId(new SpprimId(9898, 20130801, 7701));
-		existingSpprim.setDateFin(20130901);
-		IExportPaieRepository epR = Mockito.mock(IExportPaieRepository.class);
-		Mockito.when(epR.getSpprimForDayAgentAndNorubr(9009898, vp.getDateDebutMois(), rp.getNoRubr())).thenReturn(existingSpprim);
+			existingSpprim.setMontantPrime(7);
+			existingSpprim.setId(new SpprimId(9898, 20130801, 7701));
+			existingSpprim.setDateFin(20130901);
 		
+		IExportPaieRepository epR = Mockito.mock(IExportPaieRepository.class);
+			Mockito.when(epR.getSpprimForDayAgentAndNorubr(9009898, vp.getDateDebutMois(), rp.getNoRubr())).thenReturn(existingSpprim);
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return true;
+				}
+			}).when(epR).removeEntity(Mockito.isA(Spprim.class));
+			
 		ExportPaiePrimeService service = new ExportPaiePrimeService();
-		ReflectionTestUtils.setField(service, "helperService", hS);
-		ReflectionTestUtils.setField(service, "exportPaieRepository", epR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "exportPaieRepository", epR);
 		
 		// When
 		List<Spprim> result = service.exportPrimesMoisToPaie(ventilPrimesByDateAsc);
 		
 		// Then
 		assertEquals(0, result.size());
-		Mockito.verify(existingSpprim, Mockito.times(1)).remove();
+		Mockito.verify(epR, Mockito.times(1)).removeEntity(Mockito.isA(Spprim.class));
 	}
 	
 	@Test

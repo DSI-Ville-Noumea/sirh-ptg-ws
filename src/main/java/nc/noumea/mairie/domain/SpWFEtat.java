@@ -1,18 +1,15 @@
 package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPWFETAT", versionField = "")
+@Entity
+@Table(name = "SPWFETAT")
 public class SpWFEtat {
 
 	@Id
@@ -24,4 +21,22 @@ public class SpWFEtat {
 	@NotNull
 	@Column(name = "LIBETAT", columnDefinition = "char")
 	private String libelleEtat;
+
+	public SpWfEtatEnum getCodeEtat() {
+		return codeEtat;
+	}
+
+	public void setCodeEtat(SpWfEtatEnum codeEtat) {
+		this.codeEtat = codeEtat;
+	}
+
+	public String getLibelleEtat() {
+		return libelleEtat;
+	}
+
+	public void setLibelleEtat(String libelleEtat) {
+		this.libelleEtat = libelleEtat;
+	}
+	
+	
 }

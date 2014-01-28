@@ -2,14 +2,13 @@ package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.Table;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-
-@RooJavaBean
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPPHRE", versionField = "")
+@Entity
+@Table(name = "SPPHRE")
 public class Spphre {
 
 	@EmbeddedId
@@ -42,4 +41,86 @@ public class Spphre {
 
 	@Column(name = "NBHCOM", columnDefinition = "numeric")
 	private double nbhcomplementaires;
+
+	public SpphreId getId() {
+		return id;
+	}
+
+	public void setId(SpphreId id) {
+		this.id = id;
+	}
+
+	public SpphreRecupEnum getSpphreRecup() {
+		return spphreRecup;
+	}
+
+	public void setSpphreRecup(SpphreRecupEnum spphreRecup) {
+		this.spphreRecup = spphreRecup;
+	}
+
+	public double getNbh25() {
+		return nbh25;
+	}
+
+	public void setNbh25(double nbh25) {
+		this.nbh25 = nbh25;
+	}
+
+	public double getNbh50() {
+		return nbh50;
+	}
+
+	public void setNbh50(double nbh50) {
+		this.nbh50 = nbh50;
+	}
+
+	public double getNbhdim() {
+		return nbhdim;
+	}
+
+	public void setNbhdim(double nbhdim) {
+		this.nbhdim = nbhdim;
+	}
+
+	public double getNbhmai() {
+		return nbhmai;
+	}
+
+	public void setNbhmai(double nbhmai) {
+		this.nbhmai = nbhmai;
+	}
+
+	public double getNbhnuit() {
+		return nbhnuit;
+	}
+
+	public void setNbhnuit(double nbhnuit) {
+		this.nbhnuit = nbhnuit;
+	}
+
+	public double getNbhssimple() {
+		return nbhssimple;
+	}
+
+	public void setNbhssimple(double nbhssimple) {
+		this.nbhssimple = nbhssimple;
+	}
+
+	public double getNbhscomposees() {
+		return nbhscomposees;
+	}
+
+	public void setNbhscomposees(double nbhscomposees) {
+		this.nbhscomposees = nbhscomposees;
+	}
+
+	public double getNbhcomplementaires() {
+		return nbhcomplementaires;
+	}
+
+	public void setNbhcomplementaires(double nbhcomplementaires) {
+		this.nbhcomplementaires = nbhcomplementaires;
+	}
+	
+	
 }

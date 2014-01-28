@@ -7,6 +7,8 @@ import nc.noumea.mairie.ptg.domain.DroitsAgent;
 
 public interface IAccessRightsRepository {
 
+	void removeEntity(Object obj);
+	
 	List<Droit> getAgentAccessRights(int idAgent);
 
 	void removeDroitsAgent(DroitsAgent droitsAgent);

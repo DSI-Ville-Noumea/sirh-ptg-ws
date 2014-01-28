@@ -61,62 +61,62 @@ public class PointageRepositoryTest {
 //		BigInteger id3 = (BigInteger) q.getSingleResult();
 		
 		RefTypePointage abs = new RefTypePointage();
-		abs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
-		abs.persist();
+			abs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(abs);
 		RefTypePointage hSup = new RefTypePointage();
-		hSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		hSup.persist();
+			hSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		ptgEntityManager.persist(hSup);
 		RefTypePointage prime = new RefTypePointage();
-		prime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		prime.persist();
+			prime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		ptgEntityManager.persist(prime);
 
 		Pointage ptg = new Pointage();
-		ptg.setIdAgent(9008765);
-		ptg.setType(abs);
-		ptg.setDateLundi(new LocalDate(2013, 7, 22).toDate());
-		ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
-		ptg.persist();
+			ptg.setIdAgent(9008765);
+			ptg.setType(abs);
+			ptg.setDateLundi(new LocalDate(2013, 7, 22).toDate());
+			ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		ptgEntityManager.persist(ptg);
 		
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
 		
 		Pointage ptg2 = new Pointage();
-		ptg2.setIdAgent(9008765);
-		ptg2.setType(abs);
-		ptg2.setPointageParent(Pointage.findPointage(1));
-		ptg2.setDateLundi(new LocalDate(2013, 7, 22).toDate());
-		ptg2.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
-		ptg2.persist();
+			ptg2.setIdAgent(9008765);
+			ptg2.setType(abs);
+			ptg2.setPointageParent(ptg);
+			ptg2.setDateLundi(new LocalDate(2013, 7, 22).toDate());
+			ptg2.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		ptgEntityManager.persist(ptg2);
 		
 		Pointage ptg3 = new Pointage();
-		ptg3.setIdAgent(9008766);
-		ptg3.setType(abs);
-		ptg3.setDateLundi(new LocalDate(2013, 7, 22).toDate());
-		ptg3.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
-		ptg3.persist();
+			ptg3.setIdAgent(9008766);
+			ptg3.setType(abs);
+			ptg3.setDateLundi(new LocalDate(2013, 7, 22).toDate());
+			ptg3.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		ptgEntityManager.persist(ptg3);
 		
 		Pointage ptg4 = new Pointage();
-		ptg4.setIdAgent(9008765);
-		ptg4.setType(prime);
-		ptg4.setDateLundi(new LocalDate(2013, 7, 22).toDate());
-		ptg4.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
-		ptg4.persist();
+			ptg4.setIdAgent(9008765);
+			ptg4.setType(prime);
+			ptg4.setDateLundi(new LocalDate(2013, 7, 22).toDate());
+			ptg4.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		ptgEntityManager.persist(ptg4);
 		
 		Pointage ptg5 = new Pointage();
-		ptg5.setIdAgent(9008765);
-		ptg5.setType(abs);
-		ptg5.setDateLundi(new LocalDate(2013, 7, 22).toDate());
-		ptg5.setDateDebut(new DateTime(2013, 7, 22, 6, 0, 0).toDate());
-		ptg5.setDateFin(new DateTime(2013, 7, 22, 7, 0, 0).toDate());
-		ptg5.persist();
+			ptg5.setIdAgent(9008765);
+			ptg5.setType(abs);
+			ptg5.setDateLundi(new LocalDate(2013, 7, 22).toDate());
+			ptg5.setDateDebut(new DateTime(2013, 7, 22, 6, 0, 0).toDate());
+			ptg5.setDateFin(new DateTime(2013, 7, 22, 7, 0, 0).toDate());
+		ptgEntityManager.persist(ptg5);
 		
 		Pointage ptg6 = new Pointage();
-		ptg6.setIdAgent(9008765);
-		ptg6.setType(abs);
-		ptg6.setDateLundi(new LocalDate(2013, 7, 29).toDate());
-		ptg6.setDateDebut(new DateTime(2013, 7, 29, 0, 0, 0).toDate());
-		ptg6.setDateFin(new DateTime(2013, 7, 29, 0, 30, 0).toDate());
-		ptg6.persist();
+			ptg6.setIdAgent(9008765);
+			ptg6.setType(abs);
+			ptg6.setDateLundi(new LocalDate(2013, 7, 29).toDate());
+			ptg6.setDateDebut(new DateTime(2013, 7, 29, 0, 0, 0).toDate());
+			ptg6.setDateFin(new DateTime(2013, 7, 29, 0, 30, 0).toDate());
+		ptgEntityManager.persist(ptg6);
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
@@ -153,15 +153,15 @@ public class PointageRepositoryTest {
 	public void getRefPrimesWithResult_And_RefPrimesCalculeesWithNoResult() {
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(false);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(false);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		List<Integer> listRubr = new ArrayList<Integer>();
 		listRubr.add(7711);
@@ -187,15 +187,15 @@ public class PointageRepositoryTest {
 	public void getRefPrimesCalculeesWithResult_And_RefPrimesWithNoResult() {
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(true);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(true);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		List<Integer> listRubr = new ArrayList<Integer>();
 		listRubr.add(7711);
@@ -221,26 +221,26 @@ public class PointageRepositoryTest {
 	public void getRefPrimesListForAgent() {
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(true);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(true);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		RefPrime rp2 = new RefPrime();
-		rp2.setAide("Saisir l'heure de fin");
-		rp2.setCalculee(true);
-		rp2.setDescription(null);
-		rp2.setLibelle("INDEMNITE BIS");
-		rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp2.setNoRubr(7712);
-		rp2.setStatut(AgentStatutEnum.F);
-		rp2.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
-		rp2.persist();
+			rp2.setAide("Saisir l'heure de fin");
+			rp2.setCalculee(true);
+			rp2.setDescription(null);
+			rp2.setLibelle("INDEMNITE BIS");
+			rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp2.setNoRubr(7712);
+			rp2.setStatut(AgentStatutEnum.F);
+			rp2.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		ptgEntityManager.persist(rp2);
 		
 		List<RefPrime> result = repository.getRefPrimesListForAgent(AgentStatutEnum.F);
 		
@@ -266,26 +266,26 @@ public class PointageRepositoryTest {
 	public void getRefPrimesList() {
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(true);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(true);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		RefPrime rp2 = new RefPrime();
-		rp2.setAide("Saisir l'heure de fin");
-		rp2.setCalculee(true);
-		rp2.setDescription(null);
-		rp2.setLibelle("INDEMNITE BIS");
-		rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp2.setNoRubr(7712);
-		rp2.setStatut(AgentStatutEnum.C);
-		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
-		rp2.persist();
+			rp2.setAide("Saisir l'heure de fin");
+			rp2.setCalculee(true);
+			rp2.setDescription(null);
+			rp2.setLibelle("INDEMNITE BIS");
+			rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp2.setNoRubr(7712);
+			rp2.setStatut(AgentStatutEnum.C);
+			rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+		ptgEntityManager.persist(rp2);
 		
 		List<RefPrime> result = repository.getRefPrimesList();
 		
@@ -311,28 +311,28 @@ public class PointageRepositoryTest {
 	public void getPointagesForAgentAndDateOrderByIdDesc() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(1);
-		rtp.persist();
+			rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
 		
 		Pointage p = new Pointage();
-		p.setAbsenceConcertee(false); 
-		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
-		p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p.setHeureSupRecuperee(true);
-		p.setIdAgent(9005138);
-		p.setType(rtp);
-		p.persist();
+			p.setAbsenceConcertee(false); 
+			p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+			p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			p.setHeureSupRecuperee(true);
+			p.setIdAgent(9005138);
+			p.setType(rtp);
+		ptgEntityManager.persist(p);
 		
 		Pointage p2 = new Pointage();
-		p2.setAbsenceConcertee(true); 
-		p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
-		p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
-		p2.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p2.setHeureSupRecuperee(false);
-		p2.setIdAgent(9005138);
-		p2.setType(rtp);
-		p2.persist();
+			p2.setAbsenceConcertee(true); 
+			p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
+			p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
+			p2.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			p2.setHeureSupRecuperee(false);
+			p2.setIdAgent(9005138);
+			p2.setType(rtp);
+		ptgEntityManager.persist(p2);
 		
 		List<Pointage> result = repository.getPointagesForAgentAndDateOrderByIdDesc(9005138, new LocalDate(2013, 7, 23).toDate());
 		
@@ -356,29 +356,29 @@ public class PointageRepositoryTest {
 	public void getPointageArchives() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(1);
-		rtp.persist();
+			rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
 		
 		Pointage p = new Pointage();
-		p.setAbsenceConcertee(false); 
-		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
-		p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p.setHeureSupRecuperee(true);
-		p.setIdAgent(9005138);
-		p.setType(rtp);
-		p.persist();
+			p.setAbsenceConcertee(false); 
+			p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+			p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			p.setHeureSupRecuperee(true);
+			p.setIdAgent(9005138);
+			p.setType(rtp);
+		ptgEntityManager.persist(p);
 		
 		Pointage p2 = new Pointage();
 		p2.setPointageParent(p);
-		p2.setAbsenceConcertee(true); 
-		p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
-		p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
-		p2.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p2.setHeureSupRecuperee(false);
-		p2.setIdAgent(9005138);
-		p2.setType(rtp);
-		p2.persist();
+			p2.setAbsenceConcertee(true); 
+			p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
+			p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
+			p2.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			p2.setHeureSupRecuperee(false);
+			p2.setIdAgent(9005138);
+			p2.setType(rtp);
+		ptgEntityManager.persist(p2);
 		
 		List<Pointage> result = repository.getPointageArchives(p2.getIdPointage());
 		
@@ -402,19 +402,18 @@ public class PointageRepositoryTest {
 	public void removePointageCalculesForDateAgent() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(1);
-		rtp.persist();
+			rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
 		
 		Pointage p = new Pointage();
-		p.setIdPointage(100);
-		p.setAbsenceConcertee(false); 
-		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
-		p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p.setHeureSupRecuperee(true);
-		p.setIdAgent(9005138);
-		p.setType(rtp);
-		p.persist();
+			p.setAbsenceConcertee(false); 
+			p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+			p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			p.setHeureSupRecuperee(true);
+			p.setIdAgent(9005138);
+			p.setType(rtp);
+		ptgEntityManager.persist(p);
 		
 		repository.removePointageCalculesForDateAgent(9005138, new LocalDate(2013, 7, 23).toDate());
 	}
@@ -424,28 +423,28 @@ public class PointageRepositoryTest {
 	public void getListPointages() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(1);
-		rtp.persist();
+			rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
 		
 		Pointage p = new Pointage();
-		p.setAbsenceConcertee(false); 
-		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
-		p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p.setHeureSupRecuperee(true);
-		p.setIdAgent(9005138);
-		p.setType(rtp);
-		p.persist();
+			p.setAbsenceConcertee(false); 
+			p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+			p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			p.setHeureSupRecuperee(true);
+			p.setIdAgent(9005138);
+			p.setType(rtp);
+		ptgEntityManager.persist(p);
 		
 		Pointage p2 = new Pointage();
-		p2.setAbsenceConcertee(true); 
-		p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
-		p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
-		p2.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p2.setHeureSupRecuperee(false);
-		p2.setIdAgent(9005138);
-		p2.setType(rtp);
-		p2.persist();
+			p2.setAbsenceConcertee(true); 
+			p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
+			p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
+			p2.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			p2.setHeureSupRecuperee(false);
+			p2.setIdAgent(9005138);
+			p2.setType(rtp);
+		ptgEntityManager.persist(p2);
 		
 		
 		List<Integer> listAgents = new ArrayList<Integer>();
@@ -464,28 +463,28 @@ public class PointageRepositoryTest {
 	public void getPointagesVentilesForAgent() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(1);
-		rtp.persist();
+			rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
 		
 		Pointage p = new Pointage();
-		p.setAbsenceConcertee(false); 
-		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
-		p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p.setHeureSupRecuperee(true);
-		p.setIdAgent(9005138);
-		p.setType(rtp);
-		p.persist();
+			p.setAbsenceConcertee(false); 
+			p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+			p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			p.setHeureSupRecuperee(true);
+			p.setIdAgent(9005138);
+			p.setType(rtp);
+		ptgEntityManager.persist(p);
 		
 		Set<Pointage> pointages = new HashSet<Pointage>();
 		pointages.add(p);
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setPointages(pointages);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setPointages(pointages);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 		
 		List<Pointage> result = repository.getPointagesVentilesForAgent(new Integer(9005138), vd.getIdVentilDate());
 		
@@ -501,37 +500,37 @@ public class PointageRepositoryTest {
 	public void getPointagesCalculesVentilesForAgent() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(1);
-		rtp.persist();
+			rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(false);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(false);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 
 		PointageCalcule pc = new PointageCalcule();
-		pc.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		pc.setDateFin(new LocalDate(2013, 7, 29).toDate());
-		pc.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		pc.setEtat(EtatPointageEnum.APPROUVE);
-		pc.setIdAgent(9005138);
-		pc.setLastVentilDate(vd);
-		pc.setQuantite(1);
-		pc.setRefPrime(rp);
-		pc.setType(rtp);
-		pc.persist();
+			pc.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			pc.setDateFin(new LocalDate(2013, 7, 29).toDate());
+			pc.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			pc.setEtat(EtatPointageEnum.APPROUVE);
+			pc.setIdAgent(9005138);
+			pc.setLastVentilDate(vd);
+			pc.setQuantite(1);
+			pc.setRefPrime(rp);
+			pc.setType(rtp);
+		ptgEntityManager.persist(pc);
 		
 		List<PointageCalcule> result = repository.getPointagesCalculesVentilesForAgent(new Integer(9005138), vd.getIdVentilDate());
 		
@@ -546,26 +545,26 @@ public class PointageRepositoryTest {
 	public void getRefPrimesListWithNoRubr() {
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(true);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(true);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		RefPrime rp2 = new RefPrime();
-		rp2.setAide("Saisir l'heure de fin");
-		rp2.setCalculee(true);
-		rp2.setDescription(null);
-		rp2.setLibelle("INDEMNITE BIS");
-		rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp2.setNoRubr(7712);
-		rp2.setStatut(AgentStatutEnum.C);
-		rp2.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
-		rp2.persist();
+			rp2.setAide("Saisir l'heure de fin");
+			rp2.setCalculee(true);
+			rp2.setDescription(null);
+			rp2.setLibelle("INDEMNITE BIS");
+			rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp2.setNoRubr(7712);
+			rp2.setStatut(AgentStatutEnum.C);
+			rp2.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		ptgEntityManager.persist(rp2);
 		
 		List<RefPrime> result = repository.getRefPrimesListWithNoRubr(new Integer(7711));
 		
@@ -585,26 +584,26 @@ public class PointageRepositoryTest {
 	public void getRefPrimesListWithNoRubr_NoResult() {
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(true);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(true);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		RefPrime rp2 = new RefPrime();
-		rp2.setAide("Saisir l'heure de fin");
-		rp2.setCalculee(true);
-		rp2.setDescription(null);
-		rp2.setLibelle("INDEMNITE BIS");
-		rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp2.setNoRubr(7712);
-		rp2.setStatut(AgentStatutEnum.C);
-		rp2.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
-		rp2.persist();
+			rp2.setAide("Saisir l'heure de fin");
+			rp2.setCalculee(true);
+			rp2.setDescription(null);
+			rp2.setLibelle("INDEMNITE BIS");
+			rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp2.setNoRubr(7712);
+			rp2.setStatut(AgentStatutEnum.C);
+			rp2.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		ptgEntityManager.persist(rp2);
 		
 		List<RefPrime> result = repository.getRefPrimesListWithNoRubr(new Integer(7709));
 		
@@ -619,37 +618,37 @@ public class PointageRepositoryTest {
 	public void isPrimeSurPointageouPointageCalcule_PointageCalcule() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(1);
-		rtp.persist();
+			rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(false);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(false);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 
 		PointageCalcule pc = new PointageCalcule();
-		pc.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		pc.setDateFin(new LocalDate(2013, 7, 29).toDate());
-		pc.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		pc.setEtat(EtatPointageEnum.APPROUVE);
-		pc.setIdAgent(9005138);
-		pc.setLastVentilDate(vd);
-		pc.setQuantite(1);
-		pc.setRefPrime(rp);
-		pc.setType(rtp);
-		pc.persist();
+			pc.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			pc.setDateFin(new LocalDate(2013, 7, 29).toDate());
+			pc.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			pc.setEtat(EtatPointageEnum.APPROUVE);
+			pc.setIdAgent(9005138);
+			pc.setLastVentilDate(vd);
+			pc.setQuantite(1);
+			pc.setRefPrime(rp);
+			pc.setType(rtp);
+		ptgEntityManager.persist(pc);
 		
 		boolean result = repository.isPrimeSurPointageouPointageCalcule(new Integer(9005138), rp.getIdRefPrime());
 		
@@ -664,35 +663,35 @@ public class PointageRepositoryTest {
 	public void isPrimeSurPointageouPointageCalcule_Pointage() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(1);
-		rtp.persist();
+			rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(false);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(false);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 24).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 24).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 
 		Pointage p = new Pointage();
-		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
-		p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p.setIdAgent(9005139);
-		p.setQuantite(1);
-		p.setRefPrime(rp);
-		p.setType(rtp);
-		p.persist();
+			p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+			p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			p.setIdAgent(9005139);
+			p.setQuantite(1);
+			p.setRefPrime(rp);
+			p.setType(rtp);
+		ptgEntityManager.persist(p);
 		
 		boolean result = repository.isPrimeSurPointageouPointageCalcule(new Integer(9005139), rp.getIdRefPrime());
 		
@@ -707,35 +706,35 @@ public class PointageRepositoryTest {
 	public void isPrimeSurPointageouPointageCalcule_NoResult() {
 		
 		RefTypePointage rtp = new RefTypePointage();
-		rtp.setIdRefTypePointage(1);
-		rtp.persist();
+			rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
 		
 		RefPrime rp = new RefPrime();
-		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
-		rp.setCalculee(false);
-		rp.setDescription(null);
-		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
-		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
-		rp.setNoRubr(7711);
-		rp.setStatut(AgentStatutEnum.F);
-		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		rp.persist();
+			rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+			rp.setCalculee(false);
+			rp.setDescription(null);
+			rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+			rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+			rp.setNoRubr(7711);
+			rp.setStatut(AgentStatutEnum.F);
+			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
-		vd.setPaye(true);
-		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
-		vd.persist();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
 
 		Pointage p = new Pointage();
-		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
-		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
-		p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
-		p.setIdAgent(9005138);
-		p.setQuantite(1);
-		p.setRefPrime(rp);
-		p.setType(rtp);
-		p.persist();
+			p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+			p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+			p.setDateLundi(new LocalDate(2013, 7, 23).toDate()); 
+			p.setIdAgent(9005138);
+			p.setQuantite(1);
+			p.setRefPrime(rp);
+			p.setType(rtp);
+		ptgEntityManager.persist(p);
 		
 		boolean result = repository.isPrimeSurPointageouPointageCalcule(new Integer(9005138), 100);
 		

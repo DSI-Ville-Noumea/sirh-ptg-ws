@@ -5,9 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-@RooJavaBean
 @Embeddable
 public class SpcarrId implements Serializable {
 	/**
@@ -38,4 +35,21 @@ public class SpcarrId implements Serializable {
 
 	@Column(name = "DATDEB", insertable = false, updatable = false, columnDefinition = "numeric")
 	private Integer datdeb;
+
+	public Integer getNomatr() {
+		return nomatr;
+	}
+
+	public void setNomatr(Integer nomatr) {
+		this.nomatr = nomatr;
+	}
+
+	public Integer getDatdeb() {
+		return datdeb;
+	}
+
+	public void setDatdeb(Integer datdeb) {
+		this.datdeb = datdeb;
+	}
+	
 }

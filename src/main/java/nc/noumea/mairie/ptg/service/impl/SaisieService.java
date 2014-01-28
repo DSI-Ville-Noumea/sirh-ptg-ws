@@ -222,7 +222,7 @@ public class SaisieService implements ISaisieService {
 
 			// If the Pointage was SAISI, simply remove it
 			if (pointageToDelete.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI) {
-				pointageToDelete.remove();
+				pointageRepository.removeEntity(pointageToDelete);
 				continue;
 			}
 		}
@@ -245,7 +245,7 @@ public class SaisieService implements ISaisieService {
 			else
 				ptg.setMotif(new PtgComment(motif));
 		} else if (motifPtgComment != null) {
-			motifPtgComment.remove();
+			pointageRepository.removeEntity(motifPtgComment);
 			ptg.setMotif(null);
 		}
 
@@ -256,7 +256,7 @@ public class SaisieService implements ISaisieService {
 			else
 				ptg.setCommentaire(new PtgComment(commentaire));
 		} else if (commentPtgComment != null) {
-			commentPtgComment.remove();
+			pointageRepository.removeEntity(commentPtgComment);
 			ptg.setCommentaire(null);
 		}
 	}

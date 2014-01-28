@@ -1,14 +1,13 @@
 package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-
-@RooJavaBean
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPBASE", versionField = "")
+@Entity
+@Table(name = "SPBASE")
 public class Spbase {
 
 	@Id
@@ -70,4 +69,102 @@ public class Spbase {
 					return 0.0;
 		}
 	}
+
+	public String getCdBase() {
+		return cdBase;
+	}
+
+	public void setCdBase(String cdBase) {
+		this.cdBase = cdBase;
+	}
+
+	public String getLiBase() {
+		return liBase;
+	}
+
+	public void setLiBase(String liBase) {
+		this.liBase = liBase;
+	}
+
+	public double getNbashh() {
+		return nbashh;
+	}
+
+	public void setNbashh(double nbashh) {
+		this.nbashh = nbashh;
+	}
+
+	public double getCdcbas() {
+		return cdcbas;
+	}
+
+	public void setCdcbas(double cdcbas) {
+		this.cdcbas = cdcbas;
+	}
+
+	public double getNbahsa() {
+		return nbahsa;
+	}
+
+	public void setNbahsa(double nbahsa) {
+		this.nbahsa = nbahsa;
+	}
+
+	public double getNbahdi() {
+		return nbahdi;
+	}
+
+	public void setNbahdi(double nbahdi) {
+		this.nbahdi = nbahdi;
+	}
+
+	public double getNbahlu() {
+		return nbahlu;
+	}
+
+	public void setNbahlu(double nbahlu) {
+		this.nbahlu = nbahlu;
+	}
+
+	public double getNbahma() {
+		return nbahma;
+	}
+
+	public void setNbahma(double nbahma) {
+		this.nbahma = nbahma;
+	}
+
+	public double getNbahme() {
+		return nbahme;
+	}
+
+	public void setNbahme(double nbahme) {
+		this.nbahme = nbahme;
+	}
+
+	public double getNbahje() {
+		return nbahje;
+	}
+
+	public void setNbahje(double nbahje) {
+		this.nbahje = nbahje;
+	}
+
+	public double getNbahve() {
+		return nbahve;
+	}
+
+	public void setNbahve(double nbahve) {
+		this.nbahve = nbahve;
+	}
+
+	public double getNbasch() {
+		return nbasch;
+	}
+
+	public void setNbasch(double nbasch) {
+		this.nbasch = nbasch;
+	}
+	
+	
 }

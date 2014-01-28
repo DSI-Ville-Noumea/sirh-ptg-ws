@@ -5,9 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-@RooJavaBean
 @Embeddable
 public class SpphreId implements Serializable {
 
@@ -40,5 +37,21 @@ public class SpphreId implements Serializable {
 
 	@Column(name = "DATJOU", columnDefinition = "numeric")
 	private Integer datJour;
+
+	public Integer getNomatr() {
+		return nomatr;
+	}
+
+	public void setNomatr(Integer nomatr) {
+		this.nomatr = nomatr;
+	}
+
+	public Integer getDatJour() {
+		return datJour;
+	}
+
+	public void setDatJour(Integer datJour) {
+		this.datJour = datJour;
+	}
 	
 }

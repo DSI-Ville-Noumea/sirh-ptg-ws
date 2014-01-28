@@ -13,6 +13,7 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Sppprm;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -454,12 +455,12 @@ public class SaisieServiceTest {
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		AgentWithServiceDto agent = new AgentWithServiceDto();
-		agent.setIdAgent(9007654);
+			agent.setIdAgent(9007654);
 		
 		FichePointageDto dto = new FichePointageDto();
-		dto.setDateLundi(lundi);
-		dto.setAgent(agent);
-		dto.setSaisies(Arrays.asList(
+			dto.setDateLundi(lundi);
+			dto.setAgent(agent);
+			dto.setSaisies(Arrays.asList(
 				new JourPointageDto(), 
 				new JourPointageDto(), 
 				new JourPointageDto(), 
@@ -473,21 +474,20 @@ public class SaisieServiceTest {
 
 		Pointage p = Mockito.spy(new Pointage());
 		EtatPointage e1 = new EtatPointage();
-		e1.setEtat(EtatPointageEnum.SAISI);
-		p.getEtats().add(e1);
-		Mockito.doNothing().when(p).remove();
+			e1.setEtat(EtatPointageEnum.SAISI);
+			p.getEtats().add(e1);
 		Pointage p2 = Mockito.spy(new Pointage());
 		EtatPointage e2 = new EtatPointage();
-		e2.setEtat(EtatPointageEnum.REFUSE);
-		p2.getEtats().add(e2);
+			e2.setEtat(EtatPointageEnum.REFUSE);
+			p2.getEtats().add(e2);
 		
 		IPointageService pService = Mockito.mock(IPointageService.class);
-		Mockito.when(pService.getLatestPointagesForSaisieForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(p, p2));
+			Mockito.when(pService.getLatestPointagesForSaisieForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(p, p2));
 		
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
 		
 		SaisieService service = Mockito.spy(new SaisieService());
-		Mockito.doNothing().when(service).deletePointages(9001234, Arrays.asList(p, p2));
+			Mockito.doNothing().when(service).deletePointages(9001234, Arrays.asList(p, p2));
 		
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
@@ -506,72 +506,71 @@ public class SaisieServiceTest {
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		AgentWithServiceDto agent = new AgentWithServiceDto();
-		agent.setIdAgent(9007654);
+			agent.setIdAgent(9007654);
 		
 		FichePointageDto dto = new FichePointageDto();
-		dto.setDateLundi(lundi);
-		dto.setAgent(agent);
+			dto.setDateLundi(lundi);
+			dto.setAgent(agent);
 		
 		
 		// prime
 		PrimeDto templateP = new PrimeDto();
-		templateP.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES.toString());
-		templateP.setIdRefPrime(22);
-		templateP.setNumRubrique(1111);
-		templateP.setTitre("Le titre");
+			templateP.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES.toString());
+			templateP.setIdRefPrime(22);
+			templateP.setNumRubrique(1111);
+			templateP.setTitre("Le titre");
 		JourPointageDto j1 = new JourPointageDto();
-		j1.getPrimes().add(templateP);
+			j1.getPrimes().add(templateP);
 		dto.setSaisies(Arrays.asList(j1, new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1), 
 				new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1)));
 		PrimeDto prime7thday = dto.getSaisies().get(6).getPrimes().get(0);
-		prime7thday.setIdPointage(2000);
-		prime7thday.setaSupprimer(true);
-		prime7thday.setHeureDebut(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
-		prime7thday.setHeureFin(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
-		prime7thday.setQuantite(3);
-		prime7thday.setMotif("mot");
-		prime7thday.setCommentaire("com");prime7thday.setIdPointage(2000);
+			prime7thday.setIdPointage(2000);
+			prime7thday.setaSupprimer(true);
+			prime7thday.setHeureDebut(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
+			prime7thday.setHeureFin(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
+			prime7thday.setQuantite(3);
+			prime7thday.setMotif("mot");
+			prime7thday.setCommentaire("com");prime7thday.setIdPointage(2000);
 		PrimeDto prime6thday = dto.getSaisies().get(5).getPrimes().get(0);
-		prime6thday.setIdPointage(1999);
-		prime6thday.setaSupprimer(true);
-		prime6thday.setHeureDebut(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
-		prime6thday.setHeureFin(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
-		prime6thday.setQuantite(3);
-		prime6thday.setMotif("mot");
-		prime6thday.setCommentaire("com");
+			prime6thday.setIdPointage(1999);
+			prime6thday.setaSupprimer(true);
+			prime6thday.setHeureDebut(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
+			prime6thday.setHeureFin(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
+			prime6thday.setQuantite(3);
+			prime6thday.setMotif("mot");
+			prime6thday.setCommentaire("com");
 		
 		Date currentDate = new DateTime(2013, 05, 22, 9, 8, 00).toDate();
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.isDateAMonday(lundi)).thenReturn(true);
-		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+			Mockito.when(hS.isDateAMonday(lundi)).thenReturn(true);
+			Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
 		
 		RefTypePointage primTypeRef = new RefTypePointage();
-		primTypeRef.setIdRefTypePointage(3);
+			primTypeRef.setIdRefTypePointage(3);
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getEntity(RefTypePointage.class, 3)).thenReturn(primTypeRef);
+			Mockito.when(pRepo.getEntity(RefTypePointage.class, 3)).thenReturn(primTypeRef);
 		
 		RefPrime refPrime = new RefPrime();
-		refPrime.setIdRefPrime(22);
-		refPrime.setNoRubr(1111);
+			refPrime.setIdRefPrime(22);
+			refPrime.setNoRubr(1111);
 
 		Pointage existingPointageApprouve = new Pointage();
-		existingPointageApprouve.setIdAgent(agent.getIdAgent());
-		existingPointageApprouve.setDateLundi(lundi);
-		existingPointageApprouve.setRefPrime(refPrime);
-		existingPointageApprouve.setIdPointage(1999);
-		existingPointageApprouve.getEtats().add(new EtatPointage());
-		existingPointageApprouve.getLatestEtatPointage().setEtat(EtatPointageEnum.APPROUVE);
+			existingPointageApprouve.setIdAgent(agent.getIdAgent());
+			existingPointageApprouve.setDateLundi(lundi);
+			existingPointageApprouve.setRefPrime(refPrime);
+			existingPointageApprouve.setIdPointage(1999);
+			existingPointageApprouve.getEtats().add(new EtatPointage());
+			existingPointageApprouve.getLatestEtatPointage().setEtat(EtatPointageEnum.APPROUVE);
 		Pointage existingPointageSaisi = Mockito.spy(new Pointage());
-		Mockito.doNothing().when(existingPointageSaisi).remove();
-		existingPointageSaisi.setIdAgent(agent.getIdAgent());
-		existingPointageSaisi.setDateLundi(lundi);
-		existingPointageSaisi.setRefPrime(refPrime);
-		existingPointageSaisi.setIdPointage(2000);
-		existingPointageSaisi.getEtats().add(new EtatPointage());
-		existingPointageSaisi.getLatestEtatPointage().setEtat(EtatPointageEnum.SAISI);
+			existingPointageSaisi.setIdAgent(agent.getIdAgent());
+			existingPointageSaisi.setDateLundi(lundi);
+			existingPointageSaisi.setRefPrime(refPrime);
+			existingPointageSaisi.setIdPointage(2000);
+			existingPointageSaisi.getEtats().add(new EtatPointage());
+			existingPointageSaisi.getLatestEtatPointage().setEtat(EtatPointageEnum.SAISI);
 		
 		IPointageService pService = Mockito.mock(IPointageService.class);
-		Mockito.when(pService.getLatestPointagesForSaisieForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(existingPointageApprouve, existingPointageSaisi));
+			Mockito.when(pService.getLatestPointagesForSaisieForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(existingPointageApprouve, existingPointageSaisi));
 		
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
 		
@@ -587,7 +586,8 @@ public class SaisieServiceTest {
 		
 		// Then
 		Mockito.verify(pRepo, Mockito.never()).savePointage(Mockito.any(Pointage.class));
-		Mockito.verify(existingPointageSaisi, Mockito.times(1)).remove();
+		Mockito.verify(pRepo, Mockito.times(1)).removeEntity(Mockito.isA(Pointage.class));
+		
 	}
 	
 	@Test
@@ -595,19 +595,22 @@ public class SaisieServiceTest {
 		
 		// Given
 		Pointage p1 = Mockito.spy(new Pointage());
-		Mockito.doNothing().when(p1).remove();
 		EtatPointage e1 = new EtatPointage();
-		e1.setEtat(EtatPointageEnum.SAISI);
-		p1.getEtats().add(e1);
+			e1.setEtat(EtatPointageEnum.SAISI);
+			p1.getEtats().add(e1);
 		
 		List<Pointage> ptgToDelete = Arrays.asList(p1);
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		
 		SaisieService service = new SaisieService();
+			ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		
 		// When
 		service.deletePointages(9001234, ptgToDelete);
 		
 		// Then
-		Mockito.verify(p1, Mockito.times(1)).remove();
+		Mockito.verify(pRepo, Mockito.times(1)).removeEntity(Mockito.isA(Pointage.class));
 	}
 	
 	@Test
@@ -656,19 +659,20 @@ public class SaisieServiceTest {
 		// Given
 		PtgComment existingMotif = Mockito.spy(new PtgComment());
 		existingMotif.setText("value");
-		Mockito.doNothing().when(existingMotif).remove();
 		PtgComment existingComment = Mockito.spy(new PtgComment());
-		Mockito.doNothing().when(existingComment).remove();
 		
 		existingComment.setText("value2");
 		Pointage ptg = new Pointage();
-		ptg.setMotif(existingMotif);
-		ptg.setCommentaire(existingComment);
+			ptg.setMotif(existingMotif);
+			ptg.setCommentaire(existingComment);
 		
 		String motif = "";
 		String commentaire = "";
 		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		
 		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		
 		// When
 		service.crudComments(ptg, motif, commentaire);
@@ -677,8 +681,7 @@ public class SaisieServiceTest {
 		assertNull(ptg.getMotif());
 		assertNull(ptg.getCommentaire());
 
-		Mockito.verify(existingMotif, Mockito.times(1)).remove();
-		Mockito.verify(existingComment, Mockito.times(1)).remove();
+		Mockito.verify(pRepo, Mockito.times(2)).removeEntity(Mockito.isA(PtgComment.class));
 	}
 	
 	@Test

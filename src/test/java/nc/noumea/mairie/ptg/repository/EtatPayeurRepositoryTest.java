@@ -35,18 +35,17 @@ public class EtatPayeurRepositoryTest {
 	public void getEtatPayeurById_returnResult() {
 		
 		RefTypePointage type = new RefTypePointage(); 
-		type.setIdRefTypePointage(1);
-		type.setLabel("ref type 1");
+			type.setIdRefTypePointage(1);
+			type.setLabel("ref type 1");
 		ptgEntityManager.persist(type);
 		
 		EtatPayeur etatPayeur = new EtatPayeur();
-		etatPayeur.setIdEtatPayeur(new Integer(5));
-		etatPayeur.setDateEtatPayeur(new LocalDate(2013, 10, 17).toDate());
-		etatPayeur.setFichier("testUnit.pdf");
-		etatPayeur.setLabel("test unitaire");
-		etatPayeur.setStatut(AgentStatutEnum.C);
-		etatPayeur.setType(type);
-		etatPayeur.setIdAgent(9005138);
+			etatPayeur.setDateEtatPayeur(new LocalDate(2013, 10, 17).toDate());
+			etatPayeur.setFichier("testUnit.pdf");
+			etatPayeur.setLabel("test unitaire");
+			etatPayeur.setStatut(AgentStatutEnum.C);
+			etatPayeur.setType(type);
+			etatPayeur.setIdAgent(9005138);
 		ptgEntityManager.persist(etatPayeur);
 		
 		EtatPayeur result = repository.getEtatPayeurById(new Integer(5));
@@ -60,28 +59,26 @@ public class EtatPayeurRepositoryTest {
 	public void getListEditionEtatPayeur_returnResult() {
 		
 		RefTypePointage type = new RefTypePointage(); 
-		type.setIdRefTypePointage(1);
-		type.setLabel("ref type 1");
+			type.setIdRefTypePointage(1);
+			type.setLabel("ref type 1");
 		ptgEntityManager.persist(type);
 		
 		EtatPayeur et1 = new EtatPayeur();
-		et1.setIdEtatPayeur(new Integer(1));
-		et1.setDateEtatPayeur(new LocalDate(2013, 10, 17).toDate());
-		et1.setFichier("testUnit.pdf");
-		et1.setLabel("test unitaire");
-		et1.setStatut(AgentStatutEnum.C);
-		et1.setType(type);
-		et1.setIdAgent(9005138);
+			et1.setDateEtatPayeur(new LocalDate(2013, 10, 17).toDate());
+			et1.setFichier("testUnit.pdf");
+			et1.setLabel("test unitaire");
+			et1.setStatut(AgentStatutEnum.C);
+			et1.setType(type);
+			et1.setIdAgent(9005138);
 		ptgEntityManager.persist(et1);
 		
 		EtatPayeur et2 = new EtatPayeur();
-		et2.setIdEtatPayeur(new Integer(2));
-		et2.setDateEtatPayeur(new LocalDate(2013, 10, 18).toDate());
-		et2.setFichier("testUnit2.pdf");
-		et2.setLabel("test unitaire 2");
-		et2.setStatut(AgentStatutEnum.C);
-		et2.setType(type);
-		et2.setIdAgent(9005138);
+			et2.setDateEtatPayeur(new LocalDate(2013, 10, 18).toDate());
+			et2.setFichier("testUnit2.pdf");
+			et2.setLabel("test unitaire 2");
+			et2.setStatut(AgentStatutEnum.C);
+			et2.setType(type);
+			et2.setIdAgent(9005138);
 		ptgEntityManager.persist(et2);
 		
 		List<EtatPayeur> result = repository.getListEditionEtatPayeur(AgentStatutEnum.C);
@@ -96,18 +93,17 @@ public class EtatPayeurRepositoryTest {
 	public void getEtatPayeurById_returnNoResult() {
 		
 		RefTypePointage type = new RefTypePointage(); 
-		type.setIdRefTypePointage(1);
-		type.setLabel("ref type 1");
+			type.setIdRefTypePointage(1);
+			type.setLabel("ref type 1");
 		ptgEntityManager.persist(type);
 		
 		EtatPayeur etatPayeur = new EtatPayeur();
-		etatPayeur.setIdEtatPayeur(new Integer(1));
-		etatPayeur.setDateEtatPayeur(new LocalDate(2013, 10, 17).toDate());
-		etatPayeur.setFichier("testUnit.pdf");
-		etatPayeur.setLabel("test unitaire");
-		etatPayeur.setStatut(AgentStatutEnum.C);
-		etatPayeur.setType(type);
-		etatPayeur.setIdAgent(9005138);
+			etatPayeur.setDateEtatPayeur(new LocalDate(2013, 10, 17).toDate());
+			etatPayeur.setFichier("testUnit.pdf");
+			etatPayeur.setLabel("test unitaire");
+			etatPayeur.setStatut(AgentStatutEnum.C);
+			etatPayeur.setType(type);
+			etatPayeur.setIdAgent(9005138);
 		ptgEntityManager.persist(etatPayeur);
 		
 		Throwable e = null;
@@ -124,28 +120,26 @@ public class EtatPayeurRepositoryTest {
 	public void getListEditionEtatPayeur_returnNoResult() {
 		
 		RefTypePointage type = new RefTypePointage(); 
-		type.setIdRefTypePointage(1);
-		type.setLabel("ref type 1");
+			type.setIdRefTypePointage(1);
+			type.setLabel("ref type 1");
 		ptgEntityManager.persist(type);
 		
 		EtatPayeur et1 = new EtatPayeur();
-		et1.setIdEtatPayeur(new Integer(1));
-		et1.setDateEtatPayeur(new LocalDate(2013, 10, 17).toDate());
-		et1.setFichier("testUnit.pdf");
-		et1.setLabel("test unitaire");
-		et1.setStatut(AgentStatutEnum.C);
-		et1.setType(type);
-		et1.setIdAgent(9005138);
+			et1.setDateEtatPayeur(new LocalDate(2013, 10, 17).toDate());
+			et1.setFichier("testUnit.pdf");
+			et1.setLabel("test unitaire");
+			et1.setStatut(AgentStatutEnum.C);
+			et1.setType(type);
+			et1.setIdAgent(9005138);
 		ptgEntityManager.persist(et1);
 		
 		EtatPayeur et2 = new EtatPayeur();
-		et2.setIdEtatPayeur(new Integer(2));
-		et2.setDateEtatPayeur(new LocalDate(2013, 10, 18).toDate());
-		et2.setFichier("testUnit2.pdf");
-		et2.setLabel("test unitaire 2");
-		et2.setStatut(AgentStatutEnum.C);
-		et2.setType(type);
-		et2.setIdAgent(9005138);
+			et2.setDateEtatPayeur(new LocalDate(2013, 10, 18).toDate());
+			et2.setFichier("testUnit2.pdf");
+			et2.setLabel("test unitaire 2");
+			et2.setStatut(AgentStatutEnum.C);
+			et2.setType(type);
+			et2.setIdAgent(9005138);
 		ptgEntityManager.persist(et2);
 		
 		List<EtatPayeur> result = repository.getListEditionEtatPayeur(AgentStatutEnum.CC);

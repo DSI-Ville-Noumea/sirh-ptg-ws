@@ -49,4 +49,6 @@ public interface IVentilationRepository {
     VentilHsup getPriorVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilHsup latestVentilAbsence);
     
     VentilPrime getPriorVentilPrimeForAgentAndDate(Integer idAgent, Date dateDebMois, VentilPrime latestVentilAbsence);
+    
+    void persistEntity(Object entity);
 }

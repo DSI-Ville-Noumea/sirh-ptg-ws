@@ -22,10 +22,15 @@ public class MairieRepository implements IMairieRepository {
 	public void persistEntity(Object entity) {
 		entityManager.persist(entity);
 	}
+	
+	@Override
+	public void removeEntity(Object obj) {
+		entityManager.remove(obj);
+	}
 
 	@Override
 	public Spmatr findSpmatrForAgent(Integer idAgent) {
-		return Spmatr.findSpmatr(idAgent);
+		return entityManager.find(Spmatr.class, idAgent);
 	}
 	
 }

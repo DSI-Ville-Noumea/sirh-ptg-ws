@@ -12,7 +12,9 @@ import javax.persistence.TypedQuery;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
+import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
 
 import org.springframework.stereotype.Repository;
 
@@ -188,6 +190,11 @@ public class PointageRepository implements IPointageRepository {
     public void persisEntity(Object entity) {
         ptgEntityManager.persist(entity);
     }
+    
+    @Override
+    public void removeEntity(Object entity) {
+        ptgEntityManager.remove(entity);
+    }
 
     @Override
 	public boolean isPrimeSurPointageouPointageCalcule(Integer idAgent,
@@ -215,4 +222,14 @@ public class PointageRepository implements IPointageRepository {
 		}
 		return false;
 	}
+    
+    @Override
+	public List<RefEtat> findAllRefEtats() {
+	    return ptgEntityManager.createQuery("SELECT o FROM RefEtat o", RefEtat.class).getResultList();
+	}
+    
+    @Override
+   	public List<RefTypePointage> findAllRefTypePointages() {
+   	    return ptgEntityManager.createQuery("SELECT o FROM RefTypePointage o", RefTypePointage.class).getResultList();
+   	}
 }

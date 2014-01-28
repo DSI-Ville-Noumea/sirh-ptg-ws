@@ -2,12 +2,11 @@ package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-
-@RooJavaBean
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPPACT", versionField = "")
+@Entity
+@Table(name = "SPPACT")
 public class Sppact {
 
 	@EmbeddedId
@@ -18,4 +17,30 @@ public class Sppact {
 	
 	@Column(name = "SERVI", columnDefinition = "char default '    '")
 	private String service = "    ";
+
+	public SppactId getId() {
+		return id;
+	}
+
+	public void setId(SppactId id) {
+		this.id = id;
+	}
+
+	public double getNbHeures() {
+		return nbHeures;
+	}
+
+	public void setNbHeures(double nbHeures) {
+		this.nbHeures = nbHeures;
+	}
+
+	public String getService() {
+		return service;
+	}
+
+	public void setService(String service) {
+		this.service = service;
+	}
+	
+	
 }

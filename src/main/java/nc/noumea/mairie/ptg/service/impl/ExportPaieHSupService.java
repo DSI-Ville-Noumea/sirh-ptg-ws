@@ -40,7 +40,7 @@ public class ExportPaieHSupService implements IExportPaieHSupService {
 			if (!isSpphreEmpty(hre))
 				hsups.add(hre);
 			else
-				hre.remove();
+				exportPaieRepository.removeEntity(hre);
 		}
 		
 		return hsups;

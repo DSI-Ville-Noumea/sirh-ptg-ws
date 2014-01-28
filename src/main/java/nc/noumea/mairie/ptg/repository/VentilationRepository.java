@@ -439,5 +439,10 @@ public class VentilationRepository implements IVentilationRepository {
 
 		return vas.size() != 0 ? vas.get(0) : null;
 	}
+	
+	@Override
+	public void persistEntity(Object entity) {
+		ptgEntityManager.persist(entity);
+	}
 
 }

@@ -273,25 +273,25 @@ public class ExportPaieService implements IExportPaieService {
 	
 	protected void persistSppac(List<Sppact> absences) {
 		for (Sppact sppact : absences) {
-			sppact.merge();
+			sirhRepository.mergeEntity(sppact);
 		}
 	}
 	
 	protected void persistSpphre(List<Spphre> hSups) {
 		for (Spphre spphre : hSups) {
-			spphre.merge();
+			sirhRepository.mergeEntity(spphre);
 		}
 	}
 	
 	protected void persistSppprm(List<Sppprm> prms) {
 		for (Sppprm prm : prms) {
-			prm.merge();
+			sirhRepository.mergeEntity(prm);
 		}
 	}
 	
 	protected void persistSpprim(List<Spprim> pris) {
 		for (Spprim pri : pris) {
-			pri.merge();
+			sirhRepository.mergeEntity(pri);
 		}
 	}
 
@@ -306,5 +306,9 @@ public class ExportPaieService implements IExportPaieService {
 	public void stopExportToPaie(TypeChainePaieEnum typeChainePaie) throws WorkflowInvalidStateException {
 		paieWorkflowService.changeStateToExportPaieDone(typeChainePaie);
 	}
-
+	
+	@Override
+	public ExportPaieTask findExportPaieTask(Integer idExportPaieTask) {
+		return pointageRepository.getEntity(ExportPaieTask.class, idExportPaieTask);
+	}
 }

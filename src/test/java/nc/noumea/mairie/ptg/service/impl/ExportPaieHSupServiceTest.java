@@ -18,6 +18,8 @@ import org.joda.time.LocalDate;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class ExportPaieHSupServiceTest {
@@ -219,36 +221,41 @@ public class ExportPaieHSupServiceTest {
 		
 		// Given
 		VentilHsup h1 = new VentilHsup();
-		h1.setIdAgent(9008765);
-		h1.setDateLundi(new LocalDate(2013, 8, 5).toDate());
+			h1.setIdAgent(9008765);
+			h1.setDateLundi(new LocalDate(2013, 8, 5).toDate());
 		
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
-		Mockito.when(hS.getIntegerDateMairieFromDate(h1.getDateLundi())).thenReturn(20130805);
+			Mockito.when(hS.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
+			Mockito.when(hS.getIntegerDateMairieFromDate(h1.getDateLundi())).thenReturn(20130805);
 		
 		Spphre existingHre = Mockito.spy(new Spphre());
-		Mockito.doNothing().when(existingHre).remove();
-		existingHre.setId(new SpphreId(8765, 20130805));
-		existingHre.setNbh25(1);
-		existingHre.setNbh50(1);
-		existingHre.setNbhdim(1);
-		existingHre.setNbhmai(1);
-		existingHre.setNbhnuit(1);
-		existingHre.setNbhssimple(1);
-		existingHre.setNbhscomposees(1);
-		existingHre.setNbhcomplementaires(1);
+			existingHre.setId(new SpphreId(8765, 20130805));
+			existingHre.setNbh25(1);
+			existingHre.setNbh50(1);
+			existingHre.setNbhdim(1);
+			existingHre.setNbhmai(1);
+			existingHre.setNbhnuit(1);
+			existingHre.setNbhssimple(1);
+			existingHre.setNbhscomposees(1);
+			existingHre.setNbhcomplementaires(1);
+			
 		IExportPaieRepository eR = Mockito.mock(IExportPaieRepository.class);
-		Mockito.when(eR.getSpphreForDayAndAgent(9008765, h1.getDateLundi())).thenReturn(existingHre);
+			Mockito.when(eR.getSpphreForDayAndAgent(9008765, h1.getDateLundi())).thenReturn(existingHre);
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return true;
+				}
+			}).when(eR).removeEntity(Mockito.isA(Spphre.class));
 		
 		ExportPaieHSupService service = new ExportPaieHSupService();
-		ReflectionTestUtils.setField(service, "helperService", hS);
-		ReflectionTestUtils.setField(service, "exportPaieRepository", eR);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "exportPaieRepository", eR);
 		
 		// When
 		List<Spphre> result = service.exportHsupToPaie(Arrays.asList(h1));
 		
 		// Then
 		assertEquals(0, result.size());
-		Mockito.verify(existingHre, Mockito.times(1)).remove();
+		Mockito.verify(eR, Mockito.times(1)).removeEntity(Mockito.isA(Spphre.class));
 	}
 }

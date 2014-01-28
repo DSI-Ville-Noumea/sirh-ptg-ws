@@ -1,13 +1,12 @@
 package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-
-@RooJavaBean
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPBHOR", versionField = "")
+@Entity
+@Table(name = "SPBHOR")
 public class Spbhor {
 
 	@Id
@@ -16,4 +15,22 @@ public class Spbhor {
 	
 	@Column(name = "CDTAUX", columnDefinition = "decimal")
 	private Double taux;
+
+	public Integer getCdthor() {
+		return cdthor;
+	}
+
+	public void setCdthor(Integer cdthor) {
+		this.cdthor = cdthor;
+	}
+
+	public Double getTaux() {
+		return taux;
+	}
+
+	public void setTaux(Double taux) {
+		this.taux = taux;
+	}
+	
+	
 }

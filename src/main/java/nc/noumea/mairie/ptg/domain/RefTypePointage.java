@@ -1,15 +1,12 @@
 package nc.noumea.mairie.ptg.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJpaActiveRecord(persistenceUnit = "ptgPersistenceUnit", table = "PTG_REF_TYPE_POINTAGE", versionField = "")
+@Entity
+@Table(name = "PTG_REF_TYPE_POINTAGE")
 public class RefTypePointage {
 
 	@Id
@@ -18,4 +15,22 @@ public class RefTypePointage {
 
 	@Column(name = "LABEL", columnDefinition = "NVARCHAR2")
 	private String label;
+
+	public Integer getIdRefTypePointage() {
+		return idRefTypePointage;
+	}
+
+	public void setIdRefTypePointage(Integer idRefTypePointage) {
+		this.idRefTypePointage = idRefTypePointage;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	
 }

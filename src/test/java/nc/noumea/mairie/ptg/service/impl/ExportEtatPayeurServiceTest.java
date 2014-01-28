@@ -862,34 +862,38 @@ public class ExportEtatPayeurServiceTest {
 		Date ventilationDate = new LocalDate(2013, 02, 25).toDate();
 		
 		VentilDate vd = new VentilDate();
-		vd.setDateVentilation(ventilationDate);
+			vd.setDateVentilation(ventilationDate);
 		VentilHsup vh = new VentilHsup();
-		vd.getVentilHsups().add(vh);
+			vd.getVentilHsups().add(vh);
 		VentilHsup vh2 = new VentilHsup();
-		vh2.setMRecuperees(90);
-		vh2.setIdAgent(9009999);
-		vh2.setDateLundi(new LocalDate(2013, 9, 2).toDate());
+			vh2.setMRecuperees(90);
+			vh2.setIdAgent(9009999);
+			vh2.setDateLundi(new LocalDate(2013, 9, 2).toDate());
 		vd.getVentilHsups().add(vh2);
 		
 		ExportEtatsPayeurTask task = new ExportEtatsPayeurTask();
-		task.setIdAgent(idAgentExporting);
-		task.setTypeChainePaie(chainePaie);
-		task.setVentilDate(vd);
+			task.setIdAgent(idAgentExporting);
+			task.setTypeChainePaie(chainePaie);
+			task.setVentilDate(vd);
 
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(chainePaie);
+			Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(chainePaie);
 		
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getLatestVentilDate(chainePaie, false)).thenReturn(vd);
+			Mockito.when(vR.getLatestVentilDate(chainePaie, false)).thenReturn(vd);
 		
 		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
+			Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
 		
 		IAbsWsConsumer ac = Mockito.mock(IAbsWsConsumer.class);
 		
 		List<EtatPayeur> eps = new ArrayList<EtatPayeur>();
-		EtatPayeur ep = Mockito.spy(new EtatPayeur());
-		Mockito.doNothing().when(ep).persist();
+		EtatPayeur ep = Mockito.spy(new EtatPayeur()); 
+			Mockito.doAnswer(new Answer<Object>() {
+				public Object answer(InvocationOnMock invocation) {
+					return true;
+				}
+			}).when(pR).persisEntity(Mockito.isA(EtatPayeur.class));
 		eps.add(ep);
 		
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
@@ -902,7 +906,7 @@ public class ExportEtatPayeurServiceTest {
 		service.exportEtatsPayeur(99);
 		
 		// Then
-		Mockito.verify(ep, Mockito.times(1)).persist();
+		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(EtatPayeur.class));
 		Mockito.verify(ac, Mockito.times(1)).addRecuperationsToAgent(9009999, vh2.getDateLundi(), 90);
 	}
 	
@@ -957,7 +961,11 @@ public class ExportEtatPayeurServiceTest {
 		
 		List<EtatPayeur> eps = new ArrayList<EtatPayeur>();
 		EtatPayeur ep = Mockito.spy(new EtatPayeur());
-		Mockito.doNothing().when(ep).persist();
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(pR).persisEntity(Mockito.isA(EtatPayeur.class));
 		eps.add(ep);
 		
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
@@ -969,7 +977,7 @@ public class ExportEtatPayeurServiceTest {
 		service.exportEtatsPayeur(99);
 		
 		// Then
-		Mockito.verify(ep, Mockito.times(1)).persist();
+		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(EtatPayeur.class));
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompTask.class));
 	}
 	

@@ -5,9 +5,6 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-
-@RooJavaBean
 @Embeddable
 public class SpcongId implements Serializable {
 
@@ -47,4 +44,38 @@ public class SpcongId implements Serializable {
 	public boolean equals(Object obj) {
 		return super.equals(obj);
 	}
+
+	public Integer getNomatr() {
+		return nomatr;
+	}
+
+	public void setNomatr(Integer nomatr) {
+		this.nomatr = nomatr;
+	}
+
+	public Integer getDatdeb() {
+		return datdeb;
+	}
+
+	public void setDatdeb(Integer datdeb) {
+		this.datdeb = datdeb;
+	}
+
+	public Integer getType2() {
+		return type2;
+	}
+
+	public void setType2(Integer type2) {
+		this.type2 = type2;
+	}
+
+	public Integer getRang() {
+		return rang;
+	}
+
+	public void setRang(Integer rang) {
+		this.rang = rang;
+	}
+	
+	
 }

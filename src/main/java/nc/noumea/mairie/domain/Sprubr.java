@@ -1,18 +1,13 @@
 package nc.noumea.mairie.domain;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.roo.addon.javabean.RooJavaBean;
-import org.springframework.roo.addon.jpa.activerecord.RooJpaActiveRecord;
-import org.springframework.roo.addon.json.RooJson;
-import org.springframework.roo.addon.tostring.RooToString;
-
-@RooJavaBean
-@RooToString
-@RooJson
-@RooJpaActiveRecord(persistenceUnit = "sirhPersistenceUnit", table = "SPRUBR", versionField = "")
+@Entity
+@Table(name = "SPRUBR")
 public class Sprubr {
 
 	@Id
@@ -22,4 +17,22 @@ public class Sprubr {
 	@NotNull
 	@Column(name = "LIRUBR", columnDefinition = "char")
 	private String liRubr;
+
+	public Integer getNoRubr() {
+		return noRubr;
+	}
+
+	public void setNoRubr(Integer noRubr) {
+		this.noRubr = noRubr;
+	}
+
+	public String getLiRubr() {
+		return liRubr;
+	}
+
+	public void setLiRubr(String liRubr) {
+		this.liRubr = liRubr;
+	}
+	
+	
 }

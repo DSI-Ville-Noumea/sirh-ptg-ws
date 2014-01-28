@@ -33,4 +33,6 @@ public interface ISirhRepository {
 	List<Integer> getAllAgentIdsByStatus(AgentStatutEnum statut);
 	
 	List<Integer> getAllAgentsIdsByStatusAndBetween(AgentStatutEnum statut, Integer from, Integer to);
+	
+	void mergeEntity(Object entity);
 }

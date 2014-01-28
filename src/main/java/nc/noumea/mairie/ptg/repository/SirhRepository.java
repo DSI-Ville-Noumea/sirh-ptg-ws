@@ -143,4 +143,9 @@ public class SirhRepository implements ISirhRepository {
 		
 		return null;
 	}
+	
+	@Override
+	public void mergeEntity(Object entity) {
+		sirhEntityManager.merge(entity);
+	}
 }
