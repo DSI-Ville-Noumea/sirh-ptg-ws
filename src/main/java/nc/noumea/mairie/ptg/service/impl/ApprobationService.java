@@ -262,4 +262,18 @@ public class ApprobationService implements IApprobationService {
 		return result;
 	}
 
+	@Override
+	public List<AgentDto> listerTousAgentsPointages() {
+
+		List<AgentDto> result = new ArrayList<AgentDto>();
+		List<Integer> list = pointageRepository.listAllDistinctIdAgentPointage();
+
+		for (Integer idAgent : list) {
+			AgentDto agDto = new AgentDto();
+			agDto.setIdAgent(idAgent);
+			result.add(agDto);
+		}
+		return result;
+	}
+
 }

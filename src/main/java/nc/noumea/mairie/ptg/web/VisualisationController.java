@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -202,6 +203,20 @@ public class VisualisationController {
 		List<ConsultPointageDto> result = approbationService.getPointagesArchives(idPointage);
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
+		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
+				.deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/listeAgentsPointagesForSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> listeAgentsPointagesForSIRH() {
+
+		logger.debug("entered GET [visualisation/listeAgentsPointagesForSIRH] => listeAgentsPointagesForSIRH with no parameter ");
+
+		List<AgentDto> result = approbationService.listerTousAgentsPointages();
+
 		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
 				.deepSerialize(result);
 		return new ResponseEntity<String>(response, HttpStatus.OK);

@@ -194,6 +194,40 @@ HTTP Status code OK : 200
 +-------------------------+
 
 
+** Recuperer tous les idAgent qui ont un pointage
+
+ <<URL>> : /visualisation/listeAgentsPointagesForSIRH
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+
++-------------------------+
+    [
+       {
+           "idAgent": 9005138,
+           "nom": null,
+           "prenom": null
+       },
+       {
+           "idAgent": 9005472,
+           "nom": null,
+           "prenom": null
+       },
+       {
+           "idAgent": 9004037,
+           "nom": null,
+           "prenom": null
+       }
+    ]
++-------------------------+
+
 
 * Ventilation
 

@@ -47,4 +47,6 @@ public interface IPointageRepository {
 	List<RefEtat> findAllRefEtats();
 	
 	List<RefTypePointage> findAllRefTypePointages();
+
+	List<Integer> listAllDistinctIdAgentPointage();
 }
