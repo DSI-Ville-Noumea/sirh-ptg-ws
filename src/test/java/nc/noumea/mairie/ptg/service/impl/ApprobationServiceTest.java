@@ -16,6 +16,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
+import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -782,13 +783,12 @@ public class ApprobationServiceTest {
 
 		VentilDate ventilDate = new VentilDate();
 		ventilDate.setDateVentilation(new Date());
-		
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getEntity(Pointage.class, 123)).thenReturn(ptg);
 
 		HelperService hService = Mockito.mock(HelperService.class);
 		Mockito.when(hService.getTypeChainePaieFromStatut(AgentStatutEnum.F)).thenReturn(TypeChainePaieEnum.SHC);
-	
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(ventilDate);
@@ -811,6 +811,41 @@ public class ApprobationServiceTest {
 		assertEquals(2, ptg.getEtats().size());
 		assertEquals(EtatPointageEnum.SAISI, ptg.getEtats().get(0).getEtat());
 		assertEquals(EtatPointageEnum.APPROUVE, ptg.getEtats().get(1).getEtat());
+	}
+
+	@Test
+	public void listerTousAgentsPointages_ReturnEmptyListAgentDto() {
+		// Given
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.listAllDistinctIdAgentPointage()).thenReturn(new ArrayList<Integer>());
+
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+
+		// When
+		List<AgentDto> result = service.listerTousAgentsPointages();
+
+		// Then
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void listerTousAgentsPointages_ReturnListAgentDto() {
+		// Given
+		ArrayList<Integer> listAg = new ArrayList<Integer>();
+		listAg.add(9005138);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.listAllDistinctIdAgentPointage()).thenReturn(listAg);
+
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+
+		// When
+		List<AgentDto> result = service.listerTousAgentsPointages();
+
+		// Then
+		assertEquals(1, result.size());
 	}
 
 }
