@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.ReposCompHisto;
@@ -80,6 +81,13 @@ public class ReposCompService implements IReposCompService {
 
 			Spcarr carr = sirhRepository.getAgentCurrentCarriere(
 					helperService.getMairieMatrFromIdAgent(task.getIdAgent()), vhs.getDateLundi());
+
+			// Check on Agent status (this process will stop if the user is of status fonctionnaire)
+			if (carr.getStatutCarriere() == AgentStatutEnum.F) {
+				logger.info("Agent status is [{}]. Stopping process for that week.", carr.getStatutCarriere());
+				continue;
+			}
+
 			Spbase base = carr.getSpbase();
 			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(base.getNbasch()));
 

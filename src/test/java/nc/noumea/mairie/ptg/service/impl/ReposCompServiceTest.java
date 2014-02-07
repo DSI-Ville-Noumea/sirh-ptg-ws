@@ -75,7 +75,76 @@ public class ReposCompServiceTest {
 		// Then
 		Mockito.verify(rcR, Mockito.never()).countTotalHSupsSinceStartOfYear(Mockito.anyInt(), Mockito.anyInt());
 	}
-	
+
+	@SuppressWarnings("rawtypes")
+	@Test
+	public void processReposCompTask_1HsupAndAgentIsStatutF_doNothing() {
+
+		// Given
+		final ReposCompTask t = new ReposCompTask();
+		t.setIdAgent(9005138);
+		VentilDate vd = new VentilDate();
+		vd.setIdVentilDate(56);
+		t.setVentilDate(vd);
+
+		Integer currentYear = 2013;
+		IReposCompRepository rcR = Mockito.mock(IReposCompRepository.class);
+		Mockito.when(rcR.getReposCompTask(15)).thenReturn(t);
+		Mockito.when(rcR.countTotalHSupsSinceStartOfYear(t.getIdAgent(), currentYear)).thenReturn(0);
+
+		List<VentilHsup> hSs = new ArrayList<VentilHsup>();
+		final VentilHsup hs = new VentilHsup();
+		hs.setMSup(180);
+		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
+		hSs.add(hs);
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(t.getIdAgent(), vd.getIdVentilDate())).thenReturn(hSs);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013,1,1).toDate());
+		Mockito.when(hS.getMairieMatrFromIdAgent(t.getIdAgent())).thenReturn(5138);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(2);
+		Spbase base = new Spbase();
+		base.setNbasch(39.00d);
+		carr.setSpbase(base);
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
+
+		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
+		Mockito.doAnswer(new Answer() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				Object[] args = invocation.getArguments();
+				ReposCompHisto h = (ReposCompHisto) args[0];
+				assertEquals(h.getDateLundi(), hs.getDateLundi());
+				assertEquals(h.getIdAgent(), t.getIdAgent());
+				assertEquals((int) h.getMBaseHoraire(), 2340);
+				assertEquals((int) h.getMSup(), 180);
+				return true;
+			}
+		}).when(pR).persisEntity(Mockito.isA(ReposCompHisto.class));
+
+		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
+
+		ReposCompService service = new ReposCompService();
+		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWs);
+
+		// When
+		service.processReposCompTask(15);
+
+		// Then
+		Mockito.verify(pR, Mockito.never()).persisEntity(Mockito.isA(ReposCompHisto.class));
+		Mockito.verify(absWs, Mockito.never()).addReposCompToAgent(Mockito.anyInt(), Mockito.any(Date.class),Mockito.anyInt());
+	}
+
 	@SuppressWarnings("rawtypes")
 	@Test
 	public void processReposCompTask_1HSupsNotAlreadyExisting_AgentHas0MinutesSinceYearStarted_HSisLessThan180m_CreateHistoAndCallABSWSWith0() {
