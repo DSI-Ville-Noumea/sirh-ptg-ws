@@ -49,7 +49,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			result = true;
 		}
 		
-		return (result != null && result);
+		return (result != null);
 	}
 	
 	@Override
@@ -65,7 +65,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			result = true;
 		}
 		
-		return (result != null && result);
+		return (result != null);
 	}
 	
 	@Override
@@ -81,7 +81,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			result = true;
 		}
 		
-		return (result != null && result);
+		return (result != null);
 	}
 	
 	@Override
@@ -97,7 +97,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 			result = true;
 		}
 		
-		return (result != null && result);
+		return (result != null);
 	}
 
 	@Override

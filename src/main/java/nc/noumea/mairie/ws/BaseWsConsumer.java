@@ -37,7 +37,7 @@ public abstract class BaseWsConsumer {
 			webResource = webResource.queryParam(key, parameters.get(key));
 		}
 
-		ClientResponse response = null;
+		ClientResponse response;
 
 		try {
 			if (isPost)

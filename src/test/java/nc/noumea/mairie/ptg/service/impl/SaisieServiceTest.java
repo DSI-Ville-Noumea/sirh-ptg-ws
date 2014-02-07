@@ -1,44 +1,16 @@
 package nc.noumea.mairie.ptg.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
-import nc.noumea.mairie.domain.Sppprm;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
-import nc.noumea.mairie.ptg.domain.EtatPointage;
-import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
-import nc.noumea.mairie.ptg.domain.Pointage;
-import nc.noumea.mairie.ptg.domain.PtgComment;
-import nc.noumea.mairie.ptg.domain.RefPrime;
-import nc.noumea.mairie.ptg.domain.RefTypePointage;
-import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
-import nc.noumea.mairie.ptg.domain.VentilDate;
-import nc.noumea.mairie.ptg.dto.AbsenceDto;
-import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
-import nc.noumea.mairie.ptg.dto.FichePointageDto;
-import nc.noumea.mairie.ptg.dto.HeureSupDto;
-import nc.noumea.mairie.ptg.dto.JourPointageDto;
-import nc.noumea.mairie.ptg.dto.PointageDto;
-import nc.noumea.mairie.ptg.dto.PrimeDto;
-import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.domain.*;
+import nc.noumea.mairie.ptg.dto.*;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -47,6 +19,13 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class SaisieServiceTest {
 

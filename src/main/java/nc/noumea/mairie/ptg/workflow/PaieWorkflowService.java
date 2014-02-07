@@ -34,9 +34,9 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 			state.setDateMaj(helperService.getCurrentDate());
 		} else {
 			throw new WorkflowInvalidStateException(
-					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]", 
+					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]",
 							SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS,
-							state.getEtat().getCodeEtat(), state.getEtat().getLibelleEtat()));
+							state.getEtat().getCodeEtat()));
 		}
 		
 	}
@@ -77,9 +77,9 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 			state.setDateMaj(helperService.getCurrentDate());
 		} else {
 			throw new WorkflowInvalidStateException(
-					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]", 
+					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]",
 							SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE,
-							state.getEtat().getCodeEtat(), state.getEtat().getLibelleEtat()));
+							state.getEtat().getCodeEtat()));
 		}
 		
 	}
@@ -113,9 +113,9 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 			state.setDateMaj(helperService.getCurrentDate());
 		} else {
 			throw new WorkflowInvalidStateException(
-					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]", 
+					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]",
 							SpWfEtatEnum.ETATS_PAYEUR_EN_COURS,
-							state.getEtat().getCodeEtat(), state.getEtat().getLibelleEtat()));
+							state.getEtat().getCodeEtat()));
 		}
 		
 	}
@@ -130,9 +130,9 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 			state.setDateMaj(helperService.getCurrentDate());
 		} else {
 			throw new WorkflowInvalidStateException(
-					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]", 
+					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]",
 							SpWfEtatEnum.ETATS_PAYEUR_TERMINES,
-							state.getEtat().getCodeEtat(), state.getEtat().getLibelleEtat()));
+							state.getEtat().getCodeEtat()));
 		}
 		
 	}

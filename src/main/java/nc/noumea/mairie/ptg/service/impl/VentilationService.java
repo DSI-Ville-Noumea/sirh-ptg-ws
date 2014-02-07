@@ -351,8 +351,7 @@ public class VentilationService implements IVentilationService {
 	 * Removes existing pointages calcules for agent and between two dates
 	 * 
 	 * @param idAgent
-	 * @param from
-	 * @param to
+	 * @param dateLundi
 	 */
 	protected void removePreviousCalculatedPointages(Integer idAgent, Date dateLundi) {
 		logger.debug("Removing previously calculated PRIME pointages for date monday [{}]...", dateLundi);
@@ -456,7 +455,7 @@ public class VentilationService implements IVentilationService {
 	/**
 	 * Return The list of ventilations done for the agents at ventildate
 	 * 
-	 * @param ventilationDate
+	 * @param idDateVentil
 	 * @param agents
 	 * @param pointageType
 	 * @return The list of VentilDto

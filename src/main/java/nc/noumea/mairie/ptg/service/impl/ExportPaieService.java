@@ -220,7 +220,7 @@ public class ExportPaieService implements IExportPaieService {
 	
 	/**
 	 * Updates each pointage calcule to set them as VALIDE state
-	 * @param pointages
+	 * @param pointagesCalcules
 	 */
 	protected void markPointagesCalculesAsValidated(List<PointageCalcule> pointagesCalcules) {
 		for (PointageCalcule ptgC : pointagesCalcules) {

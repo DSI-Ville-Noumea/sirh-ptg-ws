@@ -137,7 +137,7 @@ public class BirtEtatsPayeurWsConsumer implements IBirtEtatsPayeurWsConsumer {
 	public byte[] getFichesEtatsPayeurByStatutAsByteArray(Integer typeFicheEtatPayeur, String statut)
 			throws Exception {
 		
-		String nomFichier = "";
+		String nomFichier;
 		
 		RefTypePointageEnum typeFiche = RefTypePointageEnum.getRefTypePointageEnum(typeFicheEtatPayeur);
 		switch (typeFiche) {

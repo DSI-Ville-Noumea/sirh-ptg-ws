@@ -27,13 +27,8 @@ public class AgentMatriculeConverterService implements IAgentMatriculeConverterS
 	}
 
 	private Integer addMissingDigit(Integer adIdAgent) {
-		
-		StringBuilder newIdSb = new StringBuilder();
-		newIdSb.append(adIdAgent.toString().substring(0, 2));
-		newIdSb.append("0");
-		newIdSb.append(adIdAgent.toString().substring(2, 6));
-		
-		return Integer.parseInt(newIdSb.toString());
+
+		return Integer.parseInt(adIdAgent.toString().substring(0, 2) + "0" + adIdAgent.toString().substring(2, 6));
 	}
 
 }

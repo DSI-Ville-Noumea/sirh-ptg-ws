@@ -570,7 +570,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	/**
 	 * Updates each pointage calcule to set them as VALIDE state
 	 * 
-	 * @param pointages
+	 * @param pointagesCalcules
 	 */
 	protected void markPointagesCalculesAsJournalises(
 			Set<PointageCalcule> pointagesCalcules) {
