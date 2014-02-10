@@ -215,7 +215,8 @@ public class ApprobationService implements IApprobationService {
 			boolean ok = true;
 
 			if (currentEtat != EtatPointageEnum.SAISI && currentEtat != EtatPointageEnum.EN_ATTENTE
-					&& currentEtat != EtatPointageEnum.REJETE && targetEtat == EtatPointageEnum.APPROUVE) {
+					&& currentEtat != EtatPointageEnum.REJETE && currentEtat != EtatPointageEnum.APPROUVE
+					&& targetEtat == EtatPointageEnum.APPROUVE) {
 				ok = false;
 			}
 
