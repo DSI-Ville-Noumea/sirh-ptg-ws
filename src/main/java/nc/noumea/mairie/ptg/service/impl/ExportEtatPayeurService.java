@@ -415,12 +415,15 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		
 		logger.info("Creating ReposComptTask for processing RCs via SIRH-JOBS...");
 		for (Integer idAgent : idAgentsToProcessRCTasks) {
-			ReposCompTask t = new ReposCompTask();
-			t.setIdAgent(idAgent);
-			t.setIdAgentCreation(task.getIdAgent());
-			t.setDateCreation(helperService.getCurrentDate());
-			t.setVentilDate(vd);
-			pointageRepository.persisEntity(t);
+			
+			if(isAgentEligibleToReposComp(idAgent, vd.getDateVentilation())) {
+				ReposCompTask t = new ReposCompTask();
+					t.setIdAgent(idAgent);
+					t.setIdAgentCreation(task.getIdAgent());
+					t.setDateCreation(helperService.getCurrentDate());
+					t.setVentilDate(vd);
+				pointageRepository.persisEntity(t);
+			}
 		}
 
 		// 4. Save records for exported files
@@ -590,5 +593,25 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 				"Updating workflow by setting state to [ETATS_PAYEURS_TERMINES] for typeChainePaie {}...",
 				typeChainePaie);
 		paieWorkflowService.changeStateToExportEtatsPayeurDone(typeChainePaie);
+	}
+	
+	/**
+	 * Returns whether or not an agent is eligible to exporting Etats Payeur
+	 * considering its status (F, C or CC) we are currently exporting
+	 * 
+	 * @param idAgent
+	 * @param statut
+	 * @return true if the agent is eligible
+	 */
+	protected boolean isAgentEligibleToReposComp(Integer idAgent, Date date) {
+		
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+				helperService.getMairieMatrFromIdAgent(idAgent), date);
+		
+		if (carr.getStatutCarriere().equals(AgentStatutEnum.C)
+				|| carr.getStatutCarriere().equals(AgentStatutEnum.CC)) {
+			return true;
+		}
+		return false;
 	}
 }
