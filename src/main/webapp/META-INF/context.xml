@@ -32,7 +32,7 @@
 <!-- 	<Resource name="jdbc/PTG_WS_DS1" auth="Container" type="javax.sql.DataSource" -->
 <!-- 		maxActive="100" maxIdle="30" minIdle="0" validationQuery="select 1" -->
 <!-- 		maxWait="10000" initialSize="1" username="ptg_read" password="s8oxdmer" -->
-<!-- 		driverClassName="org.postgresql.Driver" url="jdbc:postgresql://svi-pg0.site-mairie.noumea.nc:5432/sirh" -->
+<!-- 		driverClassName="org.postgresql.Driver" url="jdbc:postgresql://svq-pg0.site-mairie.noumea.nc:5432/sirh" -->
 <!-- 		poolPreparedStatements="true" /> -->
 		
 	<Resource name="jdbc/PTG_WS_DS1" auth="Container" type="javax.sql.DataSource"
