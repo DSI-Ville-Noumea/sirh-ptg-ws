@@ -1105,4 +1105,161 @@ public class VentilationRepositoryTest {
 		ptgEntityManager.clear();
 	}
 	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfVentilTaskErreur_SCV(){
+		
+		VentilDate ventilDateFrom = new VentilDate();
+			ventilDateFrom.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			ventilDateFrom.setPaye(false);
+			ventilDateFrom.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(ventilDateFrom);
+	
+		VentilDate ventilDateTo = new VentilDate();
+			ventilDateTo.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			ventilDateTo.setPaye(false);
+			ventilDateTo.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(ventilDateTo);
+		
+		VentilDate ventilDateTo2 = new VentilDate();
+			ventilDateTo2.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			ventilDateTo2.setPaye(false);
+			ventilDateTo2.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(ventilDateTo2);
+		
+		VentilTask vt = new VentilTask();
+			vt.setTypeChainePaie(TypeChainePaieEnum.SCV);
+			vt.setTaskStatus("OK");
+			vt.setVentilDateTo(ventilDateTo);
+			vt.setIdAgent(1111);
+			vt.setDateCreation(new Date());
+			vt.setIdAgentCreation(9005138);
+			vt.setVentilDateFrom(ventilDateFrom);
+		ptgEntityManager.persist(vt);
+		
+		VentilTask vt2 = new VentilTask();
+			vt2.setTypeChainePaie(TypeChainePaieEnum.SCV);
+			vt2.setTaskStatus("KO");
+			vt2.setVentilDateTo(ventilDateTo);
+			vt2.setIdAgent(2222);
+			vt2.setDateCreation(new Date());
+			vt2.setIdAgentCreation(9005138);
+			vt2.setVentilDateFrom(ventilDateFrom);
+		ptgEntityManager.persist(vt2);
+		
+		VentilTask vt3 = new VentilTask();
+			vt3.setTypeChainePaie(TypeChainePaieEnum.SCV);
+			vt3.setTaskStatus("ERREUR");
+			vt3.setVentilDateTo(ventilDateTo);
+			vt3.setIdAgent(3333);
+			vt3.setDateCreation(new Date());
+			vt3.setIdAgentCreation(9005138);
+			vt3.setVentilDateFrom(ventilDateFrom);
+		ptgEntityManager.persist(vt3);
+		
+		VentilTask vt4 = new VentilTask();
+			vt4.setTypeChainePaie(TypeChainePaieEnum.SHC);
+			vt4.setTaskStatus("ERREUR");
+			vt4.setVentilDateTo(ventilDateTo);
+			vt4.setIdAgent(4444);
+			vt4.setDateCreation(new Date());
+			vt4.setIdAgentCreation(9005138);
+			vt4.setVentilDateFrom(ventilDateFrom);
+		ptgEntityManager.persist(vt4);
+		
+		VentilTask vt5 = new VentilTask();
+			vt5.setTypeChainePaie(TypeChainePaieEnum.SCV);
+			vt5.setTaskStatus("KO");
+			vt5.setVentilDateTo(ventilDateTo2);
+			vt5.setIdAgent(5555);
+			vt5.setDateCreation(new Date());
+			vt5.setIdAgentCreation(9005138);
+			vt5.setVentilDateFrom(ventilDateFrom);
+		ptgEntityManager.persist(vt5);
+		
+		List<VentilTask> result = repository.getListOfVentilTaskErreur(TypeChainePaieEnum.SCV, ventilDateTo);
+		
+		assertEquals(2, result.size());
+		assertEquals(2222, result.get(0).getIdAgent().intValue());
+		assertEquals(3333, result.get(1).getIdAgent().intValue());
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfVentilTaskErreur_SHC(){
+		
+		VentilDate ventilDateFrom = new VentilDate();
+			ventilDateFrom.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			ventilDateFrom.setPaye(false);
+			ventilDateFrom.setTypeChainePaie(TypeChainePaieEnum.SHC);
+		ptgEntityManager.persist(ventilDateFrom);
+	
+		VentilDate ventilDateTo = new VentilDate();
+			ventilDateTo.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			ventilDateTo.setPaye(false);
+			ventilDateTo.setTypeChainePaie(TypeChainePaieEnum.SHC);
+		ptgEntityManager.persist(ventilDateTo);
+		
+		VentilDate ventilDateTo2 = new VentilDate();
+			ventilDateTo2.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			ventilDateTo2.setPaye(false);
+			ventilDateTo2.setTypeChainePaie(TypeChainePaieEnum.SHC);
+		ptgEntityManager.persist(ventilDateTo2);
+		
+		VentilTask vt = new VentilTask();
+			vt.setTypeChainePaie(TypeChainePaieEnum.SHC);
+			vt.setTaskStatus("OK");
+			vt.setVentilDateTo(ventilDateTo);
+			vt.setIdAgent(1111);
+			vt.setDateCreation(new Date());
+			vt.setIdAgentCreation(9005138);
+			vt.setVentilDateFrom(ventilDateFrom);
+		ptgEntityManager.persist(vt);
+		
+		VentilTask vt2 = new VentilTask();
+			vt2.setTypeChainePaie(TypeChainePaieEnum.SHC);
+			vt2.setTaskStatus("KO");
+			vt2.setVentilDateTo(ventilDateTo);
+			vt2.setIdAgent(2222);
+			vt2.setDateCreation(new Date());
+			vt2.setIdAgentCreation(9005138);
+			vt2.setVentilDateFrom(ventilDateFrom);
+		ptgEntityManager.persist(vt2);
+		
+		VentilTask vt3 = new VentilTask();
+			vt3.setTypeChainePaie(TypeChainePaieEnum.SHC);
+			vt3.setTaskStatus("ERREUR");
+			vt3.setVentilDateTo(ventilDateTo);
+			vt3.setIdAgent(3333);
+			vt3.setDateCreation(new Date());
+			vt3.setIdAgentCreation(9005138);
+			vt3.setVentilDateFrom(ventilDateFrom);
+		ptgEntityManager.persist(vt3);
+		
+		VentilTask vt4 = new VentilTask();
+			vt4.setTypeChainePaie(TypeChainePaieEnum.SCV);
+			vt4.setTaskStatus("ERREUR");
+			vt4.setVentilDateTo(ventilDateTo);
+			vt4.setIdAgent(4444);
+			vt4.setDateCreation(new Date());
+			vt4.setIdAgentCreation(9005138);
+			vt4.setVentilDateFrom(ventilDateFrom);
+		ptgEntityManager.persist(vt4);
+		
+		VentilTask vt5 = new VentilTask();
+			vt5.setTypeChainePaie(TypeChainePaieEnum.SHC);
+			vt5.setTaskStatus("KO");
+			vt5.setVentilDateTo(ventilDateTo2);
+			vt5.setIdAgent(5555);
+			vt5.setDateCreation(new Date());
+			vt5.setIdAgentCreation(9005138);
+			vt5.setVentilDateFrom(ventilDateFrom);
+		ptgEntityManager.persist(vt5);
+		
+		List<VentilTask> result = repository.getListOfVentilTaskErreur(TypeChainePaieEnum.SHC, ventilDateTo);
+		
+		assertEquals(2, result.size());
+		assertEquals(2222, result.get(0).getIdAgent().intValue());
+		assertEquals(3333, result.get(1).getIdAgent().intValue());
+	}
 }

@@ -27,6 +27,7 @@ import nc.noumea.mairie.ptg.domain.VentilTask;
 import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.VentilDateDto;
+import nc.noumea.mairie.ptg.dto.VentilErreurDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
@@ -1106,5 +1107,101 @@ public class VentilationServiceTest {
 
 		// Then
 		assertTrue(result.isPaie());
+	}
+	
+	@Test
+	public void getErreursVentilation_Fonctionnaire() {
+		
+		Date d = new Date();
+		
+		VentilTask vt2 = new VentilTask();
+			vt2.setTypeChainePaie(TypeChainePaieEnum.SHC);
+			vt2.setTaskStatus("KO");
+			vt2.setIdAgent(2222);
+			vt2.setDateCreation(d);
+			vt2.setIdAgentCreation(9005138);
+		
+		VentilTask vt3 = new VentilTask();
+			vt3.setTypeChainePaie(TypeChainePaieEnum.SHC);
+			vt3.setTaskStatus("ERREUR");
+			vt3.setIdAgent(3333);
+			vt3.setDateCreation(d);
+			vt3.setIdAgentCreation(9005138);
+	
+		List<VentilTask> listventilTask = new ArrayList<VentilTask>();
+			listventilTask.addAll(Arrays.asList(vt2, vt3));
+		
+		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+			Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(new VentilDate());
+			Mockito.when(vRepo.getListOfVentilTaskErreur(Mockito.isA(TypeChainePaieEnum.class), Mockito.isA(VentilDate.class))).thenReturn(listventilTask);
+					
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.F)).thenReturn(TypeChainePaieEnum.SHC);
+		
+		VentilationService service = Mockito.spy(new VentilationService());
+			ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		List<VentilErreurDto> result = service.getErreursVentilation(AgentStatutEnum.F);
+		
+		assertEquals(2, result.size());
+		
+		assertEquals(d, result.get(0).getDateCreation());
+		assertEquals(2222, result.get(0).getIdAgent().intValue());
+		assertEquals("KO", result.get(0).getTaskStatus());
+		assertEquals("SHC", result.get(0).getTypeChainePaie());
+		
+		assertEquals(d, result.get(1).getDateCreation());
+		assertEquals(3333, result.get(1).getIdAgent().intValue());
+		assertEquals("ERREUR", result.get(1).getTaskStatus());
+		assertEquals("SHC", result.get(1).getTypeChainePaie());
+	}
+	
+	@Test
+	public void getErreursVentilation_ConvColl() {
+		
+		Date d = new Date();
+		
+		VentilTask vt2 = new VentilTask();
+			vt2.setTypeChainePaie(TypeChainePaieEnum.SCV);
+			vt2.setTaskStatus("KO");
+			vt2.setIdAgent(2222);
+			vt2.setDateCreation(d);
+			vt2.setIdAgentCreation(9005138);
+		
+		VentilTask vt3 = new VentilTask();
+			vt3.setTypeChainePaie(TypeChainePaieEnum.SCV);
+			vt3.setTaskStatus("ERREUR");
+			vt3.setIdAgent(3333);
+			vt3.setDateCreation(d);
+			vt3.setIdAgentCreation(9005138);
+	
+		List<VentilTask> listventilTask = new ArrayList<VentilTask>();
+			listventilTask.addAll(Arrays.asList(vt2, vt3));
+		
+		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+			Mockito.when(vRepo.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(new VentilDate());
+			Mockito.when(vRepo.getListOfVentilTaskErreur(Mockito.isA(TypeChainePaieEnum.class), Mockito.isA(VentilDate.class))).thenReturn(listventilTask);
+					
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.CC)).thenReturn(TypeChainePaieEnum.SCV);
+		
+		VentilationService service = Mockito.spy(new VentilationService());
+			ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+			ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		List<VentilErreurDto> result = service.getErreursVentilation(AgentStatutEnum.CC);
+		
+		assertEquals(2, result.size());
+		
+		assertEquals(d, result.get(0).getDateCreation());
+		assertEquals(2222, result.get(0).getIdAgent().intValue());
+		assertEquals("KO", result.get(0).getTaskStatus());
+		assertEquals("SCV", result.get(0).getTypeChainePaie());
+		
+		assertEquals(d, result.get(1).getDateCreation());
+		assertEquals(3333, result.get(1).getIdAgent().intValue());
+		assertEquals("ERREUR", result.get(1).getTaskStatus());
+		assertEquals("SCV", result.get(1).getTypeChainePaie());
 	}
 }

@@ -11,6 +11,7 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
+import nc.noumea.mairie.ptg.domain.VentilTask;
 
 public interface IVentilationRepository {
 
@@ -51,4 +52,6 @@ public interface IVentilationRepository {
     VentilPrime getPriorVentilPrimeForAgentAndDate(Integer idAgent, Date dateDebMois, VentilPrime latestVentilAbsence);
     
     void persistEntity(Object entity);
+    
+    List<VentilTask> getListOfVentilTaskErreur(TypeChainePaieEnum chainePaie, VentilDate ventilDateTo);
 }

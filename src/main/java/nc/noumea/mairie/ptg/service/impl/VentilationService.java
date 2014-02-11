@@ -23,6 +23,7 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.VentilAbsenceDto;
 import nc.noumea.mairie.ptg.dto.VentilDateDto;
 import nc.noumea.mairie.ptg.dto.VentilDto;
+import nc.noumea.mairie.ptg.dto.VentilErreurDto;
 import nc.noumea.mairie.ptg.dto.VentilHSupDto;
 import nc.noumea.mairie.ptg.dto.VentilPrimeDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -509,5 +510,27 @@ public class VentilationService implements IVentilationService {
 	@Override
 	public VentilTask findVentilTask(Integer idVentilTask) {
 		return pointageRepository.getEntity(VentilTask.class, idVentilTask);
+	}
+	
+	@Override
+	public List<VentilErreurDto> getErreursVentilation(AgentStatutEnum statut) {
+		
+		List<VentilErreurDto> result = new ArrayList<VentilErreurDto>();
+		
+		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
+		
+		VentilDate ventilDateTo = ventilationRepository.getLatestVentilDate(chainePaie, false);
+		List<VentilTask> listventilTask = ventilationRepository.getListOfVentilTaskErreur(chainePaie, ventilDateTo);
+		
+		for(VentilTask vt : listventilTask) {
+			VentilErreurDto dto = new VentilErreurDto();
+				dto.setIdAgent(vt.getIdAgent());
+				dto.setDateCreation(vt.getDateCreation());
+				dto.setTaskStatus(vt.getTaskStatus());
+				dto.setTypeChainePaie(vt.getTypeChainePaie().name());
+			result.add(dto);
+		}
+		
+		return result;
 	}
 }

@@ -10,6 +10,7 @@ import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.VentilDateDto;
 import nc.noumea.mairie.ptg.dto.VentilDto;
+import nc.noumea.mairie.ptg.dto.VentilErreurDto;
 import nc.noumea.mairie.ptg.service.IVentilationService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 
@@ -139,5 +140,24 @@ public class VentilationController {
 				.serialize(result);
 
 		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getErreursVentilation", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getErreursVentilation(@RequestParam("statut") String statut) {
+
+		logger.debug(
+				"entered GET [ventilation/getErreursVentilation] => getErreursVentilation with parameter statut = {}",
+				statut);
+
+		List<VentilErreurDto> result = ventilationService.getErreursVentilation(AgentStatutEnum.valueOf(statut));
+
+		if (0 == result.size()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		
+		return new ResponseEntity<>(new JSONSerializer().exclude("*.class")
+				.transform(new MSDateTransformer(), Date.class).deepSerialize(result), HttpStatus.OK);
 	}
 }

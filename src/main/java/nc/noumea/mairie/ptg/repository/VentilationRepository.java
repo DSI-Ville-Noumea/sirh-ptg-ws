@@ -19,6 +19,7 @@ import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
+import nc.noumea.mairie.ptg.domain.VentilTask;
 
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
@@ -443,6 +444,19 @@ public class VentilationRepository implements IVentilationRepository {
 	@Override
 	public void persistEntity(Object entity) {
 		ptgEntityManager.persist(entity);
+	}
+	
+	@Override
+	public List<VentilTask> getListOfVentilTaskErreur(TypeChainePaieEnum chainePaie, VentilDate ventilDateTo) {
+		
+		TypedQuery<VentilTask> q = ptgEntityManager
+				.createQuery(
+						"from VentilTask vT WHERE vT.taskStatus <> 'OK' AND vT.typeChainePaie = :chainePaie AND ventilDateTo = :ventilDateTo ",
+						VentilTask.class);
+		q.setParameter("chainePaie", chainePaie);
+		q.setParameter("ventilDateTo", ventilDateTo);
+
+		return q.getResultList();
 	}
 
 }

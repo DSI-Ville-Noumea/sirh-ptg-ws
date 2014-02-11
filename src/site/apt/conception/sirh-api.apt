@@ -548,6 +548,41 @@ HTTP Status code OK : 200
 *--*----*
 
 
+** Liste des erreurs de la ventilation en cours dans PTG_VENTIL_TASK
+
+ <<URL>> : /ventilation/getErreursVentilation 
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut des agents dont les pointages sont à exporter dans la paie. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Status :
+
++-------------------------+
+ HTTP Status code OK : 200
+ HTTP Status code NO_CONTENT : 204
++-------------------------+
+
+  * Content 
+
++-------------------------+
+[
+   {
+	   "dateCreation": "/Date(1389929766705+1100)/",
+	   "idAgent": 9003463,
+	   "taskStatus": "ERREUR TEST",
+	   "typeChainePaie": "SCV"
+   },
+   ...
+]
++-------------------------+
+
+
 ** Vérifier la possibilité de lancer une exportation
 
  <<URL>> : /exportPaie/canStartExportPaie 

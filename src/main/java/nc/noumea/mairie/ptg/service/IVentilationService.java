@@ -10,6 +10,7 @@ import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.VentilDateDto;
 import nc.noumea.mairie.ptg.dto.VentilDto;
+import nc.noumea.mairie.ptg.dto.VentilErreurDto;
 
 public interface IVentilationService {
 
@@ -64,4 +65,6 @@ public interface IVentilationService {
 	VentilDateDto getVentilationEnCoursForStatut(AgentStatutEnum statut);
 	
 	VentilTask findVentilTask(Integer idVentilTask);
+	
+	List<VentilErreurDto> getErreursVentilation(AgentStatutEnum statut);
 }
