@@ -64,6 +64,12 @@ public class SaisieService implements ISaisieService {
 		if (!helperService.isDateAMonday(dateLundi))
 			throw new NotAMondayException();
 
+		ReturnMessageDto result = new ReturnMessageDto();
+		if(!approveModifiedPointages)
+				result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, dateLundi);
+		if(!result.getErrors().isEmpty()) 
+			return result;
+		
 		Integer idAgent = fichePointageDto.getAgent().getIdAgent();
 
 		List<Pointage> originalAgentPointages = pointageService.getLatestPointagesForSaisieForAgentAndDateMonday(
@@ -160,8 +166,6 @@ public class SaisieService implements ISaisieService {
 			}
 
 		}
-
-		ReturnMessageDto result = new ReturnMessageDto();
 
 		// calling data consistency
 		ptgDataCosistencyRules.processDataConsistency(result, idAgent, dateLundi, finalPointages);

@@ -4,7 +4,9 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spabsen;
@@ -1619,5 +1621,37 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
+	}
+	
+	@Test
+	public void checkDateLundiAnterieurA3Mois_OK() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		Date dateLundi = new Date();
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		
+		srm = service.checkDateLundiAnterieurA3Mois(srm, dateLundi);
+		
+		assertEquals(0, srm.getErrors().size());
+	}
+	
+	@Test
+	public void checkDateLundiAnterieurA3Mois_KO() {
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+		
+		GregorianCalendar calStr1 = new GregorianCalendar(); 
+			calStr1.setTime(new Date()); 
+			calStr1.add(GregorianCalendar.MONTH, -3);
+			calStr1.add(GregorianCalendar.WEEK_OF_YEAR, -2); // back to previous week
+			calStr1.set(GregorianCalendar.DAY_OF_WEEK, Calendar.MONDAY);
+		
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		
+		srm = service.checkDateLundiAnterieurA3Mois(srm, calStr1.getTime());
+		
+		assertEquals(1, srm.getErrors().size());
 	}
 }

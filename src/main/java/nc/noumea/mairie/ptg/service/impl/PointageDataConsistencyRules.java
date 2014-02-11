@@ -1,7 +1,9 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
@@ -48,6 +50,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez saisi des primes et/ou heures supplémentaires sur des périodes où l’agent était absent.";
 	public static final String ERROR_7651_MSG = "";
 	public static final String ERROR_7652_MSG = "";
+	public static final String ERROR_POINTAGE_PLUS_3_MOIS = "La semaine sélectionnée est trop ancienne pour être modifiée.";
 	
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
 	
@@ -345,6 +348,21 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkPrime7651(srm, idAgent, dateLundi, pointages);
 		checkPrime7652(srm, idAgent, dateLundi, pointages);
 		checkPrime7704(srm, idAgent, dateLundi, pointages);
+	}
+	
+	@Override
+	public ReturnMessageDto checkDateLundiAnterieurA3Mois(ReturnMessageDto srm, Date dateLundi) {
+		
+		GregorianCalendar calStr1 = new GregorianCalendar(); 
+			calStr1.setTime(new Date()); 
+			calStr1.add(GregorianCalendar.MONTH, -3);
+			calStr1.add(GregorianCalendar.WEEK_OF_YEAR, -1); // back to previous week
+			calStr1.set(GregorianCalendar.DAY_OF_WEEK, Calendar.MONDAY); // jump to next monday
+		
+		if(dateLundi.before(calStr1.getTime())) {
+			srm.getErrors().add(String.format(ERROR_POINTAGE_PLUS_3_MOIS));
+		}
+		return srm;
 	}
 
 }

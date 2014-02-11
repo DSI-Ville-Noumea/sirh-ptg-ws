@@ -92,6 +92,7 @@ public class SaisieServiceTest {
 		Mockito.when(pService.getOrCreateNewPointage(9001234, null, agent.getIdAgent(), lundi, currentDate)).thenReturn(newAbsPointage);
 		
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
 		
 		SaisieService service = new SaisieService();
 
@@ -161,6 +162,7 @@ public class SaisieServiceTest {
 		Mockito.when(pService.getOrCreateNewPointage(9001234, null, agent.getIdAgent(), lundi, currentDate)).thenReturn(newHsPointage);
 		
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+			Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
 		
 		SaisieService service = new SaisieService();
 
@@ -245,6 +247,7 @@ public class SaisieServiceTest {
 		Mockito.when(pService.getOrCreateNewPointage(9001234, null, agent.getIdAgent(), lundi, currentDate, 22)).thenReturn(newPrimePointage);
 		
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
 		
 		SaisieService service = new SaisieService();
 
@@ -331,6 +334,7 @@ public class SaisieServiceTest {
 		Mockito.when(pService.getOrCreateNewPointage(9001234, null, agent.getIdAgent(), lundi, currentDate, 22)).thenReturn(newPrimePointage);
 		
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
 		
 		SaisieService service = new SaisieService();
 
@@ -410,6 +414,8 @@ public class SaisieServiceTest {
 			).when(dcMock).processDataConsistency(
 				Mockito.any(ReturnMessageDto.class), Mockito.eq(agent.getIdAgent()), Mockito.eq(lundi), Mockito.anyList());
 		
+		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
+		
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -464,6 +470,7 @@ public class SaisieServiceTest {
 			Mockito.when(pService.getLatestPointagesForSaisieForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(p, p2));
 		
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
 		
 		SaisieService service = Mockito.spy(new SaisieService());
 			Mockito.doNothing().when(service).deletePointages(9001234, Arrays.asList(p, p2));
@@ -552,6 +559,7 @@ public class SaisieServiceTest {
 			Mockito.when(pService.getLatestPointagesForSaisieForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(existingPointageApprouve, existingPointageSaisi));
 		
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
 		
 		SaisieService service = new SaisieService();
 
@@ -566,7 +574,140 @@ public class SaisieServiceTest {
 		// Then
 		Mockito.verify(pRepo, Mockito.never()).savePointage(Mockito.any(Pointage.class));
 		Mockito.verify(pRepo, Mockito.times(1)).removeEntity(Mockito.isA(Pointage.class));
+	}
+	
+	@Test
+	public void saveFichePointage_fromKiosque_dateLundiPlus3Mois() {
 		
+		// Given
+		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+			srm.getErrors().add("Erreur PTG plus 3 mois");
+		
+		FichePointageDto dto = new FichePointageDto();
+			dto.setDateLundi(lundi);
+		
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.isDateAMonday(lundi)).thenReturn(true);
+			
+		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+			Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(srm);
+		
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// When
+		ReturnMessageDto result = service.saveFichePointage(9001234, dto);
+		
+		// Then
+		assertEquals(1, result.getErrors().size());
+	}
+	
+	@Test
+	public void saveFichePointage_fromSIRH_dateLundiPlus3Mois() {
+		
+		// Given
+		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		AgentWithServiceDto agent = new AgentWithServiceDto();
+			agent.setIdAgent(9007654);
+		
+		FichePointageDto dto = new FichePointageDto();
+			dto.setDateLundi(lundi);
+			dto.setAgent(agent);
+		
+		ReturnMessageDto srm = new ReturnMessageDto();
+			srm.getErrors().add("Erreur PTG plus 3 mois");
+		
+		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
+		
+		// prime
+		PrimeDto templateP = new PrimeDto();
+			templateP.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES.toString());
+			templateP.setIdRefPrime(22);
+			templateP.setNumRubrique(1111);
+			templateP.setTitre("Le titre");
+		JourPointageDto j1 = new JourPointageDto();
+			j1.getPrimes().add(templateP);
+		dto.setSaisies(Arrays.asList(j1, new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1), 
+				new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1)));
+		PrimeDto prime7thday = dto.getSaisies().get(6).getPrimes().get(0);
+			prime7thday.setIdPointage(2000);
+			prime7thday.setaSupprimer(true);
+			prime7thday.setHeureDebut(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
+			prime7thday.setHeureFin(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
+			prime7thday.setQuantite(3);
+			prime7thday.setMotif("mot");
+			prime7thday.setCommentaire("com");prime7thday.setIdPointage(2000);
+		PrimeDto prime6thday = dto.getSaisies().get(5).getPrimes().get(0);
+			prime6thday.setIdPointage(1999);
+			prime6thday.setaSupprimer(true);
+			prime6thday.setHeureDebut(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
+			prime6thday.setHeureFin(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
+			prime6thday.setQuantite(3);
+			prime6thday.setMotif("mot");
+			prime6thday.setCommentaire("com");
+		
+		Date currentDate = new DateTime(2013, 05, 22, 9, 8, 00).toDate();
+		HelperService hS = Mockito.mock(HelperService.class);
+			Mockito.when(hS.isDateAMonday(lundi)).thenReturn(true);
+			Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+			Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.F)).thenReturn(chainePaie);
+			Mockito.when(hS.getMairieMatrFromIdAgent(9009999)).thenReturn(9999);
+		
+		RefTypePointage primTypeRef = new RefTypePointage();
+			primTypeRef.setIdRefTypePointage(3);
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+			Mockito.when(pRepo.getEntity(RefTypePointage.class, 3)).thenReturn(primTypeRef);
+		
+		RefPrime refPrime = new RefPrime();
+			refPrime.setIdRefPrime(22);
+			refPrime.setNoRubr(1111);
+
+		Pointage existingPointageApprouve = new Pointage();
+			existingPointageApprouve.setIdAgent(agent.getIdAgent());
+			existingPointageApprouve.setDateLundi(lundi);
+			existingPointageApprouve.setRefPrime(refPrime);
+			existingPointageApprouve.setIdPointage(1999);
+			existingPointageApprouve.getEtats().add(new EtatPointage());
+			existingPointageApprouve.getLatestEtatPointage().setEtat(EtatPointageEnum.APPROUVE);
+		Pointage existingPointageSaisi = Mockito.spy(new Pointage());
+			existingPointageSaisi.setIdAgent(agent.getIdAgent());
+			existingPointageSaisi.setDateLundi(lundi);
+			existingPointageSaisi.setRefPrime(refPrime);
+			existingPointageSaisi.setIdPointage(2000);
+			existingPointageSaisi.getEtats().add(new EtatPointage());
+			existingPointageSaisi.getLatestEtatPointage().setEtat(EtatPointageEnum.SAISI);
+		
+		IPointageService pService = Mockito.mock(IPointageService.class);
+			Mockito.when(pService.getLatestPointagesForSaisieForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(Arrays.asList(existingPointageApprouve, existingPointageSaisi));
+		
+		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
+			Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(srm);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+			Mockito.when(vR.getLatestVentilDate(chainePaie, false)).thenReturn(null);
+			
+		Spcarr carr = new Spcarr();
+			carr.setCdcate(6);
+		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+			Mockito.when(sR.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
+		
+		SaisieService service = new SaisieService();
+			ReflectionTestUtils.setField(service, "helperService", hS);
+			ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+			ReflectionTestUtils.setField(service, "pointageService", pService);
+			ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
+			ReflectionTestUtils.setField(service, "sirhRepository", sR);
+			ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		
+		// When
+		service.saveFichePointage(9001234, dto, true);
+		
+		// Then
+		Mockito.verify(pRepo, Mockito.never()).savePointage(Mockito.any(Pointage.class));
+		Mockito.verify(pRepo, Mockito.times(1)).removeEntity(Mockito.isA(Pointage.class));
 	}
 	
 	@Test
