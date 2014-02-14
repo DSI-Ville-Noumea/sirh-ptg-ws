@@ -32,14 +32,14 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 	@Autowired
 	private ISirhRepository sirhRepository;
-	
+
 	@Autowired
 	private HelperService helperService;
 
 	@Autowired
 	private IHolidayService holidayService;
-	
-	//-- MESSAGES --//
+
+	// -- MESSAGES --//
 	public static final String BASE_HOR_MAX = "L'agent dépasse sa base horaire";
 	public static final String RECUP_MSG = "%s : L'agent est en récupération sur cette période.";
 	public static final String CONGE_MSG = "%s : L'agent est en congés payés sur cette période.";
@@ -51,113 +51,121 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String ERROR_7651_MSG = "";
 	public static final String ERROR_7652_MSG = "";
 	public static final String ERROR_POINTAGE_PLUS_3_MOIS = "La semaine sélectionnée est trop ancienne pour être modifiée.";
-	
-	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
-	
+	public static final String HS_TPS_PARTIEL_MSG = "L'agent est en temps partiel, il ne peut pas avoir plus de %s heures supplémentaires.";
+
+	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
+			"62", "63", "64", "65", "66");
+
 	@Override
-	public ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
 
 		double nbHours = 0;
-		
+
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() != RefTypePointageEnum.ABSENCE)
 				continue;
 
 			DateTime deb = new DateTime(ptg.getDateDebut());
 			DateTime fin = new DateTime(ptg.getDateFin());
-			
+
 			nbHours += (Minutes.minutesBetween(deb, fin).getMinutes() / 60.0);
 		}
-		
+
 		if (nbHours == 0)
 			return srm;
-		
+
 		Agent ag = sirhRepository.getAgent(idAgent);
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag, dateLundi);
-		
+
 		double agentMaxHours = carr.getSpbhor().getTaux() * carr.getSpbase().getNbashh();
-		
+
 		if (nbHours > agentMaxHours)
 			srm.getErrors().add(BASE_HOR_MAX);
-		
-		return srm;
-	}
-	
-	@Override
-	public ReturnMessageDto checkSprircRecuperation(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
-		
-		Date end = new DateTime(dateLundi).plusDays(7).toDate();
-		
-		List<Sprirc> recups = sirhRepository.getListRecuperationBetween(idAgent, dateLundi, end);
-		
-		for (Sprirc recup : recups) {
-			checkInterval(srm, RECUP_MSG, recup.getId().getDatdeb(), recup
-					.getId().getCodem1(), recup.getDatfin(), recup.getCodem2(),
-					pointages);
-		}
-		
+
 		return srm;
 	}
 
 	@Override
-	public ReturnMessageDto checkSpcongConge(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
-		
+	public ReturnMessageDto checkSprircRecuperation(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
+
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
-		
-		List<Spcong> conges = sirhRepository.getListCongeBetween(idAgent, dateLundi, end);
-		
-		for (Spcong cg : conges) {
-			checkInterval(srm, CONGE_MSG, cg.getId().getDatdeb(), cg.getCodem1(), cg.getDatfin(), cg.getCodem2(), pointages);
+
+		List<Sprirc> recups = sirhRepository.getListRecuperationBetween(idAgent, dateLundi, end);
+
+		for (Sprirc recup : recups) {
+			checkInterval(srm, RECUP_MSG, recup.getId().getDatdeb(), recup.getId().getCodem1(), recup.getDatfin(),
+					recup.getCodem2(), pointages);
 		}
-		
+
 		return srm;
 	}
-	
+
 	@Override
-	public ReturnMessageDto checkSpabsenMaladie(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
-		
+	public ReturnMessageDto checkSpcongConge(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
+
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
-		
+
+		List<Spcong> conges = sirhRepository.getListCongeBetween(idAgent, dateLundi, end);
+
+		for (Spcong cg : conges) {
+			checkInterval(srm, CONGE_MSG, cg.getId().getDatdeb(), cg.getCodem1(), cg.getDatfin(), cg.getCodem2(),
+					pointages);
+		}
+
+		return srm;
+	}
+
+	@Override
+	public ReturnMessageDto checkSpabsenMaladie(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
+
+		Date end = new DateTime(dateLundi).plusDays(7).toDate();
+
 		List<Spabsen> maladies = sirhRepository.getListMaladieBetween(idAgent, dateLundi, end);
-		
+
 		for (Spabsen mal : maladies) {
 			checkInterval(srm, MALADIE_MSG, mal.getId().getDatdeb(), null, mal.getDatfin(), null, pointages);
 		}
-		
+
 		return srm;
 	}
-	
+
 	@Override
-	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
 
 		Agent ag = sirhRepository.getAgent(idAgent);
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag, dateLundi);
-		
+
 		if ((carr.getStatutCarriere() != AgentStatutEnum.F || carr.getSpbarem().getIna() <= 315)
 				&& !carr.getSpbase().getCdBase().equals("Z"))
 			return srm;
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
-				
+
 				if (carr.getSpbarem().getIna() > 315)
 					srm.getErrors().add(HS_INA_315_MSG);
 				else
 					srm.getErrors().add(BASE_HOR_Z_MSG);
-				
+
 				break;
 			}
 		}
-		
+
 		return srm;
 	}
-	
+
 	@Override
-	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
 
 		Agent ag = sirhRepository.getAgent(idAgent);
 		Spadmn adm = sirhRepository.getAgentCurrentPosition(ag, dateLundi);
-		
+
 		if (!ACTIVITE_CODES.contains(adm.getCdpadm()))
 			srm.getErrors().add(INACTIVITE_MSG);
 
@@ -175,33 +183,35 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
 			if (deb.getDayOfWeek() == DateTimeConstants.SATURDAY || deb.getDayOfWeek() == DateTimeConstants.SUNDAY)
-				srm.getErrors().add(String.format("La prime 7650 du %s n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.", deb.toString("dd/MM/yyyy")));
-			
+				srm.getErrors()
+						.add(String
+								.format("La prime 7650 du %s n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.",
+										deb.toString("dd/MM/yyyy")));
+
 		}
-		
+
 		return srm;
 	}
-	
+
 	@Override
 	public ReturnMessageDto checkPrime7651(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages) {
-		
+
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7651))
 				continue;
 
 			DateTime deb = new DateTime(ptg.getDateDebut());
-			
+
 			if (deb.getDayOfWeek() != DateTimeConstants.SATURDAY && deb.getDayOfWeek() != DateTimeConstants.SUNDAY
 					&& !holidayService.isHoliday(deb) && !holidayService.isHoliday(deb.plusDays(1)))
 				srm.getErrors()
 						.add(String
 								.format("La prime 7651 du %s n'est pas valide. Elle ne peut être saisie qu'un samedi et dimanche, ou alors une veille et jour férié.",
 										deb.toString("dd/MM/yyyy")));
-			
+
 		}
-		
-		
+
 		return srm;
 	}
 
@@ -214,16 +224,15 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				continue;
 
 			DateTime deb = new DateTime(ptg.getDateDebut());
-			
-			if (deb.getDayOfWeek() != DateTimeConstants.SUNDAY
-					&& !holidayService.isHoliday(deb))
+
+			if (deb.getDayOfWeek() != DateTimeConstants.SUNDAY && !holidayService.isHoliday(deb))
 				srm.getErrors()
 						.add(String
 								.format("La prime 7652 du %s n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.",
 										deb.toString("dd/MM/yyyy")));
-			
+
 		}
-		
+
 		return srm;
 	}
 
@@ -236,105 +245,105 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				continue;
 
 			DateTime deb = new DateTime(ptg.getDateDebut());
-			
-			if (ptg.getQuantite()>2)
-				srm.getErrors()
-						.add(String
-								.format("La prime 7704 du %s n'est pas valide. Sa quantité ne peut être supérieur à 2.",
-										deb.toString("dd/MM/yyyy")));
-			
+
+			if (ptg.getQuantite() > 2)
+				srm.getErrors().add(
+						String.format("La prime 7704 du %s n'est pas valide. Sa quantité ne peut être supérieur à 2.",
+								deb.toString("dd/MM/yyyy")));
+
 		}
-		
+
 		return srm;
 	}
-	
-	//-- Helpers --//
-	
+
+	// -- Helpers --//
+
 	protected DateTime getDateDebut(Integer dateDeb, Integer codem1) {
 		DateTime recupDateDeb = new DateTime(helperService.getDateFromMairieInteger(dateDeb));
-		
+
 		if (codem1 != null && codem1.equals(2))
 			recupDateDeb = recupDateDeb.plusHours(12); // 12h00
-		
+
 		return recupDateDeb;
 	}
 
 	protected DateTime getDateFin(Integer dateFin, Integer codem2) {
 		DateTime recupDateFin = new DateTime(helperService.getDateFromMairieInteger(dateFin));
-		
-		if (codem2 == null ||  codem2.equals(2))
+
+		if (codem2 == null || codem2.equals(2))
 			return recupDateFin.plusDays(1); // 00h00 D+1
-		
+
 		recupDateFin = recupDateFin.plusMinutes(691); // 12h00
 
 		return recupDateFin;
 	}
 
 	/**
-	 * This methods checks whether a list of pointages are being 
-	 * input in a given period. This period can start or end 
-	 * by full or half a day. 
-	 * @param srm The structure to return the INFO or ERROR messages
-	 * @param message The message format to return
-	 * @param start The start day of the given period
-	 * @param codem1 Whether the start day is a full day or a half day (1, 2)
-	 * @param end The end day of the given period
-	 * @param codem2 Whether the end day is a full day or a half day (1, 2)
-	 * @param pointages The list of pointages to test the period against
+	 * This methods checks whether a list of pointages are being input in a
+	 * given period. This period can start or end by full or half a day.
+	 * 
+	 * @param srm
+	 *            The structure to return the INFO or ERROR messages
+	 * @param message
+	 *            The message format to return
+	 * @param start
+	 *            The start day of the given period
+	 * @param codem1
+	 *            Whether the start day is a full day or a half day (1, 2)
+	 * @param end
+	 *            The end day of the given period
+	 * @param codem2
+	 *            Whether the end day is a full day or a half day (1, 2)
+	 * @param pointages
+	 *            The list of pointages to test the period against
 	 * @return The structure containing the INFO or ERROR messages
 	 */
-	protected ReturnMessageDto checkInterval(
-			ReturnMessageDto srm, 
-			String message, 
-			Integer start, 
-			Integer codem1, 
-			Integer end, 
-			Integer codem2, 
-			List<Pointage> pointages) {
-		
+	protected ReturnMessageDto checkInterval(ReturnMessageDto srm, String message, Integer start, Integer codem1,
+			Integer end, Integer codem2, List<Pointage> pointages) {
+
 		DateTime recupDateDeb = getDateDebut(start, codem1);
 		DateTime recupDateFin = getDateFin(end, codem2);
-		
+
 		int dayOfYearDeb = new DateTime(recupDateDeb).getDayOfYear();
 		int dayOfYearFin = new DateTime(recupDateFin).getDayOfYear();
 		boolean partialDayDeb = recupDateDeb.getHourOfDay() != 0;
 		boolean partialDayFin = recupDateFin.getHourOfDay() != 0;
-		
+
 		DateTime recupDateDebFull = getDateDebut(start, null);
 		DateTime recupDateFinFull = getDateFin(end, null);
-		
+
 		Interval rInterval = new Interval(recupDateDebFull, recupDateFinFull);
-		
+
 		for (Pointage ptg : pointages) {
 
 			DateTime ptgTimeStart = new DateTime(ptg.getDateDebut());
 			DateTime ptgTimeEnd = new DateTime(ptg.getDateFin() == null ? ptg.getDateDebut() : ptg.getDateFin());
-			
+
 			Interval pInterval = new Interval(ptgTimeStart, ptgTimeEnd);
-			
+
 			if (rInterval.overlaps(pInterval)) {
-				
+
 				if (ptgTimeStart.dayOfYear().get() == dayOfYearDeb && partialDayDeb
-					|| ptgTimeStart.dayOfYear().get() == dayOfYearFin && partialDayFin
-					|| ptgTimeEnd.dayOfYear().get() == dayOfYearDeb && partialDayDeb
-					|| ptgTimeEnd.dayOfYear().get() == dayOfYearFin && partialDayFin) {
+						|| ptgTimeStart.dayOfYear().get() == dayOfYearFin && partialDayFin
+						|| ptgTimeEnd.dayOfYear().get() == dayOfYearDeb && partialDayDeb
+						|| ptgTimeEnd.dayOfYear().get() == dayOfYearFin && partialDayFin) {
 					if (!srm.getInfos().contains(AVERT_MESSAGE_ABS)) {
 						srm.getInfos().add(AVERT_MESSAGE_ABS);
 					}
-				}
-				else {
+				} else {
 					String msg = String.format(message, ptgTimeStart.toString("dd/MM/yyyy HH:mm"));
 					srm.getErrors().add(msg);
 				}
 			}
 		}
-		
+
 		return srm;
 	}
 
 	/**
-	 * Processes the data consistency of a set of Pointages being input by a user.
-	 * It will check the different business rules in order to make sure they're consistent
+	 * Processes the data consistency of a set of Pointages being input by a
+	 * user. It will check the different business rules in order to make sure
+	 * they're consistent
 	 */
 	@Override
 	public void processDataConsistency(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
@@ -343,26 +352,70 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
 		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages);
 		checkAgentINAAndHSup(srm, idAgent, dateLundi, pointages);
+		checkAgentTempsPartielAndHSup(srm, idAgent, dateLundi, pointages);
 		checkAgentInactivity(srm, idAgent, dateLundi, pointages);
 		checkPrime7650(srm, idAgent, dateLundi, pointages);
 		checkPrime7651(srm, idAgent, dateLundi, pointages);
 		checkPrime7652(srm, idAgent, dateLundi, pointages);
 		checkPrime7704(srm, idAgent, dateLundi, pointages);
 	}
-	
+
 	@Override
 	public ReturnMessageDto checkDateLundiAnterieurA3Mois(ReturnMessageDto srm, Date dateLundi) {
-		
-		GregorianCalendar calStr1 = new GregorianCalendar(); 
-			calStr1.setTime(new Date()); 
-			calStr1.add(GregorianCalendar.MONTH, -3);
-			calStr1.add(GregorianCalendar.WEEK_OF_YEAR, -1); // back to previous week
-			calStr1.set(GregorianCalendar.DAY_OF_WEEK, Calendar.MONDAY); // jump to next monday
-		
-		if(dateLundi.before(calStr1.getTime())) {
+
+		GregorianCalendar calStr1 = new GregorianCalendar();
+		calStr1.setTime(new Date());
+		calStr1.add(GregorianCalendar.MONTH, -3);
+		calStr1.add(GregorianCalendar.WEEK_OF_YEAR, -1); // back to previous
+															// week
+		calStr1.set(GregorianCalendar.DAY_OF_WEEK, Calendar.MONDAY); // jump to
+																		// next
+																		// monday
+
+		if (dateLundi.before(calStr1.getTime())) {
 			srm.getErrors().add(String.format(ERROR_POINTAGE_PLUS_3_MOIS));
 		}
 		return srm;
 	}
 
+	@Override
+	public ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages) {
+
+		Agent ag = sirhRepository.getAgent(idAgent);
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag, dateLundi);
+
+		boolean tempsPartiel = carr.getSpbhor().getTaux().intValue() != 1;
+		if (tempsPartiel) {
+			int minutesHSupWeek = 0;
+			int minutesAbsWeek = 0;
+			for (Pointage ptg : pointages) {
+				if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
+					DateTime startDate = new DateTime(ptg.getDateDebut());
+					DateTime endDate = new DateTime(ptg.getDateFin());
+					int nbMinutes = Minutes.minutesBetween(startDate, endDate).getMinutes();
+					minutesHSupWeek += nbMinutes;
+				}
+				if (ptg.getTypePointageEnum() == RefTypePointageEnum.ABSENCE) {
+					DateTime startDate = new DateTime(ptg.getDateDebut());
+					DateTime endDate = new DateTime(ptg.getDateFin());
+					int nbMinutes = Minutes.minutesBetween(startDate, endDate).getMinutes();
+					minutesAbsWeek += nbMinutes;
+				}
+			}
+
+			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(carr.getSpbase().getNbashh()) * carr
+					.getSpbhor().getTaux());
+
+			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > helperService.convertMairieNbHeuresFormatToMinutes(carr
+					.getSpbase().getNbasch())) {
+				String msg = String.format(HS_TPS_PARTIEL_MSG,
+						carr.getSpbase().getNbasch() - helperService.convertMinutesToMairieNbHeuresFormat(weekBase));
+				srm.getErrors().add(msg);
+			}
+
+		}
+
+		return srm;
+	}
 }
