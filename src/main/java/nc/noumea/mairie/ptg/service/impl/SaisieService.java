@@ -56,9 +56,10 @@ public class SaisieService implements ISaisieService {
 	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto) {
 		return saveFichePointage(idAgentOperator, fichePointageDto, false);
 	}
-	
+
 	@Override
-	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto, boolean approveModifiedPointages) {
+	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto,
+			boolean approveModifiedPointages) {
 
 		Date dateLundi = fichePointageDto.getDateLundi();
 
@@ -66,11 +67,11 @@ public class SaisieService implements ISaisieService {
 			throw new NotAMondayException();
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		if(!approveModifiedPointages)
-				result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, dateLundi);
-		if(!result.getErrors().isEmpty()) 
+		if (!approveModifiedPointages)
+			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, dateLundi);
+		if (!result.getErrors().isEmpty())
 			return result;
-		
+
 		Integer idAgent = fichePointageDto.getAgent().getIdAgent();
 
 		List<Pointage> originalAgentPointages = pointageService.getLatestPointagesForSaisieForAgentAndDateMonday(
@@ -84,7 +85,7 @@ public class SaisieService implements ISaisieService {
 
 				if (abs.isaSupprimer())
 					continue;
-				
+
 				// Try to retrieve in the existing original pointages if it
 				// exists
 				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, abs);
@@ -96,9 +97,10 @@ public class SaisieService implements ISaisieService {
 				}
 
 				// Only if it has changed, process this pointage
-				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi, helperService.getCurrentDate());
+				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi,
+						helperService.getCurrentDate());
 				ptg.setAbsenceConcertee(abs.getConcertee());
-				ptg.setTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class, abs.getTypeAbsence()));
+				ptg.setTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class, abs.getIdTypeAbsence()));
 				ptg.setDateDebut(abs.getHeureDebut());
 				ptg.setDateFin(abs.getHeureFin());
 				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.ABSENCE.getValue()));
@@ -112,7 +114,7 @@ public class SaisieService implements ISaisieService {
 
 				if (hs.isaSupprimer())
 					continue;
-				
+
 				// Try to retrieve in the existing original pointages if it
 				// exists
 				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, hs);
@@ -124,7 +126,8 @@ public class SaisieService implements ISaisieService {
 				}
 
 				// Only if it has changed, process this pointage
-				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi, helperService.getCurrentDate());
+				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi,
+						helperService.getCurrentDate());
 				ptg.setHeureSupRecuperee(hs.getRecuperee());
 				ptg.setDateDebut(hs.getHeureDebut());
 				ptg.setDateFin(hs.getHeureFin());
@@ -143,7 +146,7 @@ public class SaisieService implements ISaisieService {
 						&& (prime.getQuantite() == null || prime.getQuantite().equals(0))) {
 					continue;
 				}
-				
+
 				// Try to retrieve in the existing original pointages if it
 				// exists
 				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, prime);
@@ -176,31 +179,38 @@ public class SaisieService implements ISaisieService {
 		if (result.getErrors().size() != 0)
 			return result;
 
-		// If called with the approvedModifidPointages parameter, we need to mark all the modified pointages directly as APPROUVE
+		// If called with the approvedModifidPointages parameter, we need to
+		// mark all the modified pointages directly as APPROUVE
 		if (approveModifiedPointages) {
 			markPointagesAsApproved(finalPointages, dateLundi, idAgent, idAgentOperator);
 		}
-		
+
 		savePointages(finalPointages);
 		deletePointages(idAgentOperator, originalAgentPointages);
 
 		return result;
 	}
 
-	protected void markPointagesAsApproved(List<Pointage> pointages, Date dateLundi, Integer idAgent, Integer idAgentOperator) {
+	protected void markPointagesAsApproved(List<Pointage> pointages, Date dateLundi, Integer idAgent,
+			Integer idAgentOperator) {
 
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), dateLundi);
-		VentilDate currentVentilation = ventilationRepository.getLatestVentilDate(helperService.getTypeChainePaieFromStatut(carr.getStatutCarriere()), false);
-		Date currentDateEtat = currentVentilation == null ? helperService.getCurrentDate() : currentVentilation.getDateVentilation();
-		
+		Spcarr carr = sirhRepository
+				.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), dateLundi);
+		VentilDate currentVentilation = ventilationRepository.getLatestVentilDate(
+				helperService.getTypeChainePaieFromStatut(carr.getStatutCarriere()), false);
+		Date currentDateEtat = currentVentilation == null ? helperService.getCurrentDate() : currentVentilation
+				.getDateVentilation();
+
 		for (Pointage ptg : pointages) {
-			
-			// If the pointage was already APPROUVE (it hasnt been modified), dont change its Etat
+
+			// If the pointage was already APPROUVE (it hasnt been modified),
+			// dont change its Etat
 			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.APPROUVE)
 				continue;
-			
+
 			// Otherwise, since we're from SIRH, we need to mark it as APPROUVE
-			// and set its DateEtat to the VentilationDate if a current one exists
+			// and set its DateEtat to the VentilationDate if a current one
+			// exists
 			EtatPointage ep = new EtatPointage();
 			ep.setDateEtat(currentDateEtat);
 			ep.setDateMaj(helperService.getCurrentDate());
@@ -209,9 +219,9 @@ public class SaisieService implements ISaisieService {
 			ep.setPointage(ptg);
 			ptg.getEtats().add(ep);
 		}
-		
+
 	}
-	
+
 	private void savePointages(List<Pointage> finalPointages) {
 		for (Pointage ptg : finalPointages)
 			pointageRepository.savePointage(ptg);
@@ -290,18 +300,20 @@ public class SaisieService implements ISaisieService {
 			return (!ptg.getQuantite().equals(prime.getQuantite()) || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
 					&& hasTextChanged(ptg, prime));
 
-		boolean dateDebutHasChanged = !((ptg.getDateDebut() == null && prime.getHeureDebut() == null) 
-				|| (ptg.getDateDebut() != null && prime.getHeureDebut() != null && ptg.getDateDebut().getTime() == prime.getHeureDebut().getTime()));
-		boolean dateFinHasChanged = !((ptg.getDateFin() == null && prime.getHeureFin() == null) 
-				|| (ptg.getDateFin() != null && prime.getHeureFin() != null && ptg.getDateFin().getTime() == prime.getHeureFin().getTime()));
-		
+		boolean dateDebutHasChanged = !((ptg.getDateDebut() == null && prime.getHeureDebut() == null) || (ptg
+				.getDateDebut() != null && prime.getHeureDebut() != null && ptg.getDateDebut().getTime() == prime
+				.getHeureDebut().getTime()));
+		boolean dateFinHasChanged = !((ptg.getDateFin() == null && prime.getHeureFin() == null) || (ptg.getDateFin() != null
+				&& prime.getHeureFin() != null && ptg.getDateFin().getTime() == prime.getHeureFin().getTime()));
+
 		return (dateDebutHasChanged || dateFinHasChanged || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
 				&& hasTextChanged(ptg, prime));
 	}
 
 	protected boolean hasPointageChanged(Pointage ptg, AbsenceDto absence) {
 
-		boolean hasBeenModified = !( (null == ptg.getTypeAbsence() || ptg.getTypeAbsence().getIdRefTypeAbsence().equals(absence.getTypeAbsence())) 
+		boolean hasBeenModified = !((null == ptg.getTypeAbsence() || ptg.getTypeAbsence().getIdRefTypeAbsence()
+				.equals(absence.getIdTypeAbsence()))
 				&& ptg.getDateDebut().getTime() == absence.getHeureDebut().getTime() && ptg.getDateFin().getTime() == absence
 				.getHeureFin().getTime());
 
@@ -318,15 +330,17 @@ public class SaisieService implements ISaisieService {
 		return (hasBeenModified || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
 				&& hasTextChanged(ptg, hSup));
 	}
-	
+
 	protected boolean hasTextChanged(Pointage ptg, PointageDto pointageDto) {
-		
-		boolean motifHasChanged = (ptg.getMotif() == null  && pointageDto.getMotif() != null && !pointageDto.getMotif().equals("")
-				|| (ptg.getMotif() != null && !ptg.getMotif().getText().equals(pointageDto.getMotif())));
-		
-		boolean commentHasChanged = (ptg.getCommentaire() == null  && pointageDto.getCommentaire() != null && !pointageDto.getCommentaire().equals("")
-				|| (ptg.getCommentaire() != null && !ptg.getCommentaire().getText().equals(pointageDto.getCommentaire())));
-		
+
+		boolean motifHasChanged = (ptg.getMotif() == null && pointageDto.getMotif() != null
+				&& !pointageDto.getMotif().equals("") || (ptg.getMotif() != null && !ptg.getMotif().getText()
+				.equals(pointageDto.getMotif())));
+
+		boolean commentHasChanged = (ptg.getCommentaire() == null && pointageDto.getCommentaire() != null
+				&& !pointageDto.getCommentaire().equals("") || (ptg.getCommentaire() != null && !ptg.getCommentaire()
+				.getText().equals(pointageDto.getCommentaire())));
+
 		return motifHasChanged || commentHasChanged;
 	}
 }

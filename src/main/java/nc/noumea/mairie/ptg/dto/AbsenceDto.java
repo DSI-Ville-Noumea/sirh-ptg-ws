@@ -8,8 +8,8 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 public class AbsenceDto extends PointageDto {
 
 	private Boolean concertee;
-	
-	private Integer typeAbsence;
+
+	private Integer idTypeAbsence;
 
 	public AbsenceDto() {
 	}
@@ -17,8 +17,8 @@ public class AbsenceDto extends PointageDto {
 	public AbsenceDto(Pointage p) {
 		super(p);
 		this.concertee = p.getAbsenceConcertee();
-		if(null != p.getTypeAbsence()) {
-			this.typeAbsence = p.getTypeAbsence().getIdRefTypeAbsence();
+		if (null != p.getTypeAbsence()) {
+			this.idTypeAbsence = p.getTypeAbsence().getIdRefTypeAbsence();
 		}
 	}
 
@@ -30,11 +30,11 @@ public class AbsenceDto extends PointageDto {
 		this.concertee = concertee;
 	}
 
-	public Integer getTypeAbsence() {
-		return typeAbsence;
+	public Integer getIdTypeAbsence() {
+		return idTypeAbsence;
 	}
 
-	public void setTypeAbsence(Integer typeAbsence) {
-		this.typeAbsence = typeAbsence;
+	public void setIdTypeAbsence(Integer idTypeAbsence) {
+		this.idTypeAbsence = idTypeAbsence;
 	}
 }
