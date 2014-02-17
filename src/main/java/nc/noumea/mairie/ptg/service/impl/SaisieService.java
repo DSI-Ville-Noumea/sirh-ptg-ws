@@ -100,7 +100,9 @@ public class SaisieService implements ISaisieService {
 				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi,
 						helperService.getCurrentDate());
 				ptg.setAbsenceConcertee(abs.getConcertee());
-				ptg.setTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class, abs.getIdTypeAbsence()));
+				if(null != abs.getIdTypeAbsence()){
+					ptg.setTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class, abs.getIdTypeAbsence()));
+				}
 				ptg.setDateDebut(abs.getHeureDebut());
 				ptg.setDateFin(abs.getHeureFin());
 				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.ABSENCE.getValue()));
