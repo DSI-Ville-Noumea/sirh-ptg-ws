@@ -85,6 +85,10 @@ public class Pointage {
 	@Column(name = "IS_ABS_CONCERTEE")
 	@Type(type = "boolean")
 	private Boolean absenceConcertee;
+	
+	@OneToOne(optional = true)
+	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
+	private RefTypeAbsence typeAbsence;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(name = "ID_COMMENT_MOTIF")
@@ -250,5 +254,13 @@ public class Pointage {
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
-	
+
+	public RefTypeAbsence getTypeAbsence() {
+		return typeAbsence;
+	}
+
+	public void setTypeAbsence(RefTypeAbsence typeAbsence) {
+		this.typeAbsence = typeAbsence;
+	}
+
 }

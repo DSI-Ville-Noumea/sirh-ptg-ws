@@ -14,6 +14,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 
 import org.springframework.stereotype.Repository;
@@ -245,5 +246,10 @@ public class PointageRepository implements IPointageRepository {
 		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
 
 		return query.getResultList();
+	}
+	
+	@Override
+	public List<RefTypeAbsence> findAllRefTypeAbsence() {
+		return ptgEntityManager.createQuery("SELECT o FROM RefTypeAbsence o", RefTypeAbsence.class).getResultList();
 	}
 }

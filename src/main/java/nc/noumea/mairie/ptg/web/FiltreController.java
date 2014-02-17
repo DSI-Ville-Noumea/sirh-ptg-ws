@@ -4,6 +4,7 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
+import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
@@ -101,6 +102,20 @@ public class FiltreController {
 			throw new NoContentException();
 		
 		String json = new JSONSerializer().exclude("*.class").serialize(services);
+
+		return new ResponseEntity<String>(json, HttpStatus.OK);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getTypesAbsence", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getTypesAbsence() {
+
+		logger.debug("entered GET [filtres/getTypesAbsence] => getTypesAbsence");
+		
+		List<RefTypeAbsenceDto> types = pointageService.getRefTypeAbsence();
+
+		String json = new JSONSerializer().exclude("*.class").serialize(types);
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);
 	}

@@ -21,8 +21,10 @@ import nc.noumea.mairie.ptg.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.TypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 
@@ -785,5 +787,26 @@ public class PointageRepositoryTest {
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
 	}
-
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void findAllRefTypeAbsence() {
+		
+		RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		ptgEntityManager.persist(rta);
+		
+		RefTypeAbsence rta2 = new RefTypeAbsence();
+			rta2.setIdRefTypeAbsence(TypeAbsenceEnum.NON_CONCERTEE.getValue());
+		ptgEntityManager.persist(rta2);
+	
+		RefTypeAbsence rta3 = new RefTypeAbsence();
+			rta3.setIdRefTypeAbsence(TypeAbsenceEnum.IMMEDIATE.getValue());
+		ptgEntityManager.persist(rta3);
+		
+		List<RefTypeAbsence> result = repository.findAllRefTypeAbsence();
+		
+		assertEquals(3, result.size());
+	}
+	
 }

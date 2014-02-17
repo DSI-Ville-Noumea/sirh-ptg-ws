@@ -40,6 +40,9 @@ public class VentilAbsence {
     @Column(name = "MINUTES_NON_CONCERTEE")
     private int minutesNonConcertee;
     
+    @Column(name = "MINUTES_IMMEDIATE")
+    private int minutesImmediate;
+    
     @Column(name = "ETAT")
     @Enumerated(EnumType.ORDINAL)
     private EtatPointageEnum etat;
@@ -58,6 +61,10 @@ public class VentilAbsence {
 
     public void addMinutesNonConcertee(Integer minutes) {
         minutesNonConcertee += minutes;
+    }
+    
+    public void addMinutesImmediate(Integer minutes) {
+    	minutesImmediate += minutes;
     }
 
 	public Integer getIdVentilAbsence() {
@@ -122,5 +129,13 @@ public class VentilAbsence {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public int getMinutesImmediate() {
+		return minutesImmediate;
+	}
+
+	public void setMinutesImmediate(int minutesImmediate) {
+		this.minutesImmediate = minutesImmediate;
 	}
 }

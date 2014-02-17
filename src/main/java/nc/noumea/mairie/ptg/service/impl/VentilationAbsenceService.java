@@ -7,6 +7,7 @@ import java.util.List;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.TypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 
@@ -32,10 +33,18 @@ public class VentilationAbsenceService implements IVentilationAbsenceService {
 		
 		for (Pointage ptg : absPointages) {
 			double minutes = new Interval(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin())).toDuration().getStandardMinutes();
-			if (ptg.getAbsenceConcertee())
+			
+			switch (TypeAbsenceEnum.getTypeAbsenceEnum(ptg.getTypeAbsence().getIdRefTypeAbsence())) {
+			case CONCERTEE:
 				result.addMinutesConcertee((int) minutes);
-			else
+				break;
+			case NON_CONCERTEE:
 				result.addMinutesNonConcertee((int) minutes);
+				break;
+			case IMMEDIATE:
+				result.addMinutesImmediate((int) minutes);
+				break;
+			}
 		}
 		
 		return result;

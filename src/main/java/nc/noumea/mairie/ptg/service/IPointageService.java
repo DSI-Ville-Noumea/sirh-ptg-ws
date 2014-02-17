@@ -11,6 +11,7 @@ import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.FichePointageListDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
+import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 
 public interface IPointageService {
@@ -143,4 +144,6 @@ public interface IPointageService {
 	 * @return
 	 */
 	List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats);
+	
+	List<RefTypeAbsenceDto> getRefTypeAbsence();
 }

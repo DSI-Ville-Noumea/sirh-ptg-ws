@@ -1037,3 +1037,35 @@ HTTP Status code OK : 200
 +-------------------------+
  HTTP Status code OK : 200
 +-------------------------+
+
+
+** Liste les types disponibles pour le filtre
+
+ <<URL>> : /filtres/getTypesAbsence
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ -
+ 
+ []
+ 
+ <<Content>>
+  
++-------------------------+
+[
+	{
+		"idRefTypeAbsence": 1,
+		"libelle": "Concertée"
+	},
+	{
+		"idRefTypeAbsence": 2,
+		"libelle": "Non concertée"
+	},
+	{
+		"idRefTypeAbsence": 3,
+		"libelle": "Immédiate"
+	}
+]
++-------------------------+

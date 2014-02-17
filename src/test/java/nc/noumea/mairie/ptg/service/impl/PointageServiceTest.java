@@ -15,13 +15,16 @@ import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.TypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
+import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
@@ -147,55 +150,58 @@ public class PointageServiceTest {
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
 		FichePointageDto dto = new FichePointageDto();
-		dto.setAgent(new AgentWithServiceDto());
-		dto.setDateLundi(dateLundi);
-		dto.setSemaine("SEMAINE");
-		dto.getSaisies().add(new JourPointageDto());
-		dto.getSaisies().add(new JourPointageDto());
-		dto.getSaisies().add(new JourPointageDto());
-		dto.getSaisies().add(new JourPointageDto());
-		dto.getSaisies().add(new JourPointageDto());
-		dto.getSaisies().add(new JourPointageDto());
-		dto.getSaisies().add(new JourPointageDto());
+			dto.setAgent(new AgentWithServiceDto());
+			dto.setDateLundi(dateLundi);
+			dto.setSemaine("SEMAINE");
+			dto.getSaisies().add(new JourPointageDto());
+			dto.getSaisies().add(new JourPointageDto());
+			dto.getSaisies().add(new JourPointageDto());
+			dto.getSaisies().add(new JourPointageDto());
+			dto.getSaisies().add(new JourPointageDto());
+			dto.getSaisies().add(new JourPointageDto());
+			dto.getSaisies().add(new JourPointageDto());
 
 		Pointage p1 = new Pointage();
-		p1.setIdPointage(1);
+			p1.setIdPointage(1);
 		RefTypePointage t1 = new RefTypePointage();
-		t1.setIdRefTypePointage(1);
-		t1.setLabel("ABSENCE");
+			t1.setIdRefTypePointage(1);
+			t1.setLabel("ABSENCE");
 		p1.setType(t1);
 		p1.setAbsenceConcertee(true);
 		p1.setDateDebut(new DateTime(2013, 05, 14, 8, 0, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 05, 14, 12, 0, 0).toDate());
 		p1.setDateLundi(dateLundi);
 		EtatPointage e1 = new EtatPointage();
-		e1.setEtat(EtatPointageEnum.REFUSE);
+			e1.setEtat(EtatPointageEnum.REFUSE);
 		p1.getEtats().add(e1);
+		RefTypeAbsence typeAbsence = new RefTypeAbsence();
+			typeAbsence.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		p1.setTypeAbsence(typeAbsence);
 
 		Pointage p1new = new Pointage();
-		p1new.setIdPointage(3);
-		p1new.setPointageParent(p1);
-		p1new.setType(t1);
-		p1new.setAbsenceConcertee(true);
-		p1new.setDateDebut(new DateTime(2013, 05, 14, 9, 0, 0).toDate());
-		p1new.setDateFin(new DateTime(2013, 05, 14, 12, 0, 0).toDate());
-		p1new.setDateLundi(dateLundi);
+			p1new.setIdPointage(3);
+			p1new.setPointageParent(p1);
+			p1new.setType(t1);
+			p1new.setAbsenceConcertee(true);
+			p1new.setDateDebut(new DateTime(2013, 05, 14, 9, 0, 0).toDate());
+			p1new.setDateFin(new DateTime(2013, 05, 14, 12, 0, 0).toDate());
+			p1new.setDateLundi(dateLundi);
 		EtatPointage e1new = new EtatPointage();
-		e1new.setEtat(EtatPointageEnum.SAISI);
+			e1new.setEtat(EtatPointageEnum.SAISI);
 		p1new.getEtats().add(e1new);
 
 		Pointage p2 = new Pointage();
-		p2.setIdPointage(2);
+			p2.setIdPointage(2);
 		RefTypePointage t2 = new RefTypePointage();
-		t2.setIdRefTypePointage(2);
-		t2.setLabel("H_SUP");
+			t2.setIdRefTypePointage(2);
+			t2.setLabel("H_SUP");
 		p2.setType(t2);
 		p2.setHeureSupRecuperee(true);
 		p2.setDateDebut(new DateTime(2013, 05, 16, 14, 0, 0).toDate());
 		p2.setDateFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		p2.setDateLundi(dateLundi);
 		EtatPointage e2 = new EtatPointage();
-		e2.setEtat(EtatPointageEnum.APPROUVE);
+			e2.setEtat(EtatPointageEnum.APPROUVE);
 		p2.getEtats().add(e2);
 
 		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
@@ -768,5 +774,30 @@ public class PointageServiceTest {
 		
 		// Then
 		assertEquals(false, result);
+	}
+	
+	@Test
+	public void getRefTypeAbsence() {
+		
+		List<RefTypeAbsence> list = new ArrayList<RefTypeAbsence>();
+		
+		RefTypeAbsence rta = new RefTypeAbsence();
+			rta.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		RefTypeAbsence rta2 = new RefTypeAbsence();
+			rta2.setIdRefTypeAbsence(TypeAbsenceEnum.NON_CONCERTEE.getValue());
+		RefTypeAbsence rta3 = new RefTypeAbsence();
+			rta3.setIdRefTypeAbsence(TypeAbsenceEnum.IMMEDIATE.getValue());
+		
+		list.addAll(Arrays.asList(rta, rta2, rta3));
+		
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+			Mockito.when(pRepo.findAllRefTypeAbsence()).thenReturn(list);
+				
+		PointageService service = new PointageService();
+			ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		
+		List<RefTypeAbsenceDto> result = service.getRefTypeAbsence();
+		
+		assertEquals(3, result.size());
 	}
 }

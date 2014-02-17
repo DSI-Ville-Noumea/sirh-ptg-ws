@@ -8,6 +8,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 
 public interface IPointageRepository {
@@ -49,4 +50,6 @@ public interface IPointageRepository {
 	List<RefTypePointage> findAllRefTypePointages();
 
 	List<Integer> listAllDistinctIdAgentPointage();
+	
+	List<RefTypeAbsence> findAllRefTypeAbsence();
 }

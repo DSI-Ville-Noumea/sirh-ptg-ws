@@ -13,6 +13,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
@@ -24,6 +25,7 @@ import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
+import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -217,6 +219,7 @@ public class PointageService implements IPointageService {
 			ptg.setDateFin(parentPointage.getDateFin());
 			ptg.setQuantite(parentPointage.getQuantite());
 			ptg.setAbsenceConcertee(parentPointage.getAbsenceConcertee());
+			ptg.setTypeAbsence(parentPointage.getTypeAbsence());
 			ptg.setHeureSupRecuperee(parentPointage.getHeureSupRecuperee());
 			ptg.setType(parentPointage.getType());
 		}
@@ -365,5 +368,16 @@ public class PointageService implements IPointageService {
 			}
 		}
 		return false;
+	}
+	
+	@Override
+	public List<RefTypeAbsenceDto> getRefTypeAbsence() {
+		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();
+		List<RefTypeAbsence> refTypeAbsence = pointageRepository.findAllRefTypeAbsence();
+		for (RefTypeAbsence type : refTypeAbsence) {
+			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
+			res.add(dto);
+		}
+		return res;
 	}
 }

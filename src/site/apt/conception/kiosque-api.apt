@@ -653,6 +653,38 @@ SIRH-PTG-WS API pour le Kiosque SIRH (Sharepoint module des pointages)
 +-------------------------+
 
 
+** Liste les types disponibles pour le filtre
+
+ <<URL>> : /filtres/getTypesAbsence
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ -
+ 
+ []
+ 
+ <<Content>>
+  
++-------------------------+
+[
+	{
+		"idRefTypeAbsence": 1,
+		"libelle": "Concertée"
+	},
+	{
+		"idRefTypeAbsence": 2,
+		"libelle": "Non concertée"
+	},
+	{
+		"idRefTypeAbsence": 3,
+		"libelle": "Immédiate"
+	}
+]
++-------------------------+
+
+
 * Primes
 
 ** Détail d'un type de prime

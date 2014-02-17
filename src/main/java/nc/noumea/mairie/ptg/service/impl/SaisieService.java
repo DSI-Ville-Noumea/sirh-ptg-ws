@@ -9,6 +9,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
@@ -97,6 +98,7 @@ public class SaisieService implements ISaisieService {
 				// Only if it has changed, process this pointage
 				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi, helperService.getCurrentDate());
 				ptg.setAbsenceConcertee(abs.getConcertee());
+				ptg.setTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class, abs.getTypeAbsence()));
 				ptg.setDateDebut(abs.getHeureDebut());
 				ptg.setDateFin(abs.getHeureFin());
 				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.ABSENCE.getValue()));
@@ -299,7 +301,7 @@ public class SaisieService implements ISaisieService {
 
 	protected boolean hasPointageChanged(Pointage ptg, AbsenceDto absence) {
 
-		boolean hasBeenModified = !(ptg.getAbsenceConcertee().equals(absence.getConcertee())
+		boolean hasBeenModified = !( (null == ptg.getTypeAbsence() || ptg.getTypeAbsence().getIdRefTypeAbsence().equals(absence.getTypeAbsence())) 
 				&& ptg.getDateDebut().getTime() == absence.getHeureDebut().getTime() && ptg.getDateFin().getTime() == absence
 				.getHeureFin().getTime());
 

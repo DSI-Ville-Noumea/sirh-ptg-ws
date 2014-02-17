@@ -11,6 +11,7 @@ import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
+
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -990,16 +991,22 @@ public class SaisieServiceTest {
 	@Test
 	public void hasPointageChanged_AbsenceConcerteeHasChanged_ReturnTrue() {
 
+		RefTypeAbsence typeAbsence = new RefTypeAbsence();
+			typeAbsence.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		
 		// Given
 		Pointage ptg = new Pointage();
-		ptg.setAbsenceConcertee(true);
-		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
-		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+			ptg.setAbsenceConcertee(true);
+			ptg.setTypeAbsence(typeAbsence);
+			ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+			ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+			ptg.setTypeAbsence(typeAbsence);
 		
 		AbsenceDto abs = new AbsenceDto();
-		abs.setConcertee(false);
-		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
-		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+			abs.setConcertee(false);
+			abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+			abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+			abs.setTypeAbsence(TypeAbsenceEnum.NON_CONCERTEE.getValue());
 		
 		SaisieService service = new SaisieService();
 		
@@ -1010,16 +1017,21 @@ public class SaisieServiceTest {
 	@Test
 	public void hasPointageChanged_AbsenceHoursHasChanged_ReturnTrue() {
 
+		RefTypeAbsence typeAbsence = new RefTypeAbsence();
+			typeAbsence.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		
 		// Given
 		Pointage ptg = new Pointage();
-		ptg.setAbsenceConcertee(true);
-		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
-		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+			ptg.setAbsenceConcertee(true);
+			ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+			ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+			ptg.setTypeAbsence(typeAbsence);
 		
 		AbsenceDto abs = new AbsenceDto();
-		abs.setConcertee(true);
-		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
-		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 10, 0).toDate());
+			abs.setConcertee(true);
+			abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+			abs.setHeureFin(new DateTime(2013, 8, 1, 13, 10, 0).toDate());
+			abs.setTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
 		
 		SaisieService service = new SaisieService();
 		
