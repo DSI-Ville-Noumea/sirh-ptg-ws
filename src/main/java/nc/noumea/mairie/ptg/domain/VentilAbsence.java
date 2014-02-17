@@ -22,50 +22,50 @@ import javax.persistence.Version;
 @NamedQuery(name = "getPriorVentilAbsenceForAgentAndDate", query = "select va from VentilAbsence va where va.idVentilAbsence != :idLatestVentilAbsence and va.idAgent = :idAgent and va.dateLundi = :dateLundi order by va.idVentilAbsence desc")
 public class VentilAbsence {
 
-	@Id 
+	@Id
 	@Column(name = "ID_VENTIL_ABSENCE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idVentilAbsence;
-	
-    @Column(name = "ID_AGENT")
-    private Integer idAgent;
-    
-    @Column(name = "DATE_LUNDI")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateLundi;
-    
-    @Column(name = "MINUTES_CONCERTEE")
-    private int minutesConcertee;
-    
-    @Column(name = "MINUTES_NON_CONCERTEE")
-    private int minutesNonConcertee;
-    
-    @Column(name = "MINUTES_IMMEDIATE")
-    private int minutesImmediate;
-    
-    @Column(name = "ETAT")
-    @Enumerated(EnumType.ORDINAL)
-    private EtatPointageEnum etat;
-    
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
-    private VentilDate ventilDate;
 
-    @Version
-    @Column(name = "version")
+	@Column(name = "ID_AGENT")
+	private Integer idAgent;
+
+	@Column(name = "DATE_LUNDI")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateLundi;
+
+	@Column(name = "MINUTES_CONCERTEE")
+	private int minutesConcertee;
+
+	@Column(name = "MINUTES_NON_CONCERTEE")
+	private int minutesNonConcertee;
+
+	@Column(name = "MINUTES_IMMEDIAT")
+	private int minutesImmediat;
+
+	@Column(name = "ETAT")
+	@Enumerated(EnumType.ORDINAL)
+	private EtatPointageEnum etat;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
+	private VentilDate ventilDate;
+
+	@Version
+	@Column(name = "version")
 	private Integer version;
-    
-    public void addMinutesConcertee(Integer minutes) {
-        minutesConcertee += minutes;
-    }
 
-    public void addMinutesNonConcertee(Integer minutes) {
-        minutesNonConcertee += minutes;
-    }
-    
-    public void addMinutesImmediate(Integer minutes) {
-    	minutesImmediate += minutes;
-    }
+	public void addMinutesConcertee(Integer minutes) {
+		minutesConcertee += minutes;
+	}
+
+	public void addMinutesNonConcertee(Integer minutes) {
+		minutesNonConcertee += minutes;
+	}
+
+	public void addMinutesImmediate(Integer minutes) {
+		minutesImmediat += minutes;
+	}
 
 	public Integer getIdVentilAbsence() {
 		return idVentilAbsence;
@@ -131,11 +131,11 @@ public class VentilAbsence {
 		this.version = version;
 	}
 
-	public int getMinutesImmediate() {
-		return minutesImmediate;
+	public int getMinutesImmediat() {
+		return minutesImmediat;
 	}
 
-	public void setMinutesImmediate(int minutesImmediate) {
-		this.minutesImmediate = minutesImmediate;
+	public void setMinutesImmediat(int minutesImmediate) {
+		this.minutesImmediat = minutesImmediate;
 	}
 }
