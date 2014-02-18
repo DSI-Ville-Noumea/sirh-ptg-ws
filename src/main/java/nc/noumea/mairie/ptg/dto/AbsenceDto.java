@@ -7,34 +7,23 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 @XmlRootElement
 public class AbsenceDto extends PointageDto {
 
-	private Boolean concertee;
-
-	private Integer idTypeAbsence;
+	private Integer idRefTypeAbsence;
 
 	public AbsenceDto() {
 	}
 
 	public AbsenceDto(Pointage p) {
 		super(p);
-		this.concertee = p.getAbsenceConcertee();
-		if (null != p.getTypeAbsence()) {
-			this.idTypeAbsence = p.getTypeAbsence().getIdRefTypeAbsence();
+		if (null != p.getRefTypeAbsence()) {
+			this.idRefTypeAbsence = p.getRefTypeAbsence().getIdRefTypeAbsence();
 		}
 	}
 
-	public Boolean getConcertee() {
-		return concertee;
+	public Integer getIdRefTypeAbsence() {
+		return idRefTypeAbsence;
 	}
 
-	public void setConcertee(Boolean concertee) {
-		this.concertee = concertee;
-	}
-
-	public Integer getIdTypeAbsence() {
-		return idTypeAbsence;
-	}
-
-	public void setIdTypeAbsence(Integer idTypeAbsence) {
-		this.idTypeAbsence = idTypeAbsence;
+	public void setIdRefTypeAbsence(Integer idRefTypeAbsence) {
+		this.idRefTypeAbsence = idRefTypeAbsence;
 	}
 }

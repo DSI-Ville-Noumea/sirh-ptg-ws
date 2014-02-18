@@ -427,6 +427,7 @@ HTTP Status code OK : 200
     id_ventil_absence: 61
     minutes_concertees: 120
     minutes_non_concertees: 90
+    minutes_immediate: 90
 }
 +-------------------------+
 

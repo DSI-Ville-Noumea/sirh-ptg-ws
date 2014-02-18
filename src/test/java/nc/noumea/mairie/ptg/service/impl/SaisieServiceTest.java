@@ -20,9 +20,9 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.domain.TypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
@@ -89,11 +89,11 @@ public class SaisieServiceTest {
 				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
 
 		AbsenceDto abs3 = new AbsenceDto();
-		abs3.setConcertee(true);
 		abs3.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
 		abs3.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		abs3.setMotif("le motif 3");
 		abs3.setCommentaire("le commentaire 3");
+		abs3.setIdRefTypeAbsence(1);
 		dto.getSaisies().get(3).getAbsences().add(abs3);
 
 		Date currentDate = new DateTime(2013, 05, 22, 9, 8, 00).toDate();
@@ -134,7 +134,6 @@ public class SaisieServiceTest {
 		Mockito.verify(pRepo).savePointage(argument.capture());
 
 		assertEquals(RefTypePointageEnum.ABSENCE, argument.getValue().getTypePointageEnum());
-		assertTrue(argument.getValue().getAbsenceConcertee());
 		assertEquals(agent.getIdAgent(), argument.getValue().getIdAgent());
 		assertEquals(new DateTime(2013, 05, 16, 15, 0, 0).toDate(), argument.getValue().getDateDebut());
 		assertEquals(new DateTime(2013, 05, 16, 16, 0, 0).toDate(), argument.getValue().getDateFin());
@@ -218,7 +217,7 @@ public class SaisieServiceTest {
 		assertNull(argument.getValue().getIdPointage());
 		assertNull(argument.getValue().getQuantite());
 		assertNull(argument.getValue().getRefPrime());
-		assertNull(argument.getValue().getAbsenceConcertee());
+		assertNull(argument.getValue().getRefTypeAbsence());
 		assertNull(argument.getValue().getPointageParent());
 	}
 
@@ -306,7 +305,7 @@ public class SaisieServiceTest {
 		assertEquals(lundi, argument.getValue().getDateLundi());
 		assertNull(argument.getValue().getIdPointage());
 		assertNull(argument.getValue().getHeureSupRecuperee());
-		assertNull(argument.getValue().getAbsenceConcertee());
+		assertNull(argument.getValue().getRefTypeAbsence());
 		assertNull(argument.getValue().getPointageParent());
 	}
 
@@ -395,7 +394,7 @@ public class SaisieServiceTest {
 		assertEquals(lundi, argument.getValue().getDateLundi());
 		assertNull(argument.getValue().getIdPointage());
 		assertNull(argument.getValue().getHeureSupRecuperee());
-		assertNull(argument.getValue().getAbsenceConcertee());
+		assertNull(argument.getValue().getRefTypeAbsence());
 		assertNull(argument.getValue().getPointageParent());
 	}
 
@@ -414,7 +413,7 @@ public class SaisieServiceTest {
 
 		// prime
 		AbsenceDto abs = new AbsenceDto();
-		abs.setConcertee(true);
+		abs.setIdRefTypeAbsence(1);
 		abs.setHeureDebut(new DateTime(2013, 05, 13, 12, 0, 0).toDate());
 		abs.setHeureFin(new DateTime(2013, 05, 13, 18, 0, 0).toDate());
 		dto.getSaisies().add(new JourPointageDto());
@@ -1007,16 +1006,19 @@ public class SaisieServiceTest {
 	public void hasPointageChanged_AbsenceHasNotChanged_ReturnFalse() {
 
 		// Given
+		RefTypeAbsence refTypeAbsence = new RefTypeAbsence();
+		refTypeAbsence.setIdRefTypeAbsence(1);
+
 		Pointage ptg = new Pointage();
 		EtatPointage ep = new EtatPointage();
 		ep.setEtat(EtatPointageEnum.SAISI);
 		ptg.getEtats().add(ep);
-		ptg.setAbsenceConcertee(true);
+		ptg.setRefTypeAbsence(refTypeAbsence);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
 		AbsenceDto abs = new AbsenceDto();
-		abs.setConcertee(true);
+		abs.setIdRefTypeAbsence(1);
 		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
@@ -1030,21 +1032,19 @@ public class SaisieServiceTest {
 	public void hasPointageChanged_AbsenceConcerteeHasChanged_ReturnTrue() {
 
 		RefTypeAbsence typeAbsence = new RefTypeAbsence();
-		typeAbsence.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		typeAbsence.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 
 		// Given
 		Pointage ptg = new Pointage();
-		ptg.setAbsenceConcertee(true);
-		ptg.setTypeAbsence(typeAbsence);
+		ptg.setRefTypeAbsence(typeAbsence);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
-		ptg.setTypeAbsence(typeAbsence);
+		ptg.setRefTypeAbsence(typeAbsence);
 
 		AbsenceDto abs = new AbsenceDto();
-		abs.setConcertee(false);
 		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
-		abs.setIdTypeAbsence(TypeAbsenceEnum.NON_CONCERTEE.getValue());
+		abs.setIdRefTypeAbsence(RefTypeAbsenceEnum.NON_CONCERTEE.getValue());
 
 		SaisieService service = new SaisieService();
 
@@ -1056,20 +1056,18 @@ public class SaisieServiceTest {
 	public void hasPointageChanged_AbsenceHoursHasChanged_ReturnTrue() {
 
 		RefTypeAbsence typeAbsence = new RefTypeAbsence();
-		typeAbsence.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		typeAbsence.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 
 		// Given
 		Pointage ptg = new Pointage();
-		ptg.setAbsenceConcertee(true);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
-		ptg.setTypeAbsence(typeAbsence);
+		ptg.setRefTypeAbsence(typeAbsence);
 
 		AbsenceDto abs = new AbsenceDto();
-		abs.setConcertee(true);
 		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 10, 0).toDate());
-		abs.setIdTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		abs.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 
 		SaisieService service = new SaisieService();
 
@@ -1081,16 +1079,19 @@ public class SaisieServiceTest {
 	public void hasPointageChanged_AbsenceMotifHasChangedEtatIsSaisi_ReturnTrue() {
 
 		// Given
+		RefTypeAbsence refTypeAbsence = new RefTypeAbsence();
+		refTypeAbsence.setIdRefTypeAbsence(1);
+
 		Pointage ptg = new Pointage();
 		EtatPointage ep = new EtatPointage();
 		ep.setEtat(EtatPointageEnum.SAISI);
 		ptg.getEtats().add(ep);
-		ptg.setAbsenceConcertee(true);
+		ptg.setRefTypeAbsence(refTypeAbsence);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
 		AbsenceDto abs = new AbsenceDto();
-		abs.setConcertee(true);
+		abs.setIdRefTypeAbsence(1);
 		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 		abs.setMotif("coucou");
@@ -1105,18 +1106,21 @@ public class SaisieServiceTest {
 	public void hasPointageChanged_AbsenceCommentaireHasChangedEtatIsSaisi_ReturnTrue() {
 
 		// Given
+		RefTypeAbsence refTypeAbsence = new RefTypeAbsence();
+		refTypeAbsence.setIdRefTypeAbsence(1);
+
 		Pointage ptg = new Pointage();
 		ptg.setCommentaire(new PtgComment("aaa"));
 		ptg.setMotif(new PtgComment("aaa"));
 		EtatPointage ep = new EtatPointage();
 		ep.setEtat(EtatPointageEnum.SAISI);
 		ptg.getEtats().add(ep);
-		ptg.setAbsenceConcertee(true);
+		ptg.setRefTypeAbsence(refTypeAbsence);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
 		AbsenceDto abs = new AbsenceDto();
-		abs.setConcertee(true);
+		abs.setIdRefTypeAbsence(1);
 		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 		abs.setCommentaire("coucou");
@@ -1132,16 +1136,19 @@ public class SaisieServiceTest {
 	public void hasPointageChanged_AbsenceMotifHasChangedEtatisNotSaisi_ReturnFalse() {
 
 		// Given
+		RefTypeAbsence refTypeAbsence = new RefTypeAbsence();
+		refTypeAbsence.setIdRefTypeAbsence(1);
+
 		Pointage ptg = new Pointage();
 		EtatPointage ep = new EtatPointage();
 		ep.setEtat(EtatPointageEnum.APPROUVE);
 		ptg.getEtats().add(ep);
-		ptg.setAbsenceConcertee(true);
+		ptg.setRefTypeAbsence(refTypeAbsence);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
 		AbsenceDto abs = new AbsenceDto();
-		abs.setConcertee(true);
+		abs.setIdRefTypeAbsence(1);
 		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 		abs.setMotif("coucou");
@@ -1156,18 +1163,21 @@ public class SaisieServiceTest {
 	public void hasPointageChanged_AbsenceCommentaireHasChangedEtatisNotSaisi_ReturnFalse() {
 
 		// Given
+		RefTypeAbsence refTypeAbsence = new RefTypeAbsence();
+		refTypeAbsence.setIdRefTypeAbsence(1);
+
 		Pointage ptg = new Pointage();
 		ptg.setCommentaire(new PtgComment("aaa"));
 		ptg.setMotif(new PtgComment("aaa"));
 		EtatPointage ep = new EtatPointage();
 		ep.setEtat(EtatPointageEnum.APPROUVE);
 		ptg.getEtats().add(ep);
-		ptg.setAbsenceConcertee(true);
+		ptg.setRefTypeAbsence(refTypeAbsence);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
 		AbsenceDto abs = new AbsenceDto();
-		abs.setConcertee(true);
+		abs.setIdRefTypeAbsence(1);
 		abs.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		abs.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 		abs.setCommentaire("coucou");

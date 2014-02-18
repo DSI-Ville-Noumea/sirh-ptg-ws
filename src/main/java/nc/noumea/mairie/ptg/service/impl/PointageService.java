@@ -45,19 +45,19 @@ import org.springframework.stereotype.Service;
 public class PointageService implements IPointageService {
 
 	private Logger logger = LoggerFactory.getLogger(PointageService.class);
-	
+
 	@Autowired
 	private IPointageRepository pointageRepository;
-	
+
 	@Autowired
 	private ISirhRepository sirhRepository;
-	
+
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
-	
+
 	@Autowired
 	private HelperService helperService;
-	
+
 	@Autowired
 	private IAgentMatriculeConverterService agentMatriculeConverterService;
 
@@ -181,12 +181,14 @@ public class PointageService implements IPointageService {
 	}
 
 	@Override
-	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Date dateEtat) {
+	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi,
+			Date dateEtat) {
 		return getOrCreateNewPointage(idAgentCreator, idPointage, idAgent, dateLundi, dateEtat, null);
 	}
 
 	@Override
-	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Date dateEtat, Integer idRefPrime) {
+	public Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi,
+			Date dateEtat, Integer idRefPrime) {
 
 		Pointage ptg = null;
 		Pointage parentPointage = null;
@@ -195,7 +197,7 @@ public class PointageService implements IPointageService {
 		if (idPointage != null && !idPointage.equals(0)) {
 			ptg = pointageRepository.getEntity(Pointage.class, idPointage);
 
-			// if its state is SAISI, return it. 
+			// if its state is SAISI, return it.
 			// Otherwise create a new one with this one as parent
 			EtatPointage etatPtg = ptg.getLatestEtatPointage();
 			if (etatPtg.getEtat() == EtatPointageEnum.SAISI) {
@@ -218,8 +220,7 @@ public class PointageService implements IPointageService {
 			ptg.setDateDebut(parentPointage.getDateDebut());
 			ptg.setDateFin(parentPointage.getDateFin());
 			ptg.setQuantite(parentPointage.getQuantite());
-			ptg.setAbsenceConcertee(parentPointage.getAbsenceConcertee());
-			ptg.setTypeAbsence(parentPointage.getTypeAbsence());
+			ptg.setRefTypeAbsence(parentPointage.getRefTypeAbsence());
 			ptg.setHeureSupRecuperee(parentPointage.getHeureSupRecuperee());
 			ptg.setType(parentPointage.getType());
 		}
@@ -315,7 +316,7 @@ public class PointageService implements IPointageService {
 		return filterOldPointagesAndEtatFromList(agentPointages,
 				Arrays.asList(EtatPointageEnum.VENTILE, EtatPointageEnum.VALIDE, EtatPointageEnum.JOURNALISE));
 	}
-	
+
 	@Override
 	public List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats) {
 
@@ -353,12 +354,12 @@ public class PointageService implements IPointageService {
 		List<PointageCalcule> agentPointagesCalcules = pointageRepository.getPointagesCalculesVentilesForAgent(idAgent,
 				ventilDate.getIdVentilDate());
 
-		logger.debug("Found {} Pointage Calcules for agent {} and ventil date {} as of {}", agentPointagesCalcules.size(), idAgent,
-				ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
+		logger.debug("Found {} Pointage Calcules for agent {} and ventil date {} as of {}",
+				agentPointagesCalcules.size(), idAgent, ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
 
 		return agentPointagesCalcules;
 	}
-	
+
 	@Override
 	public boolean isPrimeUtiliseePointage(Integer idAgent, List<Integer> idRefPrime) {
 
@@ -369,7 +370,7 @@ public class PointageService implements IPointageService {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public List<RefTypeAbsenceDto> getRefTypeAbsence() {
 		List<RefTypeAbsenceDto> res = new ArrayList<RefTypeAbsenceDto>();

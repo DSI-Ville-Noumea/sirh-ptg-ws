@@ -16,9 +16,9 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.domain.TypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
@@ -45,17 +45,17 @@ public class PointageServiceTest {
 	private static RefTypePointage hSup;
 	private static RefTypePointage prime;
 	private static RefTypePointage abs;
-	
+
 	@BeforeClass
 	public static void Setup() {
 		prime = new RefTypePointage();
 		prime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
 		hSup = new RefTypePointage();
 		hSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		abs= new RefTypePointage();
+		abs = new RefTypePointage();
 		abs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 	}
-	
+
 	@Test
 	public void getAgentFichePointage() throws ParseException {
 
@@ -98,7 +98,8 @@ public class PointageServiceTest {
 		Mockito.when(wsMock.getAgentDirection(idAgent)).thenReturn(siserv);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(Arrays.asList(rp1, rp2));
+		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
+				Arrays.asList(rp1, rp2));
 
 		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getAgentCurrentCarriere(agent, d)).thenReturn(carr);
@@ -150,65 +151,66 @@ public class PointageServiceTest {
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
 		FichePointageDto dto = new FichePointageDto();
-			dto.setAgent(new AgentWithServiceDto());
-			dto.setDateLundi(dateLundi);
-			dto.setSemaine("SEMAINE");
-			dto.getSaisies().add(new JourPointageDto());
-			dto.getSaisies().add(new JourPointageDto());
-			dto.getSaisies().add(new JourPointageDto());
-			dto.getSaisies().add(new JourPointageDto());
-			dto.getSaisies().add(new JourPointageDto());
-			dto.getSaisies().add(new JourPointageDto());
-			dto.getSaisies().add(new JourPointageDto());
+		dto.setAgent(new AgentWithServiceDto());
+		dto.setDateLundi(dateLundi);
+		dto.setSemaine("SEMAINE");
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+		dto.getSaisies().add(new JourPointageDto());
+
+		RefTypeAbsence typeAbsence = new RefTypeAbsence();
+		typeAbsence.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 
 		Pointage p1 = new Pointage();
-			p1.setIdPointage(1);
+		p1.setIdPointage(1);
 		RefTypePointage t1 = new RefTypePointage();
-			t1.setIdRefTypePointage(1);
-			t1.setLabel("ABSENCE");
+		t1.setIdRefTypePointage(1);
+		t1.setLabel("ABSENCE");
 		p1.setType(t1);
-		p1.setAbsenceConcertee(true);
 		p1.setDateDebut(new DateTime(2013, 05, 14, 8, 0, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 05, 14, 12, 0, 0).toDate());
 		p1.setDateLundi(dateLundi);
 		EtatPointage e1 = new EtatPointage();
-			e1.setEtat(EtatPointageEnum.REFUSE);
+		e1.setEtat(EtatPointageEnum.REFUSE);
 		p1.getEtats().add(e1);
-		RefTypeAbsence typeAbsence = new RefTypeAbsence();
-			typeAbsence.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
-		p1.setTypeAbsence(typeAbsence);
+		p1.setRefTypeAbsence(typeAbsence);
 
 		Pointage p1new = new Pointage();
-			p1new.setIdPointage(3);
-			p1new.setPointageParent(p1);
-			p1new.setType(t1);
-			p1new.setAbsenceConcertee(true);
-			p1new.setDateDebut(new DateTime(2013, 05, 14, 9, 0, 0).toDate());
-			p1new.setDateFin(new DateTime(2013, 05, 14, 12, 0, 0).toDate());
-			p1new.setDateLundi(dateLundi);
+		p1new.setIdPointage(3);
+		p1new.setPointageParent(p1);
+		p1new.setType(t1);
+		p1new.setDateDebut(new DateTime(2013, 05, 14, 9, 0, 0).toDate());
+		p1new.setDateFin(new DateTime(2013, 05, 14, 12, 0, 0).toDate());
+		p1new.setDateLundi(dateLundi);
 		EtatPointage e1new = new EtatPointage();
-			e1new.setEtat(EtatPointageEnum.SAISI);
+		e1new.setEtat(EtatPointageEnum.SAISI);
 		p1new.getEtats().add(e1new);
+		p1new.setRefTypeAbsence(typeAbsence);
 
 		Pointage p2 = new Pointage();
-			p2.setIdPointage(2);
+		p2.setIdPointage(2);
 		RefTypePointage t2 = new RefTypePointage();
-			t2.setIdRefTypePointage(2);
-			t2.setLabel("H_SUP");
+		t2.setIdRefTypePointage(2);
+		t2.setLabel("H_SUP");
 		p2.setType(t2);
 		p2.setHeureSupRecuperee(true);
 		p2.setDateDebut(new DateTime(2013, 05, 16, 14, 0, 0).toDate());
 		p2.setDateFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		p2.setDateLundi(dateLundi);
 		EtatPointage e2 = new EtatPointage();
-			e2.setEtat(EtatPointageEnum.APPROUVE);
+		e2.setEtat(EtatPointageEnum.APPROUVE);
 		p2.getEtats().add(e2);
 
 		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(Arrays.asList(p1new, p2, p1));
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(
+				Arrays.asList(p1new, p2, p1));
 
 		HelperService helperMock = Mockito.mock(HelperService.class);
 		Mockito.when(helperMock.getWeekDayFromDateBase0(p1new.getDateDebut())).thenReturn(1);
@@ -226,17 +228,21 @@ public class PointageServiceTest {
 
 		// Then
 		assertEquals(1, result.getSaisies().get(1).getAbsences().size());
-		assertEquals(true, result.getSaisies().get(1).getAbsences().get(0).getConcertee());
+		assertEquals(1, (int) result.getSaisies().get(1).getAbsences().get(0).getIdRefTypeAbsence());
 		assertEquals(0, (int) result.getSaisies().get(1).getAbsences().get(0).getIdRefEtat());
-		assertEquals(new DateTime(2013, 05, 14, 9, 0, 0).toDate(), result.getSaisies().get(1).getAbsences().get(0).getHeureDebut());
-		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getAbsences().get(0).getHeureFin());
+		assertEquals(new DateTime(2013, 05, 14, 9, 0, 0).toDate(), result.getSaisies().get(1).getAbsences().get(0)
+				.getHeureDebut());
+		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getAbsences().get(0)
+				.getHeureFin());
 		assertEquals(new Integer(3), result.getSaisies().get(1).getAbsences().get(0).getIdPointage());
 
 		assertEquals(1, result.getSaisies().get(3).getHeuresSup().size());
 		assertEquals(true, result.getSaisies().get(3).getHeuresSup().get(0).getRecuperee());
 		assertEquals(1, (int) result.getSaisies().get(3).getHeuresSup().get(0).getIdRefEtat());
-		assertEquals(new DateTime(2013, 05, 16, 14, 0, 0).toDate(), result.getSaisies().get(3).getHeuresSup().get(0).getHeureDebut());
-		assertEquals(new DateTime(2013, 05, 16, 16, 0, 0).toDate(), result.getSaisies().get(3).getHeuresSup().get(0).getHeureFin());
+		assertEquals(new DateTime(2013, 05, 16, 14, 0, 0).toDate(), result.getSaisies().get(3).getHeuresSup().get(0)
+				.getHeureDebut());
+		assertEquals(new DateTime(2013, 05, 16, 16, 0, 0).toDate(), result.getSaisies().get(3).getHeuresSup().get(0)
+				.getHeureFin());
 		assertEquals(new Integer(2), result.getSaisies().get(3).getHeuresSup().get(0).getIdPointage());
 	}
 
@@ -306,7 +312,8 @@ public class PointageServiceTest {
 		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(Arrays.asList(p2, p1));
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(
+				Arrays.asList(p2, p1));
 
 		HelperService helperMock = Mockito.mock(HelperService.class);
 		Mockito.when(helperMock.getWeekDayFromDateBase0(p1.getDateDebut())).thenReturn(1);
@@ -328,8 +335,10 @@ public class PointageServiceTest {
 		assertEquals(new Integer(1111), result.getSaisies().get(1).getPrimes().get(0).getNumRubrique());
 		assertEquals(new Integer(11), result.getSaisies().get(1).getPrimes().get(0).getIdRefPrime());
 		assertEquals(2, (int) result.getSaisies().get(1).getPrimes().get(0).getIdRefEtat());
-		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureDebut());
-		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureFin());
+		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0)
+				.getHeureDebut());
+		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0)
+				.getHeureFin());
 		assertEquals(new Integer(1), result.getSaisies().get(1).getPrimes().get(0).getIdPointage());
 
 		assertEquals(1, result.getSaisies().get(3).getPrimes().size());
@@ -408,7 +417,7 @@ public class PointageServiceTest {
 		EtatPointage e2 = new EtatPointage();
 		e2.setEtat(EtatPointageEnum.REJETE_DEFINITIVEMENT);
 		p2.getEtats().add(e2);
-		
+
 		Pointage p3 = new Pointage();
 		p3.setIdPointage(3);
 		p3.setRefPrime(new RefPrime());
@@ -427,7 +436,8 @@ public class PointageServiceTest {
 		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(Arrays.asList(p2, p1, p3));
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(
+				Arrays.asList(p2, p1, p3));
 
 		HelperService helperMock = Mockito.mock(HelperService.class);
 		Mockito.when(helperMock.getWeekDayFromDateBase0(p1.getDateDebut())).thenReturn(1);
@@ -450,8 +460,10 @@ public class PointageServiceTest {
 		assertEquals(new Integer(1111), result.getSaisies().get(1).getPrimes().get(0).getNumRubrique());
 		assertEquals(new Integer(11), result.getSaisies().get(1).getPrimes().get(0).getIdRefPrime());
 		assertEquals(2, (int) result.getSaisies().get(1).getPrimes().get(0).getIdRefEtat());
-		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureDebut());
-		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0).getHeureFin());
+		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0)
+				.getHeureDebut());
+		assertEquals(new DateTime(2013, 05, 14, 12, 0, 0).toDate(), result.getSaisies().get(1).getPrimes().get(0)
+				.getHeureFin());
 		assertEquals(new Integer(1), result.getSaisies().get(1).getPrimes().get(0).getIdPointage());
 
 		assertEquals(1, result.getSaisies().get(3).getPrimes().size());
@@ -459,43 +471,43 @@ public class PointageServiceTest {
 		assertNull(result.getSaisies().get(3).getPrimes().get(0).getQuantite());
 		assertNull(result.getSaisies().get(3).getPrimes().get(0).getHeureDebut());
 		assertNull(result.getSaisies().get(3).getPrimes().get(0).getHeureFin());
-		
+
 		assertEquals(1, result.getSaisies().get(4).getPrimes().size());
 		assertNull(result.getSaisies().get(4).getPrimes().get(0).getIdPointage());
 		assertNull(result.getSaisies().get(4).getPrimes().get(0).getQuantite());
 		assertNull(result.getSaisies().get(4).getPrimes().get(0).getHeureDebut());
 		assertNull(result.getSaisies().get(4).getPrimes().get(0).getHeureFin());
 	}
-	
+
 	@Test
 	public void getOrCreateNewPointage_PointageDoesNotExist_CreateNewOne() {
-		
+
 		// Given
 		Integer idPointage = null;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		
+
 		EtatPointage etatSaisi = new EtatPointage();
 		etatSaisi.setEtat(EtatPointageEnum.SAISI);
-		
+
 		RefPrime rf89 = new RefPrime();
 		rf89.setIdRefPrime(89);
-		
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getEntity(EtatPointage.class, EtatPointageEnum.SAISI.getCodeEtat())).thenReturn(etatSaisi);
 		Mockito.when(pRepo.getEntity(RefPrime.class, 89)).thenReturn(rf89);
-		
+
 		Date dateEtat = new DateTime(2013, 05, 17, 9, 25, 8).toDate();
-		
+
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 5, 17, 9, 12, 0).toDate());
-		
+
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
-		
+
 		// When
 		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, dateEtat, 89);
-		
+
 		// Then
 		assertEquals(9007867, (int) result.getIdAgent());
 		assertEquals(rf89, result.getRefPrime());
@@ -506,43 +518,43 @@ public class PointageServiceTest {
 		assertEquals(new DateTime(2013, 05, 17, 9, 12, 0).toDate(), result.getLatestEtatPointage().getDateMaj());
 		assertEquals(9001234, (int) result.getLatestEtatPointage().getIdAgent());
 	}
-	
+
 	@Test
 	public void getOrCreateNewPointage_PointageExists_IsSAISI_returnPointage() {
-		
+
 		// Given
 		Integer idPointage = 67;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		
+
 		EtatPointage etatSaisi = new EtatPointage();
 		etatSaisi.setEtat(EtatPointageEnum.SAISI);
 		etatSaisi.setDateEtat(new LocalDate(2013, 5, 1).toDate());
-		
+
 		RefPrime rf89 = new RefPrime();
 		rf89.setIdRefPrime(89);
-		
+
 		Pointage p67 = new Pointage();
 		p67.setIdPointage(67);
 		p67.setIdAgent(9007867);
 		p67.setRefPrime(rf89);
 		p67.setDateLundi(dateLundi);
 		p67.getEtats().add(etatSaisi);
-		
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getEntity(Pointage.class, idPointage)).thenReturn(p67);
-		
+
 		Date dateEtat = new DateTime(2013, 05, 17, 9, 25, 8).toDate();
-		
+
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 5, 17, 9, 12, 0).toDate());
-		
+
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
-		
+
 		// When
 		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, dateEtat, 89);
-		
+
 		// Then
 		assertEquals(67, (int) result.getIdPointage());
 		assertEquals(9007867, (int) result.getIdAgent());
@@ -554,20 +566,23 @@ public class PointageServiceTest {
 		assertEquals(new DateTime(2013, 05, 17, 9, 12, 0).toDate(), result.getLatestEtatPointage().getDateMaj());
 		assertEquals(9001234, (int) result.getLatestEtatPointage().getIdAgent());
 	}
-	
+
 	@Test
 	public void getOrCreateNewPointage_PointageExists_IsNotSAISI_returnNewChildPointage() {
-		
+
 		// Given
 		Integer idPointage = 67;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-		
+
 		EtatPointage etatSaisi = new EtatPointage();
 		etatSaisi.setEtat(EtatPointageEnum.REFUSE);
-		
+
 		RefPrime rf89 = new RefPrime();
 		rf89.setIdRefPrime(89);
-		
+
+		RefTypeAbsence refTypeAbsence = new RefTypeAbsence();
+		refTypeAbsence.setIdRefTypeAbsence(1);
+
 		Pointage p67 = new Pointage();
 		p67.setIdPointage(67);
 		p67.setIdAgent(9007867);
@@ -577,27 +592,27 @@ public class PointageServiceTest {
 		p67.setDateDebut(new DateTime(2013, 5, 14, 8, 0, 0).toDate());
 		p67.setDateFin(new DateTime(2013, 5, 14, 10, 30, 0).toDate());
 		p67.setQuantite(2);
-		p67.setAbsenceConcertee(true);
+		p67.setRefTypeAbsence(refTypeAbsence);
 		p67.setHeureSupRecuperee(true);
 		p67.setType(hSup);
-		
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getEntity(Pointage.class, idPointage)).thenReturn(p67);
 		Mockito.when(pRepo.getEntity(EtatPointage.class, EtatPointageEnum.SAISI.getCodeEtat())).thenReturn(etatSaisi);
 		Mockito.when(pRepo.getEntity(RefPrime.class, 89)).thenReturn(rf89);
-		
+
 		Date dateEtat = new DateTime(2013, 05, 17, 9, 25, 8).toDate();
-		
+
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 5, 17, 9, 12, 0).toDate());
-		
+
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
-		
+
 		// When
 		Pointage result = service.getOrCreateNewPointage(9001234, idPointage, 9007867, dateLundi, dateEtat, 89);
-		
+
 		// Then
 		assertNull(result.getIdPointage());
 		assertEquals(p67, result.getPointageParent());
@@ -612,15 +627,15 @@ public class PointageServiceTest {
 		assertEquals(p67.getDateDebut(), result.getDateDebut());
 		assertEquals(p67.getDateFin(), result.getDateFin());
 		assertEquals(p67.getQuantite(), result.getQuantite());
-		assertEquals(p67.getAbsenceConcertee(), result.getAbsenceConcertee());
+		assertEquals(p67.getRefTypeAbsence(), result.getRefTypeAbsence());
 		assertEquals(p67.getHeureSupRecuperee(), result.getHeureSupRecuperee());
 		assertEquals(p67.getType(), result.getType());
-		
+
 	}
-		
+
 	@Test
 	public void getLatestPointagesForAgentsAndDates_1Agent_2Dates_SkipOldPointages() {
-		
+
 		// Given
 		List<Integer> agentIds = Arrays.asList(9008765);
 		Date from = new LocalDate(2013, 7, 8).toDate();
@@ -628,40 +643,40 @@ public class PointageServiceTest {
 
 		Pointage p1 = new Pointage();
 		p1.setIdPointage(1);
-		
+
 		Pointage p2 = new Pointage();
 		p2.setIdPointage(2);
 		p2.setPointageParent(p1);
-		
+
 		Pointage p3 = new Pointage();
 		p3.setIdPointage(3);
-		
+
 		List<Pointage> ptgs = Arrays.asList(p3, p2, p1);
-		
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getListPointages(agentIds, from, to, null)).thenReturn(ptgs);
-		
+
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		
+
 		// When
 		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, null, null);
-		
+
 		// Then
 		assertEquals(2, result.size());
 		assertEquals(p3, result.get(0));
 		assertEquals(p2, result.get(1));
 	}
-	
+
 	@Test
 	public void getLatestPointagesForAgentsAndDates_3Agentz_RefTypeFilter_SkipOldPointages() {
-		
+
 		// Given
 		List<Integer> agentIds = Arrays.asList(9008765);
 		Date from = new LocalDate(2013, 7, 8).toDate();
 		Date to = new LocalDate(2013, 7, 19).toDate();
 		RefTypePointageEnum type = RefTypePointageEnum.H_SUP;
-		
+
 		Pointage p3 = new Pointage();
 		p3.setType(hSup);
 		p3.setIdPointage(3);
@@ -675,52 +690,52 @@ public class PointageServiceTest {
 		p5.setType(hSup);
 		p5.setIdPointage(5);
 		p5.setPointageParent(p4);
-		
+
 		List<Pointage> ptgs = Arrays.asList(p5, p4, p3);
-		
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getListPointages(agentIds, from, to, type.getValue())).thenReturn(ptgs);
-		
+
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		
+
 		// When
 		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, type, null);
-		
+
 		// Then
 		assertEquals(1, result.size());
 		assertEquals(p5, result.get(0));
 	}
-	
+
 	@Test
 	public void getLatestPointagesForAgentsAndDates_3Agentz_EtatFilter_SkipOldPointages() {
-		
+
 		// Given
 		List<Integer> agentIds = Arrays.asList(9008765);
 		Date from = new LocalDate(2013, 7, 8).toDate();
 		Date to = new LocalDate(2013, 7, 19).toDate();
 		EtatPointageEnum etat = EtatPointageEnum.APPROUVE;
-		
+
 		Pointage p1 = new Pointage();
 		p1.setIdPointage(1);
 		EtatPointage ep1 = new EtatPointage();
 		ep1.setEtat(EtatPointageEnum.REFUSE);
 		p1.getEtats().add(ep1);
-		
+
 		Pointage p2 = new Pointage();
 		p2.setIdPointage(2);
 		p2.setPointageParent(p1);
 		EtatPointage ep2 = new EtatPointage();
 		ep2.setEtat(EtatPointageEnum.APPROUVE);
 		p2.getEtats().add(ep2);
-		
+
 		Pointage p3 = new Pointage();
 		p3.setType(hSup);
 		p3.setIdPointage(3);
 		EtatPointage ep3 = new EtatPointage();
 		ep3.setEtat(EtatPointageEnum.REFUSE);
 		p3.getEtats().add(ep3);
-		
+
 		Pointage p4 = new Pointage();
 		p4.setType(hSup);
 		p4.setIdPointage(4);
@@ -728,7 +743,7 @@ public class PointageServiceTest {
 		EtatPointage ep4 = new EtatPointage();
 		ep4.setEtat(EtatPointageEnum.APPROUVE);
 		p4.getEtats().add(ep4);
-		
+
 		Pointage p5 = new Pointage();
 		p5.setType(hSup);
 		p5.setIdPointage(5);
@@ -736,68 +751,69 @@ public class PointageServiceTest {
 		EtatPointage ep5 = new EtatPointage();
 		ep5.setEtat(EtatPointageEnum.SAISI);
 		p5.getEtats().add(ep5);
-		
+
 		List<Pointage> ptgs = Arrays.asList(p5, p4, p2, p3, p1);
-		
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getListPointages(agentIds, from, to, null)).thenReturn(ptgs);
-		
+
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		
+
 		// When
-		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, null, Arrays.asList(etat));
-		
+		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, null,
+				Arrays.asList(etat));
+
 		// Then
 		assertEquals(1, result.size());
 		assertEquals(p2, result.get(0));
 	}
-	
+
 	@Test
 	public void isPrimeUtiliseePointage() {
-		
+
 		// Given
 		Integer idAgent = 9008765;
 		RefPrime refPrime = new RefPrime();
-		refPrime.setIdRefPrime(12);;
-		
-		
+		refPrime.setIdRefPrime(12);
+		;
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.isPrimeSurPointageouPointageCalcule(idAgent,  refPrime.getIdRefPrime())).thenReturn(false);
-		
+		Mockito.when(pRepo.isPrimeSurPointageouPointageCalcule(idAgent, refPrime.getIdRefPrime())).thenReturn(false);
+
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		List<Integer> list= new ArrayList<>();
+		List<Integer> list = new ArrayList<>();
 		list.add(refPrime.getIdRefPrime());
 		// When
 		boolean result = service.isPrimeUtiliseePointage(idAgent, list);
-		
+
 		// Then
 		assertEquals(false, result);
 	}
-	
+
 	@Test
 	public void getRefTypeAbsence() {
-		
+
 		List<RefTypeAbsence> list = new ArrayList<RefTypeAbsence>();
-		
+
 		RefTypeAbsence rta = new RefTypeAbsence();
-			rta.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 		RefTypeAbsence rta2 = new RefTypeAbsence();
-			rta2.setIdRefTypeAbsence(TypeAbsenceEnum.NON_CONCERTEE.getValue());
+		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.NON_CONCERTEE.getValue());
 		RefTypeAbsence rta3 = new RefTypeAbsence();
-			rta3.setIdRefTypeAbsence(TypeAbsenceEnum.IMMEDIATE.getValue());
-		
+		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.IMMEDIATE.getValue());
+
 		list.addAll(Arrays.asList(rta, rta2, rta3));
-		
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-			Mockito.when(pRepo.findAllRefTypeAbsence()).thenReturn(list);
-				
+		Mockito.when(pRepo.findAllRefTypeAbsence()).thenReturn(list);
+
 		PointageService service = new PointageService();
-			ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+
 		List<RefTypeAbsenceDto> result = service.getRefTypeAbsence();
-		
+
 		assertEquals(3, result.size());
 	}
 }

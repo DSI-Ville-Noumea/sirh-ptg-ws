@@ -22,9 +22,9 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.domain.TypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 
@@ -107,12 +107,17 @@ public class PointageRepositoryTest {
 		ptg4.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
 		ptgEntityManager.persist(ptg4);
 
+		RefTypeAbsence typeAbs = new RefTypeAbsence();
+		typeAbs.setIdRefTypeAbsence(1);
+		ptgEntityManager.persist(typeAbs);
+
 		Pointage ptg5 = new Pointage();
 		ptg5.setIdAgent(9008765);
 		ptg5.setType(abs);
 		ptg5.setDateLundi(new LocalDate(2013, 7, 22).toDate());
 		ptg5.setDateDebut(new DateTime(2013, 7, 22, 6, 0, 0).toDate());
 		ptg5.setDateFin(new DateTime(2013, 7, 22, 7, 0, 0).toDate());
+		ptg5.setRefTypeAbsence(typeAbs);
 		ptgEntityManager.persist(ptg5);
 
 		Pointage ptg6 = new Pointage();
@@ -139,7 +144,7 @@ public class PointageRepositoryTest {
 		assertEquals(ptg5.getDateDebut(), result.get(0).getDateDebut());
 		assertEquals(ptg5.getDateFin(), result.get(0).getDateFin());
 		assertEquals(ptg5.getCommentaire(), result.get(0).getCommentaire());
-		assertEquals(ptg5.getAbsenceConcertee(), result.get(0).getAbsenceConcertee());
+		assertEquals(RefTypeAbsenceEnum.CONCERTEE.getValue(), result.get(0).getRefTypeAbsence().getIdRefTypeAbsence());
 		assertEquals(ptg5.getCommentaire(), result.get(0).getCommentaire());
 		assertEquals(ptg5.getDateLundi(), result.get(0).getDateLundi());
 		assertEquals(ptg5.getHeureSupRecuperee(), result.get(0).getHeureSupRecuperee());
@@ -318,8 +323,16 @@ public class PointageRepositoryTest {
 		rtp.setIdRefTypePointage(1);
 		ptgEntityManager.persist(rtp);
 
+		RefTypeAbsence refTypeAbs = new RefTypeAbsence();
+		refTypeAbs.setIdRefTypeAbsence(1);
+		ptgEntityManager.persist(refTypeAbs);
+
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
 		Pointage p = new Pointage();
-		p.setAbsenceConcertee(false);
+		p.setRefTypeAbsence(refTypeAbsNon);
 		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
 		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
 		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
@@ -329,7 +342,7 @@ public class PointageRepositoryTest {
 		ptgEntityManager.persist(p);
 
 		Pointage p2 = new Pointage();
-		p2.setAbsenceConcertee(true);
+		p2.setRefTypeAbsence(refTypeAbs);
 		p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
 		p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
 		p2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
@@ -342,12 +355,13 @@ public class PointageRepositoryTest {
 				new LocalDate(2013, 7, 23).toDate());
 
 		assertEquals(2, result.size());
-		assertEquals(true, result.get(0).getAbsenceConcertee());
+		assertEquals(RefTypeAbsenceEnum.CONCERTEE.getValue(), result.get(0).getRefTypeAbsence().getIdRefTypeAbsence());
 		assertEquals(false, result.get(0).getHeureSupRecuperee());
 		assertEquals(new LocalDate(2013, 7, 21).toDate(), result.get(0).getDateDebut());
 		assertEquals(new LocalDate(2013, 7, 30).toDate(), result.get(0).getDateFin());
 
-		assertEquals(false, result.get(1).getAbsenceConcertee());
+		assertEquals(RefTypeAbsenceEnum.NON_CONCERTEE.getValue(), result.get(1).getRefTypeAbsence()
+				.getIdRefTypeAbsence());
 		assertEquals(true, result.get(1).getHeureSupRecuperee());
 		assertEquals(new LocalDate(2013, 7, 22).toDate(), result.get(1).getDateDebut());
 		assertEquals(new LocalDate(2013, 7, 29).toDate(), result.get(1).getDateFin());
@@ -364,8 +378,16 @@ public class PointageRepositoryTest {
 		rtp.setIdRefTypePointage(1);
 		ptgEntityManager.persist(rtp);
 
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
+		RefTypeAbsence refTypeAbs = new RefTypeAbsence();
+		refTypeAbs.setIdRefTypeAbsence(1);
+		ptgEntityManager.persist(refTypeAbs);
+
 		Pointage p = new Pointage();
-		p.setAbsenceConcertee(false);
+		p.setRefTypeAbsence(refTypeAbsNon);
 		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
 		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
 		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
@@ -376,7 +398,7 @@ public class PointageRepositoryTest {
 
 		Pointage p2 = new Pointage();
 		p2.setPointageParent(p);
-		p2.setAbsenceConcertee(true);
+		p2.setRefTypeAbsence(refTypeAbs);
 		p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
 		p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
 		p2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
@@ -388,12 +410,13 @@ public class PointageRepositoryTest {
 		List<Pointage> result = repository.getPointageArchives(p2.getIdPointage());
 
 		assertEquals(2, result.size());
-		assertEquals(true, result.get(0).getAbsenceConcertee());
+		assertEquals(RefTypeAbsenceEnum.CONCERTEE.getValue(), result.get(0).getRefTypeAbsence().getIdRefTypeAbsence());
 		assertEquals(false, result.get(0).getHeureSupRecuperee());
 		assertEquals(new LocalDate(2013, 7, 21).toDate(), result.get(0).getDateDebut());
 		assertEquals(new LocalDate(2013, 7, 30).toDate(), result.get(0).getDateFin());
 
-		assertEquals(false, result.get(1).getAbsenceConcertee());
+		assertEquals(RefTypeAbsenceEnum.NON_CONCERTEE.getValue(), result.get(1).getRefTypeAbsence()
+				.getIdRefTypeAbsence());
 		assertEquals(true, result.get(1).getHeureSupRecuperee());
 		assertEquals(new LocalDate(2013, 7, 22).toDate(), result.get(1).getDateDebut());
 		assertEquals(new LocalDate(2013, 7, 29).toDate(), result.get(1).getDateFin());
@@ -410,8 +433,12 @@ public class PointageRepositoryTest {
 		rtp.setIdRefTypePointage(1);
 		ptgEntityManager.persist(rtp);
 
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
 		Pointage p = new Pointage();
-		p.setAbsenceConcertee(false);
+		p.setRefTypeAbsence(refTypeAbsNon);
 		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
 		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
 		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
@@ -431,8 +458,16 @@ public class PointageRepositoryTest {
 		rtp.setIdRefTypePointage(1);
 		ptgEntityManager.persist(rtp);
 
+		RefTypeAbsence absNonCon = new RefTypeAbsence();
+		absNonCon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(absNonCon);
+
+		RefTypeAbsence absCon = new RefTypeAbsence();
+		absCon.setIdRefTypeAbsence(1);
+		ptgEntityManager.persist(absCon);
+
 		Pointage p = new Pointage();
-		p.setAbsenceConcertee(false);
+		p.setRefTypeAbsence(absNonCon);
 		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
 		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
 		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
@@ -442,7 +477,7 @@ public class PointageRepositoryTest {
 		ptgEntityManager.persist(p);
 
 		Pointage p2 = new Pointage();
-		p2.setAbsenceConcertee(true);
+		p2.setRefTypeAbsence(absCon);
 		p2.setDateDebut(new LocalDate(2013, 7, 21).toDate());
 		p2.setDateFin(new LocalDate(2013, 7, 30).toDate());
 		p2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
@@ -457,7 +492,7 @@ public class PointageRepositoryTest {
 				new LocalDate(2013, 7, 22).toDate(), new Integer(1));
 
 		assertEquals(1, result.size());
-		assertEquals(true, result.get(0).getAbsenceConcertee());
+		assertEquals(RefTypeAbsenceEnum.CONCERTEE.getValue(), result.get(0).getRefTypeAbsence().getIdRefTypeAbsence());
 		assertEquals(false, result.get(0).getHeureSupRecuperee());
 		assertEquals(new LocalDate(2013, 7, 21).toDate(), result.get(0).getDateDebut());
 		assertEquals(new LocalDate(2013, 7, 30).toDate(), result.get(0).getDateFin());
@@ -471,8 +506,12 @@ public class PointageRepositoryTest {
 		rtp.setIdRefTypePointage(1);
 		ptgEntityManager.persist(rtp);
 
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
 		Pointage p = new Pointage();
-		p.setAbsenceConcertee(false);
+		p.setRefTypeAbsence(refTypeAbsNon);
 		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
 		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
 		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
@@ -494,7 +533,8 @@ public class PointageRepositoryTest {
 		List<Pointage> result = repository.getPointagesVentilesForAgent(new Integer(9005138), vd.getIdVentilDate());
 
 		assertEquals(1, result.size());
-		assertEquals(false, result.get(0).getAbsenceConcertee());
+		assertEquals(RefTypeAbsenceEnum.NON_CONCERTEE.getValue(), result.get(0).getRefTypeAbsence()
+				.getIdRefTypeAbsence());
 		assertEquals(true, result.get(0).getHeureSupRecuperee());
 		assertEquals(new LocalDate(2013, 7, 22).toDate(), result.get(0).getDateDebut());
 		assertEquals(new LocalDate(2013, 7, 29).toDate(), result.get(0).getDateFin());
@@ -787,26 +827,26 @@ public class PointageRepositoryTest {
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void findAllRefTypeAbsence() {
-		
+
 		RefTypeAbsence rta = new RefTypeAbsence();
-			rta.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		rta.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 		ptgEntityManager.persist(rta);
-		
+
 		RefTypeAbsence rta2 = new RefTypeAbsence();
-			rta2.setIdRefTypeAbsence(TypeAbsenceEnum.NON_CONCERTEE.getValue());
+		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.NON_CONCERTEE.getValue());
 		ptgEntityManager.persist(rta2);
-	
+
 		RefTypeAbsence rta3 = new RefTypeAbsence();
-			rta3.setIdRefTypeAbsence(TypeAbsenceEnum.IMMEDIATE.getValue());
+		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.IMMEDIATE.getValue());
 		ptgEntityManager.persist(rta3);
-		
+
 		List<RefTypeAbsence> result = repository.findAllRefTypeAbsence();
-		
+
 		assertEquals(3, result.size());
 	}
-	
+
 }

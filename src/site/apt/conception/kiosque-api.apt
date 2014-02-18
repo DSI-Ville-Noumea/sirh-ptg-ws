@@ -355,8 +355,7 @@ SIRH-PTG-WS API pour le Kiosque SIRH (Sharepoint module des pointages)
 					"idPointage" : 989,
 					"heureDebut" : "/Date()/",
 					"heureFin" : "/Date()/",
-					"concertee" : true // true, false, null
-					"idTypeAbsence" : 1 // null sinon
+					"idRefTypeAbsence" : 1 // null sinon
 					"motif" : "le motif",
 					"commentaire" : "un commentaire",
 					"idRefEtat" : 0, // (SAISI = 0/ APPROUVE = 1…)

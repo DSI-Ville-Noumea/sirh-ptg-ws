@@ -11,11 +11,12 @@ public class Spacti {
 
 	public static String CODE_ACTIVITE_ABS_NON_CONCERTEE = "A01";
 	public static String CODE_ACTIVITE_ABS_CONCERTEE = "A02";
+	public static String CODE_ACTIVITE_ABS_IMMEDIATE = "A07";
 
 	@Id
 	@Column(name = "CDACT3", insertable = false, updatable = false, columnDefinition = "char")
 	private String codeActvite;
-	
+
 	@Column(name = "LIACTI", columnDefinition = "char")
 	private String libelleActivite;
 
@@ -34,6 +35,5 @@ public class Spacti {
 	public void setLibelleActivite(String libelleActivite) {
 		this.libelleActivite = libelleActivite;
 	}
-	
-	
+
 }

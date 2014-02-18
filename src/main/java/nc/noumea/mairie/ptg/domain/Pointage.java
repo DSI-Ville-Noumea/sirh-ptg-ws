@@ -32,17 +32,16 @@ import org.hibernate.annotations.Type;
 @Entity
 @Table(name = "PTG_POINTAGE")
 @NamedQueries({
-	@NamedQuery(name = "getPointageForAgentAndDateLundiByIdDesc", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire where ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi order by ptg.idPointage desc"),
-	@NamedQuery(name = "getListPointageByAgentsAndDate", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type where ptg.idAgent in :idAgents and ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate order by ptg.idPointage desc"),
-	@NamedQuery(name = "getListPointageByAgentsTypeAndDate", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type where ptg.idAgent in :idAgents and ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate and ptg.type.idRefTypePointage = :idRefTypePointage order by ptg.idPointage desc")
-})
+		@NamedQuery(name = "getPointageForAgentAndDateLundiByIdDesc", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire where ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi order by ptg.idPointage desc"),
+		@NamedQuery(name = "getListPointageByAgentsAndDate", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type where ptg.idAgent in :idAgents and ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate order by ptg.idPointage desc"),
+		@NamedQuery(name = "getListPointageByAgentsTypeAndDate", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type where ptg.idAgent in :idAgents and ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate and ptg.type.idRefTypePointage = :idRefTypePointage order by ptg.idPointage desc") })
 public class Pointage {
-	
-	@Id 
+
+	@Id
 	@Column(name = "ID_POINTAGE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idPointage;
-	
+
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
@@ -82,13 +81,9 @@ public class Pointage {
 	@Type(type = "boolean")
 	private Boolean heureSupRecuperee;
 
-	@Column(name = "IS_ABS_CONCERTEE")
-	@Type(type = "boolean")
-	private Boolean absenceConcertee;
-	
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
-	private RefTypeAbsence typeAbsence;
+	private RefTypeAbsence refTypeAbsence;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(name = "ID_COMMENT_MOTIF")
@@ -99,17 +94,14 @@ public class Pointage {
 	private PtgComment commentaire;
 
 	@ManyToMany
-	@JoinTable(
-			name = "PTG_POINTAGE_VENTIL_DATE",
-			joinColumns = @JoinColumn(name = "ID_POINTAGE"), 
-			inverseJoinColumns = @JoinColumn(name = "ID_VENTIL_DATE"))
+	@JoinTable(name = "PTG_POINTAGE_VENTIL_DATE", joinColumns = @JoinColumn(name = "ID_POINTAGE"), inverseJoinColumns = @JoinColumn(name = "ID_VENTIL_DATE"))
 	@OrderBy("idVentilDate desc")
 	private List<VentilDate> ventilations = new ArrayList<VentilDate>();
-	
+
 	@Version
-    @Column(name = "version")
+	@Column(name = "version")
 	private Integer version;
-	
+
 	@Transient
 	public RefTypePointageEnum getTypePointageEnum() {
 		return RefTypePointageEnum.getRefTypePointageEnum(type.getIdRefTypePointage());
@@ -119,10 +111,10 @@ public class Pointage {
 	public EtatPointage getLatestEtatPointage() {
 		return etats.iterator().next();
 	}
-	
+
 	@Transient
 	public VentilDate getLatestVentilDate() {
-		if (ventilations.size() ==0)
+		if (ventilations.size() == 0)
 			return null;
 		return ventilations.iterator().next();
 	}
@@ -215,14 +207,6 @@ public class Pointage {
 		this.heureSupRecuperee = heureSupRecuperee;
 	}
 
-	public Boolean getAbsenceConcertee() {
-		return absenceConcertee;
-	}
-
-	public void setAbsenceConcertee(Boolean absenceConcertee) {
-		this.absenceConcertee = absenceConcertee;
-	}
-
 	public PtgComment getMotif() {
 		return motif;
 	}
@@ -255,12 +239,12 @@ public class Pointage {
 		this.version = version;
 	}
 
-	public RefTypeAbsence getTypeAbsence() {
-		return typeAbsence;
+	public RefTypeAbsence getRefTypeAbsence() {
+		return refTypeAbsence;
 	}
 
-	public void setTypeAbsence(RefTypeAbsence typeAbsence) {
-		this.typeAbsence = typeAbsence;
+	public void setRefTypeAbsence(RefTypeAbsence refTypeAbsence) {
+		this.refTypeAbsence = refTypeAbsence;
 	}
 
 }

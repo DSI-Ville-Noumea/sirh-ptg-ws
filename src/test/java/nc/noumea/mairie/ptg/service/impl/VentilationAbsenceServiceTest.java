@@ -10,9 +10,9 @@ import java.util.List;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
-import nc.noumea.mairie.ptg.domain.TypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 
 import org.joda.time.DateTime;
@@ -58,34 +58,31 @@ public class VentilationAbsenceServiceTest {
 		DateTime dateDebutMois = new DateTime(2013, 5, 1, 0, 0, 0);
 
 		RefTypeAbsence rta1 = new RefTypeAbsence();
-		rta1.setIdRefTypeAbsence(TypeAbsenceEnum.CONCERTEE.getValue());
+		rta1.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 
 		Pointage p1 = new Pointage();
 		p1.setDateDebut(new DateTime(2013, 5, 11, 12, 0, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 5, 11, 13, 0, 0).toDate());
-		p1.setAbsenceConcertee(true);
 		p1.setType(abs);
-		p1.setTypeAbsence(rta1);
+		p1.setRefTypeAbsence(rta1);
 
 		RefTypeAbsence rta2 = new RefTypeAbsence();
-		rta2.setIdRefTypeAbsence(TypeAbsenceEnum.NON_CONCERTEE.getValue());
+		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.NON_CONCERTEE.getValue());
 
 		Pointage p2 = new Pointage();
 		p2.setDateDebut(new DateTime(2013, 5, 19, 8, 30, 0).toDate());
 		p2.setDateFin(new DateTime(2013, 5, 19, 10, 0, 0).toDate());
-		p2.setAbsenceConcertee(false);
 		p2.setType(abs);
-		p2.setTypeAbsence(rta2);
+		p2.setRefTypeAbsence(rta2);
 
 		RefTypeAbsence rta3 = new RefTypeAbsence();
-		rta3.setIdRefTypeAbsence(TypeAbsenceEnum.IMMEDIATE.getValue());
+		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.IMMEDIATE.getValue());
 
 		Pointage p3 = new Pointage();
 		p3.setDateDebut(new DateTime(2013, 5, 20, 15, 0, 0).toDate());
 		p3.setDateFin(new DateTime(2013, 5, 20, 17, 00, 0).toDate());
-		p3.setAbsenceConcertee(false);
 		p3.setType(abs);
-		p3.setTypeAbsence(rta3);
+		p3.setRefTypeAbsence(rta3);
 
 		VentilationAbsenceService service = new VentilationAbsenceService();
 

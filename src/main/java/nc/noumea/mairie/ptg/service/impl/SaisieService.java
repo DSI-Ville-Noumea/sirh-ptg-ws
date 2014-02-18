@@ -99,9 +99,8 @@ public class SaisieService implements ISaisieService {
 				// Only if it has changed, process this pointage
 				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi,
 						helperService.getCurrentDate());
-				ptg.setAbsenceConcertee(abs.getConcertee());
-				if(null != abs.getIdTypeAbsence()){
-					ptg.setTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class, abs.getIdTypeAbsence()));
+				if (null != abs.getIdRefTypeAbsence()) {
+					ptg.setRefTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class, abs.getIdRefTypeAbsence()));
 				}
 				ptg.setDateDebut(abs.getHeureDebut());
 				ptg.setDateFin(abs.getHeureFin());
@@ -314,8 +313,8 @@ public class SaisieService implements ISaisieService {
 
 	protected boolean hasPointageChanged(Pointage ptg, AbsenceDto absence) {
 
-		boolean hasBeenModified = !((null == ptg.getTypeAbsence() || ptg.getTypeAbsence().getIdRefTypeAbsence()
-				.equals(absence.getIdTypeAbsence()))
+		boolean hasBeenModified = !((null == ptg.getRefTypeAbsence() || ptg.getRefTypeAbsence().getIdRefTypeAbsence()
+				.equals(absence.getIdRefTypeAbsence()))
 				&& ptg.getDateDebut().getTime() == absence.getHeureDebut().getTime() && ptg.getDateFin().getTime() == absence
 				.getHeureFin().getTime());
 

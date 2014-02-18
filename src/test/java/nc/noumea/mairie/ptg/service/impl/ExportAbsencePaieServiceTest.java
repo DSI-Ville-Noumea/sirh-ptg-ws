@@ -10,6 +10,7 @@ import nc.noumea.mairie.domain.Spacti;
 import nc.noumea.mairie.domain.Sppact;
 import nc.noumea.mairie.domain.SppactId;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IExportPaieRepository;
@@ -64,11 +65,14 @@ public class ExportAbsencePaieServiceTest {
 	public void exportAbsencesToPaie_1Absence_nothingInDataBase_ReturnNewSppact() {
 		
 		// Given
+		RefTypeAbsence refAbs = new RefTypeAbsence();
+		refAbs.setLabel("Concertée");
+		refAbs.setIdRefTypeAbsence(1);
 		Pointage p1 = new Pointage();
 		p1.setIdAgent(9008765);
 		p1.setDateDebut(new DateTime(2013, 5, 15, 8, 45, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 5, 15, 10, 15, 0).toDate());
-		p1.setAbsenceConcertee(true);
+		p1.setRefTypeAbsence(refAbs);
 		p1.setType(abs);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -104,18 +108,21 @@ public class ExportAbsencePaieServiceTest {
 	public void exportAbsencesToPaie_2AbsencesSameDaySameAgentSameActi_nothingInDataBase_ReturnOneSppactForBoth() {
 		
 		// Given
+		RefTypeAbsence refAbs = new RefTypeAbsence();
+		refAbs.setLabel("Concertée");
+		refAbs.setIdRefTypeAbsence(1);
 		Pointage p1 = new Pointage();
 		p1.setIdAgent(9008765);
 		p1.setDateDebut(new DateTime(2013, 5, 15, 8, 45, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 5, 15, 10, 15, 0).toDate());
-		p1.setAbsenceConcertee(true);
+		p1.setRefTypeAbsence(refAbs);
 		p1.setType(abs);
 		
 		Pointage p2 = new Pointage();
 		p2.setIdAgent(9008765);
 		p2.setDateDebut(new DateTime(2013, 5, 15, 14, 0, 0).toDate());
 		p2.setDateFin(new DateTime(2013, 5, 15, 15, 15, 0).toDate());
-		p2.setAbsenceConcertee(true);
+		p2.setRefTypeAbsence(refAbs);
 		p2.setType(abs);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -154,18 +161,24 @@ public class ExportAbsencePaieServiceTest {
 	public void exportAbsencesToPaie_2AbsencesSameDaySameAgentDiffActi_nothingInDataBase_ReturnTwoSppactForBoth() {
 		
 		// Given
+		RefTypeAbsence refAbs = new RefTypeAbsence();
+		refAbs.setLabel("Concertée");
+		refAbs.setIdRefTypeAbsence(1);
 		Pointage p1 = new Pointage();
 		p1.setIdAgent(9008765);
 		p1.setDateDebut(new DateTime(2013, 5, 15, 8, 45, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 5, 15, 10, 15, 0).toDate());
-		p1.setAbsenceConcertee(true);
+		p1.setRefTypeAbsence(refAbs);
 		p1.setType(abs);
-		
+
+		RefTypeAbsence refAbsNonConce = new RefTypeAbsence();
+		refAbsNonConce.setLabel("Non concertée");
+		refAbsNonConce.setIdRefTypeAbsence(2);
 		Pointage p2 = new Pointage();
 		p2.setIdAgent(9008765);
 		p2.setDateDebut(new DateTime(2013, 5, 15, 14, 0, 0).toDate());
 		p2.setDateFin(new DateTime(2013, 5, 15, 15, 15, 0).toDate());
-		p2.setAbsenceConcertee(false);
+		p2.setRefTypeAbsence(refAbsNonConce);
 		p2.setType(abs);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -211,11 +224,14 @@ public class ExportAbsencePaieServiceTest {
 	public void exportAbsencesToPaie_1Absence_alreadyInDataBase_ReturnModifiedSppact() {
 		
 		// Given
+		RefTypeAbsence refAbs = new RefTypeAbsence();
+		refAbs.setLabel("Concertée");
+		refAbs.setIdRefTypeAbsence(1);
 		Pointage p1 = new Pointage();
 		p1.setIdAgent(9008765);
 		p1.setDateDebut(new DateTime(2013, 5, 15, 8, 45, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 5, 15, 10, 15, 0).toDate());
-		p1.setAbsenceConcertee(true);
+		p1.setRefTypeAbsence(refAbs);
 		p1.setType(abs);
 		
 		Spacti acti = new Spacti();
