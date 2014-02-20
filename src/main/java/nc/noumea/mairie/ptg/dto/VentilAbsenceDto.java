@@ -11,6 +11,7 @@ public class VentilAbsenceDto extends VentilDto {
 
     private int minutesConcertees;
     private int minutesNonConcertees;
+    private int minutesImmediates;
 
     public VentilAbsenceDto() {
     }
@@ -18,6 +19,7 @@ public class VentilAbsenceDto extends VentilDto {
     public VentilAbsenceDto(VentilAbsence hibObj) {
     	minutesConcertees = hibObj.getMinutesConcertee();
     	minutesNonConcertees = hibObj.getMinutesNonConcertee();
+    	minutesImmediates = hibObj.getMinutesImmediat();
         idVentil = hibObj.getIdVentilAbsence();
         date = hibObj.getDateLundi();
         idAgent = hibObj.getIdAgent();
@@ -43,6 +45,14 @@ public class VentilAbsenceDto extends VentilDto {
 	
 	public Date getDateLundi(){
 		return date;
+	}
+
+	public int getMinutesImmediates() {
+		return minutesImmediates;
+	}
+
+	public void setMinutesImmediates(int minutesImmediates) {
+		this.minutesImmediates = minutesImmediates;
 	}
 
 }

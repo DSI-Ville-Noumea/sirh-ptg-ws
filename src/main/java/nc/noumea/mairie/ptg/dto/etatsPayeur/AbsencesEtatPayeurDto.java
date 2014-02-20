@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
+import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 
@@ -12,21 +13,28 @@ public class AbsencesEtatPayeurDto extends AbstractItemEtatPayeurDto {
 
 	}
 
-	public AbsencesEtatPayeurDto(VentilAbsence va, boolean isConcertee, HelperService hS) {
+	public AbsencesEtatPayeurDto(VentilAbsence va, RefTypeAbsenceEnum typeAbs, HelperService hS) {
 
-		this(va, null, isConcertee, hS);
+		this(va, null, typeAbs, hS);
 	}
 	
-	public AbsencesEtatPayeurDto(VentilAbsence vaNew, VentilAbsence vaOld, boolean isConcertee, HelperService hS) {
+	public AbsencesEtatPayeurDto(VentilAbsence vaNew, VentilAbsence vaOld, RefTypeAbsenceEnum typeAbs, HelperService hS) {
 
 		super(vaNew);
 
-		if (!isConcertee) {
-			this.type = "Absence non concertée";
-			quantite = hS.formatMinutesToString(vaNew.getMinutesNonConcertee() - (vaOld != null ? vaOld.getMinutesNonConcertee() : 0));
-		} else {
-			this.type = "Absence de service fait";
-			quantite = hS.formatMinutesToString(vaNew.getMinutesConcertee() - (vaOld != null ? vaOld.getMinutesConcertee() : 0));
+		switch(typeAbs) {
+			case CONCERTEE:
+				this.type = "Absence de service fait";
+				quantite = hS.formatMinutesToString(vaNew.getMinutesConcertee() - (vaOld != null ? vaOld.getMinutesConcertee() : 0));
+				break;
+			case IMMEDIATE:
+				this.type = "Absence immédiate";
+				quantite = hS.formatMinutesToString(vaNew.getMinutesImmediat() - (vaOld != null ? vaOld.getMinutesImmediat() : 0));
+				break;
+			case NON_CONCERTEE:
+				this.type = "Absence non concertée";
+				quantite = hS.formatMinutesToString(vaNew.getMinutesNonConcertee() - (vaOld != null ? vaOld.getMinutesNonConcertee() : 0));
+				break;
 		}
 	}
 

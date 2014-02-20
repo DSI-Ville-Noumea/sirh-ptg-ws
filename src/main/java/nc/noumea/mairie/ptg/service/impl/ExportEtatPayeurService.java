@@ -15,6 +15,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.ExportEtatsPayeurTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.ReposCompTask;
@@ -144,14 +145,21 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			if (va.getMinutesConcertee() != (vaOld != null ? vaOld
 					.getMinutesConcertee() : 0)) {
 				AbsencesEtatPayeurDto dto = new AbsencesEtatPayeurDto(va,
-						vaOld, true, helperService);
+						vaOld, RefTypeAbsenceEnum.CONCERTEE, helperService);
 				fillAgentsData(dto);
 				result.getAbsences().add(dto);
 			}
 			if (va.getMinutesNonConcertee() != (vaOld != null ? vaOld
 					.getMinutesNonConcertee() : 0)) {
 				AbsencesEtatPayeurDto dto = new AbsencesEtatPayeurDto(va,
-						vaOld, false, helperService);
+						vaOld, RefTypeAbsenceEnum.NON_CONCERTEE, helperService);
+				fillAgentsData(dto);
+				result.getAbsences().add(dto);
+			}
+			if (va.getMinutesImmediat() != (vaOld != null ? vaOld
+					.getMinutesImmediat() : 0)) {
+				AbsencesEtatPayeurDto dto = new AbsencesEtatPayeurDto(va,
+						vaOld, RefTypeAbsenceEnum.IMMEDIATE, helperService);
 				fillAgentsData(dto);
 				result.getAbsences().add(dto);
 			}
