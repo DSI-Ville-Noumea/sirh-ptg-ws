@@ -46,7 +46,7 @@ public class VentilationPrimeServiceTest {
 					
 		Pointage p2 = new Pointage();
 		p2.setDateLundi(new DateTime(2012, 04, 30, 0, 0, 0).toDate());
-		p2.setDateDebut(new DateTime(2012, 04, 30, 14, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2012, 04, 29, 14, 0, 0).toDate());
 		p2.setDateFin(new DateTime(2012, 04, 30, 16, 0, 0).toDate());
 		p2.setType(abs);
 		

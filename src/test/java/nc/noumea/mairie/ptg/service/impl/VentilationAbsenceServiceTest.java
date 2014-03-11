@@ -62,7 +62,7 @@ public class VentilationAbsenceServiceTest {
 
 		Pointage p1 = new Pointage();
 		p1.setDateDebut(new DateTime(2013, 5, 11, 12, 0, 0).toDate());
-		p1.setDateFin(new DateTime(2013, 5, 11, 13, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 5, 12, 13, 0, 0).toDate());
 		p1.setType(abs);
 		p1.setRefTypeAbsence(rta1);
 
@@ -91,7 +91,7 @@ public class VentilationAbsenceServiceTest {
 
 		// Then
 		assertEquals(9008765, (int) result.getIdAgent());
-		assertEquals(60, result.getMinutesConcertee());
+		assertEquals(1500, result.getMinutesConcertee());
 		assertEquals(90, result.getMinutesNonConcertee());
 		assertEquals(120, result.getMinutesImmediat());
 		assertEquals(dateDebutMois.toDate(), result.getDateLundi());
