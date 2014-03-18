@@ -12,7 +12,7 @@
         <java.version>7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.6</slf4j.version>
-        <spring.version>4.0.1.RELEASE</spring.version>
+        <spring.version>4.0.2.RELEASE</spring.version>
     </properties>
 
     <issueManagement>
@@ -95,7 +95,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.0.13</version>
+            <version>1.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -158,7 +158,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.3.1.Final</version>
+            <version>4.3.4.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -183,7 +183,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>5.0.1.Final</version>
+            <version>5.1.0.Final</version>
         </dependency>
         <dependency>
             <groupId>javax.validation</groupId>
@@ -267,12 +267,12 @@
         <dependency>
             <groupId>net.sf.flexjson</groupId>
             <artifactId>flexjson</artifactId>
-            <version>3.1</version>
+            <version>3.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.2.1</version>
+            <version>3.3</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
@@ -282,7 +282,7 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
-            <version>1.18</version>
+            <version>1.18.1</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
