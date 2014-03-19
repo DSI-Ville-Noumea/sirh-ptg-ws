@@ -1658,4 +1658,60 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
+
+	@Test
+	public void processHSupFonctionnaire_HSupNuit_22h_to_4h_base39H() {
+
+		// Given
+		Date dateLundi = new LocalDate(2012, 4, 30).toDate();
+
+		// hsup from 2/5 22h to 3/5 4h -> 6hsups nuit
+		Pointage p1 = new Pointage();
+		p1.setDateLundi(new DateTime(2012, 4, 30, 0, 0, 0).toDate());
+		p1.setDateDebut(new DateTime(2012, 5, 4, 22, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2012, 5, 5, 4, 0, 0).toDate());
+		p1.setHeureSupRecuperee(false);
+		p1.setType(hSup);
+
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(8);
+		spbase.setNbahma(8);
+		spbase.setNbahme(8);
+		spbase.setNbahje(8);
+		spbase.setNbahve(7);
+		spbase.setNbahsa(0);
+		spbase.setNbahdi(0);
+		spbase.setNbashh(39);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+
+		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
+
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+
+		// When
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1));
+
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p1.getDateLundi(), result.getDateLundi());
+		assertEquals(6 * 60, result.getMHorsContrat(), 0);
+		assertEquals(0, result.getMAbsences(), 0);
+		assertEquals(6 * 60, result.getMSup(), 0);
+
+		assertEquals(6 * 60, result.getMsNuit(), 0);
+		assertEquals(0, result.getMsdjf(), 0);
+		assertEquals(0, result.getMNormales(), 0);
+		assertEquals(0, result.getMSimple(), 0);
+		assertEquals(0, result.getMComposees(), 0);
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
 }
