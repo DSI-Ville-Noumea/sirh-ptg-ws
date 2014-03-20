@@ -1,9 +1,5 @@
 package nc.noumea.mairie.ptg.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spbhor;
@@ -14,13 +10,15 @@ import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
-
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.Minutes;
-import org.joda.time.Period;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class VentilationHSupService implements IVentilationHSupService {
@@ -46,17 +44,17 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 	@Override
 	public VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages) {
-		return  processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.F);
+		return processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.F);
 	}
 
 	@Override
 	public VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages) {
-		return  processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.C);
+		return processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.C);
 	}
 
 	@Override
 	public VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, boolean has1150Prime) {
-		return  processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.CC, has1150Prime);
+		return processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.CC, has1150Prime);
 	}
 
 	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut) {
@@ -181,6 +179,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 	 * week legal number of hours, and add them to the existing minutes
 	 * marked as recuperees in the VentilHSup result object based on the
 	 * agent "statut".
+	 *
 	 * @param result
 	 * @param statut
 	 */
@@ -191,14 +190,14 @@ public class VentilationHSupService implements IVentilationHSupService {
 		switch (statut) {
 			case F:
 				totalAmountOfHSRecuperees = result.getMComposeesRecup()
-				+ result.getMNormalesRecup() + result.getMsdjfRecup()
-				+ result.getMSimpleRecup() + result.getMsNuitRecup();
+						+ result.getMNormalesRecup() + result.getMsdjfRecup()
+						+ result.getMSimpleRecup() + result.getMsNuitRecup();
 				break;
 			case C:
 			case CC:
 				totalAmountOfHSRecuperees = result.getMComplementairesRecup()
-				+ result.getMsdjf25Recup() + result.getMsdjf50Recup()
-				+ result.getMSup25Recup() + result.getMSup50Recup();
+						+ result.getMsdjf25Recup() + result.getMsdjf50Recup()
+						+ result.getMSup25Recup() + result.getMSup50Recup();
 				break;
 
 		}
@@ -219,7 +218,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 			case C:
 			case CC:
 				int nbMinutesToCountAs25 = (result.getMSup25Recup() + minutesNotAccountedFor <= 8 * 60) ? minutesNotAccountedFor : (8 * 60 - result.getMSup25Recup());
-				nbMinutesToCountAs25 = nbMinutesToCountAs25 > 0 ? nbMinutesToCountAs25 : 0 ;
+				nbMinutesToCountAs25 = nbMinutesToCountAs25 > 0 ? nbMinutesToCountAs25 : 0;
 				result.setMSup25Recup(result.getMSup25Recup() + nbMinutesToCountAs25);
 				minutesNotAccountedFor -= nbMinutesToCountAs25;
 				result.setMSup50Recup(result.getMSup50Recup() + minutesNotAccountedFor);
@@ -333,7 +332,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		if (weekMinutes > BASE_HEBDO_LEGALE) {
 
 			int nbMinutesToCountAs25 = (result.getMSup25() + nbMinutesSup <= 8 * 60) ? nbMinutesSup : (8 * 60 - result.getMSup25());
-			nbMinutesToCountAs25 = nbMinutesToCountAs25 > 0 ? nbMinutesToCountAs25 : 0 ;
+			nbMinutesToCountAs25 = nbMinutesToCountAs25 > 0 ? nbMinutesToCountAs25 : 0;
 			result.setMSup25(result.getMSup25() + nbMinutesToCountAs25);
 
 			int nbMinutesToCountAs50 = nbMinutesSup - nbMinutesToCountAs25 < 0 ? 0 : (nbMinutesSup - nbMinutesToCountAs25);
@@ -354,7 +353,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		// If it's a SUNDAY or a HOLIDAY, count the hours as HS DJF
 		if (dday.getDayOfWeek() == 7 || holidayService.isHoliday(dday)) {
 			int nbMinutesToCountAs25 = (result.getMsdjf25() + totalMinutes <= 8 * 60) ? totalMinutes : (8 * 60 - result.getMsdjf25());
-			nbMinutesToCountAs25 = nbMinutesToCountAs25 > 0 ? nbMinutesToCountAs25 : 0 ;
+			nbMinutesToCountAs25 = nbMinutesToCountAs25 > 0 ? nbMinutesToCountAs25 : 0;
 			result.setMsdjf25(result.getMsdjf25() + nbMinutesToCountAs25);
 
 			int nbMinutesToCountAs50 = totalMinutes - nbMinutesToCountAs25 < 0 ? 0 : (totalMinutes - nbMinutesToCountAs25);
@@ -408,13 +407,12 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 	public MinutesupPeriod getMinutesJourNuitFromMinutesup(DateTime startDate, DateTime endDate, AgentStatutEnum statut) {
 
-//		Interval minutesSupInterval = new Interval(startDate, endDate);
 		List<Interval> intervals = new ArrayList<>();
 
 		// If the interval overlaps on the next day
 		if (startDate.getDayOfYear() != endDate.getDayOfYear()) {
-			intervals.add(new Interval(startDate, new DateTime(endDate.getYear(), endDate.getMonthOfYear(), endDate.getDayOfMonth(), 0,0,0)));
-			intervals.add(new Interval(new DateTime(endDate.getYear(), endDate.getMonthOfYear(), endDate.getDayOfMonth(), 0,0,0), endDate));
+			intervals.add(new Interval(startDate, new DateTime(endDate.getYear(), endDate.getMonthOfYear(), endDate.getDayOfMonth(), 0, 0, 0)));
+			intervals.add(new Interval(new DateTime(endDate.getYear(), endDate.getMonthOfYear(), endDate.getDayOfMonth(), 0, 0, 0), endDate));
 		} else {
 			intervals.add(new Interval(startDate, endDate));
 		}
@@ -431,14 +429,6 @@ public class VentilationHSupService implements IVentilationHSupService {
 			nbMinutesJour += (int) (hSupJourOverlap == null ? 0 : hSupJourOverlap.toDuration().getStandardMinutes());
 			nbMinutesNuit += (int) (interval.toDuration().getStandardMinutes() - nbMinutesJour);
 		}
-
-		// Create the HS Jour interval for that day (the hours between which hours are considered HS JOUR)
-//		Interval hSupJourInterval = getDayHSupJourIntervalForStatut(minutesSupInterval.getStart(), statut);
-
-		// Calculate the overlap of the HS to determine what to be counted as HS Nuit and HS Jour
-//		Interval hSupJourOverlap = hSupJourInterval.overlap(minutesSupInterval);
-//		int nbMinutesJour = (int) (hSupJourOverlap == null ? 0 : hSupJourOverlap.toDuration().getStandardMinutes());
-//		int nbMinutesNuit = (int) (minutesSupInterval.toDuration().getStandardMinutes() - nbMinutesJour);
 
 		return new MinutesupPeriod(new Interval(startDate, endDate), nbMinutesJour, nbMinutesNuit);
 	}
@@ -478,7 +468,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 		int startHour, endHour;
 
-		switch(statut) {
+		switch (statut) {
 
 			case C:
 				startHour = HEURE_JOUR_DEBUT_C;
