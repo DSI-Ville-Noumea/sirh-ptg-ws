@@ -102,7 +102,7 @@ SIRH-PTG-WS API pour le Kiosque SIRH (Sharepoint module des pointages)
 		"prenom" : "michel",
 		"idAgent" : 9004567
 	},
-	"operateurs" :
+	"saisisseurs" :
 	[
 		{
 			"nom" : "dupont2",

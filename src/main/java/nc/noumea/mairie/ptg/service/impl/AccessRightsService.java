@@ -53,7 +53,8 @@ public class AccessRightsService implements IAccessRightsService {
 			result.setSaisie(result.isSaisie() || da.isApprobateur() || da.isOperateur());
 			result.setVisualisation(result.isVisualisation() || da.isApprobateur() || da.isOperateur());
 			result.setApprobation(result.isApprobation() || da.isApprobateur());
-			result.setGestionDroitsAcces(result.isGestionDroitsAcces() || (da.getIdAgent().equals(idAgent) && da.isApprobateur()));
+			result.setGestionDroitsAcces(result.isGestionDroitsAcces()
+					|| (da.getIdAgent().equals(idAgent) && da.isApprobateur()));
 		}
 
 		return result;
@@ -95,7 +96,7 @@ public class AccessRightsService implements IAccessRightsService {
 	public ReturnMessageDto setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-		
+
 		Droit droitApprobateur = accessRightsRepository.getApprobateurFetchOperateurs(idAgent);
 
 		List<Droit> originalOperateurs = new ArrayList<Droit>(droitApprobateur.getOperateurs());
@@ -104,10 +105,11 @@ public class AccessRightsService implements IAccessRightsService {
 			// Check that the new delegataire is not an operator
 			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
 				Agent ag = sirhRepository.getAgent(dto.getDelegataire().getIdAgent());
-				result.getErrors().add(String.format("L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.", 
-						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
-			}
-			else {
+				result.getErrors().add(
+						String.format(
+								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+			} else {
 				droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
 			}
 		} else {
@@ -129,14 +131,17 @@ public class AccessRightsService implements IAccessRightsService {
 			if (existingOperateur != null)
 				continue;
 
-			// Check that the new operateur is not already delegataire or approbateur
+			// Check that the new operateur is not already delegataire or
+			// approbateur
 			if (accessRightsRepository.isUserApprobatorOrDelegataire(operateurDto.getIdAgent())) {
 				Agent ag = sirhRepository.getAgent(operateurDto.getIdAgent());
-				result.getErrors().add(String.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.", 
-						ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+				result.getErrors()
+						.add(String
+								.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
+										ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
 				continue;
 			}
-			
+
 			existingOperateur = new Droit();
 			existingOperateur.setDroitApprobateur(droitApprobateur);
 			existingOperateur.setOperateur(true);
@@ -147,9 +152,9 @@ public class AccessRightsService implements IAccessRightsService {
 
 		for (Droit droitOperateurToDelete : originalOperateurs) {
 			droitApprobateur.getOperateurs().remove(droitOperateurToDelete);
-			accessRightsRepository.removeEntity(droitOperateurToDelete); 
+			accessRightsRepository.removeEntity(droitOperateurToDelete);
 		}
-		
+
 		return result;
 	}
 
@@ -162,19 +167,19 @@ public class AccessRightsService implements IAccessRightsService {
 	public boolean canUserAccessPrint(Integer idAgent) {
 		return accessRightsRepository.isUserApprobatorOrOperatorOrDelegataire(idAgent);
 	}
-	
+
 	@Override
 	public boolean canUserAccessInput(Integer idAgent, Integer agentViewed) {
-//		 boolean isOperator = accessRightsRepository.isUserOperator(idAgent);
-//		 List<AgentDto> agents
+		// boolean isOperator = accessRightsRepository.isUserOperator(idAgent);
+		// List<AgentDto> agents
 		return true;
 	}
-	
+
 	@Override
 	public boolean canUserAccessAppro(Integer idAgent) {
 		return accessRightsRepository.isUserApprobatorOrDelegataire(idAgent);
 	}
-	
+
 	@Override
 	public boolean canUserAccessVisualisation(Integer idAgent) {
 		return accessRightsRepository.isUserApprobatorOrOperatorOrDelegataire(idAgent);
@@ -184,7 +189,8 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<AgentWithServiceDto> listAgentsApprobateurs() {
 		List<AgentWithServiceDto> agentDtos = new ArrayList<AgentWithServiceDto>();
 		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
-			AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(da.getIdAgent(), helperService.getCurrentDate());
+			AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
+					helperService.getCurrentDate());
 			agentDtos.add(agentDto);
 		}
 		Collections.sort(agentDtos, new AgentWithServiceDtoComparator());
@@ -266,7 +272,7 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent) {
 		return getAgentsToApproveOrInput(idAgent, null);
 	}
-	
+
 	/**
 	 * Retrieves the agent an approbator is set to Approve or an Operator is set
 	 * to Input. This service also filters by service
@@ -286,7 +292,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		return result;
-		
+
 	}
 
 	/**
@@ -295,7 +301,7 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public void setAgentsToApprove(Integer idAgent, List<AgentDto> agents) {
 
-		Droit droitApprobateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent);
+		Droit droitApprobateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent, null);
 
 		List<DroitsAgent> agentsToDelete = new ArrayList<DroitsAgent>(droitApprobateur.getAgents());
 
@@ -337,11 +343,14 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public void setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents) {
 
-		Droit droitApprobateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgentApprobateur);
-		Droit droitOperateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgentOperateur);
+		Droit droitApprobateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(
+				idAgentApprobateur, null);
+		Droit droitOperateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgentOperateur,
+				droitApprobateur.getIdDroit());
 
 		if (!droitApprobateur.getOperateurs().contains(droitOperateur)) {
-			logger.warn("Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est pas un opérateur de l'agent {}.",
+			logger.warn(
+					"Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est pas un opérateur de l'agent {}.",
 					idAgentApprobateur, idAgentOperateur);
 			throw new AccessForbiddenException();
 		}
@@ -376,21 +385,21 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	/**
-	 * Returns the list of distinct services approved/input agents have
-	 * Used to build the filters (by service)
+	 * Returns the list of distinct services approved/input agents have Used to
+	 * build the filters (by service)
 	 */
 	@Override
 	public List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
-		
+
 		List<ServiceDto> result = new ArrayList<ServiceDto>();
 
 		List<String> codeServices = new ArrayList<String>();
-		
+
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent)) {
-			
+
 			if (codeServices.contains(da.getCodeService()))
 				continue;
-			
+
 			codeServices.add(da.getCodeService());
 			ServiceDto svDto = new ServiceDto();
 			svDto.setCodeService(da.getCodeService());
@@ -400,7 +409,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		return result;
 	}
-	
+
 	@Override
 	public Agent findAgent(Integer idAgent) {
 		return sirhRepository.getAgent(idAgent);
