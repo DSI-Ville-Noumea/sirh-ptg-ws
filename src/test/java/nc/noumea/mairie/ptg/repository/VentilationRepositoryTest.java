@@ -1240,6 +1240,9 @@ public class VentilationRepositoryTest {
 		assertEquals(2, result.size());
 		assertEquals(2222, result.get(0).getIdAgent().intValue());
 		assertEquals(3333, result.get(1).getIdAgent().intValue());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
 	}
 
 	@Test
@@ -1319,5 +1322,82 @@ public class VentilationRepositoryTest {
 		assertEquals(2, result.size());
 		assertEquals(2222, result.get(0).getIdAgent().intValue());
 		assertEquals(3333, result.get(1).getIdAgent().intValue());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfVentilAbsenceForAgentBeetweenDate() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+
+		VentilAbsence va = new VentilAbsence();
+		va.setDateLundi(new LocalDate(2014, 2, 23).toDate());
+		va.setEtat(EtatPointageEnum.VENTILE);
+		va.setIdAgent(9005138);
+		va.setMinutesConcertee(10);
+		va.setMinutesNonConcertee(10);
+		va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
+
+		VentilAbsence va2 = new VentilAbsence();
+		va2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		va2.setEtat(EtatPointageEnum.EN_ATTENTE);
+		va2.setIdAgent(9005138);
+		va2.setMinutesConcertee(10);
+		va2.setMinutesNonConcertee(10);
+		va2.setVentilDate(vd);
+		ptgEntityManager.persist(va2);
+
+		List<VentilAbsence> result = repository.getListOfVentilAbsenceForAgentBeetweenDate(2, 2014, 9005138);
+
+		assertEquals(1, result.size());
+		assertEquals(new Integer(9005138), result.get(0).getIdAgent());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfVentilHSForAgentBeetweenDate() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+
+		VentilHsup va = new VentilHsup();
+		va.setDateLundi(new LocalDate(2014, 2, 23).toDate());
+		va.setEtat(EtatPointageEnum.VENTILE);
+		va.setIdAgent(9005138);
+		va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
+
+		VentilHsup va2 = new VentilHsup();
+		va2.setDateLundi(new LocalDate(2014, 2, 2).toDate());
+		va2.setEtat(EtatPointageEnum.VENTILE);
+		va2.setIdAgent(9005138);
+		va2.setVentilDate(vd);
+		ptgEntityManager.persist(va2);
+
+		List<VentilHsup> result = repository.getListOfVentilHSForAgentBeetweenDate(2, 2014, 9005138);
+
+		assertEquals(2, result.size());
+		assertEquals(new Integer(9005138), result.get(0).getIdAgent());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
+		assertEquals(new Integer(9005138), result.get(1).getIdAgent());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
 	}
 }

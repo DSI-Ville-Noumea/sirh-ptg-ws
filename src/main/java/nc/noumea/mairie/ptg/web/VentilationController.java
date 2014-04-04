@@ -89,7 +89,8 @@ public class VentilationController {
 	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> processTask(@RequestParam("idVentilTask") Integer idVentilTask) {
 
-		logger.debug("entered GET [ventilation/processTask] => processTask with parameters idVentilTask = {}", idVentilTask);
+		logger.debug("entered GET [ventilation/processTask] => processTask with parameters idVentilTask = {}",
+				idVentilTask);
 
 		if (ventilationService.findVentilTask(idVentilTask) == null)
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
@@ -97,6 +98,45 @@ public class VentilationController {
 		ventilationService.processVentilationForAgent(idVentilTask);
 
 		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getVentilationEnCours", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getVentilationEnCours(@RequestParam("statut") String statut) {
+
+		logger.debug(
+				"entered GET [ventilation/getVentilationEnCours] => getVentilationEnCours with parameter statut = {}",
+				statut);
+
+		VentilDateDto result = ventilationService.getVentilationEnCoursForStatut(AgentStatutEnum.valueOf(statut));
+
+		if (result.getDateVentil() == null) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		String resultJson = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
+				.serialize(result);
+
+		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/getErreursVentilation", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getErreursVentilation(@RequestParam("statut") String statut) {
+
+		logger.debug(
+				"entered GET [ventilation/getErreursVentilation] => getErreursVentilation with parameter statut = {}",
+				statut);
+
+		List<VentilErreurDto> result = ventilationService.getErreursVentilation(AgentStatutEnum.valueOf(statut));
+
+		if (0 == result.size()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+
+		return new ResponseEntity<>(new JSONSerializer().exclude("*.class")
+				.transform(new MSDateTransformer(), Date.class).deepSerialize(result), HttpStatus.OK);
 	}
 
 	@ResponseBody
@@ -123,40 +163,21 @@ public class VentilationController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/getVentilationEnCours", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ResponseEntity<String> getVentilationEnCours(@RequestParam("statut") String statut) {
+	@RequestMapping(value = "/showHistory", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional("ptgTransactionManager")
+	public ResponseEntity<String> showVentilationHistory(@RequestParam("mois") Integer mois,
+			@RequestParam("annee") Integer annee, @RequestParam("typePointage") Integer idRefTypePointage,
+			@RequestParam("idAgent") Integer idAgent) {
 
+		RefTypePointageEnum typepointage = RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage);
 		logger.debug(
-				"entered GET [ventilation/getVentilationEnCours] => getVentilationEnCours with parameter statut = {}",
-				statut);
+				"entered GET [ventilation/showHistory] => showVentilationHistory with parameters mois = {}, annee = {}, idAgent = {}, typePointage = {}",
+				mois, annee, idAgent, typepointage.name());
 
-		VentilDateDto result = ventilationService.getVentilationEnCoursForStatut(AgentStatutEnum.valueOf(statut));
-
-		if (result.getDateVentil() == null) {
+		List<VentilDto> result = ventilationService.showVentilationHistory(mois, annee, idAgent, typepointage);
+		if (result.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
-		String resultJson = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
-				.serialize(result);
-
-		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
-	}
-	
-	@ResponseBody
-	@RequestMapping(value = "/getErreursVentilation", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ResponseEntity<String> getErreursVentilation(@RequestParam("statut") String statut) {
-
-		logger.debug(
-				"entered GET [ventilation/getErreursVentilation] => getErreursVentilation with parameter statut = {}",
-				statut);
-
-		List<VentilErreurDto> result = ventilationService.getErreursVentilation(AgentStatutEnum.valueOf(statut));
-
-		if (0 == result.size()) {
-			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-		}
-		
 		return new ResponseEntity<>(new JSONSerializer().exclude("*.class")
 				.transform(new MSDateTransformer(), Date.class).deepSerialize(result), HttpStatus.OK);
 	}

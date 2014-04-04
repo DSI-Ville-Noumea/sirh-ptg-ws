@@ -488,6 +488,56 @@ HTTP Status code OK : 200
 +-------------------------+
 
 
+** Visualiser les détails d'une ventilation
+
+ <<URL>> : /ventilation/showHistory
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<mois>> : mois concerné (02,12...) Entier.
+  
+  * <<annee>> : année concernée (20143,2014...) Entier.
+  
+  * <<typePointage>> : Le type des pointages. Entier. ABS (1), H_SUP (2) ou PRIME (3)
+  
+  * <<idAgent>> : Id de l'agent concerné. Entier.
+  
+  <<Content>> : 
+ 
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content 
+
++-------------------------+
+[
+	{
+		"date":"/Date(1391346000000+1100)/",
+		"dateLundi":"/Date(1391346000000+1100)/",
+		"etat":4,
+		"idAgent":9003997,
+		"idVentil":13,
+		"minutesConcertees":0,
+		"minutesImmediates":0,
+		"minutesNonConcertees":660
+	},...
+]
++-------------------------+
+
+  * Si liste vide :
+
++-------------------------+
+ HTTP Status code NO-CONTENT : 204
++-------------------------+
+
+
 * Déversement dans la paie (Exportation dans la paie)
 
 ** Récupérer l'état du workflow

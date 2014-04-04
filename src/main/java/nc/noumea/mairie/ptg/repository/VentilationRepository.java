@@ -21,6 +21,7 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.domain.VentilTask;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.stereotype.Repository;
 
@@ -393,9 +394,8 @@ public class VentilationRepository implements IVentilationRepository {
 	public VentilAbsence getPriorVentilAbsenceForAgentAndDate(Integer idAgent, Date dateLundi,
 			VentilAbsence latestVentilAbsence) {
 
-		TypedQuery<VentilAbsence> q = ptgEntityManager
-				.createNamedQuery("getPriorVentilAbsenceForAgentAndDate",
-						VentilAbsence.class);
+		TypedQuery<VentilAbsence> q = ptgEntityManager.createNamedQuery("getPriorVentilAbsenceForAgentAndDate",
+				VentilAbsence.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateLundi", dateLundi);
 		q.setParameter("idLatestVentilAbsence", latestVentilAbsence.getIdVentilAbsence());
@@ -410,9 +410,7 @@ public class VentilationRepository implements IVentilationRepository {
 	public VentilHsup getPriorVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilHsup latestVentilHsup) {
 
 		TypedQuery<VentilHsup> q = ptgEntityManager
-				.createNamedQuery(
-						"getPriorVentilHSupAgentAndDate",
-						VentilHsup.class);
+				.createNamedQuery("getPriorVentilHSupAgentAndDate", VentilHsup.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateLundi", dateLundi);
 		q.setParameter("idLatestVentilHSup", latestVentilHsup.getIdVentilHSup());
@@ -427,10 +425,8 @@ public class VentilationRepository implements IVentilationRepository {
 	public VentilPrime getPriorVentilPrimeForAgentAndDate(Integer idAgent, Date dateDebMois,
 			VentilPrime latestVentilPrime) {
 
-		TypedQuery<VentilPrime> q = ptgEntityManager
-				.createNamedQuery(
-						"getPriorVentilPrimeForAgentAndDate",
-						VentilPrime.class);
+		TypedQuery<VentilPrime> q = ptgEntityManager.createNamedQuery("getPriorVentilPrimeForAgentAndDate",
+				VentilPrime.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateDebutMois", dateDebMois);
 		q.setParameter("idLatestVentilPrime", latestVentilPrime.getIdVentilPrime());
@@ -440,15 +436,15 @@ public class VentilationRepository implements IVentilationRepository {
 
 		return vas.size() != 0 ? vas.get(0) : null;
 	}
-	
+
 	@Override
 	public void persistEntity(Object entity) {
 		ptgEntityManager.persist(entity);
 	}
-	
+
 	@Override
 	public List<VentilTask> getListOfVentilTaskErreur(TypeChainePaieEnum chainePaie, VentilDate ventilDateTo) {
-		
+
 		TypedQuery<VentilTask> q = ptgEntityManager
 				.createQuery(
 						"from VentilTask vT WHERE vT.taskStatus <> 'OK' AND vT.typeChainePaie = :chainePaie AND ventilDateTo = :ventilDateTo ",
@@ -457,6 +453,42 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("ventilDateTo", ventilDateTo);
 
 		return q.getResultList();
+	}
+
+	@Override
+	public List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent) {
+		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
+		Date dateDeb = new DateTime(annee, mois, 1, 0, 0, 0).toDate();
+		LocalDate lastDayOfMonth = new LocalDate(annee, mois, 1).dayOfMonth().withMaximumValue();
+		Date dateFin = lastDayOfMonth.toDate();
+
+		String query = "FROM VentilAbsence tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi BETWEEN :datdeb AND :datfin";
+
+		TypedQuery<VentilAbsence> q = ptgEntityManager.createQuery(query, VentilAbsence.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("datdeb", dateDeb);
+		q.setParameter("datfin", dateFin);
+		resultat.addAll(q.getResultList());
+
+		return resultat;
+	}
+
+	@Override
+	public List<VentilHsup> getListOfVentilHSForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent) {
+		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
+		Date dateDeb = new DateTime(annee, mois, 1, 0, 0, 0).toDate();
+		LocalDate lastDayOfMonth = new LocalDate(annee, mois, 1).dayOfMonth().withMaximumValue();
+		Date dateFin = lastDayOfMonth.toDate();
+
+		String query = "FROM VentilHsup tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi BETWEEN :datdeb AND :datfin";
+
+		TypedQuery<VentilHsup> q = ptgEntityManager.createQuery(query, VentilHsup.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("datdeb", dateDeb);
+		q.setParameter("datfin", dateFin);
+		resultat.addAll(q.getResultList());
+
+		return resultat;
 	}
 
 }

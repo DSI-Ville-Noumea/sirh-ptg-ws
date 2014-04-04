@@ -23,8 +23,7 @@ public interface IVentilationService {
 	 * @param statut
 	 * @return
 	 */
-	CanStartVentilationDto canStartVentilationForAgentStatus(
-			AgentStatutEnum statut);
+	CanStartVentilationDto canStartVentilationForAgentStatus(AgentStatutEnum statut);
 
 	/**
 	 * This service method is responsible for taking a request for starting a
@@ -44,9 +43,8 @@ public interface IVentilationService {
 	 * @param pointageType
 	 * @return
 	 */
-	ReturnMessageDto startVentilation(Integer idAgent, List<Integer> agents,
-			Date ventilationDate, AgentStatutEnum statut,
-			RefTypePointageEnum pointageType);
+	ReturnMessageDto startVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate,
+			AgentStatutEnum statut, RefTypePointageEnum pointageType);
 
 	/**
 	 * This service method is responsible for ventilating the pointages for a
@@ -59,12 +57,14 @@ public interface IVentilationService {
 	 */
 	void processVentilationForAgent(Integer idVentilTask);
 
-	List<VentilDto> showVentilation(Integer idDateVentil, List<Integer> agents,
-			RefTypePointageEnum pointageType);
+	List<VentilDto> showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType);
 
 	VentilDateDto getVentilationEnCoursForStatut(AgentStatutEnum statut);
-	
+
 	VentilTask findVentilTask(Integer idVentilTask);
-	
+
 	List<VentilErreurDto> getErreursVentilation(AgentStatutEnum statut);
+
+	List<VentilDto> showVentilationHistory(Integer mois, Integer annee, Integer idAgent,
+			RefTypePointageEnum pointageType);
 }

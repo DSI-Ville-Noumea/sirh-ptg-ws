@@ -506,31 +506,63 @@ public class VentilationService implements IVentilationService {
 
 		return result;
 	}
-	
+
 	@Override
 	public VentilTask findVentilTask(Integer idVentilTask) {
 		return pointageRepository.getEntity(VentilTask.class, idVentilTask);
 	}
-	
+
 	@Override
 	public List<VentilErreurDto> getErreursVentilation(AgentStatutEnum statut) {
-		
+
 		List<VentilErreurDto> result = new ArrayList<VentilErreurDto>();
-		
+
 		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
-		
+
 		VentilDate ventilDateTo = ventilationRepository.getLatestVentilDate(chainePaie, false);
 		List<VentilTask> listventilTask = ventilationRepository.getListOfVentilTaskErreur(chainePaie, ventilDateTo);
-		
-		for(VentilTask vt : listventilTask) {
+
+		for (VentilTask vt : listventilTask) {
 			VentilErreurDto dto = new VentilErreurDto();
-				dto.setIdAgent(vt.getIdAgent());
-				dto.setDateCreation(vt.getDateCreation());
-				dto.setTaskStatus(vt.getTaskStatus());
-				dto.setTypeChainePaie(vt.getTypeChainePaie().name());
+			dto.setIdAgent(vt.getIdAgent());
+			dto.setDateCreation(vt.getDateCreation());
+			dto.setTaskStatus(vt.getTaskStatus());
+			dto.setTypeChainePaie(vt.getTypeChainePaie().name());
 			result.add(dto);
 		}
-		
+
 		return result;
+	}
+
+	@Override
+	public List<VentilDto> showVentilationHistory(Integer mois, Integer annee, Integer idAgent,
+			RefTypePointageEnum pointageType) {
+		logger.debug(
+				"Showing ventilation history of Pointages for idAgent [{}], mois [{}], annee [{}] and pointage type [{}]",
+				idAgent, mois, annee, pointageType);
+		List<VentilDto> pointagesVentiles = new ArrayList<>();
+		// For all selected agents, get ventilated pointages
+
+		switch (pointageType) {
+			case ABSENCE: {
+				for (VentilAbsence abs : ventilationRepository.getListOfVentilAbsenceForAgentBeetweenDate(mois, annee,
+						idAgent))
+					pointagesVentiles.add(new VentilAbsenceDto(abs));
+
+				break;
+			}
+
+			case H_SUP: {
+				for (VentilHsup hs : ventilationRepository.getListOfVentilHSForAgentBeetweenDate(mois, annee, idAgent))
+					pointagesVentiles.add(new VentilHSupDto(hs));
+
+				break;
+			}
+			default:
+				break;
+
+		}
+		logger.debug("Returning {} ventilated pointages from showVentilation WS.", pointagesVentiles.size());
+		return pointagesVentiles;
 	}
 }
