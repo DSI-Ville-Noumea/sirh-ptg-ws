@@ -12,7 +12,7 @@
         <java.version>7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.6</slf4j.version>
-        <spring.version>4.0.2.RELEASE</spring.version>
+        <spring.version>4.0.3.RELEASE</spring.version>
     </properties>
 
     <issueManagement>
@@ -95,7 +95,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.1.1</version>
+            <version>1.1.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -158,12 +158,12 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>4.3.4.Final</version>
+            <version>4.3.5.Final</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.3.1.Final</version>
+            <version>4.3.5.Final</version>
             <exclusions>
                 <exclusion>
                     <groupId>cglib</groupId>
@@ -272,7 +272,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.3</version>
+            <version>3.3.1</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
