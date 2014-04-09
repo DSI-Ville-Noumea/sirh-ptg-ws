@@ -522,4 +522,32 @@ public class PaieWorkflowServiceTest {
 		assertEquals(e8, state.getEtat());
 		assertEquals(new LocalDate(2013, 4, 5).toDate(), state.getDateMaj());
 	}
+	
+
+	
+	@Test
+	public void canChangeStateToVentilationStarted_stateIs0_true() {
+		
+		// Given
+		SpWFEtat etat = new SpWFEtat();
+		etat.setCodeEtat(SpWfEtatEnum.PRET);
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		
+		// Then
+		assertTrue(service.canChangeStateToVentilationStarted(etat));
+	}
+	
+	@Test
+	public void canChangeStateToVentilationStarted_stateIs1_false() {
+		
+		// Given
+		SpWFEtat etat = new SpWFEtat();
+		etat.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS);
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		
+		// Then
+		assertFalse(service.canChangeStateToVentilationStarted(etat));
+	}
 }

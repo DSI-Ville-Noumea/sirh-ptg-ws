@@ -43,4 +43,6 @@ public interface IExportPaieService {
 	void stopExportToPaie(TypeChainePaieEnum typeChainePaie) throws WorkflowInvalidStateException;
 	
 	ExportPaieTask findExportPaieTask(Integer idExportPaieTask);
+
+	CanStartWorkflowPaieActionDto isExportPaieRunning(TypeChainePaieEnum typeChainePaieFromStatut);
 }

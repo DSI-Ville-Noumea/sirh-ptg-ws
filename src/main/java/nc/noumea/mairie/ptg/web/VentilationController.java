@@ -12,6 +12,7 @@ import nc.noumea.mairie.ptg.dto.VentilDateDto;
 import nc.noumea.mairie.ptg.dto.VentilDto;
 import nc.noumea.mairie.ptg.dto.VentilErreurDto;
 import nc.noumea.mairie.ptg.service.IVentilationService;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 
 import org.slf4j.Logger;
@@ -39,6 +40,9 @@ public class VentilationController {
 
 	@Autowired
 	private IVentilationService ventilationService;
+	
+	@Autowired
+	private HelperService helperService;
 
 	@ResponseBody
 	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
@@ -76,8 +80,24 @@ public class VentilationController {
 		logger.debug("entered GET [ventilation/canStartVentilation] => canStartVentilation with parameter statut = {}",
 				statut);
 
-		CanStartVentilationDto result = ventilationService.canStartVentilationForAgentStatus(AgentStatutEnum
-				.valueOf(statut));
+		CanStartVentilationDto result = ventilationService.canStartVentilationForAgentStatus(helperService
+				.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
+
+		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
+
+		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/isVentilation", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> isVentilation(@RequestParam("statut") String statut) {
+
+		logger.debug("entered GET [ventilation/isVentilation] => isVentilation with parameter statut = {}",
+				statut);
+
+		CanStartVentilationDto result = ventilationService.isVentilationRunning(helperService
+				.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
 
 		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
 

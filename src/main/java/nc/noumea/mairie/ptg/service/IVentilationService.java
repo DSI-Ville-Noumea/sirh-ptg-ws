@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilTask;
 import nc.noumea.mairie.ptg.dto.CanStartVentilationDto;
@@ -20,10 +21,10 @@ public interface IVentilationService {
 	 * return true if no VentilTask are ongoing for the given AgentStatutEnum,
 	 * and false otherwise.
 	 * 
-	 * @param statut
+	 * @param typeChainePaieEnum
 	 * @return
 	 */
-	CanStartVentilationDto canStartVentilationForAgentStatus(AgentStatutEnum statut);
+	CanStartVentilationDto canStartVentilationForAgentStatus(TypeChainePaieEnum typeChainePaieEnum);
 
 	/**
 	 * This service method is responsible for taking a request for starting a
@@ -67,4 +68,6 @@ public interface IVentilationService {
 
 	List<VentilDto> showVentilationHistory(Integer mois, Integer annee, Integer idAgent,
 			RefTypePointageEnum pointageType);
+
+	CanStartVentilationDto isVentilationRunning(TypeChainePaieEnum typeChainePaieFromStatut);
 }

@@ -12,6 +12,9 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.SpWFEtat;
+import nc.noumea.mairie.domain.SpWFPaie;
+import nc.noumea.mairie.domain.SpWfEtatEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.domain.Sppact;
@@ -512,5 +515,28 @@ public class ExportPaieServiceTest {
 		// Then
 		assertFalse(vd.isPaye());
 		Mockito.verify(wfS, Mockito.times(1)).changeStateToExportPaieDone(TypeChainePaieEnum.SCV);
+	}
+	
+	@Test
+	public void isExportPaieRunning_callWFService() {
+		
+		// Given
+		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
+		SpWFEtat etat = new SpWFEtat();
+		etat.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS);
+		SpWFPaie paie = new SpWFPaie();
+		paie.setEtat(etat);
+		
+		IPaieWorkflowService pwfs = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(pwfs.getCurrentState(chainePaie)).thenReturn(paie);
+		
+		ExportPaieService service = new ExportPaieService();
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pwfs);
+		
+		// When
+		CanStartWorkflowPaieActionDto result = service.isExportPaieRunning(chainePaie);
+		
+		// Then
+		assertTrue(result.isCanStartAction());
 	}
 }

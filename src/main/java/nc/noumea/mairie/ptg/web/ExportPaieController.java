@@ -95,6 +95,21 @@ public class ExportPaieController {
 	}
 	
 	@ResponseBody
+	@RequestMapping(value = "/isExportPaie", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> isExportPaie(@RequestParam("statut") String statut) {
+
+		logger.debug("entered GET [exportPaie/isExportPaie] => isExportPaie with parameter statut = {}", statut);
+		
+		CanStartWorkflowPaieActionDto result = exportPaieService
+				.isExportPaieRunning(helperService.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
+        
+		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
+		
+		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
+	}
+	
+	@ResponseBody
 	@RequestMapping(value = "/processTask", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(value = "chainedTransactionManager")
 	public ResponseEntity<String> processTask(

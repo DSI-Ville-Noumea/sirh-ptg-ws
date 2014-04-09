@@ -37,6 +37,7 @@ import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
+import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -685,10 +686,14 @@ public class VentilationServiceTest {
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SHC);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 8, 2, 10, 57, 23).toDate());
 
+		IPaieWorkflowService pwServ = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(pwServ.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(true);
+
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pwServ);
 
 		Spcarr carr = new Spcarr();
 		Mockito.doReturn(carr).when(service).isAgentEligibleToVentilation(9005432, statut, lastUnPaidDate);
@@ -744,10 +749,14 @@ public class VentilationServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SHC);
 
+		IPaieWorkflowService pwServ = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(pwServ.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(true);
+
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pwServ);
 
 		Mockito.doReturn(null).when(service).isAgentEligibleToVentilation(9005432, statut, ventilationDate);
 		Mockito.doReturn(null).when(service).isAgentEligibleToVentilation(9005431, statut, ventilationDate);
@@ -775,11 +784,15 @@ public class VentilationServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
 
+		IPaieWorkflowService pwServ = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(pwServ.canStartVentilation(TypeChainePaieEnum.SCV)).thenReturn(true);
+
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.canStartVentilation(TypeChainePaieEnum.SCV)).thenReturn(true);
 
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pwServ);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 
 		// When
@@ -805,12 +818,12 @@ public class VentilationServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
 
-		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.canStartVentilation(TypeChainePaieEnum.SCV)).thenReturn(false);
+		IPaieWorkflowService pwServ = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(pwServ.canStartVentilation(TypeChainePaieEnum.SCV)).thenReturn(false);
 
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "helperService", hS);
-		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pwServ);
 
 		// When
 		ReturnMessageDto result = service.startVentilation(9008765, new ArrayList<Integer>(), ventilationDate, statut,
@@ -910,18 +923,18 @@ public class VentilationServiceTest {
 	public void canStartVentilationForAgentStatus_CannotStart_ReturnFalse() {
 
 		// Given
-		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vRepo.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(false);
-
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.F)).thenReturn(TypeChainePaieEnum.SHC);
 
+		IPaieWorkflowService pwServ = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(pwServ.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(false);
+
 		VentilationService service = Mockito.spy(new VentilationService());
-		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pwServ);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		CanStartVentilationDto result = service.canStartVentilationForAgentStatus(AgentStatutEnum.F);
+		CanStartVentilationDto result = service.canStartVentilationForAgentStatus(TypeChainePaieEnum.SHC);
 
 		// Then
 		assertFalse(result.isCanStartVentilation());
@@ -934,15 +947,19 @@ public class VentilationServiceTest {
 		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vRepo.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(true);
 
+		IPaieWorkflowService pwServ = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(pwServ.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(true);
+
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.F)).thenReturn(TypeChainePaieEnum.SHC);
 
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pwServ);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		CanStartVentilationDto result = service.canStartVentilationForAgentStatus(AgentStatutEnum.F);
+		CanStartVentilationDto result = service.canStartVentilationForAgentStatus(TypeChainePaieEnum.SHC);
 
 		// Then
 		assertTrue(result.isCanStartVentilation());
@@ -1182,5 +1199,39 @@ public class VentilationServiceTest {
 		List<VentilDto> result = service.showVentilationHistory(2, 2014, 9005138, RefTypePointageEnum.PRIME);
 
 		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void isVentilationRunning_ReturnFalse() {
+
+		// Given
+		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vRepo.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(true);
+
+		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+
+		// When
+		CanStartVentilationDto result = service.isVentilationRunning(TypeChainePaieEnum.SHC);
+
+		// Then
+		assertFalse(result.isCanStartVentilation());
+	}
+
+	@Test
+	public void isVentilationRunning_ReturnTrue() {
+
+		// Given
+		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vRepo.canStartVentilation(TypeChainePaieEnum.SHC)).thenReturn(false);
+
+		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+
+		// When
+		CanStartVentilationDto result = service.isVentilationRunning(TypeChainePaieEnum.SHC);
+
+		// Then
+		assertTrue(result.isCanStartVentilation());
 	}
 }

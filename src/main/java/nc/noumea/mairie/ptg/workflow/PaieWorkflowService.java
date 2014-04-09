@@ -12,43 +12,42 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PaieWorkflowService implements IPaieWorkflowService {
-	
+
 	@Autowired
 	private IPaieWorkflowRepository paieWorkflowRepository;
-	
+
 	@Autowired
 	private HelperService helperService;
-	
+
 	@Override
 	public SpWFPaie getCurrentState(TypeChainePaieEnum chainePaie) {
 		return paieWorkflowRepository.readCurrentState(chainePaie);
 	}
-		
+
 	@Override
 	public void changeStateToExportPaieStarted(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException {
-		
+
 		SpWFPaie state = paieWorkflowRepository.selectForUpdateState(chainePaie);
 
 		if (canChangeStateToExportPaieStarted(state.getEtat())) {
 			state.setEtat(paieWorkflowRepository.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS));
 			state.setDateMaj(helperService.getCurrentDate());
 		} else {
-			throw new WorkflowInvalidStateException(
-					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]",
-							SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS,
-							state.getEtat().getCodeEtat()));
+			throw new WorkflowInvalidStateException(String.format(
+					"Impossible de passer à l'état [%s] car l'état en cours est [%s]",
+					SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS, state.getEtat().getCodeEtat()));
 		}
-		
+
 	}
 
 	@Override
 	public boolean canChangeStateToExportPaieStarted(TypeChainePaieEnum chainePaie) {
 
 		SpWFPaie state = getCurrentState(chainePaie);
-		
+
 		return canChangeStateToExportPaieStarted(state.getEtat());
 	}
-	
+
 	protected boolean canChangeStateToExportPaieStarted(SpWFEtat currentState) {
 
 		switch (currentState.getCodeEtat()) {
@@ -61,7 +60,7 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 				return false;
 		}
 	}
-	
+
 	protected boolean canChangeStateToExportPaieDone(SpWFEtat currentState) {
 
 		return currentState.getCodeEtat() == SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS;
@@ -76,27 +75,26 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 			state.setEtat(paieWorkflowRepository.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE));
 			state.setDateMaj(helperService.getCurrentDate());
 		} else {
-			throw new WorkflowInvalidStateException(
-					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]",
-							SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE,
-							state.getEtat().getCodeEtat()));
+			throw new WorkflowInvalidStateException(String.format(
+					"Impossible de passer à l'état [%s] car l'état en cours est [%s]",
+					SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE, state.getEtat().getCodeEtat()));
 		}
-		
+
 	}
-	
+
 	@Override
 	public boolean canChangeStateToExportEtatsPayeurStarted(TypeChainePaieEnum chainePaie) {
 
 		SpWFPaie state = getCurrentState(chainePaie);
-		
+
 		return canChangeStateToExportEtatsPayeurStarted(state.getEtat());
 	}
-	
+
 	protected boolean canChangeStateToExportEtatsPayeurStarted(SpWFEtat currentState) {
 
 		return currentState.getCodeEtat() == SpWfEtatEnum.PRE_GEN_COMPTABLE_TERMINEE;
 	}
-	
+
 	protected boolean canChangeStateToExportEtatsPayeurDone(SpWFEtat currentState) {
 
 		return currentState.getCodeEtat() == SpWfEtatEnum.ETATS_PAYEUR_EN_COURS;
@@ -112,12 +110,11 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 			state.setEtat(paieWorkflowRepository.getEtat(SpWfEtatEnum.ETATS_PAYEUR_EN_COURS));
 			state.setDateMaj(helperService.getCurrentDate());
 		} else {
-			throw new WorkflowInvalidStateException(
-					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]",
-							SpWfEtatEnum.ETATS_PAYEUR_EN_COURS,
-							state.getEtat().getCodeEtat()));
+			throw new WorkflowInvalidStateException(String.format(
+					"Impossible de passer à l'état [%s] car l'état en cours est [%s]",
+					SpWfEtatEnum.ETATS_PAYEUR_EN_COURS, state.getEtat().getCodeEtat()));
 		}
-		
+
 	}
 
 	@Override
@@ -129,11 +126,29 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 			state.setEtat(paieWorkflowRepository.getEtat(SpWfEtatEnum.ETATS_PAYEUR_TERMINES));
 			state.setDateMaj(helperService.getCurrentDate());
 		} else {
-			throw new WorkflowInvalidStateException(
-					String.format("Impossible de passer à l'état [%s] car l'état en cours est [%s]",
-							SpWfEtatEnum.ETATS_PAYEUR_TERMINES,
-							state.getEtat().getCodeEtat()));
+			throw new WorkflowInvalidStateException(String.format(
+					"Impossible de passer à l'état [%s] car l'état en cours est [%s]",
+					SpWfEtatEnum.ETATS_PAYEUR_TERMINES, state.getEtat().getCodeEtat()));
 		}
-		
+
+	}
+
+	@Override
+	public boolean canStartVentilation(TypeChainePaieEnum chainePaie) {
+
+		SpWFPaie state = getCurrentState(chainePaie);
+
+		return canChangeStateToVentilationStarted(state.getEtat());
+	}
+
+	@Override
+	public boolean canChangeStateToVentilationStarted(SpWFEtat currentState) {
+
+		switch (currentState.getCodeEtat()) {
+			case ECRITURE_POINTAGES_EN_COURS: // Ecriture pointage en cours
+				return false;
+			default:
+				return true;
+		}
 	}
 }

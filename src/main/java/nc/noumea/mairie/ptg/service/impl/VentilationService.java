@@ -35,6 +35,7 @@ import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
 import nc.noumea.mairie.ptg.service.IVentilationService;
+import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -76,6 +77,9 @@ public class VentilationService implements IVentilationService {
 	@Autowired
 	private HelperService helperService;
 
+	@Autowired
+	private IPaieWorkflowService paieWorkflowService;
+
 	@Override
 	public ReturnMessageDto startVentilation(Integer idAgent, List<Integer> agents, Date ventilationDate,
 			AgentStatutEnum statut, RefTypePointageEnum pointageType) {
@@ -88,7 +92,8 @@ public class VentilationService implements IVentilationService {
 
 		// Check whether a ventilation can be started (is there one currently
 		// running for this chainePaie)
-		if (!ventilationRepository.canStartVentilation(typeChainePaie)) {
+		if (!paieWorkflowService.canStartVentilation(typeChainePaie)
+				|| !ventilationRepository.canStartVentilation(typeChainePaie)) {
 			String msg = String
 					.format("Ventiation for statut [%s] may not be started. An existing one is currently processing...",
 							statut);
@@ -438,17 +443,18 @@ public class VentilationService implements IVentilationService {
 	}
 
 	@Override
-	public CanStartVentilationDto canStartVentilationForAgentStatus(AgentStatutEnum statut) {
+	public CanStartVentilationDto canStartVentilationForAgentStatus(TypeChainePaieEnum chainePaie) {
 
 		CanStartVentilationDto result = new CanStartVentilationDto();
-		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
-		result.setCanStartVentilation(ventilationRepository.canStartVentilation(chainePaie));
+		result.setCanStartVentilation(paieWorkflowService.canStartVentilation(chainePaie)
+				&& ventilationRepository.canStartVentilation(chainePaie));
 
 		if (result.isCanStartVentilation())
-			logger.debug("Ventiation for statut [{}] may be started. None currently processing...", statut);
+			logger.debug("Ventiation for chainePaie [{}] may be started. None currently processing...", chainePaie);
 		else
-			logger.debug("Ventiation for statut [{}] may not be started. An existing one is currently processing...",
-					statut);
+			logger.debug(
+					"Ventiation for chainePaie [{}] may not be started. An existing one is currently processing...",
+					chainePaie);
 
 		return result;
 	}
@@ -564,5 +570,12 @@ public class VentilationService implements IVentilationService {
 		}
 		logger.debug("Returning {} ventilated pointages from showVentilation WS.", pointagesVentiles.size());
 		return pointagesVentiles;
+	}
+
+	@Override
+	public CanStartVentilationDto isVentilationRunning(TypeChainePaieEnum typeChainePaieFromStatut) {
+		CanStartVentilationDto result = new CanStartVentilationDto();
+		result.setCanStartVentilation(!ventilationRepository.canStartVentilation(typeChainePaieFromStatut));
+		return result;
 	}
 }
