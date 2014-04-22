@@ -51,6 +51,9 @@ public class EtatPayeurRepositoryTest {
 		EtatPayeur result = repository.getEtatPayeurById(new Integer(5));
 		
 		assertEquals("testUnit.pdf", result.getFichier());
+		
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
 	}
 	
 	
@@ -86,6 +89,9 @@ public class EtatPayeurRepositoryTest {
 		assertEquals(2, result.size());
 		assertEquals("testUnit2.pdf", result.get(0).getFichier());
 		assertEquals("testUnit.pdf", result.get(1).getFichier());
+		
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
 	}
 	
 	@Test
@@ -113,7 +119,10 @@ public class EtatPayeurRepositoryTest {
 	        e = ex;
 	    }
 
-		assertTrue(e instanceof org.springframework.dao.EmptyResultDataAccessException);
+		assertTrue(e instanceof javax.persistence.NoResultException);
+		
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
 	}
 	@Test
 	@Transactional("ptgTransactionManager")
@@ -145,6 +154,9 @@ public class EtatPayeurRepositoryTest {
 		List<EtatPayeur> result = repository.getListEditionEtatPayeur(AgentStatutEnum.CC);
 		
 		assertEquals(0, result.size());
+		
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
 	}
 
 	
