@@ -67,6 +67,7 @@ public class ApprobationServiceTest {
 		EtatPointage etat = new EtatPointage();
 		etat.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		etat.setEtat(EtatPointageEnum.APPROUVE);
+		etat.setIdAgent(9005138);
 		ptg.getEtats().add(etat);
 
 		Pointage ptg2 = new Pointage();
@@ -78,6 +79,7 @@ public class ApprobationServiceTest {
 		EtatPointage etat2 = new EtatPointage();
 		etat2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		etat2.setEtat(EtatPointageEnum.SAISI);
+		etat2.setIdAgent(9005138);
 		ptg2.getEtats().add(etat2);
 
 		List<EtatPointageEnum> letat = null;
@@ -90,6 +92,7 @@ public class ApprobationServiceTest {
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
 		Mockito.when(mRepo.getAgent(9001235)).thenReturn(new Agent());
+		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new Agent());
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
@@ -137,6 +140,7 @@ public class ApprobationServiceTest {
 		EtatPointage etat2 = new EtatPointage();
 		etat2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		etat2.setEtat(EtatPointageEnum.SAISI);
+		etat2.setIdAgent(9005138);
 		ptg2.getEtats().add(etat2);
 
 		IPointageService pService = Mockito.mock(IPointageService.class);
@@ -147,6 +151,7 @@ public class ApprobationServiceTest {
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
+		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new Agent());
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
@@ -526,6 +531,7 @@ public class ApprobationServiceTest {
 		EtatPointage etat2 = new EtatPointage();
 		etat2.setDateEtat(new DateTime(2013, 05, 20, 0, 0, 0).toDate());
 		etat2.setEtat(EtatPointageEnum.SAISI);
+		etat2.setIdAgent(9005138);
 		ptg2.getEtats().add(etat2);
 
 		List<Integer> idAgents = new ArrayList<Integer>();
@@ -540,6 +546,7 @@ public class ApprobationServiceTest {
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
+		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new Agent());
 
 		HelperService hS = Mockito.mock(HelperService.class);
 

@@ -97,7 +97,8 @@ public class ApprobationService implements IApprobationService {
 		for (Pointage ptg : pointages) {
 			AgentDto agDto = new AgentDto(sirhRepository.getAgent(ptg.getIdAgent()));
 			ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
-			dto.updateEtat(ptg.getLatestEtatPointage());
+			AgentDto opeDto = new AgentDto(sirhRepository.getAgent(ptg.getLatestEtatPointage().getIdAgent()));
+			dto.updateEtat(ptg.getLatestEtatPointage(), opeDto);
 			dto.setAgent(agDto);
 			result.add(dto);
 		}
@@ -120,7 +121,8 @@ public class ApprobationService implements IApprobationService {
 			for (EtatPointage etat : ptg.getEtats()) {
 				AgentDto agDto = new AgentDto(sirhRepository.getAgent(etat.getIdAgent()));
 				ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
-				dto.updateEtat(etat);
+				AgentDto opeDto = new AgentDto(sirhRepository.getAgent(etat.getIdAgent()));
+				dto.updateEtat(etat, opeDto);
 				dto.setAgent(agDto);
 				result.add(dto);
 			}

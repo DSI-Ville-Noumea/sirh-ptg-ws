@@ -19,6 +19,7 @@ public class ConsultPointageDto {
 	private String commentaire;
 	private Integer idRefEtat;
 	private Date dateSaisie;
+	private AgentDto operateur;
 
 	public ConsultPointageDto() {
 
@@ -32,8 +33,7 @@ public class ConsultPointageDto {
 		debut = ptg.getDateDebut();
 		fin = ptg.getDateFin();
 		motif = ptg.getMotif() == null ? "" : ptg.getMotif().getText();
-		commentaire = ptg.getCommentaire() == null ? "" : ptg.getCommentaire()
-				.getText();
+		commentaire = ptg.getCommentaire() == null ? "" : ptg.getCommentaire().getText();
 
 		switch (ptg.getTypePointageEnum()) {
 			case ABSENCE:
@@ -58,9 +58,10 @@ public class ConsultPointageDto {
 
 	}
 
-	public void updateEtat(EtatPointage etat) {
+	public void updateEtat(EtatPointage etat, AgentDto ope) {
 		idRefEtat = etat.getEtat().getCodeEtat();
 		dateSaisie = etat.getDateEtat();
+		operateur = ope;
 	}
 
 	public Integer getIdPointage() {
@@ -149,5 +150,13 @@ public class ConsultPointageDto {
 
 	public void setDateSaisie(Date dateSaisie) {
 		this.dateSaisie = dateSaisie;
+	}
+
+	public AgentDto getOperateur() {
+		return operateur;
+	}
+
+	public void setOperateur(AgentDto operateur) {
+		this.operateur = operateur;
 	}
 }
