@@ -98,7 +98,13 @@ SIRH-PTG-WS API pour SIRH
        "idRefEtat": 0,
        "motif": "",
        "quantite": "1",
-       "typePointage": "Prime"
+       "typePointage": "Prime",
+       "operateur":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       }
    },
    {
        "agent":
@@ -116,7 +122,13 @@ SIRH-PTG-WS API pour SIRH
        "idRefEtat": 2,
        "motif": "",
        "quantite": "0m",
-       "typePointage": "Absence"
+       "typePointage": "Absence",
+       "operateur":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       }
    }
 ]
 +-------------------------+
@@ -187,7 +199,13 @@ HTTP Status code OK : 200
 		"motif" : "blabla",
 		"commentaire" : "le commentaire",
 		"etat" : "SAISI", // (SAISI/…)
-		"dateSaisie" : "/Date()/"
+		"dateSaisie" : "/Date()/",
+       "operateur":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       }
 	},
 	…
 ]

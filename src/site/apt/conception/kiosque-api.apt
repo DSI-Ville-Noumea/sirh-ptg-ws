@@ -439,7 +439,13 @@ SIRH-PTG-WS API pour le Kiosque SIRH (Sharepoint module des pointages)
 		"idRefEtat": 5,
 		"motif": "",
 		"quantite": "1h",
-		"typePointage": "Absence"
+		"typePointage": "Absence",
+       "operateur":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       }
 	},	
 	…
 ]
@@ -480,7 +486,13 @@ SIRH-PTG-WS API pour le Kiosque SIRH (Sharepoint module des pointages)
 		"idRefEtat": 5,
 		"motif": "gvfdsw",
 		"quantite": "1h",
-		"typePointage": "Heure Supplémentaire"
+		"typePointage": "Heure Supplémentaire",
+       "operateur":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       }
 	},
 	…
 ]
