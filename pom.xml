@@ -405,7 +405,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
-                    <!--<argLine>-XX:-UseSplitVerifier</argLine>-->
+                    <argLine>-XX:-UseSplitVerifier</argLine>
                     <printSummary>false</printSummary>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <skipTests>false</skipTests>
