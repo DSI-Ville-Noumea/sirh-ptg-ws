@@ -1,9 +1,11 @@
 package nc.noumea.mairie.ptg.repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.ptg.domain.Droit;
@@ -164,18 +166,50 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService) {
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer pIdAgent, String pCodeService) {
 
-		TypedQuery<DroitsAgent> q = ptgEntityManager.createNamedQuery(
-				codeService == null ? "getListOfAgentsToInputOrApprove" : "getListOfAgentsToInputOrApproveByService",
-				DroitsAgent.class);
+		String sqlQuery = 
+				pCodeService == null ? getListOfAgentsToInputOrApproveWithoutService() : getListOfAgentsToInputOrApproveByService();
 
-		q.setParameter("idAgent", idAgent);
-
-		if (codeService != null)
-			q.setParameter("codeService", codeService);
-
-		return q.getResultList();
+		Query q = ptgEntityManager.createNativeQuery(sqlQuery);
+			q.setParameter("idAgent", pIdAgent);
+		
+		if(null != pCodeService) {
+			q.setParameter("codeService", pCodeService);
+		}
+		
+		List<DroitsAgent> result = new ArrayList<DroitsAgent>();
+		@SuppressWarnings("unchecked")
+		List<Object[]> l = q.getResultList();
+		
+		for (Object[] r : l) {
+			Integer idAgent = (Integer)r[0];
+			String codeService = (String)r[1];
+			String libelleService = (String)r[2];
+			
+			DroitsAgent da = new DroitsAgent(idAgent, codeService, libelleService);
+			result.add(da);
+		}
+		
+		return result;
+	}
+	
+	private String getListOfAgentsToInputOrApproveWithoutService() {
+		
+		return "SELECT  distinct(da.id_Agent), da.code_Service, da.libelle_Service "
+				+ "from PTG_DROITS_AGENT da "
+				+ "inner join PTG_DROIT_DROITS_AGENT dda on da.id_droits_agent = dda.id_droits_agent "
+				+ "inner join PTG_DROIT d on dda.id_droit = d.id_droit "
+				+ "where d.id_Agent = :idAgent or d.id_Agent_Delegataire = :idAgent ";
+	}
+	
+	private String getListOfAgentsToInputOrApproveByService() {
+		
+		return "SELECT  distinct(da.id_Agent), da.code_Service, da.libelle_Service "
+				+ "from PTG_DROITS_AGENT da "
+				+ "inner join PTG_DROIT_DROITS_AGENT dda on da.id_droits_agent = dda.id_droits_agent "
+				+ "inner join PTG_DROIT d on dda.id_droit = d.id_droit "
+				+ "where (d.id_Agent = :idAgent or d.id_Agent_Delegataire = :idAgent) and da.code_service = :codeService";
 	}
 
 	@Override

@@ -114,5 +114,18 @@ public class DroitsAgent {
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
+
+	public DroitsAgent(Integer idAgent,
+			String codeService, String libelleService) {
+		super();
+		this.idAgent = idAgent;
+		this.codeService = codeService;
+		this.libelleService = libelleService;
+	}
+
+	public DroitsAgent() {
+	}
+	
+	
 	
 }
