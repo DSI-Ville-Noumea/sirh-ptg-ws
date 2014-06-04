@@ -41,10 +41,7 @@
 	<persistence-unit name="sirhPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>nc.noumea.mairie.sirh.domain.Agent</class>
-        <class>nc.noumea.mairie.sirh.domain.FichePoste</class>
-        <class>nc.noumea.mairie.sirh.domain.Affectation</class>
         <class>nc.noumea.mairie.sirh.domain.JourFerie</class>
-        <class>nc.noumea.mairie.sirh.domain.TypeJourFerie</class>
         <class>nc.noumea.mairie.domain.Siserv</class>
         <class>nc.noumea.mairie.domain.Sprubr</class>
         <class>nc.noumea.mairie.domain.Spcarr</class>

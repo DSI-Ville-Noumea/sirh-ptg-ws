@@ -5,9 +5,7 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,11 +29,6 @@ public class JourFerie {
 	@Column(name = "DESCRIPTION")
 	private String description;
 
-	@NotNull
-	@OneToOne
-	@JoinColumn(name = "ID_TYPE_JOUR_FERIE", referencedColumnName = "ID_TYPE_JOUR_FERIE")
-	private TypeJourFerie typeJour;
-
 	public Integer getIdJourFerie() {
 		return idJourFerie;
 	}
@@ -58,14 +51,6 @@ public class JourFerie {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	public TypeJourFerie getTypeJour() {
-		return typeJour;
-	}
-
-	public void setTypeJour(TypeJourFerie typeJour) {
-		this.typeJour = typeJour;
 	}
 	
 	
