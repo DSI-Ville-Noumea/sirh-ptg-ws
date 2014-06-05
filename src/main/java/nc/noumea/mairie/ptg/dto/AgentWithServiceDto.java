@@ -1,6 +1,6 @@
 package nc.noumea.mairie.ptg.dto;
 
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import flexjson.JSONDeserializer;
 
 public class AgentWithServiceDto extends AgentDto implements IJSONSerialize, IJSONDeserialize<AgentWithServiceDto> {
@@ -13,7 +13,7 @@ public class AgentWithServiceDto extends AgentDto implements IJSONSerialize, IJS
 
 	}
 
-	public AgentWithServiceDto(Agent agent) {
+	public AgentWithServiceDto(AgentGeneriqueDto agent) {
 		super(agent);
 	}
 

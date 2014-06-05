@@ -1,7 +1,7 @@
 package nc.noumea.mairie.ptg.dto;
 
 import static org.junit.Assert.assertEquals;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ public class AgentDtoTest {
 	public void ctor_withagent() {
 		
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setNomUsage("RAYNAUD");
 		ag.setPrenomUsage("Nicolas");
 		ag.setIdAgent(9006765);

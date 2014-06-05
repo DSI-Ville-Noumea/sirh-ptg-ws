@@ -18,10 +18,10 @@ import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IApprobationService;
 import nc.noumea.mairie.ptg.service.IPointageService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +37,7 @@ public class ApprobationService implements IApprobationService {
 	private IAccessRightsRepository accessRightsRepository;
 
 	@Autowired
-	private ISirhRepository sirhRepository;
+	private ISirhWSConsumer sirhWSConsumer;
 
 	@Autowired
 	private HelperService helperService;
@@ -95,9 +95,9 @@ public class ApprobationService implements IApprobationService {
 				idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)));
 
 		for (Pointage ptg : pointages) {
-			AgentDto agDto = new AgentDto(sirhRepository.getAgent(ptg.getIdAgent()));
+			AgentDto agDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getIdAgent()));
 			ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
-			AgentDto opeDto = new AgentDto(sirhRepository.getAgent(ptg.getLatestEtatPointage().getIdAgent()));
+			AgentDto opeDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getLatestEtatPointage().getIdAgent()));
 			dto.updateEtat(ptg.getLatestEtatPointage(), opeDto);
 			dto.setAgent(agDto);
 			result.add(dto);
@@ -119,9 +119,9 @@ public class ApprobationService implements IApprobationService {
 
 		for (Pointage ptg : list) {
 			for (EtatPointage etat : ptg.getEtats()) {
-				AgentDto agDto = new AgentDto(sirhRepository.getAgent(etat.getIdAgent()));
+				AgentDto agDto = new AgentDto(sirhWSConsumer.getAgent(etat.getIdAgent()));
 				ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
-				AgentDto opeDto = new AgentDto(sirhRepository.getAgent(etat.getIdAgent()));
+				AgentDto opeDto = new AgentDto(sirhWSConsumer.getAgent(etat.getIdAgent()));
 				dto.updateEtat(etat, opeDto);
 				dto.setAgent(agDto);
 				result.add(dto);

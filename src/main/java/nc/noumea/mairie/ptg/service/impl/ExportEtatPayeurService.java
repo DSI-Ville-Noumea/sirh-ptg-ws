@@ -39,7 +39,7 @@ import nc.noumea.mairie.ptg.service.ExportEtatsPayeurServiceException;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.IBirtEtatsPayeurWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -53,8 +53,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
-	private Logger logger = LoggerFactory
-			.getLogger(ExportEtatPayeurService.class);
+	private Logger logger = LoggerFactory.getLogger(ExportEtatPayeurService.class);
 
 	@Autowired
 	private IPaieWorkflowService paieWorkflowService;
@@ -86,23 +85,18 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	private static SimpleDateFormat sfd = new SimpleDateFormat("YYYY-MM");
 
 	@Override
-	public CanStartWorkflowPaieActionDto canStartExportEtatPayeurAction(
-			TypeChainePaieEnum chainePaie) {
+	public CanStartWorkflowPaieActionDto canStartExportEtatPayeurAction(TypeChainePaieEnum chainePaie) {
 		CanStartWorkflowPaieActionDto result = new CanStartWorkflowPaieActionDto();
-		result.setCanStartAction(paieWorkflowService
-				.canChangeStateToExportEtatsPayeurStarted(chainePaie));
+		result.setCanStartAction(paieWorkflowService.canChangeStateToExportEtatsPayeurStarted(chainePaie));
 		return result;
 	}
 
 	@Override
-	public EtatPayeurDto getAbsencesEtatPayeurDataForStatut(
-			AgentStatutEnum statut) {
+	public EtatPayeurDto getAbsencesEtatPayeurDataForStatut(AgentStatutEnum statut) {
 
-		TypeChainePaieEnum chainePaie = helperService
-				.getTypeChainePaieFromStatut(statut);
+		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
 
-		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(
-				chainePaie, false);
+		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, false);
 
 		if (toVentilDate == null) {
 			logger.error(
@@ -111,21 +105,17 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			return new EtatPayeurDto();
 		}
 
-		EtatPayeurDto result = new EtatPayeurDto(chainePaie, statut,
-				toVentilDate.getDateVentilation());
+		EtatPayeurDto result = new EtatPayeurDto(chainePaie, statut, toVentilDate.getDateVentilation());
 
-		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(
-				chainePaie, true);
+		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, true);
 
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
 		for (VentilAbsence va : toVentilDate.getVentilAbsences()) {
 
 			// 1. Verify whether this agent is eligible, through its
 			// AgentStatutEnum (Spcarr)
-			if (!isAgentEligibleToVentilation(va.getIdAgent(), statut,
-					toVentilDate.getDateVentilation())) {
-				logger.info(
-						"Agent {} not eligible for Etats payeurs (status not matching), skipping to next.",
+			if (!isAgentEligibleToVentilation(va.getIdAgent(), statut, toVentilDate.getDateVentilation())) {
+				logger.info("Agent {} not eligible for Etats payeurs (status not matching), skipping to next.",
 						va.getIdAgent());
 				continue;
 			}
@@ -135,31 +125,27 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			// output the difference
 			VentilAbsence vaOld = null;
 			if (va.getDateLundi().before(fromVentilDate.getDateVentilation())) {
-				vaOld = ventilationRepository
-						.getPriorVentilAbsenceForAgentAndDate(va.getIdAgent(),
-								va.getDateLundi(), va);
+				vaOld = ventilationRepository.getPriorVentilAbsenceForAgentAndDate(va.getIdAgent(), va.getDateLundi(),
+						va);
 			}
 
 			// 3. Then create the DTOs for Absence if the value is other than 0
 			// or different from previous one
-			if (va.getMinutesConcertee() != (vaOld != null ? vaOld
-					.getMinutesConcertee() : 0)) {
-				AbsencesEtatPayeurDto dto = new AbsencesEtatPayeurDto(va,
-						vaOld, RefTypeAbsenceEnum.CONCERTEE, helperService);
+			if (va.getMinutesConcertee() != (vaOld != null ? vaOld.getMinutesConcertee() : 0)) {
+				AbsencesEtatPayeurDto dto = new AbsencesEtatPayeurDto(va, vaOld, RefTypeAbsenceEnum.CONCERTEE,
+						helperService);
 				fillAgentsData(dto);
 				result.getAbsences().add(dto);
 			}
-			if (va.getMinutesNonConcertee() != (vaOld != null ? vaOld
-					.getMinutesNonConcertee() : 0)) {
-				AbsencesEtatPayeurDto dto = new AbsencesEtatPayeurDto(va,
-						vaOld, RefTypeAbsenceEnum.NON_CONCERTEE, helperService);
+			if (va.getMinutesNonConcertee() != (vaOld != null ? vaOld.getMinutesNonConcertee() : 0)) {
+				AbsencesEtatPayeurDto dto = new AbsencesEtatPayeurDto(va, vaOld, RefTypeAbsenceEnum.NON_CONCERTEE,
+						helperService);
 				fillAgentsData(dto);
 				result.getAbsences().add(dto);
 			}
-			if (va.getMinutesImmediat() != (vaOld != null ? vaOld
-					.getMinutesImmediat() : 0)) {
-				AbsencesEtatPayeurDto dto = new AbsencesEtatPayeurDto(va,
-						vaOld, RefTypeAbsenceEnum.IMMEDIATE, helperService);
+			if (va.getMinutesImmediat() != (vaOld != null ? vaOld.getMinutesImmediat() : 0)) {
+				AbsencesEtatPayeurDto dto = new AbsencesEtatPayeurDto(va, vaOld, RefTypeAbsenceEnum.IMMEDIATE,
+						helperService);
 				fillAgentsData(dto);
 				result.getAbsences().add(dto);
 			}
@@ -169,14 +155,11 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	}
 
 	@Override
-	public EtatPayeurDto getHeuresSupEtatPayeurDataForStatut(
-			AgentStatutEnum statut) {
+	public EtatPayeurDto getHeuresSupEtatPayeurDataForStatut(AgentStatutEnum statut) {
 
-		TypeChainePaieEnum chainePaie = helperService
-				.getTypeChainePaieFromStatut(statut);
+		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
 
-		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(
-				chainePaie, false);
+		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, false);
 
 		if (toVentilDate == null) {
 			logger.error(
@@ -185,21 +168,17 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			return new EtatPayeurDto();
 		}
 
-		EtatPayeurDto result = new EtatPayeurDto(chainePaie, statut,
-				toVentilDate.getDateVentilation());
+		EtatPayeurDto result = new EtatPayeurDto(chainePaie, statut, toVentilDate.getDateVentilation());
 
-		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(
-				chainePaie, true);
+		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, true);
 
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
 		for (VentilHsup vh : toVentilDate.getVentilHsups()) {
 
 			// 1. Verify whether this agent is eligible, through its
 			// AgentStatutEnum (Spcarr)
-			if (!isAgentEligibleToVentilation(vh.getIdAgent(), statut,
-					toVentilDate.getDateVentilation())) {
-				logger.info(
-						"Agent {} not eligible for Etats payeurs (status not matching), skipping to next.",
+			if (!isAgentEligibleToVentilation(vh.getIdAgent(), statut, toVentilDate.getDateVentilation())) {
+				logger.info("Agent {} not eligible for Etats payeurs (status not matching), skipping to next.",
 						vh.getIdAgent());
 				continue;
 			}
@@ -209,13 +188,11 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			// output the difference
 			VentilHsup vhOld = null;
 			if (vh.getDateLundi().before(fromVentilDate.getDateVentilation())) {
-				vhOld = ventilationRepository.getPriorVentilHSupAgentAndDate(
-						vh.getIdAgent(), vh.getDateLundi(), vh);
+				vhOld = ventilationRepository.getPriorVentilHSupAgentAndDate(vh.getIdAgent(), vh.getDateLundi(), vh);
 			}
 
 			// 3. Then create the DTOs for HSups
-			HeuresSupEtatPayeurDto dto = new HeuresSupEtatPayeurDto(vh, vhOld,
-					helperService);
+			HeuresSupEtatPayeurDto dto = new HeuresSupEtatPayeurDto(vh, vhOld, helperService);
 			fillAgentsData(dto);
 			result.getHeuresSup().add(dto);
 		}
@@ -226,11 +203,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	@Override
 	public EtatPayeurDto getPrimesEtatPayeurDataForStatut(AgentStatutEnum statut) {
 
-		TypeChainePaieEnum chainePaie = helperService
-				.getTypeChainePaieFromStatut(statut);
+		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
 
-		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(
-				chainePaie, false);
+		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, false);
 
 		if (toVentilDate == null) {
 			logger.error(
@@ -239,21 +214,17 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			return new EtatPayeurDto();
 		}
 
-		EtatPayeurDto result = new EtatPayeurDto(chainePaie, statut,
-				toVentilDate.getDateVentilation());
+		EtatPayeurDto result = new EtatPayeurDto(chainePaie, statut, toVentilDate.getDateVentilation());
 
-		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(
-				chainePaie, true);
+		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, true);
 
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
 		for (VentilPrime vp : toVentilDate.getVentilPrimes()) {
 
 			// 1. Verify whether this agent is eligible, through its
 			// AgentStatutEnum (Spcarr)
-			if (!isAgentEligibleToVentilation(vp.getIdAgent(), statut,
-					toVentilDate.getDateVentilation())) {
-				logger.info(
-						"Agent {} not eligible for Etats payeurs (status not matching), skipping to next.",
+			if (!isAgentEligibleToVentilation(vp.getIdAgent(), statut, toVentilDate.getDateVentilation())) {
+				logger.info("Agent {} not eligible for Etats payeurs (status not matching), skipping to next.",
 						vp.getIdAgent());
 				continue;
 			}
@@ -262,16 +233,13 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			// second last ventilated item to
 			// output the difference
 			VentilPrime vpOld = null;
-			if (vp.getDateDebutMois().before(
-					fromVentilDate.getDateVentilation())) {
-				vpOld = ventilationRepository
-						.getPriorVentilPrimeForAgentAndDate(vp.getIdAgent(),
-								vp.getDateDebutMois(), vp);
+			if (vp.getDateDebutMois().before(fromVentilDate.getDateVentilation())) {
+				vpOld = ventilationRepository.getPriorVentilPrimeForAgentAndDate(vp.getIdAgent(),
+						vp.getDateDebutMois(), vp);
 			}
 
 			// 3. Then create the DTOs for Primes
-			PrimesEtatPayeurDto dto = new PrimesEtatPayeurDto(vp, vpOld,
-					helperService);
+			PrimesEtatPayeurDto dto = new PrimesEtatPayeurDto(vp, vpOld, helperService);
 			fillAgentsData(dto);
 			result.getPrimes().add(dto);
 		}
@@ -287,23 +255,21 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	 */
 	protected void fillAgentsData(AbstractItemEtatPayeurDto item) {
 
-		Agent ag = sirhRepository.getAgent(item.getIdAgent());
+		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(item.getIdAgent());
 		item.setNom(ag.getDisplayNom());
 		item.setPrenom(ag.getDisplayPrenom());
 
-		Integer idAgentApprobateur = accessRightRepository
-				.getAgentsApprobateur(item.getIdAgent());
+		Integer idAgentApprobateur = accessRightRepository.getAgentsApprobateur(item.getIdAgent());
 
 		if (idAgentApprobateur == null)
 			return;
 
-		AgentWithServiceDto agApproDto = sirhWsConsumer.getAgentService(
-				idAgentApprobateur, helperService.getCurrentDate());
+		AgentWithServiceDto agApproDto = sirhWsConsumer.getAgentService(idAgentApprobateur,
+				helperService.getCurrentDate());
 		item.setApprobateurIdAgent(idAgentApprobateur);
 		item.setApprobateurNom(agApproDto.getNom());
 		item.setApprobateurPrenom(agApproDto.getPrenom());
-		item.setApprobateurServiceLabel(String.format("%s - %s",
-				agApproDto.getCodeService(), agApproDto.getService()));
+		item.setApprobateurServiceLabel(String.format("%s - %s", agApproDto.getCodeService(), agApproDto.getService()));
 	}
 
 	/**
@@ -314,38 +280,28 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	 * @param statut
 	 * @return true if the agent is eligible
 	 */
-	protected boolean isAgentEligibleToVentilation(Integer idAgent,
-			AgentStatutEnum statut, Date date) {
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-				helperService.getMairieMatrFromIdAgent(idAgent), date);
-		AgentStatutEnum agentStatus = carr != null ? carr.getStatutCarriere()
-				: null;
+	protected boolean isAgentEligibleToVentilation(Integer idAgent, AgentStatutEnum statut, Date date) {
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
+		AgentStatutEnum agentStatus = carr != null ? carr.getStatutCarriere() : null;
 		return agentStatus == statut;
 	}
 
 	@Override
-	public ReturnMessageDto startExportEtatsPayeur(Integer agentIdExporting,
-			AgentStatutEnum statut) {
+	public ReturnMessageDto startExportEtatsPayeur(Integer agentIdExporting, AgentStatutEnum statut) {
 
-		logger.info(
-				"Starting exportEtatsPayeurs of Pointages for Agents statut [{}], asked by [{}]",
-				agentIdExporting, statut);
+		logger.info("Starting exportEtatsPayeurs of Pointages for Agents statut [{}], asked by [{}]", agentIdExporting,
+				statut);
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
 		// 1. Retrieve eligible ventilation in order to get dates
-		TypeChainePaieEnum chainePaie = helperService
-				.getTypeChainePaieFromStatut(statut);
-		VentilDate ventilDate = ventilationRepository.getLatestVentilDate(
-				chainePaie, false);
+		TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(statut);
+		VentilDate ventilDate = ventilationRepository.getLatestVentilDate(chainePaie, false);
 
 		// If no ventilation has ever been ran, return now
 		if (ventilDate == null) {
 			logger.info("No unpaid ventilation date found. Nothing to export. Stopping process here.");
-			result.getErrors().add(
-					String.format(
-							"Aucune ventilation n'existe pour le statut [%s].",
-							statut));
+			result.getErrors().add(String.format("Aucune ventilation n'existe pour le statut [%s].", statut));
 			return result;
 		}
 
@@ -353,11 +309,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		// process
 		try {
 			paieWorkflowService
-					.changeStateToExportEtatsPayeurStarted(helperService
-							.getTypeChainePaieFromStatut(statut));
+					.changeStateToExportEtatsPayeurStarted(helperService.getTypeChainePaieFromStatut(statut));
 		} catch (WorkflowInvalidStateException e) {
-			logger.error("Could not start exportEtatsPayeur process: {}",
-					e.getMessage());
+			logger.error("Could not start exportEtatsPayeur process: {}", e.getMessage());
 			result.getErrors().add(e.getMessage());
 			return result;
 		}
@@ -371,10 +325,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		task.setDateCreation(helperService.getCurrentDate());
 		pointageRepository.persisEntity(task);
 
-		result.getInfos()
-				.add(String
-						.format("L'export des Etats du Payeur pour la chaine paie [%s] a bien été lancé.",
-								chainePaie));
+		result.getInfos().add(
+				String.format("L'export des Etats du Payeur pour la chaine paie [%s] a bien été lancé.", chainePaie));
 
 		return result;
 	}
@@ -382,31 +334,27 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	@Override
 	public void exportEtatsPayeur(Integer idExportEtatsPayeurTask) {
 
-		ExportEtatsPayeurTask task = pointageRepository.getEntity(
-				ExportEtatsPayeurTask.class, idExportEtatsPayeurTask);
+		ExportEtatsPayeurTask task = pointageRepository.getEntity(ExportEtatsPayeurTask.class, idExportEtatsPayeurTask);
 
 		if (task == null) {
-			logger.info(
-					"The given idExportEtatsPayeurTask [{}] does not match any task in database. Exiting.",
+			logger.info("The given idExportEtatsPayeurTask [{}] does not match any task in database. Exiting.",
 					idExportEtatsPayeurTask);
 			return;
 		}
 
 		// 1. Retrieve latest ventilDate in order to date the reports
-		logger.info("Retrieving ventilation date for chaine paie [{}]",
-				task.getTypeChainePaie());
+		logger.info("Retrieving ventilation date for chaine paie [{}]", task.getTypeChainePaie());
 		VentilDate vd = task.getVentilDate();
 
 		// 2. Call Birt and store files
 		logger.info("Calling Birt reports...");
-		List<EtatPayeur> etats = callBirtEtatsPayeurForChainePaie(
-				task.getIdAgent(), task.getTypeChainePaie(),
+		List<EtatPayeur> etats = callBirtEtatsPayeurForChainePaie(task.getIdAgent(), task.getTypeChainePaie(),
 				vd.getDateVentilation());
 
 		// 3. Update Recups through SIRH-ABS-WS
 		logger.info("Updating recuperations by calling SIRH-ABS-WS...");
 		List<Integer> idAgentsToProcessRCTasks = new ArrayList<Integer>();
-		
+
 		for (VentilHsup vh : vd.getVentilHsups()) {
 
 			if (vh.getMSup() != 0 && !idAgentsToProcessRCTasks.contains(vh.getIdAgent())) {
@@ -416,20 +364,19 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			if (vh.getMRecuperees() != 0) {
 				// TODO: add coeff. calculation
 				int nbMinutesRecupereesTotal = vh.getMRecuperees();
-				absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(),
-						vh.getDateLundi(), nbMinutesRecupereesTotal);
+				absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(), vh.getDateLundi(), nbMinutesRecupereesTotal);
 			}
 		}
-		
+
 		logger.info("Creating ReposComptTask for processing RCs via SIRH-JOBS...");
 		for (Integer idAgent : idAgentsToProcessRCTasks) {
-			
-			if(isAgentEligibleToReposComp(idAgent, vd.getDateVentilation())) {
+
+			if (isAgentEligibleToReposComp(idAgent, vd.getDateVentilation())) {
 				ReposCompTask t = new ReposCompTask();
-					t.setIdAgent(idAgent);
-					t.setIdAgentCreation(task.getIdAgent());
-					t.setDateCreation(helperService.getCurrentDate());
-					t.setVentilDate(vd);
+				t.setIdAgent(idAgent);
+				t.setIdAgentCreation(task.getIdAgent());
+				t.setDateCreation(helperService.getCurrentDate());
+				t.setVentilDate(vd);
 				pointageRepository.persisEntity(t);
 			}
 		}
@@ -446,12 +393,10 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	@Override
 	public void journalizeEtatsPayeur(Integer idExportEtatsPayeurTask) {
 
-		ExportEtatsPayeurTask task = pointageRepository.getEntity(
-				ExportEtatsPayeurTask.class, idExportEtatsPayeurTask);
+		ExportEtatsPayeurTask task = pointageRepository.getEntity(ExportEtatsPayeurTask.class, idExportEtatsPayeurTask);
 
 		if (task == null) {
-			logger.info(
-					"The given idExportEtatsPayeurTask [{}] does not match any task in database. Exiting.",
+			logger.info("The given idExportEtatsPayeurTask [{}] does not match any task in database. Exiting.",
 					idExportEtatsPayeurTask);
 			return;
 		}
@@ -465,10 +410,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 		// 5. Set all related pointages as Journalise
 		logger.info("Marking pointages as JOURNALISES...");
-		markPointagesAsJournalises(task.getVentilDate().getPointages(),
-				task.getIdAgent());
-		markPointagesCalculesAsJournalises(task.getVentilDate()
-				.getPointagesCalcules());
+		markPointagesAsJournalises(task.getVentilDate().getPointages(), task.getIdAgent());
+		markPointagesCalculesAsJournalises(task.getVentilDate().getPointagesCalcules());
 
 		// 6. Set VentilDate as Payee
 		logger.info("Setting Ventilation as PAYE...");
@@ -477,75 +420,60 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		logger.info("Export Etats Payeurs stopped.");
 	}
 
-	protected List<EtatPayeur> callBirtEtatsPayeurForChainePaie(
-			Integer agentIdExporting, TypeChainePaieEnum chainePaie,
-			Date ventilationDate) {
+	protected List<EtatPayeur> callBirtEtatsPayeurForChainePaie(Integer agentIdExporting,
+			TypeChainePaieEnum chainePaie, Date ventilationDate) {
 
 		List<EtatPayeur> etats = new ArrayList<EtatPayeur>();
 
 		try {
 			switch (chainePaie) {
-			case SCV:
-				etats.add(exportEtatPayeur(agentIdExporting,
-						RefTypePointageEnum.ABSENCE, AgentStatutEnum.CC,
-						ventilationDate));
-				etats.add(exportEtatPayeur(agentIdExporting,
-						RefTypePointageEnum.H_SUP, AgentStatutEnum.CC,
-						ventilationDate));
-				etats.add(exportEtatPayeur(agentIdExporting,
-						RefTypePointageEnum.PRIME, AgentStatutEnum.CC,
-						ventilationDate));
-				break;
+				case SCV:
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.ABSENCE, AgentStatutEnum.CC,
+							ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.H_SUP, AgentStatutEnum.CC,
+							ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.PRIME, AgentStatutEnum.CC,
+							ventilationDate));
+					break;
 
-			case SHC:
-				etats.add(exportEtatPayeur(agentIdExporting,
-						RefTypePointageEnum.ABSENCE, AgentStatutEnum.F,
-						ventilationDate));
-				etats.add(exportEtatPayeur(agentIdExporting,
-						RefTypePointageEnum.H_SUP, AgentStatutEnum.F,
-						ventilationDate));
-				etats.add(exportEtatPayeur(agentIdExporting,
-						RefTypePointageEnum.PRIME, AgentStatutEnum.F,
-						ventilationDate));
+				case SHC:
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.ABSENCE, AgentStatutEnum.F,
+							ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.H_SUP, AgentStatutEnum.F,
+							ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.PRIME, AgentStatutEnum.F,
+							ventilationDate));
 
-				etats.add(exportEtatPayeur(agentIdExporting,
-						RefTypePointageEnum.ABSENCE, AgentStatutEnum.C,
-						ventilationDate));
-				etats.add(exportEtatPayeur(agentIdExporting,
-						RefTypePointageEnum.H_SUP, AgentStatutEnum.C,
-						ventilationDate));
-				etats.add(exportEtatPayeur(agentIdExporting,
-						RefTypePointageEnum.PRIME, AgentStatutEnum.C,
-						ventilationDate));
-				break;
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.ABSENCE, AgentStatutEnum.C,
+							ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.H_SUP, AgentStatutEnum.C,
+							ventilationDate));
+					etats.add(exportEtatPayeur(agentIdExporting, RefTypePointageEnum.PRIME, AgentStatutEnum.C,
+							ventilationDate));
+					break;
 			}
 		} catch (Exception ex) {
 			throw new ExportEtatsPayeurServiceException(
-					"An error occured while retrieving reports from SIRH-REPORTS for Etats Payeur.",
-					ex);
+					"An error occured while retrieving reports from SIRH-REPORTS for Etats Payeur.", ex);
 		}
 
 		return etats;
 	}
 
-	protected EtatPayeur exportEtatPayeur(Integer idAgent,
-			RefTypePointageEnum type, AgentStatutEnum statut, Date date)
+	protected EtatPayeur exportEtatPayeur(Integer idAgent, RefTypePointageEnum type, AgentStatutEnum statut, Date date)
 			throws Exception {
 
 		EtatPayeur ep = new EtatPayeur();
-		ep.setFichier(String.format("%s-%s-%s.pdf", sfd.format(date), statut,
-				type));
+		ep.setFichier(String.format("%s-%s-%s.pdf", sfd.format(date), statut, type));
 		ep.setLabel(String.format("%s-%s-%s", sfd.format(date), statut, type));
 		ep.setDateEtatPayeur(new LocalDate(date).withDayOfMonth(1).toDate());
 		ep.setStatut(statut);
-		ep.setType(pointageRepository.getEntity(RefTypePointage.class,
-				type.getValue()));
+		ep.setType(pointageRepository.getEntity(RefTypePointage.class, type.getValue()));
 		ep.setIdAgent(idAgent);
 		ep.setDateEdition(helperService.getCurrentDate());
 
 		logger.info("Downloading report named [{}]...", ep.getFichier());
-		birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(type,
-				statut.toString(), ep.getFichier());
+		birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(type, statut.toString(), ep.getFichier());
 		logger.info("Downloading report [{}] done.", ep.getFichier());
 
 		return ep;
@@ -558,8 +486,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	 * @param pointages
 	 * @param idAgent
 	 */
-	protected void markPointagesAsJournalises(Set<Pointage> pointages,
-			int idAgent) {
+	protected void markPointagesAsJournalises(Set<Pointage> pointages, int idAgent) {
 
 		Date currentDate = helperService.getCurrentDate();
 
@@ -583,8 +510,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	 * 
 	 * @param pointagesCalcules
 	 */
-	protected void markPointagesCalculesAsJournalises(
-			Set<PointageCalcule> pointagesCalcules) {
+	protected void markPointagesCalculesAsJournalises(Set<PointageCalcule> pointagesCalcules) {
 		for (PointageCalcule ptgC : pointagesCalcules) {
 			if (ptgC.getEtat() == EtatPointageEnum.JOURNALISE)
 				continue;
@@ -594,15 +520,13 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	}
 
 	@Override
-	public void stopExportEtatsPayeur(TypeChainePaieEnum typeChainePaie)
-			throws WorkflowInvalidStateException {
+	public void stopExportEtatsPayeur(TypeChainePaieEnum typeChainePaie) throws WorkflowInvalidStateException {
 
-		logger.info(
-				"Updating workflow by setting state to [ETATS_PAYEURS_TERMINES] for typeChainePaie {}...",
+		logger.info("Updating workflow by setting state to [ETATS_PAYEURS_TERMINES] for typeChainePaie {}...",
 				typeChainePaie);
 		paieWorkflowService.changeStateToExportEtatsPayeurDone(typeChainePaie);
 	}
-	
+
 	/**
 	 * Returns whether or not an agent is eligible to exporting Etats Payeur
 	 * considering its status (F, C or CC) we are currently exporting
@@ -612,12 +536,10 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	 * @return true if the agent is eligible
 	 */
 	protected boolean isAgentEligibleToReposComp(Integer idAgent, Date date) {
-		
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(
-				helperService.getMairieMatrFromIdAgent(idAgent), date);
-		
-		if (carr.getStatutCarriere().equals(AgentStatutEnum.C)
-				|| carr.getStatutCarriere().equals(AgentStatutEnum.CC)) {
+
+		Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
+
+		if (carr.getStatutCarriere().equals(AgentStatutEnum.C) || carr.getStatutCarriere().equals(AgentStatutEnum.CC)) {
 			return true;
 		}
 		return false;

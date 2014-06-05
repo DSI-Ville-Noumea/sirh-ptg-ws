@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
 
 public interface ISirhWSConsumer {
@@ -16,4 +17,6 @@ public interface ISirhWSConsumer {
 	List<SirhWsServiceDto> getSousServices(String rootService);
 
 	AgentWithServiceDto getAgentService(Integer idAgent, Date date);
+
+	AgentGeneriqueDto getAgent(Integer idAgent);
 }

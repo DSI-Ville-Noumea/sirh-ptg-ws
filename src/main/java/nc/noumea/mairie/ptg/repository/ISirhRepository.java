@@ -8,18 +8,17 @@ import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
 public interface ISirhRepository {
 
-	Agent getAgent(int idAgent);
+	Spcarr getAgentCurrentCarriere(AgentGeneriqueDto aAgent, Date asOfDate);
 
-	Spcarr getAgentCurrentCarriere(Agent aAgent, Date asOfDate);
 	Spcarr getAgentCurrentCarriere(Integer noMatr, Date asOfDate);
 
 	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date);
 
-	Spadmn getAgentCurrentPosition(Agent ag, Date asOfDate);
+	Spadmn getAgentCurrentPosition(AgentGeneriqueDto ag, Date asOfDate);
 
 	List<Sprirc> getListRecuperationBetween(Integer idAgent, Date start, Date end);
 
@@ -28,6 +27,6 @@ public interface ISirhRepository {
 	List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end);
 
 	boolean isJourHoliday(Date date);
-	
+
 	void mergeEntity(Object entity);
 }

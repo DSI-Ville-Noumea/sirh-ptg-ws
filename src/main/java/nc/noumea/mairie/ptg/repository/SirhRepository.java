@@ -15,7 +15,7 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -30,10 +30,10 @@ public class SirhRepository implements ISirhRepository {
 	private HelperService helperService;
 
 	@Override
-	public Spcarr getAgentCurrentCarriere(Agent agent, Date asOfDate) {
+	public Spcarr getAgentCurrentCarriere(AgentGeneriqueDto agent, Date asOfDate) {
 		return getAgentCurrentCarriere(agent.getNomatr(), asOfDate);
 	}
-	
+
 	@Override
 	public Spcarr getAgentCurrentCarriere(Integer nomatr, Date asOfDate) {
 
@@ -45,16 +45,11 @@ public class SirhRepository implements ISirhRepository {
 		qCarr.setParameter("todayFormatMairie", dateFormatMairie);
 
 		List<Spcarr> result = qCarr.getResultList();
-		
+
 		if (result.size() != 1)
 			return null;
 
 		return result.get(0);
-	}
-
-	@Override
-	public Agent getAgent(int idAgent) {
-		return sirhEntityManager.getReference(Agent.class, idAgent);
 	}
 
 	@Override
@@ -66,7 +61,7 @@ public class SirhRepository implements ISirhRepository {
 		sb.append("where aff.id_agent = :idAgent and aff.date_Debut_Aff <= :date ");
 		sb.append("and (aff.date_Fin_Aff = '01/01/0001' or aff.date_Fin_Aff is null or aff.date_Fin_Aff >= :date) ");
 		sb.append("order by paff.num_rubrique ");
-		
+
 		Query q = sirhEntityManager.createNativeQuery(sb.toString());
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("date", date);
@@ -109,7 +104,7 @@ public class SirhRepository implements ISirhRepository {
 	}
 
 	@Override
-	public Spadmn getAgentCurrentPosition(Agent agent, Date asOfDate) {
+	public Spadmn getAgentCurrentPosition(AgentGeneriqueDto agent, Date asOfDate) {
 		TypedQuery<Spadmn> qSpadmn = sirhEntityManager.createNamedQuery("getAgentSpadmnAsOfDate", Spadmn.class);
 		qSpadmn.setParameter("nomatr", agent.getNomatr());
 
@@ -129,7 +124,7 @@ public class SirhRepository implements ISirhRepository {
 
 		return (q.getResultList().size() != 0);
 	}
-	
+
 	@Override
 	public void mergeEntity(Object entity) {
 		sirhEntityManager.merge(entity);

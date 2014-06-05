@@ -18,7 +18,8 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -32,6 +33,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 	@Autowired
 	private ISirhRepository sirhRepository;
+
+	@Autowired
+	private ISirhWSConsumer sirhWsConsumer;
 
 	@Autowired
 	private HelperService helperService;
@@ -75,7 +79,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		if (nbHours == 0)
 			return srm;
 
-		Agent ag = sirhRepository.getAgent(idAgent);
+		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag, dateLundi);
 
 		double agentMaxHours = carr.getSpbhor().getTaux() * carr.getSpbase().getNbashh();
@@ -137,7 +141,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages) {
 
-		Agent ag = sirhRepository.getAgent(idAgent);
+		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag, dateLundi);
 
 		if ((carr.getStatutCarriere() != AgentStatutEnum.F || carr.getSpbarem().getIna() <= 315)
@@ -163,7 +167,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages) {
 
-		Agent ag = sirhRepository.getAgent(idAgent);
+		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		Spadmn adm = sirhRepository.getAgentCurrentPosition(ag, dateLundi);
 
 		if (!ACTIVITE_CODES.contains(adm.getCdpadm()))
@@ -382,7 +386,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages) {
 
-		Agent ag = sirhRepository.getAgent(idAgent);
+		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag, dateLundi);
 
 		boolean tempsPartiel = carr.getSpbhor().getTaux().intValue() != 1;

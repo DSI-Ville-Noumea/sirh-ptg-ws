@@ -13,11 +13,10 @@ import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -35,9 +34,6 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private IAccessRightsRepository accessRightsRepository;
-
-	@Autowired
-	private ISirhRepository sirhRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
@@ -73,7 +69,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		if (droit.getIdAgentDelegataire() != null) {
-			Agent delegataire = sirhRepository.getAgent(droit.getIdAgentDelegataire());
+			AgentGeneriqueDto delegataire = sirhWSConsumer.getAgent(droit.getIdAgentDelegataire());
 
 			if (delegataire == null)
 				logger.warn("L'agent délégataire {} n'existe pas.", droit.getIdAgentDelegataire());
@@ -82,7 +78,7 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		for (Droit operateur : droit.getOperateurs()) {
-			Agent ope = sirhRepository.getAgent(operateur.getIdAgent());
+			AgentGeneriqueDto ope = sirhWSConsumer.getAgent(operateur.getIdAgent());
 			if (ope == null)
 				logger.warn("L'agent opérateur {} n'existe pas.", operateur.getIdAgent());
 			else
@@ -104,7 +100,7 @@ public class AccessRightsService implements IAccessRightsService {
 		if (dto.getDelegataire() != null) {
 			// Check that the new delegataire is not an operator
 			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
-				Agent ag = sirhRepository.getAgent(dto.getDelegataire().getIdAgent());
+				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
 				result.getErrors().add(
 						String.format(
 								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
@@ -134,7 +130,7 @@ public class AccessRightsService implements IAccessRightsService {
 			// Check that the new operateur is not already delegataire or
 			// approbateur
 			if (accessRightsRepository.isUserApprobatorOrDelegataire(operateurDto.getIdAgent())) {
-				Agent ag = sirhRepository.getAgent(operateurDto.getIdAgent());
+				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(operateurDto.getIdAgent());
 				result.getErrors()
 						.add(String
 								.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
@@ -284,7 +280,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
 			AgentDto agDto = new AgentDto();
-			Agent ag = sirhRepository.getAgent(da.getIdAgent());
+			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
 			agDto.setIdAgent(da.getIdAgent());
 			agDto.setNom(ag.getDisplayNom());
 			agDto.setPrenom(ag.getDisplayPrenom());
@@ -411,7 +407,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public Agent findAgent(Integer idAgent) {
-		return sirhRepository.getAgent(idAgent);
+	public AgentGeneriqueDto findAgent(Integer idAgent) {
+		return sirhWSConsumer.getAgent(idAgent);
 	}
 }

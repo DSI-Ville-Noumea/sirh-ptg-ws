@@ -28,7 +28,7 @@ import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -75,7 +75,7 @@ public class PointageServiceTest {
 		carr.setId(carrId);
 		carr.setCdcate(1);
 
-		Agent agent = new Agent();
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
 		agent.setIdAgent(9007654);
 
 		List<Integer> listePrimePointage = new ArrayList<Integer>();
@@ -112,7 +112,7 @@ public class PointageServiceTest {
 
 		// When
 		PointageService service = new PointageService();
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
@@ -146,7 +146,7 @@ public class PointageServiceTest {
 
 		// Given
 		int idAgent = 9006543;
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9006543);
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -205,8 +205,8 @@ public class PointageServiceTest {
 		e2.setEtat(EtatPointageEnum.APPROUVE);
 		p2.getEtats().add(e2);
 
-		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(
@@ -219,9 +219,9 @@ public class PointageServiceTest {
 		PointageService service = Mockito.spy(new PointageService());
 		Mockito.doReturn(dto).when(service).getFichePointageForAgent(ag, dateLundi);
 
-		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		FichePointageDto result = service.getFilledFichePointageForAgent(idAgent, dateLundi);
@@ -251,7 +251,7 @@ public class PointageServiceTest {
 
 		// Given
 		int idAgent = 9006543;
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9006543);
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -308,8 +308,8 @@ public class PointageServiceTest {
 		e2.setEtat(EtatPointageEnum.APPROUVE);
 		p2.getEtats().add(e2);
 
-		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(
@@ -322,9 +322,9 @@ public class PointageServiceTest {
 		PointageService service = Mockito.spy(new PointageService());
 		Mockito.doReturn(dto).when(service).getFichePointageForAgent(ag, dateLundi);
 
-		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		FichePointageDto result = service.getFilledFichePointageForAgent(idAgent, dateLundi);
@@ -356,7 +356,7 @@ public class PointageServiceTest {
 
 		// Given
 		int idAgent = 9006543;
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9006543);
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -432,8 +432,8 @@ public class PointageServiceTest {
 		e3.setEtat(EtatPointageEnum.REFUSE_DEFINITIVEMENT);
 		p3.getEtats().add(e3);
 
-		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mairieRepo.getAgent(idAgent)).thenReturn(ag);
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(idAgent, dateLundi)).thenReturn(
@@ -447,9 +447,9 @@ public class PointageServiceTest {
 		PointageService service = Mockito.spy(new PointageService());
 		Mockito.doReturn(dto).when(service).getFichePointageForAgent(ag, dateLundi);
 
-		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		FichePointageDto result = service.getFilledFichePointageForAgent(idAgent, dateLundi);

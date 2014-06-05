@@ -8,6 +8,7 @@ import java.util.Map;
 
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +27,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhAgentsServiceUrl = "services/agents";
 	private static final String sirhAgentServiceUrl = "services/agent";
 	private static final String sirhSousServicesUrl = "services/sousServices";
+	private static final String sirhAgentUrl = "agents/getAgent";
 
 	@Override
 	public SirhWsServiceDto getAgentDirection(Integer idAgent) {
@@ -33,7 +35,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		String url = String.format(sirhWsBaseUrl + sirhAgentDivisionsUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
-		
+
 		parameters.put("idAgent", String.valueOf(idAgent));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
@@ -90,5 +92,17 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		List<SirhWsServiceDto> services = readResponseAsList(SirhWsServiceDto.class, res, url);
 
 		return services;
+	}
+
+	@Override
+	public AgentGeneriqueDto getAgent(Integer idAgent) {
+		String url = String.format(sirhWsBaseUrl + sirhAgentUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(AgentGeneriqueDto.class, res, url);
 	}
 }

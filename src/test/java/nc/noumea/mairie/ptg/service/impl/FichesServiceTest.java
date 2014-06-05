@@ -8,8 +8,8 @@ import java.util.List;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -25,7 +25,7 @@ public class FichesServiceTest {
 		// Given
 		Integer idAgent = 906543;
 
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9005138);
 
 		DroitsAgent da = new DroitsAgent();
@@ -34,12 +34,12 @@ public class FichesServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, "DEDA")).thenReturn(Arrays.asList(da));
 
-		ISirhRepository sirhRepo = Mockito.mock(ISirhRepository.class);
+		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhRepo.getAgent(9005138)).thenReturn(ag);
 
 		FichesService service = new FichesService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
 		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, "DEDA");

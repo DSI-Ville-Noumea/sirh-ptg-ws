@@ -33,7 +33,7 @@ import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -53,7 +53,7 @@ public class PointageService implements IPointageService {
 	private ISirhRepository sirhRepository;
 
 	@Autowired
-	private ISirhWSConsumer sirhWSConsumer;
+	private ISirhWSConsumer sirhWsConsumer;
 
 	@Autowired
 	private HelperService helperService;
@@ -61,14 +61,14 @@ public class PointageService implements IPointageService {
 	@Autowired
 	private IAgentMatriculeConverterService agentMatriculeConverterService;
 
-	protected FichePointageDto getFichePointageForAgent(Agent agent, Date date) {
+	protected FichePointageDto getFichePointageForAgent(AgentGeneriqueDto agent, Date date) {
 
 		if (!helperService.isDateAMonday(date)) {
 			throw new NotAMondayException();
 		}
 
 		// Retrieve division service of agent
-		SirhWsServiceDto service = sirhWSConsumer.getAgentDirection(agent.getIdAgent());
+		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(agent.getIdAgent());
 
 		// on construit le dto de l'agent
 		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);
@@ -116,12 +116,12 @@ public class PointageService implements IPointageService {
 	@Override
 	public FichePointageListDto getFichesPointageForUsers(String csvIdAgents, Date date) {
 
-		List<Agent> listAgent = new ArrayList<Agent>();
+		List<AgentGeneriqueDto> listAgent = new ArrayList<AgentGeneriqueDto>();
 
 		for (String id : csvIdAgents.split(",")) {
 			Integer convertedId = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(Integer
 					.valueOf(id));
-			Agent ag = sirhRepository.getAgent(convertedId);
+			AgentGeneriqueDto ag = sirhWsConsumer.getAgent(convertedId);
 			if (ag != null) {
 				listAgent.add(ag);
 			}
@@ -129,7 +129,7 @@ public class PointageService implements IPointageService {
 
 		FichePointageListDto fiches = new FichePointageListDto();
 
-		for (Agent agent : listAgent) {
+		for (AgentGeneriqueDto agent : listAgent) {
 			FichePointageDto ficheDto = getFichePointageForAgent(agent, date);
 			fiches.getFiches().add(ficheDto);
 		}
@@ -140,7 +140,7 @@ public class PointageService implements IPointageService {
 	@Override
 	public FichePointageDto getFilledFichePointageForAgent(int idAgent, Date dateLundi) {
 
-		Agent agent = sirhRepository.getAgent(idAgent);
+		AgentGeneriqueDto agent = sirhWsConsumer.getAgent(idAgent);
 
 		FichePointageDto ficheDto = getFichePointageForAgent(agent, dateLundi);
 

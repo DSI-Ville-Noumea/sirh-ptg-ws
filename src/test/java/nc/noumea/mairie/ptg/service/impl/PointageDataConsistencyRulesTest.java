@@ -27,7 +27,8 @@ import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IHolidayService;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -659,7 +660,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkMaxAbsenceHebdo_Noabsences_ReturnNoError() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 17, 0, 0, 0).toDate();
 
@@ -670,11 +671,11 @@ public class PointageDataConsistencyRulesTest {
 		p2.setType(new RefTypePointage());
 		p2.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", mRepo);
 
 		// When
 		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi,
@@ -689,7 +690,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkMaxAbsenceHebdo_2absences_NbHeureDepasse_returnError() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -713,11 +714,14 @@ public class PointageDataConsistencyRulesTest {
 		car.setSpbase(bas);
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi,
@@ -733,7 +737,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkMaxAbsenceHebdo_2absences_NbHeureNonDepasse_returnError() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -757,11 +761,14 @@ public class PointageDataConsistencyRulesTest {
 		car.setSpbase(bas);
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi,
@@ -776,7 +783,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentINAAndHSup_INALessThan315_NoError() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -796,11 +803,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
@@ -815,7 +825,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentINAAndHSup_INAEq315_NoError() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -835,11 +845,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
@@ -854,7 +867,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentINAAndHSup_INASupTo315_returnError() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -874,11 +887,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
@@ -894,7 +910,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentINAAndHSup_INASupTo315_Not_F_returnNothing() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -914,11 +930,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
@@ -933,7 +952,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentINAAndHSup_INALessThan315ButZ_returnError() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -953,11 +972,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
@@ -973,7 +995,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentInactivity_AgentIsActive_ReturnNothing() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9007865);
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -981,11 +1003,14 @@ public class PointageDataConsistencyRulesTest {
 		sp.setCdpadm("01");
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(9007865)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateLundi)).thenReturn(sp);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(9007865)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentInactivity(new ReturnMessageDto(), 9007865, dateLundi, null);
@@ -999,7 +1024,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentInactivity_AgentIsInActive_ReturnError() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9007865);
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -1007,11 +1032,14 @@ public class PointageDataConsistencyRulesTest {
 		sp.setCdpadm("99");
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(9007865)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateLundi)).thenReturn(sp);
+
+		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhRepo.getAgent(9007865)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentInactivity(new ReturnMessageDto(), 9007865, dateLundi, null);
@@ -1695,7 +1723,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentTempsPartielAndHSup_NoTempsPartiel_OK() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -1714,11 +1742,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
@@ -1733,7 +1764,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentTempsPartielAndHSup_TempsPartiel_OK() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -1754,8 +1785,10 @@ public class PointageDataConsistencyRulesTest {
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbashh())).thenReturn(1200);
@@ -1764,6 +1797,7 @@ public class PointageDataConsistencyRulesTest {
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
@@ -1778,7 +1812,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentTempsPartielAndHSup_KO() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -1799,8 +1833,10 @@ public class PointageDataConsistencyRulesTest {
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbashh())).thenReturn(1200);
@@ -1810,6 +1846,7 @@ public class PointageDataConsistencyRulesTest {
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
@@ -1826,7 +1863,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentTempsPartielAndHSup_TempsPartiel_WithAbsence_OK() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -1853,8 +1890,10 @@ public class PointageDataConsistencyRulesTest {
 		p2.getType().setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbashh())).thenReturn(1200);
@@ -1863,6 +1902,7 @@ public class PointageDataConsistencyRulesTest {
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
@@ -1877,7 +1917,7 @@ public class PointageDataConsistencyRulesTest {
 	public void checkAgentTempsPartielAndHSup_WithAbsence_KO() {
 
 		// Given
-		Agent ag = new Agent();
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
@@ -1904,8 +1944,10 @@ public class PointageDataConsistencyRulesTest {
 		p2.getType().setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 
 		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(idAgent)).thenReturn(ag);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbashh())).thenReturn(1200);
@@ -1915,6 +1957,7 @@ public class PointageDataConsistencyRulesTest {
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,

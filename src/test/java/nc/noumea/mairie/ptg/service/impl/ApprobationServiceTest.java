@@ -23,10 +23,10 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.AccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageService;
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -89,17 +89,17 @@ public class ApprobationServiceTest {
 						Mockito.eq(fromDate), Mockito.eq(toDateQuery), Mockito.eq(RefTypePointageEnum.ABSENCE),
 						Mockito.eq(letat))).thenReturn(Arrays.asList(ptg, ptg2));
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
-		Mockito.when(mRepo.getAgent(9001235)).thenReturn(new Agent());
-		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new Agent());
+		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new AgentGeneriqueDto());
+		Mockito.when(mRepo.getAgent(9001235)).thenReturn(new AgentGeneriqueDto());
+		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new AgentGeneriqueDto());
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -149,16 +149,16 @@ public class ApprobationServiceTest {
 						Mockito.eq(toDateQuery), Mockito.eq(RefTypePointageEnum.ABSENCE),
 						Mockito.eq(Arrays.asList(EtatPointageEnum.SAISI)))).thenReturn(Arrays.asList(ptg2));
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
-		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new Agent());
+		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new AgentGeneriqueDto());
+		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new AgentGeneriqueDto());
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -229,11 +229,11 @@ public class ApprobationServiceTest {
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getPointageArchives(123)).thenReturn(Arrays.asList(ptg1));
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Agent ag9007860 = new Agent();
+		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
+		AgentGeneriqueDto ag9007860 = new AgentGeneriqueDto();
 		ag9007860.setIdAgent(9007860);
 		Mockito.when(mRepo.getAgent(9007860)).thenReturn(ag9007860);
-		Agent ag9007861 = new Agent();
+		AgentGeneriqueDto ag9007861 = new AgentGeneriqueDto();
 		ag9007861.setIdAgent(9007861);
 		Mockito.when(mRepo.getAgent(9007861)).thenReturn(ag9007861);
 
@@ -241,7 +241,7 @@ public class ApprobationServiceTest {
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -544,15 +544,15 @@ public class ApprobationServiceTest {
 						RefTypePointageEnum.ABSENCE, Arrays.asList(EtatPointageEnum.SAISI))).thenReturn(
 				Arrays.asList(ptg2));
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new Agent());
-		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new Agent());
+		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new AgentGeneriqueDto());
+		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new AgentGeneriqueDto());
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageService", pService);
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When

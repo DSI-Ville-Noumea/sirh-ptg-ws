@@ -1,8 +1,11 @@
 package nc.noumea.mairie.ws;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,20 +22,21 @@ public abstract class BaseWsConsumer {
 	public ClientResponse createAndFireGetRequest(Map<String, String> parameters, String url) {
 		return createAndFireRequest(parameters, url, false, null);
 	}
-	
+
 	public ClientResponse createAndFirePostRequest(Map<String, String> parameters, String url) {
 		return createAndFireRequest(parameters, url, true, null);
 	}
-	
+
 	public ClientResponse createAndFirePostRequest(Map<String, String> parameters, String url, String content) {
 		return createAndFireRequest(parameters, url, true, content);
 	}
-	
-	public ClientResponse createAndFireRequest(Map<String, String> parameters, String url, boolean isPost, String postContent) {
+
+	public ClientResponse createAndFireRequest(Map<String, String> parameters, String url, boolean isPost,
+			String postContent) {
 
 		Client client = Client.create();
 		WebResource webResource = client.resource(url);
-		
+
 		for (String key : parameters.keySet()) {
 			webResource = webResource.queryParam(key, parameters.get(key));
 		}
@@ -44,7 +48,8 @@ public abstract class BaseWsConsumer {
 				if (postContent != null)
 					response = webResource.accept(MediaType.APPLICATION_JSON_VALUE).post(ClientResponse.class);
 				else
-					response = webResource.accept(MediaType.APPLICATION_JSON_VALUE).post(ClientResponse.class, postContent);
+					response = webResource.accept(MediaType.APPLICATION_JSON_VALUE).post(ClientResponse.class,
+							postContent);
 			else
 				response = webResource.accept(MediaType.APPLICATION_JSON_VALUE).get(ClientResponse.class);
 		} catch (ClientHandlerException ex) {
@@ -55,14 +60,15 @@ public abstract class BaseWsConsumer {
 	}
 
 	public void readResponse(ClientResponse response, String url) {
-		
-		if (response.getStatus() == HttpStatus.OK.value()) 
+
+		if (response.getStatus() == HttpStatus.OK.value())
 			return;
-		
-		throw new WSConsumerException(String.format("An error occured when querying '%s'. Return code is : %s, content is %s", 
-				url, response.getStatus(), response.getEntity(String.class)));
+
+		throw new WSConsumerException(String.format(
+				"An error occured when querying '%s'. Return code is : %s, content is %s", url, response.getStatus(),
+				response.getEntity(String.class)));
 	}
-	
+
 	public <T> T readResponse(Class<T> targetClass, ClientResponse response, String url) {
 
 		T result = null;
@@ -72,7 +78,8 @@ public abstract class BaseWsConsumer {
 			result = targetClass.newInstance();
 
 		} catch (Exception ex) {
-			throw new WSConsumerException("An error occured when instantiating return type when deserializing JSON from WS request.", ex);
+			throw new WSConsumerException(
+					"An error occured when instantiating return type when deserializing JSON from WS request.", ex);
 		}
 
 		if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
@@ -80,13 +87,14 @@ public abstract class BaseWsConsumer {
 		}
 
 		if (response.getStatus() != HttpStatus.OK.value()) {
-			throw new WSConsumerException(String.format("An error occured when querying '%s'. Return code is : %s, content is %s", 
-					url, response.getStatus(), response.getEntity(String.class)));
+			throw new WSConsumerException(String.format(
+					"An error occured when querying '%s'. Return code is : %s, content is %s", url,
+					response.getStatus(), response.getEntity(String.class)));
 		}
 
 		String output = response.getEntity(String.class);
 
-		result = new JSONDeserializer<T>().deserializeInto(output, result);
+		result = new JSONDeserializer<T>().use(Date.class, new MSDateTransformer()).deserializeInto(output, result);
 
 		return result;
 	}
@@ -102,12 +110,14 @@ public abstract class BaseWsConsumer {
 		}
 
 		if (response.getStatus() != HttpStatus.OK.value()) {
-			throw new WSConsumerException(String.format("An error occured when querying '%s'. Return code is : %s", url, response.getStatus()));
+			throw new WSConsumerException(String.format("An error occured when querying '%s'. Return code is : %s",
+					url, response.getStatus()));
 		}
 
 		String output = response.getEntity(String.class);
 
-		result = new JSONDeserializer<List<T>>().use(null, ArrayList.class).use("values", targetClass).deserialize(output);
+		result = new JSONDeserializer<List<T>>().use(null, ArrayList.class).use("values", targetClass)
+				.deserialize(output);
 
 		return result;
 	}

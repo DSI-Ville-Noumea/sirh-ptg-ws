@@ -1,6 +1,6 @@
 package nc.noumea.mairie.ptg.dto;
 
-import nc.noumea.mairie.sirh.domain.Agent;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
 public class AgentDto {
 
@@ -12,7 +12,7 @@ public class AgentDto {
 
 	}
 
-	public AgentDto(Agent agent) {
+	public AgentDto(AgentGeneriqueDto agent) {
 		nom = agent.getDisplayNom();
 		prenom = agent.getDisplayPrenom();
 		idAgent = agent.getIdAgent();
