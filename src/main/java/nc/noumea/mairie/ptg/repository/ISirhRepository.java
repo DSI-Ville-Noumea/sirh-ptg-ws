@@ -26,7 +26,5 @@ public interface ISirhRepository {
 
 	List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end);
 
-	boolean isJourHoliday(Date date);
-
 	void mergeEntity(Object entity);
 }

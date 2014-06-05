@@ -13,8 +13,8 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
-import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -26,28 +26,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class PointageCalculeService implements IPointageCalculeService {
 
-	@Autowired 
+	@Autowired
 	private ISirhRepository sirhRepository;
-	
+
 	@Autowired
 	private IPointageRepository pointageRepository;
-	
+
 	@Autowired
-	private IHolidayService holidayService;
-	
+	private ISirhWSConsumer sirhWsConsumer;
+
 	/**
-	 * Calculating a list of PointageCalcule for an agent over a week (from = monday, to = sunday)
-	 * Based on its RefPrime at the time of the monday
+	 * Calculating a list of PointageCalcule for an agent over a week (from =
+	 * monday, to = sunday) Based on its RefPrime at the time of the monday
 	 */
-	public List<PointageCalcule> calculatePointagesForAgentAndWeek(Integer idAgent, AgentStatutEnum statut, Date dateLundi, List<Pointage> agentPointages) {
-		
+	public List<PointageCalcule> calculatePointagesForAgentAndWeek(Integer idAgent, AgentStatutEnum statut,
+			Date dateLundi, List<Pointage> agentPointages) {
+
 		List<Integer> norubrs = sirhRepository.getPrimePointagesByAgent(idAgent, dateLundi);
 		List<RefPrime> refPrimes = pointageRepository.getRefPrimesCalculees(norubrs, statut);
-		
+
 		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>();
-		
+
 		for (RefPrime prime : refPrimes) {
-			
+
 			switch (prime.getNoRubr()) {
 				case 7711:
 				case 7712:
@@ -56,39 +57,41 @@ public class PointageCalculeService implements IPointageCalculeService {
 					break;
 			}
 		}
-		
+
 		return pointagesCalcules;
 	}
-	
-	public List<PointageCalcule> generatePointage7711_12_13(Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
-		
+
+	public List<PointageCalcule> generatePointage7711_12_13(Integer idAgent, Date dateLundi, RefPrime prime,
+			List<Pointage> pointages) {
+
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
-		
+
 		for (Pointage ptg : getPointagesPrime(pointages, 7715)) {
-			
+
 			LocalDate datePointage = new DateTime(ptg.getDateDebut()).toLocalDate();
-			
+
 			Interval inputInterval = new Interval(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin()));
-			Interval primeIntervalInverse = new Interval(
-					new DateTime(datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 5, 0, 0),
-					new DateTime(datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 21, 0, 0));
-			
+			Interval primeIntervalInverse = new Interval(new DateTime(datePointage.getYear(),
+					datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 5, 0, 0), new DateTime(
+					datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 21, 0, 0));
+
 			Interval overlap = primeIntervalInverse.overlap(inputInterval);
 			long dayMinutes = overlap == null ? 0 : overlap.toDuration().getStandardMinutes();
 			long totalMinutes = inputInterval.toDuration().getStandardMinutes();
-			
+
 			if (prime.getNoRubr().equals(7712)
-					&& (datePointage.getDayOfWeek() == DateTimeConstants.SUNDAY || holidayService.isHoliday(datePointage))) {
+					&& (datePointage.getDayOfWeek() == DateTimeConstants.SUNDAY || sirhWsConsumer
+							.isHoliday(datePointage))) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
 				existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
 				existingPc.addQuantite((int) totalMinutes);
 
 				if (!result.contains(existingPc))
 					result.add(existingPc);
-				
+
 				continue;
 			}
-			
+
 			if (prime.getNoRubr().equals(7711)) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
 				existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
@@ -96,7 +99,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 
 				if (!result.contains(existingPc))
 					result.add(existingPc);
-				
+
 				continue;
 			}
 
@@ -107,70 +110,73 @@ public class PointageCalculeService implements IPointageCalculeService {
 						|| inputInterval.getStart().getHourOfDay() <= 13 && inputInterval.getEnd().getHourOfDay() >= 21) {
 					PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
 					existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
-					
-					if (existingPc.getQuantite() == null ||  existingPc.getQuantite() < 2)
+
+					if (existingPc.getQuantite() == null || existingPc.getQuantite() < 2)
 						existingPc.addQuantite(1);
-					
+
 					if (!result.contains(existingPc))
 						result.add(existingPc);
 				}
 			}
 		}
-		
+
 		return result;
 	}
-	
+
 	private List<Pointage> getPointagesPrime(List<Pointage> pointages, Integer noRubr) {
-		
+
 		List<Pointage> result = new ArrayList<Pointage>();
-		
+
 		for (Pointage ptg : pointages) {
-			if (ptg.getTypePointageEnum() == RefTypePointageEnum.PRIME
-					&& ptg.getRefPrime().getNoRubr().equals(noRubr))
+			if (ptg.getTypePointageEnum() == RefTypePointageEnum.PRIME && ptg.getRefPrime().getNoRubr().equals(noRubr))
 				result.add(ptg);
 		}
-		
+
 		return result;
 	}
 
 	/**
-	 * Retrieves a PointageCalcule for a given date
-	 * this is used by Pointage generators to avoid creating multiple primes for one day
+	 * Retrieves a PointageCalcule for a given date this is used by Pointage
+	 * generators to avoid creating multiple primes for one day
+	 * 
 	 * @param list
 	 * @param pointageDate
 	 * @return
 	 */
 	private PointageCalcule getPointageCalculeOfSamePrime(List<PointageCalcule> list, Date pointageDate) {
-		
+
 		PointageCalcule existingPc = null;
-		
+
 		for (PointageCalcule pc : list) {
 			if (pc.getDateDebut().equals(pointageDate)) {
 				existingPc = pc;
 				break;
 			}
 		}
-		
+
 		return existingPc;
 	}
-	
+
 	/**
-	 * This methods either returns the pointageCalcule if not null or create a new one
-	 * according to the pointage and the prime generating it.
-	 * This is used by Pointage generators to create new Pointage calcules the same way for all methods
+	 * This methods either returns the pointageCalcule if not null or create a
+	 * new one according to the pointage and the prime generating it. This is
+	 * used by Pointage generators to create new Pointage calcules the same way
+	 * for all methods
+	 * 
 	 * @param pCalcule
 	 * @param ptg
 	 * @param prime
 	 * @return
 	 */
 	private PointageCalcule returnOrCreateNewPointageWithPrime(PointageCalcule pCalcule, Pointage ptg, RefPrime prime) {
-		
+
 		if (pCalcule != null)
 			return pCalcule;
-		
+
 		DateTime start = new DateTime(ptg.getDateDebut());
-		Date newPrimeStartDate = new DateTime(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth(), 0, 0, 0).toDate();
-		
+		Date newPrimeStartDate = new DateTime(start.getYear(), start.getMonthOfYear(), start.getDayOfMonth(), 0, 0, 0)
+				.toDate();
+
 		pCalcule = new PointageCalcule();
 		pCalcule.setIdAgent(ptg.getIdAgent());
 		pCalcule.setDateLundi(ptg.getDateLundi());
@@ -178,8 +184,8 @@ public class PointageCalculeService implements IPointageCalculeService {
 		pCalcule.setEtat(EtatPointageEnum.VENTILE);
 		pCalcule.setRefPrime(prime);
 		pCalcule.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME.getValue()));
-		
+
 		return pCalcule;
 	}
-	
+
 }

@@ -16,7 +16,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
-import nc.noumea.mairie.ptg.service.IHolidayService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -137,11 +137,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -199,11 +199,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -282,11 +282,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -379,11 +379,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -469,11 +469,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -538,11 +538,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -628,11 +628,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -733,11 +733,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -831,11 +831,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -929,11 +929,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -1034,11 +1034,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -1159,11 +1159,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -1268,11 +1268,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2012, 05, 1, 9, 0, 0))).thenReturn(true);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -1383,11 +1383,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2012, 05, 1, 9, 0, 0))).thenReturn(true);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -1451,11 +1451,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 04, 1, 8, 0, 0))).thenReturn(true);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -1545,11 +1545,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -1633,11 +1633,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 		
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 		
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 		
 		// When
@@ -1689,11 +1689,11 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 
-		IHolidayService hService = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(Mockito.any(DateTime.class))).thenReturn(false);
 
 		VentilationHSupService service = new VentilationHSupService();
-		ReflectionTestUtils.setField(service, "holidayService", hService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
 
 		// When

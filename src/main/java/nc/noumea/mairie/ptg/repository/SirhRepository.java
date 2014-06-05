@@ -118,14 +118,6 @@ public class SirhRepository implements ISirhRepository {
 	}
 
 	@Override
-	public boolean isJourHoliday(Date date) {
-		TypedQuery<Integer> q = sirhEntityManager.createNamedQuery("isJourHoliday", Integer.class);
-		q.setParameter("date", date);
-
-		return (q.getResultList().size() != 0);
-	}
-
-	@Override
 	public void mergeEntity(Object entity) {
 		sirhEntityManager.merge(entity);
 	}

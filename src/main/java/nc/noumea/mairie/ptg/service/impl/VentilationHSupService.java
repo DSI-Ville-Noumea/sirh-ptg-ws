@@ -1,5 +1,9 @@
 package nc.noumea.mairie.ptg.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spbhor;
@@ -8,22 +12,19 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
-import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
+
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
 import org.joda.time.Minutes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Service
 public class VentilationHSupService implements IVentilationHSupService {
 
-	//-- HSUP consts --//
+	// -- HSUP consts --//
 	private static int HEURE_JOUR_DEBUT_F = 4;
 	private static int HEURE_JOUR_FIN_F = 21;
 
@@ -37,7 +38,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 	private static int BASE_HEBDO_LEGALE = 39 * 60;
 
 	@Autowired
-	private IHolidayService holidayService;
+	private ISirhWSConsumer sirhWsConsumer;
 
 	@Autowired
 	private HelperService helperService;
@@ -53,15 +54,18 @@ public class VentilationHSupService implements IVentilationHSupService {
 	}
 
 	@Override
-	public VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, boolean has1150Prime) {
+	public VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, Date dateLundi,
+			List<Pointage> pointages, boolean has1150Prime) {
 		return processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.CC, has1150Prime);
 	}
 
-	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut) {
+	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages,
+			AgentStatutEnum statut) {
 		return processHSup(idAgent, carr, dateLundi, pointages, statut, false);
 	}
 
-	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime) {
+	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages,
+			AgentStatutEnum statut, boolean has1150Prime) {
 
 		// If there are no HSUPS pointages, there will be no VentilHSup.
 		if (!areThereHSupsPointages(pointages))
@@ -100,9 +104,11 @@ public class VentilationHSupService implements IVentilationHSupService {
 			// Compute the new total of hours for the agent
 			weekMinutes += dayBase;
 
-			// Compute the number of MinutesSup considering the week normal hours
+			// Compute the number of MinutesSup considering the week normal
+			// hours
 			int nbMinutesSup = (weekMinutes - weekBase) <= 0 ? 0 : (weekMinutes - weekBase);
-			// In the whole amount of MinutesSup, take only the ones we added with this day of work
+			// In the whole amount of MinutesSup, take only the ones we added
+			// with this day of work
 			nbMinutesSup = nbMinutesSup > dayBase ? dayBase : nbMinutesSup;
 
 			// Then take what's over the agent's weekBase only
@@ -131,23 +137,29 @@ public class VentilationHSupService implements IVentilationHSupService {
 				if (ptg.getHeureSupRecuperee())
 					nbMinutesRecuperees += minutes.getTotalMinutes();
 
-				// For agents statuses CC and C, count Hours done on DJF and NUIT even if those hours will not
-				// be counted as Minutes Sup (except if agent has Prime Rubr n° 1150)
+				// For agents statuses CC and C, count Hours done on DJF and
+				// NUIT even if those hours will not
+				// be counted as Minutes Sup (except if agent has Prime Rubr n°
+				// 1150)
 				if (statut != AgentStatutEnum.F && !has1150Prime)
 					countHSupDJFandNUITNotFonctionnaire(result, minutes, ptg.getHeureSupRecuperee());
 
-				// Then, if those hours can't be counted as HSup (because under the weekBase), stop here the process
+				// Then, if those hours can't be counted as HSup (because under
+				// the weekBase), stop here the process
 				if (weekMinutes <= weekBase)
 					continue;
 
 				// Remove as many hours as needed to get exact number of HSUP
-				// If for example the weekMinutes is over the weekBase because of these hours
+				// If for example the weekMinutes is over the weekBase because
+				// of these hours
 				removeMinutesWhileUnderWeekBase(minutes, weekBase, weekMinutes, statut);
 
-				// Then , depending on agent status, computer the HSup specifically
+				// Then , depending on agent status, computer the HSup
+				// specifically
 				switch (statut) {
 					case F:
-						generateHSupFonctionnaire(result, weekBase, weekMinutes, dday, minutes.getNbMinutesJour(), minutes.getNbMinutesNuit(), startDate, ptg.getHeureSupRecuperee());
+						generateHSupFonctionnaire(result, weekBase, weekMinutes, dday, minutes.getNbMinutesJour(),
+								minutes.getNbMinutesNuit(), startDate, ptg.getHeureSupRecuperee());
 						break;
 					case C:
 					case CC:
@@ -175,11 +187,10 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 	/**
 	 * This method takes all minutes marked as recuperees but that were not
-	 * taken as minutes sup because happening before the agent reached his
-	 * week legal number of hours, and add them to the existing minutes
-	 * marked as recuperees in the VentilHSup result object based on the
-	 * agent "statut".
-	 *
+	 * taken as minutes sup because happening before the agent reached his week
+	 * legal number of hours, and add them to the existing minutes marked as
+	 * recuperees in the VentilHSup result object based on the agent "statut".
+	 * 
 	 * @param result
 	 * @param statut
 	 */
@@ -189,15 +200,13 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 		switch (statut) {
 			case F:
-				totalAmountOfHSRecuperees = result.getMComposeesRecup()
-						+ result.getMNormalesRecup() + result.getMsdjfRecup()
-						+ result.getMSimpleRecup() + result.getMsNuitRecup();
+				totalAmountOfHSRecuperees = result.getMComposeesRecup() + result.getMNormalesRecup()
+						+ result.getMsdjfRecup() + result.getMSimpleRecup() + result.getMsNuitRecup();
 				break;
 			case C:
 			case CC:
-				totalAmountOfHSRecuperees = result.getMComplementairesRecup()
-						+ result.getMsdjf25Recup() + result.getMsdjf50Recup()
-						+ result.getMSup25Recup() + result.getMSup50Recup();
+				totalAmountOfHSRecuperees = result.getMComplementairesRecup() + result.getMsdjf25Recup()
+						+ result.getMsdjf50Recup() + result.getMSup25Recup() + result.getMSup50Recup();
 				break;
 
 		}
@@ -210,14 +219,16 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 		switch (statut) {
 			case F:
-				int nbMinutesSimplesToAdd = (minutesNotAccountedFor + result.getMSimpleRecup()) > NB_HS_SIMPLE ? (NB_HS_SIMPLE - result.getMSimpleRecup()) : minutesNotAccountedFor;
+				int nbMinutesSimplesToAdd = (minutesNotAccountedFor + result.getMSimpleRecup()) > NB_HS_SIMPLE ? (NB_HS_SIMPLE - result
+						.getMSimpleRecup()) : minutesNotAccountedFor;
 				result.setMSimpleRecup(result.getMSimpleRecup() + nbMinutesSimplesToAdd);
 				minutesNotAccountedFor -= nbMinutesSimplesToAdd;
 				result.setMComposeesRecup(result.getMComposeesRecup() + minutesNotAccountedFor);
 				break;
 			case C:
 			case CC:
-				int nbMinutesToCountAs25 = (result.getMSup25Recup() + minutesNotAccountedFor <= 8 * 60) ? minutesNotAccountedFor : (8 * 60 - result.getMSup25Recup());
+				int nbMinutesToCountAs25 = (result.getMSup25Recup() + minutesNotAccountedFor <= 8 * 60) ? minutesNotAccountedFor
+						: (8 * 60 - result.getMSup25Recup());
 				nbMinutesToCountAs25 = nbMinutesToCountAs25 > 0 ? nbMinutesToCountAs25 : 0;
 				result.setMSup25Recup(result.getMSup25Recup() + nbMinutesToCountAs25);
 				minutesNotAccountedFor -= nbMinutesToCountAs25;
@@ -227,11 +238,14 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 	}
 
-	protected void generateHSupFonctionnaire(VentilHsup result, int weekBase, int weekMinutes, DateTime dday, int nbMinutesSupJour) {
-		generateHSupFonctionnaire(result, weekBase, weekMinutes, dday, nbMinutesSupJour, 0, dday.plusHours(HEURE_JOUR_DEBUT_F), false);
+	protected void generateHSupFonctionnaire(VentilHsup result, int weekBase, int weekMinutes, DateTime dday,
+			int nbMinutesSupJour) {
+		generateHSupFonctionnaire(result, weekBase, weekMinutes, dday, nbMinutesSupJour, 0,
+				dday.plusHours(HEURE_JOUR_DEBUT_F), false);
 	}
 
-	protected void generateHSupFonctionnaire(VentilHsup result, int weekBase, int weekMinutes, DateTime dday, int nbMinutesSupJour, int nbMinutesSupNuit, DateTime startDate, boolean isHRecuperee) {
+	protected void generateHSupFonctionnaire(VentilHsup result, int weekBase, int weekMinutes, DateTime dday,
+			int nbMinutesSupJour, int nbMinutesSupNuit, DateTime startDate, boolean isHRecuperee) {
 
 		if (nbMinutesSupJour <= 0 && nbMinutesSupNuit <= 0)
 			return;
@@ -241,7 +255,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		int weekMinutesBeforeHSup = weekMinutes - nbMinutesSupJour - nbMinutesSupNuit;
 
 		// If it's a SUNDAY or a HOLIDAY, count the hours as HS DJF
-		if (dday.getDayOfWeek() == 7 || holidayService.isHoliday(dday)) {
+		if (dday.getDayOfWeek() == 7 || sirhWsConsumer.isHoliday(dday)) {
 			result.setMsdjf(result.getMsdjf() + nbMinutesSupJour + nbMinutesSupNuit);
 
 			if (isHRecuperee) {
@@ -260,9 +274,11 @@ public class VentilationHSupService implements IVentilationHSupService {
 			}
 		}
 
-		// If we're doing HS JOUR under the BASE_HEBDO_LEGAL = 39, count them as HS Normale (for people having weekBase != BASE_HEBDO_LEGALE)
+		// If we're doing HS JOUR under the BASE_HEBDO_LEGAL = 39, count them as
+		// HS Normale (for people having weekBase != BASE_HEBDO_LEGALE)
 		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE && weekBase < BASE_HEBDO_LEGALE) {
-			int nbMinutesNormalesToAdd = (nbMinutesSupJour + result.getMNormales() + weekBase) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup) : nbMinutesSupJour;
+			int nbMinutesNormalesToAdd = (nbMinutesSupJour + result.getMNormales() + weekBase) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup)
+					: nbMinutesSupJour;
 			result.setMNormales(result.getMNormales() + nbMinutesNormalesToAdd);
 			nbMinutesSupJour -= nbMinutesNormalesToAdd;
 
@@ -274,10 +290,12 @@ public class VentilationHSupService implements IVentilationHSupService {
 				return;
 		}
 
-		// If we're doing HS over the BASE_HEBDO_LEGAL = 39, and under NB_HS_SIMPLE, count them as HS_Simple
+		// If we're doing HS over the BASE_HEBDO_LEGAL = 39, and under
+		// NB_HS_SIMPLE, count them as HS_Simple
 		if (weekMinutes > BASE_HEBDO_LEGALE && result.getMSimple() < NB_HS_SIMPLE) {
 
-			int nbMinutesSimplesToAdd = (nbMinutesSupJour + result.getMSimple()) > NB_HS_SIMPLE ? (NB_HS_SIMPLE - result.getMSimple()) : nbMinutesSupJour;
+			int nbMinutesSimplesToAdd = (nbMinutesSupJour + result.getMSimple()) > NB_HS_SIMPLE ? (NB_HS_SIMPLE - result
+					.getMSimple()) : nbMinutesSupJour;
 			result.setMSimple(result.getMSimple() + nbMinutesSimplesToAdd);
 			nbMinutesSupJour -= nbMinutesSimplesToAdd;
 
@@ -289,7 +307,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 				return;
 		}
 
-		// If we're doing HS over the BASE_HEBDO_LEGAL + NB_HS_SIMPLE = 42, count the next ones as HS Composees
+		// If we're doing HS over the BASE_HEBDO_LEGAL + NB_HS_SIMPLE = 42,
+		// count the next ones as HS Composees
 		if (weekMinutes >= BASE_HEBDO_LEGALE + NB_HS_SIMPLE) {
 			result.setMComposees(result.getMComposees() + nbMinutesSupJour);
 
@@ -300,10 +319,12 @@ public class VentilationHSupService implements IVentilationHSupService {
 	}
 
 	protected void generateHSupNotFonctionnaire(VentilHsup result, int weekBase, int weekMinutes, int nbMinutesSupJour) {
-		generateHSupNotFonctionnaire(result, weekBase, weekMinutes, new MinutesupPeriod(null, nbMinutesSupJour, 0), false);
+		generateHSupNotFonctionnaire(result, weekBase, weekMinutes, new MinutesupPeriod(null, nbMinutesSupJour, 0),
+				false);
 	}
 
-	protected void generateHSupNotFonctionnaire(VentilHsup result, int weekBase, int weekMinutes, MinutesupPeriod Minutes, boolean isHRecuperee) {
+	protected void generateHSupNotFonctionnaire(VentilHsup result, int weekBase, int weekMinutes,
+			MinutesupPeriod Minutes, boolean isHRecuperee) {
 
 		if (Minutes.getTotalMinutes() == 0)
 			return;
@@ -314,9 +335,11 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 		int nbMinutesSup = Minutes.getTotalMinutes();
 
-		// If we're doing HS under the BASE_HEBDO_LEGAL = 39, count them as HS Complementaires
+		// If we're doing HS under the BASE_HEBDO_LEGAL = 39, count them as HS
+		// Complementaires
 		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE && weekBase < BASE_HEBDO_LEGALE) {
-			int nbMinutesComplementairesToAdd = (nbMinutesSup + result.getMComplementaires() + weekBase) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup) : nbMinutesSup;
+			int nbMinutesComplementairesToAdd = (nbMinutesSup + result.getMComplementaires() + weekBase) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup)
+					: nbMinutesSup;
 			result.setMComplementaires(result.getMComplementaires() + nbMinutesComplementairesToAdd);
 			nbMinutesSup -= nbMinutesComplementairesToAdd;
 
@@ -328,14 +351,17 @@ public class VentilationHSupService implements IVentilationHSupService {
 				return;
 		}
 
-		// If we're doing HS over the BASE_HEBDO_LEGAL = 39, count the next ones as H Sup 25 and 50
+		// If we're doing HS over the BASE_HEBDO_LEGAL = 39, count the next ones
+		// as H Sup 25 and 50
 		if (weekMinutes > BASE_HEBDO_LEGALE) {
 
-			int nbMinutesToCountAs25 = (result.getMSup25() + nbMinutesSup <= 8 * 60) ? nbMinutesSup : (8 * 60 - result.getMSup25());
+			int nbMinutesToCountAs25 = (result.getMSup25() + nbMinutesSup <= 8 * 60) ? nbMinutesSup : (8 * 60 - result
+					.getMSup25());
 			nbMinutesToCountAs25 = nbMinutesToCountAs25 > 0 ? nbMinutesToCountAs25 : 0;
 			result.setMSup25(result.getMSup25() + nbMinutesToCountAs25);
 
-			int nbMinutesToCountAs50 = nbMinutesSup - nbMinutesToCountAs25 < 0 ? 0 : (nbMinutesSup - nbMinutesToCountAs25);
+			int nbMinutesToCountAs50 = nbMinutesSup - nbMinutesToCountAs25 < 0 ? 0
+					: (nbMinutesSup - nbMinutesToCountAs25);
 			result.setMSup50(result.getMSup50() + nbMinutesToCountAs50);
 
 			if (isHRecuperee) {
@@ -351,12 +377,14 @@ public class VentilationHSupService implements IVentilationHSupService {
 		DateTime dday = minutes.getInterval().getStart();
 
 		// If it's a SUNDAY or a HOLIDAY, count the hours as HS DJF
-		if (dday.getDayOfWeek() == 7 || holidayService.isHoliday(dday)) {
-			int nbMinutesToCountAs25 = (result.getMsdjf25() + totalMinutes <= 8 * 60) ? totalMinutes : (8 * 60 - result.getMsdjf25());
+		if (dday.getDayOfWeek() == 7 || sirhWsConsumer.isHoliday(dday)) {
+			int nbMinutesToCountAs25 = (result.getMsdjf25() + totalMinutes <= 8 * 60) ? totalMinutes : (8 * 60 - result
+					.getMsdjf25());
 			nbMinutesToCountAs25 = nbMinutesToCountAs25 > 0 ? nbMinutesToCountAs25 : 0;
 			result.setMsdjf25(result.getMsdjf25() + nbMinutesToCountAs25);
 
-			int nbMinutesToCountAs50 = totalMinutes - nbMinutesToCountAs25 < 0 ? 0 : (totalMinutes - nbMinutesToCountAs25);
+			int nbMinutesToCountAs50 = totalMinutes - nbMinutesToCountAs25 < 0 ? 0
+					: (totalMinutes - nbMinutesToCountAs25);
 			result.setMsdjf50(result.getMsdjf50() + nbMinutesToCountAs50);
 
 			result.setMsdjf(result.getMsdjf() + totalMinutes);
@@ -396,8 +424,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 		for (Pointage ptg : pointages) {
 			DateTime dday = new DateTime(ptg.getDateDebut());
-			if (dday.getDayOfYear() == day.getDayOfYear()
-					&& dday.getYear() == day.getYear()
+			if (dday.getDayOfYear() == day.getDayOfYear() && dday.getYear() == day.getYear()
 					&& ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP)
 				result.add(ptg);
 		}
@@ -411,8 +438,10 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 		// If the interval overlaps on the next day
 		if (startDate.getDayOfYear() != endDate.getDayOfYear()) {
-			intervals.add(new Interval(startDate, new DateTime(endDate.getYear(), endDate.getMonthOfYear(), endDate.getDayOfMonth(), 0, 0, 0)));
-			intervals.add(new Interval(new DateTime(endDate.getYear(), endDate.getMonthOfYear(), endDate.getDayOfMonth(), 0, 0, 0), endDate));
+			intervals.add(new Interval(startDate, new DateTime(endDate.getYear(), endDate.getMonthOfYear(), endDate
+					.getDayOfMonth(), 0, 0, 0)));
+			intervals.add(new Interval(new DateTime(endDate.getYear(), endDate.getMonthOfYear(), endDate
+					.getDayOfMonth(), 0, 0, 0), endDate));
 		} else {
 			intervals.add(new Interval(startDate, endDate));
 		}
@@ -421,10 +450,12 @@ public class VentilationHSupService implements IVentilationHSupService {
 		int nbMinutesNuit = 0;
 
 		for (Interval interval : intervals) {
-			// Create the HS Jour interval for that period (the hours between which hours are considered HS JOUR)
+			// Create the HS Jour interval for that period (the hours between
+			// which hours are considered HS JOUR)
 			Interval hSupJourInterval = getDayHSupJourIntervalForStatut(interval.getStart(), statut);
 
-			// Calculate the overlap of the HS to determine what to be counted as HS Nuit and HS Jour
+			// Calculate the overlap of the HS to determine what to be counted
+			// as HS Nuit and HS Jour
 			Interval hSupJourOverlap = hSupJourInterval.overlap(interval);
 			nbMinutesJour += (int) (hSupJourOverlap == null ? 0 : hSupJourOverlap.toDuration().getStandardMinutes());
 			nbMinutesNuit += (int) (interval.toDuration().getStandardMinutes() - nbMinutesJour);
@@ -433,20 +464,25 @@ public class VentilationHSupService implements IVentilationHSupService {
 		return new MinutesupPeriod(new Interval(startDate, endDate), nbMinutesJour, nbMinutesNuit);
 	}
 
-	public void removeMinutesWhileUnderWeekBase(MinutesupPeriod minutes, int weekBase, int weekMinutesWithHSup, AgentStatutEnum statut) {
+	public void removeMinutesWhileUnderWeekBase(MinutesupPeriod minutes, int weekBase, int weekMinutesWithHSup,
+			AgentStatutEnum statut) {
 
-		// Define whether we need to cut the HS period (because it starts before being an HS and ends after)
+		// Define whether we need to cut the HS period (because it starts before
+		// being an HS and ends after)
 		if ((weekMinutesWithHSup - minutes.getTotalMinutes()) <= weekBase && weekMinutesWithHSup > weekBase) {
 
 			// Number of hours to remove from HS
 			int nbMinutesSupToNOTTake = weekBase - (weekMinutesWithHSup - minutes.getTotalMinutes());
 
-			// Create the HS Jour interval for that day (the hours between which hours are considered HS JOUR)
+			// Create the HS Jour interval for that day (the hours between which
+			// hours are considered HS JOUR)
 			Interval hSupJourInterval = getDayHSupJourIntervalForStatut(minutes.getInterval().getStart(), statut);
 
-			// If the HS started during the day, we first remove hours from the day period
+			// If the HS started during the day, we first remove hours from the
+			// day period
 			if (hSupJourInterval.contains(minutes.getInterval())) {
-				int nbMinutesToRemove = minutes.getNbMinutesJour() - nbMinutesSupToNOTTake < 0 ? minutes.getNbMinutesJour() : nbMinutesSupToNOTTake;
+				int nbMinutesToRemove = minutes.getNbMinutesJour() - nbMinutesSupToNOTTake < 0 ? minutes
+						.getNbMinutesJour() : nbMinutesSupToNOTTake;
 				minutes.setNbMinutesJour(minutes.getNbMinutesJour() - nbMinutesToRemove);
 				nbMinutesSupToNOTTake -= nbMinutesToRemove;
 
@@ -454,7 +490,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 			}
 			// Otherwise, we first remove hours from the night period
 			else {
-				int nbMinutesToRemove = minutes.getNbMinutesNuit() - nbMinutesSupToNOTTake < 0 ? minutes.getNbMinutesNuit() : nbMinutesSupToNOTTake;
+				int nbMinutesToRemove = minutes.getNbMinutesNuit() - nbMinutesSupToNOTTake < 0 ? minutes
+						.getNbMinutesNuit() : nbMinutesSupToNOTTake;
 				minutes.setNbMinutesNuit(minutes.getNbMinutesNuit() - nbMinutesToRemove);
 				nbMinutesSupToNOTTake -= nbMinutesToRemove;
 
@@ -485,11 +522,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 				break;
 		}
 
-		return new Interval(
-				new DateTime(day.getYear(), day.getMonthOfYear(),
-						day.getDayOfMonth(), startHour, 0, 0),
-				new DateTime(day.getYear(), day.getMonthOfYear(),
-						day.getDayOfMonth(), endHour, 0, 0));
+		return new Interval(new DateTime(day.getYear(), day.getMonthOfYear(), day.getDayOfMonth(), startHour, 0, 0),
+				new DateTime(day.getYear(), day.getMonthOfYear(), day.getDayOfMonth(), endHour, 0, 0));
 	}
 
 	protected class MinutesupPeriod {

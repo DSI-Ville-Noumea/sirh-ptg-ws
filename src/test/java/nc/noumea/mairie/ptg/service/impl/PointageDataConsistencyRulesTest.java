@@ -26,7 +26,6 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
-import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -1279,12 +1278,12 @@ public class PointageDataConsistencyRulesTest {
 
 		List<Pointage> ptgs = Arrays.asList(p1, p2, p4, p3, p5);
 
-		IHolidayService holS = Mockito.mock(IHolidayService.class);
-		Mockito.when(holS.isHoliday(new LocalDate(2013, 9, 25).toDate())).thenReturn(false);
-		Mockito.when(holS.isHoliday(new LocalDate(2013, 9, 26).toDate())).thenReturn(false);
+		ISirhWSConsumer holS = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(holS.isHoliday(new LocalDate(2013, 9, 25))).thenReturn(false);
+		Mockito.when(holS.isHoliday(new LocalDate(2013, 9, 26))).thenReturn(false);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "holidayService", holS);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", holS);
 
 		// When
 		service.checkPrime7651(result, idAgent, dateLundi, ptgs);
@@ -1330,11 +1329,11 @@ public class PointageDataConsistencyRulesTest {
 
 		List<Pointage> ptgs = Arrays.asList(p1, p2, p4, p3);
 
-		IHolidayService holS = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer holS = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(holS.isHoliday(new DateTime(2013, 9, 24, 0, 0, 0))).thenReturn(true);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "holidayService", holS);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", holS);
 
 		// When
 		service.checkPrime7651(result, idAgent, dateLundi, ptgs);
@@ -1376,10 +1375,6 @@ public class PointageDataConsistencyRulesTest {
 		p4.setDateLundi(dateLundi);
 
 		List<Pointage> ptgs = Arrays.asList(p1, p2, p4, p3);
-
-		IHolidayService holS = Mockito.mock(IHolidayService.class);
-		Mockito.when(holS.isHoliday(new LocalDate(2013, 9, 23).toDate())).thenReturn(false);
-		Mockito.when(holS.isHoliday(new LocalDate(2013, 9, 24).toDate())).thenReturn(true);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
@@ -1424,10 +1419,6 @@ public class PointageDataConsistencyRulesTest {
 
 		List<Pointage> ptgs = Arrays.asList(p1, p2, p4, p3);
 
-		IHolidayService holS = Mockito.mock(IHolidayService.class);
-		Mockito.when(holS.isHoliday(new LocalDate(2013, 9, 23).toDate())).thenReturn(false);
-		Mockito.when(holS.isHoliday(new LocalDate(2013, 9, 24).toDate())).thenReturn(true);
-
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
 		// When
@@ -1471,12 +1462,12 @@ public class PointageDataConsistencyRulesTest {
 
 		List<Pointage> ptgs = Arrays.asList(p1, p2, p4, p3);
 
-		IHolidayService holS = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer holS = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(holS.isHoliday(new DateTime(2013, 9, 23, 0, 0, 0))).thenReturn(false);
 		Mockito.when(holS.isHoliday(new DateTime(2013, 9, 24, 0, 0, 0))).thenReturn(true);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "holidayService", holS);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", holS);
 
 		// When
 		service.checkPrime7651(result, idAgent, dateLundi, ptgs);
@@ -1519,11 +1510,11 @@ public class PointageDataConsistencyRulesTest {
 
 		List<Pointage> ptgs = Arrays.asList(p1, p2, p4, p3);
 
-		IHolidayService holS = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer holS = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(holS.isHoliday(new DateTime(2013, 9, 24, 0, 0, 0))).thenReturn(true);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "holidayService", holS);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", holS);
 
 		// When
 		service.checkPrime7652(result, idAgent, dateLundi, ptgs);
@@ -1609,11 +1600,11 @@ public class PointageDataConsistencyRulesTest {
 
 		List<Pointage> ptgs = Arrays.asList(p1, p2, p4, p3);
 
-		IHolidayService holS = Mockito.mock(IHolidayService.class);
+		ISirhWSConsumer holS = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(holS.isHoliday(new DateTime(2013, 9, 28, 0, 0, 0))).thenReturn(false);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "holidayService", holS);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", holS);
 
 		// When
 		service.checkPrime7652(result, idAgent, dateLundi, ptgs);

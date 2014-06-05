@@ -16,7 +16,6 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.ISirhRepository;
-import nc.noumea.mairie.ptg.service.IHolidayService;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -39,9 +38,6 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 	@Autowired
 	private HelperService helperService;
-
-	@Autowired
-	private IHolidayService holidayService;
 
 	// -- MESSAGES --//
 	public static final String BASE_HOR_MAX = "L'agent dépasse sa base horaire";
@@ -208,7 +204,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
 			if (deb.getDayOfWeek() != DateTimeConstants.SATURDAY && deb.getDayOfWeek() != DateTimeConstants.SUNDAY
-					&& !holidayService.isHoliday(deb) && !holidayService.isHoliday(deb.plusDays(1)))
+					&& !sirhWsConsumer.isHoliday(deb) && !sirhWsConsumer.isHoliday(deb.plusDays(1)))
 				srm.getErrors()
 						.add(String
 								.format("La prime 7651 du %s n'est pas valide. Elle ne peut être saisie qu'un samedi et dimanche, ou alors une veille et jour férié.",
@@ -229,7 +225,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
-			if (deb.getDayOfWeek() != DateTimeConstants.SUNDAY && !holidayService.isHoliday(deb))
+			if (deb.getDayOfWeek() != DateTimeConstants.SUNDAY && !sirhWsConsumer.isHoliday(deb))
 				srm.getErrors()
 						.add(String
 								.format("La prime 7652 du %s n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.",

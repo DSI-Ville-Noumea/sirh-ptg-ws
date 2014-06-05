@@ -10,8 +10,11 @@ import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -28,6 +31,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhAgentServiceUrl = "services/agent";
 	private static final String sirhSousServicesUrl = "services/sousServices";
 	private static final String sirhAgentUrl = "agents/getAgent";
+	private static final String sirhHolidayUrl = "utils/isHoliday";
 
 	@Override
 	public SirhWsServiceDto getAgentDirection(Integer idAgent) {
@@ -104,5 +108,35 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(AgentGeneriqueDto.class, res, url);
+	}
+
+	@Override
+	public boolean isHoliday(LocalDate datePointage) {
+		String url = String.format(sirhWsBaseUrl + sirhHolidayUrl);
+		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("date", sf.format(datePointage.toDate()));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+		if (res.getStatus() == HttpStatus.OK.value()) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isHoliday(DateTime deb) {
+		String url = String.format(sirhWsBaseUrl + sirhHolidayUrl);
+		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("date", sf.format(deb.toDate()));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+		if (res.getStatus() == HttpStatus.OK.value()) {
+			return true;
+		}
+		return false;
 	}
 }
