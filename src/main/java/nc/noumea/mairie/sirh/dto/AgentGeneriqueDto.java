@@ -1,6 +1,5 @@
 package nc.noumea.mairie.sirh.dto;
 
-import java.util.Date;
 
 public class AgentGeneriqueDto {
 
@@ -11,7 +10,6 @@ public class AgentGeneriqueDto {
 	private String nomUsage;
 	private String prenom;
 	private String prenomUsage;
-	private Date dateNaissance;
 
 	public String getDisplayPrenom() {
 		return getPrenomUsage();
@@ -76,13 +74,4 @@ public class AgentGeneriqueDto {
 	public void setPrenomUsage(String prenomUsage) {
 		this.prenomUsage = prenomUsage;
 	}
-
-	public Date getDateNaissance() {
-		return dateNaissance;
-	}
-
-	public void setDateNaissance(Date dateNaissance) {
-		this.dateNaissance = dateNaissance;
-	}
-
 }
