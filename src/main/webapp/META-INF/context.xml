@@ -11,30 +11,11 @@
 	language governing permissions and limitations under the License. -->
 <!-- The contents of this file will be loaded for each web application -->
 <Context reloadable="true" cookies="true">
-
-	<!-- Default set of monitored resources -->
-	<!-- <WatchedResource>WEB-INF/web.xml</WatchedResource> -->
-
-	<!-- Uncomment this to disable session persistence across Tomcat restarts -->
-	<!-- <Manager pathname="" /> -->
-
-	<!-- Uncomment this to enable Comet connection tacking (provides events 
-		on session expiration as well as webapp lifecycle) -->
-	<!-- <Valve className="org.apache.catalina.valves.CometConnectionManagerValve" 
-		/> -->
-
-<!-- 	<Resource name="jdbc/PTG_WS_DS1" auth="Container" type="javax.sql.DataSource" -->
-<!-- 		maxActive="100" maxIdle="30" minIdle="0" validationQuery="select 1 from dual" -->
-<!-- 		maxWait="10000" initialSize="1" username="PTG" password="PTG" -->
-<!-- 		driverClassName="oracle.jdbc.driver.OracleDriver" url="jdbc:oracle:thin:@DVLP:1521:ORADEV" -->
-<!-- 		poolPreparedStatements="true" /> -->
-		<!-- RECETTE -->
-<!-- 	<Resource name="jdbc/PTG_WS_DS1" auth="Container" type="javax.sql.DataSource" -->
-<!-- 		maxActive="100" maxIdle="30" minIdle="0" validationQuery="select 1" -->
-<!-- 		maxWait="10000" initialSize="1" username="ptg_read" password="s8oxdmer" -->
-<!-- 		driverClassName="org.postgresql.Driver" url="jdbc:postgresql://svq-pg0.site-mairie.noumea.nc:5432/sirh" -->
-<!-- 		poolPreparedStatements="true" /> -->
 		
+		
+	<!--  -->
+	<!-- DATASOURCES -->
+	<!--  -->	
 	<Resource name="jdbc/PTG_WS_DS1" auth="Container" type="javax.sql.DataSource"
 		maxActive="100" maxIdle="30" minIdle="0" validationQuery="select 1"
 		maxWait="10000" initialSize="1" username="ptg_adm" password="***REMOVED***"
@@ -51,25 +32,31 @@
 		jmxEnabled="true" username="opensirh" password="***REMOVED***"
 		driverClassName="com.ibm.as400.access.AS400JDBCDriver" url="jdbc:as400://robinnw;naming=system;libraries=MAIRIE,SYSIBM;" />
 
-	<Environment name="PTG_SIRH_WS_BASE_URL" type="java.lang.String"
-		description="SIRH WS endpoint url" value="http://svi-tomcat0:8085/sirhws/"
-		override="false" />
+	<!--  -->
+	<!-- WS SIRH -->
+	<!--  -->	
+	<Environment name="PTG_SIRH_WS_BASE_URL" type="java.lang.String" description="SIRH WS endpoint url" 
+		value="http://svi-tomcat0:8085/sirhws/" override="false" />
 		
-	<Environment name="PTG_SIRH_ABS_WS_BASE_URL" type="java.lang.String"
-		description="SIRH WS endpoint url" value="http://svi-tomcat0:8085/sirh-abs-ws/"
-		override="false" />
+	<!--  -->
+	<!-- WS ABS -->
+	<!--  -->	
+	<Environment name="PTG_SIRH_ABS_WS_BASE_URL" type="java.lang.String" description="SIRH WS endpoint url" 
+		value="http://svi-tomcat0:8085/sirh-abs-ws/" override="false" />
 		
-	<Environment name="REPORTING_SERVER_SIRH_PTG_REPORT_PATH" type="java.lang.String"
-		description="SIRH reports path on Birt"
+	<!--  -->
+	<!-- BIRT -->
+	<!--  -->	
+	<Environment name="REPORTING_SERVER_SIRH_PTG_REPORT_PATH" type="java.lang.String" description="SIRH reports path on Birt"
 		value="report/sirh-ptg-reports/" override="false" />
 
-	<Environment name="REPORTING_BASE_URL" type="java.lang.String"
-		description="BIRT report viewer base URL for SIRH reporting"
+	<Environment name="REPORTING_BASE_URL" type="java.lang.String" description="BIRT report viewer base URL for SIRH reporting"
 		value="http://svi-tomcat0:8085/birt/" override="false" />
 		
-	<Environment name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR" type="java.lang.String"
-		description="SIRH Etat Payeur File Path" 
+	<!--  -->
+	<!-- Parametres pour la gestion des documents -->
+	<!--  -->	
+	<Environment name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR" type="java.lang.String" description="SIRH Etat Payeur File Path" 
 		value="file://///cristal/drh$/DRH/SIRH-document/DEV/Document_Associe/Pointages" override="false" />
-<!-- 		value="file:///mnt/sirh-document/Document_Associe/Pointages/" override="false" /> -->
 		 		
 </Context>
