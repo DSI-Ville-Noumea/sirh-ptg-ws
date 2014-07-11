@@ -20,6 +20,7 @@ import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -578,8 +579,12 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(null);
 
+		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9009999)).thenReturn(9999);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		// When
 		DelegatorAndOperatorsDto result = service.getDelegatorAndOperators(idAgent);
@@ -699,9 +704,13 @@ public class AccessRightsServiceTest {
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(9009999)).thenReturn(ag);
 
+		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9009999)).thenReturn(9999);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sRepo);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
 		dto.setDelegataire(new AgentDto());
@@ -712,7 +721,7 @@ public class AccessRightsServiceTest {
 
 		// Then
 		assertEquals(1, result.getErrors().size());
-		assertEquals("L'agent NOM PRENOM [9009999] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+		assertEquals("L'agent NOM PRENOM [9999] ne peut pas être délégataire car il ou elle est déjà opérateur.",
 				result.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 		assertNull(droitAppro.getIdAgentDelegataire());
@@ -737,9 +746,13 @@ public class AccessRightsServiceTest {
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(9009999)).thenReturn(ag);
 
+		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9009999)).thenReturn(9999);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sRepo);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
 		dto.getSaisisseurs().add(new AgentDto());
@@ -751,7 +764,7 @@ public class AccessRightsServiceTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(
-				"L'agent NOM PRENOM [9009999] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
+				"L'agent NOM PRENOM [9999] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
 				result.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 		assertNull(droitAppro.getIdAgentDelegataire());

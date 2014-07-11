@@ -14,6 +14,7 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
@@ -37,6 +38,9 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
+
+	@Autowired
+	private IAgentMatriculeConverterService matriculeConvertor;
 
 	@Override
 	public AccessRightsDto getAgentAccessRights(Integer idAgent) {
@@ -64,7 +68,7 @@ public class AccessRightsService implements IAccessRightsService {
 		Droit droit = accessRightsRepository.getApprobateurFetchOperateurs(idAgent);
 
 		if (droit == null) {
-			logger.warn("L'agent {} n'est pas approbateur.", idAgent);
+			logger.warn("L'agent {} n'est pas approbateur.", matriculeConvertor.tryConvertIdAgentToNomatr(idAgent));
 			return result;
 		}
 
@@ -72,7 +76,7 @@ public class AccessRightsService implements IAccessRightsService {
 			AgentGeneriqueDto delegataire = sirhWSConsumer.getAgent(droit.getIdAgentDelegataire());
 
 			if (delegataire == null)
-				logger.warn("L'agent délégataire {} n'existe pas.", droit.getIdAgentDelegataire());
+				logger.warn("L'agent délégataire {} n'existe pas.", matriculeConvertor.tryConvertIdAgentToNomatr(droit.getIdAgentDelegataire()));
 			else
 				result.setDelegataire(new AgentDto(delegataire));
 		}
@@ -80,7 +84,7 @@ public class AccessRightsService implements IAccessRightsService {
 		for (Droit operateur : droit.getOperateurs()) {
 			AgentGeneriqueDto ope = sirhWSConsumer.getAgent(operateur.getIdAgent());
 			if (ope == null)
-				logger.warn("L'agent opérateur {} n'existe pas.", operateur.getIdAgent());
+				logger.warn("L'agent opérateur {} n'existe pas.", matriculeConvertor.tryConvertIdAgentToNomatr(operateur.getIdAgent()));
 			else
 				result.getSaisisseurs().add(new AgentDto(ope));
 		}
@@ -104,7 +108,7 @@ public class AccessRightsService implements IAccessRightsService {
 				result.getErrors().add(
 						String.format(
 								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+								ag.getDisplayNom(), ag.getDisplayPrenom(), matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
 			} else {
 				droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
 			}
@@ -134,7 +138,7 @@ public class AccessRightsService implements IAccessRightsService {
 				result.getErrors()
 						.add(String
 								.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
-										ag.getDisplayNom(), ag.getDisplayPrenom(), ag.getIdAgent()));
+										ag.getDisplayNom(), ag.getDisplayPrenom(), matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
 				continue;
 			}
 

@@ -24,6 +24,7 @@ import nc.noumea.mairie.ptg.repository.AccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -299,9 +300,14 @@ public class ApprobationServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(new ArrayList<DroitsAgent>());
 
+		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9001234)).thenReturn(1234);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -311,7 +317,7 @@ public class ApprobationServiceTest {
 
 		// Then
 		assertEquals(1, result.getErrors().size());
-		assertEquals("L'agent 9001234 n'a pas le droit de mettre à jour le pointage 9 de l'agent 9005678.", result
+		assertEquals("L'agent 1234 n'a pas le droit de mettre à jour le pointage 9 de l'agent 5678.", result
 				.getErrors().get(0));
 	}
 
@@ -334,9 +340,13 @@ public class ApprobationServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(Arrays.asList(da));
 
+		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -348,7 +358,7 @@ public class ApprobationServiceTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(1, ptg.getEtats().size());
 		assertEquals(
-				"Impossible de mettre à jour le pointage 9 de l'agent 9005678 car celui-ci est à l'état REFUSE_DEFINITIVEMENT.",
+				"Impossible de mettre à jour le pointage 9 de l'agent 5678 car celui-ci est à l'état REFUSE_DEFINITIVEMENT.",
 				result.getErrors().get(0));
 	}
 
@@ -371,9 +381,13 @@ public class ApprobationServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(Arrays.asList(da));
 
+		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -386,7 +400,7 @@ public class ApprobationServiceTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(1, ptg.getEtats().size());
 		assertEquals(
-				"Impossible de mettre à jour le pointage 9 de l'agent 9005678 à l'état REJETE. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.",
+				"Impossible de mettre à jour le pointage 9 de l'agent 5678 à l'état REJETE. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.",
 				result.getErrors().get(0));
 	}
 
@@ -606,9 +620,13 @@ public class ApprobationServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(null);
 
+		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "ventilRepository", vR);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -622,7 +640,7 @@ public class ApprobationServiceTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(1, ptg.getEtats().size());
 		assertEquals(
-				"Impossible de mettre à APPROUVE le pointage 9 de l'agent 9005678 car celui-ci est à l'état JOURNALISE.",
+				"Impossible de mettre à APPROUVE le pointage 9 de l'agent 5678 car celui-ci est à l'état JOURNALISE.",
 				result.getErrors().get(0));
 	}
 
@@ -643,9 +661,13 @@ public class ApprobationServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(null);
 
+		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "ventilRepository", vR);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -659,7 +681,7 @@ public class ApprobationServiceTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(1, ptg.getEtats().size());
 		assertEquals(
-				"Impossible de mettre à EN_ATTENTE le pointage 9 de l'agent 9005678 car celui-ci est à l'état JOURNALISE.",
+				"Impossible de mettre à EN_ATTENTE le pointage 9 de l'agent 5678 car celui-ci est à l'état JOURNALISE.",
 				result.getErrors().get(0));
 	}
 
@@ -680,9 +702,13 @@ public class ApprobationServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(null);
 
+		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "ventilRepository", vR);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -696,7 +722,7 @@ public class ApprobationServiceTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(1, ptg.getEtats().size());
 		assertEquals(
-				"Impossible de mettre à REJETE le pointage 9 de l'agent 9005678 car celui-ci est à l'état JOURNALISE.",
+				"Impossible de mettre à REJETE le pointage 9 de l'agent 5678 car celui-ci est à l'état JOURNALISE.",
 				result.getErrors().get(0));
 	}
 
@@ -717,9 +743,13 @@ public class ApprobationServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(null);
 
+		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "ventilRepository", vR);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -733,7 +763,7 @@ public class ApprobationServiceTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(1, ptg.getEtats().size());
 		assertEquals(
-				"Impossible de mettre à jour le pointage 9 de l'agent 9005678 à l'état JOURNALISE. Seuls APPROUVE, REJETE ou EN_ATTENTE sont acceptés depuis SIRH.",
+				"Impossible de mettre à jour le pointage 9 de l'agent 5678 à l'état JOURNALISE. Seuls APPROUVE, REJETE ou EN_ATTENTE sont acceptés depuis SIRH.",
 				result.getErrors().get(0));
 	}
 

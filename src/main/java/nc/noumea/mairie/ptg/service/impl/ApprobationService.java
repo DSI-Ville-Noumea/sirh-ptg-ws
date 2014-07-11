@@ -19,6 +19,7 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IApprobationService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -47,6 +48,9 @@ public class ApprobationService implements IApprobationService {
 
 	@Autowired
 	private IVentilationRepository ventilRepository;
+
+	@Autowired
+	private IAgentMatriculeConverterService matriculeConvertor;
 
 	@Override
 	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService,
@@ -156,7 +160,8 @@ public class ApprobationService implements IApprobationService {
 			if (!droitsAgentsIds.contains(ptg.getIdAgent())) {
 				result.getErrors().add(
 						String.format("L'agent %s n'a pas le droit de mettre à jour le pointage %s de l'agent %s.",
-								idAgent, ptg.getIdPointage(), ptg.getIdAgent()));
+								matriculeConvertor.tryConvertIdAgentToNomatr(idAgent), ptg.getIdPointage(),
+								matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent())));
 				continue;
 			}
 
@@ -167,7 +172,8 @@ public class ApprobationService implements IApprobationService {
 				result.getErrors()
 						.add(String
 								.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.",
-										ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.getEtat().name()));
+										ptg.getIdPointage(), matriculeConvertor.tryConvertIdAgentToNomatr(ptg
+												.getIdAgent()), currentEtat.getEtat().name()));
 				continue;
 			}
 
@@ -179,7 +185,9 @@ public class ApprobationService implements IApprobationService {
 				result.getErrors()
 						.add(String
 								.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.",
-										ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
+										ptg.getIdPointage(),
+										matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()),
+										targetEtat.name()));
 				continue;
 			}
 
@@ -234,7 +242,8 @@ public class ApprobationService implements IApprobationService {
 				result.getErrors().add(
 						String.format(
 								"Impossible de mettre à %s le pointage %s de l'agent %s car celui-ci est à l'état %s.",
-								targetEtat.name(), ptg.getIdPointage(), ptg.getIdAgent(), currentEtat.name()));
+								targetEtat.name(), ptg.getIdPointage(),
+								matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()), currentEtat.name()));
 				continue;
 			}
 
@@ -243,7 +252,9 @@ public class ApprobationService implements IApprobationService {
 				result.getErrors()
 						.add(String
 								.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REJETE ou EN_ATTENTE sont acceptés depuis SIRH.",
-										ptg.getIdPointage(), ptg.getIdAgent(), targetEtat.name()));
+										ptg.getIdPointage(),
+										matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()),
+										targetEtat.name()));
 				continue;
 			}
 
