@@ -114,6 +114,7 @@ public class EtatPayeurRepositoryTest {
 
 		Throwable e = null;
 		try {
+			@SuppressWarnings("unused")
 			EtatPayeur result = repository.getEtatPayeurById(new Integer(2));
 		} catch (Throwable ex) {
 			e = ex;

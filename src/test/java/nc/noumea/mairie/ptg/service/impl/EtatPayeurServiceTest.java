@@ -41,6 +41,7 @@ public class EtatPayeurServiceTest {
 		Mockito.when(repo.getEtatPayeurById(idEtatPayeur)).thenReturn(etatPayeur);
 		
 		// When
+		@SuppressWarnings("unused")
 		Pair<String, String> result = null;
 		EtatPayeurService service = new EtatPayeurService();
 		ReflectionTestUtils.setField(service, "etatPayeurRepository", repo);
