@@ -32,9 +32,7 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IExportPaieAbsenceService;
 import nc.noumea.mairie.ptg.service.IExportPaieHSupService;
@@ -42,6 +40,7 @@ import nc.noumea.mairie.ptg.service.IExportPaiePrimeService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
+import nc.noumea.mairie.repository.IMairieRepository;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -292,7 +291,7 @@ public class ExportPaieServiceTest {
 
 		Spcarr validSpcarr = new Spcarr();
 		validSpcarr.setCdcate(7);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(8765, ventilDate.getDateVentilation())).thenReturn(validSpcarr);
 		Mockito.when(sR.getAgentCurrentCarriere(8989, ventilDate.getDateVentilation())).thenReturn(null);
 		
@@ -317,7 +316,7 @@ public class ExportPaieServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		ReflectionTestUtils.setField(service, "paieWorkflowService", wfS);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		
 		// When

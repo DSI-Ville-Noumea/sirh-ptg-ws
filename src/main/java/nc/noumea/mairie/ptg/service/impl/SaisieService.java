@@ -21,12 +21,12 @@ import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.ISaisieService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
+import nc.noumea.mairie.repository.IMairieRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +41,7 @@ public class SaisieService implements ISaisieService {
 	private IVentilationRepository ventilationRepository;
 
 	@Autowired
-	private ISirhRepository sirhRepository;
+	private IMairieRepository mairieRepository;
 
 	@Autowired
 	private IPointageService pointageService;
@@ -195,8 +195,8 @@ public class SaisieService implements ISaisieService {
 	protected void markPointagesAsApproved(List<Pointage> pointages, Date dateLundi, Integer idAgent,
 			Integer idAgentOperator) {
 
-		Spcarr carr = sirhRepository
-				.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), dateLundi);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
+				dateLundi);
 		VentilDate currentVentilation = ventilationRepository.getLatestVentilDate(
 				helperService.getTypeChainePaieFromStatut(carr.getStatutCarriere()), false);
 		Date currentDateEtat = currentVentilation == null ? helperService.getCurrentDate() : currentVentilation

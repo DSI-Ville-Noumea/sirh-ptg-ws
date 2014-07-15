@@ -11,9 +11,9 @@ import nc.noumea.mairie.ptg.domain.ReposCompTask;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IReposCompRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IReposCompService;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -42,7 +42,7 @@ public class ReposCompService implements IReposCompService {
 	private HelperService helperService;
 
 	@Autowired
-	private ISirhRepository sirhRepository;
+	private IMairieRepository mairieRepository;
 
 	@Autowired
 	private IAbsWsConsumer absWsConsumer;
@@ -79,10 +79,11 @@ public class ReposCompService implements IReposCompService {
 
 			logger.info("Processing week {}", vhs.getDateLundi());
 
-			Spcarr carr = sirhRepository.getAgentCurrentCarriere(
+			Spcarr carr = mairieRepository.getAgentCurrentCarriere(
 					helperService.getMairieMatrFromIdAgent(task.getIdAgent()), vhs.getDateLundi());
 
-			// Check on Agent status (this process will stop if the user is of status fonctionnaire)
+			// Check on Agent status (this process will stop if the user is of
+			// status fonctionnaire)
 			if (carr.getStatutCarriere() == AgentStatutEnum.F) {
 				logger.info("Agent status is [{}]. Stopping process for that week.", carr.getStatutCarriere());
 				continue;
@@ -101,17 +102,18 @@ public class ReposCompService implements IReposCompService {
 			logger.info("Hsups: {} minutes. Total HSups count for year is {} minutes: {} hours.", histo.getLeft()
 					.getMSup(), totalMinutesOfYear, totalMinutesOfYear / 60);
 
-			int nbMinutesBeforeThreshold = (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD) > 0 ? 
-					(histo.getLeft().getMSup() - (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD)) : histo.getLeft().getMSup();
-			int nbMinutesAfterThreshold = totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD > 0 ?
-					histo.getLeft().getMSup() - nbMinutesBeforeThreshold : 0;
+			int nbMinutesBeforeThreshold = (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD) > 0 ? (histo.getLeft()
+					.getMSup() - (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD)) : histo.getLeft().getMSup();
+			int nbMinutesAfterThreshold = totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD > 0 ? histo.getLeft()
+					.getMSup() - nbMinutesBeforeThreshold : 0;
 			logger.info("Agent has done {} minutes over than 130H per year.", nbMinutesAfterThreshold);
-					
-			int nbMinutesBeforeThresholdToCount = (weekBase + nbMinutesBeforeThreshold) - MAX_MIN_PER_WEEK > 0 ? 
-					(weekBase + nbMinutesBeforeThreshold) - MAX_MIN_PER_WEEK  : 0;
+
+			int nbMinutesBeforeThresholdToCount = (weekBase + nbMinutesBeforeThreshold) - MAX_MIN_PER_WEEK > 0 ? (weekBase + nbMinutesBeforeThreshold)
+					- MAX_MIN_PER_WEEK
+					: 0;
 			logger.info("Agent has done {} minutes more than 42H this week.", nbMinutesBeforeThresholdToCount);
-			
-			int nbRecups = (nbMinutesBeforeThresholdToCount / 60) * 12 + (nbMinutesAfterThreshold /60) * 30;
+
+			int nbRecups = (nbMinutesBeforeThresholdToCount / 60) * 12 + (nbMinutesAfterThreshold / 60) * 30;
 
 			logger.info("Agent is accountable for {} minutes.", nbRecups);
 

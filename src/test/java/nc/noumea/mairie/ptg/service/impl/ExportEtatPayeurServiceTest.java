@@ -37,10 +37,10 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.IBirtEtatsPayeurWsConsumer;
@@ -139,7 +139,7 @@ public class ExportEtatPayeurServiceTest {
 		spcarr1.setCdcate(1);
 		Spcarr spcarr2 = new Spcarr();
 		spcarr2.setCdcate(1);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
 		Mockito.when(sR.getAgentCurrentCarriere(6767, toVentilDate.getDateVentilation())).thenReturn(spcarr2);
 
@@ -147,7 +147,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.doNothing().when(service).fillAgentsData(Mockito.any(AbsencesEtatPayeurDto.class));
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		EtatPayeurDto result = service.getAbsencesEtatPayeurDataForStatut(statut);
@@ -190,13 +190,13 @@ public class ExportEtatPayeurServiceTest {
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(7);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
 
 		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		EtatPayeurDto result = service.getAbsencesEtatPayeurDataForStatut(statut);
@@ -247,14 +247,14 @@ public class ExportEtatPayeurServiceTest {
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(1);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
 
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doNothing().when(service).fillAgentsData(Mockito.any(AbsencesEtatPayeurDto.class));
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		EtatPayeurDto result = service.getAbsencesEtatPayeurDataForStatut(statut);
@@ -310,7 +310,7 @@ public class ExportEtatPayeurServiceTest {
 		spcarr1.setCdcate(1);
 		Spcarr spcarr2 = new Spcarr();
 		spcarr2.setCdcate(1);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
 		Mockito.when(sR.getAgentCurrentCarriere(6767, toVentilDate.getDateVentilation())).thenReturn(spcarr2);
 
@@ -318,7 +318,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.doNothing().when(service).fillAgentsData(Mockito.any(HeuresSupEtatPayeurDto.class));
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		EtatPayeurDto result = service.getHeuresSupEtatPayeurDataForStatut(statut);
@@ -360,13 +360,13 @@ public class ExportEtatPayeurServiceTest {
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(7);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
 
 		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		EtatPayeurDto result = service.getHeuresSupEtatPayeurDataForStatut(statut);
@@ -417,14 +417,14 @@ public class ExportEtatPayeurServiceTest {
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(1);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
 
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doNothing().when(service).fillAgentsData(Mockito.any(HeuresSupEtatPayeurDto.class));
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		EtatPayeurDto result = service.getHeuresSupEtatPayeurDataForStatut(statut);
@@ -482,7 +482,7 @@ public class ExportEtatPayeurServiceTest {
 		spcarr1.setCdcate(1);
 		Spcarr spcarr2 = new Spcarr();
 		spcarr2.setCdcate(1);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
 		Mockito.when(sR.getAgentCurrentCarriere(6767, toVentilDate.getDateVentilation())).thenReturn(spcarr2);
 
@@ -490,7 +490,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.doNothing().when(service).fillAgentsData(Mockito.any(PrimesEtatPayeurDto.class));
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		EtatPayeurDto result = service.getPrimesEtatPayeurDataForStatut(statut);
@@ -532,13 +532,13 @@ public class ExportEtatPayeurServiceTest {
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(7);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
 
 		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		EtatPayeurDto result = service.getPrimesEtatPayeurDataForStatut(statut);
@@ -591,14 +591,14 @@ public class ExportEtatPayeurServiceTest {
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(1);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(8989, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
 
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doNothing().when(service).fillAgentsData(Mockito.any(PrimesEtatPayeurDto.class));
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		EtatPayeurDto result = service.getPrimesEtatPayeurDataForStatut(statut);
@@ -992,15 +992,15 @@ public class ExportEtatPayeurServiceTest {
 		Spcarr spcarr = new Spcarr();
 		spcarr.setCdcate(4);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(9999, vd.getDateVentilation())).thenReturn(spcarr);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(9999, vd.getDateVentilation())).thenReturn(spcarr);
 
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doReturn(eps).when(service)
 				.callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, ventilationDate);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		service.exportEtatsPayeur(99);
@@ -1072,15 +1072,15 @@ public class ExportEtatPayeurServiceTest {
 		Spcarr spcarr = new Spcarr();
 		spcarr.setCdcate(7);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(9999, vd.getDateVentilation())).thenReturn(spcarr);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(9999, vd.getDateVentilation())).thenReturn(spcarr);
 
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doReturn(eps).when(service)
 				.callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, ventilationDate);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		service.exportEtatsPayeur(99);
@@ -1152,15 +1152,15 @@ public class ExportEtatPayeurServiceTest {
 		Spcarr spcarr = new Spcarr();
 		spcarr.setCdcate(20);
 
-		ISirhRepository sirhRepository = Mockito.mock(ISirhRepository.class);
-		Mockito.when(sirhRepository.getAgentCurrentCarriere(9999, vd.getDateVentilation())).thenReturn(spcarr);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(9999, vd.getDateVentilation())).thenReturn(spcarr);
 
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doReturn(eps).when(service)
 				.callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, ventilationDate);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sirhRepository);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		service.exportEtatsPayeur(99);

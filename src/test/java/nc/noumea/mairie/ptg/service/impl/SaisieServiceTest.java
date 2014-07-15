@@ -34,11 +34,11 @@ import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
+import nc.noumea.mairie.repository.IMairieRepository;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -729,7 +729,7 @@ public class SaisieServiceTest {
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(6);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.isA(Date.class))).thenReturn(carr);
 
 		SaisieService service = new SaisieService();
@@ -737,7 +737,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 
 		// When
@@ -1421,13 +1421,13 @@ public class SaisieServiceTest {
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(6);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(9999, dateLundi)).thenReturn(carr);
 
 		SaisieService service = new SaisieService();
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		service.markPointagesAsApproved(Arrays.asList(p1), dateLundi, 9009999, idAgentOperator);
@@ -1466,13 +1466,13 @@ public class SaisieServiceTest {
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(6);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(9999, dateLundi)).thenReturn(carr);
 
 		SaisieService service = new SaisieService();
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		service.markPointagesAsApproved(Arrays.asList(p1), dateLundi, 9009999, idAgentOperator);
@@ -1509,13 +1509,13 @@ public class SaisieServiceTest {
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(6);
-		ISirhRepository sR = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(9999, dateLundi)).thenReturn(carr);
 
 		SaisieService service = new SaisieService();
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
-		ReflectionTestUtils.setField(service, "sirhRepository", sR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 
 		// When
 		service.markPointagesAsApproved(Arrays.asList(p1), dateLundi, 9009999, idAgentOperator);

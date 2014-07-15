@@ -33,12 +33,12 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.ExportEtatsPayeurServiceException;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.IBirtEtatsPayeurWsConsumer;
@@ -68,7 +68,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	private IPointageRepository pointageRepository;
 
 	@Autowired
-	private ISirhRepository sirhRepository;
+	private IMairieRepository mairieRepository;
 
 	@Autowired
 	private IAccessRightsRepository accessRightRepository;
@@ -281,7 +281,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	 * @return true if the agent is eligible
 	 */
 	protected boolean isAgentEligibleToVentilation(Integer idAgent, AgentStatutEnum statut, Date date) {
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
 		AgentStatutEnum agentStatus = carr != null ? carr.getStatutCarriere() : null;
 		return agentStatus == statut;
 	}
@@ -537,7 +537,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	 */
 	protected boolean isAgentEligibleToReposComp(Integer idAgent, Date date) {
 
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
 
 		if (carr.getStatutCarriere().equals(AgentStatutEnum.C) || carr.getStatutCarriere().equals(AgentStatutEnum.CC)) {
 			return true;

@@ -29,10 +29,10 @@ import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -50,7 +50,7 @@ public class PointageService implements IPointageService {
 	private IPointageRepository pointageRepository;
 
 	@Autowired
-	private ISirhRepository sirhRepository;
+	private IMairieRepository mairieRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
@@ -77,7 +77,7 @@ public class PointageService implements IPointageService {
 
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(agent, helperService.getCurrentDate());
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(agent, helperService.getCurrentDate());
 		agentDto.setStatut(carr.getStatutCarriere().name());
 
 		// on construit le DTO de jourPointage

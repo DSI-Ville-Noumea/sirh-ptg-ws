@@ -27,7 +27,7 @@ import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -102,7 +102,7 @@ public class PointageServiceTest {
 		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
 				Arrays.asList(rp1, rp2));
 
-		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mairieRepo.getAgentCurrentCarriere(agent, d)).thenReturn(carr);
 
 		HelperService helperMock = Mockito.mock(HelperService.class);
@@ -114,7 +114,7 @@ public class PointageServiceTest {
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "helperService", helperMock);
 
 		FichePointageDto dto = service.getFichePointageForAgent(agent, d);

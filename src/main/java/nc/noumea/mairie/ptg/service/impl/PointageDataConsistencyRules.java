@@ -15,8 +15,8 @@ import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -31,7 +31,7 @@ import org.springframework.stereotype.Service;
 public class PointageDataConsistencyRules implements IPointageDataConsistencyRules {
 
 	@Autowired
-	private ISirhRepository sirhRepository;
+	private IMairieRepository mairieRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
@@ -76,7 +76,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			return srm;
 
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag, dateLundi);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
 
 		double agentMaxHours = carr.getSpbhor().getTaux() * carr.getSpbase().getNbashh();
 
@@ -92,7 +92,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
 
-		List<Sprirc> recups = sirhRepository.getListRecuperationBetween(idAgent, dateLundi, end);
+		List<Sprirc> recups = mairieRepository.getListRecuperationBetween(idAgent, dateLundi, end);
 
 		for (Sprirc recup : recups) {
 			checkInterval(srm, RECUP_MSG, recup.getId().getDatdeb(), recup.getId().getCodem1(), recup.getDatfin(),
@@ -108,7 +108,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
 
-		List<Spcong> conges = sirhRepository.getListCongeBetween(idAgent, dateLundi, end);
+		List<Spcong> conges = mairieRepository.getListCongeBetween(idAgent, dateLundi, end);
 
 		for (Spcong cg : conges) {
 			checkInterval(srm, CONGE_MSG, cg.getId().getDatdeb(), cg.getCodem1(), cg.getDatfin(), cg.getCodem2(),
@@ -124,7 +124,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
 
-		List<Spabsen> maladies = sirhRepository.getListMaladieBetween(idAgent, dateLundi, end);
+		List<Spabsen> maladies = mairieRepository.getListMaladieBetween(idAgent, dateLundi, end);
 
 		for (Spabsen mal : maladies) {
 			checkInterval(srm, MALADIE_MSG, mal.getId().getDatdeb(), null, mal.getDatfin(), null, pointages);
@@ -138,7 +138,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			List<Pointage> pointages) {
 
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag, dateLundi);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
 
 		if ((carr.getStatutCarriere() != AgentStatutEnum.F || carr.getSpbarem().getIna() <= 315)
 				&& !carr.getSpbase().getCdBase().equals("Z"))
@@ -164,7 +164,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			List<Pointage> pointages) {
 
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
-		Spadmn adm = sirhRepository.getAgentCurrentPosition(ag, dateLundi);
+		Spadmn adm = mairieRepository.getAgentCurrentPosition(ag, dateLundi);
 
 		if (!ACTIVITE_CODES.contains(adm.getCdpadm()))
 			srm.getErrors().add(INACTIVITE_MSG);
@@ -383,7 +383,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			List<Pointage> pointages) {
 
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(ag, dateLundi);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
 
 		boolean tempsPartiel = carr.getSpbhor().getTaux().intValue() != 1;
 		if (tempsPartiel) {

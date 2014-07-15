@@ -22,9 +22,7 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IExportPaieAbsenceService;
 import nc.noumea.mairie.ptg.service.IExportPaieHSupService;
@@ -33,6 +31,7 @@ import nc.noumea.mairie.ptg.service.IExportPaieService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
+import nc.noumea.mairie.repository.IMairieRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +48,6 @@ public class ExportPaieService implements IExportPaieService {
 
 	@Autowired
 	private IPointageRepository pointageRepository;
-
-	@Autowired
-	private ISirhRepository sirhRepository;
 
 	@Autowired
 	private IMairieRepository mairieRepository;
@@ -198,7 +194,7 @@ public class ExportPaieService implements IExportPaieService {
 	 * @return
 	 */
 	protected Boolean isAgentEligibleToExport(Integer idAgent, AgentStatutEnum statut, Date date) {
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
 		AgentStatutEnum agentStatus = carr != null ? carr.getStatutCarriere() : null;
 		return agentStatus == statut;
 	}
@@ -288,25 +284,25 @@ public class ExportPaieService implements IExportPaieService {
 
 	protected void persistSppac(List<Sppact> absences) {
 		for (Sppact sppact : absences) {
-			sirhRepository.mergeEntity(sppact);
+			mairieRepository.mergeEntity(sppact);
 		}
 	}
 
 	protected void persistSpphre(List<Spphre> hSups) {
 		for (Spphre spphre : hSups) {
-			sirhRepository.mergeEntity(spphre);
+			mairieRepository.mergeEntity(spphre);
 		}
 	}
 
 	protected void persistSppprm(List<Sppprm> prms) {
 		for (Sppprm prm : prms) {
-			sirhRepository.mergeEntity(prm);
+			mairieRepository.mergeEntity(prm);
 		}
 	}
 
 	protected void persistSpprim(List<Spprim> pris) {
 		for (Spprim pri : pris) {
-			sirhRepository.mergeEntity(pri);
+			mairieRepository.mergeEntity(pri);
 		}
 	}
 

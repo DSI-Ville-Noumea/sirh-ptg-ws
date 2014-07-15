@@ -30,7 +30,6 @@ import nc.noumea.mairie.ptg.dto.VentilDateDto;
 import nc.noumea.mairie.ptg.dto.VentilDto;
 import nc.noumea.mairie.ptg.dto.VentilErreurDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.ptg.service.IPointageService;
@@ -38,6 +37,7 @@ import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -440,14 +440,14 @@ public class VentilationServiceTest {
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(20); // F
-		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mairieRepo.getAgentCurrentCarriere(Mockito.eq(8765), Mockito.eq(dateLundi))).thenReturn(carr);
 
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
 
 		VentilationService service = new VentilationService();
-		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
 		ReflectionTestUtils.setField(service, "pointageCalculeService", ptgCService);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
@@ -525,14 +525,14 @@ public class VentilationServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(20); // F
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(7898, asOfDate)).thenReturn(carr);
 
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getMairieMatrFromIdAgent(9007898)).thenReturn(7898);
 
 		VentilationService service = new VentilationService();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
 
 		// When
@@ -551,14 +551,14 @@ public class VentilationServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(7); // CC
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(7898, asOfDate)).thenReturn(carr);
 
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getMairieMatrFromIdAgent(9007898)).thenReturn(7898);
 
 		VentilationService service = new VentilationService();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
 
 		// When
@@ -868,13 +868,13 @@ public class VentilationServiceTest {
 		Mockito.when(hS.getMairieMatrFromIdAgent(9005432)).thenReturn(5432);
 
 		Spcarr carr = new Spcarr();
-		ISirhRepository sRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository sRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sRepo.getAgentCurrentCarriere(5432, ventilationDate)).thenReturn(carr);
 
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", sRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", sRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		List<Date> datesLundi = new ArrayList<Date>();

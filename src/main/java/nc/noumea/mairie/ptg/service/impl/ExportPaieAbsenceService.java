@@ -11,8 +11,8 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IExportPaieRepository;
-import nc.noumea.mairie.ptg.repository.IMairieRepository;
 import nc.noumea.mairie.ptg.service.IExportPaieAbsenceService;
+import nc.noumea.mairie.repository.IMairieRepository;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;

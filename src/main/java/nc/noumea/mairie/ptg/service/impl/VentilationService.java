@@ -27,7 +27,6 @@ import nc.noumea.mairie.ptg.dto.VentilErreurDto;
 import nc.noumea.mairie.ptg.dto.VentilHSupDto;
 import nc.noumea.mairie.ptg.dto.VentilPrimeDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.ptg.service.IPointageService;
@@ -36,6 +35,7 @@ import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
 import nc.noumea.mairie.ptg.service.IVentilationService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -55,7 +55,7 @@ public class VentilationService implements IVentilationService {
 	private IPointageRepository pointageRepository;
 
 	@Autowired
-	private ISirhRepository sirhRepository;
+	private IMairieRepository mairieRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
@@ -185,7 +185,7 @@ public class VentilationService implements IVentilationService {
 		VentilDate toVentilDate = task.getVentilDateTo();
 
 		// 1. Retrieve agent current Spcarr
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(agent),
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(agent),
 				toVentilDate.getDateVentilation());
 
 		// 2. remove existing ventilations
@@ -382,8 +382,8 @@ public class VentilationService implements IVentilationService {
 
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
 
-		Spcarr carr = sirhRepository
-				.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), dateLundi);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
+				dateLundi);
 		List<Pointage> ptgs = ventilationRepository.getListPointagesForPrimesCalculees(idAgent, fromEtatDate,
 				toEtatDate, dateLundi);
 		result.addAll(pointageCalculeService.calculatePointagesForAgentAndWeek(idAgent, carr.getStatutCarriere(),
@@ -441,7 +441,7 @@ public class VentilationService implements IVentilationService {
 	 * @return the Agent's Spcarr if the agent is eligible, null otherwise
 	 */
 	protected Spcarr isAgentEligibleToVentilation(Integer idAgent, AgentStatutEnum statut, Date date) {
-		Spcarr carr = sirhRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), date);
 		AgentStatutEnum agentStatus = carr != null ? carr.getStatutCarriere() : null;
 		return agentStatus == statut ? carr : null;
 	}

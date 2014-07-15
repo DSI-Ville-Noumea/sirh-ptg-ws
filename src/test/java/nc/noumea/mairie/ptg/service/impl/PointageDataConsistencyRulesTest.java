@@ -25,7 +25,7 @@ import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.repository.ISirhRepository;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -82,12 +82,12 @@ public class PointageDataConsistencyRulesTest {
 		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
 		List<Pointage> ptgs = new ArrayList<Pointage>();
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListRecuperationBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(new ArrayList<Sprirc>());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
 		// When
 		ReturnMessageDto result = service.checkSprircRecuperation(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
@@ -110,7 +110,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setDatfin(20130521);
 		sp.setCodem2(1);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListRecuperationBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -118,7 +118,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -150,7 +150,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setDatfin(20130521);
 		sp.setCodem2(1);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListRecuperationBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -158,7 +158,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -191,7 +191,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setDatfin(20130521);
 		sp.setCodem2(2);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListRecuperationBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -199,7 +199,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -232,7 +232,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setDatfin(20130521);
 		sp.setCodem2(2);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListRecuperationBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -240,7 +240,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -273,7 +273,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setDatfin(20130521);
 		sp.setCodem2(1);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListRecuperationBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -282,7 +282,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -315,7 +315,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setDatfin(20130522);
 		sp.setCodem2(2);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListRecuperationBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -324,7 +324,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130522)).thenReturn(new DateTime(2013, 5, 22, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -344,12 +344,12 @@ public class PointageDataConsistencyRulesTest {
 		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
 		List<Pointage> ptgs = new ArrayList<Pointage>();
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListCongeBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(new ArrayList<Spcong>());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
 		// When
 		ReturnMessageDto result = service.checkSpcongConge(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
@@ -373,7 +373,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setDatfin(20130521);
 		sp.setCodem2(1);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListCongeBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -381,7 +381,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -414,7 +414,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setDatfin(20130521);
 		sp.setCodem2(2);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListCongeBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -422,7 +422,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -456,7 +456,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setDatfin(20130521);
 		sp.setCodem2(1);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListCongeBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -464,7 +464,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -498,7 +498,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setDatfin(20130522);
 		sp.setCodem2(2);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListCongeBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -507,7 +507,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130522)).thenReturn(new DateTime(2013, 5, 22, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -527,12 +527,12 @@ public class PointageDataConsistencyRulesTest {
 		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
 		List<Pointage> ptgs = new ArrayList<Pointage>();
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(new ArrayList<Spabsen>());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
 		// When
 		ReturnMessageDto result = service.checkSpabsenMaladie(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
@@ -554,7 +554,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setId(new SpabsenId(5138, 20130519, null));
 		sp.setDatfin(20130521);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -563,7 +563,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -594,7 +594,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setId(new SpabsenId(5138, 20130521, null));
 		sp.setDatfin(20130521);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -602,7 +602,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -634,7 +634,7 @@ public class PointageDataConsistencyRulesTest {
 		sp.setId(new SpabsenId(5138, 20130515, null));
 		sp.setDatfin(20130527);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(Arrays.asList(sp));
 
@@ -643,7 +643,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.getDateFromMairieInteger(20130522)).thenReturn(new DateTime(2013, 5, 27, 0, 0, 0).toDate());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
@@ -712,14 +712,14 @@ public class PointageDataConsistencyRulesTest {
 		car.setSpbhor(hor);
 		car.setSpbase(bas);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
@@ -759,14 +759,14 @@ public class PointageDataConsistencyRulesTest {
 		car.setSpbhor(hor);
 		car.setSpbase(bas);
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
@@ -801,14 +801,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
@@ -843,14 +843,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
@@ -885,14 +885,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
@@ -928,14 +928,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
@@ -970,14 +970,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
@@ -1001,14 +1001,14 @@ public class PointageDataConsistencyRulesTest {
 		Spadmn sp = new Spadmn();
 		sp.setCdpadm("01");
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateLundi)).thenReturn(sp);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(9007865)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
@@ -1030,14 +1030,14 @@ public class PointageDataConsistencyRulesTest {
 		Spadmn sp = new Spadmn();
 		sp.setCdpadm("99");
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateLundi)).thenReturn(sp);
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhRepo.getAgent(9007865)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
@@ -1732,14 +1732,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(ag);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
 		// When
@@ -1775,7 +1775,7 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -1786,7 +1786,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbasch())).thenReturn(2340);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
@@ -1823,7 +1823,7 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 18, 16, 15, 0).toDate()); // 33h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -1835,7 +1835,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(600)).thenReturn(10.0d);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
@@ -1880,7 +1880,7 @@ public class PointageDataConsistencyRulesTest {
 		p2.setDateFin(new DateTime(2013, 05, 17, 8, 15, 0).toDate()); // 1h
 		p2.getType().setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -1891,7 +1891,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbasch())).thenReturn(2340);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
@@ -1934,7 +1934,7 @@ public class PointageDataConsistencyRulesTest {
 		p2.setDateFin(new DateTime(2013, 05, 17, 8, 15, 0).toDate()); // 1h
 		p2.getType().setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 
-		ISirhRepository mRepo = Mockito.mock(ISirhRepository.class);
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(ag, dateLundi)).thenReturn(car);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -1946,7 +1946,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(600)).thenReturn(10.0d);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "sirhRepository", mRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
