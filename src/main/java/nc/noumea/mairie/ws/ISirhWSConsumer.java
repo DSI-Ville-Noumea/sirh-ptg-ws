@@ -25,4 +25,6 @@ public interface ISirhWSConsumer {
 	boolean isHoliday(LocalDate datePointage);
 
 	boolean isHoliday(DateTime deb);
+
+	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date);
 }

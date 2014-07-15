@@ -88,7 +88,7 @@ public class PointageService implements IPointageService {
 
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
-		List<Integer> pps = sirhRepository.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		List<Integer> pps = sirhWsConsumer.getPrimePointagesByAgent(agent.getIdAgent(), date);
 		if (pps.size() > 0) {
 			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
 

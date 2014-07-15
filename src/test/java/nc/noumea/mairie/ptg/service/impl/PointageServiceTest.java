@@ -96,6 +96,7 @@ public class PointageServiceTest {
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentDirection(idAgent)).thenReturn(siserv);
+		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
@@ -103,7 +104,6 @@ public class PointageServiceTest {
 
 		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
 		Mockito.when(mairieRepo.getAgentCurrentCarriere(agent, d)).thenReturn(carr);
-		Mockito.when(mairieRepo.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
 
 		HelperService helperMock = Mockito.mock(HelperService.class);
 		Mockito.when(helperMock.getCurrentDate()).thenReturn(d);

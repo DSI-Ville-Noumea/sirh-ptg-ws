@@ -16,8 +16,6 @@ public interface ISirhRepository {
 
 	Spcarr getAgentCurrentCarriere(Integer noMatr, Date asOfDate);
 
-	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date);
-
 	Spadmn getAgentCurrentPosition(AgentGeneriqueDto ag, Date asOfDate);
 
 	List<Sprirc> getListRecuperationBetween(Integer idAgent, Date start, Date end);

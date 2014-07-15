@@ -32,6 +32,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhSousServicesUrl = "services/sousServices";
 	private static final String sirhAgentUrl = "agents/getAgent";
 	private static final String sirhHolidayUrl = "utils/isHoliday";
+	private static final String sirhListPrimePointageUrl = "pointages/listPrimePointages";
 
 	@Override
 	public SirhWsServiceDto getAgentDirection(Integer idAgent) {
@@ -138,5 +139,22 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date) {
+
+		String url = String.format(sirhWsBaseUrl + sirhListPrimePointageUrl);
+		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", idAgent.toString());
+		parameters.put("date", sf.format(date));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		List<Integer> listeNumPrime = readResponseAsList(Integer.class, res, url);
+
+		return listeNumPrime;
 	}
 }

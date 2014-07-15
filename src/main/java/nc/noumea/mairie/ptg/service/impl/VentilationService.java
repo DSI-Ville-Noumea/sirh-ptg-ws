@@ -36,6 +36,7 @@ import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
 import nc.noumea.mairie.ptg.service.IVentilationService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -55,6 +56,9 @@ public class VentilationService implements IVentilationService {
 
 	@Autowired
 	private ISirhRepository sirhRepository;
+
+	@Autowired
+	private ISirhWSConsumer sirhWsConsumer;
 
 	@Autowired
 	private IVentilationRepository ventilationRepository;
@@ -269,7 +273,7 @@ public class VentilationService implements IVentilationService {
 		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(
 				agentsPointageForPeriod, null);
 
-		boolean has1150Prime = sirhRepository.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
+		boolean has1150Prime = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
 				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime);
 		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod,

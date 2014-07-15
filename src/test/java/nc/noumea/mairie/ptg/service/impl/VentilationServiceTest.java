@@ -38,6 +38,7 @@ import nc.noumea.mairie.ptg.service.IVentilationAbsenceService;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.ptg.service.IVentilationPrimeService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -196,8 +197,8 @@ public class VentilationServiceTest {
 		IPointageService pService = Mockito.mock(IPointageService.class);
 		Mockito.when(pService.filterOldPointagesAndEtatFromList(plist, null)).thenReturn(plist);
 
-		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mairieRepo.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(Arrays.asList(1128, 1135));
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(Arrays.asList(1128, 1135));
 
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
 		Mockito.doAnswer(new Answer<Object>() {
@@ -216,7 +217,7 @@ public class VentilationServiceTest {
 
 		VentilationService service = new VentilationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
 		ReflectionTestUtils.setField(service, "ventilationAbsenceService", absV);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
@@ -256,8 +257,8 @@ public class VentilationServiceTest {
 		IPointageService pService = Mockito.mock(IPointageService.class);
 		Mockito.when(pService.filterOldPointagesAndEtatFromList(plist, null)).thenReturn(plist);
 
-		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mairieRepo.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(
 				Arrays.asList(1128, 1150, 1135));
 
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
@@ -276,10 +277,10 @@ public class VentilationServiceTest {
 
 		VentilationService service = new VentilationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilRepo);
-		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
 		ReflectionTestUtils.setField(service, "ventilationAbsenceService", absV);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 
 		// When
 		service.processHSupAndAbsVentilationForWeekAndAgent(ventilDate, idAgent, carr, dateLundi, fromEtatDate);
@@ -327,15 +328,15 @@ public class VentilationServiceTest {
 				absV.processAbsenceAgent(Mockito.eq(idAgent), Mockito.anyListOf(Pointage.class),
 						Mockito.any(Date.class))).thenReturn(ventilAbs);
 
-		ISirhRepository mairieRepo = Mockito.mock(ISirhRepository.class);
-		Mockito.when(mairieRepo.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(Arrays.asList(1128));
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(Arrays.asList(1128));
 
 		VentilationService service = new VentilationService();
-		ReflectionTestUtils.setField(service, "sirhRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilRepo);
 		ReflectionTestUtils.setField(service, "ventilationAbsenceService", absV);
 		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 
 		// When
 		service.processHSupAndAbsVentilationForWeekAndAgent(ventilDate, idAgent, new Spcarr(), dateLundi, fromEtatDate);
