@@ -33,6 +33,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhAgentUrl = "agents/getAgent";
 	private static final String sirhHolidayUrl = "utils/isHoliday";
 	private static final String sirhListPrimePointageUrl = "pointages/listPrimePointages";
+	private static final String sirhJourFerieUrl = "utils/isJourFerie";
 
 	@Override
 	public SirhWsServiceDto getAgentDirection(Integer idAgent) {
@@ -156,5 +157,21 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		List<Integer> listeNumPrime = readResponseAsList(Integer.class, res, url);
 
 		return listeNumPrime;
+	}
+}
+	
+	@Override
+	public boolean isJourFerie(DateTime deb) {
+		String url = String.format(sirhWsBaseUrl + sirhJourFerieUrl);
+		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("date", sf.format(deb.toDate()));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+		if (res.getStatus() == HttpStatus.OK.value()) {
+			return true;
+		}
+		return false;
 	}
 }

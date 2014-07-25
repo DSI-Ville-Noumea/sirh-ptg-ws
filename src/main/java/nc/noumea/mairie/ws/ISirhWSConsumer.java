@@ -27,4 +27,6 @@ public interface ISirhWSConsumer {
 	boolean isHoliday(DateTime deb);
 
 	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date);
+	
+	boolean isJourFerie(DateTime deb);
 }
