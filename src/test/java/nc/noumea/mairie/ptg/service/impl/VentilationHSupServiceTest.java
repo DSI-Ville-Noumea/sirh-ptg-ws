@@ -3585,4 +3585,81 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
+	
+	/**
+	 * Cas tests ressorti de la recette base sur un pointage reel
+	 */
+	@Test
+	public void processHSupConventionCollective_testDeLaRecette() {
+		
+		// Given
+		Date dateLundi = new LocalDate(2014, 5, 26).toDate();
+		
+		Pointage p2 = new Pointage();
+		p2.setDateLundi(new DateTime(2014, 5, 26, 0, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2014, 5, 26, 15, 30, 0).toDate());
+		p2.setDateFin(new DateTime(2014, 5, 26, 20, 0, 0).toDate());
+		p2.setHeureSupRecuperee(true);
+		p2.setType(hSup);
+		
+		Pointage p3 = new Pointage();
+		p3.setDateLundi(new DateTime(2014, 5, 26, 0, 0, 0).toDate());
+		p3.setDateDebut(new DateTime(2014, 5, 27, 15, 30, 0).toDate());
+		p3.setDateFin(new DateTime(2014, 5, 27, 20, 0, 0).toDate());
+		p3.setHeureSupRecuperee(false);
+		p3.setType(hSup);
+		
+		Pointage p4 = new Pointage();
+		p4.setDateLundi(new DateTime(2014, 5, 26, 0, 0, 0).toDate());
+		p4.setDateDebut(new DateTime(2014, 5, 28, 15, 30, 0).toDate());
+		p4.setDateFin(new DateTime(2014, 5, 28, 20, 0, 0).toDate());
+		p4.setHeureSupRecuperee(true);
+		p4.setType(hSup);
+				
+		Spbase spbase = new Spbase();
+		spbase.setNbahlu(7.45);
+		spbase.setNbahma(7.45);
+		spbase.setNbahme(7.45);
+		spbase.setNbahje(7.45);
+		spbase.setNbahve(7.45);
+		spbase.setNbahsa(0);
+		spbase.setNbahdi(0);
+		spbase.setNbashh(38.45);
+		Spcarr spcarr = new Spcarr();
+		spcarr.setSpbase(spbase);
+		
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+
+		// When
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4), false);
+
+		// Then
+		assertEquals(9007865, (int) result.getIdAgent());
+		assertEquals(p2.getDateLundi(), result.getDateLundi());
+		assertEquals(13.5 * 60, result.getMHorsContrat(), 0);
+		assertEquals(0 * 60, result.getMAbsences(), 0);
+		assertEquals(0, result.getMSup(), 0);
+
+		assertEquals(0, result.getMsNuit(), 0);
+		assertEquals(0, result.getMsdjf(), 0);
+		assertEquals(0, result.getMNormales(), 0);
+		assertEquals(0, result.getMSimple(), 0);
+		assertEquals(0, result.getMComposees(), 0);
+		assertEquals(13.5 * 60, result.getMComplementaires(), 0);
+		assertEquals(9 * 60, result.getMComplementairesRecup(), 0);
+		assertEquals(0, result.getMSup25(), 0);
+		assertEquals(0, result.getMSup50(), 0);
+
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+		
+	}
+	
 }

@@ -158,7 +158,6 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		return listeNumPrime;
 	}
-}
 	
 	@Override
 	public boolean isJourFerie(DateTime deb) {

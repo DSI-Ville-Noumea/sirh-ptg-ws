@@ -295,7 +295,6 @@ public class VentilationHSupService implements IVentilationHSupService {
 			int nbMinutesNormalesToAdd = (nbMinutesSupJour + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup)
 					: nbMinutesSupJour;
 			result.setMNormales(result.getMNormales() + nbMinutesNormalesToAdd);
-//			result.setMSup(result.getMSup() + nbMinutesNormalesToAdd);
 			nbMinutesSupJour -= nbMinutesNormalesToAdd;
 
 			if (isHRecuperee) {
@@ -369,7 +368,6 @@ public class VentilationHSupService implements IVentilationHSupService {
 			int nbMinutesNormalesToAdd = (nbMinutesSupJour + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup)
 					: nbMinutesSupJour;
 			result.setMComplementaires(result.getMComplementaires() + nbMinutesNormalesToAdd);
-//			result.setMSup(result.getMSup() + nbMinutesNormalesToAdd);
 			nbMinutesSupJour -= nbMinutesNormalesToAdd;
 
 			if (isHRecuperee) {
@@ -439,7 +437,6 @@ public class VentilationHSupService implements IVentilationHSupService {
 			int nbMinutesComplementairesToAdd = (nbMinutesSup + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup)
 					: nbMinutesSup;
 			result.setMComplementaires(result.getMComplementaires() + nbMinutesComplementairesToAdd);
-//			result.setMSup(result.getMSup() + nbMinutesComplementairesToAdd);
 			nbMinutesSup -= nbMinutesComplementairesToAdd;
 
 			if (isHRecuperee) {
@@ -508,7 +505,6 @@ public class VentilationHSupService implements IVentilationHSupService {
 		// If it's a SUNDAY or a HOLIDAY, count the hours as HS DJF
 		if (dday.getDayOfWeek() == 7 || sirhWsConsumer.isHoliday(dday)) {
 			result.setMsdjf(result.getMsdjf() + totalMinutes);
-//			result.setMSup(result.getMSup() + totalMinutes);
 			
 			// Do the same calculus if the minutes are marked as "recuperee"
 			if (isHRecuperee) {
@@ -519,7 +515,6 @@ public class VentilationHSupService implements IVentilationHSupService {
 		// If it's a 1st of May
 		if (dday.getDayOfMonth() == 1 && dday.getMonthOfYear() == 5) {
 			result.setMMai(result.getMMai() + totalMinutes);
-//			result.setMSup(result.getMSup() + totalMinutes);
 
 			if (isHRecuperee) {
 				result.setMMaiRecup(result.getMMaiRecup() + totalMinutes);
@@ -529,7 +524,6 @@ public class VentilationHSupService implements IVentilationHSupService {
 		// If we're doing HS Nuit then count them as HS Nuit
 		if (minutes.getNbMinutesNuit() != 0) {
 			result.setMsNuit(result.getMsNuit() + minutes.getNbMinutesNuit());
-//			result.setMSup(result.getMSup() + minutes.getNbMinutesNuit());
 
 			if (isHRecuperee) {
 				result.setMsNuitRecup(result.getMsNuitRecup() + minutes.getNbMinutesNuit());
