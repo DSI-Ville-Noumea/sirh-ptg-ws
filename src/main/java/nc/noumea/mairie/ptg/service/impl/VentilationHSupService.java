@@ -291,9 +291,18 @@ public class VentilationHSupService implements IVentilationHSupService {
 		// HS Normale (for people having weekBase != BASE_HEBDO_LEGALE)
 		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE 
 				&& isHeuresSupSaisies 
-				&& (weekBase - result.getMAbsences()) < BASE_HEBDO_LEGALE) {
-			int nbMinutesNormalesToAdd = (nbMinutesSupJour + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup)
-					: nbMinutesSupJour;
+				&& (weekBase - result.getMAbsences()) + result.getMNormales() < BASE_HEBDO_LEGALE) {
+			
+			int nbMinutesNormalesToAdd = 0;
+			
+			if((nbMinutesSupJour + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE) {
+				nbMinutesNormalesToAdd = (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup);
+			} else if(nbMinutesSupJour + (weekBase - result.getMAbsences()) > BASE_HEBDO_LEGALE) {
+				nbMinutesNormalesToAdd = BASE_HEBDO_LEGALE - (weekBase - result.getMAbsences());
+			} else {
+				nbMinutesNormalesToAdd = nbMinutesSupJour;
+			}
+			
 			result.setMNormales(result.getMNormales() + nbMinutesNormalesToAdd);
 			nbMinutesSupJour -= nbMinutesNormalesToAdd;
 
@@ -364,9 +373,18 @@ public class VentilationHSupService implements IVentilationHSupService {
 		// HS Normale (for people having weekBase != BASE_HEBDO_LEGALE)
 		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE 
 				&& isHeuresSupSaisies 
-				&& (weekBase - result.getMAbsences()) < BASE_HEBDO_LEGALE) {
-			int nbMinutesNormalesToAdd = (nbMinutesSupJour + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup)
-					: nbMinutesSupJour;
+				&& (weekBase - result.getMAbsences()) + result.getMComplementaires() < BASE_HEBDO_LEGALE) {
+			
+			int nbMinutesNormalesToAdd = 0;
+			
+			if((nbMinutesSupJour + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE) {
+				nbMinutesNormalesToAdd = (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup);
+			} else if(nbMinutesSupJour + (weekBase - result.getMAbsences()) > BASE_HEBDO_LEGALE) {
+				nbMinutesNormalesToAdd = BASE_HEBDO_LEGALE - (weekBase - result.getMAbsences());
+			} else {
+				nbMinutesNormalesToAdd = nbMinutesSupJour;
+			}
+			
 			result.setMComplementaires(result.getMComplementaires() + nbMinutesNormalesToAdd);
 			nbMinutesSupJour -= nbMinutesNormalesToAdd;
 
@@ -432,10 +450,18 @@ public class VentilationHSupService implements IVentilationHSupService {
 		// If we're doing HS under the BASE_HEBDO_LEGAL = 39, count them as HS
 		// Complementaires
 		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE 
-				&& (weekBase - result.getMAbsences()) < BASE_HEBDO_LEGALE) {
+				&& (weekBase - result.getMAbsences()) + result.getMComplementaires() < BASE_HEBDO_LEGALE) {
 			
-			int nbMinutesComplementairesToAdd = (nbMinutesSup + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE ? (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup)
-					: nbMinutesSup;
+			int nbMinutesComplementairesToAdd = 0;
+			
+			if((nbMinutesSup + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE) {
+				nbMinutesComplementairesToAdd = (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup);
+			} else if(nbMinutesSup + (weekBase - result.getMAbsences()) > BASE_HEBDO_LEGALE) {
+				nbMinutesComplementairesToAdd = BASE_HEBDO_LEGALE - (weekBase - result.getMAbsences());
+			} else {
+				nbMinutesComplementairesToAdd = nbMinutesSup;
+			}
+			
 			result.setMComplementaires(result.getMComplementaires() + nbMinutesComplementairesToAdd);
 			nbMinutesSup -= nbMinutesComplementairesToAdd;
 
