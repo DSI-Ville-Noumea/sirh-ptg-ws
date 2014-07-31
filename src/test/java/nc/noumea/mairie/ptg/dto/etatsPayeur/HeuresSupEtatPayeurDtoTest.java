@@ -23,8 +23,6 @@ public class HeuresSupEtatPayeurDtoTest {
 		vh.setMMai(40);
 		vh.setMNormales(50);
 		vh.setMsdjf(60);
-		vh.setMsdjf25(70);
-		vh.setMsdjf50(80);
 		vh.setMSimple(90);
 		vh.setMsNuit(100);
 		vh.setMSup(110);
@@ -60,8 +58,6 @@ public class HeuresSupEtatPayeurDtoTest {
 		assertEquals("40m", result.getH1Mai());
 		assertEquals("50m", result.getNormales());
 		assertEquals("1h", result.getDjf());
-		assertEquals("1h10m", result.getDjf25());
-		assertEquals("1h20m", result.getDjf50());
 		assertEquals("1h30m", result.getSimples());
 		assertEquals("1h40m", result.getNuit());
 		assertEquals("1h50m", result.getSup());
@@ -82,8 +78,6 @@ public class HeuresSupEtatPayeurDtoTest {
 		vhNew.setMMai(40);
 		vhNew.setMNormales(50);
 		vhNew.setMsdjf(60);
-		vhNew.setMsdjf25(70);
-		vhNew.setMsdjf50(80);
 		vhNew.setMSimple(90);
 		vhNew.setMsNuit(100);
 		vhNew.setMSup(110);
@@ -99,8 +93,6 @@ public class HeuresSupEtatPayeurDtoTest {
 		vhOld.setMMai(40);
 		vhOld.setMNormales(50);
 		vhOld.setMsdjf(60);
-		vhOld.setMsdjf25(70);
-		vhOld.setMsdjf50(80);
 		vhOld.setMSimple(90);
 		vhOld.setMsNuit(100);
 		vhOld.setMSup(110);
@@ -126,8 +118,6 @@ public class HeuresSupEtatPayeurDtoTest {
 		assertEquals("", result.getH1Mai());
 		assertEquals("", result.getNormales());
 		assertEquals("", result.getDjf());
-		assertEquals("", result.getDjf25());
-		assertEquals("", result.getDjf50());
 		assertEquals("", result.getSimples());
 		assertEquals("", result.getNuit());
 		assertEquals("", result.getSup());

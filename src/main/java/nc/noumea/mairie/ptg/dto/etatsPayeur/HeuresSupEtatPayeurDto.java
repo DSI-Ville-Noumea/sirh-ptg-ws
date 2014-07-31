@@ -10,8 +10,6 @@ public class HeuresSupEtatPayeurDto extends AbstractItemEtatPayeurDto {
 	private String sup25;
 	private String sup50;
 	private String djf;
-	private String djf25;
-	private String djf50;
 	private String h1Mai;
 	private String nuit;
 	private String normales;
@@ -38,8 +36,6 @@ public class HeuresSupEtatPayeurDto extends AbstractItemEtatPayeurDto {
 		sup25 = hS.formatMinutesToString((int) vhNew.getMSup25() - (vhOld != null ? vhOld.getMSup25() : 0));
 		sup50 = hS.formatMinutesToString(vhNew.getMSup50() - (vhOld != null ? vhOld.getMSup50() : 0));
 		djf = hS.formatMinutesToString(vhNew.getMsdjf() - (vhOld != null ? vhOld.getMsdjf() : 0));
-		djf25 = hS.formatMinutesToString(vhNew.getMsdjf25() - (vhOld != null ? vhOld.getMsdjf25() : 0));
-		djf50 = hS.formatMinutesToString(vhNew.getMsdjf50() - (vhOld != null ? vhOld.getMsdjf50() : 0));
 		h1Mai = hS.formatMinutesToString(vhNew.getMMai() - (vhOld != null ? vhOld.getMMai() : 0));
 		nuit = hS.formatMinutesToString(vhNew.getMsNuit() - (vhOld != null ? vhOld.getMsNuit() : 0));
 		normales = hS.formatMinutesToString(vhNew.getMNormales() - (vhOld != null ? vhOld.getMNormales() : 0));
@@ -88,22 +84,6 @@ public class HeuresSupEtatPayeurDto extends AbstractItemEtatPayeurDto {
 
 	public void setDjf(String djf) {
 		this.djf = djf;
-	}
-
-	public String getDjf25() {
-		return djf25;
-	}
-
-	public void setDjf25(String djf25) {
-		this.djf25 = djf25;
-	}
-
-	public String getDjf50() {
-		return djf50;
-	}
-
-	public void setDjf50(String djf50) {
-		this.djf50 = djf50;
 	}
 
 	public String getH1Mai() {

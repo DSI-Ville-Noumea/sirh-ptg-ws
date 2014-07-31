@@ -61,18 +61,6 @@ public class VentilHsup {
     @Column(name = "M_DJF_R")
     private int msdjfRecup;
     
-    @Column(name = "M_DJF_25")
-    private int msdjf25;
-    
-    @Column(name = "M_DJF_25_R")
-    private int msdjf25Recup;
-    
-    @Column(name = "M_DJF_50")
-    private int msdjf50;
-    
-    @Column(name = "M_DJF_50_R")
-    private int msdjf50Recup;
-    
     @Column(name = "M_1_MAI")
     private int mMai;
     
@@ -218,38 +206,6 @@ public class VentilHsup {
 
 	public void setMsdjfRecup(int msdjfRecup) {
 		this.msdjfRecup = msdjfRecup;
-	}
-
-	public int getMsdjf25() {
-		return msdjf25;
-	}
-
-	public void setMsdjf25(int msdjf25) {
-		this.msdjf25 = msdjf25;
-	}
-
-	public int getMsdjf25Recup() {
-		return msdjf25Recup;
-	}
-
-	public void setMsdjf25Recup(int msdjf25Recup) {
-		this.msdjf25Recup = msdjf25Recup;
-	}
-
-	public int getMsdjf50() {
-		return msdjf50;
-	}
-
-	public void setMsdjf50(int msdjf50) {
-		this.msdjf50 = msdjf50;
-	}
-
-	public int getMsdjf50Recup() {
-		return msdjf50Recup;
-	}
-
-	public void setMsdjf50Recup(int msdjf50Recup) {
-		this.msdjf50Recup = msdjf50Recup;
 	}
 
 	public int getMMai() {
