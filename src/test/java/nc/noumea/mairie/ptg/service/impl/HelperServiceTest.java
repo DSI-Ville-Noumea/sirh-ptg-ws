@@ -292,4 +292,15 @@ public class HelperServiceTest {
 		assertEquals("15m", service.formatMinutesToString(new DateTime(2013, 01, 01, 2, 15, 0).toDate(), new DateTime(2013, 01, 01, 2, 30, 0).toDate()));
 		
 	}
+	
+	@Test
+	public void formatMinutesToString_PeriodOneDay() {
+		
+		// Given
+		HelperService service = new HelperService();
+		
+		// Then
+		assertEquals("1j", service.formatMinutesToString(new DateTime(2013, 01, 01, 2, 15, 0).toDate(), new DateTime(2013, 01, 02, 2, 15, 0).toDate()));
+		
+	}
 }

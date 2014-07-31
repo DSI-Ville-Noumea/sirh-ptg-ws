@@ -121,7 +121,7 @@ public class HelperService {
 		return sb.toString();
 	}
 	
-	private static PeriodFormatter formatter = new PeriodFormatterBuilder().appendHours().appendSuffix("h")
+	private static PeriodFormatter formatter = new PeriodFormatterBuilder().appendDays().appendSuffix("j").appendHours().appendSuffix("h")
 			.appendMinutes().appendSuffix("m").toFormatter();
 
 	public String formatMinutesToString(Date dateDebut, Date dateFin) {
