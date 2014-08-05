@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.service.impl;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -409,8 +410,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > helperService.convertMairieNbHeuresFormatToMinutes(carr
 					.getSpbase().getNbasch())) {
-				String msg = String.format(HS_TPS_PARTIEL_MSG,
-						carr.getSpbase().getNbasch() - helperService.convertMinutesToMairieNbHeuresFormat(weekBase));
+				DecimalFormat df = new DecimalFormat("0.##");
+				double nombre = carr.getSpbase().getNbasch()
+						- helperService.convertMinutesToMairieNbHeuresFormat(weekBase);
+				String msg = String.format(HS_TPS_PARTIEL_MSG, df.format(nombre));
 				srm.getErrors().add(msg);
 			}
 

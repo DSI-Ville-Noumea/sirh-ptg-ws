@@ -1846,7 +1846,7 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 29.0 heures supplémentaires.", result
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 29 heures supplémentaires.", result
 				.getErrors().get(0));
 	}
 
@@ -1914,7 +1914,7 @@ public class PointageDataConsistencyRulesTest {
 
 		Spbase bas = new Spbase();
 		bas.setCdBase("A");
-		bas.setNbashh(20.0);
+		bas.setNbashh(20.5);
 		bas.setNbasch(39.0);
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(0.5);
@@ -1943,7 +1943,7 @@ public class PointageDataConsistencyRulesTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbashh())).thenReturn(1200);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbasch())).thenReturn(2340);
-		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(600)).thenReturn(10.0d);
+		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(600)).thenReturn(10.485d);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
@@ -1957,7 +1957,7 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 29.0 heures supplémentaires.", result
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 28,52 heures supplémentaires.", result
 				.getErrors().get(0));
 	}
 }
