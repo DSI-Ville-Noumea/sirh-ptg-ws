@@ -5,14 +5,17 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spbase;
-import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -43,6 +46,12 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 	@Autowired
 	private HelperService helperService;
+	
+	@Autowired
+	private IMairieRepository mairieRepository;
+	
+	@Autowired
+	private IPointageDataConsistencyRules ptgDataCosistencyRules;
 
 	@Override
 	public VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages) {
@@ -87,10 +96,59 @@ public class VentilationHSupService implements IVentilationHSupService {
 			}
 		}
 
-		// Compute the agent week hour base
 		Spbase base = carr.getSpbase();
-		Spbhor spbhor = carr.getSpbhor();
-		int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(base.getNbashh()) * spbhor.getTaux());
+		// second retrieve all the absences in SPCONG
+		List<Spcong> listSpCong = mairieRepository.getListCongeBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate());
+		for(Spcong spCong : listSpCong) {
+			DateTime startDate = new DateTime(helperService.getDateFromMairieInteger(spCong.getId().getDatdeb()));
+			if(dateLundi.after(startDate.toDate()) ) {
+				startDate = new DateTime(dateLundi);
+			}
+			
+			DateTime endDate = new DateTime(helperService.getDateFromMairieInteger(spCong.getDatfin()));
+			if(endDate.toDate().after(new DateTime(dateLundi).plusDays(7).toDate())) {
+				endDate = new DateTime(dateLundi).plusDays(7);
+			}
+			
+			int minutesConges = 0;
+			for (int i = 0; i < 7; i++) {
+				Date dateJour = new DateTime(dateLundi).plusDays(i).toDate();
+				if((dateJour.equals(startDate.toDate()) || dateJour.after(startDate.toDate()))
+						&& (dateJour.equals(endDate) || dateJour.before(endDate.toDate()))) {
+					minutesConges += helperService.convertMairieNbHeuresFormatToMinutes(base.getDayBase(i));
+				}
+			}
+			
+			result.setMAbsences(result.getMAbsences() + minutesConges);
+		}
+		
+		// second retrieve all the absences in SPABSEN
+		List<Spabsen> listSpAbsen = mairieRepository.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate());
+		for(Spabsen spabsen : listSpAbsen) {
+			DateTime startDate = new DateTime(helperService.getDateFromMairieInteger(spabsen.getId().getDatdeb()));
+			if(dateLundi.after(startDate.toDate()) ) {
+				startDate = new DateTime(dateLundi);
+			}
+			
+			DateTime endDate = new DateTime(helperService.getDateFromMairieInteger(spabsen.getDatfin()));
+			if(endDate.toDate().after(new DateTime(dateLundi).plusDays(7).toDate())) {
+				endDate = new DateTime(dateLundi).plusDays(7);
+			}
+			
+			int minutesSpAbsen = 0;
+			for (int i = 0; i < 7; i++) {
+				Date dateJour = new DateTime(dateLundi).plusDays(i).toDate();
+				if((dateJour.equals(startDate.toDate()) || dateJour.after(startDate.toDate()))
+						&& (dateJour.equals(endDate) || dateJour.before(endDate.toDate()))) {
+					minutesSpAbsen += helperService.convertMairieNbHeuresFormatToMinutes(base.getDayBase(i));
+				}
+			}
+			
+			result.setMAbsences(result.getMAbsences() + minutesSpAbsen);
+		}
+		
+		// Compute the agent week hour base
+		int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(base.getNbashh()));
 		int weekMinutes = 0 - result.getMAbsences();
 		int nbMinutesRecuperees = 0;
 

@@ -8,14 +8,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -92,10 +95,15 @@ public class VentilationHSupServiceTest {
 		
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
@@ -175,10 +183,15 @@ public class VentilationHSupServiceTest {
 		
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4));
@@ -272,10 +285,15 @@ public class VentilationHSupServiceTest {
 		
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6));
@@ -362,10 +380,15 @@ public class VentilationHSupServiceTest {
 		
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
@@ -431,10 +454,15 @@ public class VentilationHSupServiceTest {
 		
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
@@ -521,10 +549,15 @@ public class VentilationHSupServiceTest {
 		
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
@@ -615,10 +648,15 @@ public class VentilationHSupServiceTest {
 		
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
@@ -709,10 +747,15 @@ public class VentilationHSupServiceTest {
 		
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
@@ -782,10 +825,15 @@ public class VentilationHSupServiceTest {
 		
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 04, 1, 8, 0, 0))).thenReturn(true);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), true);
@@ -874,10 +922,15 @@ public class VentilationHSupServiceTest {
 		
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6));
@@ -931,9 +984,14 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1));
@@ -1014,9 +1072,14 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3));
@@ -1090,9 +1153,14 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3));
@@ -1159,9 +1227,14 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
@@ -1276,9 +1349,14 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
@@ -1364,9 +1442,14 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
@@ -1489,9 +1572,14 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9));
@@ -1565,9 +1653,14 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6));
@@ -1632,9 +1725,14 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
@@ -1715,9 +1813,14 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4));
@@ -1803,10 +1906,15 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
-
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6));
@@ -1883,10 +1991,15 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3));
@@ -1959,10 +2072,15 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3));
@@ -2027,10 +2145,15 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
@@ -2144,10 +2267,15 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
@@ -2232,10 +2360,15 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
@@ -2357,10 +2490,15 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9));
@@ -2433,10 +2571,15 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6));
@@ -2500,10 +2643,15 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
@@ -2583,10 +2731,15 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4));
@@ -2672,10 +2825,15 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6));
@@ -2754,10 +2912,15 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 8, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false);
@@ -2832,10 +2995,15 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 0, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false);
@@ -2900,10 +3068,15 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), false);
@@ -3017,10 +3190,15 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), false);
@@ -3105,10 +3283,15 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), false);
@@ -3230,10 +3413,15 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9), false);
@@ -3306,10 +3494,15 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6), false);
@@ -3373,10 +3566,15 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), false);
@@ -3456,10 +3654,15 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4), false);
@@ -3545,10 +3748,15 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), false);
@@ -3583,22 +3791,22 @@ public class VentilationHSupServiceTest {
 		
 		Pointage p2 = new Pointage();
 		p2.setDateLundi(new DateTime(2014, 5, 26, 0, 0, 0).toDate());
-		p2.setDateDebut(new DateTime(2014, 5, 26, 15, 30, 0).toDate());
-		p2.setDateFin(new DateTime(2014, 5, 26, 20, 0, 0).toDate());
+		p2.setDateDebut(new DateTime(2014, 5, 26, 16, 30, 0).toDate());
+		p2.setDateFin(new DateTime(2014, 5, 26, 21, 0, 0).toDate());
 		p2.setHeureSupRecuperee(true);
 		p2.setType(hSup);
 		
 		Pointage p3 = new Pointage();
 		p3.setDateLundi(new DateTime(2014, 5, 26, 0, 0, 0).toDate());
-		p3.setDateDebut(new DateTime(2014, 5, 27, 15, 30, 0).toDate());
-		p3.setDateFin(new DateTime(2014, 5, 27, 20, 0, 0).toDate());
+		p3.setDateDebut(new DateTime(2014, 5, 27, 16, 30, 0).toDate());
+		p3.setDateFin(new DateTime(2014, 5, 27, 21, 0, 0).toDate());
 		p3.setHeureSupRecuperee(false);
 		p3.setType(hSup);
 		
 		Pointage p4 = new Pointage();
 		p4.setDateLundi(new DateTime(2014, 5, 26, 0, 0, 0).toDate());
-		p4.setDateDebut(new DateTime(2014, 5, 28, 15, 30, 0).toDate());
-		p4.setDateFin(new DateTime(2014, 5, 28, 20, 0, 0).toDate());
+		p4.setDateDebut(new DateTime(2014, 5, 28, 16, 30, 0).toDate());
+		p4.setDateFin(new DateTime(2014, 5, 28, 21, 0, 0).toDate());
 		p4.setHeureSupRecuperee(true);
 		p4.setType(hSup);
 				
@@ -3619,10 +3827,15 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4), false);
@@ -3634,7 +3847,7 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMAbsences(), 0);
 		assertEquals(13.25 * 60, result.getMSup(), 0);
 
-		assertEquals(0, result.getMsNuit(), 0);
+		assertEquals(3 * 60, result.getMsNuit(), 0);
 		assertEquals(0, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
@@ -3689,10 +3902,15 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p2, p3));
@@ -3763,10 +3981,15 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListCongeBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spcong>());
+		Mockito.when(mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4));

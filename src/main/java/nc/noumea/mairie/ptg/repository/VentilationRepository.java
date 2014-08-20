@@ -127,8 +127,8 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("WHERE p.ID_AGENT = :idAgent ");
 		sb.append("AND p.DATE_LUNDI = :dateLundi ");
 		sb.append("AND (p.ID_TYPE_POINTAGE = :typePointageHSUP OR p.ID_TYPE_POINTAGE = :typePointageABS) ");
-		sb.append("AND (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ");
-		sb.append("OR ep.etat IN (:ventile, :valide, :journalise)) ");
+		sb.append("AND ((ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve) ");
+		sb.append("OR ep.etat IN (:ventile, :valide, :journalise, :refuse, :rejete)) ");
 		sb.append("ORDER BY id_pointage DESC ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
@@ -142,6 +142,8 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("typePointageABS", RefTypePointageEnum.ABSENCE.getValue());
 		q.setParameter("valide", EtatPointageEnum.VALIDE.getCodeEtat());
 		q.setParameter("journalise", EtatPointageEnum.JOURNALISE.getCodeEtat());
+		q.setParameter("refuse", EtatPointageEnum.REFUSE.getCodeEtat());
+		q.setParameter("rejete", EtatPointageEnum.REJETE.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
 		List<Pointage> result = q.getResultList();
