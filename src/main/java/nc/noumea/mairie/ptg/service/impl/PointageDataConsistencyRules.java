@@ -258,8 +258,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	// -- Helpers --//
-
-	protected DateTime getDateDebut(Integer dateDeb, Integer codem1) {
+	@Override
+	public DateTime getDateDebut(Integer dateDeb, Integer codem1) {
 		DateTime recupDateDeb = new DateTime(helperService.getDateFromMairieInteger(dateDeb));
 
 		if (codem1 != null && codem1.equals(2))
@@ -267,8 +267,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		return recupDateDeb;
 	}
-
-	protected DateTime getDateFin(Integer dateFin, Integer codem2) {
+	@Override
+	public DateTime getDateFin(Integer dateFin, Integer codem2) {
 		DateTime recupDateFin = new DateTime(helperService.getDateFromMairieInteger(dateFin));
 
 		if (codem2 == null || codem2.equals(2))

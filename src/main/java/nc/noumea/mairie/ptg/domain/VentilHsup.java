@@ -15,6 +15,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.Version;
 
 @Entity
@@ -36,6 +37,9 @@ public class VentilHsup {
     
     @Column(name = "M_ABS")
     private int mAbsences;
+    
+    @Column(name = "M_ABS_AS400")
+    private int mAbsencesAS400;
     
     @Column(name = "M_HORS_CONTRAT")
     private int mHorsContrat;
@@ -334,6 +338,19 @@ public class VentilHsup {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public int getMAbsencesAS400() {
+		return mAbsencesAS400;
+	}
+
+	public void setMAbsencesAS400(int mAbsencesAS400) {
+		this.mAbsencesAS400 = mAbsencesAS400;
+	}
+	
+	@Transient
+	public int getTotalAbsences(){
+		return mAbsencesAS400 + mAbsences;
 	}
     
 }

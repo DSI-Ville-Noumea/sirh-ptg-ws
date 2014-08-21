@@ -34,4 +34,7 @@ public interface IMairieRepository {
 	List<Spcong> getListCongeBetween(Integer idAgent, Date start, Date end);
 
 	List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end);
+
+	List<Spcong> getListCongeWithoutCongesAnnuelsEtAnnulesBetween(
+			Integer idAgent, Date start, Date end);
 }

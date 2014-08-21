@@ -8,6 +8,7 @@ import nc.noumea.mairie.ptg.domain.VentilHsup;
 public class VentilHSupDto extends VentilDto {
 
 	private int mabs;
+	private int mabsAs400;
 	private int mHorsContrat;
 	private int mSup;
 	private int mSup25;
@@ -35,6 +36,7 @@ public class VentilHSupDto extends VentilDto {
 
 	public VentilHSupDto(VentilHsup hibObj) {
 		mabs = hibObj.getMAbsences();
+		mabsAs400 = hibObj.getMAbsencesAS400();
 		mHorsContrat = hibObj.getMHorsContrat();
 		mSup = hibObj.getMSup();
 		mSup25 = hibObj.getMSup25();
@@ -244,6 +246,14 @@ public class VentilHSupDto extends VentilDto {
 
 	public void setmComposeesR(int mComposeesR) {
 		this.mComposeesR = mComposeesR;
+	}
+
+	public int getMabsAs400() {
+		return mabsAs400;
+	}
+
+	public void setMabsAs400(int mabsAs400) {
+		this.mabsAs400 = mabsAs400;
 	}
 
 }

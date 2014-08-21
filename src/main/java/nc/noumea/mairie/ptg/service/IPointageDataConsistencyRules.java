@@ -3,6 +3,8 @@ package nc.noumea.mairie.ptg.service;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
@@ -22,4 +24,7 @@ public interface IPointageDataConsistencyRules {
 	ReturnMessageDto checkPrime7652(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 	ReturnMessageDto checkPrime7704(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 	ReturnMessageDto checkDateLundiAnterieurA3Mois(ReturnMessageDto srm, Date dateLundi);
+
+	DateTime getDateDebut(Integer dateDeb, Integer codem1);
+	DateTime getDateFin(Integer dateFin, Integer codem2);
 }
