@@ -106,17 +106,33 @@ public class VentilationHSupService implements IVentilationHSupService {
 				startDate = new DateTime(dateLundi);
 			}
 			
-			DateTime endDate = ptgDataCosistencyRules.getDateDebut(spCong.getDatfin(), spCong.getCodem2());
+			DateTime endDate = ptgDataCosistencyRules.getDateFin(spCong.getDatfin(), spCong.getCodem2());
 			if(endDate.toDate().after(new DateTime(dateLundi).plusDays(7).toDate())) {
 				endDate = new DateTime(dateLundi).plusDays(7);
 			}
 			
 			int minutesConges = 0;
 			for (int i = 0; i < 7; i++) {
-				Date dateJour = new DateTime(dateLundi).plusDays(i).toDate();
-				if((dateJour.equals(startDate.toDate()) || dateJour.after(startDate.toDate()))
-						&& (dateJour.equals(endDate.toDate()) || dateJour.before(endDate.toDate()))) {
-					minutesConges += helperService.convertMairieNbHeuresFormatToMinutes(base.getDayBase(i));
+				DateTime dateJour = new DateTime(dateLundi).plusDays(i);
+				
+				if((dateJour.getDayOfYear()==startDate.getDayOfYear() || dateJour.toDate().after(startDate.toDate()))
+						&& (dateJour.getDayOfYear()==endDate.plusMinutes(-1).getDayOfYear() || dateJour.toDate().before(endDate.toDate()))) {
+					
+					int minutesCongesDay = helperService.convertMairieNbHeuresFormatToMinutes(base.getDayBase(i));
+					// on gere ici les demis journees grace au champ SPCONG.CODEM1 et SPCONG.CODEM2
+					if(spCong.getId().getDatdeb().equals(spCong.getDatfin())
+							&& startDate.getDayOfWeek()-1 == i) {
+						if(null != spCong.getCodem1() && null != spCong.getCodem2()
+								&& spCong.getCodem1().equals(spCong.getCodem2())) {
+							minutesCongesDay = minutesCongesDay / 2;
+						}
+					} else if(startDate.getDayOfWeek()-1 == i && spCong.getCodem1().equals(2)){
+						minutesCongesDay = minutesCongesDay / 2;
+					} else if(endDate.getDayOfWeek()-1 == i && spCong.getCodem2().equals(1)) {
+						minutesCongesDay = minutesCongesDay / 2;
+					}
+					
+					minutesConges += minutesCongesDay;
 				}
 			}
 			
