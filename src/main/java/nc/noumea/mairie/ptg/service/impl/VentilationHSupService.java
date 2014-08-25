@@ -28,14 +28,14 @@ import org.springframework.stereotype.Service;
 public class VentilationHSupService implements IVentilationHSupService {
 
 	// -- HSUP consts --//
-	private static int HEURE_JOUR_DEBUT_F = 4;
-	private static int HEURE_JOUR_FIN_F = 21;
+	public static int HEURE_JOUR_DEBUT_F = 4;
+	public static int HEURE_JOUR_FIN_F = 21;
 
-	private static int HEURE_JOUR_DEBUT_C = 5;
-	private static int HEURE_JOUR_FIN_C = 22;
+	public static int HEURE_JOUR_DEBUT_C = 5;
+	public static int HEURE_JOUR_FIN_C = 22;
 
-	private static int HEURE_JOUR_DEBUT_CC = 4;
-	private static int HEURE_JOUR_FIN_CC = 20;
+	public static int HEURE_JOUR_DEBUT_CC = 4;
+	public static int HEURE_JOUR_FIN_CC = 20;
 
 	private static int NB_HS_SIMPLE = 3 * 60;
 	private static int NB_HS_SUP25 = 8 * 60;
