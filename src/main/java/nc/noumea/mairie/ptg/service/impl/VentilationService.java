@@ -272,7 +272,7 @@ public class VentilationService implements IVentilationService {
 		// Then filter them (if they have parent pointages to be excluded for
 		// ex.)
 		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(
-				agentsPointageForPeriod,  Arrays.asList(EtatPointageEnum.APPROUVE));
+				agentsPointageForPeriod,  Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE));
 
 		boolean has1150Prime = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
