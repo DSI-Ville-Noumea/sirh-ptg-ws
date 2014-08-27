@@ -687,7 +687,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		} else {
 			intervals.add(new Interval(startDate, endDate));
 		}
-
+		
 		int nbMinutesJour = 0;
 		int nbMinutesNuit = 0;
 
@@ -699,8 +699,9 @@ public class VentilationHSupService implements IVentilationHSupService {
 			// Calculate the overlap of the HS to determine what to be counted
 			// as HS Nuit and HS Jour
 			Interval hSupJourOverlap = hSupJourInterval.overlap(interval);
-			nbMinutesJour += (int) (hSupJourOverlap == null ? 0 : hSupJourOverlap.toDuration().getStandardMinutes());
-			nbMinutesNuit += (int) (interval.toDuration().getStandardMinutes() - nbMinutesJour);
+			int nbMinutesJourInterval = (int) (hSupJourOverlap == null ? 0 : hSupJourOverlap.toDuration().getStandardMinutes());
+			nbMinutesJour += nbMinutesJourInterval;
+			nbMinutesNuit += (int) (interval.toDuration().getStandardMinutes() - nbMinutesJourInterval);
 		}
 
 		return new MinutesupPeriod(new Interval(startDate, endDate), nbMinutesJour, nbMinutesNuit);
