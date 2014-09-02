@@ -583,4 +583,43 @@ public class VentilationService implements IVentilationService {
 		result.setCanStartVentilation(!ventilationRepository.canStartVentilation(typeChainePaieFromStatut));
 		return result;
 	}
+	
+	@Override
+	public List<Integer> getListeAgentsToShowVentilation(Integer idDateVentil, Integer idRefTypePointage, AgentStatutEnum statut, 
+			Integer agentMin,Integer agentMax, Date dateVentilation) {
+	
+		List<Integer> listeAgents = new ArrayList<Integer>();
+		
+		switch (RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage)) {
+			case ABSENCE: {
+				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationAbsencesForDate(idDateVentil, agentMin, agentMax)) {
+					Spcarr carr = isAgentEligibleToVentilation(idAgent, statut, dateVentilation);
+					if (null != carr) {
+						listeAgents.add(idAgent);
+					}
+				}
+				break;
+			}
+			case H_SUP: {
+				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationHeuresSupForDate(idDateVentil, agentMin, agentMax)) {
+					Spcarr carr = isAgentEligibleToVentilation(idAgent, statut, dateVentilation);
+					if (null != carr) {
+						listeAgents.add(idAgent);
+					}
+				}
+				break;
+			}
+			case PRIME: {
+				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationPrimesForDate(idDateVentil, agentMin, agentMax)){
+					Spcarr carr = isAgentEligibleToVentilation(idAgent, statut, dateVentilation);
+					if (null != carr) {
+						listeAgents.add(idAgent);
+					}
+				}
+				break;
+			}
+		}
+		
+		return listeAgents;
+	}
 }

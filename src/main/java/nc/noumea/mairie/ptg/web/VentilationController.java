@@ -201,4 +201,26 @@ public class VentilationController {
 		return new ResponseEntity<>(new JSONSerializer().exclude("*.class")
 				.transform(new MSDateTransformer(), Date.class).deepSerialize(result), HttpStatus.OK);
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/listeAgentsToShowVentilation", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional("ptgTransactionManager")
+	public ResponseEntity<String> getListeAgentsToShowVentilation(@RequestParam("idDateVentil") Integer idDateVentil,
+			@RequestParam("typePointage") Integer idRefTypePointage, @RequestParam("statut") String statut, 
+			@RequestParam("agentMin") Integer agentMin, @RequestParam("agentMax") Integer agentMax, 
+			@RequestParam("ventilationDate") @DateTimeFormat(pattern = "YYYYMMdd") Date ventilationDate) {
+		
+		RefTypePointageEnum typepointage = RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage);
+		AgentStatutEnum statutEnum = AgentStatutEnum.valueOf(statut);
+		logger.debug(
+				"entered GET [ventilation/listeAgents] => getListeAgents with parameters idDateVentil = {}, typePointage = {}, statut = {}, agentMin = {}, agentMax = {}",
+				idDateVentil, typepointage.name(), statut, agentMin, agentMax);
+
+		List<Integer> result = ventilationService.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage, statutEnum, agentMin, agentMax, ventilationDate);
+		if (result.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(new JSONSerializer().exclude("*.class").deepSerialize(result), HttpStatus.OK);
+	}
+	
 }

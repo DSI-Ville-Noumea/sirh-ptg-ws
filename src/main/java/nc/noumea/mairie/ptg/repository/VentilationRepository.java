@@ -493,4 +493,75 @@ public class VentilationRepository implements IVentilationRepository {
 		return resultat;
 	}
 
+	@Override
+	public List<Integer> getListAgentsForShowVentilationPrimesForDate (
+			Integer ventilDateId, Integer agentMin, Integer agentMax) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(tb.idAgent) from VentilPrime tb where tb.ventilDate.idVentilDate = :ventilDateId ");
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
+			sb.append(" and tb.idAgent between :agentMin and :agentMax ");
+		}
+
+		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
+		query.setParameter("ventilDateId", ventilDateId);
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
+			query.setParameter("agentMin", agentMin);
+			query.setParameter("agentMax", agentMax);
+		}
+		
+		return query.getResultList();
+	}
+	
+	@Override
+	public List<Integer> getListAgentsForShowVentilationAbsencesForDate (
+			Integer ventilDateId, Integer agentMin, Integer agentMax) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(tb.idAgent) from VentilAbsence tb where tb.ventilDate.idVentilDate = :ventilDateId ");
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
+			sb.append(" and tb.idAgent between :agentMin and :agentMax ");
+		}
+
+		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
+		query.setParameter("ventilDateId", ventilDateId);
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
+			query.setParameter("agentMin", agentMin);
+			query.setParameter("agentMax", agentMax);
+		}
+		
+		return query.getResultList();
+	}
+	
+	@Override
+	public List<Integer> getListAgentsForShowVentilationHeuresSupForDate (
+			Integer ventilDateId, Integer agentMin, Integer agentMax) {
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(tb.idAgent) from VentilHsup tb where tb.ventilDate.idVentilDate = :ventilDateId ");
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
+			sb.append(" and tb.idAgent between :agentMin and :agentMax ");
+		}
+
+		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
+		query.setParameter("ventilDateId", ventilDateId);
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
+			query.setParameter("agentMin", agentMin);
+			query.setParameter("agentMax", agentMax);
+		}
+		
+		return query.getResultList();
+	}
 }

@@ -70,4 +70,8 @@ public interface IVentilationService {
 			RefTypePointageEnum pointageType);
 
 	CanStartVentilationDto isVentilationRunning(TypeChainePaieEnum typeChainePaieFromStatut);
+
+	List<Integer> getListeAgentsToShowVentilation(Integer idDateVentil,
+			Integer idRefTypePointage, AgentStatutEnum statut,
+			Integer agentMin, Integer agentMax, Date dateVentilation);
 }

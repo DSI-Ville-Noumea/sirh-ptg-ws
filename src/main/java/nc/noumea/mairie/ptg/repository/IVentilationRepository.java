@@ -62,4 +62,13 @@ public interface IVentilationRepository {
 	List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent);
 
 	List<VentilHsup> getListOfVentilHSForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent);
+
+	List<Integer> getListAgentsForShowVentilationPrimesForDate(
+			Integer ventilDateId, Integer agentMin, Integer agentMax);
+
+	List<Integer> getListAgentsForShowVentilationAbsencesForDate(
+			Integer ventilDateId, Integer agentMin, Integer agentMax);
+
+	List<Integer> getListAgentsForShowVentilationHeuresSupForDate(
+			Integer ventilDateId, Integer agentMin, Integer agentMax);
 }

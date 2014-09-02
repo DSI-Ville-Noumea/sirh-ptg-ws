@@ -1235,4 +1235,229 @@ public class VentilationServiceTest {
 		// Then
 		assertTrue(result.isCanStartVentilation());
 	}
+	
+	@Test
+	public void getListeAgentsToShowVentilation_Fonctionnaire_Absences_return2result() {
+		
+		Integer idDateVentil = 1;
+		Integer idRefTypePointage = RefTypePointageEnum.ABSENCE.getValue();
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		Integer agentMin = null;
+		Integer agentMax = null;
+		Date dateVentilation = new Date();
+		
+		List<Integer> listeAgents = new ArrayList<Integer>();
+		listeAgents.addAll(Arrays.asList(9005138, 9002990));
+		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListAgentsForShowVentilationAbsencesForDate(idDateVentil, agentMin, agentMax)).thenReturn(listeAgents);
+		
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(20); // F
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(5138, dateVentilation)).thenReturn(carr);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(2990, dateVentilation)).thenReturn(carr);
+
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9002990)).thenReturn(2990);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		
+		List<Integer> result = service.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage, statut, agentMin, agentMax, dateVentilation);
+		
+		assertEquals(2, result.size());
+	}
+	
+	@Test
+	public void getListeAgentsToShowVentilation_Fonctionnaire_Absences_return1result() {
+		
+		Integer idDateVentil = 1;
+		Integer idRefTypePointage = RefTypePointageEnum.ABSENCE.getValue();
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		Integer agentMin = null;
+		Integer agentMax = null;
+		Date dateVentilation = new Date();
+		
+		List<Integer> listeAgents = new ArrayList<Integer>();
+		listeAgents.addAll(Arrays.asList(9005138, 9002990));
+		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListAgentsForShowVentilationAbsencesForDate(idDateVentil, agentMin, agentMax)).thenReturn(listeAgents);
+		
+		Spcarr carrF = new Spcarr();
+			carrF.setCdcate(20); // F
+		Spcarr carrC = new Spcarr();
+			carrC.setCdcate(4); // C
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(5138, dateVentilation)).thenReturn(carrF);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(2990, dateVentilation)).thenReturn(carrC);
+
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9002990)).thenReturn(2990);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		
+		List<Integer> result = service.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage, statut, agentMin, agentMax, dateVentilation);
+		
+		assertEquals(1, result.size());
+		assertEquals(9005138, result.get(0).intValue());
+	}
+	
+	@Test
+	public void getListeAgentsToShowVentilation_Contractuel_H_SUP_return2result() {
+		
+		Integer idDateVentil = 1;
+		Integer idRefTypePointage = RefTypePointageEnum.H_SUP.getValue();
+		AgentStatutEnum statut = AgentStatutEnum.C;
+		Integer agentMin = null;
+		Integer agentMax = null;
+		Date dateVentilation = new Date();
+		
+		List<Integer> listeAgents = new ArrayList<Integer>();
+		listeAgents.addAll(Arrays.asList(9005138, 9002990));
+		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListAgentsForShowVentilationHeuresSupForDate(idDateVentil, agentMin, agentMax)).thenReturn(listeAgents);
+		
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(4); // F
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(5138, dateVentilation)).thenReturn(carr);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(2990, dateVentilation)).thenReturn(carr);
+
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9002990)).thenReturn(2990);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		
+		List<Integer> result = service.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage, statut, agentMin, agentMax, dateVentilation);
+		
+		assertEquals(2, result.size());
+	}
+	
+	@Test
+	public void getListeAgentsToShowVentilation_Contractuel_H_SUP_return1result() {
+		
+		Integer idDateVentil = 1;
+		Integer idRefTypePointage = RefTypePointageEnum.H_SUP.getValue();
+		AgentStatutEnum statut = AgentStatutEnum.C;
+		Integer agentMin = null;
+		Integer agentMax = null;
+		Date dateVentilation = new Date();
+		
+		List<Integer> listeAgents = new ArrayList<Integer>();
+		listeAgents.addAll(Arrays.asList(9005138, 9002990));
+		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListAgentsForShowVentilationHeuresSupForDate(idDateVentil, agentMin, agentMax)).thenReturn(listeAgents);
+		
+		Spcarr carrF = new Spcarr();
+			carrF.setCdcate(20); // F
+		Spcarr carrC = new Spcarr();
+			carrC.setCdcate(4); // C
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(5138, dateVentilation)).thenReturn(carrF);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(2990, dateVentilation)).thenReturn(carrC);
+
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9002990)).thenReturn(2990);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		
+		List<Integer> result = service.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage, statut, agentMin, agentMax, dateVentilation);
+		
+		assertEquals(1, result.size());
+		assertEquals(9002990, result.get(0).intValue());
+	}
+	
+	@Test
+	public void getListeAgentsToShowVentilation_ConvColl_PRIME_return2result() {
+		
+		Integer idDateVentil = 1;
+		Integer idRefTypePointage = RefTypePointageEnum.PRIME.getValue();
+		AgentStatutEnum statut = AgentStatutEnum.CC;
+		Integer agentMin = null;
+		Integer agentMax = null;
+		Date dateVentilation = new Date();
+		
+		List<Integer> listeAgents = new ArrayList<Integer>();
+		listeAgents.addAll(Arrays.asList(9005138, 9002990));
+		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListAgentsForShowVentilationPrimesForDate(idDateVentil, agentMin, agentMax)).thenReturn(listeAgents);
+		
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(7); // CC
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(5138, dateVentilation)).thenReturn(carr);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(2990, dateVentilation)).thenReturn(carr);
+
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9002990)).thenReturn(2990);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		
+		List<Integer> result = service.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage, statut, agentMin, agentMax, dateVentilation);
+		
+		assertEquals(2, result.size());
+	}
+	
+	@Test
+	public void getListeAgentsToShowVentilation_ConvColl_PRIME_return1result() {
+		
+		Integer idDateVentil = 1;
+		Integer idRefTypePointage = RefTypePointageEnum.PRIME.getValue();
+		AgentStatutEnum statut = AgentStatutEnum.CC;
+		Integer agentMin = null;
+		Integer agentMax = null;
+		Date dateVentilation = new Date();
+		
+		List<Integer> listeAgents = new ArrayList<Integer>();
+		listeAgents.addAll(Arrays.asList(9005138, 9002990));
+		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListAgentsForShowVentilationPrimesForDate(idDateVentil, agentMin, agentMax)).thenReturn(listeAgents);
+		
+		Spcarr carrF = new Spcarr();
+			carrF.setCdcate(20); // F
+		Spcarr carrC = new Spcarr();
+			carrC.setCdcate(7); // CC
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(5138, dateVentilation)).thenReturn(carrF);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(2990, dateVentilation)).thenReturn(carrC);
+
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9002990)).thenReturn(2990);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		
+		List<Integer> result = service.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage, statut, agentMin, agentMax, dateVentilation);
+		
+		assertEquals(1, result.size());
+		assertEquals(9002990, result.get(0).intValue());
+	}
 }
