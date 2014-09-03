@@ -41,6 +41,9 @@ public class Spphre {
 
 	@Column(name = "NBHCOM", columnDefinition = "numeric")
 	private double nbhcomplementaires;
+	
+	@Column(name = "NBRECU", columnDefinition = "numeric")
+	private double nbhrecuperees;
 
 	public SpphreId getId() {
 		return id;
@@ -120,6 +123,14 @@ public class Spphre {
 
 	public void setNbhcomplementaires(double nbhcomplementaires) {
 		this.nbhcomplementaires = nbhcomplementaires;
+	}
+
+	public double getNbhrecuperees() {
+		return nbhrecuperees;
+	}
+
+	public void setNbhrecuperees(double nbhrecuperees) {
+		this.nbhrecuperees = nbhrecuperees;
 	}
 	
 	

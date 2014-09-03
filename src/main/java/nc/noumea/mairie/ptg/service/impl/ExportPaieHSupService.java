@@ -37,13 +37,32 @@ public class ExportPaieHSupService implements IExportPaieHSupService {
 			fillInSpphre(hre, ventilHsup);
 			
 			// Add the item to the list of hre modified/created
-			if (!isSpphreEmpty(hre))
+			if (!isSpphreEmpty(hre)) {
+				hre.setSpphreRecup(getCodeRecup(hre));
 				hsups.add(hre);
-			else
+			} else {
 				exportPaieRepository.removeEntity(hre);
+			}
 		}
 		
 		return hsups;
+	}
+	
+	protected SpphreRecupEnum getCodeRecup(Spphre hre) {
+		
+		if(hre.getNbh25() == 0d
+				&& hre.getNbh50() == 0d
+				&& hre.getNbhcomplementaires() == 0d
+				&& hre.getNbhdim() == 0d
+				&& hre.getNbhmai() == 0d
+				&& hre.getNbhnuit() == 0d
+				&& hre.getNbhscomposees() == 0d
+				&& hre.getNbhssimple() == 0d
+				&& hre.getNbhrecuperees() != 0d) {
+			return SpphreRecupEnum.R;
+		}
+		
+		return SpphreRecupEnum.P;
 	}
 
 	protected Spphre findOrCreateSpphreRecord(Integer idAgent, Date dateLundi) {
@@ -89,6 +108,9 @@ public class ExportPaieHSupService implements IExportPaieHSupService {
 		nbHcomplementaires = nbHcomplementaires - (ventilHsup.getMComplementaires() == 0 ? ventilHsup.getMNormalesRecup() : ventilHsup.getMComplementairesRecup());
 		hre.setNbhcomplementaires(helperService.convertMinutesToMairieNbHeuresFormat(nbHcomplementaires));
 		
+		int nbhrecuperees = ventilHsup.getMRecuperees();
+		hre.setNbhrecuperees(helperService.convertMinutesToMairieNbHeuresFormat(nbhrecuperees));
+		
 		return hre;
 	}
 
@@ -101,6 +123,7 @@ public class ExportPaieHSupService implements IExportPaieHSupService {
 				&& hre.getNbhmai() == 0d
 				&& hre.getNbhnuit() == 0d
 				&& hre.getNbhscomposees() == 0d
-				&& hre.getNbhssimple() == 0d);
+				&& hre.getNbhssimple() == 0d
+				&& hre.getNbhrecuperees() == 0d);
 	}
 }
