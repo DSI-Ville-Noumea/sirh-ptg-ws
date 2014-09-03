@@ -1,7 +1,9 @@
 package nc.noumea.mairie.ptg.dto;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
@@ -60,6 +62,7 @@ public class ConsultPointageDtoTest {
 		assertEquals("motif", dto.getMotif());
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("2h45m", dto.getQuantite());
+		assertFalse(dto.isHeuresSupRecuperees());
 	}
 
 	@Test
@@ -104,6 +107,53 @@ public class ConsultPointageDtoTest {
 		assertEquals("motif", dto.getMotif());
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("45m", dto.getQuantite());
+		assertFalse(dto.isHeuresSupRecuperees());
+	}
+	
+	@Test
+	public void PointageConstructor_isRecupere() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(123);
+		RefTypePointage t = new RefTypePointage();
+		t.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		t.setLabel("type ptg");
+		ptg.setType(t);
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		etat.setDateEtat(new DateTime(2013, 05, 24, 7, 56, 0).toDate());
+		ptg.getEtats().add(etat);
+
+		ptg.setDateDebut(new DateTime(2013, 05, 14, 8, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 05, 14, 8, 45, 0).toDate());
+
+		ptg.setCommentaire(new PtgComment());
+		ptg.getCommentaire().setText("commentaire");
+
+		ptg.setMotif(new PtgComment());
+		ptg.getMotif().setText("motif");
+
+		ptg.setQuantite(null);
+		ptg.setHeureSupRecuperee(true);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.formatMinutesToString(ptg.getDateDebut(), ptg.getDateFin())).thenReturn("45m");
+
+		// When
+		ConsultPointageDto dto = new ConsultPointageDto(ptg, hS);
+
+		// Then
+		assertEquals(123, (int) dto.getIdPointage());
+		assertEquals("type ptg", dto.getTypePointage());
+		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDate());
+		assertEquals(new DateTime(2013, 05, 14, 8, 0, 0).toDate(), dto.getDebut());
+		assertEquals(new DateTime(2013, 05, 14, 8, 45, 0).toDate(), dto.getFin());
+		assertEquals("motif", dto.getMotif());
+		assertEquals("commentaire", dto.getCommentaire());
+		assertEquals("45m", dto.getQuantite());
+		assertTrue(dto.isHeuresSupRecuperees());
 	}
 
 	@Test
@@ -153,6 +203,7 @@ public class ConsultPointageDtoTest {
 		assertEquals("motif", dto.getMotif());
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("1h15m", dto.getQuantite());
+		assertFalse(dto.isHeuresSupRecuperees());
 	}
 
 	@Test
@@ -202,6 +253,7 @@ public class ConsultPointageDtoTest {
 		assertEquals("motif", dto.getMotif());
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("1h", dto.getQuantite());
+		assertFalse(dto.isHeuresSupRecuperees());
 	}
 
 	@Test
@@ -251,6 +303,7 @@ public class ConsultPointageDtoTest {
 		assertEquals("motif", dto.getMotif());
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("15m", dto.getQuantite());
+		assertFalse(dto.isHeuresSupRecuperees());
 	}
 
 	@Test
@@ -297,6 +350,7 @@ public class ConsultPointageDtoTest {
 		assertEquals("motif", dto.getMotif());
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("1", dto.getQuantite());
+		assertFalse(dto.isHeuresSupRecuperees());
 	}
 
 	@Test

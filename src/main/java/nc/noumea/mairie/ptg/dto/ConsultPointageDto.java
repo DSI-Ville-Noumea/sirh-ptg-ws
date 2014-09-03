@@ -20,6 +20,7 @@ public class ConsultPointageDto {
 	private Integer idRefEtat;
 	private Date dateSaisie;
 	private AgentDto operateur;
+	private boolean heuresSupRecuperees;
 
 	public ConsultPointageDto() {
 
@@ -39,6 +40,7 @@ public class ConsultPointageDto {
 			case ABSENCE:
 			case H_SUP:
 				quantite = helper.formatMinutesToString(debut, fin);
+				heuresSupRecuperees = null == ptg.getHeureSupRecuperee() ? false : ptg.getHeureSupRecuperee();
 				break;
 			case PRIME:
 				typePointage = ptg.getRefPrime().getLibelle();
@@ -159,4 +161,13 @@ public class ConsultPointageDto {
 	public void setOperateur(AgentDto operateur) {
 		this.operateur = operateur;
 	}
+
+	public boolean isHeuresSupRecuperees() {
+		return heuresSupRecuperees;
+	}
+
+	public void setHeuresSupRecuperees(boolean heuresSupRecuperees) {
+		this.heuresSupRecuperees = heuresSupRecuperees;
+	}
+	
 }
