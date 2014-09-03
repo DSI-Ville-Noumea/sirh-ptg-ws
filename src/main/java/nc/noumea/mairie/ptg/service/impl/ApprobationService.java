@@ -3,7 +3,9 @@ package nc.noumea.mairie.ptg.service.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
@@ -98,10 +100,31 @@ public class ApprobationService implements IApprobationService {
 				new LocalDate(toDate).plusDays(1).toDate(), RefTypePointageEnum.getRefTypePointageEnum(idRefType),
 				idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)));
 
+		// creation d un HashMap pour garder en memoire les agents deja retournes
+		// ceci evite de faire trop d appel a SIRH-WS, ce qui est tres gourmand en temps
+		// pour 300 lignes de pointage, le bout de code ci-dessous pouvait prendre jusque 1 minute avant la modif
+		Map<Integer, AgentDto> mapAgentDto = new HashMap<Integer, AgentDto>();
+		
 		for (Pointage ptg : pointages) {
-			AgentDto agDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getIdAgent()));
+			
+			AgentDto agDto = null;
+			if(mapAgentDto.containsKey(ptg.getIdAgent())) {
+				agDto = mapAgentDto.get(ptg.getIdAgent());
+			} else {
+				agDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getIdAgent()));
+				mapAgentDto.put(ptg.getIdAgent(), agDto);
+			}
+			
 			ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
-			AgentDto opeDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getLatestEtatPointage().getIdAgent()));
+			
+			AgentDto opeDto = null;
+			if(mapAgentDto.containsKey(ptg.getLatestEtatPointage().getIdAgent())) {
+				opeDto = mapAgentDto.get(ptg.getIdAgent());
+			} else {
+				opeDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getLatestEtatPointage().getIdAgent()));
+				mapAgentDto.put(ptg.getLatestEtatPointage().getIdAgent(), opeDto);
+			}
+			
 			dto.updateEtat(ptg.getLatestEtatPointage(), opeDto);
 			dto.setAgent(agDto);
 			result.add(dto);
