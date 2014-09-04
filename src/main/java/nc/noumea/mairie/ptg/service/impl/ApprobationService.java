@@ -119,7 +119,7 @@ public class ApprobationService implements IApprobationService {
 			
 			AgentDto opeDto = null;
 			if(mapAgentDto.containsKey(ptg.getLatestEtatPointage().getIdAgent())) {
-				opeDto = mapAgentDto.get(ptg.getIdAgent());
+				opeDto = mapAgentDto.get(ptg.getLatestEtatPointage().getIdAgent());
 			} else {
 				opeDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getLatestEtatPointage().getIdAgent()));
 				mapAgentDto.put(ptg.getLatestEtatPointage().getIdAgent(), opeDto);
@@ -161,11 +161,11 @@ public class ApprobationService implements IApprobationService {
 				ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
 				
 				AgentDto opeDto = null;
-				if(mapAgentDto.containsKey(ptg.getLatestEtatPointage().getIdAgent())) {
-					opeDto = mapAgentDto.get(ptg.getIdAgent());
+				if(mapAgentDto.containsKey(etat.getIdAgent())) {
+					opeDto = mapAgentDto.get(etat.getIdAgent());
 				} else {
-					opeDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getLatestEtatPointage().getIdAgent()));
-					mapAgentDto.put(ptg.getLatestEtatPointage().getIdAgent(), opeDto);
+					opeDto = new AgentDto(sirhWSConsumer.getAgent(etat.getIdAgent()));
+					mapAgentDto.put(etat.getIdAgent(), opeDto);
 				}
 				
 				dto.updateEtat(etat, opeDto);

@@ -204,6 +204,7 @@ public class ApprobationServiceTest {
 		// Given
 		Pointage ptg1 = new Pointage();
 		ptg1.setIdPointage(123);
+		ptg1.setIdAgent(9005138);
 		ptg1.setType(new RefTypePointage());
 		ptg1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
@@ -237,6 +238,9 @@ public class ApprobationServiceTest {
 		AgentGeneriqueDto ag9007861 = new AgentGeneriqueDto();
 		ag9007861.setIdAgent(9007861);
 		Mockito.when(mRepo.getAgent(9007861)).thenReturn(ag9007861);
+		AgentGeneriqueDto ag9005138 = new AgentGeneriqueDto();
+		ag9005138.setIdAgent(9005138);
+		Mockito.when(mRepo.getAgent(9005138)).thenReturn(ag9005138);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
@@ -252,13 +256,13 @@ public class ApprobationServiceTest {
 		assertEquals(3, result.size());
 		assertEquals(EtatPointageEnum.SAISI.getCodeEtat(), (int) result.get(0).getIdRefEtat());
 		assertEquals(new DateTime(2013, 04, 29, 10, 30, 0).toDate(), result.get(0).getDateSaisie());
-		assertEquals(9007861, (int) result.get(0).getAgent().getIdAgent());
+		assertEquals(9007861, (int) result.get(0).getOperateur().getIdAgent());
 		assertEquals(EtatPointageEnum.REFUSE.getCodeEtat(), (int) result.get(1).getIdRefEtat());
 		assertEquals(new DateTime(2013, 04, 29, 10, 20, 0).toDate(), result.get(1).getDateSaisie());
-		assertEquals(9007860, (int) result.get(1).getAgent().getIdAgent());
+		assertEquals(9007860, (int) result.get(1).getOperateur().getIdAgent());
 		assertEquals(EtatPointageEnum.SAISI.getCodeEtat(), (int) result.get(2).getIdRefEtat());
 		assertEquals(new DateTime(2013, 04, 28, 8, 10, 0).toDate(), result.get(2).getDateSaisie());
-		assertEquals(9007861, (int) result.get(2).getAgent().getIdAgent());
+		assertEquals(9007861, (int) result.get(2).getOperateur().getIdAgent());
 	}
 
 	@Test
