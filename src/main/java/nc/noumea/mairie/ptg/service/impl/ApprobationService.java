@@ -144,11 +144,30 @@ public class ApprobationService implements IApprobationService {
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 		List<Pointage> list = pointageRepository.getPointageArchives(idPointage);
 
+		// optimisation performances
+		Map<Integer, AgentDto> mapAgentDto = new HashMap<Integer, AgentDto>();
+				
 		for (Pointage ptg : list) {
 			for (EtatPointage etat : ptg.getEtats()) {
-				AgentDto agDto = new AgentDto(sirhWSConsumer.getAgent(etat.getIdAgent()));
+				
+				AgentDto agDto = null;
+				if(mapAgentDto.containsKey(ptg.getIdAgent())) {
+					agDto = mapAgentDto.get(ptg.getIdAgent());
+				} else {
+					agDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getIdAgent()));
+					mapAgentDto.put(ptg.getIdAgent(), agDto);
+				}
+				
 				ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
-				AgentDto opeDto = new AgentDto(sirhWSConsumer.getAgent(etat.getIdAgent()));
+				
+				AgentDto opeDto = null;
+				if(mapAgentDto.containsKey(ptg.getLatestEtatPointage().getIdAgent())) {
+					opeDto = mapAgentDto.get(ptg.getIdAgent());
+				} else {
+					opeDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getLatestEtatPointage().getIdAgent()));
+					mapAgentDto.put(ptg.getLatestEtatPointage().getIdAgent(), opeDto);
+				}
+				
 				dto.updateEtat(etat, opeDto);
 				dto.setAgent(agDto);
 				result.add(dto);
