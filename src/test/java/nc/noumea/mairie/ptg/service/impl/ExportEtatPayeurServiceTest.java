@@ -897,6 +897,7 @@ public class ExportEtatPayeurServiceTest {
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(chainePaie);
+		Mockito.when(hS.getMairieMatrFromIdAgent(vh2.getIdAgent())).thenReturn(9999);
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(chainePaie, false)).thenReturn(vd);
@@ -915,12 +916,18 @@ public class ExportEtatPayeurServiceTest {
 		}).when(pR).persisEntity(Mockito.isA(EtatPayeur.class));
 		eps.add(ep);
 
+		Spcarr spcarr = new Spcarr();
+			spcarr.setCdcate(4);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(9999, vh2.getDateLundi())).thenReturn(spcarr);
+		
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doReturn(eps).when(service)
 				.callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, ventilationDate);
 		ReflectionTestUtils.setField(service, "absWsConsumer", ac);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
 		service.exportEtatsPayeur(99);
@@ -1410,6 +1417,121 @@ public class ExportEtatPayeurServiceTest {
 
 		// Then
 		Mockito.verify(pS, Mockito.times(1)).changeStateToExportEtatsPayeurDone(TypeChainePaieEnum.SCV);
+	}
+	
+	@Test
+	public void calculMinutesRecuperation_fonctionnaire() {
+		
+		Date dateLundi = new Date();
+		
+		VentilHsup vh = new VentilHsup();
+		vh.setDateLundi(dateLundi);
+		vh.setIdAgent(9008989);
+		vh.setMRecuperees(100);
+		
+		Spcarr spcarr1 = new Spcarr();
+		spcarr1.setCdcate(1);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(8989, vh.getDateLundi())).thenReturn(spcarr1);
 
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		
+		ExportEtatPayeurService service =  new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		
+		int result = service.calculMinutesRecuperation(vh);
+		
+		assertEquals(result, 100);
+	}
+	
+	@Test
+	public void calculMinutesRecuperation_contractuel() {
+		
+		Date dateLundi = new Date();
+		
+		VentilHsup vh = new VentilHsup();
+		vh.setDateLundi(dateLundi);
+		vh.setIdAgent(9008989);
+		vh.setMRecuperees(100);
+		
+		Spcarr spcarr1 = new Spcarr();
+		spcarr1.setCdcate(4);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(8989, vh.getDateLundi())).thenReturn(spcarr1);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		
+		ExportEtatPayeurService service =  new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		
+		int result = service.calculMinutesRecuperation(vh);
+		
+		assertEquals(result, 100);
+	}
+	
+	@Test
+	public void calculMinutesRecuperation_convColl_cas1() {
+		
+		Date dateLundi = new Date();
+		
+		VentilHsup vh = new VentilHsup();
+		vh.setDateLundi(dateLundi);
+		vh.setIdAgent(9008989);
+		vh.setMRecuperees(100);
+		
+		Spcarr spcarr1 = new Spcarr();
+		spcarr1.setCdcate(7);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(8989, vh.getDateLundi())).thenReturn(spcarr1);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		
+		ExportEtatPayeurService service =  new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		
+		int result = service.calculMinutesRecuperation(vh);
+		
+		assertEquals(result, 0);
+	}
+	
+	@Test
+	public void calculMinutesRecuperation_convColl_cas2() {
+		
+		Date dateLundi = new Date();
+		
+		VentilHsup vh = new VentilHsup();
+		vh.setDateLundi(dateLundi);
+		vh.setIdAgent(9008989);
+		vh.setMRecuperees(100);
+		
+		vh.setMComplementairesRecup(10);
+		vh.setMSup25Recup(20);
+		vh.setMSup50Recup(30);
+		vh.setMsdjfRecup(40);
+		vh.setMsNuitRecup(50);
+		vh.setMMaiRecup(60);
+		
+		Spcarr spcarr1 = new Spcarr();
+		spcarr1.setCdcate(7);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(8989, vh.getDateLundi())).thenReturn(spcarr1);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		
+		ExportEtatPayeurService service =  new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		
+		int result = service.calculMinutesRecuperation(vh);
+		
+		double calcul = 10 + 20 * 1.25 + 30 * 1.5 + 40 * 1.75 + 50 * 2 + 60 * 1.75;
+		assertEquals(result,  calcul, 0);
 	}
 }

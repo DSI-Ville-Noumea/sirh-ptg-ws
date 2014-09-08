@@ -362,8 +362,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			}
 
 			if (vh.getMRecuperees() != 0) {
-				// TODO: add coeff. calculation
-				int nbMinutesRecupereesTotal = vh.getMRecuperees();
+				int nbMinutesRecupereesTotal = calculMinutesRecuperation(vh);
 				absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(), vh.getDateLundi(), nbMinutesRecupereesTotal);
 			}
 		}
@@ -543,5 +542,25 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			return true;
 		}
 		return false;
+	}
+	
+	protected int calculMinutesRecuperation(VentilHsup vh) {
+		
+		int result = 0;
+		
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(vh.getIdAgent()), vh.getDateLundi());
+		// dans le cas des fonctionnaires et contractuels : pas de majoration
+		if (carr.getStatutCarriere().equals(AgentStatutEnum.C) || carr.getStatutCarriere().equals(AgentStatutEnum.F)) {
+			return vh.getMRecuperees();
+		}
+		// pour les conventions collectives
+		result += vh.getMComplementairesRecup();
+		result += vh.getMSup25Recup() * 1.25;
+		result += vh.getMSup50Recup() * 1.50;
+		result += vh.getMsdjfRecup() * 1.75;
+		result += vh.getMMaiRecup() * 1.75;
+		result += vh.getMsNuitRecup() * 2;
+		
+		return result;
 	}
 }
