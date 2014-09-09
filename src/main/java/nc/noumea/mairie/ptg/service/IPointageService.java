@@ -146,4 +146,7 @@ public interface IPointageService {
 	List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats);
 	
 	List<RefTypeAbsenceDto> getRefTypeAbsence();
+
+	void addEtatPointage(Pointage ptg, EtatPointageEnum etat,
+			Integer idAgentCreator, Date dateEtat);
 }

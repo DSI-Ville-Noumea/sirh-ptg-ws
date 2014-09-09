@@ -241,7 +241,8 @@ public class PointageService implements IPointageService {
 	 * @param etat
 	 * @param dateEtat
 	 */
-	protected void addEtatPointage(Pointage ptg, EtatPointageEnum etat, Integer idAgentCreator, Date dateEtat) {
+	@Override
+	public void addEtatPointage(Pointage ptg, EtatPointageEnum etat, Integer idAgentCreator, Date dateEtat) {
 		EtatPointage ep = new EtatPointage();
 		ep.setDateEtat(dateEtat);
 		ep.setDateMaj(helperService.getCurrentDate());
