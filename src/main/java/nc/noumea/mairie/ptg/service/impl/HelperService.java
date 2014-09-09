@@ -77,6 +77,14 @@ public class HelperService {
 		return idAgent - 9000000;
 	}
 	
+	public Integer getIdAgentFromMairieMatr(Integer noMatr) {
+		if(null != noMatr && noMatr < 9000000) {
+			return noMatr + 9000000;
+		}
+		
+		return noMatr;
+	}
+	
 	public int convertMairieNbHeuresFormatToMinutes(Double nbHeuresMairies) {
 		
 		if (nbHeuresMairies == 0.0d)

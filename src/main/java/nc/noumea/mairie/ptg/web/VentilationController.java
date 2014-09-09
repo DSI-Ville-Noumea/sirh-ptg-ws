@@ -216,7 +216,10 @@ public class VentilationController {
 				"entered GET [ventilation/listeAgents] => getListeAgents with parameters idDateVentil = {}, typePointage = {}, statut = {}, agentMin = {}, agentMax = {}",
 				idDateVentil, typepointage.name(), statut, agentMin, agentMax);
 
-		List<Integer> result = ventilationService.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage, statutEnum, agentMin, agentMax, ventilationDate);
+		List<Integer> result = ventilationService.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage, statutEnum, 
+				helperService.getIdAgentFromMairieMatr(agentMin), 
+				helperService.getIdAgentFromMairieMatr(agentMax), ventilationDate);
+		
 		if (result.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}

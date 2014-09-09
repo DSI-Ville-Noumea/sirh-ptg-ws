@@ -303,4 +303,25 @@ public class HelperServiceTest {
 		assertEquals("1j", service.formatMinutesToString(new DateTime(2013, 01, 01, 2, 15, 0).toDate(), new DateTime(2013, 01, 02, 2, 15, 0).toDate()));
 		
 	}
+	
+	@Test
+	public void getIdAgentFromMairieMatr_null() {
+		
+		HelperService service = new HelperService();
+		assertNull(service.getIdAgentFromMairieMatr(null));
+	}
+	
+	@Test
+	public void getIdAgentFromMairieMatr_idAgent() {
+		
+		HelperService service = new HelperService();
+		assertEquals(9005138, service.getIdAgentFromMairieMatr(9005138).intValue());
+	}
+	
+	@Test
+	public void getIdAgentFromMairieMatr_noMatr() {
+		
+		HelperService service = new HelperService();
+		assertEquals(9005138, service.getIdAgentFromMairieMatr(5138).intValue());
+	}
 }
