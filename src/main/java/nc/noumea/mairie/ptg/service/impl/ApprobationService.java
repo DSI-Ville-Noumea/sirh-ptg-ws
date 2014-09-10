@@ -277,7 +277,8 @@ public class ApprobationService implements IApprobationService {
 				ok = false;
 			}
 			if (currentEtat != EtatPointageEnum.APPROUVE && currentEtat != EtatPointageEnum.EN_ATTENTE
-					&& currentEtat != EtatPointageEnum.VENTILE && targetEtat == EtatPointageEnum.REJETE) {
+					&& currentEtat != EtatPointageEnum.VENTILE && currentEtat != EtatPointageEnum.VALIDE
+					&& targetEtat == EtatPointageEnum.REJETE) {
 				ok = false;
 			}
 			if (!ok) {
@@ -302,6 +303,7 @@ public class ApprobationService implements IApprobationService {
 
 			// at last, create and add the new EtatPointage
 			EtatPointage etat = new EtatPointage();
+			
 			VentilDate lastVentil = ventilRepository.getLatestVentilDate(
 					helperService.getTypeChainePaieFromStatut(statut), false);
 			if (targetEtat == EtatPointageEnum.APPROUVE && lastVentil != null)
@@ -314,8 +316,45 @@ public class ApprobationService implements IApprobationService {
 			etat.setIdAgent(ptg.getIdAgent());
 			etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
 			ptg.getEtats().add(etat);
+			
+			Date dateEtat = null;
+			if(null != lastVentil) {
+				dateEtat = lastVentil.getDateVentilation();
+			} else {
+				dateEtat = helperService.getCurrentDate();
+			}
+			
+			reinitialisePointageHSupEtAbsAApprouveForVentilation(dto, currentEtat, ptg, dateEtat);
 		}
 		return result;
+	}
+	
+	protected void reinitialisePointageHSupEtAbsAApprouveForVentilation(PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
+		
+		if(EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
+				&& EtatPointageEnum.VALIDE.equals(currentEtat)) {
+			// si on REJETE un pointages VALIDE
+			// on reinitialise les autres pointages du meme agent pour la meme semaine
+			// a APPROUVE pour prise en compte dans la ventilation
+			List<Pointage> listePointagesAgent = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi());
+			if(null != listePointagesAgent && !listePointagesAgent.isEmpty()) {
+				for(Pointage pointage : listePointagesAgent) {
+					if(EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
+							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum())
+								|| RefTypePointageEnum.ABSENCE.equals(pointage.getTypePointageEnum()))
+							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {
+						
+						EtatPointage etat = new EtatPointage();
+							etat.setDateEtat(dateEtat);
+							etat.setDateMaj(helperService.getCurrentDate());
+							etat.setPointage(pointage);
+							etat.setIdAgent(ptg.getIdAgent());
+							etat.setEtat(EtatPointageEnum.APPROUVE);
+						pointage.getEtats().add(etat);
+					}
+				}
+			}
+		}
 	}
 
 	@Override
