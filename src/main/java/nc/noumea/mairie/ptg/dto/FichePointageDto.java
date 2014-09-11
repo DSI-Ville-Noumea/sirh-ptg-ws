@@ -10,7 +10,7 @@ public class FichePointageDto {
 	private Date dateLundi;
 	private AgentWithServiceDto agent;
 	private String semaine;
-	List<JourPointageDto> saisies;
+	private List<JourPointageDto> saisies;
 
 	public FichePointageDto() {
 		saisies = new ArrayList<JourPointageDto>();
