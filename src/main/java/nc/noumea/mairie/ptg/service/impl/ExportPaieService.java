@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.service.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
+import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
@@ -182,6 +184,11 @@ public class ExportPaieService implements IExportPaieService {
 		logger.debug("Updating SPMATR for Paie...");
 		updateSpmatrForAgentAndPointages(idAgent, chainePaie, ventilatedPointages);
 
+		// 7.Mark PTG_VENTIL_xxx as validated
+		List<VentilAbsence> vAbsences = ventilationRepository.getListVentilAbsencesForAgentAndVentilDate(idAgent, ventilDate.getIdVentilDate());
+		List<VentilPrime> vPrimesJourEtMensuel = ventilationRepository.getListOfVentilPrimeForDateAgent(ventilDate.getIdVentilDate(), Arrays.asList(idAgent));
+		markVentilesAsValidated(vHsups, vPrimesJourEtMensuel, vAbsences);
+		
 		logger.info("Exportation of idExportPaieTask [{}] done.", idExportPaieTask);
 	}
 
@@ -222,6 +229,33 @@ public class ExportPaieService implements IExportPaieService {
 			ep.setEtat(EtatPointageEnum.VALIDE);
 			ep.setIdAgent(idAgent);
 			ptg.getEtats().add(ep);
+		}
+	}
+	
+	/**
+	 * Updates each VENTIL to set them as VALIDE state for saving history
+	 * 
+	 * @param pointages
+	 * @param idAgent
+	 */
+	protected void markVentilesAsValidated(List<VentilHsup> vHsups, List<VentilPrime> vPrimes, List<VentilAbsence> vabsences) {
+		
+		for (VentilHsup vHsup : vHsups) {
+			if (EtatPointageEnum.VENTILE.equals(vHsup.getEtat())) {
+				vHsup.setEtat(EtatPointageEnum.VALIDE);
+			}
+		}
+		
+		for (VentilPrime vPrime : vPrimes) {
+			if (EtatPointageEnum.VENTILE.equals(vPrime.getEtat())) {
+				vPrime.setEtat(EtatPointageEnum.VALIDE);
+			}
+		}
+		
+		for (VentilAbsence vabsence : vabsences) {
+			if (EtatPointageEnum.VENTILE.equals(vabsence.getEtat())) {
+				vabsence.setEtat(EtatPointageEnum.VALIDE);
+			}
 		}
 	}
 

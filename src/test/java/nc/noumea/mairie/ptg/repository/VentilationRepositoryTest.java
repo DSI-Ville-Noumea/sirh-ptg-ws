@@ -623,7 +623,7 @@ public class VentilationRepositoryTest {
 
 	@Test
 	@Transactional("ptgTransactionManager")
-	public void removeVentilationsForDateAgentAndType() {
+	public void removeVentilationsForDateAgentAndType_etatVentile() {
 
 		VentilDate vd = new VentilDate();
 		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
@@ -633,7 +633,7 @@ public class VentilationRepositoryTest {
 
 		VentilPrime vp = new VentilPrime();
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp.setEtat(EtatPointageEnum.APPROUVE);
+		vp.setEtat(EtatPointageEnum.VENTILE);
 		vp.setIdAgent(9005138);
 		vp.setQuantite(1);
 		vp.setVentilDate(vd);
@@ -641,7 +641,7 @@ public class VentilationRepositoryTest {
 
 		VentilHsup vh = new VentilHsup();
 		vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh.setEtat(EtatPointageEnum.APPROUVE);
+		vh.setEtat(EtatPointageEnum.VENTILE);
 		vh.setIdAgent(9005139);
 		vh.setMAbsences(0);
 		vh.setMComplementaires(1);
@@ -654,12 +654,113 @@ public class VentilationRepositoryTest {
 
 		VentilAbsence va = new VentilAbsence();
 		va.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		va.setEtat(EtatPointageEnum.APPROUVE);
+		va.setEtat(EtatPointageEnum.VENTILE);
 		va.setIdAgent(9005140);
 		va.setMinutesConcertee(10);
 		va.setMinutesNonConcertee(10);
 		va.setVentilDate(vd);
 		ptgEntityManager.persist(va);
+
+		List<Integer> listAgents = new ArrayList<Integer>();
+		listAgents.add(9005138);
+		listAgents.add(9005139);
+		listAgents.add(9005140);
+
+		List<VentilAbsence> resultAbs = repository.getListOfVentilAbsenceForDateAgent(vd.getIdVentilDate(), listAgents);
+		assertEquals(1, resultAbs.size());
+		List<VentilHsup> resultHS = repository.getListOfVentilHSForDateAgent(vd.getIdVentilDate(), listAgents);
+		assertEquals(1, resultHS.size());
+		List<VentilPrime> resultPrime = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents);
+		assertEquals(1, resultPrime.size());
+
+		repository.removeVentilationsForDateAgentAndType(vd, 9005138, RefTypePointageEnum.PRIME);
+		repository.removeVentilationsForDateAgentAndType(vd, 9005139, RefTypePointageEnum.H_SUP);
+		repository.removeVentilationsForDateAgentAndType(vd, 9005140, RefTypePointageEnum.ABSENCE);
+
+		resultAbs = null;
+		resultHS = null;
+		resultPrime = null;
+
+		resultAbs = repository.getListOfVentilAbsenceForDateAgent(vd.getIdVentilDate(), listAgents);
+		assertEquals(0, resultAbs.size());
+		resultHS = repository.getListOfVentilHSForDateAgent(vd.getIdVentilDate(), listAgents);
+		assertEquals(0, resultHS.size());
+		resultPrime = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents);
+		assertEquals(0, resultPrime.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void removeVentilationsForDateAgentAndType_etatValide() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+
+		VentilPrime vp = new VentilPrime();
+		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+		vp.setEtat(EtatPointageEnum.VALIDE);
+		vp.setIdAgent(9005138);
+		vp.setQuantite(1);
+		vp.setVentilDate(vd);
+		ptgEntityManager.persist(vp);
+
+		VentilHsup vh = new VentilHsup();
+		vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		vh.setEtat(EtatPointageEnum.VALIDE);
+		vh.setIdAgent(9005139);
+		vh.setMAbsences(0);
+		vh.setMComplementaires(1);
+		vh.setMComplementairesRecup(0);
+		vh.setMComposees(1);
+		vh.setMComposeesRecup(0);
+		vh.setMHorsContrat(1);
+		vh.setVentilDate(vd);
+		ptgEntityManager.persist(vh);
+
+		VentilAbsence va = new VentilAbsence();
+		va.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		va.setEtat(EtatPointageEnum.VALIDE);
+		va.setIdAgent(9005140);
+		va.setMinutesConcertee(10);
+		va.setMinutesNonConcertee(10);
+		va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
+		
+		VentilPrime vp2 = new VentilPrime();
+		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+		vp2.setEtat(EtatPointageEnum.VENTILE);
+		vp2.setIdAgent(9005138);
+		vp2.setQuantite(1);
+		vp2.setVentilDate(vd);
+		ptgEntityManager.persist(vp2);
+
+		VentilHsup vh2 = new VentilHsup();
+		vh2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		vh2.setEtat(EtatPointageEnum.VENTILE);
+		vh2.setIdAgent(9005139);
+		vh2.setMAbsences(0);
+		vh2.setMComplementaires(1);
+		vh2.setMComplementairesRecup(0);
+		vh2.setMComposees(1);
+		vh2.setMComposeesRecup(0);
+		vh2.setMHorsContrat(1);
+		vh2.setVentilDate(vd);
+		ptgEntityManager.persist(vh2);
+
+		VentilAbsence va2 = new VentilAbsence();
+		va2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		va2.setEtat(EtatPointageEnum.VENTILE);
+		va2.setIdAgent(9005140);
+		va2.setMinutesConcertee(10);
+		va2.setMinutesNonConcertee(10);
+		va2.setVentilDate(vd);
+		ptgEntityManager.persist(va2);
 
 		List<Integer> listAgents = new ArrayList<Integer>();
 		listAgents.add(9005138);
@@ -704,7 +805,7 @@ public class VentilationRepositoryTest {
 
 		VentilAbsence va = new VentilAbsence();
 		va.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		va.setEtat(EtatPointageEnum.APPROUVE);
+		va.setEtat(EtatPointageEnum.VENTILE);
 		va.setIdAgent(9005139);
 		va.setMinutesConcertee(10);
 		va.setMinutesNonConcertee(10);
@@ -713,12 +814,21 @@ public class VentilationRepositoryTest {
 
 		VentilAbsence va2 = new VentilAbsence();
 		va2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		va2.setEtat(EtatPointageEnum.EN_ATTENTE);
+		va2.setEtat(EtatPointageEnum.VENTILE);
 		va2.setIdAgent(9005140);
 		va2.setMinutesConcertee(10);
 		va2.setMinutesNonConcertee(10);
 		va2.setVentilDate(vd);
 		ptgEntityManager.persist(va2);
+
+		VentilAbsence va3 = new VentilAbsence();
+		va3.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		va3.setEtat(EtatPointageEnum.VALIDE);
+		va3.setIdAgent(9005140);
+		va3.setMinutesConcertee(10);
+		va3.setMinutesNonConcertee(10);
+		va3.setVentilDate(vd);
+		ptgEntityManager.persist(va3);
 
 		List<Integer> listAgents = new ArrayList<Integer>();
 		listAgents.add(9005139);
@@ -728,10 +838,10 @@ public class VentilationRepositoryTest {
 
 		assertEquals(2, result.size());
 		assertEquals(new Integer(9005139), result.get(0).getIdAgent());
-		assertEquals(EtatPointageEnum.APPROUVE, result.get(0).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 
 		assertEquals(new Integer(9005140), result.get(1).getIdAgent());
-		assertEquals(EtatPointageEnum.EN_ATTENTE, result.get(1).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
@@ -749,7 +859,7 @@ public class VentilationRepositoryTest {
 
 		VentilPrime vp = new VentilPrime();
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp.setEtat(EtatPointageEnum.APPROUVE);
+		vp.setEtat(EtatPointageEnum.VENTILE);
 		vp.setIdAgent(9005138);
 		vp.setQuantite(3);
 		vp.setVentilDate(vd);
@@ -757,11 +867,27 @@ public class VentilationRepositoryTest {
 
 		VentilPrime vp2 = new VentilPrime();
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp2.setEtat(EtatPointageEnum.SAISI);
+		vp2.setEtat(EtatPointageEnum.VENTILE);
 		vp2.setIdAgent(9005139);
 		vp2.setQuantite(1);
 		vp2.setVentilDate(vd);
 		ptgEntityManager.persist(vp2);
+
+		VentilPrime vp3 = new VentilPrime();
+		vp3.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+		vp3.setEtat(EtatPointageEnum.VALIDE);
+		vp3.setIdAgent(9005139);
+		vp3.setQuantite(1);
+		vp3.setVentilDate(vd);
+		ptgEntityManager.persist(vp3);
+
+		VentilPrime vp4 = new VentilPrime();
+		vp4.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+		vp4.setEtat(EtatPointageEnum.VENTILE);
+		vp4.setIdAgent(9009999);
+		vp4.setQuantite(1);
+		vp4.setVentilDate(vd);
+		ptgEntityManager.persist(vp4);
 
 		List<Integer> listAgents = new ArrayList<Integer>();
 		listAgents.add(9005138);
@@ -771,11 +897,11 @@ public class VentilationRepositoryTest {
 
 		assertEquals(2, result.size());
 		assertEquals(new Integer(9005138), result.get(0).getIdAgent());
-		assertEquals(EtatPointageEnum.APPROUVE, result.get(0).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(new Integer(3), result.get(0).getQuantite());
 
 		assertEquals(new Integer(9005139), result.get(1).getIdAgent());
-		assertEquals(EtatPointageEnum.SAISI, result.get(1).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
 		assertEquals(new Integer(1), result.get(1).getQuantite());
 
 		ptgEntityManager.flush();
@@ -794,7 +920,7 @@ public class VentilationRepositoryTest {
 
 		VentilHsup vh = new VentilHsup();
 		vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh.setEtat(EtatPointageEnum.VALIDE);
+		vh.setEtat(EtatPointageEnum.VENTILE);
 		vh.setIdAgent(9005138);
 		vh.setMAbsences(3);
 		vh.setMComplementaires(1);
@@ -807,7 +933,7 @@ public class VentilationRepositoryTest {
 
 		VentilHsup vh2 = new VentilHsup();
 		vh2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh2.setEtat(EtatPointageEnum.APPROUVE);
+		vh2.setEtat(EtatPointageEnum.VENTILE);
 		vh2.setIdAgent(9005139);
 		vh2.setMAbsences(0);
 		vh2.setMComplementaires(1);
@@ -818,6 +944,32 @@ public class VentilationRepositoryTest {
 		vh2.setVentilDate(vd);
 		ptgEntityManager.persist(vh2);
 
+		VentilHsup vh3 = new VentilHsup();
+		vh3.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		vh3.setEtat(EtatPointageEnum.VALIDE);
+		vh3.setIdAgent(9005139);
+		vh3.setMAbsences(0);
+		vh3.setMComplementaires(1);
+		vh3.setMComplementairesRecup(0);
+		vh3.setMComposees(1);
+		vh3.setMComposeesRecup(0);
+		vh3.setMHorsContrat(11);
+		vh3.setVentilDate(vd);
+		ptgEntityManager.persist(vh3);
+
+		VentilHsup vh4 = new VentilHsup();
+		vh4.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		vh4.setEtat(EtatPointageEnum.VENTILE);
+		vh4.setIdAgent(9009999);
+		vh4.setMAbsences(0);
+		vh4.setMComplementaires(1);
+		vh4.setMComplementairesRecup(0);
+		vh4.setMComposees(1);
+		vh4.setMComposeesRecup(0);
+		vh4.setMHorsContrat(11);
+		vh4.setVentilDate(vd);
+		ptgEntityManager.persist(vh2);
+
 		List<Integer> listAgents = new ArrayList<Integer>();
 		listAgents.add(9005138);
 		listAgents.add(9005139);
@@ -826,13 +978,13 @@ public class VentilationRepositoryTest {
 
 		assertEquals(2, result.size());
 		assertEquals(new Integer(9005138), result.get(0).getIdAgent());
-		assertEquals(EtatPointageEnum.VALIDE, result.get(0).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(3, result.get(0).getMAbsences());
 		assertEquals(5, result.get(0).getMComposees());
 		assertEquals(1, result.get(0).getMHorsContrat());
 
 		assertEquals(new Integer(9005139), result.get(1).getIdAgent());
-		assertEquals(EtatPointageEnum.APPROUVE, result.get(1).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
 		assertEquals(0, result.get(1).getMAbsences());
 		assertEquals(1, result.get(1).getMComposees());
 		assertEquals(11, result.get(1).getMHorsContrat());
@@ -859,7 +1011,7 @@ public class VentilationRepositoryTest {
 
 		VentilHsup vh = new VentilHsup();
 		vh.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh.setEtat(EtatPointageEnum.VALIDE);
+		vh.setEtat(EtatPointageEnum.VENTILE);
 		vh.setIdAgent(9005138);
 		vh.setMAbsences(3);
 		vh.setMComplementaires(1);
@@ -872,7 +1024,7 @@ public class VentilationRepositoryTest {
 
 		VentilHsup vh2 = new VentilHsup();
 		vh2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh2.setEtat(EtatPointageEnum.APPROUVE);
+		vh2.setEtat(EtatPointageEnum.VENTILE);
 		vh2.setIdAgent(9005138);
 		vh2.setMAbsences(0);
 		vh2.setMComplementaires(1);
@@ -885,7 +1037,7 @@ public class VentilationRepositoryTest {
 
 		VentilHsup vh3 = new VentilHsup();
 		vh3.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		vh3.setEtat(EtatPointageEnum.SAISI);
+		vh3.setEtat(EtatPointageEnum.VENTILE);
 		vh3.setIdAgent(9005138);
 		vh3.setMAbsences(10);
 		vh3.setMComplementaires(1);
@@ -896,15 +1048,98 @@ public class VentilationRepositoryTest {
 		vh3.setVentilDate(vd2);
 		ptgEntityManager.persist(vh3);
 
+		VentilHsup vh4 = new VentilHsup();
+		vh4.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		vh4.setEtat(EtatPointageEnum.VALIDE);
+		vh4.setIdAgent(9005138);
+		vh4.setMAbsences(10);
+		vh4.setMComplementaires(1);
+		vh4.setMComplementairesRecup(0);
+		vh4.setMComposees(1);
+		vh4.setMComposeesRecup(0);
+		vh4.setMHorsContrat(11);
+		vh4.setVentilDate(vd2);
+		ptgEntityManager.persist(vh4);
+
+		VentilHsup vh5 = new VentilHsup();
+		vh5.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		vh5.setEtat(EtatPointageEnum.VALIDE);
+		vh5.setIdAgent(9009999);
+		vh5.setMAbsences(10);
+		vh5.setMComplementaires(1);
+		vh5.setMComplementairesRecup(0);
+		vh5.setMComposees(1);
+		vh5.setMComposeesRecup(0);
+		vh5.setMHorsContrat(11);
+		vh5.setVentilDate(vd2);
+		ptgEntityManager.persist(vh5);
+
 		List<VentilHsup> result = repository.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(new Integer(9005138),
 				vd.getIdVentilDate());
 
 		assertEquals(2, result.size());
-		assertEquals(EtatPointageEnum.VALIDE, result.get(0).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(3, result.get(0).getMAbsences());
 
-		assertEquals(EtatPointageEnum.APPROUVE, result.get(1).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
 		assertEquals(0, result.get(1).getMAbsences());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListVentilAbsencesForAgentAndVentilDate() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+
+		VentilDate vd2 = new VentilDate();
+		vd2.setDateVentilation(new LocalDate(2013, 7, 24).toDate());
+		vd2.setPaye(true);
+		vd2.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd2);
+
+		VentilAbsence va = new VentilAbsence();
+		va.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		va.setEtat(EtatPointageEnum.VENTILE);
+		va.setIdAgent(9005138);
+		va.setMinutesConcertee(10);
+		va.setMinutesImmediat(0);
+		va.setMinutesNonConcertee(5);
+		va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
+
+		VentilAbsence va2 = new VentilAbsence();
+		va2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		va2.setEtat(EtatPointageEnum.VENTILE);
+		va2.setIdAgent(9005138);
+		va2.setMinutesConcertee(20);
+		va2.setMinutesImmediat(0);
+		va2.setMinutesNonConcertee(5);
+		va2.setVentilDate(vd2);
+		ptgEntityManager.persist(va2);
+
+		VentilAbsence va3 = new VentilAbsence();
+		va3.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		va3.setEtat(EtatPointageEnum.VALIDE);
+		va3.setIdAgent(9005138);
+		va3.setMinutesConcertee(30);
+		va3.setMinutesImmediat(0);
+		va3.setMinutesNonConcertee(5);
+		va3.setVentilDate(vd);
+		ptgEntityManager.persist(va3);
+
+		List<VentilAbsence> result = repository.getListVentilAbsencesForAgentAndVentilDate(new Integer(9005138),
+				vd.getIdVentilDate());
+
+		assertEquals(1, result.size());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
+		assertEquals(10, result.get(0).getMinutesConcertee());
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
@@ -939,7 +1174,7 @@ public class VentilationRepositoryTest {
 
 		VentilPrime vp = new VentilPrime();
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp.setEtat(EtatPointageEnum.APPROUVE);
+		vp.setEtat(EtatPointageEnum.VENTILE);
 		vp.setIdAgent(9005138);
 		vp.setQuantite(3);
 		vp.setVentilDate(vd);
@@ -948,7 +1183,7 @@ public class VentilationRepositoryTest {
 
 		VentilPrime vp2 = new VentilPrime();
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp2.setEtat(EtatPointageEnum.SAISI);
+		vp2.setEtat(EtatPointageEnum.VENTILE);
 		vp2.setIdAgent(9005138);
 		vp2.setQuantite(1);
 		vp2.setVentilDate(vd);
@@ -957,21 +1192,39 @@ public class VentilationRepositoryTest {
 
 		VentilPrime vp3 = new VentilPrime();
 		vp3.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp3.setEtat(EtatPointageEnum.REFUSE_DEFINITIVEMENT);
+		vp3.setEtat(EtatPointageEnum.VENTILE);
 		vp3.setIdAgent(9005138);
 		vp3.setQuantite(10);
 		vp3.setVentilDate(vd2);
 		vp3.setRefPrime(rp);
 		ptgEntityManager.persist(vp3);
+		
+		VentilPrime vp4 = new VentilPrime();
+		vp4.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+		vp4.setEtat(EtatPointageEnum.VALIDE);
+		vp4.setIdAgent(9005138);
+		vp4.setQuantite(1);
+		vp4.setVentilDate(vd);
+		vp4.setRefPrime(rp);
+		ptgEntityManager.persist(vp4);
+		
+		VentilPrime vp5 = new VentilPrime();
+		vp5.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+		vp5.setEtat(EtatPointageEnum.VENTILE);
+		vp5.setIdAgent(9009999);
+		vp5.setQuantite(1);
+		vp5.setVentilDate(vd);
+		vp5.setRefPrime(rp);
+		ptgEntityManager.persist(vp5);
 
 		List<VentilPrime> result = repository.getListVentilPrimesMoisForAgentAndVentilDateOrderByDateAsc(new Integer(
 				9005138), vd.getIdVentilDate());
 
 		assertEquals(2, result.size());
-		assertEquals(EtatPointageEnum.APPROUVE, result.get(0).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(new Integer(3), result.get(0).getQuantite());
 
-		assertEquals(EtatPointageEnum.SAISI, result.get(1).getEtat());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
 		assertEquals(new Integer(1), result.get(1).getQuantite());
 
 		ptgEntityManager.flush();
@@ -1348,12 +1601,30 @@ public class VentilationRepositoryTest {
 
 		VentilAbsence va2 = new VentilAbsence();
 		va2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		va2.setEtat(EtatPointageEnum.EN_ATTENTE);
+		va2.setEtat(EtatPointageEnum.VENTILE);
 		va2.setIdAgent(9005138);
 		va2.setMinutesConcertee(10);
 		va2.setMinutesNonConcertee(10);
 		va2.setVentilDate(vd);
 		ptgEntityManager.persist(va2);
+		
+		VentilAbsence va3 = new VentilAbsence();
+		va3.setDateLundi(new LocalDate(2014, 2, 23).toDate());
+		va3.setEtat(EtatPointageEnum.VENTILE);
+		va3.setIdAgent(9009999);
+		va3.setMinutesConcertee(10);
+		va3.setMinutesNonConcertee(10);
+		va3.setVentilDate(vd);
+		ptgEntityManager.persist(va3);
+		
+		VentilAbsence va4 = new VentilAbsence();
+		va4.setDateLundi(new LocalDate(2014, 2, 23).toDate());
+		va4.setEtat(EtatPointageEnum.VALIDE);
+		va4.setIdAgent(9005138);
+		va4.setMinutesConcertee(10);
+		va4.setMinutesNonConcertee(10);
+		va4.setVentilDate(vd);
+		ptgEntityManager.persist(va4);
 
 		List<VentilAbsence> result = repository.getListOfVentilAbsenceForAgentBeetweenDate(2, 2014, 9005138);
 
@@ -1389,6 +1660,20 @@ public class VentilationRepositoryTest {
 		va2.setVentilDate(vd);
 		ptgEntityManager.persist(va2);
 
+		VentilHsup va3 = new VentilHsup();
+		va3.setDateLundi(new LocalDate(2014, 2, 23).toDate());
+		va3.setEtat(EtatPointageEnum.VENTILE);
+		va3.setIdAgent(9009999);
+		va3.setVentilDate(vd);
+		ptgEntityManager.persist(va3);
+
+		VentilHsup va4 = new VentilHsup();
+		va4.setDateLundi(new LocalDate(2014, 2, 23).toDate());
+		va4.setEtat(EtatPointageEnum.VALIDE);
+		va4.setIdAgent(9009999);
+		va4.setVentilDate(vd);
+		ptgEntityManager.persist(va4);
+
 		List<VentilHsup> result = repository.getListOfVentilHSForAgentBeetweenDate(2, 2014, 9005138);
 
 		assertEquals(2, result.size());
@@ -1413,7 +1698,7 @@ public class VentilationRepositoryTest {
 
 		VentilPrime vp = new VentilPrime();
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp.setEtat(EtatPointageEnum.APPROUVE);
+		vp.setEtat(EtatPointageEnum.VENTILE);
 		vp.setIdAgent(9001111);
 		vp.setQuantite(3);
 		vp.setVentilDate(vd);
@@ -1421,11 +1706,19 @@ public class VentilationRepositoryTest {
 
 		VentilPrime vp2 = new VentilPrime();
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp2.setEtat(EtatPointageEnum.EN_ATTENTE);
+		vp2.setEtat(EtatPointageEnum.VENTILE);
 		vp2.setIdAgent(9005138);
 		vp2.setQuantite(3);
 		vp2.setVentilDate(vd);
 		ptgEntityManager.persist(vp2);
+
+		VentilPrime vp3 = new VentilPrime();
+		vp3.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+		vp3.setEtat(EtatPointageEnum.VALIDE);
+		vp3.setIdAgent(9005138);
+		vp3.setQuantite(3);
+		vp3.setVentilDate(vd);
+		ptgEntityManager.persist(vp3);
 
 		List<Integer> result = repository.getListAgentsForShowVentilationPrimesForDate(vd.getIdVentilDate(), null, null);
 
@@ -1449,7 +1742,7 @@ public class VentilationRepositoryTest {
 
 		VentilPrime vp = new VentilPrime();
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp.setEtat(EtatPointageEnum.APPROUVE);
+		vp.setEtat(EtatPointageEnum.VENTILE);
 		vp.setIdAgent(9001111);
 		vp.setQuantite(3);
 		vp.setVentilDate(vd);
@@ -1457,11 +1750,19 @@ public class VentilationRepositoryTest {
 
 		VentilPrime vp2 = new VentilPrime();
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
-		vp2.setEtat(EtatPointageEnum.EN_ATTENTE);
+		vp2.setEtat(EtatPointageEnum.VENTILE);
 		vp2.setIdAgent(9005138);
 		vp2.setQuantite(3);
 		vp2.setVentilDate(vd);
 		ptgEntityManager.persist(vp2);
+
+		VentilPrime vp3 = new VentilPrime();
+		vp3.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+		vp3.setEtat(EtatPointageEnum.VALIDE);
+		vp3.setIdAgent(9005138);
+		vp3.setQuantite(3);
+		vp3.setVentilDate(vd);
+		ptgEntityManager.persist(vp3);
 
 		List<Integer> result = repository.getListAgentsForShowVentilationPrimesForDate(vd.getIdVentilDate(), 9005000, 9009000);
 
@@ -1493,12 +1794,21 @@ public class VentilationRepositoryTest {
 
 		VentilAbsence va2 = new VentilAbsence();
 		va2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		va2.setEtat(EtatPointageEnum.EN_ATTENTE);
+		va2.setEtat(EtatPointageEnum.VENTILE);
 		va2.setIdAgent(9005138);
 		va2.setMinutesConcertee(10);
 		va2.setMinutesNonConcertee(10);
 		va2.setVentilDate(vd);
 		ptgEntityManager.persist(va2);
+
+		VentilAbsence va3 = new VentilAbsence();
+		va3.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		va3.setEtat(EtatPointageEnum.VALIDE);
+		va3.setIdAgent(9005138);
+		va3.setMinutesConcertee(10);
+		va3.setMinutesNonConcertee(10);
+		va3.setVentilDate(vd);
+		ptgEntityManager.persist(va3);
 
 		List<Integer> result = repository.getListAgentsForShowVentilationAbsencesForDate(vd.getIdVentilDate(), null, null);
 
@@ -1531,12 +1841,21 @@ public class VentilationRepositoryTest {
 
 		VentilAbsence va2 = new VentilAbsence();
 		va2.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		va2.setEtat(EtatPointageEnum.EN_ATTENTE);
+		va2.setEtat(EtatPointageEnum.VENTILE);
 		va2.setIdAgent(9005138);
 		va2.setMinutesConcertee(10);
 		va2.setMinutesNonConcertee(10);
 		va2.setVentilDate(vd);
 		ptgEntityManager.persist(va2);
+
+		VentilAbsence va3 = new VentilAbsence();
+		va3.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		va3.setEtat(EtatPointageEnum.VALIDE);
+		va3.setIdAgent(9005138);
+		va3.setMinutesConcertee(10);
+		va3.setMinutesNonConcertee(10);
+		va3.setVentilDate(vd);
+		ptgEntityManager.persist(va3);
 
 		List<Integer> result = repository.getListAgentsForShowVentilationAbsencesForDate(vd.getIdVentilDate(), 9005000, 9009000);
 

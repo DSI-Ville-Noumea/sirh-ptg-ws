@@ -71,4 +71,7 @@ public interface IVentilationRepository {
 
 	List<Integer> getListAgentsForShowVentilationHeuresSupForDate(
 			Integer ventilDateId, Integer agentMin, Integer agentMax);
+
+	List<VentilAbsence> getListVentilAbsencesForAgentAndVentilDate(
+			Integer idAgent, Integer idVentilDate);
 }

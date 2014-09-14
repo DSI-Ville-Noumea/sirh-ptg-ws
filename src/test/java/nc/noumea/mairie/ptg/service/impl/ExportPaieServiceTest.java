@@ -27,6 +27,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.ExportPaieTask;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
+import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
@@ -537,5 +538,51 @@ public class ExportPaieServiceTest {
 		
 		// Then
 		assertTrue(result.isCanStartAction());
+	}
+	
+	@Test
+	public void markVentilesAsValidated() {
+		
+		VentilHsup hSup = new VentilHsup();
+			hSup.setEtat(EtatPointageEnum.VALIDE);
+		VentilHsup hSup2 = new VentilHsup();
+			hSup2.setEtat(EtatPointageEnum.VENTILE);
+		List<VentilHsup> vHsups = new ArrayList<VentilHsup>();
+			vHsups.addAll(Arrays.asList(hSup, hSup2));
+		
+		VentilPrime vPrime = new VentilPrime();
+			vPrime.setEtat(EtatPointageEnum.VALIDE);
+		VentilPrime vPrime2 = new VentilPrime();
+			vPrime2.setEtat(EtatPointageEnum.VENTILE);
+		List<VentilPrime> vPrimes = new ArrayList<VentilPrime>(); 
+			vPrimes.addAll(Arrays.asList(vPrime, vPrime2));
+			
+		VentilAbsence vabsence = new VentilAbsence();
+			vabsence.setEtat(EtatPointageEnum.VALIDE);
+		VentilAbsence vabsence2 = new VentilAbsence();
+			vabsence2.setEtat(EtatPointageEnum.VENTILE);
+		List<VentilAbsence> vabsences = new ArrayList<VentilAbsence>();
+			vabsences.addAll(Arrays.asList(vabsence, vabsence2));
+		
+		ExportPaieService service = new ExportPaieService();
+		service.markVentilesAsValidated(vHsups, vPrimes, vabsences);
+		
+		for (VentilHsup vHsup : vHsups) {
+			if (!EtatPointageEnum.VALIDE.equals(vHsup.getEtat())) {
+				fail();
+			}
+		}
+		
+		for (VentilPrime vPrim : vPrimes) {
+			if (!EtatPointageEnum.VALIDE.equals(vPrim.getEtat())) {
+				fail();
+			}
+		}
+		
+		for (VentilAbsence vabsenc : vabsences) {
+			if (!EtatPointageEnum.VALIDE.equals(vabsenc.getEtat())) {
+				fail();
+			}
+		}
 	}
 }
