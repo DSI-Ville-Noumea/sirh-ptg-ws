@@ -313,7 +313,7 @@ public class ApprobationService implements IApprobationService {
 
 			etat.setDateMaj(helperService.getCurrentDate());
 			etat.setPointage(ptg);
-			etat.setIdAgent(ptg.getIdAgent());
+			etat.setIdAgent(idAgent);
 			etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
 			ptg.getEtats().add(etat);
 			
