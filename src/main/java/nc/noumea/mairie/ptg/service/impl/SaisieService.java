@@ -218,7 +218,7 @@ public class SaisieService implements ISaisieService {
 						crudComments(ptg, abs.getMotif(), abs.getCommentaire());
 						
 						if (!approveModifiedPointages) 
-							pointageService.addEtatPointage(ptg, EtatPointageEnum.APPROUVE, idAgent, currentDateEtat);
+							pointageService.addEtatPointage(ptg, EtatPointageEnum.APPROUVE, idAgentOperator, currentDateEtat);
 	
 						finalPointages.add(ptg);
 					}

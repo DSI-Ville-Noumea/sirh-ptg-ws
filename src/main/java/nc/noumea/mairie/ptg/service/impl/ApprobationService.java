@@ -100,31 +100,34 @@ public class ApprobationService implements IApprobationService {
 				new LocalDate(toDate).plusDays(1).toDate(), RefTypePointageEnum.getRefTypePointageEnum(idRefType),
 				idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)));
 
-		// creation d un HashMap pour garder en memoire les agents deja retournes
-		// ceci evite de faire trop d appel a SIRH-WS, ce qui est tres gourmand en temps
-		// pour 300 lignes de pointage, le bout de code ci-dessous pouvait prendre jusque 1 minute avant la modif
+		// creation d un HashMap pour garder en memoire les agents deja
+		// retournes
+		// ceci evite de faire trop d appel a SIRH-WS, ce qui est tres gourmand
+		// en temps
+		// pour 300 lignes de pointage, le bout de code ci-dessous pouvait
+		// prendre jusque 1 minute avant la modif
 		Map<Integer, AgentDto> mapAgentDto = new HashMap<Integer, AgentDto>();
-		
+
 		for (Pointage ptg : pointages) {
-			
+
 			AgentDto agDto = null;
-			if(mapAgentDto.containsKey(ptg.getIdAgent())) {
+			if (mapAgentDto.containsKey(ptg.getIdAgent())) {
 				agDto = mapAgentDto.get(ptg.getIdAgent());
 			} else {
 				agDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getIdAgent()));
 				mapAgentDto.put(ptg.getIdAgent(), agDto);
 			}
-			
+
 			ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
-			
+
 			AgentDto opeDto = null;
-			if(mapAgentDto.containsKey(ptg.getLatestEtatPointage().getIdAgent())) {
+			if (mapAgentDto.containsKey(ptg.getLatestEtatPointage().getIdAgent())) {
 				opeDto = mapAgentDto.get(ptg.getLatestEtatPointage().getIdAgent());
 			} else {
 				opeDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getLatestEtatPointage().getIdAgent()));
 				mapAgentDto.put(ptg.getLatestEtatPointage().getIdAgent(), opeDto);
 			}
-			
+
 			dto.updateEtat(ptg.getLatestEtatPointage(), opeDto);
 			dto.setAgent(agDto);
 			result.add(dto);
@@ -146,28 +149,28 @@ public class ApprobationService implements IApprobationService {
 
 		// optimisation performances
 		Map<Integer, AgentDto> mapAgentDto = new HashMap<Integer, AgentDto>();
-				
+
 		for (Pointage ptg : list) {
 			for (EtatPointage etat : ptg.getEtats()) {
-				
+
 				AgentDto agDto = null;
-				if(mapAgentDto.containsKey(ptg.getIdAgent())) {
+				if (mapAgentDto.containsKey(ptg.getIdAgent())) {
 					agDto = mapAgentDto.get(ptg.getIdAgent());
 				} else {
 					agDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getIdAgent()));
 					mapAgentDto.put(ptg.getIdAgent(), agDto);
 				}
-				
+
 				ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
-				
+
 				AgentDto opeDto = null;
-				if(mapAgentDto.containsKey(etat.getIdAgent())) {
+				if (mapAgentDto.containsKey(etat.getIdAgent())) {
 					opeDto = mapAgentDto.get(etat.getIdAgent());
 				} else {
 					opeDto = new AgentDto(sirhWSConsumer.getAgent(etat.getIdAgent()));
 					mapAgentDto.put(etat.getIdAgent(), opeDto);
 				}
-				
+
 				dto.updateEtat(etat, opeDto);
 				dto.setAgent(agDto);
 				result.add(dto);
@@ -238,7 +241,7 @@ public class ApprobationService implements IApprobationService {
 			etat.setDateEtat(helperService.getCurrentDate());
 			etat.setDateMaj(helperService.getCurrentDate());
 			etat.setPointage(ptg);
-			etat.setIdAgent(ptg.getIdAgent());
+			etat.setIdAgent(idAgent);
 			etat.setEtat(targetEtat);
 			ptg.getEtats().add(etat);
 		}
@@ -303,7 +306,7 @@ public class ApprobationService implements IApprobationService {
 
 			// at last, create and add the new EtatPointage
 			EtatPointage etat = new EtatPointage();
-			
+
 			VentilDate lastVentil = ventilRepository.getLatestVentilDate(
 					helperService.getTypeChainePaieFromStatut(statut), false);
 			if (targetEtat == EtatPointageEnum.APPROUVE && lastVentil != null)
@@ -316,40 +319,43 @@ public class ApprobationService implements IApprobationService {
 			etat.setIdAgent(idAgent);
 			etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
 			ptg.getEtats().add(etat);
-			
+
 			Date dateEtat = null;
-			if(null != lastVentil) {
+			if (null != lastVentil) {
 				dateEtat = lastVentil.getDateVentilation();
 			} else {
 				dateEtat = helperService.getCurrentDate();
 			}
-			
-			reinitialisePointageHSupEtAbsAApprouveForVentilation(dto, currentEtat, ptg, dateEtat);
+
+			reinitialisePointageHSupEtAbsAApprouveForVentilation(idAgent, dto, currentEtat, ptg, dateEtat);
 		}
 		return result;
 	}
-	
-	protected void reinitialisePointageHSupEtAbsAApprouveForVentilation(PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
-		
-		if(EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
+
+	protected void reinitialisePointageHSupEtAbsAApprouveForVentilation(Integer idAgent, PointagesEtatChangeDto dto,
+			EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
+
+		if (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
 				&& EtatPointageEnum.VALIDE.equals(currentEtat)) {
 			// si on REJETE un pointages VALIDE
-			// on reinitialise les autres pointages du meme agent pour la meme semaine
+			// on reinitialise les autres pointages du meme agent pour la meme
+			// semaine
 			// a APPROUVE pour prise en compte dans la ventilation
-			List<Pointage> listePointagesAgent = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi());
-			if(null != listePointagesAgent && !listePointagesAgent.isEmpty()) {
-				for(Pointage pointage : listePointagesAgent) {
-					if(EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
-							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum())
-								|| RefTypePointageEnum.ABSENCE.equals(pointage.getTypePointageEnum()))
+			List<Pointage> listePointagesAgent = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(
+					ptg.getIdAgent(), ptg.getDateLundi());
+			if (null != listePointagesAgent && !listePointagesAgent.isEmpty()) {
+				for (Pointage pointage : listePointagesAgent) {
+					if (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
+							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE
+									.equals(pointage.getTypePointageEnum()))
 							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {
-						
+
 						EtatPointage etat = new EtatPointage();
-							etat.setDateEtat(dateEtat);
-							etat.setDateMaj(helperService.getCurrentDate());
-							etat.setPointage(pointage);
-							etat.setIdAgent(ptg.getIdAgent());
-							etat.setEtat(EtatPointageEnum.APPROUVE);
+						etat.setDateEtat(dateEtat);
+						etat.setDateMaj(helperService.getCurrentDate());
+						etat.setPointage(pointage);
+						etat.setIdAgent(idAgent);
+						etat.setEtat(EtatPointageEnum.APPROUVE);
 						pointage.getEtats().add(etat);
 					}
 				}
