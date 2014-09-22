@@ -74,4 +74,7 @@ public interface IVentilationRepository {
 
 	List<VentilAbsence> getListVentilAbsencesForAgentAndVentilDate(
 			Integer idAgent, Integer idVentilDate);
+
+	List<VentilHsup> getListOfOldVentilHSForAgentAndDateLundi(Integer idAgent,
+			Date dateLundi, Integer ventilDateId);
 }

@@ -12,7 +12,9 @@ import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.repository.IMairieRepository;
@@ -52,35 +54,49 @@ public class VentilationHSupService implements IVentilationHSupService {
 	
 	@Autowired
 	private IPointageDataConsistencyRules ptgDataCosistencyRules;
+	
+	@Autowired
+	private IVentilationRepository ventilationRepository;
 
 	@Override
-	public VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages) {
-		return processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.F);
+	public VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, VentilDate ventilDate) {
+		return processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.F, ventilDate);
 	}
 
 	@Override
-	public VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages) {
-		return processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.C);
+	public VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, VentilDate ventilDate) {
+		return processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.C, ventilDate);
 	}
 
 	@Override
 	public VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, Date dateLundi,
-			List<Pointage> pointages, boolean has1150Prime) {
-		return processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.CC, has1150Prime);
+			List<Pointage> pointages, boolean has1150Prime, VentilDate ventilDate) {
+		return processHSup(idAgent, carr, dateLundi, pointages, AgentStatutEnum.CC, has1150Prime, ventilDate);
 	}
 
 	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages,
-			AgentStatutEnum statut) {
-		return processHSup(idAgent, carr, dateLundi, pointages, statut, false);
+			AgentStatutEnum statut, VentilDate ventilDate) {
+		return processHSup(idAgent, carr, dateLundi, pointages, statut, false, ventilDate);
 	}
 
 	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages,
-			AgentStatutEnum statut, boolean has1150Prime) {
+			AgentStatutEnum statut, boolean has1150Prime, VentilDate ventilDate) {
 
 		// If there are no HSUPS pointages, there will be no VentilHSup.
-		if (!areThereHSupsPointages(pointages))
+		if (!areThereHSupsPointages(pointages)){
+			// if there was one previous VentilHSup from a previous ventilation
+			// there will be one VentilHSup with 0 minutes to delete in SPPHRE
+			List<VentilHsup> listOldVentilHSup = ventilationRepository.getListOfOldVentilHSForAgentAndDateLundi(idAgent, dateLundi, ventilDate.getIdVentilDate());
+			if(null != listOldVentilHSup && !listOldVentilHSup.isEmpty()) {
+				VentilHsup result = new VentilHsup();
+					result.setIdAgent(idAgent);
+					result.setDateLundi(dateLundi);
+					result.setEtat(EtatPointageEnum.VENTILE);
+				return result;
+			}
 			return null;
-
+		}
+		
 		VentilHsup result = new VentilHsup();
 		result.setIdAgent(idAgent);
 		result.setDateLundi(dateLundi);

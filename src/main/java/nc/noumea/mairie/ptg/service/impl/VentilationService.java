@@ -276,7 +276,7 @@ public class VentilationService implements IVentilationService {
 
 		boolean has1150Prime = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
-				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime);
+				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime, ventilDate);
 		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod,
 				dateLundi);
 

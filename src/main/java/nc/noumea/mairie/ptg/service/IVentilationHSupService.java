@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 
 import org.joda.time.DateTime;
@@ -13,15 +14,15 @@ import org.joda.time.Interval;
 
 public interface IVentilationHSupService {
 
-	VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime);
+	VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime, VentilDate ventilDate);
 	
-	VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut);
+	VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut, VentilDate ventilDate);
 	
-	VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages);
+	VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, VentilDate ventilDate);
 	
-	VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages);
+	VentilHsup processHSupContractuel(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, VentilDate ventilDate);
 	
-	VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, boolean has1150Prime);
+	VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, boolean has1150Prime, VentilDate ventilDate);
 	
 	Interval getDayHSupJourIntervalForStatut(DateTime day, AgentStatutEnum statut);
 }

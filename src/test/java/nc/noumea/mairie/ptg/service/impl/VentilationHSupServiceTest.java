@@ -1,7 +1,6 @@
 package nc.noumea.mairie.ptg.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +18,9 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -51,13 +52,89 @@ public class VentilationHSupServiceTest {
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		Date dateLundi = new LocalDate(2013, 7, 22).toDate();
 		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		
 		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
 		
 		// When
-		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false);
+		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false, new VentilDate());
 		
 		// Then
 		assertNull(result);
+	}
+
+	@Test
+	public void processHSup_NoPointages_ReturnNull_listOldVentilHSupEmpty() {
+		
+		// Given
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		Date dateLundi = new LocalDate(2013, 7, 22).toDate();
+		
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setIdVentilDate(1);
+		
+		List<VentilHsup> listOldVentilHSup = new ArrayList<VentilHsup>();
+		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListOfOldVentilHSForAgentAndDateLundi(9008765, dateLundi, ventilDate.getIdVentilDate())).thenReturn(listOldVentilHSup);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		
+		// When
+		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false, ventilDate);
+		
+		// Then
+		assertNull(result);
+	}
+	
+	/**
+	 * dans le cas ou il y avait une ancienne ventilation 
+	 * (ex : pointage rejete apres une ventilation ou export de paie)
+	 */
+	@Test
+	public void processHSup_NoPointages_ReturnVentilHSupVide() {
+		
+		// Given
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		Date dateLundi = new LocalDate(2013, 7, 22).toDate();
+		
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setIdVentilDate(1);
+		
+		List<VentilHsup> listOldVentilHSup = new ArrayList<VentilHsup>();
+		listOldVentilHSup.add(new VentilHsup());
+		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListOfOldVentilHSForAgentAndDateLundi(9008765, dateLundi, ventilDate.getIdVentilDate())).thenReturn(listOldVentilHSup);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		
+		// When
+		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false, ventilDate);
+		
+		// Then
+		assertNotNull(result);
+		assertEquals(result.getIdAgent().intValue(), 9008765);
+		assertEquals(result.getDateLundi(), dateLundi);
+		assertEquals(result.getEtat(), EtatPointageEnum.VENTILE);
+		assertEquals(0, result.getMHorsContrat());
+		assertEquals(0, result.getMAbsences());
+		assertEquals(0, result.getMAbsencesAS400());
+		assertEquals(0, result.getMSup());
+		assertEquals(0, result.getMRecuperees());
+		assertEquals(0, result.getMsNuit());
+		assertEquals(0, result.getMsdjf());
+		assertEquals(0, result.getMNormales());
+		assertEquals(0, result.getMSimple());
+		assertEquals(0, result.getMComposees());
+		assertEquals(0, result.getMsNuitRecup());
+		assertEquals(0, result.getMsdjfRecup());
+		assertEquals(0, result.getMNormalesRecup());
+		assertEquals(0, result.getMSimpleRecup());
+		assertEquals(0, result.getMComposeesRecup());
 	}
 	
 	@Test
@@ -109,7 +186,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -198,7 +275,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4), new VentilDate());
 		
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -301,7 +378,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6), new VentilDate());
 		
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -397,7 +474,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 		
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -472,7 +549,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 		
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -568,7 +645,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 		
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -668,7 +745,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 		
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -768,7 +845,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 		
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -847,7 +924,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), true);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), true, new VentilDate());
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -945,7 +1022,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6), new VentilDate());
 				
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1007,7 +1084,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1096,7 +1173,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1178,7 +1255,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1253,7 +1330,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1376,7 +1453,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1470,7 +1547,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1601,7 +1678,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1683,7 +1760,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1756,7 +1833,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1860,7 +1937,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1955,7 +2032,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2041,7 +2118,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2123,7 +2200,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2197,7 +2274,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2320,7 +2397,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2414,7 +2491,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2545,7 +2622,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2627,7 +2704,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2703,7 +2780,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2794,7 +2871,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2899,7 +2976,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p3, p1, p2, p4));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p3, p1, p2, p4), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3003,7 +3080,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3098,7 +3175,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3186,7 +3263,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3270,7 +3347,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3344,7 +3421,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3467,7 +3544,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3561,7 +3638,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3692,7 +3769,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3774,7 +3851,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3847,7 +3924,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3954,7 +4031,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4058,7 +4135,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4153,7 +4230,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4233,7 +4310,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4), false);
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4315,7 +4392,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p2, p3));
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p2, p3), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4395,7 +4472,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4));
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4), new VentilDate());
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
 		assertEquals(p2.getDateLundi(), result.getDateLundi());
