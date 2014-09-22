@@ -219,7 +219,8 @@ public class ExportPaieService implements IExportPaieService {
 
 		for (Pointage ptg : pointages) {
 
-			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.JOURNALISE)
+			if (ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.JOURNALISE
+					|| ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.VALIDE)
 				continue;
 
 			EtatPointage ep = new EtatPointage();
@@ -266,7 +267,8 @@ public class ExportPaieService implements IExportPaieService {
 	 */
 	protected void markPointagesCalculesAsValidated(List<PointageCalcule> pointagesCalcules) {
 		for (PointageCalcule ptgC : pointagesCalcules) {
-			if (ptgC.getEtat() == EtatPointageEnum.JOURNALISE)
+			if (ptgC.getEtat() == EtatPointageEnum.JOURNALISE
+					|| ptgC.getEtat() == EtatPointageEnum.VALIDE)
 				continue;
 
 			ptgC.setEtat(EtatPointageEnum.VALIDE);
