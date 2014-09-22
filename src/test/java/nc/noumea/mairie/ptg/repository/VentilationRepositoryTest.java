@@ -1932,4 +1932,69 @@ public class VentilationRepositoryTest {
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
 	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfOldVentilHSForAgentAndDateLundi() {
+		
+		Date dateLundi = new LocalDate(2014, 2, 23).toDate();
+		
+		VentilDate vd = new VentilDate();
+			vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			vd.setPaye(true);
+			vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+		
+		VentilDate badVd = new VentilDate();
+			badVd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+			badVd.setPaye(true);
+			badVd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(badVd);
+
+		VentilHsup vaOk = new VentilHsup();
+			vaOk.setDateLundi(dateLundi);
+			vaOk.setEtat(EtatPointageEnum.VALIDE);
+			vaOk.setIdAgent(9005138);
+			vaOk.setVentilDate(vd);
+		ptgEntityManager.persist(vaOk);
+
+		VentilHsup vaBadAgent = new VentilHsup();
+			vaBadAgent.setDateLundi(dateLundi);
+			vaBadAgent.setEtat(EtatPointageEnum.VALIDE);
+			vaBadAgent.setIdAgent(9009999);
+			vaBadAgent.setVentilDate(vd);
+		ptgEntityManager.persist(vaBadAgent);
+
+		VentilHsup vaBadLundi = new VentilHsup();
+			vaBadLundi.setDateLundi(new LocalDate(2014, 2, 2).toDate());
+			vaBadLundi.setEtat(EtatPointageEnum.VALIDE);
+			vaBadLundi.setIdAgent(9005138);
+			vaBadLundi.setVentilDate(vd);
+		ptgEntityManager.persist(vaBadLundi);
+
+		VentilHsup vaBadEtat = new VentilHsup();
+			vaBadEtat.setDateLundi(dateLundi);
+			vaBadEtat.setEtat(EtatPointageEnum.VENTILE);
+			vaBadEtat.setIdAgent(9005138);
+			vaBadEtat.setVentilDate(vd);
+		ptgEntityManager.persist(vaBadEtat);
+
+		VentilHsup vaBadVentiDate = new VentilHsup();
+			vaBadVentiDate.setDateLundi(dateLundi);
+			vaBadVentiDate.setEtat(EtatPointageEnum.VALIDE);
+			vaBadVentiDate.setIdAgent(9005138);
+			vaBadVentiDate.setVentilDate(badVd);
+		ptgEntityManager.persist(vaBadVentiDate);
+		
+		List<VentilHsup> result = repository.getListOfOldVentilHSForAgentAndDateLundi(9005138, dateLundi, vd.getIdVentilDate());
+
+		assertEquals(1, result.size());
+		assertEquals(dateLundi, result.get(0).getDateLundi());
+		assertEquals(EtatPointageEnum.VALIDE, result.get(0).getEtat());
+		assertEquals(9005138, result.get(0).getIdAgent().intValue());
+		assertEquals(vd.getIdVentilDate(), result.get(0).getVentilDate().getIdVentilDate());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
 }

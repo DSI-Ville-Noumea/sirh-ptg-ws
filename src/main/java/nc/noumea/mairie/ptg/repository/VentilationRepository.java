@@ -595,12 +595,13 @@ public class VentilationRepository implements IVentilationRepository {
 	public List<VentilHsup> getListOfOldVentilHSForAgentAndDateLundi(Integer idAgent, Date dateLundi, Integer ventilDateId) {
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
 		
-		String query = "FROM VentilHsup tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi = :dateLundi AND tb.ventilDate.idVentilDate = :ventilDateId ";
+		String query = "FROM VentilHsup tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi = :dateLundi AND tb.ventilDate.idVentilDate = :ventilDateId AND tb.etat = :etat ";
 
 		TypedQuery<VentilHsup> q = ptgEntityManager.createQuery(query, VentilHsup.class);
 			q.setParameter("idAgent", idAgent);
 			q.setParameter("dateLundi", dateLundi);
 			q.setParameter("ventilDateId", ventilDateId);
+			q.setParameter("etat", EtatPointageEnum.VALIDE);
 		resultat.addAll(q.getResultList());
 
 		return resultat;
