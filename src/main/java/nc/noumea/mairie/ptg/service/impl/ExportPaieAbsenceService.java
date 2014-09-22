@@ -44,12 +44,8 @@ public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
 			Sppact act = findOrCreateSppactRecord(modifiedOrAddedSppact, ptg.getIdAgent(), ptg.getDateDebut(), ptg
 					.getRefTypeAbsence().getIdRefTypeAbsence());
 
-			// Compute the time period in minutes, add them to potential
-			// existing minutes for that day, and convert them to Mairie Format
 			Period p = new Period(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin()));
-			int nbMinutesAlreadySet = helperService.convertMairieNbHeuresFormatToMinutes(act.getNbHeures());
-			act.setNbHeures(helperService.convertMinutesToMairieNbHeuresFormat(nbMinutesAlreadySet
-					+ p.toStandardMinutes().getMinutes()));
+			act.setNbHeures(helperService.convertMinutesToMairieNbHeuresFormat(p.toStandardMinutes().getMinutes()));
 
 			if (act.getNbHeures() == 0d) {
 				modifiedOrAddedSppact.remove(act);
