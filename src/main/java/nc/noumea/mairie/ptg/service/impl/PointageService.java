@@ -316,7 +316,7 @@ public class PointageService implements IPointageService {
 				ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
 
 		return filterOldPointagesAndEtatFromList(agentPointages,
-				Arrays.asList(EtatPointageEnum.VENTILE, EtatPointageEnum.VALIDE, EtatPointageEnum.JOURNALISE));
+				Arrays.asList(EtatPointageEnum.VENTILE));
 	}
 
 	@Override
