@@ -903,7 +903,7 @@ public class ApprobationServiceTest {
 
 		ApprobationService service = new ApprobationService();
 
-		service.reinitialisePointageHSupEtAbsAApprouveForVentilation(9005138, dto, currentEtat, new Pointage(),
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, new Pointage(),
 				dateVentilation);
 
 		Mockito.verify(pointage, Mockito.times(0)).getEtats();
@@ -935,7 +935,7 @@ public class ApprobationServiceTest {
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 
-		service.reinitialisePointageHSupEtAbsAApprouveForVentilation(9005138, dto, currentEtat, ptg, dateVentilation);
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, ptg, dateVentilation);
 
 		Mockito.verify(pointage, Mockito.times(0)).getEtats();
 	}
@@ -988,7 +988,7 @@ public class ApprobationServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		service.reinitialisePointageHSupEtAbsAApprouveForVentilation(9005138, dto, currentEtat, ptg, dateVentilation);
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, ptg, dateVentilation);
 
 		assertEquals(2, otherPointageHSup.getEtats().size());
 		assertEquals(2, otherPointageAbs.getEtats().size());
@@ -1033,7 +1033,7 @@ public class ApprobationServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		service.reinitialisePointageHSupEtAbsAApprouveForVentilation(9005138, dto, currentEtat, ptg, dateVentilation);
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, ptg, dateVentilation);
 
 		assertEquals(1, otherPointage.getEtats().size());
 	}
@@ -1086,7 +1086,7 @@ public class ApprobationServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		service.reinitialisePointageHSupEtAbsAApprouveForVentilation(9005138, dto, currentEtat, ptg, dateVentilation);
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, ptg, dateVentilation);
 
 		assertEquals(1, otherPointageHSup.getEtats().size());
 		assertEquals(1, otherPointageAbs.getEtats().size());
@@ -1131,7 +1131,254 @@ public class ApprobationServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
-		service.reinitialisePointageHSupEtAbsAApprouveForVentilation(9005138, dto, currentEtat, ptg, dateVentilation);
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, ptg, dateVentilation);
+
+		assertEquals(1, otherPointageHSup.getEtats().size());
+	}
+	
+	@Test
+	public void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation_badEtat() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
+
+		Pointage pointage = Mockito.spy(new Pointage());
+		pointage.setEtats(new ArrayList<EtatPointage>());
+
+		Date dateVentilation = new Date();
+
+		ApprobationService service = new ApprobationService();
+
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(9005138, dto, currentEtat, new Pointage(),
+				dateVentilation);
+
+		Mockito.verify(pointage, Mockito.times(0)).getEtats();
+	}
+
+	@Test
+	public void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation_noOtherPointage() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+		dto.setIdRefEtat(EtatPointageEnum.APPROUVE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+
+		Pointage pointage = Mockito.spy(new Pointage());
+		pointage.setEtats(new ArrayList<EtatPointage>());
+
+		Date dateVentilation = new Date();
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi())).thenReturn(
+				listePointagesAgent);
+
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(9005138, dto, currentEtat, ptg, dateVentilation);
+
+		Mockito.verify(pointage, Mockito.times(0)).getEtats();
+	}
+
+	@Test
+	public void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation_2OtherPointage_HSup_Abs() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+		dto.setIdRefEtat(EtatPointageEnum.APPROUVE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
+
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+
+		Date dateVentilation = new Date();
+
+		RefTypePointage typePointageHSup = new RefTypePointage();
+		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		RefTypePointage typePointageAbs = new RefTypePointage();
+		typePointageAbs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.VALIDE);
+
+		Pointage otherPointageHSup = Mockito.spy(new Pointage());
+		otherPointageHSup.setIdPointage(2);
+		otherPointageHSup.setType(typePointageHSup);
+		otherPointageHSup.getEtats().add(etat);
+
+		Pointage otherPointageAbs = Mockito.spy(new Pointage());
+		otherPointageAbs.setIdPointage(3);
+		otherPointageAbs.setType(typePointageAbs);
+		otherPointageAbs.getEtats().add(etat);
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+		listePointagesAgent.add(otherPointageHSup);
+		listePointagesAgent.add(otherPointageAbs);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi())).thenReturn(
+				listePointagesAgent);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(9005138, dto, currentEtat, ptg, dateVentilation);
+
+		assertEquals(2, otherPointageHSup.getEtats().size());
+		assertEquals(2, otherPointageAbs.getEtats().size());
+	}
+
+	@Test
+	public void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation_1OtherPointage_Prime() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+		dto.setIdRefEtat(EtatPointageEnum.APPROUVE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
+
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+
+		Date dateVentilation = new Date();
+
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.VALIDE);
+
+		Pointage otherPointage = Mockito.spy(new Pointage());
+		otherPointage.setIdPointage(2);
+		otherPointage.setType(typePointage);
+		otherPointage.getEtats().add(etat);
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+		listePointagesAgent.add(otherPointage);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi())).thenReturn(
+				listePointagesAgent);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(9005138, dto, currentEtat, ptg, dateVentilation);
+
+		assertEquals(1, otherPointage.getEtats().size());
+	}
+
+	@Test
+	public void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation_2OtherPointage_HSup_Abs_badEtat() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+		dto.setIdRefEtat(EtatPointageEnum.APPROUVE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
+
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+
+		Date dateVentilation = new Date();
+
+		RefTypePointage typePointageHSup = new RefTypePointage();
+		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		RefTypePointage typePointageAbs = new RefTypePointage();
+		typePointageAbs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.VENTILE);
+
+		Pointage otherPointageHSup = Mockito.spy(new Pointage());
+		otherPointageHSup.setIdPointage(2);
+		otherPointageHSup.setType(typePointageHSup);
+		otherPointageHSup.getEtats().add(etat);
+
+		Pointage otherPointageAbs = Mockito.spy(new Pointage());
+		otherPointageAbs.setIdPointage(3);
+		otherPointageAbs.setType(typePointageAbs);
+		otherPointageAbs.getEtats().add(etat);
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+		listePointagesAgent.add(otherPointageHSup);
+		listePointagesAgent.add(otherPointageAbs);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi())).thenReturn(
+				listePointagesAgent);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(9005138, dto, currentEtat, ptg, dateVentilation);
+
+		assertEquals(1, otherPointageHSup.getEtats().size());
+		assertEquals(1, otherPointageAbs.getEtats().size());
+	}
+
+	@Test
+	public void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation_2OtherPointage_HSup_Abs_sameIdPointage() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+		dto.setIdRefEtat(EtatPointageEnum.APPROUVE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
+
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+
+		Date dateVentilation = new Date();
+
+		RefTypePointage typePointageHSup = new RefTypePointage();
+		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.VENTILE);
+
+		Pointage otherPointageHSup = Mockito.spy(new Pointage());
+		otherPointageHSup.setIdPointage(1);
+		otherPointageHSup.setType(typePointageHSup);
+		otherPointageHSup.getEtats().add(etat);
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+		listePointagesAgent.add(otherPointageHSup);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi())).thenReturn(
+				listePointagesAgent);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(9005138, dto, currentEtat, ptg, dateVentilation);
 
 		assertEquals(1, otherPointageHSup.getEtats().size());
 	}

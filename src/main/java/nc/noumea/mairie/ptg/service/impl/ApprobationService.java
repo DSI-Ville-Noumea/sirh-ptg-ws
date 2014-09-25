@@ -327,16 +327,48 @@ public class ApprobationService implements IApprobationService {
 				dateEtat = helperService.getCurrentDate();
 			}
 
-			reinitialisePointageHSupEtAbsAApprouveForVentilation(idAgent, dto, currentEtat, ptg, dateEtat);
+			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat, ptg, dateEtat);
+			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(idAgent, dto, currentEtat, ptg, dateEtat);
 		}
 		return result;
 	}
 
-	protected void reinitialisePointageHSupEtAbsAApprouveForVentilation(Integer idAgent, PointagesEtatChangeDto dto,
+	protected void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(Integer idAgent, PointagesEtatChangeDto dto,
 			EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
 
 		if (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
 				&& EtatPointageEnum.VALIDE.equals(currentEtat)) {
+			// si on REJETE un pointages VALIDE
+			// on reinitialise les autres pointages du meme agent pour la meme
+			// semaine
+			// a APPROUVE pour prise en compte dans la ventilation
+			List<Pointage> listePointagesAgent = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(
+					ptg.getIdAgent(), ptg.getDateLundi());
+			if (null != listePointagesAgent && !listePointagesAgent.isEmpty()) {
+				for (Pointage pointage : listePointagesAgent) {
+					if (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
+							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE
+									.equals(pointage.getTypePointageEnum()))
+							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {
+
+						EtatPointage etat = new EtatPointage();
+						etat.setDateEtat(dateEtat);
+						etat.setDateMaj(helperService.getCurrentDate());
+						etat.setPointage(pointage);
+						etat.setIdAgent(idAgent);
+						etat.setEtat(EtatPointageEnum.APPROUVE);
+						pointage.getEtats().add(etat);
+					}
+				}
+			}
+		}
+	}
+	
+	protected void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(Integer idAgent, PointagesEtatChangeDto dto,
+			EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
+
+		if (EtatPointageEnum.APPROUVE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
+				&& EtatPointageEnum.REJETE.equals(currentEtat)) {
 			// si on REJETE un pointages VALIDE
 			// on reinitialise les autres pointages du meme agent pour la meme
 			// semaine
