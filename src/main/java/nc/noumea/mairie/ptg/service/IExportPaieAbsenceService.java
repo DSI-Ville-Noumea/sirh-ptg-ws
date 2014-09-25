@@ -16,4 +16,7 @@ public interface IExportPaieAbsenceService {
 	 * @return
 	 */
 	List<Sppact> exportAbsencesToPaie(List<Pointage> pointagesOrderedByDateAsc);
+
+	void deleteSppactFromAbsencesRejetees(
+			List<Pointage> listPointageRejetesVentilesOrderedByDateAsc);
 }

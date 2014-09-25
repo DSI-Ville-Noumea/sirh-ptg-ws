@@ -47,7 +47,7 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("maxEtats ON maxEtats.maxIdEtatPointage = ep.id_etat_pointage AND maxEtats.id_pointage = ep.id_pointage ");
 		sb.append("WHERE p.ID_AGENT = :idAgent ");
 		sb.append("AND (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ");
-		sb.append("OR ep.etat = :ventile) ");
+		sb.append("OR ep.etat = :ventile OR ep.etat = :rejete) ");
 		sb.append("ORDER BY (p.date_debut) ASC ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString());
@@ -56,6 +56,7 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("toEtatDate", toEtatDate);
 		q.setParameter("approuve", EtatPointageEnum.APPROUVE.getCodeEtat());
 		q.setParameter("ventile", EtatPointageEnum.VENTILE.getCodeEtat());
+		q.setParameter("rejete", EtatPointageEnum.REJETE.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
 		List<Date> result = q.getResultList();

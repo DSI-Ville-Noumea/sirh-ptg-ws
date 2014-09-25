@@ -151,14 +151,16 @@ public class ExportPaieService implements IExportPaieService {
 		List<Pointage> ventilatedPointages = pointageService.getPointagesVentilesForAgent(idAgent, ventilDate);
 		List<PointageCalcule> ventilatedPointagesCalcules = pointageService.getPointagesCalculesVentilesForAgent(
 				idAgent, ventilDate);
+		List<Pointage> listPointageRejetesVentilesOrderedByDateAsc = pointageService.getPointagesVentilesAndRejetesForAgent(idAgent, ventilDate);
 
-		if (ventilatedPointages.size() == 0) {
+		if (ventilatedPointages.size() == 0 && listPointageRejetesVentilesOrderedByDateAsc.size() == 0) {
 			logger.debug("No pointages to export. Exiting...");
 			return;
 		}
 
 		// 2. Export absences
 		logger.debug("Exporting Absences...");
+		exportPaieAbsenceService.deleteSppactFromAbsencesRejetees(listPointageRejetesVentilesOrderedByDateAsc);
 		persistSppac(exportPaieAbsenceService.exportAbsencesToPaie(ventilatedPointages));
 
 		// 3. Export hSups

@@ -14,4 +14,5 @@ public interface IExportPaieRepository {
 	Sppprm getSppprmForDayAgentAndNorubr(Integer idAgent, Date day, Integer noRubr);
 	Spprim getSpprimForDayAgentAndNorubr(Integer idAgent, Date day, Integer noRubr);
 	void removeEntity(Object entity);
+	int deleteSppactForDayAndAgent(Integer idAgent, Date day, String codeActi);
 }

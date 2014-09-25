@@ -11,6 +11,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IExportPaieRepository;
+import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IExportPaieAbsenceService;
 import nc.noumea.mairie.repository.IMairieRepository;
 
@@ -30,6 +31,9 @@ public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
 
 	@Autowired
 	private HelperService helperService;
+	
+	@Autowired
+	private IPointageRepository pointageRepository;
 
 	@Override
 	public List<Sppact> exportAbsencesToPaie(List<Pointage> pointagesOrderedByDateAsc) {
@@ -98,5 +102,31 @@ public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
 		existingRecords.add(act);
 
 		return act;
+	}
+	
+	@Override
+	public void deleteSppactFromAbsencesRejetees(List<Pointage> listPointageRejetesVentilesOrderedByDateAsc) {
+		
+		for (Pointage ptg : listPointageRejetesVentilesOrderedByDateAsc) {
+
+			if (ptg.getTypePointageEnum() != RefTypePointageEnum.ABSENCE)
+				continue;
+
+			String codeActi = "";
+			switch (RefTypeAbsenceEnum.getRefTypeAbsenceEnum(ptg.getRefTypeAbsence().getIdRefTypeAbsence())) {
+				case CONCERTEE:
+					codeActi = Spacti.CODE_ACTIVITE_ABS_CONCERTEE;
+					break;
+				case NON_CONCERTEE:
+					codeActi = Spacti.CODE_ACTIVITE_ABS_NON_CONCERTEE;
+					break;
+				case IMMEDIATE:
+					codeActi = Spacti.CODE_ACTIVITE_ABS_IMMEDIATE;
+					break;
+			}
+
+			// Then delete for an exising record already existing in the DB
+			exportPaieRepository.deleteSppactForDayAndAgent(ptg.getIdAgent(), ptg.getDateDebut(), codeActi);
+		}
 	}
 }

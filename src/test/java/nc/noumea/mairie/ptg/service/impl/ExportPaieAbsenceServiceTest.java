@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.Spacti;
@@ -312,5 +313,51 @@ public class ExportPaieAbsenceServiceTest {
 		// Then
 		assertEquals(0, result.size());
 		Mockito.verify(mR, Mockito.times(1)).removeEntity(Mockito.isA(Sppact.class));
+	}
+	
+	@Test
+	public void deleteSppactFromAbsencesRejetees() {
+		
+		RefTypePointage typePtgAbs = new RefTypePointage();
+		typePtgAbs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		
+		RefTypeAbsence refTypeAbsence = new RefTypeAbsence();
+		refTypeAbsence.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
+		
+		Pointage pointageAbs = new Pointage();
+		pointageAbs.setIdAgent(9005138);
+		pointageAbs.setType(typePtgAbs);
+		pointageAbs.setRefTypeAbsence(refTypeAbsence);
+		pointageAbs.setDateDebut(new Date());
+		
+		RefTypePointage typePtgHSup = new RefTypePointage();
+		typePtgHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage pointageHSup = new Pointage();
+		pointageHSup.setIdAgent(9005138);
+		pointageHSup.setType(typePtgHSup);
+		pointageHSup.setRefTypeAbsence(refTypeAbsence);
+		pointageHSup.setDateDebut(new Date());
+		
+		RefTypePointage typePtgPrime = new RefTypePointage();
+		typePtgPrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		
+		Pointage pointagePrime = new Pointage();
+		pointagePrime.setIdAgent(9005138);
+		pointagePrime.setType(typePtgPrime);
+		pointagePrime.setRefTypeAbsence(refTypeAbsence);
+		pointagePrime.setDateDebut(new Date());
+		
+		List<Pointage> listPointageRejetesVentiles = new ArrayList<Pointage>();
+		listPointageRejetesVentiles.addAll(Arrays.asList(pointageAbs, pointageHSup, pointagePrime));
+		
+		IExportPaieRepository exportPaieRepository = Mockito.mock(IExportPaieRepository.class);
+		
+		ExportPaieAbsenceService service = new ExportPaieAbsenceService();
+		ReflectionTestUtils.setField(service, "exportPaieRepository", exportPaieRepository);
+		
+		service.deleteSppactFromAbsencesRejetees(listPointageRejetesVentiles);
+		
+		Mockito.verify(exportPaieRepository, Mockito.times(1)).deleteSppactForDayAndAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyString());
 	}
 }

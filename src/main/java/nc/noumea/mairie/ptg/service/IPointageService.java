@@ -149,4 +149,7 @@ public interface IPointageService {
 
 	void addEtatPointage(Pointage ptg, EtatPointageEnum etat,
 			Integer idAgentCreator, Date dateEtat);
+
+	List<Pointage> getPointagesVentilesAndRejetesForAgent(Integer idAgent,
+			VentilDate ventilDate);
 }

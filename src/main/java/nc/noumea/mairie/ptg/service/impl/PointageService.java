@@ -318,6 +318,21 @@ public class PointageService implements IPointageService {
 		return filterOldPointagesAndEtatFromList(agentPointages,
 				Arrays.asList(EtatPointageEnum.VENTILE));
 	}
+	
+	@Override
+	public List<Pointage> getPointagesVentilesAndRejetesForAgent(Integer idAgent, VentilDate ventilDate) {
+
+		List<Pointage> agentPointages = pointageRepository.getPointagesVentilesForAgent(idAgent,
+				ventilDate.getIdVentilDate());
+
+		List<Pointage> result = filterOldPointagesAndEtatFromList(agentPointages,
+				Arrays.asList(EtatPointageEnum.REJETE));
+		
+		logger.debug("Found {} Pointage Ventile Rejete for agent {} and ventil date {} as of {}", result.size(), idAgent,
+				ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
+		
+		return result;
+	}
 
 	@Override
 	public List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats) {

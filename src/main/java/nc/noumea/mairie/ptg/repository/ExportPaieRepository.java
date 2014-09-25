@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.Sppact;
@@ -40,6 +41,18 @@ public class ExportPaieRepository implements IExportPaieRepository {
 			return null;
 		
 		return result.get(0);
+	}
+	
+	@Override
+	public int deleteSppactForDayAndAgent(Integer idAgent, Date day, String codeActi) {
+
+		String jpql = "delete Sppact a where a.id.nomatr = :nomatr and a.id.dateJour = :dateJour and a.id.activite.codeActvite = :codeActi";
+		Query q = mairieEntityManager.createQuery(jpql);
+		q.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
+		q.setParameter("dateJour", helperService.getIntegerDateMairieFromDate(day));
+		q.setParameter("codeActi", codeActi);
+		
+		return q.executeUpdate();
 	}
 	
 	@Override
