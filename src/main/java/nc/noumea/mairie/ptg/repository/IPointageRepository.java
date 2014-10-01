@@ -52,4 +52,6 @@ public interface IPointageRepository {
 	List<Integer> listAllDistinctIdAgentPointage();
 	
 	List<RefTypeAbsence> findAllRefTypeAbsence();
+
+	List<Integer> getListApprobateursPointagesSaisiesJourDonne();
 }

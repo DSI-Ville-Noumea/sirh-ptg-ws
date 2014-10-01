@@ -10,6 +10,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefEtat;
@@ -247,9 +248,33 @@ public class PointageRepository implements IPointageRepository {
 
 		return query.getResultList();
 	}
-	
+
 	@Override
 	public List<RefTypeAbsence> findAllRefTypeAbsence() {
 		return ptgEntityManager.createQuery("SELECT o FROM RefTypeAbsence o", RefTypeAbsence.class).getResultList();
+	}
+
+	@Override
+	public List<Integer> getListApprobateursPointagesSaisiesJourDonne() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(droit.id_agent) as idAgent from ptg_droit droit ");
+		sb.append("inner join ptg_droit_droits_agent dda on droit.id_droit = dda.id_droit ");
+		sb.append("inner join ptg_droits_agent da on dda.id_droits_agent = da.id_droits_agent ");
+		sb.append("where droit.is_approbateur is true ");
+		sb.append("and da.id_agent in ( ");
+		sb.append("select p.id_agent from ptg_pointage p ");
+		sb.append("inner join ptg_etat_pointage ep on p.id_pointage = ep.id_pointage ");
+		sb.append("where ep.etat =:SAISIE ");
+		sb.append("and ep.date_etat <= :DATE_JOUR ");
+		sb.append("and ep.id_etat_pointage in ( select max(ep2.id_etat_pointage) from ptg_etat_pointage ep2 group by ep2.id_pointage ) ");
+		sb.append(" ) GROUP BY idAgent ");
+
+		@SuppressWarnings("unchecked")
+		List<Integer> result = ptgEntityManager.createNativeQuery(sb.toString())
+				.setParameter("SAISIE", EtatPointageEnum.SAISI.getCodeEtat()).setParameter("DATE_JOUR", new Date())
+				.getResultList();
+
+		return result;
 	}
 }

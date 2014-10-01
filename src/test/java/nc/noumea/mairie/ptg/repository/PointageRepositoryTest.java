@@ -16,6 +16,9 @@ import javax.persistence.PersistenceContext;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.domain.Droit;
+import nc.noumea.mairie.ptg.domain.DroitsAgent;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
@@ -847,6 +850,85 @@ public class PointageRepositoryTest {
 		List<RefTypeAbsence> result = repository.findAllRefTypeAbsence();
 
 		assertEquals(3, result.size());
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListApprobateursPointagesSaisiesJourDonne() {
+
+		/* APPRO 2 avec pointage parent */
+
+		DroitsAgent droitsAgent2 = new DroitsAgent();
+		droitsAgent2.setIdAgent(9000012);
+		ptgEntityManager.persist(droitsAgent2);
+
+		Set<DroitsAgent> droitDroitsAgent2 = new HashSet<DroitsAgent>();
+		droitDroitsAgent2.add(droitsAgent2);
+
+		Droit droitApprobateur2 = new Droit();
+		droitApprobateur2.setIdAgent(9000002);
+		droitApprobateur2.setAgents(droitDroitsAgent2);
+		droitApprobateur2.setApprobateur(true);
+		ptgEntityManager.persist(droitApprobateur2);
+
+		Pointage ptg2 = new Pointage();
+		ptg2.setIdAgent(9000012);
+		ptgEntityManager.persist(ptg2);
+
+		EtatPointage etatDemande2 = new EtatPointage();
+		etatDemande2.setPointage(ptg2);
+		etatDemande2.setDateEtat(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etatDemande2.setDateMaj(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etatDemande2.setIdAgent(9000003);
+		etatDemande2.setEtat(EtatPointageEnum.APPROUVE);
+		ptgEntityManager.persist(etatDemande2);
+
+		Pointage ptg3 = new Pointage();
+		ptg3.setIdAgent(9000012);
+		ptg3.setPointageParent(ptg2);
+		ptgEntityManager.persist(ptg3);
+
+		EtatPointage etatDemande3 = new EtatPointage();
+		etatDemande3.setPointage(ptg3);
+		etatDemande3.setDateEtat(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+		etatDemande3.setDateMaj(new DateTime(2013, 7, 23, 8, 0, 0).toDate());
+		etatDemande3.setIdAgent(9000002);
+		etatDemande3.setEtat(EtatPointageEnum.SAISI);
+		ptgEntityManager.persist(etatDemande3);
+
+		/* APPRO 1 avec 1 PTG */
+		DroitsAgent droitsAgent = new DroitsAgent();
+		droitsAgent.setIdAgent(9000011);
+		ptgEntityManager.persist(droitsAgent);
+
+		Set<DroitsAgent> droitDroitsAgent = new HashSet<DroitsAgent>();
+		droitDroitsAgent.add(droitsAgent);
+
+		Droit droitApprobateur = new Droit();
+		droitApprobateur.setIdAgent(9000001);
+		droitApprobateur.setAgents(droitDroitsAgent);
+		droitApprobateur.setApprobateur(true);
+		ptgEntityManager.persist(droitApprobateur);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9000011);
+		ptgEntityManager.persist(ptg);
+
+		EtatPointage etatDemande = new EtatPointage();
+		etatDemande.setPointage(ptg);
+		etatDemande.setDateEtat(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etatDemande.setDateMaj(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etatDemande.setIdAgent(9000001);
+		etatDemande.setEtat(EtatPointageEnum.SAISI);
+		ptgEntityManager.persist(etatDemande);
+
+		// When
+		List<Integer> result = repository.getListApprobateursPointagesSaisiesJourDonne();
+
+		assertEquals(2, result.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
 	}
 
 }
