@@ -173,6 +173,7 @@ public class ExportPaieService implements IExportPaieService {
 		logger.debug("Exporting Primes...");
 		List<VentilPrime> vPrimes = ventilationRepository.getListVentilPrimesMoisForAgentAndVentilDateOrderByDateAsc(
 				idAgent, ventilDate.getIdVentilDate());
+		exportPaiePrimeService.deleteSppprmFromPrimesRejetees(listPointageRejetesVentilesOrderedByDateAsc);
 		persistSpprim(exportPaiePrimeService.exportPrimesMoisToPaie(vPrimes));
 		persistSppprm(exportPaiePrimeService.exportPrimesJourToPaie(ventilatedPointages));
 		persistSppprm(exportPaiePrimeService.exportPrimesCalculeesJourToPaie(ventilatedPointagesCalcules));

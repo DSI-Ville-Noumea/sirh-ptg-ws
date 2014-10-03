@@ -202,5 +202,18 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 		
 		return pri;
 	}
-
+	
+	@Override
+	public void deleteSppprmFromPrimesRejetees(List<Pointage> listPointageRejetesVentilesOrderedByDateAsc) {
+		
+		for (Pointage ptg : listPointageRejetesVentilesOrderedByDateAsc) {
+			
+			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME
+					|| ptg.getRefPrime().getMairiePrimeTableEnum() != MairiePrimeTableEnum.SPPPRM)
+				continue;
+			
+			// Then delete for an exising record already existing in the DB
+			exportPaieRepository.deleteSppprmForDayAndNorubr(ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getNoRubr());
+		}
+	}
 }

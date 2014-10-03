@@ -101,10 +101,11 @@ public class PointageRepository implements IPointageRepository {
 	@Override
 	public void removePointageCalculesForDateAgent(Integer idAgent, Date dateLundi) {
 
-		String query = "DELETE FROM PointageCalcule ptg WHERE ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi";
+		String query = "DELETE FROM PointageCalcule ptg WHERE ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi and ptg.etat = :etat";
 		Query q = ptgEntityManager.createQuery(query);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateLundi", dateLundi);
+		q.setParameter("etat", EtatPointageEnum.VENTILE);
 
 		q.executeUpdate();
 		ptgEntityManager.flush();
@@ -171,10 +172,11 @@ public class PointageRepository implements IPointageRepository {
 
 		TypedQuery<PointageCalcule> query = ptgEntityManager
 				.createQuery(
-						"select p from PointageCalcule p where p.idAgent = :idAgent and p.lastVentilDate.idVentilDate = :idVentilDate",
+						"select p from PointageCalcule p where p.idAgent = :idAgent and p.lastVentilDate.idVentilDate = :idVentilDate and p.etat = :etat",
 						PointageCalcule.class);
 		query.setParameter("idAgent", idAgent);
 		query.setParameter("idVentilDate", idVentilDate);
+		query.setParameter("etat", EtatPointageEnum.VENTILE);
 
 		return query.getResultList();
 	}

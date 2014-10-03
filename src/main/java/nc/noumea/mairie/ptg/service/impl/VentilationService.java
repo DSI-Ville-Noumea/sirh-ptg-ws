@@ -137,6 +137,17 @@ public class VentilationService implements IVentilationService {
 		if (agents.size() == 0) {
 			agents = ventilationRepository.getListIdAgentsForVentilationByDateAndEtat(
 					fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+			
+			// we are looking for pointages still validated, and then rejeted
+			// to delete in AS400
+			List<Integer> listAgentWithPointageRejete = ventilationRepository.getListIdAgentsWithPointagesValidatedAndRejetes(toVentilDate.getIdVentilDate());
+			if(null != listAgentWithPointageRejete) {
+				for(Integer idAgentWithPointageRejete : listAgentWithPointageRejete) {
+					if(!agents.contains(idAgentWithPointageRejete)) {
+						agents.add(idAgentWithPointageRejete);
+					}
+				}
+			}
 		}
 
 		logger.info("Found {} agents to ventilate pointages for (based on available pointages) and before filtering.",
@@ -317,6 +328,31 @@ public class VentilationService implements IVentilationService {
 		primesVentilees.addAll(ventilationPrimeService.processPrimesCalculeesAgent(idAgent,
 				agentsPointagesCalculesForPeriod, dateDebutMois));
 
+		// if no VentilPrime for this month, we are looking for a old validated VentilPrime for this same month 
+		// so if we find it, we create a VentilPrime with quantite = 0 to delete in SPPRIM (AS400)
+		List<VentilPrime> listOldVentilPrime = ventilationRepository.getListOfOldVentilPrimeForAgentAndDateDebutMois(
+				idAgent, dateDebutMois, ventilDate.getIdVentilDate());
+
+		if(null != listOldVentilPrime && !listOldVentilPrime.isEmpty()) {
+			List<Integer> refPrime = new ArrayList<Integer>();
+			for(VentilPrime ventilPrime : primesVentilees) {
+				refPrime.add(ventilPrime.getIdRefPrime());
+			}
+			
+			for(VentilPrime primeOld : listOldVentilPrime) {
+				if(!refPrime.contains(primeOld.getIdRefPrime())) {
+					VentilPrime ventilPrime = new VentilPrime();
+						ventilPrime.setIdAgent(idAgent);
+						ventilPrime.setDateDebutMois(dateDebutMois);
+						ventilPrime.setEtat(EtatPointageEnum.VENTILE);
+						ventilPrime.setQuantite(0);
+						ventilPrime.setRefPrime(primeOld.getRefPrime());
+					primesVentilees.add(ventilPrime);
+					refPrime.add(primeOld.getIdRefPrime());
+				}
+			}
+		}
+		
 		// persisting all the generated entities linking them to the current
 		// ventil date
 		for (VentilPrime v : primesVentilees) {

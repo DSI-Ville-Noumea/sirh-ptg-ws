@@ -917,9 +917,13 @@ public class ApprobationServiceTest {
 
 		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
 
+		RefTypePointage typePointageAbs = new RefTypePointage();
+		typePointageAbs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+
 		Pointage ptg = new Pointage();
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
+		ptg.setType(typePointageAbs);
 
 		Pointage pointage = Mockito.spy(new Pointage());
 		pointage.setEtats(new ArrayList<EtatPointage>());
@@ -948,15 +952,16 @@ public class ApprobationServiceTest {
 
 		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
 
+		RefTypePointage typePointageHSup = new RefTypePointage();
+		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
 		Pointage ptg = new Pointage();
 		ptg.setIdPointage(1);
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
+		ptg.setType(typePointageHSup);
 
 		Date dateVentilation = new Date();
-
-		RefTypePointage typePointageHSup = new RefTypePointage();
-		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		RefTypePointage typePointageAbs = new RefTypePointage();
 		typePointageAbs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
@@ -1002,15 +1007,16 @@ public class ApprobationServiceTest {
 
 		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
 
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		
 		Pointage ptg = new Pointage();
 		ptg.setIdPointage(1);
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
+		ptg.setType(typePointage);
 
 		Date dateVentilation = new Date();
-
-		RefTypePointage typePointage = new RefTypePointage();
-		typePointage.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
 
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.VALIDE);
@@ -1046,15 +1052,16 @@ public class ApprobationServiceTest {
 
 		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
 
+		RefTypePointage typePointageHSup = new RefTypePointage();
+		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
 		Pointage ptg = new Pointage();
 		ptg.setIdPointage(1);
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
+		ptg.setType(typePointageHSup);
 
 		Date dateVentilation = new Date();
-
-		RefTypePointage typePointageHSup = new RefTypePointage();
-		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		RefTypePointage typePointageAbs = new RefTypePointage();
 		typePointageAbs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
@@ -1100,15 +1107,16 @@ public class ApprobationServiceTest {
 
 		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
 
+		RefTypePointage typePointageHSup = new RefTypePointage();
+		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
 		Pointage ptg = new Pointage();
 		ptg.setIdPointage(1);
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
+		ptg.setType(typePointageHSup);
 
 		Date dateVentilation = new Date();
-
-		RefTypePointage typePointageHSup = new RefTypePointage();
-		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.VENTILE);
@@ -1164,9 +1172,13 @@ public class ApprobationServiceTest {
 
 		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
 
+		RefTypePointage typePointageHSup = new RefTypePointage();
+		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
 		Pointage ptg = new Pointage();
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
+		ptg.setType(typePointageHSup);
 
 		Pointage pointage = Mockito.spy(new Pointage());
 		pointage.setEtats(new ArrayList<EtatPointage>());
@@ -1195,15 +1207,16 @@ public class ApprobationServiceTest {
 
 		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
 
+		RefTypePointage typePointageHSup = new RefTypePointage();
+		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
 		Pointage ptg = new Pointage();
 		ptg.setIdPointage(1);
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
+		ptg.setType(typePointageHSup);
 
 		Date dateVentilation = new Date();
-
-		RefTypePointage typePointageHSup = new RefTypePointage();
-		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		RefTypePointage typePointageAbs = new RefTypePointage();
 		typePointageAbs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
@@ -1249,15 +1262,16 @@ public class ApprobationServiceTest {
 
 		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
 
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
 		Pointage ptg = new Pointage();
 		ptg.setIdPointage(1);
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
+		ptg.setType(typePointage);
 
 		Date dateVentilation = new Date();
-
-		RefTypePointage typePointage = new RefTypePointage();
-		typePointage.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
 
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.VALIDE);
@@ -1293,15 +1307,17 @@ public class ApprobationServiceTest {
 
 		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
 
+		RefTypePointage typePointageHSup = new RefTypePointage();
+		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
 		Pointage ptg = new Pointage();
 		ptg.setIdPointage(1);
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
+		ptg.setType(typePointageHSup);
 
 		Date dateVentilation = new Date();
 
-		RefTypePointage typePointageHSup = new RefTypePointage();
-		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		RefTypePointage typePointageAbs = new RefTypePointage();
 		typePointageAbs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
@@ -1347,15 +1363,16 @@ public class ApprobationServiceTest {
 
 		EtatPointageEnum currentEtat = EtatPointageEnum.REJETE;
 
+		RefTypePointage typePointageHSup = new RefTypePointage();
+		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
 		Pointage ptg = new Pointage();
 		ptg.setIdPointage(1);
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
+		ptg.setType(typePointageHSup);
 
 		Date dateVentilation = new Date();
-
-		RefTypePointage typePointageHSup = new RefTypePointage();
-		typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.VENTILE);

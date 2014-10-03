@@ -89,6 +89,18 @@ public class ExportPaieRepository implements IExportPaieRepository {
 	}
 	
 	@Override
+	public int deleteSppprmForDayAndNorubr(Integer idAgent, Date day, Integer noRubr) {
+
+		String jpql = "delete Sppprm p where p.id.nomatr = :nomatr and p.id.datJour = :datJour and p.id.noRubr = :noRubr ";
+		Query q = mairieEntityManager.createQuery(jpql);
+		q.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
+		q.setParameter("datJour", helperService.getIntegerDateMairieFromDate(day));
+		q.setParameter("noRubr", noRubr);
+		
+		return q.executeUpdate();
+	}
+	
+	@Override
 	public Spprim getSpprimForDayAgentAndNorubr(Integer idAgent, Date day, Integer noRubr) {
 
 		String jpql = "from Spprim p where p.id.nomatr = :nomatr and p.id.dateDebut = :dateDebut and p.id.noRubr = :noRubr";

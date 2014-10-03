@@ -39,4 +39,11 @@ public interface IExportPaiePrimeService {
 	 * @return
 	 */
 	List<Spprim> exportPrimesMoisToPaie(List<VentilPrime> ventilPrimeOrderedByDateAsc);
+
+	/**
+	 * delete Primes Valides in Sppprm
+	 * @param listPointageRejetesVentilesOrderedByDateAsc
+	 */
+	void deleteSppprmFromPrimesRejetees(
+			List<Pointage> listPointageRejetesVentilesOrderedByDateAsc);
 }

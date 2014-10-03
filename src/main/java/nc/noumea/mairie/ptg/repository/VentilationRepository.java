@@ -77,7 +77,7 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("INNER JOIN ptg_pointage ptg ON ptg.id_pointage = epmax.id_pointage ");
 		sb.append("GROUP BY epmax.id_pointage)  ");
 		sb.append("maxEtats ON maxEtats.maxIdEtatPointage = ep.id_etat_pointage AND maxEtats.id_pointage = ep.id_pointage ");
-		sb.append("WHERE ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ");
+		sb.append("WHERE (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ) ");
 		sb.append("OR ep.etat = :ventile ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString());
@@ -86,6 +86,32 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("approuve", EtatPointageEnum.APPROUVE.getCodeEtat());
 		q.setParameter("ventile", EtatPointageEnum.VENTILE.getCodeEtat());
 
+		@SuppressWarnings("unchecked")
+		List<Integer> result = q.getResultList();
+
+		return result;
+	}
+	
+	@Override
+	public List<Integer> getListIdAgentsWithPointagesValidatedAndRejetes(Integer idVentilDate) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT distinct (p.id_agent) as id_agent ");
+		sb.append("FROM PTG_ETAT_POINTAGE ep ");
+		sb.append("INNER JOIN PTG_POINTAGE p ON ep.ID_POINTAGE = p.ID_POINTAGE ");
+		sb.append("INNER JOIN PTG_POINTAGE_VENTIL_DATE pvd ON p.ID_POINTAGE = pvd.ID_POINTAGE and pvd.Id_VENTIL_DATE = :idVentilDate ");
+		sb.append("INNER JOIN ( ");
+		sb.append("SELECT epmax.id_pointage, max(epmax.id_etat_pointage) AS maxIdEtatPointage ");
+		sb.append("FROM ptg_etat_pointage epmax ");
+		sb.append("INNER JOIN ptg_pointage ptg ON ptg.id_pointage = epmax.id_pointage ");
+		sb.append("GROUP BY epmax.id_pointage)  ");
+		sb.append("maxEtats ON maxEtats.maxIdEtatPointage = ep.id_etat_pointage AND maxEtats.id_pointage = ep.id_pointage ");
+		sb.append("WHERE ep.etat = :rejete ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString());
+		q.setParameter("rejete", EtatPointageEnum.REJETE.getCodeEtat());
+		q.setParameter("idVentilDate", idVentilDate);
+		
 		@SuppressWarnings("unchecked")
 		List<Integer> result = q.getResultList();
 
@@ -184,6 +210,40 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("typePointagePRIME", RefTypePointageEnum.PRIME.getValue());
 		q.setParameter("valide", EtatPointageEnum.VALIDE.getCodeEtat());
 		q.setParameter("journalise", EtatPointageEnum.JOURNALISE.getCodeEtat());
+
+		@SuppressWarnings("unchecked")
+		List<Pointage> result = q.getResultList();
+
+		return result;
+	}
+	
+	@Override
+	public List<Pointage> getListPointagesPrimeValideByMoisAndRefPrime(Integer idAgent, Date dateMois, Integer idRefPrime) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT p.* ");
+		sb.append("FROM PTG_ETAT_POINTAGE ep ");
+		sb.append("INNER JOIN PTG_POINTAGE p ON ep.ID_POINTAGE = p.ID_POINTAGE ");
+		sb.append("INNER JOIN ( ");
+		sb.append("SELECT epmax.id_pointage, max(epmax.id_etat_pointage) AS maxIdEtatPointage ");
+		sb.append("FROM ptg_etat_pointage epmax ");
+		sb.append("INNER JOIN ptg_pointage ptg ON ptg.id_pointage = epmax.id_pointage ");
+		sb.append("WHERE ptg.id_agent = :idAgent ");
+		sb.append("GROUP BY epmax.id_pointage)  ");
+		sb.append("maxEtats ON maxEtats.maxIdEtatPointage = ep.id_etat_pointage AND maxEtats.id_pointage = ep.id_pointage ");
+		sb.append("WHERE p.ID_AGENT = :idAgent ");
+		sb.append("AND extract(MONTH FROM p.DATE_DEBUT) = :month ");
+		sb.append("AND p.ID_TYPE_POINTAGE = :typePointagePRIME ");
+		sb.append("AND p.ID_REF_PRIME = :idRefPrime ");
+		sb.append("AND ep.etat = :valide ");
+		sb.append("ORDER BY id_pointage DESC ");
+		
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("month", new LocalDate(dateMois).monthOfYear().get());
+		q.setParameter("typePointagePRIME", RefTypePointageEnum.PRIME.getValue());
+		q.setParameter("valide", EtatPointageEnum.VALIDE.getCodeEtat());
+		q.setParameter("idRefPrime", idRefPrime);
 
 		@SuppressWarnings("unchecked")
 		List<Pointage> result = q.getResultList();
@@ -318,7 +378,7 @@ public class VentilationRepository implements IVentilationRepository {
 		List<VentilPrime> resultat = new ArrayList<VentilPrime>();
 		List<Integer> agentIdsReduite = null;
 
-		String query = "FROM VentilPrime tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate = :ventilDateId and tb.etat = :etat ";
+		String query = "FROM VentilPrime tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate = :ventilDateId and tb.etat = :etat and quantite <> 0 ";
 		int fromIndex = 0;
 		int toIndex = 0;
 
@@ -380,7 +440,8 @@ public class VentilationRepository implements IVentilationRepository {
 		TypedQuery<VentilPrime> q = ptgEntityManager
 				.createQuery(
 						"from VentilPrime p where p.idAgent = :idAgent and p.ventilDate.idVentilDate = :idVentilDate and p.refPrime.mairiePrimeTableEnum = :mairiePrimeTableEnum"
-								+ " and p.etat = :etat order by p.dateDebutMois asc", VentilPrime.class);
+						+ " and p.etat = :etat order by p.dateDebutMois asc",
+						VentilPrime.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idVentilDate", idVentilDate);
 		q.setParameter("etat", EtatPointageEnum.VENTILE);
@@ -388,7 +449,7 @@ public class VentilationRepository implements IVentilationRepository {
 
 		return q.getResultList();
 	}
-
+	
 	@Override
 	public List<VentilAbsence> getListVentilAbsencesForAgentAndVentilDate(Integer idAgent, Integer idVentilDate) {
 
@@ -517,91 +578,113 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<Integer> getListAgentsForShowVentilationPrimesForDate(Integer ventilDateId, Integer agentMin,
-			Integer agentMax) {
-
+	public List<Integer> getListAgentsForShowVentilationPrimesForDate (
+			Integer ventilDateId, Integer agentMin, Integer agentMax) {
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(tb.idAgent) from VentilPrime tb where tb.ventilDate.idVentilDate = :ventilDateId AND tb.etat = :etat ");
-
-		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
 			sb.append(" and tb.idAgent between :agentMin and :agentMax ");
 		}
 
 		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
 		query.setParameter("ventilDateId", ventilDateId);
 		query.setParameter("etat", EtatPointageEnum.VENTILE);
-
-		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
 			query.setParameter("agentMin", agentMin);
 			query.setParameter("agentMax", agentMax);
 		}
-
+		
 		return query.getResultList();
 	}
-
+	
 	@Override
-	public List<Integer> getListAgentsForShowVentilationAbsencesForDate(Integer ventilDateId, Integer agentMin,
-			Integer agentMax) {
-
+	public List<Integer> getListAgentsForShowVentilationAbsencesForDate (
+			Integer ventilDateId, Integer agentMin, Integer agentMax) {
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(tb.idAgent) from VentilAbsence tb where tb.ventilDate.idVentilDate = :ventilDateId AND tb.etat = :etat ");
-
-		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
 			sb.append(" and tb.idAgent between :agentMin and :agentMax ");
 		}
 
 		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
 		query.setParameter("ventilDateId", ventilDateId);
 		query.setParameter("etat", EtatPointageEnum.VENTILE);
-
-		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
 			query.setParameter("agentMin", agentMin);
 			query.setParameter("agentMax", agentMax);
 		}
-
+		
 		return query.getResultList();
 	}
-
+	
 	@Override
-	public List<Integer> getListAgentsForShowVentilationHeuresSupForDate(Integer ventilDateId, Integer agentMin,
-			Integer agentMax) {
-
+	public List<Integer> getListAgentsForShowVentilationHeuresSupForDate (
+			Integer ventilDateId, Integer agentMin, Integer agentMax) {
+		
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(tb.idAgent) from VentilHsup tb where tb.ventilDate.idVentilDate = :ventilDateId AND tb.etat = :etat ");
-
-		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
 			sb.append(" and tb.idAgent between :agentMin and :agentMax ");
 		}
 
 		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
 		query.setParameter("ventilDateId", ventilDateId);
 		query.setParameter("etat", EtatPointageEnum.VENTILE);
-
-		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
+		
+		if(null != agentMin && 0 != agentMin
+				&& null != agentMax && 0 != agentMax) {
 			query.setParameter("agentMin", agentMin);
 			query.setParameter("agentMax", agentMax);
 		}
-
+		
 		return query.getResultList();
 	}
-
+	
 	@Override
-	public List<VentilHsup> getListOfOldVentilHSForAgentAndDateLundi(Integer idAgent, Date dateLundi,
-			Integer ventilDateId) {
+	public List<VentilHsup> getListOfOldVentilHSForAgentAndDateLundi(Integer idAgent, Date dateLundi, Integer ventilDateId) {
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
-
+		
 		String query = "FROM VentilHsup tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi = :dateLundi AND tb.ventilDate.idVentilDate = :ventilDateId AND tb.etat = :etat ";
 
 		TypedQuery<VentilHsup> q = ptgEntityManager.createQuery(query, VentilHsup.class);
-		q.setParameter("idAgent", idAgent);
-		q.setParameter("dateLundi", dateLundi);
-		q.setParameter("ventilDateId", ventilDateId);
-		q.setParameter("etat", EtatPointageEnum.VALIDE);
+			q.setParameter("idAgent", idAgent);
+			q.setParameter("dateLundi", dateLundi);
+			q.setParameter("ventilDateId", ventilDateId);
+			q.setParameter("etat", EtatPointageEnum.VALIDE);
 		resultat.addAll(q.getResultList());
 
 		return resultat;
 	}
+	
+	@Override
+	public List<VentilPrime> getListOfOldVentilPrimeForAgentAndDateDebutMois(Integer idAgent, Date dateDebutMois, Integer ventilDateId) {
+		
+		List<VentilPrime> resultat = new ArrayList<VentilPrime>();
+		
+		String query = "FROM VentilPrime tb WHERE tb.idAgent = :idAgent AND  tb.dateDebutMois = :dateDebutMois AND tb.ventilDate.idVentilDate = :ventilDateId AND tb.etat = :etat ";
 
+		TypedQuery<VentilPrime> q = ptgEntityManager.createQuery(query, VentilPrime.class);
+			q.setParameter("idAgent", idAgent);
+			q.setParameter("dateDebutMois", dateDebutMois);
+			q.setParameter("ventilDateId", ventilDateId);
+			q.setParameter("etat", EtatPointageEnum.VALIDE);
+		resultat.addAll(q.getResultList());
+
+		return resultat;
+	}
+	
 	@Override
 	public List<VentilAbsence> getListOfVentilAbsenceWithDateForEtatPayeur(Integer idVentilDate) {
 		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();

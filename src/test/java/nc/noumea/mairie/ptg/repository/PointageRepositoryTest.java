@@ -572,7 +572,7 @@ public class PointageRepositoryTest {
 		pc.setDateDebut(new LocalDate(2013, 7, 22).toDate());
 		pc.setDateFin(new LocalDate(2013, 7, 29).toDate());
 		pc.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		pc.setEtat(EtatPointageEnum.APPROUVE);
+		pc.setEtat(EtatPointageEnum.VENTILE);
 		pc.setIdAgent(9005138);
 		pc.setLastVentilDate(vd);
 		pc.setQuantite(1);
@@ -587,6 +587,49 @@ public class PointageRepositoryTest {
 		assertEquals(new Integer(1), result.get(0).getQuantite());
 		assertEquals(new LocalDate(2013, 7, 22).toDate(), result.get(0).getDateDebut());
 		assertEquals(new LocalDate(2013, 7, 29).toDate(), result.get(0).getDateFin());
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getPointagesCalculesVentilesForAgent_badEtat() {
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
+
+		RefPrime rp = new RefPrime();
+		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+		rp.setCalculee(false);
+		rp.setDescription(null);
+		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+		rp.setNoRubr(7711);
+		rp.setStatut(AgentStatutEnum.F);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+
+		PointageCalcule pc = new PointageCalcule();
+		pc.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+		pc.setDateFin(new LocalDate(2013, 7, 29).toDate());
+		pc.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		pc.setEtat(EtatPointageEnum.VALIDE);
+		pc.setIdAgent(9005138);
+		pc.setLastVentilDate(vd);
+		pc.setQuantite(1);
+		pc.setRefPrime(rp);
+		pc.setType(rtp);
+		ptgEntityManager.persist(pc);
+
+		List<PointageCalcule> result = repository.getPointagesCalculesVentilesForAgent(new Integer(9005138),
+				vd.getIdVentilDate());
+
+		assertEquals(0, result.size());
 	}
 
 	@Test

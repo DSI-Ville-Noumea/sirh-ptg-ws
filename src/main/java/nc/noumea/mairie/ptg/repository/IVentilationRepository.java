@@ -83,4 +83,13 @@ public interface IVentilationRepository {
 	List<VentilHsup> getListOfVentilHeuresSupWithDateForEtatPayeur(Integer idVentilDate);
 
 	List<VentilPrime> getListOfVentilPrimeWithDateForEtatPayeur(Integer idVentilDate);
+
+	List<VentilPrime> getListOfOldVentilPrimeForAgentAndDateDebutMois(
+			Integer idAgent, Date dateDebutMois, Integer ventilDateId);
+
+	List<Pointage> getListPointagesPrimeValideByMoisAndRefPrime(
+			Integer idAgent, Date dateMois, Integer idRefPrime);
+
+	List<Integer> getListIdAgentsWithPointagesValidatedAndRejetes(
+			Integer idVentilDate);
 }

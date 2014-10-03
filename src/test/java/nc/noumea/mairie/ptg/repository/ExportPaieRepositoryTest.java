@@ -1,6 +1,6 @@
 package nc.noumea.mairie.ptg.repository;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Date;
 
@@ -10,6 +10,8 @@ import javax.persistence.PersistenceContext;
 import nc.noumea.mairie.domain.Spacti;
 import nc.noumea.mairie.domain.Sppact;
 import nc.noumea.mairie.domain.SppactId;
+import nc.noumea.mairie.domain.Sppprm;
+import nc.noumea.mairie.domain.SppprmId;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 
 import org.junit.Test;
@@ -145,5 +147,105 @@ public class ExportPaieRepositoryTest {
 		ReflectionTestUtils.setField(repository, "helperService", helperService);
 		
 		assertEquals(0, repository.deleteSppactForDayAndAgent(9005138, dateDebut, codeActi));
+	}
+	
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void deleteSppprmForDayAndNorubr_OK() {
+		
+		Date dateDebut = new Date();
+		Integer dateJour = 20140923;
+		Integer noRubr = 123;
+		
+		SppprmId id = new SppprmId();
+			id.setNoRubr(noRubr);
+			id.setDatJour(dateJour);
+			id.setNomatr(5138);
+		Sppprm sppprm = new Sppprm();
+			sppprm.setId(id);
+		sirhEntityManager.persist(sppprm);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(helperService.getIntegerDateMairieFromDate(dateDebut)).thenReturn(dateJour);
+		
+		ReflectionTestUtils.setField(repository, "helperService", helperService);
+		
+		assertEquals(1, repository.deleteSppprmForDayAndNorubr(9005138, dateDebut, noRubr));
+	}
+	
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void deleteSppprmForDayAndNorubr_badAgent() {
+		
+		Date dateDebut = new Date();
+		Integer dateJour = 20140923;
+		Integer noRubr = 123;
+		
+		SppprmId id = new SppprmId();
+			id.setNoRubr(noRubr);
+			id.setDatJour(dateJour);
+			id.setNomatr(5138);
+		Sppprm sppprm = new Sppprm();
+			sppprm.setId(id);
+		sirhEntityManager.persist(sppprm);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(helperService.getIntegerDateMairieFromDate(dateDebut)).thenReturn(dateJour);
+		
+		ReflectionTestUtils.setField(repository, "helperService", helperService);
+		
+		assertEquals(0, repository.deleteSppprmForDayAndNorubr(9005999, dateDebut, noRubr));
+	}
+	
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void deleteSppprmForDayAndNorubr_badDate() {
+		
+		Date dateDebut = new Date();
+		Integer dateJour = 20140923;
+		Integer noRubr = 123;
+		
+		SppprmId id = new SppprmId();
+			id.setNoRubr(noRubr);
+			id.setDatJour(dateJour);
+			id.setNomatr(5138);
+		Sppprm sppprm = new Sppprm();
+			sppprm.setId(id);
+		sirhEntityManager.persist(sppprm);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(helperService.getIntegerDateMairieFromDate(dateDebut)).thenReturn(dateJour+1);
+		
+		ReflectionTestUtils.setField(repository, "helperService", helperService);
+		
+		assertEquals(0, repository.deleteSppprmForDayAndNorubr(9005138, dateDebut, noRubr));
+	}
+
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void deleteSppprmForDayAndNorubr_badnoRubr() {
+		
+		Date dateDebut = new Date();
+		Integer dateJour = 20140923;
+		Integer noRubr = 123;
+		
+		SppprmId id = new SppprmId();
+			id.setNoRubr(noRubr);
+			id.setDatJour(dateJour);
+			id.setNomatr(5138);
+		Sppprm sppprm = new Sppprm();
+			sppprm.setId(id);
+		sirhEntityManager.persist(sppprm);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(helperService.getIntegerDateMairieFromDate(dateDebut)).thenReturn(dateJour);
+		
+		ReflectionTestUtils.setField(repository, "helperService", helperService);
+		
+		assertEquals(0, repository.deleteSppprmForDayAndNorubr(9005138, dateDebut, 351));
 	}
 }

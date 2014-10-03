@@ -17,6 +17,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
+import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
@@ -410,6 +411,69 @@ public class VentilationServiceTest {
 		Mockito.verify(ventilRepo, Mockito.times(2)).persistEntity(Mockito.isA(VentilPrime.class));
 		assertEquals(ventilDate, ventilPrime.getVentilDate());
 		assertEquals(ventilDate, ventilPrime2.getVentilDate());
+	}
+	
+	@Test
+	public void processPrimesVentilationForMonthAndAgent_VentilPrime_quantite0() {
+
+		// Given
+		Integer idAgent = 9008765;
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setDateVentilation(new LocalDate(2013, 7, 28).toDate());
+		Date dateDebutMois = new LocalDate().toDate();
+		Date fromEtatDate = new LocalDate().toDate();
+		Date toEtatDate = new LocalDate().toDate();
+
+		Pointage p1 = new Pointage();
+			p1.setType(prime);
+			p1.setDateDebut(new LocalDate(2013, 7, 4).toDate());
+
+		VentilPrime ventilPrime = Mockito.spy(new VentilPrime());
+		ventilPrime.setRefPrime(new RefPrime());
+		
+		List<Pointage> plist1 = Arrays.asList(p1);
+		IVentilationRepository ventilRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilRepo.getListPointagesPrimeForVentilation(idAgent, fromEtatDate, toEtatDate, dateDebutMois))
+				.thenReturn(null);
+		Mockito.when(ventilRepo.getListPointagesCalculesPrimeForVentilation(idAgent, dateDebutMois)).thenReturn(
+				new ArrayList<PointageCalcule>());
+		Mockito.when(ventilRepo.getListOfOldVentilPrimeForAgentAndDateDebutMois(idAgent, dateDebutMois, ventilDate.getIdVentilDate()))
+			.thenReturn(Arrays.asList(ventilPrime));
+
+		IPointageService pService = Mockito.mock(IPointageService.class);
+		Mockito.when(pService.filterOldPointagesAndEtatFromList(plist1, null)).thenReturn(plist1);
+
+		
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(ventilRepo).persistEntity(Mockito.isA(VentilPrime.class));
+
+		IVentilationPrimeService primeV = Mockito.mock(IVentilationPrimeService.class);
+		Mockito.when(
+				primeV.processPrimesAgent(Mockito.eq(idAgent), Mockito.anyListOf(Pointage.class),
+						Mockito.eq(dateDebutMois))).thenReturn(new ArrayList<VentilPrime>());
+
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(ventilRepo).persistEntity(Mockito.isA(VentilPrime.class));
+		Mockito.when(
+				primeV.processPrimesCalculeesAgent(Mockito.eq(idAgent), Mockito.anyListOf(PointageCalcule.class),
+						Mockito.eq(dateDebutMois))).thenReturn(new ArrayList<VentilPrime>());
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilRepo);
+		ReflectionTestUtils.setField(service, "ventilationPrimeService", primeV);
+		ReflectionTestUtils.setField(service, "pointageService", pService);
+
+		// When
+		service.processPrimesVentilationForMonthAndAgent(ventilDate, idAgent, dateDebutMois, fromEtatDate);
+
+		// Then
+		Mockito.verify(ventilRepo, Mockito.times(1)).persistEntity(Mockito.isA(VentilPrime.class));
 	}
 
 	@Test

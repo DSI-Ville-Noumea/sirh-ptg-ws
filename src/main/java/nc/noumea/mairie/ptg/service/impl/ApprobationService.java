@@ -53,6 +53,9 @@ public class ApprobationService implements IApprobationService {
 
 	@Autowired
 	private IAgentMatriculeConverterService matriculeConvertor;
+	
+	@Autowired
+	private IVentilationRepository ventilationRepository;
 
 	@Override
 	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService,
@@ -329,15 +332,59 @@ public class ApprobationService implements IApprobationService {
 
 			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat, ptg, dateEtat);
 			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(idAgent, dto, currentEtat, ptg, dateEtat);
+			reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat, ptg, dateEtat);
 		}
 		return result;
+	}
+	
+	/**
+	 * Passer a APPOUVE les primes de meme rubrique pour un agent
+	 * 
+	 * @param idAgent Integer
+	 * @param dto PointagesEtatChangeDto
+	 * @param currentEtat EtatPointageEnum
+	 * @param ptg Pointage
+	 * @param dateEtat Date
+	 */
+	protected void reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(Integer idAgent, PointagesEtatChangeDto dto,
+			EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
+		
+		if (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
+				&& EtatPointageEnum.VALIDE.equals(currentEtat)
+				&& (RefTypePointageEnum.PRIME.equals(ptg.getTypePointageEnum())) ) {
+			
+			List<Pointage> listePointagesPrimeAgent = ventilationRepository.getListPointagesPrimeValideByMoisAndRefPrime(
+					ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getIdRefPrime());
+
+			List<Pointage> filteredListePointagesPrimeAgent = pointageService.filterOldPointagesAndEtatFromList(
+					listePointagesPrimeAgent,  Arrays.asList(EtatPointageEnum.VALIDE));
+			
+			if (null != filteredListePointagesPrimeAgent && !filteredListePointagesPrimeAgent.isEmpty()) {
+				for (Pointage pointage : filteredListePointagesPrimeAgent) {
+					if (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
+							&& (RefTypePointageEnum.PRIME.equals(pointage.getTypePointageEnum()))
+							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {
+
+						EtatPointage etat = new EtatPointage();
+						etat.setDateEtat(dateEtat);
+						etat.setDateMaj(helperService.getCurrentDate());
+						etat.setPointage(pointage);
+						etat.setIdAgent(idAgent);
+						etat.setEtat(EtatPointageEnum.APPROUVE);
+						pointage.getEtats().add(etat);
+					}
+				}
+			}
+		}
 	}
 
 	protected void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(Integer idAgent, PointagesEtatChangeDto dto,
 			EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
 
 		if (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
-				&& EtatPointageEnum.VALIDE.equals(currentEtat)) {
+				&& EtatPointageEnum.VALIDE.equals(currentEtat)
+				&& (RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE
+						.equals(ptg.getTypePointageEnum())) ) {
 			// si on REJETE un pointages VALIDE
 			// on reinitialise les autres pointages du meme agent pour la meme
 			// semaine
@@ -368,7 +415,9 @@ public class ApprobationService implements IApprobationService {
 			EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
 
 		if (EtatPointageEnum.APPROUVE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
-				&& EtatPointageEnum.REJETE.equals(currentEtat)) {
+				&& EtatPointageEnum.REJETE.equals(currentEtat)
+				&& (RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE
+						.equals(ptg.getTypePointageEnum())) ) {
 			// si on REJETE un pointages VALIDE
 			// on reinitialise les autres pointages du meme agent pour la meme
 			// semaine
