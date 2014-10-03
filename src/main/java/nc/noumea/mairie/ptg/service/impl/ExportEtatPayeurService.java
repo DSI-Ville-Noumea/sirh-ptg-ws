@@ -110,7 +110,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, true);
 
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
-		for (VentilAbsence va : toVentilDate.getVentilAbsences()) {
+		for (VentilAbsence va : ventilationRepository.getListOfVentilAbsenceWithDateForEtatPayeur(toVentilDate
+				.getIdVentilDate())) {
 
 			// 1. Verify whether this agent is eligible, through its
 			// AgentStatutEnum (Spcarr)
@@ -173,7 +174,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, true);
 
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
-		for (VentilHsup vh : toVentilDate.getVentilHsups()) {
+		for (VentilHsup vh : ventilationRepository.getListOfVentilHeuresSupWithDateForEtatPayeur(toVentilDate
+				.getIdVentilDate())) {
 
 			// 1. Verify whether this agent is eligible, through its
 			// AgentStatutEnum (Spcarr)
@@ -219,7 +221,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, true);
 
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
-		for (VentilPrime vp : toVentilDate.getVentilPrimes()) {
+		for (VentilPrime vp : ventilationRepository.getListOfVentilPrimeWithDateForEtatPayeur(toVentilDate
+				.getIdVentilDate())) {
 
 			// 1. Verify whether this agent is eligible, through its
 			// AgentStatutEnum (Spcarr)
@@ -355,7 +358,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		logger.info("Updating recuperations by calling SIRH-ABS-WS...");
 		List<Integer> idAgentsToProcessRCTasks = new ArrayList<Integer>();
 
-		for (VentilHsup vh : vd.getVentilHsups()) {
+		for (VentilHsup vh : ventilationRepository.getListOfVentilHeuresSupWithDateForEtatPayeur(vd.getIdVentilDate())) {
 
 			if (vh.getMSup() != 0 && !idAgentsToProcessRCTasks.contains(vh.getIdAgent())) {
 				idAgentsToProcessRCTasks.add(vh.getIdAgent());
@@ -543,12 +546,13 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		}
 		return false;
 	}
-	
+
 	protected int calculMinutesRecuperation(VentilHsup vh) {
-		
+
 		int result = 0;
-		
-		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(vh.getIdAgent()), vh.getDateLundi());
+
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(vh.getIdAgent()),
+				vh.getDateLundi());
 		// dans le cas des fonctionnaires et contractuels : pas de majoration
 		if (carr.getStatutCarriere().equals(AgentStatutEnum.C) || carr.getStatutCarriere().equals(AgentStatutEnum.F)) {
 			return vh.getMRecuperees();
@@ -560,7 +564,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		result += vh.getMsdjfRecup() * 1.75;
 		result += vh.getMMaiRecup() * 1.75;
 		result += vh.getMsNuitRecup() * 2;
-		
+
 		return result;
 	}
 }

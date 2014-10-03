@@ -380,8 +380,7 @@ public class VentilationRepository implements IVentilationRepository {
 		TypedQuery<VentilPrime> q = ptgEntityManager
 				.createQuery(
 						"from VentilPrime p where p.idAgent = :idAgent and p.ventilDate.idVentilDate = :idVentilDate and p.refPrime.mairiePrimeTableEnum = :mairiePrimeTableEnum"
-						+ " and p.etat = :etat order by p.dateDebutMois asc",
-						VentilPrime.class);
+								+ " and p.etat = :etat order by p.dateDebutMois asc", VentilPrime.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("idVentilDate", idVentilDate);
 		q.setParameter("etat", EtatPointageEnum.VENTILE);
@@ -389,7 +388,7 @@ public class VentilationRepository implements IVentilationRepository {
 
 		return q.getResultList();
 	}
-	
+
 	@Override
 	public List<VentilAbsence> getListVentilAbsencesForAgentAndVentilDate(Integer idAgent, Integer idVentilDate) {
 
@@ -518,92 +517,147 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<Integer> getListAgentsForShowVentilationPrimesForDate (
-			Integer ventilDateId, Integer agentMin, Integer agentMax) {
-		
+	public List<Integer> getListAgentsForShowVentilationPrimesForDate(Integer ventilDateId, Integer agentMin,
+			Integer agentMax) {
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(tb.idAgent) from VentilPrime tb where tb.ventilDate.idVentilDate = :ventilDateId AND tb.etat = :etat ");
-		
-		if(null != agentMin && 0 != agentMin
-				&& null != agentMax && 0 != agentMax) {
+
+		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
 			sb.append(" and tb.idAgent between :agentMin and :agentMax ");
 		}
 
 		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
 		query.setParameter("ventilDateId", ventilDateId);
 		query.setParameter("etat", EtatPointageEnum.VENTILE);
-		
-		if(null != agentMin && 0 != agentMin
-				&& null != agentMax && 0 != agentMax) {
+
+		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
 			query.setParameter("agentMin", agentMin);
 			query.setParameter("agentMax", agentMax);
 		}
-		
+
 		return query.getResultList();
 	}
-	
+
 	@Override
-	public List<Integer> getListAgentsForShowVentilationAbsencesForDate (
-			Integer ventilDateId, Integer agentMin, Integer agentMax) {
-		
+	public List<Integer> getListAgentsForShowVentilationAbsencesForDate(Integer ventilDateId, Integer agentMin,
+			Integer agentMax) {
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(tb.idAgent) from VentilAbsence tb where tb.ventilDate.idVentilDate = :ventilDateId AND tb.etat = :etat ");
-		
-		if(null != agentMin && 0 != agentMin
-				&& null != agentMax && 0 != agentMax) {
+
+		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
 			sb.append(" and tb.idAgent between :agentMin and :agentMax ");
 		}
 
 		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
 		query.setParameter("ventilDateId", ventilDateId);
 		query.setParameter("etat", EtatPointageEnum.VENTILE);
-		
-		if(null != agentMin && 0 != agentMin
-				&& null != agentMax && 0 != agentMax) {
+
+		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
 			query.setParameter("agentMin", agentMin);
 			query.setParameter("agentMax", agentMax);
 		}
-		
+
 		return query.getResultList();
 	}
-	
+
 	@Override
-	public List<Integer> getListAgentsForShowVentilationHeuresSupForDate (
-			Integer ventilDateId, Integer agentMin, Integer agentMax) {
-		
+	public List<Integer> getListAgentsForShowVentilationHeuresSupForDate(Integer ventilDateId, Integer agentMin,
+			Integer agentMax) {
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(tb.idAgent) from VentilHsup tb where tb.ventilDate.idVentilDate = :ventilDateId AND tb.etat = :etat ");
-		
-		if(null != agentMin && 0 != agentMin
-				&& null != agentMax && 0 != agentMax) {
+
+		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
 			sb.append(" and tb.idAgent between :agentMin and :agentMax ");
 		}
 
 		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
 		query.setParameter("ventilDateId", ventilDateId);
 		query.setParameter("etat", EtatPointageEnum.VENTILE);
-		
-		if(null != agentMin && 0 != agentMin
-				&& null != agentMax && 0 != agentMax) {
+
+		if (null != agentMin && 0 != agentMin && null != agentMax && 0 != agentMax) {
 			query.setParameter("agentMin", agentMin);
 			query.setParameter("agentMax", agentMax);
 		}
-		
+
 		return query.getResultList();
 	}
-	
+
 	@Override
-	public List<VentilHsup> getListOfOldVentilHSForAgentAndDateLundi(Integer idAgent, Date dateLundi, Integer ventilDateId) {
+	public List<VentilHsup> getListOfOldVentilHSForAgentAndDateLundi(Integer idAgent, Date dateLundi,
+			Integer ventilDateId) {
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
-		
+
 		String query = "FROM VentilHsup tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi = :dateLundi AND tb.ventilDate.idVentilDate = :ventilDateId AND tb.etat = :etat ";
 
 		TypedQuery<VentilHsup> q = ptgEntityManager.createQuery(query, VentilHsup.class);
-			q.setParameter("idAgent", idAgent);
-			q.setParameter("dateLundi", dateLundi);
-			q.setParameter("ventilDateId", ventilDateId);
-			q.setParameter("etat", EtatPointageEnum.VALIDE);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateLundi", dateLundi);
+		q.setParameter("ventilDateId", ventilDateId);
+		q.setParameter("etat", EtatPointageEnum.VALIDE);
 		resultat.addAll(q.getResultList());
+
+		return resultat;
+	}
+
+	@Override
+	public List<VentilAbsence> getListOfVentilAbsenceWithDateForEtatPayeur(Integer idVentilDate) {
+		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select tb.* FROM PTG_VENTIL_ABSENCE tb WHERE tb.ID_VENTIL_ABSENCE in  ");
+		sb.append("(select max(id_ventil_absence) from ptg_ventil_absence where id_ventil_date=:ventilDateId and etat=:etat group by id_agent,date_lundi) ");
+		sb.append("order by date_Lundi asc, id_Agent asc ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilAbsence.class);
+		q.setParameter("ventilDateId", idVentilDate);
+		q.setParameter("etat", EtatPointageEnum.VALIDE.getCodeEtat());
+
+		@SuppressWarnings("unchecked")
+		List<VentilAbsence> result = q.getResultList();
+		resultat.addAll(result);
+
+		return resultat;
+	}
+
+	@Override
+	public List<VentilHsup> getListOfVentilHeuresSupWithDateForEtatPayeur(Integer idVentilDate) {
+		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select tb.* FROM PTG_VENTIL_HSUP tb WHERE tb.ID_VENTIL_HSUP in  ");
+		sb.append("(select max(id_ventil_hsup) from ptg_ventil_hsup where id_ventil_date=:ventilDateId and etat=:etat group by id_agent,date_lundi) ");
+		sb.append("order by date_Lundi asc, id_Agent asc ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilHsup.class);
+		q.setParameter("ventilDateId", idVentilDate);
+		q.setParameter("etat", EtatPointageEnum.VALIDE.getCodeEtat());
+
+		@SuppressWarnings("unchecked")
+		List<VentilHsup> result = q.getResultList();
+		resultat.addAll(result);
+
+		return resultat;
+	}
+
+	@Override
+	public List<VentilPrime> getListOfVentilPrimeWithDateForEtatPayeur(Integer idVentilDate) {
+		List<VentilPrime> resultat = new ArrayList<VentilPrime>();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select tb.* FROM PTG_VENTIL_PRIME tb WHERE tb.ID_VENTIL_PRIME in  ");
+		sb.append("(select max(id_ventil_prime) from ptg_ventil_prime where id_ventil_date=:ventilDateId and etat=:etat group by id_agent,date_debut_mois) ");
+		sb.append("order by date_debut_mois asc, id_Agent asc ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilPrime.class);
+		q.setParameter("ventilDateId", idVentilDate);
+		q.setParameter("etat", EtatPointageEnum.VALIDE.getCodeEtat());
+
+		@SuppressWarnings("unchecked")
+		List<VentilPrime> result = q.getResultList();
+		resultat.addAll(result);
 
 		return resultat;
 	}

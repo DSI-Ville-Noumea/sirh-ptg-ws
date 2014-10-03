@@ -77,4 +77,10 @@ public interface IVentilationRepository {
 
 	List<VentilHsup> getListOfOldVentilHSForAgentAndDateLundi(Integer idAgent,
 			Date dateLundi, Integer ventilDateId);
+
+	List<VentilAbsence> getListOfVentilAbsenceWithDateForEtatPayeur(Integer idVentilDate);
+
+	List<VentilHsup> getListOfVentilHeuresSupWithDateForEtatPayeur(Integer idVentilDate);
+
+	List<VentilPrime> getListOfVentilPrimeWithDateForEtatPayeur(Integer idVentilDate);
 }

@@ -115,14 +115,12 @@ public class ExportEtatPayeurServiceTest {
 		va1.setDateLundi(new LocalDate(2013, 9, 2).toDate());
 		va1.setMinutesConcertee(60);
 		va1.setIdAgent(9008989);
-		toVentilDate.getVentilAbsences().add(va1);
 
 		VentilAbsence va2 = new VentilAbsence();
 		va2.setMinutesNonConcertee(30);
 		va2.setMinutesConcertee(30);
 		va2.setDateLundi(new LocalDate(2013, 9, 9).toDate());
 		va2.setIdAgent(9006767);
-		toVentilDate.getVentilAbsences().add(va2);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
@@ -134,6 +132,8 @@ public class ExportEtatPayeurServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
+		Mockito.when(vR.getListOfVentilAbsenceWithDateForEtatPayeur(toVentilDate.getIdVentilDate())).thenReturn(
+				Arrays.asList(va1, va2));
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(1);
@@ -178,7 +178,6 @@ public class ExportEtatPayeurServiceTest {
 		va1.setDateLundi(new LocalDate(2013, 9, 2).toDate());
 		va1.setMinutesConcertee(60);
 		va1.setIdAgent(9008989);
-		toVentilDate.getVentilAbsences().add(va1);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
@@ -187,6 +186,8 @@ public class ExportEtatPayeurServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
+		Mockito.when(vR.getListOfVentilAbsenceWithDateForEtatPayeur(toVentilDate.getIdVentilDate())).thenReturn(
+				Arrays.asList(va1));
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(7);
@@ -225,7 +226,6 @@ public class ExportEtatPayeurServiceTest {
 		va1.setDateLundi(new LocalDate(2013, 8, 26).toDate());
 		va1.setMinutesConcertee(60);
 		va1.setIdAgent(9008989);
-		toVentilDate.getVentilAbsences().add(va1);
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setDateLundi(new LocalDate(2013, 8, 26).toDate());
@@ -244,6 +244,8 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
 		Mockito.when(vR.getPriorVentilAbsenceForAgentAndDate(va1.getIdAgent(), va1.getDateLundi(), va1)).thenReturn(
 				vaOld);
+		Mockito.when(vR.getListOfVentilAbsenceWithDateForEtatPayeur(toVentilDate.getIdVentilDate())).thenReturn(
+				Arrays.asList(va1));
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(1);
@@ -287,13 +289,11 @@ public class ExportEtatPayeurServiceTest {
 		vh1.setDateLundi(new LocalDate(2013, 9, 2).toDate());
 		vh1.setIdAgent(9008989);
 		vh1.setMComplementaires(30);
-		toVentilDate.getVentilHsups().add(vh1);
 
 		VentilHsup vh2 = new VentilHsup();
 		vh2.setDateLundi(new LocalDate(2013, 9, 9).toDate());
 		vh2.setIdAgent(9006767);
 		vh2.setMComplementaires(60);
-		toVentilDate.getVentilHsups().add(vh2);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
@@ -305,6 +305,8 @@ public class ExportEtatPayeurServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
+		Mockito.when(vR.getListOfVentilHeuresSupWithDateForEtatPayeur(toVentilDate.getIdVentilDate())).thenReturn(
+				Arrays.asList(vh1, vh2));
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(1);
@@ -348,7 +350,6 @@ public class ExportEtatPayeurServiceTest {
 		VentilHsup vh1 = new VentilHsup();
 		vh1.setDateLundi(new LocalDate(2013, 9, 2).toDate());
 		vh1.setIdAgent(9008989);
-		toVentilDate.getVentilHsups().add(vh1);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
@@ -357,6 +358,8 @@ public class ExportEtatPayeurServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
+		Mockito.when(vR.getListOfVentilHeuresSupWithDateForEtatPayeur(toVentilDate.getIdVentilDate())).thenReturn(
+				Arrays.asList(vh1));
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(7);
@@ -396,7 +399,6 @@ public class ExportEtatPayeurServiceTest {
 		vh1.setIdAgent(9008989);
 		vh1.setMMai(60);
 		vh1.setMComplementaires(30);
-		toVentilDate.getVentilHsups().add(vh1);
 
 		VentilHsup vhOld = new VentilHsup();
 		vhOld.setDateLundi(new LocalDate(2013, 8, 26).toDate());
@@ -414,6 +416,8 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
 		Mockito.when(vR.getPriorVentilHSupAgentAndDate(vh1.getIdAgent(), vh1.getDateLundi(), vh1)).thenReturn(vhOld);
+		Mockito.when(vR.getListOfVentilHeuresSupWithDateForEtatPayeur(toVentilDate.getIdVentilDate())).thenReturn(
+				Arrays.asList(vh1));
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(1);
@@ -459,7 +463,6 @@ public class ExportEtatPayeurServiceTest {
 		vp1.setRefPrime(new RefPrime());
 		vp1.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		vp1.setQuantite(12);
-		toVentilDate.getVentilPrimes().add(vp1);
 
 		VentilPrime vp2 = new VentilPrime();
 		vp2.setDateDebutMois(new LocalDate(2013, 9, 2).toDate());
@@ -467,7 +470,6 @@ public class ExportEtatPayeurServiceTest {
 		vp2.setRefPrime(new RefPrime());
 		vp2.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		vp2.setQuantite(24);
-		toVentilDate.getVentilPrimes().add(vp2);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
@@ -477,6 +479,8 @@ public class ExportEtatPayeurServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
+		Mockito.when(vR.getListOfVentilPrimeWithDateForEtatPayeur(toVentilDate.getIdVentilDate())).thenReturn(
+				Arrays.asList(vp1, vp2));
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(1);
@@ -520,7 +524,6 @@ public class ExportEtatPayeurServiceTest {
 		VentilPrime vp1 = new VentilPrime();
 		vp1.setDateDebutMois(new LocalDate(2013, 9, 2).toDate());
 		vp1.setIdAgent(9008989);
-		toVentilDate.getVentilPrimes().add(vp1);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
@@ -529,6 +532,8 @@ public class ExportEtatPayeurServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
+		Mockito.when(vR.getListOfVentilPrimeWithDateForEtatPayeur(toVentilDate.getIdVentilDate())).thenReturn(
+				Arrays.asList(vp1));
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(7);
@@ -570,7 +575,6 @@ public class ExportEtatPayeurServiceTest {
 		vp1.setRefPrime(new RefPrime());
 		vp1.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		vp1.getRefPrime().setLibelle("libelle");
-		toVentilDate.getVentilPrimes().add(vp1);
 
 		VentilPrime vpOld = new VentilPrime();
 		vpOld.setDateDebutMois(new LocalDate(2013, 8, 26).toDate());
@@ -588,6 +592,8 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
 		Mockito.when(vR.getPriorVentilPrimeForAgentAndDate(vp1.getIdAgent(), vp1.getDateDebutMois(), vp1)).thenReturn(
 				vpOld);
+		Mockito.when(vR.getListOfVentilPrimeWithDateForEtatPayeur(toVentilDate.getIdVentilDate())).thenReturn(
+				Arrays.asList(vp1));
 
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(1);
@@ -883,12 +889,10 @@ public class ExportEtatPayeurServiceTest {
 		VentilDate vd = new VentilDate();
 		vd.setDateVentilation(ventilationDate);
 		VentilHsup vh = new VentilHsup();
-		vd.getVentilHsups().add(vh);
 		VentilHsup vh2 = new VentilHsup();
 		vh2.setMRecuperees(90);
 		vh2.setIdAgent(9009999);
 		vh2.setDateLundi(new LocalDate(2013, 9, 2).toDate());
-		vd.getVentilHsups().add(vh2);
 
 		ExportEtatsPayeurTask task = new ExportEtatsPayeurTask();
 		task.setIdAgent(idAgentExporting);
@@ -901,6 +905,8 @@ public class ExportEtatPayeurServiceTest {
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(chainePaie, false)).thenReturn(vd);
+		Mockito.when(vR.getListOfVentilHeuresSupWithDateForEtatPayeur(vd.getIdVentilDate())).thenReturn(
+				Arrays.asList(vh, vh2));
 
 		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
@@ -917,10 +923,10 @@ public class ExportEtatPayeurServiceTest {
 		eps.add(ep);
 
 		Spcarr spcarr = new Spcarr();
-			spcarr.setCdcate(4);
+		spcarr.setCdcate(4);
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mairieRepository.getAgentCurrentCarriere(9999, vh2.getDateLundi())).thenReturn(spcarr);
-		
+
 		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
 		Mockito.doReturn(eps).when(service)
 				.callBirtEtatsPayeurForChainePaie(idAgentExporting, chainePaie, ventilationDate);
@@ -928,6 +934,7 @@ public class ExportEtatPayeurServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 
 		// When
 		service.exportEtatsPayeur(99);
@@ -950,12 +957,10 @@ public class ExportEtatPayeurServiceTest {
 		final VentilDate vd = new VentilDate();
 		vd.setDateVentilation(ventilationDate);
 		VentilHsup vh = new VentilHsup();
-		vd.getVentilHsups().add(vh);
 		VentilHsup vh2 = new VentilHsup();
 		vh2.setMSup(180);
 		vh2.setIdAgent(9009999);
 		vh2.setDateLundi(new LocalDate(2013, 9, 2).toDate());
-		vd.getVentilHsups().add(vh2);
 
 		ExportEtatsPayeurTask task = new ExportEtatsPayeurTask();
 		task.setIdAgent(idAgentExporting);
@@ -970,6 +975,8 @@ public class ExportEtatPayeurServiceTest {
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(chainePaie, false)).thenReturn(vd);
+		Mockito.when(vR.getListOfVentilHeuresSupWithDateForEtatPayeur(vd.getIdVentilDate())).thenReturn(
+				Arrays.asList(vh, vh2));
 
 		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
@@ -1008,6 +1015,7 @@ public class ExportEtatPayeurServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 
 		// When
 		service.exportEtatsPayeur(99);
@@ -1030,12 +1038,10 @@ public class ExportEtatPayeurServiceTest {
 		final VentilDate vd = new VentilDate();
 		vd.setDateVentilation(ventilationDate);
 		VentilHsup vh = new VentilHsup();
-		vd.getVentilHsups().add(vh);
 		VentilHsup vh2 = new VentilHsup();
 		vh2.setMSup(180);
 		vh2.setIdAgent(9009999);
 		vh2.setDateLundi(new LocalDate(2013, 9, 2).toDate());
-		vd.getVentilHsups().add(vh2);
 
 		ExportEtatsPayeurTask task = new ExportEtatsPayeurTask();
 		task.setIdAgent(idAgentExporting);
@@ -1050,6 +1056,8 @@ public class ExportEtatPayeurServiceTest {
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(chainePaie, false)).thenReturn(vd);
+		Mockito.when(vR.getListOfVentilHeuresSupWithDateForEtatPayeur(vd.getIdVentilDate())).thenReturn(
+				Arrays.asList(vh, vh2));
 
 		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
@@ -1088,6 +1096,7 @@ public class ExportEtatPayeurServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 
 		// When
 		service.exportEtatsPayeur(99);
@@ -1110,12 +1119,10 @@ public class ExportEtatPayeurServiceTest {
 		final VentilDate vd = new VentilDate();
 		vd.setDateVentilation(ventilationDate);
 		VentilHsup vh = new VentilHsup();
-		vd.getVentilHsups().add(vh);
 		VentilHsup vh2 = new VentilHsup();
 		vh2.setMSup(180);
 		vh2.setIdAgent(9009999);
 		vh2.setDateLundi(new LocalDate(2013, 9, 2).toDate());
-		vd.getVentilHsups().add(vh2);
 
 		ExportEtatsPayeurTask task = new ExportEtatsPayeurTask();
 		task.setIdAgent(idAgentExporting);
@@ -1130,6 +1137,8 @@ public class ExportEtatPayeurServiceTest {
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(chainePaie, false)).thenReturn(vd);
+		Mockito.when(vR.getListOfVentilHeuresSupWithDateForEtatPayeur(vd.getIdVentilDate())).thenReturn(
+				Arrays.asList(vh, vh2));
 
 		IPointageRepository pR = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pR.getEntity(ExportEtatsPayeurTask.class, 99)).thenReturn(task);
@@ -1168,6 +1177,7 @@ public class ExportEtatPayeurServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 
 		// When
 		service.exportEtatsPayeur(99);
@@ -1204,13 +1214,10 @@ public class ExportEtatPayeurServiceTest {
 
 		// Given
 		VentilDate vd = new VentilDate();
-		VentilHsup vh = new VentilHsup();
-		vd.getVentilHsups().add(vh);
 		VentilHsup vh2 = new VentilHsup();
 		vh2.setMRecuperees(90);
 		vh2.setIdAgent(9009999);
 		vh2.setDateLundi(new LocalDate(2013, 9, 2).toDate());
-		vd.getVentilHsups().add(vh2);
 
 		ExportEtatsPayeurTask task = new ExportEtatsPayeurTask();
 		task.setIdAgent(9009999);
@@ -1418,17 +1425,17 @@ public class ExportEtatPayeurServiceTest {
 		// Then
 		Mockito.verify(pS, Mockito.times(1)).changeStateToExportEtatsPayeurDone(TypeChainePaieEnum.SCV);
 	}
-	
+
 	@Test
 	public void calculMinutesRecuperation_fonctionnaire() {
-		
+
 		Date dateLundi = new Date();
-		
+
 		VentilHsup vh = new VentilHsup();
 		vh.setDateLundi(dateLundi);
 		vh.setIdAgent(9008989);
 		vh.setMRecuperees(100);
-		
+
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(1);
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
@@ -1436,26 +1443,26 @@ public class ExportEtatPayeurServiceTest {
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
-		
-		ExportEtatPayeurService service =  new ExportEtatPayeurService();
+
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
-		
+
 		int result = service.calculMinutesRecuperation(vh);
-		
+
 		assertEquals(result, 100);
 	}
-	
+
 	@Test
 	public void calculMinutesRecuperation_contractuel() {
-		
+
 		Date dateLundi = new Date();
-		
+
 		VentilHsup vh = new VentilHsup();
 		vh.setDateLundi(dateLundi);
 		vh.setIdAgent(9008989);
 		vh.setMRecuperees(100);
-		
+
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(4);
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
@@ -1463,26 +1470,26 @@ public class ExportEtatPayeurServiceTest {
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
-		
-		ExportEtatPayeurService service =  new ExportEtatPayeurService();
+
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
-		
+
 		int result = service.calculMinutesRecuperation(vh);
-		
+
 		assertEquals(result, 100);
 	}
-	
+
 	@Test
 	public void calculMinutesRecuperation_convColl_cas1() {
-		
+
 		Date dateLundi = new Date();
-		
+
 		VentilHsup vh = new VentilHsup();
 		vh.setDateLundi(dateLundi);
 		vh.setIdAgent(9008989);
 		vh.setMRecuperees(100);
-		
+
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(7);
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
@@ -1490,33 +1497,33 @@ public class ExportEtatPayeurServiceTest {
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
-		
-		ExportEtatPayeurService service =  new ExportEtatPayeurService();
+
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
-		
+
 		int result = service.calculMinutesRecuperation(vh);
-		
+
 		assertEquals(result, 0);
 	}
-	
+
 	@Test
 	public void calculMinutesRecuperation_convColl_cas2() {
-		
+
 		Date dateLundi = new Date();
-		
+
 		VentilHsup vh = new VentilHsup();
 		vh.setDateLundi(dateLundi);
 		vh.setIdAgent(9008989);
 		vh.setMRecuperees(100);
-		
+
 		vh.setMComplementairesRecup(10);
 		vh.setMSup25Recup(20);
 		vh.setMSup50Recup(30);
 		vh.setMsdjfRecup(40);
 		vh.setMsNuitRecup(50);
 		vh.setMMaiRecup(60);
-		
+
 		Spcarr spcarr1 = new Spcarr();
 		spcarr1.setCdcate(7);
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
@@ -1524,14 +1531,14 @@ public class ExportEtatPayeurServiceTest {
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
-		
-		ExportEtatPayeurService service =  new ExportEtatPayeurService();
+
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
-		
+
 		int result = service.calculMinutesRecuperation(vh);
-		
+
 		double calcul = 10 + 20 * 1.25 + 30 * 1.5 + 40 * 1.75 + 50 * 2 + 60 * 1.75;
-		assertEquals(result,  calcul, 0);
+		assertEquals(result, calcul, 0);
 	}
 }

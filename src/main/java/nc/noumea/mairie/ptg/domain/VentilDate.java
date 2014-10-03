@@ -17,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -29,55 +28,38 @@ import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Table(name = "PTG_VENTIL_DATE") 
+@Table(name = "PTG_VENTIL_DATE")
 public class VentilDate {
 
-	@Id 
+	@Id
 	@Column(name = "ID_VENTIL_DATE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idVentilDate;
-	
-    @Column(name = "DATE_VENTIL")
-    @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dateVentilation;
-    
-    @Column(name = "TYPE_CHAINE_PAIE")
-    @Enumerated(EnumType.STRING)
-    private TypeChainePaieEnum typeChainePaie;
-    
-    @Column(name = "IS_PAYE", nullable = false)
-    @Type(type = "boolean")
-    private boolean paye;
-    
-    @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy("dateLundi asc, idAgent asc")
-    private Set<VentilAbsence> ventilAbsences = new HashSet<VentilAbsence>();
-    
-    @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy("dateLundi asc, idAgent asc")
-    private Set<VentilHsup> ventilHsups = new HashSet<VentilHsup>();
-    
-    @OneToMany(mappedBy = "ventilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @OrderBy("dateDebutMois asc, idAgent asc")
-    private Set<VentilPrime> ventilPrimes = new HashSet<VentilPrime>();
-    
-    @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "PTG_POINTAGE_VENTIL_DATE",
-            inverseJoinColumns =
-            @JoinColumn(name = "ID_POINTAGE"),
-            joinColumns =
-            @JoinColumn(name = "ID_VENTIL_DATE"))
-    private Set<Pointage> pointages = new HashSet<Pointage>();
-    
-    @OneToMany(mappedBy = "lastVentilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<PointageCalcule> pointagesCalcules = new HashSet<PointageCalcule>();
 
-    @Version
-    @Column(name = "version")
+	@Column(name = "DATE_VENTIL")
+	@NotNull
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateVentilation;
+
+	@Column(name = "TYPE_CHAINE_PAIE")
+	@Enumerated(EnumType.STRING)
+	private TypeChainePaieEnum typeChainePaie;
+
+	@Column(name = "IS_PAYE", nullable = false)
+	@Type(type = "boolean")
+	private boolean paye;
+
+	@ManyToMany(cascade = CascadeType.PERSIST)
+	@JoinTable(name = "PTG_POINTAGE_VENTIL_DATE", inverseJoinColumns = @JoinColumn(name = "ID_POINTAGE"), joinColumns = @JoinColumn(name = "ID_VENTIL_DATE"))
+	private Set<Pointage> pointages = new HashSet<Pointage>();
+
+	@OneToMany(mappedBy = "lastVentilDate", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<PointageCalcule> pointagesCalcules = new HashSet<PointageCalcule>();
+
+	@Version
+	@Column(name = "version")
 	private Integer version;
-    
+
 	public Integer getIdVentilDate() {
 		return idVentilDate;
 	}
@@ -110,30 +92,6 @@ public class VentilDate {
 		this.paye = paye;
 	}
 
-	public Set<VentilAbsence> getVentilAbsences() {
-		return ventilAbsences;
-	}
-
-	public void setVentilAbsences(Set<VentilAbsence> ventilAbsences) {
-		this.ventilAbsences = ventilAbsences;
-	}
-
-	public Set<VentilHsup> getVentilHsups() {
-		return ventilHsups;
-	}
-
-	public void setVentilHsups(Set<VentilHsup> ventilHsups) {
-		this.ventilHsups = ventilHsups;
-	}
-
-	public Set<VentilPrime> getVentilPrimes() {
-		return ventilPrimes;
-	}
-
-	public void setVentilPrimes(Set<VentilPrime> ventilPrimes) {
-		this.ventilPrimes = ventilPrimes;
-	}
-
 	public Set<Pointage> getPointages() {
 		return pointages;
 	}
@@ -158,5 +116,4 @@ public class VentilDate {
 		this.version = version;
 	}
 
-    
 }
