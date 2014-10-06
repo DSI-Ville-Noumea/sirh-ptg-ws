@@ -13,6 +13,7 @@ import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
@@ -1119,7 +1120,7 @@ public class ApprobationServiceTest {
 		Date dateVentilation = new Date();
 
 		EtatPointage etat = new EtatPointage();
-		etat.setEtat(EtatPointageEnum.VENTILE);
+		etat.setEtat(EtatPointageEnum.VALIDE);
 
 		Pointage otherPointageHSup = Mockito.spy(new Pointage());
 		otherPointageHSup.setIdPointage(1);
@@ -1375,7 +1376,7 @@ public class ApprobationServiceTest {
 		Date dateVentilation = new Date();
 
 		EtatPointage etat = new EtatPointage();
-		etat.setEtat(EtatPointageEnum.VENTILE);
+		etat.setEtat(EtatPointageEnum.VALIDE);
 
 		Pointage otherPointageHSup = Mockito.spy(new Pointage());
 		otherPointageHSup.setIdPointage(1);
@@ -1398,5 +1399,330 @@ public class ApprobationServiceTest {
 		service.reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(9005138, dto, currentEtat, ptg, dateVentilation);
 
 		assertEquals(1, otherPointageHSup.getEtats().size());
+	}
+	
+
+
+	@Test
+	public void reinitialisePointagePrimeAApprouveForVentilationSuiteRejet_badEtat() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+		dto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.APPROUVE;
+
+		RefTypePointage typePointagePrime = new RefTypePointage();
+		typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		
+		Pointage pointage = Mockito.spy(new Pointage());
+		pointage.setEtats(new ArrayList<EtatPointage>());
+		pointage.setType(typePointagePrime);
+
+		Date dateVentilation = new Date();
+
+		ApprobationService service = new ApprobationService();
+
+		service.reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, new Pointage(),
+				dateVentilation);
+
+		Mockito.verify(pointage, Mockito.times(0)).getEtats();
+	}
+
+	@Test
+	public void reinitialisePointagePrimeAApprouveForVentilationSuiteRejet_noOtherPointage() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+			dto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
+
+		RefTypePointage typePointagePrime = new RefTypePointage();
+			typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
+		RefPrime refPrime = new RefPrime();
+			refPrime.setIdRefPrime(1);
+		
+		Pointage ptg = new Pointage();
+			ptg.setIdAgent(9005138);
+			ptg.setDateLundi(new Date());
+			ptg.setType(typePointagePrime);
+			ptg.setRefPrime(refPrime);
+
+		Pointage pointage = Mockito.spy(new Pointage());
+			pointage.setEtats(new ArrayList<EtatPointage>());
+
+		Date dateVentilation = new Date();
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListPointagesPrimeValideByMoisAndRefPrime(ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getIdRefPrime())).thenReturn(
+				listePointagesAgent);
+
+		IPointageService pointageService = Mockito.mock(IPointageService.class);
+		Mockito.when(pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,  Arrays.asList(EtatPointageEnum.VALIDE))).thenReturn(listePointagesAgent);
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "pointageService", pointageService);
+
+		service.reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(ptg.getIdAgent(), dto, currentEtat, ptg, dateVentilation);
+
+		Mockito.verify(pointage, Mockito.times(0)).getEtats();
+	}
+
+	@Test
+	public void reinitialisePointagePrimeAApprouveForVentilationSuiteRejet_2OtherPointage_HSup_Abs() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+			dto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
+
+		RefTypePointage typePointagePrime = new RefTypePointage();
+			typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
+		RefPrime refPrime = new RefPrime();
+			refPrime.setIdRefPrime(1);
+		
+		Pointage ptg = new Pointage();
+			ptg.setIdPointage(1);
+			ptg.setIdAgent(9005138);
+			ptg.setDateLundi(new Date());
+			ptg.setType(typePointagePrime);
+			ptg.setRefPrime(refPrime);
+
+		Date dateVentilation = new Date();
+
+		RefTypePointage typePointageAbs = new RefTypePointage();
+			typePointageAbs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+
+		RefTypePointage typePointageHSup = new RefTypePointage();
+			typePointageHSup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+			
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.VALIDE);
+
+		Pointage otherPointageHSup = Mockito.spy(new Pointage());
+			otherPointageHSup.setIdPointage(2);
+			otherPointageHSup.setType(typePointageHSup);
+			otherPointageHSup.getEtats().add(etat);
+
+		Pointage otherPointageAbs = Mockito.spy(new Pointage());
+			otherPointageAbs.setIdPointage(3);
+			otherPointageAbs.setType(typePointageAbs);
+			otherPointageAbs.getEtats().add(etat);
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+			listePointagesAgent.add(otherPointageHSup);
+			listePointagesAgent.add(otherPointageAbs);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi())).thenReturn(
+				listePointagesAgent);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListPointagesPrimeValideByMoisAndRefPrime(ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getIdRefPrime())).thenReturn(
+				listePointagesAgent);
+
+		IPointageService pointageService = Mockito.mock(IPointageService.class);
+		Mockito.when(pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,  Arrays.asList(EtatPointageEnum.VALIDE))).thenReturn(listePointagesAgent);
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "pointageService", pointageService);
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		service.reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, ptg, dateVentilation);
+
+		assertEquals(1, otherPointageHSup.getEtats().size());
+		assertEquals(1, otherPointageAbs.getEtats().size());
+	}
+
+	@Test
+	public void reinitialisePointagePrimeAApprouveForVentilationSuiteRejet_1OtherPointage_Prime() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+		dto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
+
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+	
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(1);
+	
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+		ptg.setType(typePointage);
+		ptg.setRefPrime(refPrime);
+
+		Date dateVentilation = new Date();
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.VALIDE);
+
+		Pointage otherPointage = Mockito.spy(new Pointage());
+		otherPointage.setIdPointage(2);
+		otherPointage.setType(typePointage);
+		otherPointage.getEtats().add(etat);
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+		listePointagesAgent.add(otherPointage);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi())).thenReturn(
+				listePointagesAgent);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListPointagesPrimeValideByMoisAndRefPrime(ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getIdRefPrime())).thenReturn(
+				listePointagesAgent);
+
+		IPointageService pointageService = Mockito.mock(IPointageService.class);
+		Mockito.when(pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,  Arrays.asList(EtatPointageEnum.VALIDE))).thenReturn(listePointagesAgent);
+	
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "pointageService", pointageService);
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		service.reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, ptg, dateVentilation);
+
+		assertEquals(2, otherPointage.getEtats().size());
+	}
+
+	@Test
+	public void reinitialisePointagePrimeAApprouveForVentilationSuiteRejet_2OtherPointage_HSup_Abs_badEtat() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+		dto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
+
+		RefTypePointage typePointagePrime = new RefTypePointage();
+		typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(1);
+	
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+		ptg.setType(typePointagePrime);
+		ptg.setRefPrime(refPrime);
+
+		Date dateVentilation = new Date();
+
+		EtatPointage etatVentile = new EtatPointage();
+		etatVentile.setEtat(EtatPointageEnum.VENTILE);
+		
+		EtatPointage etatJournalise = new EtatPointage();
+		etatJournalise.setEtat(EtatPointageEnum.JOURNALISE);
+
+		Pointage otherPointagePrimeVentile = Mockito.spy(new Pointage());
+		otherPointagePrimeVentile.setIdPointage(2);
+		otherPointagePrimeVentile.setType(typePointagePrime);
+		otherPointagePrimeVentile.getEtats().add(etatVentile);
+
+		Pointage otherPointagePrimeJournalise = Mockito.spy(new Pointage());
+		otherPointagePrimeJournalise.setIdPointage(3);
+		otherPointagePrimeJournalise.setType(typePointagePrime);
+		otherPointagePrimeJournalise.getEtats().add(etatJournalise);
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+		listePointagesAgent.add(otherPointagePrimeVentile);
+		listePointagesAgent.add(otherPointagePrimeJournalise);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi())).thenReturn(
+				listePointagesAgent);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListPointagesPrimeValideByMoisAndRefPrime(ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getIdRefPrime())).thenReturn(
+				listePointagesAgent);
+
+		IPointageService pointageService = Mockito.mock(IPointageService.class);
+		Mockito.when(pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,  Arrays.asList(EtatPointageEnum.VALIDE))).thenReturn(listePointagesAgent);
+	
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "pointageService", pointageService);
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		service.reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, ptg, dateVentilation);
+
+		assertEquals(1, otherPointagePrimeVentile.getEtats().size());
+		assertEquals(1, otherPointagePrimeJournalise.getEtats().size());
+	}
+
+	@Test
+	public void reinitialisePointagePrimeAApprouveForVentilationSuiteRejet_1OtherPointage_Prime_sameIdPointage() {
+
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+		dto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+
+		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
+
+		RefTypePointage typePointagePrime = new RefTypePointage();
+		typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(1);
+	
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+		ptg.setType(typePointagePrime);
+		ptg.setRefPrime(refPrime);
+
+		Date dateVentilation = new Date();
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.VALIDE);
+
+		Pointage otherPointage = Mockito.spy(new Pointage());
+		otherPointage.setIdPointage(1);
+		otherPointage.setType(typePointagePrime);
+		otherPointage.getEtats().add(etat);
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+		listePointagesAgent.add(otherPointage);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi())).thenReturn(
+				listePointagesAgent);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(ventilationRepository.getListPointagesPrimeValideByMoisAndRefPrime(ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getIdRefPrime())).thenReturn(
+				listePointagesAgent);
+
+		IPointageService pointageService = Mockito.mock(IPointageService.class);
+		Mockito.when(pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,  Arrays.asList(EtatPointageEnum.VALIDE))).thenReturn(listePointagesAgent);
+	
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+		ReflectionTestUtils.setField(service, "pointageService", pointageService);
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		service.reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(9005138, dto, currentEtat, ptg, dateVentilation);
+
+		assertEquals(1, otherPointage.getEtats().size());
 	}
 }

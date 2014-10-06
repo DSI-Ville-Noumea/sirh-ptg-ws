@@ -1,8 +1,6 @@
 package nc.noumea.mairie.ptg.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -430,27 +428,82 @@ public class PointageRepositoryTest {
 
 	@Test
 	@Transactional("ptgTransactionManager")
-	public void removePointageCalculesForDateAgent() {
+	public void removePointageCalculesForDateAgent_ok() {
 
 		RefTypePointage rtp = new RefTypePointage();
 		rtp.setIdRefTypePointage(1);
 		ptgEntityManager.persist(rtp);
 
-		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
-		refTypeAbsNon.setIdRefTypeAbsence(2);
-		ptgEntityManager.persist(refTypeAbsNon);
-
-		Pointage p = new Pointage();
-		p.setRefTypeAbsence(refTypeAbsNon);
+		PointageCalcule p = new PointageCalcule();
 		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
 		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
 		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
-		p.setHeureSupRecuperee(true);
 		p.setIdAgent(9005138);
 		p.setType(rtp);
+		p.setEtat(EtatPointageEnum.VENTILE);
 		ptgEntityManager.persist(p);
 
-		repository.removePointageCalculesForDateAgent(9005138, new LocalDate(2013, 7, 23).toDate());
+		assertEquals(1, repository.removePointageCalculesForDateAgent(9005138, new LocalDate(2013, 7, 23).toDate()));
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void removePointageCalculesForDateAgent_badAgent() {
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
+
+		PointageCalcule p = new PointageCalcule();
+		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		p.setEtat(EtatPointageEnum.VENTILE);
+		ptgEntityManager.persist(p);
+
+		assertEquals(0, repository.removePointageCalculesForDateAgent(9009999, new LocalDate(2013, 7, 23).toDate()));
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void removePointageCalculesForDateAgent_badEtat() {
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
+
+		PointageCalcule p = new PointageCalcule();
+		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		p.setEtat(EtatPointageEnum.VALIDE);
+		ptgEntityManager.persist(p);
+
+		assertEquals(0, repository.removePointageCalculesForDateAgent(9005138, new LocalDate(2013, 7, 23).toDate()));
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void removePointageCalculesForDateAgent_badDateLundi() {
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
+
+		PointageCalcule p = new PointageCalcule();
+		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		p.setEtat(EtatPointageEnum.VENTILE);
+		ptgEntityManager.persist(p);
+
+		assertEquals(0, repository.removePointageCalculesForDateAgent(9005138, new LocalDate(2013, 8, 23).toDate()));
 	}
 
 	@Test
