@@ -87,7 +87,8 @@ public class VisualisationController {
 			@RequestParam("to") @DateTimeFormat(pattern = "YYYYMMdd") Date toDate,
 			@RequestParam(value = "idAgents", required = false) String idAgents,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat,
-			@RequestParam(value = "type", required = false) Integer idRefType) {
+			@RequestParam(value = "type", required = false) Integer idRefType,
+			@RequestParam(value = "typeHS", required = false) String typeHS) {
 
 		logger.debug(
 				"entered GET [visualisation/pointagesSIRH] => getListePointagesSIRH with parameters  from = {}, to = {},  idAgents = {}, etat = {} and type = {}",
