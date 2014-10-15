@@ -142,10 +142,11 @@ public class SaisieService implements ISaisieService {
 				SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent);
 				if(service.getSigle().toUpperCase().equals("DPM")){
 					ptg.setHeureSupRecuperee(true);
+					ptg.setHeureSupRappelService(hs.getRappelService());
 				}else{
 					ptg.setHeureSupRecuperee(hs.getRecuperee());
+					ptg.setHeureSupRappelService(false);
 				}
-				ptg.setHeureSupRappelService(hs.getRappelService());
 				ptg.setDateDebut(hs.getHeureDebut());
 				ptg.setDateFin(hs.getHeureFin());
 				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.H_SUP.getValue()));
