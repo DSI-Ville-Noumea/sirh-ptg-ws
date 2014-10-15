@@ -33,12 +33,14 @@ import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
 import nc.noumea.mairie.repository.IMairieRepository;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -178,7 +180,8 @@ public class SaisieServiceTest {
 				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
 
 		HeureSupDto hs1 = new HeureSupDto();
-		hs1.setRecuperee(true);
+		hs1.setRecuperee(false);
+		hs1.setRappelService(false);
 		hs1.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
 		hs1.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		hs1.setMotif("le motif 3");
@@ -218,6 +221,12 @@ public class SaisieServiceTest {
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
 		
+		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		dtoService.setSigle("DPM");
+
+		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent())).thenReturn(dtoService);
+		
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -226,6 +235,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -236,6 +246,7 @@ public class SaisieServiceTest {
 
 		assertEquals(RefTypePointageEnum.H_SUP, argument.getValue().getTypePointageEnum());
 		assertTrue(argument.getValue().getHeureSupRecuperee());
+		assertFalse(argument.getValue().getHeureSupRappelService());
 		assertEquals(agent.getIdAgent(), argument.getValue().getIdAgent());
 		assertEquals(new DateTime(2013, 05, 16, 15, 0, 0).toDate(), argument.getValue().getDateDebut());
 		assertEquals(new DateTime(2013, 05, 16, 16, 0, 0).toDate(), argument.getValue().getDateFin());
@@ -794,6 +805,7 @@ public class SaisieServiceTest {
 
 		HeureSupDto hs1 = new HeureSupDto();
 			hs1.setRecuperee(true);
+			hs1.setRappelService(true);
 			hs1.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
 			hs1.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 			hs1.setMotif("le motif 3");
@@ -801,7 +813,8 @@ public class SaisieServiceTest {
 			
 		HeureSupDto hs2 = new HeureSupDto();
 			hs2.setIdPointage(1);
-			hs2.setRecuperee(true);
+			hs2.setRecuperee(false);
+			hs2.setRappelService(false);
 			hs2.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
 			hs2.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 			hs2.setMotif("le motif 3");
@@ -858,6 +871,13 @@ public class SaisieServiceTest {
 		carr.setCdcate(6);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
+
+		
+		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		dtoService.setSigle("TITI");
+
+		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent())).thenReturn(dtoService);
 		
 		SaisieService service = new SaisieService();
 
@@ -867,6 +887,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -1326,11 +1347,13 @@ public class SaisieServiceTest {
 		ep.setEtat(EtatPointageEnum.SAISI);
 		ptg.getEtats().add(ep);
 		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
 		HeureSupDto hSup = new HeureSupDto();
 		hSup.setRecuperee(true);
+		hSup.setRappelService(true);
 		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
@@ -1361,16 +1384,40 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void hasPointageChanged_HSupHoursHasChanged_ReturnTrue() {
+	public void hasPointageChanged_HSupRecupHasChangedRappelService_ReturnTrue() {
 
 		// Given
 		Pointage ptg = new Pointage();
 		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
 		HeureSupDto hSup = new HeureSupDto();
 		hSup.setRecuperee(true);
+		hSup.setRappelService(false);
+		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+
+		SaisieService service = new SaisieService();
+
+		// Then
+		assertTrue(service.hasPointageChanged(ptg, hSup));
+	}
+
+	@Test
+	public void hasPointageChanged_HSupHoursHasChanged_ReturnTrue() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
+		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
+
+		HeureSupDto hSup = new HeureSupDto();
+		hSup.setRecuperee(true);
+		hSup.setRappelService(false);
 		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 10, 0).toDate());
 
@@ -1389,11 +1436,13 @@ public class SaisieServiceTest {
 		ep.setEtat(EtatPointageEnum.SAISI);
 		ptg.getEtats().add(ep);
 		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
 		HeureSupDto hSup = new HeureSupDto();
 		hSup.setRecuperee(true);
+		hSup.setRappelService(false);
 		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 		hSup.setMotif("coucou");
@@ -1415,6 +1464,7 @@ public class SaisieServiceTest {
 		ep.setEtat(EtatPointageEnum.SAISI);
 		ptg.getEtats().add(ep);
 		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
@@ -1440,11 +1490,13 @@ public class SaisieServiceTest {
 		ep.setEtat(EtatPointageEnum.APPROUVE);
 		ptg.getEtats().add(ep);
 		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
 		HeureSupDto hSup = new HeureSupDto();
 		hSup.setRecuperee(true);
+		hSup.setRappelService(true);
 		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 		hSup.setMotif("coucou");
@@ -1466,11 +1518,13 @@ public class SaisieServiceTest {
 		ep.setEtat(EtatPointageEnum.APPROUVE);
 		ptg.getEtats().add(ep);
 		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
 		ptg.setDateDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		ptg.setDateFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 
 		HeureSupDto hSup = new HeureSupDto();
 		hSup.setRecuperee(true);
+		hSup.setRappelService(true);
 		hSup.setHeureDebut(new DateTime(2013, 8, 1, 12, 0, 0).toDate());
 		hSup.setHeureFin(new DateTime(2013, 8, 1, 13, 0, 0).toDate());
 		hSup.setCommentaire("coucou");
@@ -1797,6 +1851,12 @@ public class SaisieServiceTest {
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
 		
+		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		dtoService.setSigle("TITI");
+
+		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent())).thenReturn(dtoService);
+		
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -1805,6 +1865,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
 		service.saveFichePointage(9001234, dto);

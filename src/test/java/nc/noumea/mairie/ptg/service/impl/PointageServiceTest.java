@@ -198,6 +198,7 @@ public class PointageServiceTest {
 		t2.setLabel("H_SUP");
 		p2.setType(t2);
 		p2.setHeureSupRecuperee(true);
+		p2.setHeureSupRappelService(true);
 		p2.setDateDebut(new DateTime(2013, 05, 16, 14, 0, 0).toDate());
 		p2.setDateFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		p2.setDateLundi(dateLundi);
@@ -238,6 +239,7 @@ public class PointageServiceTest {
 
 		assertEquals(1, result.getSaisies().get(3).getHeuresSup().size());
 		assertEquals(true, result.getSaisies().get(3).getHeuresSup().get(0).getRecuperee());
+		assertEquals(true, result.getSaisies().get(3).getHeuresSup().get(0).getRappelService());
 		assertEquals(1, (int) result.getSaisies().get(3).getHeuresSup().get(0).getIdRefEtat());
 		assertEquals(new DateTime(2013, 05, 16, 14, 0, 0).toDate(), result.getSaisies().get(3).getHeuresSup().get(0)
 				.getHeureDebut());

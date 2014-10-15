@@ -27,6 +27,7 @@ public class HeureSupDtoTest {
 		p.setDateLundi(new DateTime(2013, 4, 19, 0, 0, 0, 0).toDate());
 		p.setType(tp);
 		p.setHeureSupRecuperee(true);
+		p.setHeureSupRappelService(true);
 		EtatPointage ep1 = new EtatPointage(); 
 		ep1.setEtat(EtatPointageEnum.SAISI);
 		ep1.setPointage(p);
@@ -44,6 +45,7 @@ public class HeureSupDtoTest {
 		// Then
 		assertEquals(new Integer(9), result.getIdPointage());
 		assertEquals(true, result.getRecuperee());
+		assertEquals(true, result.getRappelService());
 		assertEquals(0, (int) result.getIdRefEtat());
 		assertEquals(p.getDateDebut(), result.getHeureDebut());
 		assertEquals(p.getDateFin(), result.getHeureFin());

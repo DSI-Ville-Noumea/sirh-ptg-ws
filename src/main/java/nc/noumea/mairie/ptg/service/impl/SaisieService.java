@@ -20,6 +20,7 @@ import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
@@ -27,6 +28,7 @@ import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.ISaisieService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
 import nc.noumea.mairie.repository.IMairieRepository;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,6 +53,9 @@ public class SaisieService implements ISaisieService {
 
 	@Autowired
 	private IPointageDataConsistencyRules ptgDataCosistencyRules;
+
+	@Autowired
+	private ISirhWSConsumer sirhWsConsumer;
 
 	@Override
 	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto) {
@@ -132,7 +137,14 @@ public class SaisieService implements ISaisieService {
 				// Only if it has changed, process this pointage
 				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi,
 						helperService.getCurrentDate());
-				ptg.setHeureSupRecuperee(hs.getRecuperee());
+				//cas de la DMP #11622
+				//cas de la DPM #11622
+				SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent);
+				if(service.getSigle().toUpperCase().equals("DPM")){
+					ptg.setHeureSupRecuperee(true);
+				}else{
+					ptg.setHeureSupRecuperee(hs.getRecuperee());
+				}
 				ptg.setHeureSupRappelService(hs.getRappelService());
 				ptg.setDateDebut(hs.getHeureDebut());
 				ptg.setDateFin(hs.getHeureFin());
