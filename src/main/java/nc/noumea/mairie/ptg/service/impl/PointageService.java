@@ -84,6 +84,7 @@ public class PointageService implements IPointageService {
 		FichePointageDto result = new FichePointageDto();
 		result.setDateLundi(date);
 		result.setAgent(agentDto);
+		result.setDPM(service.getSigle().toUpperCase().equals("DPM"));
 		result.setSemaine(helperService.getWeekStringFromDate(date));
 
 		JourPointageDto jourPointageTemplate = new JourPointageDto();

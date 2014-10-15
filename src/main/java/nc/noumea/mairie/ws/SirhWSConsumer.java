@@ -26,7 +26,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	@Qualifier("sirhWsBaseUrl")
 	private String sirhWsBaseUrl;
 
-	private static final String sirhAgentDivisionsUrl = "agents/direction";
+	private static final String sirhAgentDirectionUrl = "agents/direction";
 	private static final String sirhAgentsServiceUrl = "services/agents";
 	private static final String sirhAgentServiceUrl = "services/agent";
 	private static final String sirhSousServicesUrl = "services/sousServices";
@@ -38,7 +38,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	@Override
 	public SirhWsServiceDto getAgentDirection(Integer idAgent) {
 
-		String url = String.format(sirhWsBaseUrl + sirhAgentDivisionsUrl);
+		String url = String.format(sirhWsBaseUrl + sirhAgentDirectionUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 
