@@ -55,11 +55,12 @@ public class VisualisationController {
 			@RequestParam(value = "codeService", required = false) String codeService,
 			@RequestParam(value = "agent", required = false) Integer agent,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat,
-			@RequestParam(value = "type", required = false) Integer idRefType) {
+			@RequestParam(value = "type", required = false) Integer idRefType,
+			@RequestParam(value = "typeHS", required = false) String typeHS) {
 
 		logger.debug(
-				"entered GET [visualisation/pointages] => getListePointages with parameters idAgent = {}, from = {}, to = {}, codeService = {}, agent = {}, etat = {} and type = {}",
-				idAgent, fromDate, toDate, codeService, agent, idRefEtat, idRefType);
+				"entered GET [visualisation/pointages] => getListePointages with parameters idAgent = {}, from = {}, to = {}, codeService = {}, agent = {}, etat = {} and type = {} and typeHS = {}",
+				idAgent, fromDate, toDate, codeService, agent, idRefEtat, idRefType, typeHS);
 
 		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		Integer convertedAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agent);
@@ -68,7 +69,7 @@ public class VisualisationController {
 			throw new AccessForbiddenException();
 
 		List<ConsultPointageDto> result = approbationService.getPointages(convertedIdAgent, fromDate, toDate,
-				codeService, convertedAgent, idRefEtat, idRefType);
+				codeService, convertedAgent, idRefEtat, idRefType, typeHS);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
@@ -92,8 +93,8 @@ public class VisualisationController {
 		// TODO
 		// traiter le cas de typeHS pour info SIRH renvoi R ou RS.
 		logger.debug(
-				"entered GET [visualisation/pointagesSIRH] => getListePointagesSIRH with parameters  from = {}, to = {},  idAgents = {}, etat = {} and type = {}",
-				fromDate, toDate, idAgents, idRefEtat, idRefType);
+				"entered GET [visualisation/pointagesSIRH] => getListePointagesSIRH with parameters  from = {}, to = {},  idAgents = {}, etat = {} and type = {} and typeHS = {}",
+				fromDate, toDate, idAgents, idRefEtat, idRefType, typeHS);
 
 		List<Integer> agentIds = new ArrayList<Integer>();
 		if (idAgents != null) {
@@ -103,7 +104,7 @@ public class VisualisationController {
 		}
 
 		List<ConsultPointageDto> result = approbationService.getPointagesSIRH(fromDate, toDate, agentIds, idRefEtat,
-				idRefType);
+				idRefType, typeHS);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);

@@ -656,13 +656,13 @@ public class PointageServiceTest {
 		List<Pointage> ptgs = Arrays.asList(p3, p2, p1);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointages(agentIds, from, to, null)).thenReturn(ptgs);
+		Mockito.when(pRepo.getListPointages(agentIds, from, to, null, null)).thenReturn(ptgs);
 
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 
 		// When
-		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, null, null);
+		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, null, null, null);
 
 		// Then
 		assertEquals(2, result.size());
@@ -696,13 +696,13 @@ public class PointageServiceTest {
 		List<Pointage> ptgs = Arrays.asList(p5, p4, p3);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointages(agentIds, from, to, type.getValue())).thenReturn(ptgs);
+		Mockito.when(pRepo.getListPointages(agentIds, from, to, type.getValue(), null)).thenReturn(ptgs);
 
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 
 		// When
-		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, type, null);
+		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, type, null, null);
 
 		// Then
 		assertEquals(1, result.size());
@@ -757,14 +757,14 @@ public class PointageServiceTest {
 		List<Pointage> ptgs = Arrays.asList(p5, p4, p2, p3, p1);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointages(agentIds, from, to, null)).thenReturn(ptgs);
+		Mockito.when(pRepo.getListPointages(agentIds, from, to, null, null)).thenReturn(ptgs);
 
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 
 		// When
 		List<Pointage> result = service.getLatestPointagesForAgentsAndDates(agentIds, from, to, null,
-				Arrays.asList(etat));
+				Arrays.asList(etat), null);
 
 		// Then
 		assertEquals(1, result.size());

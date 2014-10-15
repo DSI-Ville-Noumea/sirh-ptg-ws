@@ -213,7 +213,7 @@ public class PointageService implements IPointageService {
 		ptg.setPointageParent(parentPointage);
 		ptg.setIdAgent(idAgent);
 		ptg.setDateLundi(dateLundi);
-		
+
 		addEtatPointage(ptg, EtatPointageEnum.SAISI, idAgentCreator, dateEtat);
 
 		// If this pointage is a new version of an existing one,
@@ -292,15 +292,15 @@ public class PointageService implements IPointageService {
 	@Override
 	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate,
 			RefTypePointageEnum type, List<EtatPointageEnum> etats) {
-		return getLatestPointagesForAgentsAndDates(Arrays.asList(idAgent), fromDate, toDate, type, etats);
+		return getLatestPointagesForAgentsAndDates(Arrays.asList(idAgent), fromDate, toDate, type, etats, null);
 	}
 
 	@Override
 	public List<Pointage> getLatestPointagesForAgentsAndDates(List<Integer> idAgents, Date fromDate, Date toDate,
-			RefTypePointageEnum type, List<EtatPointageEnum> etats) {
+			RefTypePointageEnum type, List<EtatPointageEnum> etats, String typeHS) {
 
 		List<Pointage> agentPointages = pointageRepository.getListPointages(idAgents, fromDate, toDate,
-				type != null ? type.getValue() : null);
+				type != null ? type.getValue() : null, typeHS);
 
 		logger.debug("Found {} Pointage for agents {} between dates {} and {}", agentPointages.size(), idAgents,
 				fromDate, toDate);
@@ -317,10 +317,9 @@ public class PointageService implements IPointageService {
 		logger.debug("Found {} Pointage for agent {} and ventil date {} as of {}", agentPointages.size(), idAgent,
 				ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
 
-		return filterOldPointagesAndEtatFromList(agentPointages,
-				Arrays.asList(EtatPointageEnum.VENTILE));
+		return filterOldPointagesAndEtatFromList(agentPointages, Arrays.asList(EtatPointageEnum.VENTILE));
 	}
-	
+
 	@Override
 	public List<Pointage> getPointagesVentilesAndRejetesForAgent(Integer idAgent, VentilDate ventilDate) {
 
@@ -329,10 +328,10 @@ public class PointageService implements IPointageService {
 
 		List<Pointage> result = filterOldPointagesAndEtatFromList(agentPointages,
 				Arrays.asList(EtatPointageEnum.REJETE));
-		
-		logger.debug("Found {} Pointage Ventile Rejete for agent {} and ventil date {} as of {}", result.size(), idAgent,
-				ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
-		
+
+		logger.debug("Found {} Pointage Ventile Rejete for agent {} and ventil date {} as of {}", result.size(),
+				idAgent, ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
+
 		return result;
 	}
 

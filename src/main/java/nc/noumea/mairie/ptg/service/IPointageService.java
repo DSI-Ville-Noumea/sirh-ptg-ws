@@ -108,10 +108,11 @@ public interface IPointageService {
 	 * @param toDate
 	 * @param type
 	 * @param etats
+	 * @param typeHS 
 	 * @return
 	 */
 	List<Pointage> getLatestPointagesForAgentsAndDates(List<Integer> idAgents, Date fromDate, Date toDate,
-			RefTypePointageEnum type, List<EtatPointageEnum> etats);
+			RefTypePointageEnum type, List<EtatPointageEnum> etats, String typeHS);
 
 	/**
 	 * Retrieves a list of Pointages that have been ventilated for a given agent

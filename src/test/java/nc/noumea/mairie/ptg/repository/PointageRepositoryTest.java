@@ -1,6 +1,8 @@
 package nc.noumea.mairie.ptg.repository;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -138,7 +140,7 @@ public class PointageRepositoryTest {
 		Integer idRefType = 1;
 
 		// When
-		List<Pointage> result = repository.getListPointages(agents, fromDate, toDate, idRefType);
+		List<Pointage> result = repository.getListPointages(agents, fromDate, toDate, idRefType, null);
 
 		// Then
 		assertEquals(3, result.size());
@@ -445,7 +447,7 @@ public class PointageRepositoryTest {
 
 		assertEquals(1, repository.removePointageCalculesForDateAgent(9005138, new LocalDate(2013, 7, 23).toDate()));
 	}
-	
+
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void removePointageCalculesForDateAgent_badAgent() {
@@ -545,7 +547,7 @@ public class PointageRepositoryTest {
 		List<Integer> listAgents = new ArrayList<Integer>();
 		listAgents.add(9005138);
 		List<Pointage> result = repository.getListPointages(listAgents, new LocalDate(2013, 7, 21).toDate(),
-				new LocalDate(2013, 7, 22).toDate(), new Integer(1));
+				new LocalDate(2013, 7, 22).toDate(), new Integer(1), null);
 
 		assertEquals(1, result.size());
 		assertEquals(RefTypeAbsenceEnum.CONCERTEE.getValue(), result.get(0).getRefTypeAbsence().getIdRefTypeAbsence());
@@ -641,7 +643,7 @@ public class PointageRepositoryTest {
 		assertEquals(new LocalDate(2013, 7, 22).toDate(), result.get(0).getDateDebut());
 		assertEquals(new LocalDate(2013, 7, 29).toDate(), result.get(0).getDateFin());
 	}
-	
+
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void getPointagesCalculesVentilesForAgent_badEtat() {

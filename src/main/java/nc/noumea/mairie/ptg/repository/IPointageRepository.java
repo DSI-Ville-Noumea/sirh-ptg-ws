@@ -23,7 +23,7 @@ public interface IPointageRepository {
 
     List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
 
-    List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
+	List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType, String typeHS);
 
     List<Pointage> getPointagesVentilesForAgent(Integer idAgent, Integer idVentilDate);
     
