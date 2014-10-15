@@ -16,6 +16,7 @@ import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
@@ -138,6 +139,12 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		if ((carr.getStatutCarriere() != AgentStatutEnum.F || carr.getSpbarem().getIna() <= 315)
 				&& !carr.getSpbase().getCdBase().equals("Z"))
 			return srm;
+		
+		//cas de la DPM #11622
+		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent);
+		if(service.getSigle().toUpperCase().equals("DPM")){
+			return srm;
+		}
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
@@ -344,7 +351,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
-		
+
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
 		checkSprircRecuperation(srm, idAgent, dateLundi, pointages);
 		checkSpcongConge(srm, idAgent, dateLundi, pointages);
