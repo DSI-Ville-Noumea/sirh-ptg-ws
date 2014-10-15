@@ -81,6 +81,10 @@ public class Pointage {
 	@Type(type = "boolean")
 	private Boolean heureSupRecuperee;
 
+	@Column(name = "IS_HSUP_RAPPEL_SERVICE")
+	@Type(type = "boolean")
+	private Boolean heureSupRappelService;
+
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
 	private RefTypeAbsence refTypeAbsence;
@@ -245,6 +249,14 @@ public class Pointage {
 
 	public void setRefTypeAbsence(RefTypeAbsence refTypeAbsence) {
 		this.refTypeAbsence = refTypeAbsence;
+	}
+
+	public Boolean getHeureSupRappelService() {
+		return heureSupRappelService;
+	}
+
+	public void setHeureSupRappelService(Boolean heureSupRappelService) {
+		this.heureSupRappelService = heureSupRappelService;
 	}
 
 }

@@ -15,10 +15,9 @@ public class HeureSupDto extends PointageDto {
 	}
 
 	public HeureSupDto(Pointage p) {
-		// TODO
-		// remplir le DTO pour rappel en service et isDPM
 		super(p);
 		this.recuperee = p.getHeureSupRecuperee();
+		this.rappelService = p.getHeureSupRappelService();
 	}
 
 	public boolean getRecuperee() {
@@ -29,7 +28,7 @@ public class HeureSupDto extends PointageDto {
 		this.recuperee = recuperee;
 	}
 
-	public boolean isRappelService() {
+	public boolean getRappelService() {
 		return rappelService;
 	}
 

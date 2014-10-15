@@ -42,6 +42,7 @@ public class ConsultPointageDto {
 			case H_SUP:
 				quantite = helper.formatMinutesToString(debut, fin);
 				heuresSupRecuperees = null == ptg.getHeureSupRecuperee() ? false : ptg.getHeureSupRecuperee();
+				heuresSupRappelEnService = null == ptg.getHeureSupRappelService() ? false : ptg.getHeureSupRappelService();
 				break;
 			case PRIME:
 				typePointage = ptg.getRefPrime().getLibelle();

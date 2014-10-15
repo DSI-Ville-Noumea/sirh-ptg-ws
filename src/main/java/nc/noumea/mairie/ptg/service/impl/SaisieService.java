@@ -80,7 +80,7 @@ public class SaisieService implements ISaisieService {
 		List<Pointage> finalPointages = new ArrayList<Pointage>();
 		boolean isPointageAbsenceModifie = false;
 		boolean isPointageHSupModifie = false;
-		
+
 		for (JourPointageDto jourDto : fichePointageDto.getSaisies()) {
 
 			for (AbsenceDto abs : jourDto.getAbsences()) {
@@ -133,6 +133,7 @@ public class SaisieService implements ISaisieService {
 				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi,
 						helperService.getCurrentDate());
 				ptg.setHeureSupRecuperee(hs.getRecuperee());
+				ptg.setHeureSupRappelService(hs.getRappelService());
 				ptg.setDateDebut(hs.getHeureDebut());
 				ptg.setDateFin(hs.getHeureFin());
 				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.H_SUP.getValue()));
@@ -183,16 +184,17 @@ public class SaisieService implements ISaisieService {
 		if (result.getErrors().size() != 0)
 			return result;
 
-		// si une heure sup ou absence est modifiee, 
-		// on repasse toutes les hsup et absence a APPROUVE si celles-ci etaient en VALIDE ou JOURNALISE
+		// si une heure sup ou absence est modifiee,
+		// on repasse toutes les hsup et absence a APPROUVE si celles-ci etaient
+		// en VALIDE ou JOURNALISE
 		// pour qu elles soient reprises en compte dans la ventilation
-		if(isPointageAbsenceModifie || isPointageHSupModifie) {
-			
-			originalAgentPointages = pointageService.getLatestPointagesForSaisieForAgentAndDateMonday(
-					idAgent, dateLundi);
-			
+		if (isPointageAbsenceModifie || isPointageHSupModifie) {
+
+			originalAgentPointages = pointageService.getLatestPointagesForSaisieForAgentAndDateMonday(idAgent,
+					dateLundi);
+
 			Date currentDateEtat = getCurrentDateEtat(idAgent, dateLundi);
-			
+
 			for (JourPointageDto jourDto : fichePointageDto.getSaisies()) {
 				for (AbsenceDto abs : jourDto.getAbsences()) {
 
@@ -202,24 +204,27 @@ public class SaisieService implements ISaisieService {
 					// Try to retrieve in the existing original pointages if it
 					// exists
 					Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, abs);
-					
-					if(null != ptg
+
+					if (null != ptg
 							&& !isPointageDejaModifie(finalPointages, ptg)
-							&& (EtatPointageEnum.VALIDE.equals(ptg.getLatestEtatPointage().getEtat())
-									|| EtatPointageEnum.JOURNALISE.equals(ptg.getLatestEtatPointage().getEtat()))) {
+							&& (EtatPointageEnum.VALIDE.equals(ptg.getLatestEtatPointage().getEtat()) || EtatPointageEnum.JOURNALISE
+									.equals(ptg.getLatestEtatPointage().getEtat()))) {
 						// Only if it has changed, process this pointage
-						ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi,
-								helperService.getCurrentDate());
+						ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent,
+								dateLundi, helperService.getCurrentDate());
 						if (null != abs.getIdRefTypeAbsence()) {
-							ptg.setRefTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class, abs.getIdRefTypeAbsence()));
+							ptg.setRefTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class,
+									abs.getIdRefTypeAbsence()));
 						}
-						ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.ABSENCE.getValue()));
-	
+						ptg.setType(pointageRepository.getEntity(RefTypePointage.class,
+								RefTypePointageEnum.ABSENCE.getValue()));
+
 						crudComments(ptg, abs.getMotif(), abs.getCommentaire());
-						
-						if (!approveModifiedPointages) 
-							pointageService.addEtatPointage(ptg, EtatPointageEnum.APPROUVE, idAgentOperator, currentDateEtat);
-	
+
+						if (!approveModifiedPointages)
+							pointageService.addEtatPointage(ptg, EtatPointageEnum.APPROUVE, idAgentOperator,
+									currentDateEtat);
+
 						finalPointages.add(ptg);
 					}
 				}
@@ -232,27 +237,28 @@ public class SaisieService implements ISaisieService {
 					// Try to retrieve in the existing original pointages if it
 					// exists
 					Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, hs);
-					
-					if(null != ptg
+
+					if (null != ptg
 							&& !isPointageDejaModifie(finalPointages, ptg)
-							&& (EtatPointageEnum.VALIDE.equals(ptg.getLatestEtatPointage().getEtat())
-									|| EtatPointageEnum.JOURNALISE.equals(ptg.getLatestEtatPointage().getEtat()))) {
+							&& (EtatPointageEnum.VALIDE.equals(ptg.getLatestEtatPointage().getEtat()) || EtatPointageEnum.JOURNALISE
+									.equals(ptg.getLatestEtatPointage().getEtat()))) {
 						// Only if it has changed, process this pointage
-						ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi,
-								helperService.getCurrentDate());
-						ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.H_SUP.getValue()));
-	
+						ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent,
+								dateLundi, helperService.getCurrentDate());
+						ptg.setType(pointageRepository.getEntity(RefTypePointage.class,
+								RefTypePointageEnum.H_SUP.getValue()));
+
 						crudComments(ptg, hs.getMotif(), hs.getCommentaire());
-						
-						if (!approveModifiedPointages) 
+
+						if (!approveModifiedPointages)
 							pointageService.addEtatPointage(ptg, EtatPointageEnum.APPROUVE, idAgent, currentDateEtat);
-						
+
 						finalPointages.add(ptg);
 					}
 				}
 			}
 		}
-		
+
 		// If called with the approvedModifidPointages parameter, we need to
 		// mark all the modified pointages directly as APPROUVE
 		if (approveModifiedPointages) {
@@ -264,27 +270,26 @@ public class SaisieService implements ISaisieService {
 
 		return result;
 	}
-	
+
 	protected boolean isPointageDejaModifie(List<Pointage> finalPointages, Pointage ptg) {
 		boolean isPointageDejaModifie = false;
 		for (Pointage p : finalPointages) {
 			if ((null != p.getIdPointage() && p.getIdPointage().equals(ptg.getIdPointage()))
-					|| (null != p.getPointageParent() && null != p.getPointageParent().getIdPointage() 
-						&& p.getPointageParent().getIdPointage().equals(ptg.getIdPointage())) ) {
+					|| (null != p.getPointageParent() && null != p.getPointageParent().getIdPointage() && p
+							.getPointageParent().getIdPointage().equals(ptg.getIdPointage()))) {
 				isPointageDejaModifie = true;
 				break;
 			}
 		}
 		return isPointageDejaModifie;
 	}
-	
+
 	protected Date getCurrentDateEtat(Integer idAgent, Date dateLundi) {
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
 				dateLundi);
 		VentilDate currentVentilation = ventilationRepository.getLatestVentilDate(
 				helperService.getTypeChainePaieFromStatut(carr.getStatutCarriere()), false);
-		return currentVentilation == null ? helperService.getCurrentDate() : currentVentilation
-				.getDateVentilation();
+		return currentVentilation == null ? helperService.getCurrentDate() : currentVentilation.getDateVentilation();
 	}
 
 	protected void markPointagesAsApproved(List<Pointage> pointages, Date dateLundi, Integer idAgent,
@@ -415,6 +420,7 @@ public class SaisieService implements ISaisieService {
 	protected boolean hasPointageChanged(Pointage ptg, HeureSupDto hSup) {
 
 		boolean hasBeenModified = !(ptg.getHeureSupRecuperee().equals(hSup.getRecuperee())
+				&& ptg.getHeureSupRappelService().equals(hSup.getRappelService())
 				&& ptg.getDateDebut().getTime() == hSup.getHeureDebut().getTime() && ptg.getDateFin().getTime() == hSup
 				.getHeureFin().getTime());
 

@@ -224,6 +224,7 @@ public class PointageService implements IPointageService {
 			ptg.setQuantite(parentPointage.getQuantite());
 			ptg.setRefTypeAbsence(parentPointage.getRefTypeAbsence());
 			ptg.setHeureSupRecuperee(parentPointage.getHeureSupRecuperee());
+			ptg.setHeureSupRappelService(parentPointage.getHeureSupRappelService());
 			ptg.setType(parentPointage.getType());
 		}
 
