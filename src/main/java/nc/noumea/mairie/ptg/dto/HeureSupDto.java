@@ -9,7 +9,6 @@ public class HeureSupDto extends PointageDto {
 
 	private boolean recuperee;
 	private boolean rappelService;
-	private boolean isDPM;
 
 	public HeureSupDto() {
 
@@ -36,13 +35,5 @@ public class HeureSupDto extends PointageDto {
 
 	public void setRappelService(boolean rappelService) {
 		this.rappelService = rappelService;
-	}
-
-	public boolean isDPM() {
-		return isDPM;
-	}
-
-	public void setDPM(boolean isDPM) {
-		this.isDPM = isDPM;
 	}
 }
