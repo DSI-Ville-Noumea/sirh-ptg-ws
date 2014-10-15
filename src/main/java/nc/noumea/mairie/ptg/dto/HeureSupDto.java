@@ -8,12 +8,16 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 public class HeureSupDto extends PointageDto {
 
 	private boolean recuperee;
+	private boolean rappelService;
+	private boolean isDPM;
 
 	public HeureSupDto() {
 
 	}
 
 	public HeureSupDto(Pointage p) {
+		// TODO
+		// remplir le DTO pour rappel en service et isDPM
 		super(p);
 		this.recuperee = p.getHeureSupRecuperee();
 	}
@@ -24,5 +28,21 @@ public class HeureSupDto extends PointageDto {
 
 	public void setRecuperee(boolean recuperee) {
 		this.recuperee = recuperee;
+	}
+
+	public boolean isRappelService() {
+		return rappelService;
+	}
+
+	public void setRappelService(boolean rappelService) {
+		this.rappelService = rappelService;
+	}
+
+	public boolean isDPM() {
+		return isDPM;
+	}
+
+	public void setDPM(boolean isDPM) {
+		this.isDPM = isDPM;
 	}
 }
