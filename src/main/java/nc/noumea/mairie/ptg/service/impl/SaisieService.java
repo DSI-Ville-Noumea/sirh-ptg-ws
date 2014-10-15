@@ -138,7 +138,6 @@ public class SaisieService implements ISaisieService {
 				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi,
 						helperService.getCurrentDate());
 				//cas de la DMP #11622
-				//cas de la DPM #11622
 				SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent);
 				if(service.getSigle().toUpperCase().equals("DPM")){
 					ptg.setHeureSupRecuperee(true);
