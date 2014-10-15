@@ -13,44 +13,44 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 
 public interface IPointageRepository {
 
-    List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut);
+	List<RefPrime> getRefPrimes(List<Integer> noRubrList, AgentStatutEnum statut);
 
-    List<RefPrime> getRefPrimesCalculees(List<Integer> noRubrList, AgentStatutEnum statut);
-    
-    List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut);
+	List<RefPrime> getRefPrimesCalculees(List<Integer> noRubrList, AgentStatutEnum statut);
 
-    List<RefPrime> getRefPrimesList();
+	List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut);
 
-    List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
+	List<RefPrime> getRefPrimesList();
 
-	List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType, String typeHS);
+	List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi);
 
-    List<Pointage> getPointagesVentilesForAgent(Integer idAgent, Integer idVentilDate);
-    
-    List<PointageCalcule> getPointagesCalculesVentilesForAgent(Integer idAgent, Integer idVentilDate);
+	List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType);
 
-    List<Pointage> getPointageArchives(Integer idPointage);
+	List<Pointage> getPointagesVentilesForAgent(Integer idAgent, Integer idVentilDate);
 
-    int removePointageCalculesForDateAgent(Integer idAgent, Date dateLundi);
+	List<PointageCalcule> getPointagesCalculesVentilesForAgent(Integer idAgent, Integer idVentilDate);
 
-    void savePointage(Pointage ptg);
+	List<Pointage> getPointageArchives(Integer idPointage);
 
-    List<RefPrime> getRefPrimesListWithNoRubr(Integer noRubr);
+	int removePointageCalculesForDateAgent(Integer idAgent, Date dateLundi);
 
-    <T> T getEntity(Class<T> Tclass, Object Id);
-    
-    void persisEntity(Object entity);
-    
-    void removeEntity(Object entity);
+	void savePointage(Pointage ptg);
+
+	List<RefPrime> getRefPrimesListWithNoRubr(Integer noRubr);
+
+	<T> T getEntity(Class<T> Tclass, Object Id);
+
+	void persisEntity(Object entity);
+
+	void removeEntity(Object entity);
 
 	boolean isPrimeSurPointageouPointageCalcule(Integer idAgent, Integer idRefPrime);
-	
+
 	List<RefEtat> findAllRefEtats();
-	
+
 	List<RefTypePointage> findAllRefTypePointages();
 
 	List<Integer> listAllDistinctIdAgentPointage();
-	
+
 	List<RefTypeAbsence> findAllRefTypeAbsence();
 
 	List<Integer> getListApprobateursPointagesSaisiesJourDonne();

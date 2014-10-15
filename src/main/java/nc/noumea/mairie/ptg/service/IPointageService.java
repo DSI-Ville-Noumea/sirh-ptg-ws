@@ -34,7 +34,8 @@ public interface IPointageService {
 	 * @param dateEtat
 	 * @return
 	 */
-	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Date dateEtat);
+	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi,
+			Date dateEtat);
 
 	/**
 	 * Based on the user input, this code retrieves a Pointage if existing,
@@ -49,7 +50,8 @@ public interface IPointageService {
 	 * @param idRefPrime
 	 * @return
 	 */
-	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi, Date dateEtat, Integer idRefPrime);
+	Pointage getOrCreateNewPointage(Integer idAgentCreator, Integer idPointage, Integer idAgent, Date dateLundi,
+			Date dateEtat, Integer idRefPrime);
 
 	/**
 	 * Returns a list of FichePointageDto initialized with Agents assigned
@@ -108,7 +110,7 @@ public interface IPointageService {
 	 * @param toDate
 	 * @param type
 	 * @param etats
-	 * @param typeHS 
+	 * @param typeHS
 	 * @return
 	 */
 	List<Pointage> getLatestPointagesForAgentsAndDates(List<Integer> idAgents, Date fromDate, Date toDate,
@@ -116,6 +118,7 @@ public interface IPointageService {
 
 	/**
 	 * Retrieves a list of Pointages that have been ventilated for a given agent
+	 * 
 	 * @param idAgent
 	 * @param ventilDate
 	 * @return
@@ -123,13 +126,15 @@ public interface IPointageService {
 	List<Pointage> getPointagesVentilesForAgent(Integer idAgent, VentilDate ventilDate);
 
 	/**
-	 * Retrieves a list of Pointages Calcules that have been ventilated for a given agent
+	 * Retrieves a list of Pointages Calcules that have been ventilated for a
+	 * given agent
+	 * 
 	 * @param idAgent
 	 * @param ventilDate
 	 * @return
 	 */
 	List<PointageCalcule> getPointagesCalculesVentilesForAgent(Integer idAgent, VentilDate ventilDate);
-	
+
 	/**
 	 * 
 	 * @param idAgent
@@ -137,20 +142,24 @@ public interface IPointageService {
 	 * @return
 	 */
 	boolean isPrimeUtiliseePointage(Integer idAgent, List<Integer> refPrimes);
-	
+
 	/**
 	 * Filters Pointages by removing parents from the list.
-	 * @param pointages - It is mandatory that the pointages are sorted by idPointage asc
-	 * @param etats - Optional list of Etats to keep. If null, no filter will be applied
+	 * 
+	 * @param pointages
+	 *            - It is mandatory that the pointages are sorted by idPointage
+	 *            asc
+	 * @param etats
+	 *            - Optional list of Etats to keep. If null, no filter will be
+	 *            applied
 	 * @return
 	 */
-	List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats);
-	
+	List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats,
+			String typeHS);
+
 	List<RefTypeAbsenceDto> getRefTypeAbsence();
 
-	void addEtatPointage(Pointage ptg, EtatPointageEnum etat,
-			Integer idAgentCreator, Date dateEtat);
+	void addEtatPointage(Pointage ptg, EtatPointageEnum etat, Integer idAgentCreator, Date dateEtat);
 
-	List<Pointage> getPointagesVentilesAndRejetesForAgent(Integer idAgent,
-			VentilDate ventilDate);
+	List<Pointage> getPointagesVentilesAndRejetesForAgent(Integer idAgent, VentilDate ventilDate);
 }

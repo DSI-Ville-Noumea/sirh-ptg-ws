@@ -1472,7 +1472,7 @@ public class ApprobationServiceTest {
 		IPointageService pointageService = Mockito.mock(IPointageService.class);
 		Mockito.when(
 				pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,
-						Arrays.asList(EtatPointageEnum.VALIDE))).thenReturn(listePointagesAgent);
+						Arrays.asList(EtatPointageEnum.VALIDE), null)).thenReturn(listePointagesAgent);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
@@ -1544,7 +1544,7 @@ public class ApprobationServiceTest {
 		IPointageService pointageService = Mockito.mock(IPointageService.class);
 		Mockito.when(
 				pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,
-						Arrays.asList(EtatPointageEnum.VALIDE))).thenReturn(listePointagesAgent);
+						Arrays.asList(EtatPointageEnum.VALIDE), null)).thenReturn(listePointagesAgent);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
@@ -1607,7 +1607,7 @@ public class ApprobationServiceTest {
 		IPointageService pointageService = Mockito.mock(IPointageService.class);
 		Mockito.when(
 				pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,
-						Arrays.asList(EtatPointageEnum.VALIDE))).thenReturn(listePointagesAgent);
+						Arrays.asList(EtatPointageEnum.VALIDE), null)).thenReturn(listePointagesAgent);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
@@ -1678,7 +1678,7 @@ public class ApprobationServiceTest {
 		IPointageService pointageService = Mockito.mock(IPointageService.class);
 		Mockito.when(
 				pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,
-						Arrays.asList(EtatPointageEnum.VALIDE))).thenReturn(listePointagesAgent);
+						Arrays.asList(EtatPointageEnum.VALIDE), null)).thenReturn(listePointagesAgent);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
@@ -1741,7 +1741,7 @@ public class ApprobationServiceTest {
 		IPointageService pointageService = Mockito.mock(IPointageService.class);
 		Mockito.when(
 				pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,
-						Arrays.asList(EtatPointageEnum.VALIDE))).thenReturn(listePointagesAgent);
+						Arrays.asList(EtatPointageEnum.VALIDE), null)).thenReturn(listePointagesAgent);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);

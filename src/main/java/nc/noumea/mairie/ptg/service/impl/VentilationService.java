@@ -137,13 +137,14 @@ public class VentilationService implements IVentilationService {
 		if (agents.size() == 0) {
 			agents = ventilationRepository.getListIdAgentsForVentilationByDateAndEtat(
 					fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
-			
+
 			// we are looking for pointages still validated, and then rejeted
 			// to delete in AS400
-			List<Integer> listAgentWithPointageRejete = ventilationRepository.getListIdAgentsWithPointagesValidatedAndRejetes(toVentilDate.getIdVentilDate());
-			if(null != listAgentWithPointageRejete) {
-				for(Integer idAgentWithPointageRejete : listAgentWithPointageRejete) {
-					if(!agents.contains(idAgentWithPointageRejete)) {
+			List<Integer> listAgentWithPointageRejete = ventilationRepository
+					.getListIdAgentsWithPointagesValidatedAndRejetes(toVentilDate.getIdVentilDate());
+			if (null != listAgentWithPointageRejete) {
+				for (Integer idAgentWithPointageRejete : listAgentWithPointageRejete) {
+					if (!agents.contains(idAgentWithPointageRejete)) {
 						agents.add(idAgentWithPointageRejete);
 					}
 				}
@@ -283,7 +284,7 @@ public class VentilationService implements IVentilationService {
 		// Then filter them (if they have parent pointages to be excluded for
 		// ex.)
 		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(
-				agentsPointageForPeriod,  Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE));
+				agentsPointageForPeriod, Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE), null);
 
 		boolean has1150Prime = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
@@ -315,7 +316,7 @@ public class VentilationService implements IVentilationService {
 				fromVentilDate, ventilDate.getDateVentilation(), dateDebutMois);
 
 		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(
-				agentsPointageForPeriod, null);
+				agentsPointageForPeriod, null, null);
 
 		List<PointageCalcule> agentsPointagesCalculesForPeriod = ventilationRepository
 				.getListPointagesCalculesPrimeForVentilation(idAgent, dateDebutMois);
@@ -328,31 +329,33 @@ public class VentilationService implements IVentilationService {
 		primesVentilees.addAll(ventilationPrimeService.processPrimesCalculeesAgent(idAgent,
 				agentsPointagesCalculesForPeriod, dateDebutMois));
 
-		// if no VentilPrime for this month, we are looking for a old validated VentilPrime for this same month 
-		// so if we find it, we create a VentilPrime with quantite = 0 to delete in SPPRIM (AS400)
+		// if no VentilPrime for this month, we are looking for a old validated
+		// VentilPrime for this same month
+		// so if we find it, we create a VentilPrime with quantite = 0 to delete
+		// in SPPRIM (AS400)
 		List<VentilPrime> listOldVentilPrime = ventilationRepository.getListOfOldVentilPrimeForAgentAndDateDebutMois(
 				idAgent, dateDebutMois, ventilDate.getIdVentilDate());
 
-		if(null != listOldVentilPrime && !listOldVentilPrime.isEmpty()) {
+		if (null != listOldVentilPrime && !listOldVentilPrime.isEmpty()) {
 			List<Integer> refPrime = new ArrayList<Integer>();
-			for(VentilPrime ventilPrime : primesVentilees) {
+			for (VentilPrime ventilPrime : primesVentilees) {
 				refPrime.add(ventilPrime.getIdRefPrime());
 			}
-			
-			for(VentilPrime primeOld : listOldVentilPrime) {
-				if(!refPrime.contains(primeOld.getIdRefPrime())) {
+
+			for (VentilPrime primeOld : listOldVentilPrime) {
+				if (!refPrime.contains(primeOld.getIdRefPrime())) {
 					VentilPrime ventilPrime = new VentilPrime();
-						ventilPrime.setIdAgent(idAgent);
-						ventilPrime.setDateDebutMois(dateDebutMois);
-						ventilPrime.setEtat(EtatPointageEnum.VENTILE);
-						ventilPrime.setQuantite(0);
-						ventilPrime.setRefPrime(primeOld.getRefPrime());
+					ventilPrime.setIdAgent(idAgent);
+					ventilPrime.setDateDebutMois(dateDebutMois);
+					ventilPrime.setEtat(EtatPointageEnum.VENTILE);
+					ventilPrime.setQuantite(0);
+					ventilPrime.setRefPrime(primeOld.getRefPrime());
 					primesVentilees.add(ventilPrime);
 					refPrime.add(primeOld.getIdRefPrime());
 				}
 			}
 		}
-		
+
 		// persisting all the generated entities linking them to the current
 		// ventil date
 		for (VentilPrime v : primesVentilees) {
@@ -619,16 +622,17 @@ public class VentilationService implements IVentilationService {
 		result.setCanStartVentilation(!ventilationRepository.canStartVentilation(typeChainePaieFromStatut));
 		return result;
 	}
-	
+
 	@Override
-	public List<Integer> getListeAgentsToShowVentilation(Integer idDateVentil, Integer idRefTypePointage, AgentStatutEnum statut, 
-			Integer agentMin,Integer agentMax, Date dateVentilation) {
-	
+	public List<Integer> getListeAgentsToShowVentilation(Integer idDateVentil, Integer idRefTypePointage,
+			AgentStatutEnum statut, Integer agentMin, Integer agentMax, Date dateVentilation) {
+
 		List<Integer> listeAgents = new ArrayList<Integer>();
-		
+
 		switch (RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage)) {
 			case ABSENCE: {
-				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationAbsencesForDate(idDateVentil, agentMin, agentMax)) {
+				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationAbsencesForDate(
+						idDateVentil, agentMin, agentMax)) {
 					Spcarr carr = isAgentEligibleToVentilation(idAgent, statut, dateVentilation);
 					if (null != carr) {
 						listeAgents.add(idAgent);
@@ -637,7 +641,8 @@ public class VentilationService implements IVentilationService {
 				break;
 			}
 			case H_SUP: {
-				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationHeuresSupForDate(idDateVentil, agentMin, agentMax)) {
+				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationHeuresSupForDate(
+						idDateVentil, agentMin, agentMax)) {
 					Spcarr carr = isAgentEligibleToVentilation(idAgent, statut, dateVentilation);
 					if (null != carr) {
 						listeAgents.add(idAgent);
@@ -646,7 +651,8 @@ public class VentilationService implements IVentilationService {
 				break;
 			}
 			case PRIME: {
-				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationPrimesForDate(idDateVentil, agentMin, agentMax)){
+				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationPrimesForDate(idDateVentil,
+						agentMin, agentMax)) {
 					Spcarr carr = isAgentEligibleToVentilation(idAgent, statut, dateVentilation);
 					if (null != carr) {
 						listeAgents.add(idAgent);
@@ -655,7 +661,7 @@ public class VentilationService implements IVentilationService {
 				break;
 			}
 		}
-		
+
 		return listeAgents;
 	}
 }

@@ -140,7 +140,7 @@ public class PointageRepositoryTest {
 		Integer idRefType = 1;
 
 		// When
-		List<Pointage> result = repository.getListPointages(agents, fromDate, toDate, idRefType, null);
+		List<Pointage> result = repository.getListPointages(agents, fromDate, toDate, idRefType);
 
 		// Then
 		assertEquals(3, result.size());
@@ -547,7 +547,7 @@ public class PointageRepositoryTest {
 		List<Integer> listAgents = new ArrayList<Integer>();
 		listAgents.add(9005138);
 		List<Pointage> result = repository.getListPointages(listAgents, new LocalDate(2013, 7, 21).toDate(),
-				new LocalDate(2013, 7, 22).toDate(), new Integer(1), null);
+				new LocalDate(2013, 7, 22).toDate(), new Integer(1));
 
 		assertEquals(1, result.size());
 		assertEquals(RefTypeAbsenceEnum.CONCERTEE.getValue(), result.get(0).getRefTypeAbsence().getIdRefTypeAbsence());

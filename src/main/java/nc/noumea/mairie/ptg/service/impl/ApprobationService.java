@@ -364,7 +364,7 @@ public class ApprobationService implements IApprobationService {
 							.getRefPrime().getIdRefPrime());
 
 			List<Pointage> filteredListePointagesPrimeAgent = pointageService.filterOldPointagesAndEtatFromList(
-					listePointagesPrimeAgent, Arrays.asList(EtatPointageEnum.VALIDE));
+					listePointagesPrimeAgent, Arrays.asList(EtatPointageEnum.VALIDE),null);
 
 			if (null != filteredListePointagesPrimeAgent && !filteredListePointagesPrimeAgent.isEmpty()) {
 				for (Pointage pointage : filteredListePointagesPrimeAgent) {

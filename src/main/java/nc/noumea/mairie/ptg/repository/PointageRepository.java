@@ -121,8 +121,7 @@ public class PointageRepository implements IPointageRepository {
 	}
 
 	@Override
-	public List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType,
-			String typeHS) {
+	public List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select ptg from Pointage ptg ");
@@ -135,14 +134,6 @@ public class PointageRepository implements IPointageRepository {
 
 		if (idAgents != null && idAgents.size() > 0) {
 			sb.append("and ptg.idAgent in :idAgents ");
-		}
-
-		if (typeHS != null) {
-			if (typeHS.toUpperCase().equals("R")) {
-				sb.append("and ptg.heureSupRecuperee = true ");
-			} else if (typeHS.toUpperCase().equals("RS")) {
-				sb.append("and ptg.heureSupRappelService = true ");
-			}
 		}
 
 		sb.append("order by ptg.idPointage desc ");

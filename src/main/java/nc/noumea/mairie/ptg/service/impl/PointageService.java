@@ -286,7 +286,8 @@ public class PointageService implements IPointageService {
 
 		return filterOldPointagesAndEtatFromList(agentPointages, Arrays.asList(EtatPointageEnum.APPROUVE,
 				EtatPointageEnum.EN_ATTENTE, EtatPointageEnum.JOURNALISE, EtatPointageEnum.REFUSE,
-				EtatPointageEnum.REJETE, EtatPointageEnum.SAISI, EtatPointageEnum.VALIDE, EtatPointageEnum.VENTILE));
+				EtatPointageEnum.REJETE, EtatPointageEnum.SAISI, EtatPointageEnum.VALIDE, EtatPointageEnum.VENTILE),
+				null);
 	}
 
 	@Override
@@ -300,12 +301,12 @@ public class PointageService implements IPointageService {
 			RefTypePointageEnum type, List<EtatPointageEnum> etats, String typeHS) {
 
 		List<Pointage> agentPointages = pointageRepository.getListPointages(idAgents, fromDate, toDate,
-				type != null ? type.getValue() : null, typeHS);
+				type != null ? type.getValue() : null);
 
 		logger.debug("Found {} Pointage for agents {} between dates {} and {}", agentPointages.size(), idAgents,
 				fromDate, toDate);
 
-		return filterOldPointagesAndEtatFromList(agentPointages, etats);
+		return filterOldPointagesAndEtatFromList(agentPointages, etats, typeHS);
 	}
 
 	@Override
@@ -317,7 +318,7 @@ public class PointageService implements IPointageService {
 		logger.debug("Found {} Pointage for agent {} and ventil date {} as of {}", agentPointages.size(), idAgent,
 				ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
 
-		return filterOldPointagesAndEtatFromList(agentPointages, Arrays.asList(EtatPointageEnum.VENTILE));
+		return filterOldPointagesAndEtatFromList(agentPointages, Arrays.asList(EtatPointageEnum.VENTILE), null);
 	}
 
 	@Override
@@ -327,7 +328,7 @@ public class PointageService implements IPointageService {
 				ventilDate.getIdVentilDate());
 
 		List<Pointage> result = filterOldPointagesAndEtatFromList(agentPointages,
-				Arrays.asList(EtatPointageEnum.REJETE));
+				Arrays.asList(EtatPointageEnum.REJETE), null);
 
 		logger.debug("Found {} Pointage Ventile Rejete for agent {} and ventil date {} as of {}", result.size(),
 				idAgent, ventilDate.getIdVentilDate(), ventilDate.getDateVentilation());
@@ -336,7 +337,8 @@ public class PointageService implements IPointageService {
 	}
 
 	@Override
-	public List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats) {
+	public List<Pointage> filterOldPointagesAndEtatFromList(List<Pointage> pointages, List<EtatPointageEnum> etats,
+			String typeHS) {
 
 		List<Integer> oldPointagesToAvoid = new ArrayList<Integer>();
 
@@ -363,7 +365,26 @@ public class PointageService implements IPointageService {
 			}
 		}
 
-		return resultList;
+		List<Pointage> resultListFinal = new ArrayList<Pointage>();
+		if (typeHS != null) {
+			for (Pointage p : resultList) {
+				if (typeHS.toUpperCase().equals("R")) {
+					if (p.getHeureSupRecuperee() != null && p.getHeureSupRecuperee()) {
+						if (!resultListFinal.contains(p))
+							resultListFinal.add(p);
+					}
+				} else if (typeHS.toUpperCase().equals("RS")) {
+					if (p.getHeureSupRappelService() != null && p.getHeureSupRappelService()) {
+						if (!resultListFinal.contains(p))
+							resultListFinal.add(p);
+					}
+				}
+			}
+		} else {
+			resultListFinal = resultList;
+		}
+
+		return resultListFinal;
 	}
 
 	@Override

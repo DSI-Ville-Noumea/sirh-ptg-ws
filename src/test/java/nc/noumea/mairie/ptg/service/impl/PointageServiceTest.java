@@ -656,7 +656,7 @@ public class PointageServiceTest {
 		List<Pointage> ptgs = Arrays.asList(p3, p2, p1);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointages(agentIds, from, to, null, null)).thenReturn(ptgs);
+		Mockito.when(pRepo.getListPointages(agentIds, from, to, null)).thenReturn(ptgs);
 
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
@@ -696,7 +696,7 @@ public class PointageServiceTest {
 		List<Pointage> ptgs = Arrays.asList(p5, p4, p3);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointages(agentIds, from, to, type.getValue(), null)).thenReturn(ptgs);
+		Mockito.when(pRepo.getListPointages(agentIds, from, to, type.getValue())).thenReturn(ptgs);
 
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
@@ -757,7 +757,7 @@ public class PointageServiceTest {
 		List<Pointage> ptgs = Arrays.asList(p5, p4, p2, p3, p1);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
-		Mockito.when(pRepo.getListPointages(agentIds, from, to, null, null)).thenReturn(ptgs);
+		Mockito.when(pRepo.getListPointages(agentIds, from, to, null)).thenReturn(ptgs);
 
 		PointageService service = new PointageService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
