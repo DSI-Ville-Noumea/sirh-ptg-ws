@@ -1479,6 +1479,62 @@ public class ExportEtatPayeurServiceTest {
 
 		assertEquals(result, 100);
 	}
+	
+	@Test
+	public void calculMinutesRecuperation_fonctionnaire_avec_HSRappelService() {
+
+		Date dateLundi = new Date();
+
+		VentilHsup vh = new VentilHsup();
+		vh.setDateLundi(dateLundi);
+		vh.setIdAgent(9008989);
+		vh.setMRecuperees(100);
+		vh.setMRappelService(50);
+
+		Spcarr spcarr1 = new Spcarr();
+		spcarr1.setCdcate(1);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(8989, vh.getDateLundi())).thenReturn(spcarr1);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+
+		int result = service.calculMinutesRecuperation(vh);
+
+		assertEquals(result, 150);
+	}
+
+	@Test
+	public void calculMinutesRecuperation_contractuel_avec_HSRappelService() {
+
+		Date dateLundi = new Date();
+
+		VentilHsup vh = new VentilHsup();
+		vh.setDateLundi(dateLundi);
+		vh.setIdAgent(9008989);
+		vh.setMRecuperees(100);
+		vh.setMRappelService(70);
+
+		Spcarr spcarr1 = new Spcarr();
+		spcarr1.setCdcate(4);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(8989, vh.getDateLundi())).thenReturn(spcarr1);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+
+		ExportEtatPayeurService service = new ExportEtatPayeurService();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+
+		int result = service.calculMinutesRecuperation(vh);
+
+		assertEquals(result, 170);
+	}
 
 	@Test
 	public void calculMinutesRecuperation_convColl_cas1() {

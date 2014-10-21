@@ -104,6 +104,9 @@ public class VentilHsup {
     @Column(name = "M_RECUPEREES")
     private int mRecuperees;
     
+    @Column(name = "M_RAPPEL_SERVICE")
+    private int mRappelService;
+    
     @Column(name = "ETAT")
     @Enumerated(EnumType.ORDINAL)
     private EtatPointageEnum etat;
@@ -352,5 +355,12 @@ public class VentilHsup {
 	public int getTotalAbsences(){
 		return mAbsencesAS400 + mAbsences;
 	}
-    
+
+	public int getMRappelService() {
+		return mRappelService;
+	}
+
+	public void setMRappelService(int mRappelService) {
+		this.mRappelService = mRappelService;
+	}
 }

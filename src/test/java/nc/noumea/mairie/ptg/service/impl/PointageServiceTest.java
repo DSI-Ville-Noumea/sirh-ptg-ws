@@ -95,7 +95,7 @@ public class PointageServiceTest {
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDirection(idAgent)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(siserv);
 		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);

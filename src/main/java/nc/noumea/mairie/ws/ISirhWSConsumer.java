@@ -12,7 +12,7 @@ import org.joda.time.LocalDate;
 
 public interface ISirhWSConsumer {
 
-	SirhWsServiceDto getAgentDirection(Integer idAgent);
+	SirhWsServiceDto getAgentDirection(Integer idAgent, Date date);
 
 	List<AgentWithServiceDto> getServicesAgent(String rootService, Date date);
 

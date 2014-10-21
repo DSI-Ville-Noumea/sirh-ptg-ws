@@ -862,7 +862,7 @@ public class PointageDataConsistencyRulesTest {
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhRepo.getAgentDirection(idAgent)).thenReturn(dtoService);
+		Mockito.when(sirhRepo.getAgentDirection(idAgent, dateLundi)).thenReturn(dtoService);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
@@ -903,7 +903,7 @@ public class PointageDataConsistencyRulesTest {
 		dtoService.setSigle("DPM");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhRepo.getAgentDirection(idAgent)).thenReturn(dtoService);
+		Mockito.when(sirhRepo.getAgentDirection(idAgent, dateLundi)).thenReturn(dtoService);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
@@ -976,7 +976,7 @@ public class PointageDataConsistencyRulesTest {
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhRepo.getAgentDirection(idAgent)).thenReturn(dtoService);
+		Mockito.when(sirhRepo.getAgentDirection(idAgent, dateLundi)).thenReturn(dtoService);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
@@ -1017,7 +1017,7 @@ public class PointageDataConsistencyRulesTest {
 		dtoService.setSigle("DPM");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhRepo.getAgentDirection(idAgent)).thenReturn(dtoService);
+		Mockito.when(sirhRepo.getAgentDirection(idAgent, dateLundi)).thenReturn(dtoService);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);

@@ -184,6 +184,9 @@ public class VentilationHSupService implements IVentilationHSupService {
 		int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(base.getNbashh()));
 		int weekMinutes = 0 - result.getTotalAbsences();
 		int nbMinutesRecuperees = 0;
+		// pour la DPM, les heures sup recuperees en rappel de service sont doublees
+		// #11635
+		int nbMinutesRappelService = 0;
 
 		// For each day of the week, get related pointages of HSup to count them
 		// and compare to the agent Hour Base
@@ -249,6 +252,9 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 				if (ptg.getHeureSupRecuperee())
 					nbMinutesRecuperees += minutes.getTotalMinutes();
+				
+				if (ptg.getHeureSupRecuperee() && ptg.getHeureSupRappelService())
+					nbMinutesRappelService += minutes.getTotalMinutes();
 
 				// For agents statuses CC and C, count Hours done on DJF and
 				// NUIT even if those hours will not
@@ -291,6 +297,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		}
 
 		result.setMRecuperees(nbMinutesRecuperees);
+		result.setMRappelService(nbMinutesRappelService);
 		adjustHeuresRecuperees(result, statut);
 
 		return result;

@@ -108,7 +108,7 @@ public class ExportPaieHSupService implements IExportPaieHSupService {
 		nbHcomplementaires = nbHcomplementaires - (ventilHsup.getMComplementaires() == 0 ? ventilHsup.getMNormalesRecup() : ventilHsup.getMComplementairesRecup());
 		hre.setNbhcomplementaires(helperService.convertMinutesToMairieNbHeuresFormat(nbHcomplementaires));
 		
-		int nbhrecuperees = ventilHsup.getMRecuperees();
+		int nbhrecuperees = ventilHsup.getMRecuperees() + ventilHsup.getMRappelService();
 		hre.setNbhrecuperees(helperService.convertMinutesToMairieNbHeuresFormat(nbhrecuperees));
 		
 		return hre;

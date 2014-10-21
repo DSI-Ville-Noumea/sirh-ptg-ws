@@ -68,7 +68,7 @@ public class PointageService implements IPointageService {
 		}
 
 		// Retrieve division service of agent
-		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(agent.getIdAgent());
+		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(agent.getIdAgent(), date);
 
 		// on construit le dto de l'agent
 		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);

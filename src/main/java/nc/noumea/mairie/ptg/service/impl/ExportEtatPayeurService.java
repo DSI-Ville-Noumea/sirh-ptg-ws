@@ -555,7 +555,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 				vh.getDateLundi());
 		// dans le cas des fonctionnaires et contractuels : pas de majoration
 		if (carr.getStatutCarriere().equals(AgentStatutEnum.C) || carr.getStatutCarriere().equals(AgentStatutEnum.F)) {
-			return vh.getMRecuperees();
+			return vh.getMRecuperees() + vh.getMRappelService();
 		}
 		// pour les conventions collectives
 		result += vh.getMComplementairesRecup();
@@ -564,7 +564,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		result += vh.getMsdjfRecup() * 1.75;
 		result += vh.getMMaiRecup() * 1.75;
 		result += vh.getMsNuitRecup() * 2;
-
+		//TODO voir avec Michel ce que l'on fait pour les CC et la DPM
+		
 		return result;
 	}
 }

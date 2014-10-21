@@ -141,7 +141,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			return srm;
 		
 		//cas de la DPM #11622
-		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent);
+		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent, dateLundi);
 		if(service.getSigle().toUpperCase().equals("DPM")){
 			return srm;
 		}

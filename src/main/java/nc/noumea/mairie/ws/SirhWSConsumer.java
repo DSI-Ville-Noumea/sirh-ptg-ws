@@ -36,13 +36,16 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhJourFerieUrl = "utils/isJourFerie";
 
 	@Override
-	public SirhWsServiceDto getAgentDirection(Integer idAgent) {
+	public SirhWsServiceDto getAgentDirection(Integer idAgent, Date date) {
 
 		String url = String.format(sirhWsBaseUrl + sirhAgentDirectionUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
-
 		parameters.put("idAgent", String.valueOf(idAgent));
+		if (date != null) {
+			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+			parameters.put("dateAffectation", sf.format(date));
+		}
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 

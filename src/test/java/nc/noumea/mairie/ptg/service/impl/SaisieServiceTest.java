@@ -205,6 +205,7 @@ public class SaisieServiceTest {
 		Pointage newHsPointage = new Pointage();
 		newHsPointage.setIdAgent(agent.getIdAgent());
 		newHsPointage.setDateLundi(lundi);
+		newHsPointage.setDateDebut(new Date());
 		IPointageService pService = Mockito.mock(IPointageService.class);
 		Mockito.when(pService.getOrCreateNewPointage(9001234, null, agent.getIdAgent(), lundi, currentDate))
 				.thenReturn(newHsPointage);
@@ -225,7 +226,7 @@ public class SaisieServiceTest {
 		dtoService.setSigle("DPM");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent())).thenReturn(dtoService);
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), newHsPointage.getDateDebut())).thenReturn(dtoService);
 		
 		SaisieService service = new SaisieService();
 
@@ -837,6 +838,7 @@ public class SaisieServiceTest {
 		Pointage existingPointageApprouve = new Pointage();
 			existingPointageApprouve.setIdAgent(agent.getIdAgent());
 			existingPointageApprouve.setDateLundi(lundi);
+			existingPointageApprouve.setDateDebut(new Date());
 			existingPointageApprouve.setRefPrime(refPrime);
 			existingPointageApprouve.setIdPointage(1999);
 			existingPointageApprouve.getEtats().add(new EtatPointage());
@@ -851,6 +853,7 @@ public class SaisieServiceTest {
 		Pointage newHsPointage = new Pointage();
 		newHsPointage.setIdAgent(agent.getIdAgent());
 		newHsPointage.setDateLundi(lundi);
+		newHsPointage.setDateDebut(new Date());
 		
 		IPointageService pService = Mockito.mock(IPointageService.class);
 		Mockito.when(pService.getOrCreateNewPointage(9001234, null, agent.getIdAgent(), lundi, currentDate))
@@ -872,12 +875,12 @@ public class SaisieServiceTest {
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
 
-		
 		SirhWsServiceDto dtoService = new SirhWsServiceDto();
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent())).thenReturn(dtoService);
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), newHsPointage.getDateDebut())).thenReturn(dtoService);
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), existingPointageApprouve.getDateDebut())).thenReturn(dtoService);
 		
 		SaisieService service = new SaisieService();
 
@@ -1835,6 +1838,7 @@ public class SaisieServiceTest {
 		Pointage newHsPointage = new Pointage();
 		newHsPointage.setIdAgent(agent.getIdAgent());
 		newHsPointage.setDateLundi(lundi);
+		newHsPointage.setDateDebut(new Date());
 		IPointageService pService = Mockito.mock(IPointageService.class);
 		Mockito.when(pService.getOrCreateNewPointage(9001234, null, agent.getIdAgent(), lundi, currentDate))
 				.thenReturn(newHsPointage);
@@ -1855,7 +1859,7 @@ public class SaisieServiceTest {
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent())).thenReturn(dtoService);
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), newHsPointage.getDateDebut())).thenReturn(dtoService);
 		
 		SaisieService service = new SaisieService();
 
