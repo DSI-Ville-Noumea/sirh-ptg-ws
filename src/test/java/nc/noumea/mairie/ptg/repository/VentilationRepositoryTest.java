@@ -670,7 +670,7 @@ public class VentilationRepositoryTest {
 		assertEquals(1, resultAbs.size());
 		List<VentilHsup> resultHS = repository.getListOfVentilHSForDateAgent(vd.getIdVentilDate(), listAgents);
 		assertEquals(1, resultHS.size());
-		List<VentilPrime> resultPrime = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents);
+		List<VentilPrime> resultPrime = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents, true);
 		assertEquals(1, resultPrime.size());
 
 		repository.removeVentilationsForDateAgentAndType(vd, 9005138, RefTypePointageEnum.PRIME);
@@ -685,7 +685,7 @@ public class VentilationRepositoryTest {
 		assertEquals(0, resultAbs.size());
 		resultHS = repository.getListOfVentilHSForDateAgent(vd.getIdVentilDate(), listAgents);
 		assertEquals(0, resultHS.size());
-		resultPrime = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents);
+		resultPrime = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents, true);
 		assertEquals(0, resultPrime.size());
 
 		ptgEntityManager.flush();
@@ -771,7 +771,7 @@ public class VentilationRepositoryTest {
 		assertEquals(1, resultAbs.size());
 		List<VentilHsup> resultHS = repository.getListOfVentilHSForDateAgent(vd.getIdVentilDate(), listAgents);
 		assertEquals(1, resultHS.size());
-		List<VentilPrime> resultPrime = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents);
+		List<VentilPrime> resultPrime = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents, true);
 		assertEquals(1, resultPrime.size());
 
 		repository.removeVentilationsForDateAgentAndType(vd, 9005138, RefTypePointageEnum.PRIME);
@@ -786,7 +786,7 @@ public class VentilationRepositoryTest {
 		assertEquals(0, resultAbs.size());
 		resultHS = repository.getListOfVentilHSForDateAgent(vd.getIdVentilDate(), listAgents);
 		assertEquals(0, resultHS.size());
-		resultPrime = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents);
+		resultPrime = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents, true);
 		assertEquals(0, resultPrime.size());
 
 		ptgEntityManager.flush();
@@ -901,7 +901,7 @@ public class VentilationRepositoryTest {
 		listAgents.add(9005138);
 		listAgents.add(9005139);
 
-		List<VentilPrime> result = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents);
+		List<VentilPrime> result = repository.getListOfVentilPrimeForDateAgent(vd.getIdVentilDate(), listAgents, true);
 
 		assertEquals(2, result.size());
 		assertEquals(new Integer(9005138), result.get(0).getIdAgent());

@@ -189,7 +189,7 @@ public class ExportPaieService implements IExportPaieService {
 
 		// 7.Mark PTG_VENTIL_xxx as validated
 		List<VentilAbsence> vAbsences = ventilationRepository.getListVentilAbsencesForAgentAndVentilDate(idAgent, ventilDate.getIdVentilDate());
-		List<VentilPrime> vPrimesJourEtMensuel = ventilationRepository.getListOfVentilPrimeForDateAgent(ventilDate.getIdVentilDate(), Arrays.asList(idAgent));
+		List<VentilPrime> vPrimesJourEtMensuel = ventilationRepository.getListOfVentilPrimeForDateAgent(ventilDate.getIdVentilDate(), Arrays.asList(idAgent), false);
 		markVentilesAsValidated(vHsups, vPrimesJourEtMensuel, vAbsences);
 		
 		logger.info("Exportation of idExportPaieTask [{}] done.", idExportPaieTask);

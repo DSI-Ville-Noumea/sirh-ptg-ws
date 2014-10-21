@@ -374,11 +374,15 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilPrime> getListOfVentilPrimeForDateAgent(Integer ventilDateId, List<Integer> agentIds) {
+	public List<VentilPrime> getListOfVentilPrimeForDateAgent(Integer ventilDateId, List<Integer> agentIds, boolean isShowVentilation) {
 		List<VentilPrime> resultat = new ArrayList<VentilPrime>();
 		List<Integer> agentIdsReduite = null;
 
-		String query = "FROM VentilPrime tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate = :ventilDateId and tb.etat = :etat and quantite <> 0 ";
+		String query = "FROM VentilPrime tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate = :ventilDateId and tb.etat = :etat ";
+		if(isShowVentilation) {
+			query += "and quantite <> 0 ";
+		}
+		
 		int fromIndex = 0;
 		int toIndex = 0;
 

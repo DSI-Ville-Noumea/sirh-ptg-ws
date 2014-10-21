@@ -40,7 +40,7 @@ public interface IVentilationRepository {
 
 	List<VentilAbsence> getListOfVentilAbsenceForDateAgent(Integer ventilDateId, List<Integer> agentIds);
 
-	List<VentilPrime> getListOfVentilPrimeForDateAgent(Integer ventilDateId, List<Integer> agentIds);
+	List<VentilPrime> getListOfVentilPrimeForDateAgent(Integer ventilDateId, List<Integer> agentIds, boolean isShowVentilation);
 
 	List<VentilHsup> getListOfVentilHSForDateAgent(Integer ventilDateId, List<Integer> agentIds);
 
