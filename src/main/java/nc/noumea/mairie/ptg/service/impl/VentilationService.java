@@ -522,22 +522,39 @@ public class VentilationService implements IVentilationService {
 
 		switch (pointageType) {
 			case ABSENCE: {
-				for (VentilAbsence abs : ventilationRepository.getListOfVentilAbsenceForDateAgent(idDateVentil, agents,
-						allVentilation))
+				List<VentilAbsence> liste = new ArrayList<VentilAbsence>();
+				if (allVentilation) {
+					liste = ventilationRepository
+							.getListOfVentilAbsenceForDateAgentAllVentilation(idDateVentil, agents);
+				} else {
+					liste = ventilationRepository.getListOfVentilAbsenceForDateAgent(idDateVentil, agents);
+				}
+				for (VentilAbsence abs : liste)
 					pointagesVentiles.add(new VentilAbsenceDto(abs));
 
 				break;
 			}
 			case H_SUP: {
-				for (VentilHsup hs : ventilationRepository.getListOfVentilHSForDateAgent(idDateVentil, agents,
-						allVentilation))
+				List<VentilHsup> liste = new ArrayList<VentilHsup>();
+				if (allVentilation) {
+					liste = ventilationRepository.getListOfVentilHSForDateAgentAllVentilation(idDateVentil, agents);
+				} else {
+					liste = ventilationRepository.getListOfVentilHSForDateAgent(idDateVentil, agents);
+				}
+				for (VentilHsup hs : liste)
 					pointagesVentiles.add(new VentilHSupDto(hs));
 
 				break;
 			}
 			case PRIME: {
-				for (VentilPrime prime : ventilationRepository.getListOfVentilPrimeForDateAgent(idDateVentil, agents,
-						true, allVentilation))
+				List<VentilPrime> liste = new ArrayList<VentilPrime>();
+				if (allVentilation) {
+					liste = ventilationRepository.getListOfVentilPrimeForDateAgentAllVentilation(idDateVentil, agents,
+							true);
+				} else {
+					liste = ventilationRepository.getListOfVentilPrimeForDateAgent(idDateVentil, agents, true);
+				}
+				for (VentilPrime prime : liste)
 					pointagesVentiles.add(new VentilPrimeDto(prime, helperService));
 
 				break;
@@ -600,16 +617,28 @@ public class VentilationService implements IVentilationService {
 
 		switch (pointageType) {
 			case ABSENCE: {
-				for (VentilAbsence abs : ventilationRepository.getListOfVentilAbsenceForAgentBeetweenDate(mois, annee,
-						idAgent, allVentilation))
+				List<VentilAbsence> liste = new ArrayList<VentilAbsence>();
+				if (allVentilation) {
+					liste = ventilationRepository.getListOfVentilAbsenceForAgentBeetweenDateAllVentilation(mois, annee,
+							idAgent);
+				} else {
+					liste = ventilationRepository.getListOfVentilAbsenceForAgentBeetweenDate(mois, annee, idAgent);
+				}
+				for (VentilAbsence abs : liste)
 					pointagesVentiles.add(new VentilAbsenceDto(abs));
 
 				break;
 			}
 
 			case H_SUP: {
-				for (VentilHsup hs : ventilationRepository.getListOfVentilHSForAgentBeetweenDate(mois, annee, idAgent,
-						allVentilation))
+				List<VentilHsup> liste = new ArrayList<VentilHsup>();
+				if (allVentilation) {
+					liste = ventilationRepository.getListOfVentilHSForAgentBeetweenDateAllVentilation(mois, annee,
+							idAgent);
+				} else {
+					liste = ventilationRepository.getListOfVentilHSForAgentBeetweenDate(mois, annee, idAgent);
+				}
+				for (VentilHsup hs : liste)
 					pointagesVentiles.add(new VentilHSupDto(hs));
 
 				break;

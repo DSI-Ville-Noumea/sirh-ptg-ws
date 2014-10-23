@@ -1353,7 +1353,7 @@ public class VentilationServiceTest {
 		listAbs.add(abs2);
 
 		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vRepo.getListOfVentilAbsenceForAgentBeetweenDate(2, 2014, 9005138, false)).thenReturn(listAbs);
+		Mockito.when(vRepo.getListOfVentilAbsenceForAgentBeetweenDate(2, 2014, 9005138)).thenReturn(listAbs);
 
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
@@ -1387,7 +1387,7 @@ public class VentilationServiceTest {
 		listHsup.add(hs1);
 
 		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vRepo.getListOfVentilHSForAgentBeetweenDate(2, 2014, 9005138, false)).thenReturn(listHsup);
+		Mockito.when(vRepo.getListOfVentilHSForAgentBeetweenDate(2, 2014, 9005138)).thenReturn(listHsup);
 
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);

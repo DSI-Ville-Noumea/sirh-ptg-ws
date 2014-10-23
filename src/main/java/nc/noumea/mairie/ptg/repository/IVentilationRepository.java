@@ -38,13 +38,19 @@ public interface IVentilationRepository {
 
 	boolean canStartVentilation(TypeChainePaieEnum chainePaie);
 
-	List<VentilAbsence> getListOfVentilAbsenceForDateAgent(Integer ventilDateId, List<Integer> agentIds,
-			boolean allVentilation);
+	List<VentilAbsence> getListOfVentilAbsenceForDateAgent(Integer ventilDateId, List<Integer> agentIds);
+
+	List<VentilAbsence> getListOfVentilAbsenceForDateAgentAllVentilation(Integer ventilDateId, List<Integer> agentIds);
 
 	List<VentilPrime> getListOfVentilPrimeForDateAgent(Integer ventilDateId, List<Integer> agentIds,
-			boolean isShowVentilation, boolean allVentilation);
+			boolean isShowVentilation);
 
-	List<VentilHsup> getListOfVentilHSForDateAgent(Integer ventilDateId, List<Integer> agentIds, boolean allVentilation);
+	List<VentilPrime> getListOfVentilPrimeForDateAgentAllVentilation(Integer ventilDateId, List<Integer> agentIds,
+			boolean isShowVentilation);
+
+	List<VentilHsup> getListOfVentilHSForDateAgent(Integer ventilDateId, List<Integer> agentIds);
+
+	List<VentilHsup> getListOfVentilHSForDateAgentAllVentilation(Integer ventilDateId, List<Integer> agentIds);
 
 	List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAsc(Integer idAgent, Integer idVentilDate);
 
@@ -61,11 +67,14 @@ public interface IVentilationRepository {
 
 	List<VentilTask> getListOfVentilTaskErreur(TypeChainePaieEnum chainePaie, VentilDate ventilDateTo);
 
-	List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent,
-			boolean allVentilation);
+	List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent);
 
-	List<VentilHsup> getListOfVentilHSForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent,
-			boolean allVentilation);
+	List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDateAllVentilation(Integer mois, Integer annee,
+			Integer idAgent);
+
+	List<VentilHsup> getListOfVentilHSForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent);
+
+	List<VentilHsup> getListOfVentilHSForAgentBeetweenDateAllVentilation(Integer mois, Integer annee, Integer idAgent);
 
 	List<Integer> getListAgentsForShowVentilationPrimesForDate(Integer ventilDateId, Integer agentMin,
 			Integer agentMax, boolean allVentilation);

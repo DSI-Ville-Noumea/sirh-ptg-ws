@@ -352,12 +352,11 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilAbsence> getListOfVentilAbsenceForDateAgent(Integer ventilDateId, List<Integer> agentIds,
-			boolean allVentilation) {
+	public List<VentilAbsence> getListOfVentilAbsenceForDateAgent(Integer ventilDateId, List<Integer> agentIds) {
 		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
 		List<Integer> agentIdsReduite = null;
 
-		String query = "FROM VentilAbsence tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate = :ventilDateId and tb.etat in :etat ";
+		String query = "FROM VentilAbsence tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate = :ventilDateId and tb.etat = :etat ";
 		int fromIndex = 0;
 		int toIndex = 0;
 
@@ -367,14 +366,7 @@ public class VentilationRepository implements IVentilationRepository {
 			TypedQuery<VentilAbsence> q = ptgEntityManager.createQuery(query, VentilAbsence.class);
 			q.setParameter("agentIds", agentIdsReduite);
 			q.setParameter("ventilDateId", ventilDateId);
-			if (allVentilation) {
-				List<EtatPointageEnum> listeEtat = new ArrayList<>();
-				listeEtat.add(EtatPointageEnum.VENTILE);
-				listeEtat.add(EtatPointageEnum.VALIDE);
-				q.setParameter("etat", listeEtat);
-			} else {
-				q.setParameter("etat", EtatPointageEnum.VENTILE);
-			}
+			q.setParameter("etat", EtatPointageEnum.VENTILE);
 			resultat.addAll(q.getResultList());
 			fromIndex = toIndex;
 		} while (fromIndex < agentIds.size());
@@ -383,12 +375,42 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
+	public List<VentilAbsence> getListOfVentilAbsenceForDateAgentAllVentilation(Integer ventilDateId,
+			List<Integer> agentIds) {
+		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
+		List<Integer> agentIdsReduite = null;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select * from ptg_ventil_absence ");
+		sb.append("WHERE id_ventil_date =:ventilDateId and id_agent in :agentIds  and id_ventil_absence in ");
+		sb.append("(select max(id_ventil_absence) from ptg_ventil_absence group by date_lundi,id_agent) ");
+
+		int fromIndex = 0;
+		int toIndex = 0;
+
+		do {
+			toIndex = fromIndex + 1000;
+			agentIdsReduite = agentIds.subList(fromIndex, toIndex > agentIds.size() ? agentIds.size() : toIndex);
+			Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilAbsence.class);
+			q.setParameter("agentIds", agentIdsReduite);
+			q.setParameter("ventilDateId", ventilDateId);
+
+			@SuppressWarnings("unchecked")
+			List<VentilAbsence> result = q.getResultList();
+			resultat.addAll(result);
+			fromIndex = toIndex;
+		} while (fromIndex < agentIds.size());
+
+		return resultat;
+	}
+
+	@Override
 	public List<VentilPrime> getListOfVentilPrimeForDateAgent(Integer ventilDateId, List<Integer> agentIds,
-			boolean isShowVentilation, boolean allVentilation) {
+			boolean isShowVentilation) {
 		List<VentilPrime> resultat = new ArrayList<VentilPrime>();
 		List<Integer> agentIdsReduite = null;
 
-		String query = "FROM VentilPrime tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate = :ventilDateId and tb.etat in :etat ";
+		String query = "FROM VentilPrime tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate = :ventilDateId and tb.etat = :etat ";
 		if (isShowVentilation) {
 			query += "and quantite <> 0 ";
 		}
@@ -402,14 +424,8 @@ public class VentilationRepository implements IVentilationRepository {
 			TypedQuery<VentilPrime> q = ptgEntityManager.createQuery(query, VentilPrime.class);
 			q.setParameter("agentIds", agentIdsReduite);
 			q.setParameter("ventilDateId", ventilDateId);
-			if (allVentilation) {
-				List<EtatPointageEnum> listeEtat = new ArrayList<>();
-				listeEtat.add(EtatPointageEnum.VENTILE);
-				listeEtat.add(EtatPointageEnum.VALIDE);
-				q.setParameter("etat", listeEtat);
-			} else {
-				q.setParameter("etat", EtatPointageEnum.VENTILE);
-			}
+			q.setParameter("etat", EtatPointageEnum.VENTILE);
+
 			resultat.addAll(q.getResultList());
 			fromIndex = toIndex;
 		} while (fromIndex < agentIds.size());
@@ -418,12 +434,41 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilHsup> getListOfVentilHSForDateAgent(Integer ventilDateId, List<Integer> agentIds,
-			boolean allVentilation) {
+	public List<VentilPrime> getListOfVentilPrimeForDateAgentAllVentilation(Integer ventilDateId,
+			List<Integer> agentIds, boolean isShowVentilation) {
+		List<VentilPrime> resultat = new ArrayList<VentilPrime>();
+		List<Integer> agentIdsReduite = null;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select * from ptg_ventil_prime ");
+		sb.append("WHERE id_ventil_date =:ventilDateId and id_agent in :agentIds  and id_ventil_prime in ");
+		sb.append("(select max(id_ventil_prime) from ptg_ventil_prime group by date_debut_mois,id_agent,id_ref_prime) ");
+
+		int fromIndex = 0;
+		int toIndex = 0;
+
+		do {
+			toIndex = fromIndex + 1000;
+			agentIdsReduite = agentIds.subList(fromIndex, toIndex > agentIds.size() ? agentIds.size() : toIndex);
+			Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilPrime.class);
+			q.setParameter("agentIds", agentIdsReduite);
+			q.setParameter("ventilDateId", ventilDateId);
+
+			@SuppressWarnings("unchecked")
+			List<VentilPrime> result = q.getResultList();
+			resultat.addAll(result);
+			fromIndex = toIndex;
+		} while (fromIndex < agentIds.size());
+
+		return resultat;
+	}
+
+	@Override
+	public List<VentilHsup> getListOfVentilHSForDateAgent(Integer ventilDateId, List<Integer> agentIds) {
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
 		List<Integer> agentIdsReduite = null;
 
-		String query = "FROM VentilHsup tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate= :ventilDateId and tb.etat in :etat ";
+		String query = "FROM VentilHsup tb WHERE tb.idAgent in :agentIds AND  tb.ventilDate.idVentilDate= :ventilDateId and tb.etat = :etat ";
 		int fromIndex = 0;
 		int toIndex = 0;
 
@@ -433,15 +478,38 @@ public class VentilationRepository implements IVentilationRepository {
 			TypedQuery<VentilHsup> q = ptgEntityManager.createQuery(query, VentilHsup.class);
 			q.setParameter("agentIds", agentIdsReduite);
 			q.setParameter("ventilDateId", ventilDateId);
-			if (allVentilation) {
-				List<EtatPointageEnum> listeEtat = new ArrayList<>();
-				listeEtat.add(EtatPointageEnum.VENTILE);
-				listeEtat.add(EtatPointageEnum.VALIDE);
-				q.setParameter("etat", listeEtat);
-			} else {
-				q.setParameter("etat", EtatPointageEnum.VENTILE);
-			}
+			q.setParameter("etat", EtatPointageEnum.VENTILE);
+
 			resultat.addAll(q.getResultList());
+			fromIndex = toIndex;
+		} while (fromIndex < agentIds.size());
+
+		return resultat;
+	}
+
+	@Override
+	public List<VentilHsup> getListOfVentilHSForDateAgentAllVentilation(Integer ventilDateId, List<Integer> agentIds) {
+		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
+		List<Integer> agentIdsReduite = null;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select * from ptg_ventil_hsup ");
+		sb.append("WHERE id_ventil_date =:ventilDateId and id_agent in :agentIds  and id_ventil_hsup in ");
+		sb.append("(select max(id_ventil_hsup) from ptg_ventil_hsup group by date_lundi,id_agent) ");
+
+		int fromIndex = 0;
+		int toIndex = 0;
+
+		do {
+			toIndex = fromIndex + 1000;
+			agentIdsReduite = agentIds.subList(fromIndex, toIndex > agentIds.size() ? agentIds.size() : toIndex);
+			Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilHsup.class);
+			q.setParameter("agentIds", agentIdsReduite);
+			q.setParameter("ventilDateId", ventilDateId);
+
+			@SuppressWarnings("unchecked")
+			List<VentilHsup> result = q.getResultList();
+			resultat.addAll(result);
 			fromIndex = toIndex;
 		} while (fromIndex < agentIds.size());
 
@@ -568,55 +636,91 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent,
-			boolean allVentilation) {
+	public List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent) {
 		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
 		Date dateDeb = new DateTime(annee, mois, 1, 0, 0, 0).toDate();
 		LocalDate lastDayOfMonth = new LocalDate(annee, mois, 1).dayOfMonth().withMaximumValue();
 		Date dateFin = lastDayOfMonth.toDate();
 
-		String query = "FROM VentilAbsence tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi BETWEEN :datdeb AND :datfin and tb.etat in :etat ";
+		String query = "FROM VentilAbsence tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi BETWEEN :datdeb AND :datfin and tb.etat = :etat ";
 
 		TypedQuery<VentilAbsence> q = ptgEntityManager.createQuery(query, VentilAbsence.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("datdeb", dateDeb);
 		q.setParameter("datfin", dateFin);
-		if (allVentilation) {
-			List<EtatPointageEnum> listeEtat = new ArrayList<>();
-			listeEtat.add(EtatPointageEnum.VENTILE);
-			listeEtat.add(EtatPointageEnum.VALIDE);
-			q.setParameter("etat", listeEtat);
-		} else {
-			q.setParameter("etat", EtatPointageEnum.VENTILE);
-		}
+		q.setParameter("etat", EtatPointageEnum.VENTILE);
+
 		resultat.addAll(q.getResultList());
 
 		return resultat;
 	}
 
 	@Override
-	public List<VentilHsup> getListOfVentilHSForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent,
-			boolean allVentilation) {
+	public List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDateAllVentilation(Integer mois, Integer annee,
+			Integer idAgent) {
+		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
+		Date dateDeb = new DateTime(annee, mois, 1, 0, 0, 0).toDate();
+		LocalDate lastDayOfMonth = new LocalDate(annee, mois, 1).dayOfMonth().withMaximumValue();
+		Date dateFin = lastDayOfMonth.toDate();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select * from ptg_ventil_absence ");
+		sb.append("WHERE date_lundi between :datdeb AND :datfin and id_agent = :idAgent  and id_ventil_absence in ");
+		sb.append("(select max(id_ventil_absence) from ptg_ventil_absence group by date_lundi,id_agent) ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilAbsence.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("datdeb", dateDeb);
+		q.setParameter("datfin", dateFin);
+
+		@SuppressWarnings("unchecked")
+		List<VentilAbsence> result = q.getResultList();
+		resultat.addAll(result);
+
+		return resultat;
+	}
+
+	@Override
+	public List<VentilHsup> getListOfVentilHSForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent) {
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
 		Date dateDeb = new DateTime(annee, mois, 1, 0, 0, 0).toDate();
 		LocalDate lastDayOfMonth = new LocalDate(annee, mois, 1).dayOfMonth().withMaximumValue();
 		Date dateFin = lastDayOfMonth.toDate();
 
-		String query = "FROM VentilHsup tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi BETWEEN :datdeb AND :datfin AND tb.etat in :etat ";
+		String query = "FROM VentilHsup tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi BETWEEN :datdeb AND :datfin AND tb.etat = :etat ";
 
 		TypedQuery<VentilHsup> q = ptgEntityManager.createQuery(query, VentilHsup.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("datdeb", dateDeb);
 		q.setParameter("datfin", dateFin);
-		if (allVentilation) {
-			List<EtatPointageEnum> listeEtat = new ArrayList<>();
-			listeEtat.add(EtatPointageEnum.VENTILE);
-			listeEtat.add(EtatPointageEnum.VALIDE);
-			q.setParameter("etat", listeEtat);
-		} else {
-			q.setParameter("etat", EtatPointageEnum.VENTILE);
-		}
+		q.setParameter("etat", EtatPointageEnum.VENTILE);
+
 		resultat.addAll(q.getResultList());
+
+		return resultat;
+	}
+
+	@Override
+	public List<VentilHsup> getListOfVentilHSForAgentBeetweenDateAllVentilation(Integer mois, Integer annee,
+			Integer idAgent) {
+		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
+		Date dateDeb = new DateTime(annee, mois, 1, 0, 0, 0).toDate();
+		LocalDate lastDayOfMonth = new LocalDate(annee, mois, 1).dayOfMonth().withMaximumValue();
+		Date dateFin = lastDayOfMonth.toDate();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select * from ptg_ventil_hsup ");
+		sb.append("WHERE date_lundi between :datdeb AND :datfin and id_agent = :idAgent  and id_ventil_hsup in ");
+		sb.append("(select max(id_ventil_hsup) from ptg_ventil_hsup group by date_lundi,id_agent) ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilHsup.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("datdeb", dateDeb);
+		q.setParameter("datfin", dateFin);
+
+		@SuppressWarnings("unchecked")
+		List<VentilHsup> result = q.getResultList();
+		resultat.addAll(result);
 
 		return resultat;
 	}
@@ -635,10 +739,11 @@ public class VentilationRepository implements IVentilationRepository {
 		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
 		query.setParameter("ventilDateId", ventilDateId);
 		if (allVentilation) {
-			List<EtatPointageEnum> listeEtat = new ArrayList<>();
-			listeEtat.add(EtatPointageEnum.VENTILE);
-			listeEtat.add(EtatPointageEnum.VALIDE);
-			query.setParameter("etat", listeEtat);
+			List<EtatPointageEnum> liste = new ArrayList<>();
+			liste.add(EtatPointageEnum.VALIDE);
+			liste.add(EtatPointageEnum.VENTILE);
+
+			query.setParameter("etat", liste);
 		} else {
 			query.setParameter("etat", EtatPointageEnum.VENTILE);
 		}
@@ -665,10 +770,11 @@ public class VentilationRepository implements IVentilationRepository {
 		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
 		query.setParameter("ventilDateId", ventilDateId);
 		if (allVentilation) {
-			List<EtatPointageEnum> listeEtat = new ArrayList<>();
-			listeEtat.add(EtatPointageEnum.VENTILE);
-			listeEtat.add(EtatPointageEnum.VALIDE);
-			query.setParameter("etat", listeEtat);
+			List<EtatPointageEnum> liste = new ArrayList<>();
+			liste.add(EtatPointageEnum.VALIDE);
+			liste.add(EtatPointageEnum.VENTILE);
+
+			query.setParameter("etat", liste);
 		} else {
 			query.setParameter("etat", EtatPointageEnum.VENTILE);
 		}
@@ -695,10 +801,11 @@ public class VentilationRepository implements IVentilationRepository {
 		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
 		query.setParameter("ventilDateId", ventilDateId);
 		if (allVentilation) {
-			List<EtatPointageEnum> listeEtat = new ArrayList<>();
-			listeEtat.add(EtatPointageEnum.VENTILE);
-			listeEtat.add(EtatPointageEnum.VALIDE);
-			query.setParameter("etat", listeEtat);
+			List<EtatPointageEnum> liste = new ArrayList<>();
+			liste.add(EtatPointageEnum.VALIDE);
+			liste.add(EtatPointageEnum.VENTILE);
+
+			query.setParameter("etat", liste);
 		} else {
 			query.setParameter("etat", EtatPointageEnum.VENTILE);
 		}
