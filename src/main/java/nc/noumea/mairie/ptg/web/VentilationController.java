@@ -40,7 +40,7 @@ public class VentilationController {
 
 	@Autowired
 	private IVentilationService ventilationService;
-	
+
 	@Autowired
 	private HelperService helperService;
 
@@ -93,8 +93,7 @@ public class VentilationController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> isVentilation(@RequestParam("statut") String statut) {
 
-		logger.debug("entered GET [ventilation/isVentilation] => isVentilation with parameter statut = {}",
-				statut);
+		logger.debug("entered GET [ventilation/isVentilation] => isVentilation with parameter statut = {}", statut);
 
 		CanStartVentilationDto result = ventilationService.isVentilationRunning(helperService
 				.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
@@ -163,18 +162,19 @@ public class VentilationController {
 	@RequestMapping(value = "/show", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional("ptgTransactionManager")
 	public ResponseEntity<String> showVentilation(@RequestParam("idDateVentil") Integer idDateVentil,
-			@RequestParam("typePointage") Integer idRefTypePointage, @RequestBody(required = true) String agentsJson) {
+			@RequestParam("typePointage") Integer idRefTypePointage,
+			@RequestParam("allVentilation") boolean allVentilation, @RequestBody(required = true) String agentsJson) {
 
 		RefTypePointageEnum typepointage = RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage);
 		logger.debug(
-				"entered POST [ventilation/show] => showVentilation with parameters idDateVentil = {}, agents = {}, typePointage = {}",
-				idDateVentil, agentsJson, typepointage.name());
+				"entered POST [ventilation/show] => showVentilation with parameters idDateVentil = {}, agents = {}, typePointage = {}, allVentilation = {}",
+				idDateVentil, agentsJson, typepointage.name(), allVentilation);
 
 		// Deserializing integer list
 		List<Integer> agents = new JSONDeserializer<List<Integer>>().use(null, ArrayList.class)
 				.use("values", Integer.class).deserialize(agentsJson);
 
-		List<VentilDto> result = ventilationService.showVentilation(idDateVentil, agents, typepointage);
+		List<VentilDto> result = ventilationService.showVentilation(idDateVentil, agents, typepointage, allVentilation);
 		if (result.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
@@ -187,43 +187,45 @@ public class VentilationController {
 	@Transactional("ptgTransactionManager")
 	public ResponseEntity<String> showVentilationHistory(@RequestParam("mois") Integer mois,
 			@RequestParam("annee") Integer annee, @RequestParam("typePointage") Integer idRefTypePointage,
-			@RequestParam("idAgent") Integer idAgent) {
+			@RequestParam("idAgent") Integer idAgent, @RequestParam("allVentilation") boolean allVentilation) {
 
 		RefTypePointageEnum typepointage = RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage);
 		logger.debug(
-				"entered GET [ventilation/showHistory] => showVentilationHistory with parameters mois = {}, annee = {}, idAgent = {}, typePointage = {}",
-				mois, annee, idAgent, typepointage.name());
+				"entered GET [ventilation/showHistory] => showVentilationHistory with parameters mois = {}, annee = {}, idAgent = {}, typePointage = {}, allVentilation = {}",
+				mois, annee, idAgent, typepointage.name(), allVentilation);
 
-		List<VentilDto> result = ventilationService.showVentilationHistory(mois, annee, idAgent, typepointage);
+		List<VentilDto> result = ventilationService.showVentilationHistory(mois, annee, idAgent, typepointage,
+				allVentilation);
 		if (result.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<>(new JSONSerializer().exclude("*.class")
 				.transform(new MSDateTransformer(), Date.class).deepSerialize(result), HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/listeAgentsToShowVentilation", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional("ptgTransactionManager")
 	public ResponseEntity<String> getListeAgentsToShowVentilation(@RequestParam("idDateVentil") Integer idDateVentil,
-			@RequestParam("typePointage") Integer idRefTypePointage, @RequestParam("statut") String statut, 
-			@RequestParam("agentMin") Integer agentMin, @RequestParam("agentMax") Integer agentMax, 
-			@RequestParam("ventilationDate") @DateTimeFormat(pattern = "YYYYMMdd") Date ventilationDate) {
-		
+			@RequestParam("typePointage") Integer idRefTypePointage, @RequestParam("statut") String statut,
+			@RequestParam("agentMin") Integer agentMin, @RequestParam("agentMax") Integer agentMax,
+			@RequestParam("ventilationDate") @DateTimeFormat(pattern = "YYYYMMdd") Date ventilationDate,
+			@RequestParam("allVentilation") boolean allVentilation) {
+
 		RefTypePointageEnum typepointage = RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage);
 		AgentStatutEnum statutEnum = AgentStatutEnum.valueOf(statut);
 		logger.debug(
-				"entered GET [ventilation/listeAgents] => getListeAgents with parameters idDateVentil = {}, typePointage = {}, statut = {}, agentMin = {}, agentMax = {}",
-				idDateVentil, typepointage.name(), statut, agentMin, agentMax);
+				"entered GET [ventilation/listeAgents] => getListeAgents with parameters idDateVentil = {}, typePointage = {}, statut = {}, agentMin = {}, agentMax = {}, allVentilation = {}",
+				idDateVentil, typepointage.name(), statut, agentMin, agentMax, allVentilation);
 
-		List<Integer> result = ventilationService.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage, statutEnum, 
-				helperService.getIdAgentFromMairieMatr(agentMin), 
-				helperService.getIdAgentFromMairieMatr(agentMax), ventilationDate);
-		
+		List<Integer> result = ventilationService.getListeAgentsToShowVentilation(idDateVentil, idRefTypePointage,
+				statutEnum, helperService.getIdAgentFromMairieMatr(agentMin),
+				helperService.getIdAgentFromMairieMatr(agentMax), ventilationDate, allVentilation);
+
 		if (result.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}
 		return new ResponseEntity<>(new JSONSerializer().exclude("*.class").deepSerialize(result), HttpStatus.OK);
 	}
-	
+
 }

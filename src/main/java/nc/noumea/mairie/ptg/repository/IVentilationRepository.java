@@ -38,11 +38,13 @@ public interface IVentilationRepository {
 
 	boolean canStartVentilation(TypeChainePaieEnum chainePaie);
 
-	List<VentilAbsence> getListOfVentilAbsenceForDateAgent(Integer ventilDateId, List<Integer> agentIds);
+	List<VentilAbsence> getListOfVentilAbsenceForDateAgent(Integer ventilDateId, List<Integer> agentIds,
+			boolean allVentilation);
 
-	List<VentilPrime> getListOfVentilPrimeForDateAgent(Integer ventilDateId, List<Integer> agentIds, boolean isShowVentilation);
+	List<VentilPrime> getListOfVentilPrimeForDateAgent(Integer ventilDateId, List<Integer> agentIds,
+			boolean isShowVentilation, boolean allVentilation);
 
-	List<VentilHsup> getListOfVentilHSForDateAgent(Integer ventilDateId, List<Integer> agentIds);
+	List<VentilHsup> getListOfVentilHSForDateAgent(Integer ventilDateId, List<Integer> agentIds, boolean allVentilation);
 
 	List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAsc(Integer idAgent, Integer idVentilDate);
 
@@ -59,24 +61,24 @@ public interface IVentilationRepository {
 
 	List<VentilTask> getListOfVentilTaskErreur(TypeChainePaieEnum chainePaie, VentilDate ventilDateTo);
 
-	List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent);
+	List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent,
+			boolean allVentilation);
 
-	List<VentilHsup> getListOfVentilHSForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent);
+	List<VentilHsup> getListOfVentilHSForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent,
+			boolean allVentilation);
 
-	List<Integer> getListAgentsForShowVentilationPrimesForDate(
-			Integer ventilDateId, Integer agentMin, Integer agentMax);
+	List<Integer> getListAgentsForShowVentilationPrimesForDate(Integer ventilDateId, Integer agentMin,
+			Integer agentMax, boolean allVentilation);
 
-	List<Integer> getListAgentsForShowVentilationAbsencesForDate(
-			Integer ventilDateId, Integer agentMin, Integer agentMax);
+	List<Integer> getListAgentsForShowVentilationAbsencesForDate(Integer ventilDateId, Integer agentMin,
+			Integer agentMax, boolean allVentilation);
 
-	List<Integer> getListAgentsForShowVentilationHeuresSupForDate(
-			Integer ventilDateId, Integer agentMin, Integer agentMax);
+	List<Integer> getListAgentsForShowVentilationHeuresSupForDate(Integer ventilDateId, Integer agentMin,
+			Integer agentMax, boolean allVentilation);
 
-	List<VentilAbsence> getListVentilAbsencesForAgentAndVentilDate(
-			Integer idAgent, Integer idVentilDate);
+	List<VentilAbsence> getListVentilAbsencesForAgentAndVentilDate(Integer idAgent, Integer idVentilDate);
 
-	List<VentilHsup> getListOfOldVentilHSForAgentAndDateLundi(Integer idAgent,
-			Date dateLundi, Integer ventilDateId);
+	List<VentilHsup> getListOfOldVentilHSForAgentAndDateLundi(Integer idAgent, Date dateLundi, Integer ventilDateId);
 
 	List<VentilAbsence> getListOfVentilAbsenceWithDateForEtatPayeur(Integer idVentilDate);
 
@@ -84,12 +86,10 @@ public interface IVentilationRepository {
 
 	List<VentilPrime> getListOfVentilPrimeWithDateForEtatPayeur(Integer idVentilDate);
 
-	List<VentilPrime> getListOfOldVentilPrimeForAgentAndDateDebutMois(
-			Integer idAgent, Date dateDebutMois, Integer ventilDateId);
+	List<VentilPrime> getListOfOldVentilPrimeForAgentAndDateDebutMois(Integer idAgent, Date dateDebutMois,
+			Integer ventilDateId);
 
-	List<Pointage> getListPointagesPrimeValideByMoisAndRefPrime(
-			Integer idAgent, Date dateMois, Integer idRefPrime);
+	List<Pointage> getListPointagesPrimeValideByMoisAndRefPrime(Integer idAgent, Date dateMois, Integer idRefPrime);
 
-	List<Integer> getListIdAgentsWithPointagesValidatedAndRejetes(
-			Integer idVentilDate);
+	List<Integer> getListIdAgentsWithPointagesValidatedAndRejetes(Integer idVentilDate);
 }

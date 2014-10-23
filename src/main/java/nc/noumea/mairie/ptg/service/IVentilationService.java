@@ -58,7 +58,8 @@ public interface IVentilationService {
 	 */
 	void processVentilationForAgent(Integer idVentilTask);
 
-	List<VentilDto> showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType);
+	List<VentilDto> showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType,
+			boolean allVentilation);
 
 	VentilDateDto getVentilationEnCoursForStatut(AgentStatutEnum statut);
 
@@ -67,11 +68,10 @@ public interface IVentilationService {
 	List<VentilErreurDto> getErreursVentilation(AgentStatutEnum statut);
 
 	List<VentilDto> showVentilationHistory(Integer mois, Integer annee, Integer idAgent,
-			RefTypePointageEnum pointageType);
+			RefTypePointageEnum pointageType, boolean allVentilation);
 
 	CanStartVentilationDto isVentilationRunning(TypeChainePaieEnum typeChainePaieFromStatut);
 
-	List<Integer> getListeAgentsToShowVentilation(Integer idDateVentil,
-			Integer idRefTypePointage, AgentStatutEnum statut,
-			Integer agentMin, Integer agentMax, Date dateVentilation);
+	List<Integer> getListeAgentsToShowVentilation(Integer idDateVentil, Integer idRefTypePointage,
+			AgentStatutEnum statut, Integer agentMin, Integer agentMax, Date dateVentilation, boolean allVentilation);
 }

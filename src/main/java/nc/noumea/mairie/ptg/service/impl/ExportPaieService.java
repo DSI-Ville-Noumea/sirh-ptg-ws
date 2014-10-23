@@ -151,7 +151,8 @@ public class ExportPaieService implements IExportPaieService {
 		List<Pointage> ventilatedPointages = pointageService.getPointagesVentilesForAgent(idAgent, ventilDate);
 		List<PointageCalcule> ventilatedPointagesCalcules = pointageService.getPointagesCalculesVentilesForAgent(
 				idAgent, ventilDate);
-		List<Pointage> listPointageRejetesVentilesOrderedByDateAsc = pointageService.getPointagesVentilesAndRejetesForAgent(idAgent, ventilDate);
+		List<Pointage> listPointageRejetesVentilesOrderedByDateAsc = pointageService
+				.getPointagesVentilesAndRejetesForAgent(idAgent, ventilDate);
 
 		if (ventilatedPointages.size() == 0 && listPointageRejetesVentilesOrderedByDateAsc.size() == 0) {
 			logger.debug("No pointages to export. Exiting...");
@@ -188,10 +189,12 @@ public class ExportPaieService implements IExportPaieService {
 		updateSpmatrForAgentAndPointages(idAgent, chainePaie, ventilatedPointages);
 
 		// 7.Mark PTG_VENTIL_xxx as validated
-		List<VentilAbsence> vAbsences = ventilationRepository.getListVentilAbsencesForAgentAndVentilDate(idAgent, ventilDate.getIdVentilDate());
-		List<VentilPrime> vPrimesJourEtMensuel = ventilationRepository.getListOfVentilPrimeForDateAgent(ventilDate.getIdVentilDate(), Arrays.asList(idAgent), false);
+		List<VentilAbsence> vAbsences = ventilationRepository.getListVentilAbsencesForAgentAndVentilDate(idAgent,
+				ventilDate.getIdVentilDate());
+		List<VentilPrime> vPrimesJourEtMensuel = ventilationRepository.getListOfVentilPrimeForDateAgent(
+				ventilDate.getIdVentilDate(), Arrays.asList(idAgent), false, false);
 		markVentilesAsValidated(vHsups, vPrimesJourEtMensuel, vAbsences);
-		
+
 		logger.info("Exportation of idExportPaieTask [{}] done.", idExportPaieTask);
 	}
 
@@ -235,27 +238,28 @@ public class ExportPaieService implements IExportPaieService {
 			ptg.getEtats().add(ep);
 		}
 	}
-	
+
 	/**
 	 * Updates each VENTIL to set them as VALIDE state for saving history
 	 * 
 	 * @param pointages
 	 * @param idAgent
 	 */
-	protected void markVentilesAsValidated(List<VentilHsup> vHsups, List<VentilPrime> vPrimes, List<VentilAbsence> vabsences) {
-		
+	protected void markVentilesAsValidated(List<VentilHsup> vHsups, List<VentilPrime> vPrimes,
+			List<VentilAbsence> vabsences) {
+
 		for (VentilHsup vHsup : vHsups) {
 			if (EtatPointageEnum.VENTILE.equals(vHsup.getEtat())) {
 				vHsup.setEtat(EtatPointageEnum.VALIDE);
 			}
 		}
-		
+
 		for (VentilPrime vPrime : vPrimes) {
 			if (EtatPointageEnum.VENTILE.equals(vPrime.getEtat())) {
 				vPrime.setEtat(EtatPointageEnum.VALIDE);
 			}
 		}
-		
+
 		for (VentilAbsence vabsence : vabsences) {
 			if (EtatPointageEnum.VENTILE.equals(vabsence.getEtat())) {
 				vabsence.setEtat(EtatPointageEnum.VALIDE);
@@ -270,8 +274,7 @@ public class ExportPaieService implements IExportPaieService {
 	 */
 	protected void markPointagesCalculesAsValidated(List<PointageCalcule> pointagesCalcules) {
 		for (PointageCalcule ptgC : pointagesCalcules) {
-			if (ptgC.getEtat() == EtatPointageEnum.JOURNALISE
-					|| ptgC.getEtat() == EtatPointageEnum.VALIDE)
+			if (ptgC.getEtat() == EtatPointageEnum.JOURNALISE || ptgC.getEtat() == EtatPointageEnum.VALIDE)
 				continue;
 
 			ptgC.setEtat(EtatPointageEnum.VALIDE);

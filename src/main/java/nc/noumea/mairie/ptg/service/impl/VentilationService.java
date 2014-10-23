@@ -512,27 +512,32 @@ public class VentilationService implements IVentilationService {
 	 * @return The list of VentilDto
 	 */
 	@Override
-	public List<VentilDto> showVentilation(Integer idDateVentil, List<Integer> agents, RefTypePointageEnum pointageType) {
-		logger.debug("Showing ventilation of Pointages for Agents [{}], idDateVentil [{}] and pointage type [{}]",
-				agents, idDateVentil, pointageType);
+	public List<VentilDto> showVentilation(Integer idDateVentil, List<Integer> agents,
+			RefTypePointageEnum pointageType, boolean allVentilation) {
+		logger.debug(
+				"Showing ventilation of Pointages for Agents [{}], idDateVentil [{}], allVentilation [{}] and pointage type [{}]",
+				agents, idDateVentil, allVentilation, pointageType);
 		List<VentilDto> pointagesVentiles = new ArrayList<>();
 		// For all selected agents, get ventilated pointages
 
 		switch (pointageType) {
 			case ABSENCE: {
-				for (VentilAbsence abs : ventilationRepository.getListOfVentilAbsenceForDateAgent(idDateVentil, agents))
+				for (VentilAbsence abs : ventilationRepository.getListOfVentilAbsenceForDateAgent(idDateVentil, agents,
+						allVentilation))
 					pointagesVentiles.add(new VentilAbsenceDto(abs));
 
 				break;
 			}
 			case H_SUP: {
-				for (VentilHsup hs : ventilationRepository.getListOfVentilHSForDateAgent(idDateVentil, agents))
+				for (VentilHsup hs : ventilationRepository.getListOfVentilHSForDateAgent(idDateVentil, agents,
+						allVentilation))
 					pointagesVentiles.add(new VentilHSupDto(hs));
 
 				break;
 			}
 			case PRIME: {
-				for (VentilPrime prime : ventilationRepository.getListOfVentilPrimeForDateAgent(idDateVentil, agents, true))
+				for (VentilPrime prime : ventilationRepository.getListOfVentilPrimeForDateAgent(idDateVentil, agents,
+						true, allVentilation))
 					pointagesVentiles.add(new VentilPrimeDto(prime, helperService));
 
 				break;
@@ -586,7 +591,7 @@ public class VentilationService implements IVentilationService {
 
 	@Override
 	public List<VentilDto> showVentilationHistory(Integer mois, Integer annee, Integer idAgent,
-			RefTypePointageEnum pointageType) {
+			RefTypePointageEnum pointageType, boolean allVentilation) {
 		logger.debug(
 				"Showing ventilation history of Pointages for idAgent [{}], mois [{}], annee [{}] and pointage type [{}]",
 				idAgent, mois, annee, pointageType);
@@ -596,14 +601,15 @@ public class VentilationService implements IVentilationService {
 		switch (pointageType) {
 			case ABSENCE: {
 				for (VentilAbsence abs : ventilationRepository.getListOfVentilAbsenceForAgentBeetweenDate(mois, annee,
-						idAgent))
+						idAgent, allVentilation))
 					pointagesVentiles.add(new VentilAbsenceDto(abs));
 
 				break;
 			}
 
 			case H_SUP: {
-				for (VentilHsup hs : ventilationRepository.getListOfVentilHSForAgentBeetweenDate(mois, annee, idAgent))
+				for (VentilHsup hs : ventilationRepository.getListOfVentilHSForAgentBeetweenDate(mois, annee, idAgent,
+						allVentilation))
 					pointagesVentiles.add(new VentilHSupDto(hs));
 
 				break;
@@ -625,14 +631,14 @@ public class VentilationService implements IVentilationService {
 
 	@Override
 	public List<Integer> getListeAgentsToShowVentilation(Integer idDateVentil, Integer idRefTypePointage,
-			AgentStatutEnum statut, Integer agentMin, Integer agentMax, Date dateVentilation) {
+			AgentStatutEnum statut, Integer agentMin, Integer agentMax, Date dateVentilation, boolean allVentilation) {
 
 		List<Integer> listeAgents = new ArrayList<Integer>();
 
 		switch (RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage)) {
 			case ABSENCE: {
 				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationAbsencesForDate(
-						idDateVentil, agentMin, agentMax)) {
+						idDateVentil, agentMin, agentMax, allVentilation)) {
 					Spcarr carr = isAgentEligibleToVentilation(idAgent, statut, dateVentilation);
 					if (null != carr) {
 						listeAgents.add(idAgent);
@@ -642,7 +648,7 @@ public class VentilationService implements IVentilationService {
 			}
 			case H_SUP: {
 				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationHeuresSupForDate(
-						idDateVentil, agentMin, agentMax)) {
+						idDateVentil, agentMin, agentMax, allVentilation)) {
 					Spcarr carr = isAgentEligibleToVentilation(idAgent, statut, dateVentilation);
 					if (null != carr) {
 						listeAgents.add(idAgent);
@@ -652,7 +658,7 @@ public class VentilationService implements IVentilationService {
 			}
 			case PRIME: {
 				for (Integer idAgent : ventilationRepository.getListAgentsForShowVentilationPrimesForDate(idDateVentil,
-						agentMin, agentMax)) {
+						agentMin, agentMax, allVentilation)) {
 					Spcarr carr = isAgentEligibleToVentilation(idAgent, statut, dateVentilation);
 					if (null != carr) {
 						listeAgents.add(idAgent);
