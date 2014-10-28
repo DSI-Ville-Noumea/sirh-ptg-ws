@@ -20,6 +20,7 @@ import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -60,7 +61,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 	@Override
 	public ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages, Spcarr carr) {
+			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
 
 		double nbHours = 0;
 
@@ -77,7 +78,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		if (nbHours == 0)
 			return srm;
 
-		double agentMaxHours = carr.getSpbhor().getTaux() * carr.getSpbase().getNbashh();
+		double agentMaxHours = carr.getSpbhor().getTaux() * baseDto.getBaseCalculee();
 
 		if (nbHours > agentMaxHours)
 			srm.getErrors().add(BASE_HOR_MAX);
@@ -134,15 +135,15 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 	@Override
 	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages, Spcarr carr) {
+			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
 
 		if ((carr.getStatutCarriere() != AgentStatutEnum.F || carr.getSpbarem().getIna() <= 315)
-				&& !carr.getSpbase().getCdBase().equals("Z"))
+				&& !baseDto.getCodeBaseHorairePointage().equals("Z"))
 			return srm;
-		
-		//cas de la DPM #11622
+
+		// cas de la DPM #11622
 		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent, dateLundi);
-		if(service.getSigle().toUpperCase().equals("DPM")){
+		if (service.getSigle().toUpperCase().equals("DPM")) {
 			return srm;
 		}
 
@@ -267,6 +268,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		return recupDateDeb;
 	}
+
 	@Override
 	public DateTime getDateFin(Integer dateFin, Integer codem2) {
 		DateTime recupDateFin = new DateTime(helperService.getDateFromMairieInteger(dateFin));
@@ -348,17 +350,18 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	 */
 	@Override
 	public void processDataConsistency(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
-		
+
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
+		BaseHorairePointageDto baseDto = sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi);
 
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
 		checkSprircRecuperation(srm, idAgent, dateLundi, pointages);
 		checkSpcongConge(srm, idAgent, dateLundi, pointages);
 		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
-		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages, carr);
-		checkAgentINAAndHSup(srm, idAgent, dateLundi, pointages, carr);
-		checkAgentTempsPartielAndHSup(srm, idAgent, dateLundi, pointages, carr);
+		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages, carr, baseDto);
+		checkAgentINAAndHSup(srm, idAgent, dateLundi, pointages, carr, baseDto);
+		checkAgentTempsPartielAndHSup(srm, idAgent, dateLundi, pointages, carr, baseDto);
 		checkAgentInactivity(srm, idAgent, dateLundi, pointages, ag);
 		checkPrime7650(srm, idAgent, dateLundi, pointages);
 		checkPrime7651(srm, idAgent, dateLundi, pointages);
@@ -367,22 +370,23 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkHeureFinSaisieHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, Spcarr carr) {
-		
+	public ReturnMessageDto checkHeureFinSaisieHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
+			List<Pointage> pointages, Spcarr carr) {
+
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
-				
+
 				int heureFinNuit = 0;
-				if (AgentStatutEnum.F.equals(carr.getStatutCarriere())){
-					heureFinNuit= VentilationHSupService.HEURE_JOUR_DEBUT_F;
+				if (AgentStatutEnum.F.equals(carr.getStatutCarriere())) {
+					heureFinNuit = VentilationHSupService.HEURE_JOUR_DEBUT_F;
 				}
-				if (AgentStatutEnum.C.equals(carr.getStatutCarriere())){
-					heureFinNuit= VentilationHSupService.HEURE_JOUR_DEBUT_C;
+				if (AgentStatutEnum.C.equals(carr.getStatutCarriere())) {
+					heureFinNuit = VentilationHSupService.HEURE_JOUR_DEBUT_C;
 				}
-				if (AgentStatutEnum.CC.equals(carr.getStatutCarriere())){
-					heureFinNuit= VentilationHSupService.HEURE_JOUR_DEBUT_CC;
+				if (AgentStatutEnum.CC.equals(carr.getStatutCarriere())) {
+					heureFinNuit = VentilationHSupService.HEURE_JOUR_DEBUT_CC;
 				}
-				
+
 				GregorianCalendar calDateFinLimite = new GregorianCalendar();
 				calDateFinLimite.setTime(ptg.getDateDebut());
 				calDateFinLimite.add(GregorianCalendar.DAY_OF_YEAR, 1);
@@ -390,18 +394,19 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				calDateFinLimite.set(GregorianCalendar.HOUR, heureFinNuit);
 				calDateFinLimite.set(GregorianCalendar.MINUTE, 0);
 				calDateFinLimite.set(GregorianCalendar.MILLISECOND, 0);
-				
-				if(ptg.getDateFin().after(calDateFinLimite.getTime())) {
-					srm.getErrors().add(
-							String.format("L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser %sh (limite des heures de nuit).",
-									new DateTime(ptg.getDateDebut()).toString("dd/MM/yyyy"), heureFinNuit));
+
+				if (ptg.getDateFin().after(calDateFinLimite.getTime())) {
+					srm.getErrors()
+							.add(String
+									.format("L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser %sh (limite des heures de nuit).",
+											new DateTime(ptg.getDateDebut()).toString("dd/MM/yyyy"), heureFinNuit));
 				}
 			}
 		}
-		
+
 		return srm;
 	}
-	
+
 	@Override
 	public ReturnMessageDto checkDateLundiAnterieurA3Mois(ReturnMessageDto srm, Date dateLundi) {
 
@@ -422,7 +427,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 	@Override
 	public ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages, Spcarr carr) {
+			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
 
 		boolean tempsPartiel = carr.getSpbhor().getTaux().intValue() != 1;
 		if (tempsPartiel) {
@@ -443,14 +448,13 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				}
 			}
 
-			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(carr.getSpbase().getNbashh()) * carr
+			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getBaseCalculee()) * carr
 					.getSpbhor().getTaux());
 
-			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > helperService.convertMairieNbHeuresFormatToMinutes(carr
-					.getSpbase().getNbasch())) {
+			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > helperService
+					.convertMairieNbHeuresFormatToMinutes(baseDto.getBaseLegale())) {
 				DecimalFormat df = new DecimalFormat("0.##");
-				double nombre = carr.getSpbase().getNbasch()
-						- helperService.convertMinutesToMairieNbHeuresFormat(weekBase);
+				double nombre = baseDto.getBaseLegale() - helperService.convertMinutesToMairieNbHeuresFormat(weekBase);
 				String msg = String.format(HS_TPS_PARTIEL_MSG, df.format(nombre));
 				srm.getErrors().add(msg);
 			}

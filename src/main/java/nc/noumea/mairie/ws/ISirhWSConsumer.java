@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -27,6 +28,8 @@ public interface ISirhWSConsumer {
 	boolean isHoliday(DateTime deb);
 
 	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date);
-	
+
 	boolean isJourFerie(DateTime deb);
+
+	BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date date);
 }

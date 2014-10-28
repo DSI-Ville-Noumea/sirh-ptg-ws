@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.ReposCompHisto;
 import nc.noumea.mairie.ptg.domain.ReposCompTask;
@@ -16,7 +15,9 @@ import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IReposCompRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.repository.IMairieRepository;
+import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.joda.time.LocalDate;
@@ -110,9 +111,8 @@ public class ReposCompServiceTest {
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(2);
-		Spbase base = new Spbase();
-		base.setNbasch(39.00d);
-		carr.setSpbase(base);
+		BaseHorairePointageDto base = new BaseHorairePointageDto();
+		base.setBaseLegale(39.00d);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 
@@ -180,9 +180,9 @@ public class ReposCompServiceTest {
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
 
 		Spcarr carr = new Spcarr();
-		Spbase base = new Spbase();
-		base.setNbasch(39.00d);
-		carr.setSpbase(base);
+		BaseHorairePointageDto base = new BaseHorairePointageDto();
+		base.setIdBaseHorairePointage(1);
+		base.setBaseLegale(39.00d);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 
@@ -202,6 +202,10 @@ public class ReposCompServiceTest {
 
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
+				base);
+
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
@@ -209,6 +213,7 @@ public class ReposCompServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWs);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		service.processReposCompTask(15);
@@ -250,9 +255,9 @@ public class ReposCompServiceTest {
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
 
 		Spcarr carr = new Spcarr();
-		Spbase base = new Spbase();
-		base.setNbasch(39.00d);
-		carr.setSpbase(base);
+		BaseHorairePointageDto base = new BaseHorairePointageDto();
+		base.setIdBaseHorairePointage(1);
+		base.setBaseLegale(39.00d);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 
@@ -272,6 +277,10 @@ public class ReposCompServiceTest {
 
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
+				base);
+
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
@@ -279,6 +288,7 @@ public class ReposCompServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWs);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		service.processReposCompTask(15);
@@ -320,9 +330,9 @@ public class ReposCompServiceTest {
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
 
 		Spcarr carr = new Spcarr();
-		Spbase base = new Spbase();
-		base.setNbasch(39.00d);
-		carr.setSpbase(base);
+		BaseHorairePointageDto base = new BaseHorairePointageDto();
+		base.setIdBaseHorairePointage(1);
+		base.setBaseLegale(39.00d);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 
@@ -342,6 +352,10 @@ public class ReposCompServiceTest {
 
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
+				base);
+
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
@@ -349,6 +363,7 @@ public class ReposCompServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWs);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		service.processReposCompTask(15);
@@ -390,9 +405,9 @@ public class ReposCompServiceTest {
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
 
 		Spcarr carr = new Spcarr();
-		Spbase base = new Spbase();
-		base.setNbasch(39.00d);
-		carr.setSpbase(base);
+		BaseHorairePointageDto base = new BaseHorairePointageDto();
+		base.setIdBaseHorairePointage(1);
+		base.setBaseLegale(39.00d);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 
@@ -412,6 +427,10 @@ public class ReposCompServiceTest {
 
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
+				base);
+
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
@@ -419,6 +438,7 @@ public class ReposCompServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWs);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		service.processReposCompTask(15);
@@ -460,9 +480,9 @@ public class ReposCompServiceTest {
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(39.00d)).thenReturn(2340);
 
 		Spcarr carr = new Spcarr();
-		Spbase base = new Spbase();
-		base.setNbasch(39.00d);
-		carr.setSpbase(base);
+		BaseHorairePointageDto base = new BaseHorairePointageDto();
+		base.setIdBaseHorairePointage(1);
+		base.setBaseLegale(39.00d);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(5138, hs.getDateLundi())).thenReturn(carr);
 
@@ -482,6 +502,10 @@ public class ReposCompServiceTest {
 
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
+				base);
+
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
@@ -489,6 +513,7 @@ public class ReposCompServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWs);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
 
 		// When
 		service.processReposCompTask(15);

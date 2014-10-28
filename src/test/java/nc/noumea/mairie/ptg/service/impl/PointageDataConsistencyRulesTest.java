@@ -13,7 +13,6 @@ import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spbarem;
-import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
@@ -28,6 +27,7 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -49,11 +49,14 @@ public class PointageDataConsistencyRulesTest {
 		Spcarr carr = new Spcarr();
 		AgentGeneriqueDto agent = new AgentGeneriqueDto();
 
+		BaseHorairePointageDto base = new BaseHorairePointageDto();
+
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mRepo.getAgentCurrentCarriere(agent, dateLundi)).thenReturn(carr);
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(agent);
+		Mockito.when(sRepo.getBaseHorairePointageAgent(idAgent, dateLundi)).thenReturn(base);
 
 		PointageDataConsistencyRules service = Mockito.spy(new PointageDataConsistencyRules());
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
@@ -62,13 +65,14 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.doReturn(rmd).when(service).checkSprircRecuperation(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkSpcongConge(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkSpabsenMaladie(rmd, idAgent, dateLundi, pointages);
-		Mockito.doReturn(rmd).when(service).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr);
-		Mockito.doReturn(rmd).when(service).checkAgentINAAndHSup(rmd, idAgent, dateLundi, pointages, carr);
+		Mockito.doReturn(rmd).when(service).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr, base);
+		Mockito.doReturn(rmd).when(service).checkAgentINAAndHSup(rmd, idAgent, dateLundi, pointages, carr, base);
 		Mockito.doReturn(rmd).when(service).checkAgentInactivity(rmd, idAgent, dateLundi, pointages, agent);
 		Mockito.doReturn(rmd).when(service).checkPrime7650(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkPrime7651(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkPrime7652(rmd, idAgent, dateLundi, pointages);
-		Mockito.doReturn(rmd).when(service).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr);
+		Mockito.doReturn(rmd).when(service)
+				.checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, base);
 
 		// When
 		service.processDataConsistency(rmd, idAgent, dateLundi, pointages);
@@ -77,14 +81,14 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.verify(service, Mockito.times(1)).checkSprircRecuperation(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkSpcongConge(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkSpabsenMaladie(rmd, idAgent, dateLundi, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr);
-		Mockito.verify(service, Mockito.times(1)).checkAgentINAAndHSup(rmd, idAgent, dateLundi, pointages, carr);
+		Mockito.verify(service, Mockito.times(1)).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr, base);
+		Mockito.verify(service, Mockito.times(1)).checkAgentINAAndHSup(rmd, idAgent, dateLundi, pointages, carr, base);
 		Mockito.verify(service, Mockito.times(1)).checkAgentInactivity(rmd, idAgent, dateLundi, pointages, agent);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7650(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7651(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7652(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages,
-				carr);
+				carr, base);
 	}
 
 	@Test
@@ -683,12 +687,13 @@ public class PointageDataConsistencyRulesTest {
 		p2.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		Spcarr carr = new Spcarr();
+		BaseHorairePointageDto base = new BaseHorairePointageDto();
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
 		// When
 		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1, p2), carr);
+				Arrays.asList(p1, p2), carr, base);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -715,17 +720,16 @@ public class PointageDataConsistencyRulesTest {
 
 		Spbhor hor = new Spbhor();
 		hor.setTaux(0.5);
-		Spbase bas = new Spbase();
-		bas.setNbashh(32);
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setBaseCalculee(32.0);
 		Spcarr car = new Spcarr();
 		car.setSpbhor(hor);
-		car.setSpbase(bas);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
 		// When
 		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1, p2), car);
+				Arrays.asList(p1, p2), car, bas);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -753,17 +757,16 @@ public class PointageDataConsistencyRulesTest {
 
 		Spbhor hor = new Spbhor();
 		hor.setTaux(0.5);
-		Spbase bas = new Spbase();
-		bas.setNbashh(32);
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setBaseCalculee(32.0);
 		Spcarr car = new Spcarr();
 		car.setSpbhor(hor);
-		car.setSpbase(bas);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
 		// When
 		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1, p2), car);
+				Arrays.asList(p1, p2), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -779,11 +782,10 @@ public class PointageDataConsistencyRulesTest {
 
 		Spbarem barem = new Spbarem();
 		barem.setIna(205);
-		Spbase bas = new Spbase();
-		bas.setCdBase("A");
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
-		car.setSpbase(bas);
 		car.setCdcate(1);
 
 		Pointage p1 = new Pointage();
@@ -796,7 +798,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car);
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -812,11 +814,10 @@ public class PointageDataConsistencyRulesTest {
 
 		Spbarem barem = new Spbarem();
 		barem.setIna(315);
-		Spbase bas = new Spbase();
-		bas.setCdBase("A");
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
-		car.setSpbase(bas);
 		car.setCdcate(1);
 
 		Pointage p1 = new Pointage();
@@ -829,7 +830,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car);
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -845,11 +846,10 @@ public class PointageDataConsistencyRulesTest {
 
 		Spbarem barem = new Spbarem();
 		barem.setIna(316);
-		Spbase bas = new Spbase();
-		bas.setCdBase("A");
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
-		car.setSpbase(bas);
 		car.setCdcate(1);
 
 		Pointage p1 = new Pointage();
@@ -869,7 +869,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car);
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -886,11 +886,10 @@ public class PointageDataConsistencyRulesTest {
 
 		Spbarem barem = new Spbarem();
 		barem.setIna(316);
-		Spbase bas = new Spbase();
-		bas.setCdBase("A");
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
-		car.setSpbase(bas);
 		car.setCdcate(1);
 
 		Pointage p1 = new Pointage();
@@ -910,7 +909,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car);
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -926,11 +925,10 @@ public class PointageDataConsistencyRulesTest {
 
 		Spbarem barem = new Spbarem();
 		barem.setIna(316);
-		Spbase bas = new Spbase();
-		bas.setCdBase("A");
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
-		car.setSpbase(bas);
 		car.setCdcate(4);
 
 		Pointage p1 = new Pointage();
@@ -943,7 +941,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car);
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -959,11 +957,10 @@ public class PointageDataConsistencyRulesTest {
 
 		Spbarem barem = new Spbarem();
 		barem.setIna(315);
-		Spbase bas = new Spbase();
-		bas.setCdBase("Z");
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("Z");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
-		car.setSpbase(bas);
 		car.setCdcate(1);
 
 		Pointage p1 = new Pointage();
@@ -971,7 +968,7 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		SirhWsServiceDto dtoService = new SirhWsServiceDto();
 		dtoService.setSigle("TITI");
 
@@ -983,7 +980,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car);
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -1000,11 +997,10 @@ public class PointageDataConsistencyRulesTest {
 
 		Spbarem barem = new Spbarem();
 		barem.setIna(315);
-		Spbase bas = new Spbase();
-		bas.setCdBase("Z");
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("Z");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
-		car.setSpbase(bas);
 		car.setCdcate(1);
 
 		Pointage p1 = new Pointage();
@@ -1012,7 +1008,7 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		SirhWsServiceDto dtoService = new SirhWsServiceDto();
 		dtoService.setSigle("DPM");
 
@@ -1024,7 +1020,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car);
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(0, result.getInfos().size());
@@ -1750,12 +1746,11 @@ public class PointageDataConsistencyRulesTest {
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
-		Spbase bas = new Spbase();
-		bas.setCdBase("A");
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1.0);
 		Spcarr car = new Spcarr();
-		car.setSpbase(bas);
 		car.setSpbhor(spbhor);
 
 		Pointage p1 = new Pointage();
@@ -1768,7 +1763,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car);
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -1782,14 +1777,13 @@ public class PointageDataConsistencyRulesTest {
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
-		Spbase bas = new Spbase();
-		bas.setCdBase("A");
-		bas.setNbashh(20.0);
-		bas.setNbasch(39.0);
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
+		bas.setBaseCalculee(20.0);
+		bas.setBaseLegale(39.0);
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(0.5);
 		Spcarr car = new Spcarr();
-		car.setSpbase(bas);
 		car.setSpbhor(spbhor);
 
 		Pointage p1 = new Pointage();
@@ -1799,15 +1793,15 @@ public class PointageDataConsistencyRulesTest {
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbashh())).thenReturn(1200);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbasch())).thenReturn(2340);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseCalculee())).thenReturn(1200);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseLegale())).thenReturn(2340);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car);
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -1821,14 +1815,13 @@ public class PointageDataConsistencyRulesTest {
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
-		Spbase bas = new Spbase();
-		bas.setCdBase("A");
-		bas.setNbashh(20.0);
-		bas.setNbasch(39.0);
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
+		bas.setBaseCalculee(20.0);
+		bas.setBaseLegale(39.0);
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(0.5);
 		Spcarr car = new Spcarr();
-		car.setSpbase(bas);
 		car.setSpbhor(spbhor);
 
 		Pointage p1 = new Pointage();
@@ -1838,8 +1831,8 @@ public class PointageDataConsistencyRulesTest {
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbashh())).thenReturn(1200);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbasch())).thenReturn(2340);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseCalculee())).thenReturn(1200);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseLegale())).thenReturn(2340);
 		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(600)).thenReturn(10.0d);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
@@ -1847,7 +1840,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car);
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -1863,14 +1856,13 @@ public class PointageDataConsistencyRulesTest {
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
-		Spbase bas = new Spbase();
-		bas.setCdBase("A");
-		bas.setNbashh(20.0);
-		bas.setNbasch(39.0);
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
+		bas.setBaseCalculee(20.0);
+		bas.setBaseLegale(39.0);
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(0.5);
 		Spcarr car = new Spcarr();
-		car.setSpbase(bas);
 		car.setSpbhor(spbhor);
 
 		Pointage p1 = new Pointage();
@@ -1886,15 +1878,15 @@ public class PointageDataConsistencyRulesTest {
 		p2.getType().setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbashh())).thenReturn(1200);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbasch())).thenReturn(2340);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseCalculee())).thenReturn(1200);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseLegale())).thenReturn(2340);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1, p2), car);
+				Arrays.asList(p1, p2), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -1908,14 +1900,13 @@ public class PointageDataConsistencyRulesTest {
 		Integer idAgent = 9008765;
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 
-		Spbase bas = new Spbase();
-		bas.setCdBase("A");
-		bas.setNbashh(20.5);
-		bas.setNbasch(39.0);
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
+		bas.setBaseCalculee(20.5);
+		bas.setBaseLegale(39.0);
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(0.5);
 		Spcarr car = new Spcarr();
-		car.setSpbase(bas);
 		car.setSpbhor(spbhor);
 
 		Pointage p1 = new Pointage();
@@ -1931,8 +1922,8 @@ public class PointageDataConsistencyRulesTest {
 		p2.getType().setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbashh())).thenReturn(1200);
-		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getNbasch())).thenReturn(2340);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseCalculee())).thenReturn(1200);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseLegale())).thenReturn(2340);
 		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(600)).thenReturn(10.485d);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
@@ -1940,7 +1931,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1, p2), car);
+				Arrays.asList(p1, p2), car, bas);
 
 		// Then
 		assertEquals(1, result.getErrors().size());

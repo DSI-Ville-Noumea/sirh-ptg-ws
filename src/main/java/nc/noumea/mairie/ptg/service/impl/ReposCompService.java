@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
-import nc.noumea.mairie.domain.Spbase;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.ReposCompHisto;
 import nc.noumea.mairie.ptg.domain.ReposCompTask;
@@ -14,7 +13,9 @@ import nc.noumea.mairie.ptg.repository.IReposCompRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IReposCompService;
 import nc.noumea.mairie.repository.IMairieRepository;
+import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,6 +47,9 @@ public class ReposCompService implements IReposCompService {
 
 	@Autowired
 	private IAbsWsConsumer absWsConsumer;
+
+	@Autowired
+	private ISirhWSConsumer sirhWSConsumer;
 
 	private static int MAX_MIN_PER_WEEK = 42 * 60; // 42h
 	private static int REPOS_COMP_COEF_THRESHOLD = 130 * 60; // 130h
@@ -88,9 +92,13 @@ public class ReposCompService implements IReposCompService {
 				logger.info("Agent status is [{}]. Stopping process for that week.", carr.getStatutCarriere());
 				continue;
 			}
-
-			Spbase base = carr.getSpbase();
-			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(base.getNbasch()));
+			BaseHorairePointageDto baseDto = sirhWSConsumer.getBaseHorairePointageAgent(task.getIdAgent(),
+					vhs.getDateLundi());
+			if (baseDto == null || baseDto.getIdBaseHorairePointage() == null) {
+				logger.info("BaseHoraireAgent  is null. Stopping process for that week.");
+				continue;
+			}
+			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getBaseLegale()));
 
 			Pair<ReposCompHisto, Integer> histo = getOrCreateReposCompHisto(task.getIdAgent(), vhs.getDateLundi(),
 					weekBase, vhs.getMSup());

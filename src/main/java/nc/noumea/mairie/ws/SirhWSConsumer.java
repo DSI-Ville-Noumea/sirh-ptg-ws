@@ -9,6 +9,7 @@ import java.util.Map;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -34,6 +35,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhHolidayUrl = "utils/isHoliday";
 	private static final String sirhListPrimePointageUrl = "pointages/listPrimePointages";
 	private static final String sirhJourFerieUrl = "utils/isJourFerie";
+	private static final String sirhBaseHorairePointageUrl = "pointages/baseHoraire";
 
 	@Override
 	public SirhWsServiceDto getAgentDirection(Integer idAgent, Date date) {
@@ -161,7 +163,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		return listeNumPrime;
 	}
-	
+
 	@Override
 	public boolean isJourFerie(DateTime deb) {
 		String url = String.format(sirhWsBaseUrl + sirhJourFerieUrl);
@@ -175,5 +177,20 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date date) {
+		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+
+		String url = String.format(sirhWsBaseUrl + sirhBaseHorairePointageUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		parameters.put("date", sf.format(date));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(BaseHorairePointageDto.class, res, url);
 	}
 }

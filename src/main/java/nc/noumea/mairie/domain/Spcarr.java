@@ -14,9 +14,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "SPCARR")
-@NamedQueries({
-	@NamedQuery(name = "getCurrentCarriere", query = "select carr from Spcarr carr where carr.id.nomatr = :nomatr and carr.id.datdeb <= :todayFormatMairie and (carr.dateFin = 0 or carr.dateFin >= :todayFormatMairie)")
-})
+@NamedQueries({ @NamedQuery(name = "getCurrentCarriere", query = "select carr from Spcarr carr where carr.id.nomatr = :nomatr and carr.id.datdeb <= :todayFormatMairie and (carr.dateFin = 0 or carr.dateFin >= :todayFormatMairie)") })
 public class Spcarr {
 
 	@EmbeddedId
@@ -40,21 +38,17 @@ public class Spcarr {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "CDBHOR2", referencedColumnName = "CDTHOR", columnDefinition = "decimal")
 	private Spbhor spbhor;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "IBAN", referencedColumnName = "IBAN", columnDefinition = "char")
 	private Spbarem spbarem;
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "CDBASE", referencedColumnName = "CDBASE", columnDefinition = "char")
-	private Spbase spbase;
-	
+
 	@Transient
 	public AgentStatutEnum getStatutCarriere() {
-		
+
 		if (cdcate == null)
 			return null;
-		
+
 		switch (cdcate) {
 			case 1:
 			case 2:
@@ -73,7 +67,7 @@ public class Spcarr {
 				return null;
 		}
 	}
-	
+
 	public static Integer getStatutCarriereFromEnum(AgentStatutEnum statut) {
 		switch (statut) {
 			case F:
@@ -127,12 +121,4 @@ public class Spcarr {
 		this.spbarem = spbarem;
 	}
 
-	public Spbase getSpbase() {
-		return spbase;
-	}
-
-	public void setSpbase(Spbase spbase) {
-		this.spbase = spbase;
-	}
-	
 }
