@@ -68,7 +68,7 @@ public class ReposCompService implements IReposCompService {
 
 		logger.info("Agent {}.", task.getIdAgent());
 
-		List<VentilHsup> hSs = ventilationRepository.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(
+		List<VentilHsup> hSs = ventilationRepository.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(
 				task.getIdAgent(), task.getVentilDate().getIdVentilDate());
 
 		if (hSs.size() == 0) {

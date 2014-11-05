@@ -874,6 +874,28 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
+	public List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(Integer idAgent, Integer idVentilDate) {
+		
+		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select tb.* FROM PTG_VENTIL_HSUP tb WHERE tb.ID_VENTIL_HSUP in ");
+		sb.append("(select max(id_ventil_hsup) from ptg_ventil_hsup where id_ventil_date=:ventilDateId and id_agent=:idAgent and etat=:etat group by date_lundi) ");
+		sb.append("order by date_Lundi asc ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilHsup.class);
+		q.setParameter("ventilDateId", idVentilDate);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("etat", EtatPointageEnum.VALIDE.getCodeEtat());
+
+		@SuppressWarnings("unchecked")
+		List<VentilHsup> result = q.getResultList();
+		resultat.addAll(result);
+
+		return resultat;
+	}
+	
+	@Override
 	public List<VentilHsup> getListOfVentilHeuresSupWithDateForEtatPayeur(Integer idVentilDate) {
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
 

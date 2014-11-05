@@ -171,7 +171,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(t.getIdAgent(), vd.getIdVentilDate()))
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate()))
 				.thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -246,7 +246,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(t.getIdAgent(), vd.getIdVentilDate()))
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate()))
 				.thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -321,7 +321,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(t.getIdAgent(), vd.getIdVentilDate()))
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate()))
 				.thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -396,7 +396,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(t.getIdAgent(), vd.getIdVentilDate()))
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate()))
 				.thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -471,7 +471,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(t.getIdAgent(), vd.getIdVentilDate()))
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate()))
 				.thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);

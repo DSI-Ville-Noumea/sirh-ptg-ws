@@ -101,4 +101,7 @@ public interface IVentilationRepository {
 	List<Pointage> getListPointagesPrimeValideByMoisAndRefPrime(Integer idAgent, Date dateMois, Integer idRefPrime);
 
 	List<Integer> getListIdAgentsWithPointagesValidatedAndRejetes(Integer idVentilDate);
+
+	List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(
+			Integer idAgent, Integer idVentilDate);
 }
