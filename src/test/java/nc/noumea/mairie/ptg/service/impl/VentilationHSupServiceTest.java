@@ -4810,9 +4810,9 @@ public class VentilationHSupServiceTest {
 		assertEquals(0.25 * 60, result.getMComplementaires(), 0);
 		assertEquals(0.25 * 60, result.getMComplementairesRecup(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
-		assertEquals(6.75 * 60, result.getMSup25Recup(), 0);
+		assertEquals(8 * 60, result.getMSup25Recup(), 0);
 		assertEquals(5.25 * 60, result.getMSup50(), 0);
-		assertEquals(0, result.getMSup50Recup(), 0);
+		assertEquals(0.75 * 60, result.getMSup50Recup(), 0);
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}

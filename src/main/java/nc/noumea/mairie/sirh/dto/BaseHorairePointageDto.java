@@ -23,7 +23,7 @@ public class BaseHorairePointageDto {
 	}
 
 	@Transient
-	public double getDayBase(int day) {
+	public Double getDayBase(int day) {
 
 		switch (day) {
 			case 0:

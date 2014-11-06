@@ -349,7 +349,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 			case C:
 			case CC:
 				totalAmountOfHSRecuperees = result.getMComplementairesRecup() + result.getMSup25Recup()
-						+ result.getMSup50Recup() + result.getMsdjfRecup() + result.getMsNuitRecup();
+						+ result.getMSup50Recup();
 				break;
 
 		}

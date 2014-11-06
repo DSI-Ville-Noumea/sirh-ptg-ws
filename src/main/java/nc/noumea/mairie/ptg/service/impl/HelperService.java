@@ -87,7 +87,7 @@ public class HelperService {
 	
 	public int convertMairieNbHeuresFormatToMinutes(Double nbHeuresMairies) {
 		
-		if (nbHeuresMairies == 0.0d)
+		if (null == nbHeuresMairies || nbHeuresMairies == 0.0d)
 			return 0;
 		
 		BigDecimal v = new BigDecimal(String.valueOf(nbHeuresMairies));
