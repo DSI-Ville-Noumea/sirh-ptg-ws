@@ -558,13 +558,14 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			return vh.getMRecuperees() + vh.getMRappelService();
 		}
 		// pour les conventions collectives
+		// on prend l heure supplementaire + la majoration
 		result += vh.getMComplementairesRecup();
 		result += vh.getMSup25Recup() * 1.25;
 		result += vh.getMSup50Recup() * 1.50;
-		result += vh.getMsdjfRecup() * 1.75;
-		result += vh.getMMaiRecup() * 1.75;
-		result += vh.getMsNuitRecup() * 2;
-		//TODO voir avec Michel ce que l'on fait pour les CC et la DPM
+		// on ne prend que la majoration car l heure sup est deja prise en compte juste au dessus
+		result += vh.getMsdjfRecup() * 0.75;
+		result += vh.getMMaiRecup() * 0.75;
+		result += vh.getMsNuitRecup();
 		
 		return result;
 	}

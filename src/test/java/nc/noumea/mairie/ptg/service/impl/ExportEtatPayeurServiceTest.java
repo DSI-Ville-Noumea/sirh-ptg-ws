@@ -1594,7 +1594,7 @@ public class ExportEtatPayeurServiceTest {
 
 		int result = service.calculMinutesRecuperation(vh);
 
-		double calcul = 10 + 20 * 1.25 + 30 * 1.5 + 40 * 1.75 + 50 * 2 + 60 * 1.75;
+		double calcul = 10 + 20 * 1.25 + 30 * 1.5 + 40 * 0.75 + 50 * 1 + 60 * 0.75;
 		assertEquals(result, calcul, 0);
 	}
 }
