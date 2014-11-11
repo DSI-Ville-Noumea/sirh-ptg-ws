@@ -76,7 +76,8 @@ public class AccessRightsService implements IAccessRightsService {
 			AgentGeneriqueDto delegataire = sirhWSConsumer.getAgent(droit.getIdAgentDelegataire());
 
 			if (delegataire == null)
-				logger.warn("L'agent délégataire {} n'existe pas.", matriculeConvertor.tryConvertIdAgentToNomatr(droit.getIdAgentDelegataire()));
+				logger.warn("L'agent délégataire {} n'existe pas.",
+						matriculeConvertor.tryConvertIdAgentToNomatr(droit.getIdAgentDelegataire()));
 			else
 				result.setDelegataire(new AgentDto(delegataire));
 		}
@@ -84,7 +85,8 @@ public class AccessRightsService implements IAccessRightsService {
 		for (Droit operateur : droit.getOperateurs()) {
 			AgentGeneriqueDto ope = sirhWSConsumer.getAgent(operateur.getIdAgent());
 			if (ope == null)
-				logger.warn("L'agent opérateur {} n'existe pas.", matriculeConvertor.tryConvertIdAgentToNomatr(operateur.getIdAgent()));
+				logger.warn("L'agent opérateur {} n'existe pas.",
+						matriculeConvertor.tryConvertIdAgentToNomatr(operateur.getIdAgent()));
 			else
 				result.getSaisisseurs().add(new AgentDto(ope));
 		}
@@ -108,7 +110,8 @@ public class AccessRightsService implements IAccessRightsService {
 				result.getErrors().add(
 						String.format(
 								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(), matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
+								ag.getDisplayNom(), ag.getDisplayPrenom(),
+								matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
 			} else {
 				droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
 			}
@@ -138,7 +141,8 @@ public class AccessRightsService implements IAccessRightsService {
 				result.getErrors()
 						.add(String
 								.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
-										ag.getDisplayNom(), ag.getDisplayPrenom(), matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
+										ag.getDisplayNom(), ag.getDisplayPrenom(),
+										matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
 				continue;
 			}
 
@@ -170,6 +174,8 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Override
 	public boolean canUserAccessInput(Integer idAgent, Integer agentViewed) {
+		// #11939 : attention si changement de RG ici, tenir compte de ce
+		// redmine
 		// boolean isOperator = accessRightsRepository.isUserOperator(idAgent);
 		// List<AgentDto> agents
 		return true;
