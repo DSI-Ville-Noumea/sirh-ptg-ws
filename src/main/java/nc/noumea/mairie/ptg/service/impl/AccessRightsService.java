@@ -197,7 +197,8 @@ public class AccessRightsService implements IAccessRightsService {
 		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
 			AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			agentDtos.add(agentDto);
+			if (agentDto != null)
+				agentDtos.add(agentDto);
 		}
 		Collections.sort(agentDtos, new AgentWithServiceDtoComparator());
 		return agentDtos;
