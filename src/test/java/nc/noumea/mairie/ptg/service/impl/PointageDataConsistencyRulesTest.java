@@ -958,7 +958,7 @@ public class PointageDataConsistencyRulesTest {
 		Spbarem barem = new Spbarem();
 		barem.setIna(315);
 		BaseHorairePointageDto bas = new BaseHorairePointageDto();
-		bas.setCodeBaseHorairePointage("Z");
+		bas.setCodeBaseHorairePointage("00Z");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
 		car.setCdcate(1);
@@ -985,7 +985,7 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en base horaire \"Z\" sur la période", result.getErrors().get(0));
+		assertEquals("L'agent est en base horaire \"00Z\" sur la période", result.getErrors().get(0));
 	}
 
 	@Test
@@ -998,7 +998,7 @@ public class PointageDataConsistencyRulesTest {
 		Spbarem barem = new Spbarem();
 		barem.setIna(315);
 		BaseHorairePointageDto bas = new BaseHorairePointageDto();
-		bas.setCodeBaseHorairePointage("Z");
+		bas.setCodeBaseHorairePointage("00Z");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
 		car.setCdcate(1);

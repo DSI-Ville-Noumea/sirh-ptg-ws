@@ -48,7 +48,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String CONGE_MSG = "%s : L'agent est en congés payés sur cette période.";
 	public static final String MALADIE_MSG = "%s : L'agent est en maladie sur cette période.";
 	public static final String HS_INA_315_MSG = "L'agent n'a pas droit aux HS sur la période (INA > 315)";
-	public static final String BASE_HOR_Z_MSG = "L'agent est en base horaire \"Z\" sur la période";
+	public static final String BASE_HOR_00Z_MSG = "L'agent est en base horaire \"00Z\" sur la période";
 	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
 	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez saisi des primes et/ou heures supplémentaires sur des périodes où l’agent était absent.";
 	public static final String ERROR_7651_MSG = "";
@@ -138,7 +138,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
 
 		if ((carr.getStatutCarriere() != AgentStatutEnum.F || carr.getSpbarem().getIna() <= 315)
-				&& !baseDto.getCodeBaseHorairePointage().equals("Z"))
+				&& !baseDto.getCodeBaseHorairePointage().equals("00Z"))
 			return srm;
 
 		// cas de la DPM #11622
@@ -153,7 +153,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				if (carr.getSpbarem().getIna() > 315)
 					srm.getErrors().add(HS_INA_315_MSG);
 				else
-					srm.getErrors().add(BASE_HOR_Z_MSG);
+					srm.getErrors().add(BASE_HOR_00Z_MSG);
 
 				break;
 			}
