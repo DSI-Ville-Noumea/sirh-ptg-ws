@@ -368,18 +368,28 @@ public class PointageService implements IPointageService {
 		List<Pointage> resultListFinal = new ArrayList<Pointage>();
 		if (typeHS != null) {
 			for (Pointage p : resultList) {
-				if (typeHS.toUpperCase().equals("RS")) {
-					if (p.getHeureSupRappelService() != null && p.getHeureSupRappelService()) {
-						if (!resultListFinal.contains(p))
-							resultListFinal.add(p);
-					}
-				} else if (typeHS.toUpperCase().equals("R")) {
-					// si elle est en rappel de service on ne l'ajoute pas
-					if (p.getHeureSupRappelService() == null || !p.getHeureSupRappelService()) {
-						if (p.getHeureSupRecuperee() != null && p.getHeureSupRecuperee()) {
+				if (p.getTypePointageEnum().equals(RefTypePointageEnum.H_SUP)) {
+					if (typeHS.toUpperCase().equals("RS")) {
+						if (p.getHeureSupRappelService() != null && p.getHeureSupRappelService()) {
 							if (!resultListFinal.contains(p))
 								resultListFinal.add(p);
 						}
+					} else if (typeHS.toUpperCase().equals("R")) {
+						// si elle est en rappel de service on ne l'ajoute pas
+						if (p.getHeureSupRappelService() == null || !p.getHeureSupRappelService()) {
+							if (p.getHeureSupRecuperee() != null && p.getHeureSupRecuperee()) {
+								if (!resultListFinal.contains(p))
+									resultListFinal.add(p);
+							}
+						}
+					} else if (typeHS.toUpperCase().equals("AUTRE")) {
+						// on ajoute celle qui ne sont ni en rappel ni
+						// recupérées
+						if (p.getHeureSupRappelService() == null && p.getHeureSupRecuperee() == null) {
+							if (!resultListFinal.contains(p))
+								resultListFinal.add(p);
+						}
+
 					}
 				}
 			}
