@@ -28,9 +28,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private String sirhWsBaseUrl;
 
 	private static final String sirhAgentDirectionUrl = "agents/direction";
-	private static final String sirhAgentsServiceUrl = "services/agents";
 	private static final String sirhAgentServiceUrl = "services/agent";
-	private static final String sirhSousServicesUrl = "services/sousServices";
 	private static final String sirhAgentUrl = "agents/getAgent";
 	private static final String sirhHolidayUrl = "utils/isHoliday";
 	private static final String sirhListPrimePointageUrl = "pointages/listPrimePointages";
@@ -70,39 +68,6 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(AgentWithServiceDto.class, res, url);
-	}
-
-	@Override
-	public List<AgentWithServiceDto> getServicesAgent(String rootService, Date date) {
-
-		String url = String.format(sirhWsBaseUrl + sirhAgentsServiceUrl);
-
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("codeService", rootService);
-
-		if (date != null) {
-			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
-			parameters.put("date", sf.format(date));
-		}
-
-		ClientResponse res = createAndFireGetRequest(parameters, url);
-
-		return readResponseAsList(AgentWithServiceDto.class, res, url);
-	}
-
-	@Override
-	public List<SirhWsServiceDto> getSousServices(String rootService) {
-
-		String url = String.format(sirhWsBaseUrl + sirhSousServicesUrl);
-
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("codeService", rootService);
-
-		ClientResponse res = createAndFireGetRequest(parameters, url);
-
-		List<SirhWsServiceDto> services = readResponseAsList(SirhWsServiceDto.class, res, url);
-
-		return services;
 	}
 
 	@Override

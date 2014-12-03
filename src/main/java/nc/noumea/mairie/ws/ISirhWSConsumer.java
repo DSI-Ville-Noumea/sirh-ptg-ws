@@ -15,10 +15,6 @@ public interface ISirhWSConsumer {
 
 	SirhWsServiceDto getAgentDirection(Integer idAgent, Date date);
 
-	List<AgentWithServiceDto> getServicesAgent(String rootService, Date date);
-
-	List<SirhWsServiceDto> getSousServices(String rootService);
-
 	AgentWithServiceDto getAgentService(Integer idAgent, Date date);
 
 	AgentGeneriqueDto getAgent(Integer idAgent);
