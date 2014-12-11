@@ -13,6 +13,7 @@ public class PrimeDto extends PointageDto  {
 	private Integer quantite;
 	private Integer numRubrique;
 	private Integer idRefPrime;
+	private String aide;
 
 	public PrimeDto() {
 	}
@@ -22,6 +23,7 @@ public class PrimeDto extends PointageDto  {
 		this.idRefPrime = prime.getIdRefPrime();
 		this.numRubrique = prime.getNoRubr();
 		this.typeSaisie = prime.getTypeSaisie().name();
+		this.aide = prime.getAide();
 	}
 	
 	public PrimeDto(PrimeDto primeDto) {
@@ -32,6 +34,7 @@ public class PrimeDto extends PointageDto  {
 		this.quantite = primeDto.quantite;
 		this.numRubrique = primeDto.numRubrique;
 		this.idRefPrime = primeDto.idRefPrime;
+		this.aide = primeDto.aide;
 	}
 
 	public void updateWithPointage(Pointage ptg) {
@@ -91,6 +94,14 @@ public class PrimeDto extends PointageDto  {
 
 	public void setIdRefPrime(Integer idRefPrime) {
 		this.idRefPrime = idRefPrime;
+	}
+
+	public String getAide() {
+		return aide;
+	}
+
+	public void setAide(String aide) {
+		this.aide = aide;
 	}
 
 	
