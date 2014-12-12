@@ -13,6 +13,7 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.SpcarrId;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.MotifHeureSup;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
@@ -23,8 +24,10 @@ import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
+import nc.noumea.mairie.ptg.dto.MotifHeureSupDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.repository.IMairieRepository;
@@ -817,5 +820,95 @@ public class PointageServiceTest {
 		List<RefTypeAbsenceDto> result = service.getRefTypeAbsence();
 
 		assertEquals(3, result.size());
+	}
+
+	@Test
+	public void getMotifHeureSup_Empty() {
+
+		// Given
+		List<MotifHeureSup> listeMotif = new ArrayList<MotifHeureSup>();
+
+		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(arRepo.findAllMotifHeureSup()).thenReturn(listeMotif);
+
+		// When
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
+
+		List<MotifHeureSupDto> dto = service.getMotifHeureSup();
+
+		// Then
+		assertEquals(0, dto.size());
+	}
+
+	@Test
+	public void getMotifHeureSup() {
+
+		// Given
+		MotifHeureSup m = new MotifHeureSup();
+		m.setIdMotifHsup(1);
+		m.setText("teset");
+
+		List<MotifHeureSup> listeMotif = new ArrayList<MotifHeureSup>();
+		listeMotif.add(m);
+
+		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(arRepo.findAllMotifHeureSup()).thenReturn(listeMotif);
+
+		// When
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
+
+		List<MotifHeureSupDto> dto = service.getMotifHeureSup();
+
+		// Then
+		assertEquals(1, dto.size());
+		assertEquals(m.getIdMotifHsup(), dto.get(0).getIdMotifHsup());
+		assertEquals(m.getText(), dto.get(0).getLibelle());
+	}
+
+	@Test
+	public void setMotifHeureSup_MotifInexistant() {
+
+		// Given
+		MotifHeureSupDto motif = new MotifHeureSupDto();
+		motif.setIdMotifHsup(1);
+
+		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(arRepo.getEntity(MotifHeureSup.class, 1)).thenReturn(null);
+
+		// When
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
+
+		ReturnMessageDto dto = service.setMotifHeureSup(motif);
+
+		// Then
+		assertEquals(1, dto.getErrors().size());
+		assertEquals("Le motif à modifier n'existe pas.", dto.getErrors().get(0));
+	}
+
+	@Test
+	public void setMotifHeureSup_LibelleVide() {
+
+		// Given
+		MotifHeureSupDto motif = new MotifHeureSupDto();
+		motif.setIdMotifHsup(1);
+		
+		MotifHeureSup hsup = new MotifHeureSup();
+		hsup.setIdMotifHsup(1);
+
+		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(arRepo.getEntity(MotifHeureSup.class, 1)).thenReturn(hsup);
+
+		// When
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
+
+		ReturnMessageDto dto = service.setMotifHeureSup(motif);
+
+		// Then
+		assertEquals(1, dto.getErrors().size());
+		assertEquals("Le libellé du motif n'est pas saisi.", dto.getErrors().get(0));
 	}
 }
