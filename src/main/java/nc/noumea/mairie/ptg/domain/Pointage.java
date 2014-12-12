@@ -94,6 +94,10 @@ public class Pointage {
 	private PtgComment motif;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@JoinColumn(name = "ID_MOTIF_HSUP")
+	private MotifHeureSup motifHsup;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(name = "ID_COMMENT_COMMENTAIRE")
 	private PtgComment commentaire;
 
@@ -257,6 +261,14 @@ public class Pointage {
 
 	public void setHeureSupRappelService(Boolean heureSupRappelService) {
 		this.heureSupRappelService = heureSupRappelService;
+	}
+
+	public MotifHeureSup getMotifHsup() {
+		return motifHsup;
+	}
+
+	public void setMotifHsup(MotifHeureSup motifHsup) {
+		this.motifHsup = motifHsup;
 	}
 
 }

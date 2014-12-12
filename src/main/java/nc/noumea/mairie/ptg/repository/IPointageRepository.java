@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.ptg.domain.MotifHeureSup;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefEtat;
@@ -54,4 +55,6 @@ public interface IPointageRepository {
 	List<RefTypeAbsence> findAllRefTypeAbsence();
 
 	List<Integer> getListApprobateursPointagesSaisiesJourDonne();
+
+	List<MotifHeureSup> findAllMotifHeureSup();
 }

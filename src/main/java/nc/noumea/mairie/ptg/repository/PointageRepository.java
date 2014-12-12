@@ -11,6 +11,7 @@ import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.MotifHeureSup;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefEtat;
@@ -280,5 +281,10 @@ public class PointageRepository implements IPointageRepository {
 				.getResultList();
 
 		return result;
+	}
+
+	@Override
+	public List<MotifHeureSup> findAllMotifHeureSup() {
+		return ptgEntityManager.createQuery("SELECT o FROM MotifHeureSup o", MotifHeureSup.class).getResultList();
 	}
 }

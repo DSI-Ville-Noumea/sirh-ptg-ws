@@ -34,7 +34,13 @@ public class ConsultPointageDto {
 		date = ptg.getDateDebut();
 		debut = ptg.getDateDebut();
 		fin = ptg.getDateFin();
-		motif = ptg.getMotif() == null ? "" : ptg.getMotif().getText();
+		if (ptg.getMotif() == null) {
+			if (ptg.getMotifHsup() != null) {
+				motif = ptg.getMotifHsup() == null ? "" : ptg.getMotifHsup().getText();
+			}
+		} else {
+			motif = ptg.getMotif() == null ? "" : ptg.getMotif().getText();
+		}
 		commentaire = ptg.getCommentaire() == null ? "" : ptg.getCommentaire().getText();
 
 		switch (ptg.getTypePointageEnum()) {
@@ -42,7 +48,8 @@ public class ConsultPointageDto {
 			case H_SUP:
 				quantite = helper.formatMinutesToString(debut, fin);
 				heuresSupRecuperees = null == ptg.getHeureSupRecuperee() ? false : ptg.getHeureSupRecuperee();
-				heuresSupRappelEnService = null == ptg.getHeureSupRappelService() ? false : ptg.getHeureSupRappelService();
+				heuresSupRappelEnService = null == ptg.getHeureSupRappelService() ? false : ptg
+						.getHeureSupRappelService();
 				break;
 			case PRIME:
 				typePointage = ptg.getRefPrime().getLibelle();
@@ -179,5 +186,5 @@ public class ConsultPointageDto {
 	public void setHeuresSupRappelEnService(boolean heuresSupRappelEnService) {
 		this.heuresSupRappelEnService = heuresSupRappelEnService;
 	}
-	
+
 }

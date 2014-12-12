@@ -26,6 +26,7 @@
         <class>nc.noumea.mairie.ptg.domain.ReposCompTask</class>
         <class>nc.noumea.mairie.ptg.domain.ReposCompHisto</class>
         <class>nc.noumea.mairie.ptg.domain.RefTypeAbsence</class>
+        <class>nc.noumea.mairie.ptg.domain.MotifHeureSup</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

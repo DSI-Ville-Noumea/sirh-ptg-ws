@@ -7,6 +7,7 @@ import java.util.List;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.MotifHeureSup;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
@@ -137,12 +138,12 @@ public class SaisieService implements ISaisieService {
 				// Only if it has changed, process this pointage
 				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi,
 						helperService.getCurrentDate());
-				//cas de la DMP #11622
+				// cas de la DMP #11622
 				SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent, ptg.getDateDebut());
-				if(service.getSigle().toUpperCase().equals("DPM")){
+				if (service.getSigle().toUpperCase().equals("DPM")) {
 					ptg.setHeureSupRecuperee(true);
 					ptg.setHeureSupRappelService(hs.getRappelService());
-				}else{
+				} else {
 					ptg.setHeureSupRecuperee(hs.getRecuperee());
 					ptg.setHeureSupRappelService(false);
 				}
@@ -150,7 +151,7 @@ public class SaisieService implements ISaisieService {
 				ptg.setDateFin(hs.getHeureFin());
 				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.H_SUP.getValue()));
 
-				crudComments(ptg, hs.getMotif(), hs.getCommentaire());
+				crudCommentsHeureSup(ptg, hs.getIdMotifHsup(), hs.getCommentaire());
 
 				isPointageHSupModifie = true;
 				finalPointages.add(ptg);
@@ -260,7 +261,7 @@ public class SaisieService implements ISaisieService {
 						ptg.setType(pointageRepository.getEntity(RefTypePointage.class,
 								RefTypePointageEnum.H_SUP.getValue()));
 
-						crudComments(ptg, hs.getMotif(), hs.getCommentaire());
+						crudCommentsHeureSup(ptg, hs.getIdMotifHsup(), hs.getCommentaire());
 
 						if (!approveModifiedPointages)
 							pointageService.addEtatPointage(ptg, EtatPointageEnum.APPROUVE, idAgent, currentDateEtat);
@@ -281,6 +282,30 @@ public class SaisieService implements ISaisieService {
 		deletePointages(idAgentOperator, originalAgentPointages);
 
 		return result;
+	}
+
+	/**
+	 * Responsible for creating / updating / deleting comments based on what a
+	 * user entered
+	 * 
+	 * @param ptg
+	 * @param idMotifHsup
+	 * @param commentaire
+	 */
+	protected void crudCommentsHeureSup(Pointage ptg, Integer idMotifHsup, String commentaire) {
+		MotifHeureSup motifHSup = pointageRepository.getEntity(MotifHeureSup.class, idMotifHsup);
+		ptg.setMotifHsup(motifHSup);
+
+		PtgComment commentPtgComment = ptg.getCommentaire();
+		if (commentaire != null && !commentaire.equals("")) {
+			if (commentPtgComment != null)
+				commentPtgComment.setText(commentaire);
+			else
+				ptg.setCommentaire(new PtgComment(commentaire));
+		} else if (commentPtgComment != null) {
+			pointageRepository.removeEntity(commentPtgComment);
+			ptg.setCommentaire(null);
+		}
 	}
 
 	protected boolean isPointageDejaModifie(List<Pointage> finalPointages, Pointage ptg) {
@@ -437,7 +462,7 @@ public class SaisieService implements ISaisieService {
 				.getHeureFin().getTime());
 
 		return (hasBeenModified || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
-				&& hasTextChanged(ptg, hSup));
+				&& hasTextChangedHSup(ptg, hSup));
 	}
 
 	protected boolean hasTextChanged(Pointage ptg, PointageDto pointageDto) {
@@ -449,6 +474,18 @@ public class SaisieService implements ISaisieService {
 		boolean commentHasChanged = (ptg.getCommentaire() == null && pointageDto.getCommentaire() != null
 				&& !pointageDto.getCommentaire().equals("") || (ptg.getCommentaire() != null && !ptg.getCommentaire()
 				.getText().equals(pointageDto.getCommentaire())));
+
+		return motifHasChanged || commentHasChanged;
+	}
+
+	protected boolean hasTextChangedHSup(Pointage ptg, HeureSupDto hsupDto) {
+
+		boolean motifHasChanged = (ptg.getMotifHsup() == null && hsupDto.getIdMotifHsup() != null || (ptg
+				.getMotifHsup() != null && ptg.getMotifHsup().getIdMotifHsup() != hsupDto.getIdMotifHsup()));
+
+		boolean commentHasChanged = (ptg.getCommentaire() == null && hsupDto.getCommentaire() != null
+				&& !hsupDto.getCommentaire().equals("") || (ptg.getCommentaire() != null && !ptg.getCommentaire()
+				.getText().equals(hsupDto.getCommentaire())));
 
 		return motifHasChanged || commentHasChanged;
 	}

@@ -9,6 +9,7 @@ public class HeureSupDto extends PointageDto {
 
 	private boolean recuperee;
 	private boolean rappelService;
+	private Integer idMotifHsup;
 
 	public HeureSupDto() {
 
@@ -18,6 +19,7 @@ public class HeureSupDto extends PointageDto {
 		super(p);
 		this.recuperee = p.getHeureSupRecuperee();
 		this.rappelService = p.getHeureSupRappelService();
+		this.idMotifHsup = p.getMotifHsup() == null ? null : p.getMotifHsup().getIdMotifHsup();
 	}
 
 	public boolean getRecuperee() {
@@ -34,5 +36,13 @@ public class HeureSupDto extends PointageDto {
 
 	public void setRappelService(boolean rappelService) {
 		this.rappelService = rappelService;
+	}
+
+	public Integer getIdMotifHsup() {
+		return idMotifHsup;
+	}
+
+	public void setIdMotifHsup(Integer idMotifHsup) {
+		this.idMotifHsup = idMotifHsup;
 	}
 }

@@ -16,6 +16,7 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.MotifHeureSup;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
@@ -132,7 +133,7 @@ public class SaisieServiceTest {
 		carr.setCdcate(6);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
-		
+
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -172,19 +173,23 @@ public class SaisieServiceTest {
 		agent.setIdAgent(9007654);
 
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
-		
+
 		FichePointageDto dto = new FichePointageDto();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
 		dto.setSaisies(Arrays.asList(new JourPointageDto(), new JourPointageDto(), new JourPointageDto(),
 				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
 
+		MotifHeureSup motifHSup = new MotifHeureSup();
+		motifHSup.setIdMotifHsup(2);
+		motifHSup.setText("le motif 3");
+
 		HeureSupDto hs1 = new HeureSupDto();
 		hs1.setRecuperee(false);
 		hs1.setRappelService(false);
 		hs1.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
 		hs1.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
-		hs1.setMotif("le motif 3");
+		hs1.setIdMotifHsup(2);
 		hs1.setCommentaire("le commentaire 3");
 		dto.getSaisies().get(3).getHeuresSup().add(hs1);
 
@@ -201,6 +206,7 @@ public class SaisieServiceTest {
 		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(agent.getIdAgent(), lundi)).thenReturn(
 				new ArrayList<Pointage>());
 		Mockito.when(pRepo.getEntity(RefTypePointage.class, 2)).thenReturn(absRef);
+		Mockito.when(pRepo.getEntity(MotifHeureSup.class, 2)).thenReturn(motifHSup);
 
 		Pointage newHsPointage = new Pointage();
 		newHsPointage.setIdAgent(agent.getIdAgent());
@@ -221,13 +227,14 @@ public class SaisieServiceTest {
 		carr.setCdcate(6);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
-		
+
 		SirhWsServiceDto dtoService = new SirhWsServiceDto();
 		dtoService.setSigle("DPM");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), newHsPointage.getDateDebut())).thenReturn(dtoService);
-		
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), newHsPointage.getDateDebut())).thenReturn(
+				dtoService);
+
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -252,7 +259,7 @@ public class SaisieServiceTest {
 		assertEquals(new DateTime(2013, 05, 16, 15, 0, 0).toDate(), argument.getValue().getDateDebut());
 		assertEquals(new DateTime(2013, 05, 16, 16, 0, 0).toDate(), argument.getValue().getDateFin());
 		assertEquals("le commentaire 3", argument.getValue().getCommentaire().getText());
-		assertEquals("le motif 3", argument.getValue().getMotif().getText());
+		assertEquals("le motif 3", argument.getValue().getMotifHsup().getText());
 		assertEquals(lundi, argument.getValue().getDateLundi());
 		assertNull(argument.getValue().getIdPointage());
 		assertNull(argument.getValue().getQuantite());
@@ -787,7 +794,7 @@ public class SaisieServiceTest {
 		Mockito.verify(pRepo, Mockito.never()).savePointage(Mockito.any(Pointage.class));
 		Mockito.verify(pRepo, Mockito.times(1)).removeEntity(Mockito.isA(Pointage.class));
 	}
-	
+
 	@Test
 	public void saveFichePointage_ExistingPointage_saveNewHsup_WithOthersOldHSup() {
 
@@ -797,7 +804,7 @@ public class SaisieServiceTest {
 		agent.setIdAgent(9007654);
 
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
-		
+
 		FichePointageDto dto = new FichePointageDto();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
@@ -805,22 +812,22 @@ public class SaisieServiceTest {
 				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
 
 		HeureSupDto hs1 = new HeureSupDto();
-			hs1.setRecuperee(true);
-			hs1.setRappelService(true);
-			hs1.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
-			hs1.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
-			hs1.setMotif("le motif 3");
-			hs1.setCommentaire("le commentaire 3");
-			
+		hs1.setRecuperee(true);
+		hs1.setRappelService(true);
+		hs1.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
+		hs1.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
+		hs1.setMotif("le motif 3");
+		hs1.setCommentaire("le commentaire 3");
+
 		HeureSupDto hs2 = new HeureSupDto();
-			hs2.setIdPointage(1);
-			hs2.setRecuperee(false);
-			hs2.setRappelService(false);
-			hs2.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
-			hs2.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
-			hs2.setMotif("le motif 3");
-			hs2.setCommentaire("le commentaire 3");
-			
+		hs2.setIdPointage(1);
+		hs2.setRecuperee(false);
+		hs2.setRappelService(false);
+		hs2.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
+		hs2.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
+		hs2.setMotif("le motif 3");
+		hs2.setCommentaire("le commentaire 3");
+
 		dto.getSaisies().get(3).getHeuresSup().add(hs1);
 		dto.getSaisies().get(3).getHeuresSup().add(hs2);
 
@@ -832,21 +839,21 @@ public class SaisieServiceTest {
 		Mockito.when(hS.getTypeChainePaieFromStatut(AgentStatutEnum.F)).thenReturn(chainePaie);
 
 		RefPrime refPrime = new RefPrime();
-			refPrime.setIdRefPrime(22);
-			refPrime.setNoRubr(1111);
-		
+		refPrime.setIdRefPrime(22);
+		refPrime.setNoRubr(1111);
+
 		Pointage existingPointageApprouve = new Pointage();
-			existingPointageApprouve.setIdAgent(agent.getIdAgent());
-			existingPointageApprouve.setDateLundi(lundi);
-			existingPointageApprouve.setDateDebut(new Date());
-			existingPointageApprouve.setRefPrime(refPrime);
-			existingPointageApprouve.setIdPointage(1999);
-			existingPointageApprouve.getEtats().add(new EtatPointage());
-			existingPointageApprouve.getLatestEtatPointage().setEtat(EtatPointageEnum.APPROUVE);
-		
+		existingPointageApprouve.setIdAgent(agent.getIdAgent());
+		existingPointageApprouve.setDateLundi(lundi);
+		existingPointageApprouve.setDateDebut(new Date());
+		existingPointageApprouve.setRefPrime(refPrime);
+		existingPointageApprouve.setIdPointage(1999);
+		existingPointageApprouve.getEtats().add(new EtatPointage());
+		existingPointageApprouve.getLatestEtatPointage().setEtat(EtatPointageEnum.APPROUVE);
+
 		RefTypePointage absRef = new RefTypePointage();
 		absRef.setIdRefTypePointage(2);
-		
+
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pRepo.getEntity(RefTypePointage.class, 2)).thenReturn(absRef);
 
@@ -854,12 +861,13 @@ public class SaisieServiceTest {
 		newHsPointage.setIdAgent(agent.getIdAgent());
 		newHsPointage.setDateLundi(lundi);
 		newHsPointage.setDateDebut(new Date());
-		
+
 		IPointageService pService = Mockito.mock(IPointageService.class);
 		Mockito.when(pService.getOrCreateNewPointage(9001234, null, agent.getIdAgent(), lundi, currentDate))
 				.thenReturn(newHsPointage);
-		Mockito.when(pService.getOrCreateNewPointage(9001234, hs2.getIdPointage(), existingPointageApprouve.getIdAgent(), lundi, currentDate))
-		.thenReturn(existingPointageApprouve);
+		Mockito.when(
+				pService.getOrCreateNewPointage(9001234, hs2.getIdPointage(), existingPointageApprouve.getIdAgent(),
+						lundi, currentDate)).thenReturn(existingPointageApprouve);
 		Mockito.when(pService.getLatestPointagesForSaisieForAgentAndDateMonday(agent.getIdAgent(), lundi)).thenReturn(
 				Arrays.asList(existingPointageApprouve));
 
@@ -879,9 +887,11 @@ public class SaisieServiceTest {
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), newHsPointage.getDateDebut())).thenReturn(dtoService);
-		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), existingPointageApprouve.getDateDebut())).thenReturn(dtoService);
-		
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), newHsPointage.getDateDebut())).thenReturn(
+				dtoService);
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), existingPointageApprouve.getDateDebut()))
+				.thenReturn(dtoService);
+
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -1709,7 +1719,6 @@ public class SaisieServiceTest {
 		assertEquals(1, p1.getEtats().size());
 	}
 
-
 	@Test
 	public void saveFichePointage_noExistingPointage_saveNewAbsence_2Days() {
 
@@ -1719,7 +1728,7 @@ public class SaisieServiceTest {
 		agent.setIdAgent(9007654);
 
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
-		
+
 		FichePointageDto dto = new FichePointageDto();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
@@ -1766,7 +1775,7 @@ public class SaisieServiceTest {
 		carr.setCdcate(6);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
-		
+
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -1813,12 +1822,16 @@ public class SaisieServiceTest {
 		dto.setSaisies(Arrays.asList(new JourPointageDto(), new JourPointageDto(), new JourPointageDto(),
 				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
 
+		MotifHeureSup motifHsup = new MotifHeureSup();
+		motifHsup.setIdMotifHsup(2);
+		motifHsup.setText("le motif 3");
+
 		HeureSupDto hs1 = new HeureSupDto();
 		hs1.setRecuperee(true);
 		hs1.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
 		hs1.setHeureFin(new DateTime(2013, 05, 17, 16, 0, 0).toDate());
-		hs1.setMotif("le motif 3");
 		hs1.setCommentaire("le commentaire 3");
+		hs1.setIdMotifHsup(2);
 		dto.getSaisies().get(3).getHeuresSup().add(hs1);
 
 		Date currentDate = new DateTime(2013, 05, 22, 9, 8, 00).toDate();
@@ -1834,6 +1847,7 @@ public class SaisieServiceTest {
 		Mockito.when(pRepo.getPointagesForAgentAndDateOrderByIdDesc(agent.getIdAgent(), lundi)).thenReturn(
 				new ArrayList<Pointage>());
 		Mockito.when(pRepo.getEntity(RefTypePointage.class, 2)).thenReturn(absRef);
+		Mockito.when(pRepo.getEntity(MotifHeureSup.class, 2)).thenReturn(motifHsup);
 
 		Pointage newHsPointage = new Pointage();
 		newHsPointage.setIdAgent(agent.getIdAgent());
@@ -1854,13 +1868,14 @@ public class SaisieServiceTest {
 		carr.setCdcate(6);
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
-		
+
 		SirhWsServiceDto dtoService = new SirhWsServiceDto();
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), newHsPointage.getDateDebut())).thenReturn(dtoService);
-		
+		Mockito.when(sirhRepo.getAgentDirection(agent.getIdAgent(), newHsPointage.getDateDebut())).thenReturn(
+				dtoService);
+
 		SaisieService service = new SaisieService();
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -1884,7 +1899,7 @@ public class SaisieServiceTest {
 		assertEquals(new DateTime(2013, 05, 16, 15, 0, 0).toDate(), argument.getValue().getDateDebut());
 		assertEquals(new DateTime(2013, 05, 17, 16, 0, 0).toDate(), argument.getValue().getDateFin());
 		assertEquals("le commentaire 3", argument.getValue().getCommentaire().getText());
-		assertEquals("le motif 3", argument.getValue().getMotif().getText());
+		assertEquals("le motif 3", argument.getValue().getMotifHsup().getText());
 		assertEquals(lundi, argument.getValue().getDateLundi());
 		assertNull(argument.getValue().getIdPointage());
 		assertNull(argument.getValue().getQuantite());

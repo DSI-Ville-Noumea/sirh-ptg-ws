@@ -9,6 +9,7 @@ import java.util.List;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.MotifHeureSup;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefEtat;
@@ -23,6 +24,7 @@ import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.FichePointageListDto;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
+import nc.noumea.mairie.ptg.dto.MotifHeureSupDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
@@ -429,6 +431,17 @@ public class PointageService implements IPointageService {
 		List<RefTypeAbsence> refTypeAbsence = pointageRepository.findAllRefTypeAbsence();
 		for (RefTypeAbsence type : refTypeAbsence) {
 			RefTypeAbsenceDto dto = new RefTypeAbsenceDto(type);
+			res.add(dto);
+		}
+		return res;
+	}
+
+	@Override
+	public List<MotifHeureSupDto> getMotifHeureSup() {
+		List<MotifHeureSupDto> res = new ArrayList<MotifHeureSupDto>();
+		List<MotifHeureSup> listeMotif = pointageRepository.findAllMotifHeureSup();
+		for (MotifHeureSup motif : listeMotif) {
+			MotifHeureSupDto dto = new MotifHeureSupDto(motif);
 			res.add(dto);
 		}
 		return res;
