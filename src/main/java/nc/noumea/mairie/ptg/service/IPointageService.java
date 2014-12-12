@@ -14,6 +14,7 @@ import nc.noumea.mairie.ptg.dto.MotifHeureSupDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
 public interface IPointageService {
 
@@ -165,4 +166,6 @@ public interface IPointageService {
 	void addEtatPointage(Pointage ptg, EtatPointageEnum etat, Integer idAgentCreator, Date dateEtat);
 
 	List<Pointage> getPointagesVentilesAndRejetesForAgent(Integer idAgent, VentilDate ventilDate);
+
+	ReturnMessageDto setMotifHeureSup(MotifHeureSupDto motifHeureSupDto);
 }

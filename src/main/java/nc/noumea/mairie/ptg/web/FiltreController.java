@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.AgentDto;
@@ -7,10 +8,12 @@ import nc.noumea.mairie.ptg.dto.MotifHeureSupDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
+import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +22,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 
 @Controller
@@ -135,6 +140,28 @@ public class FiltreController {
 		String json = new JSONSerializer().exclude("*.class").serialize(motifs);
 
 		return new ResponseEntity<String>(json, HttpStatus.OK);
+	}
+
+	/**
+	 * Saisie/modification d un motif pour les heures supplémentaires
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/setMotifHsup", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "ptgTransactionManager")
+	public ResponseEntity<String> setMotifHsup(@RequestBody(required = true) String motifHeureSupDto) {
+
+		logger.debug("entered POST [filtres/setMotifHsup] => setMotifHsup");
+
+		MotifHeureSupDto dto = new JSONDeserializer<MotifHeureSupDto>().use(Date.class, new MSDateTransformer())
+				.deserializeInto(motifHeureSupDto, new MotifHeureSupDto());
+
+		ReturnMessageDto srm = pointageService.setMotifHeureSup(dto);
+
+		if (!srm.getErrors().isEmpty()) {
+			return new ResponseEntity<String>(HttpStatus.CONFLICT);
+		}
+
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
 }

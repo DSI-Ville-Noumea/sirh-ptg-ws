@@ -29,6 +29,7 @@ import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
@@ -62,6 +63,9 @@ public class PointageService implements IPointageService {
 
 	@Autowired
 	private IAgentMatriculeConverterService agentMatriculeConverterService;
+
+	public static final String MOTIF_MODIFIE_INEXISTANT = "Le motif à modifier n'existe pas.";
+	public static final String LIBELLE_MOTIF_VIDE = "Le libellé du motif n'est pas saisi.";
 
 	protected FichePointageDto getFichePointageForAgent(AgentGeneriqueDto agent, Date date) {
 
@@ -445,5 +449,43 @@ public class PointageService implements IPointageService {
 			res.add(dto);
 		}
 		return res;
+	}
+
+	@Override
+	public ReturnMessageDto setMotifHeureSup(MotifHeureSupDto motifHeureSupDto) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		MotifHeureSup motifCompteur = null;
+
+		if (null != motifHeureSupDto.getIdMotifHsup()) {
+			motifCompteur = pointageRepository.getEntity(MotifHeureSup.class, motifHeureSupDto.getIdMotifHsup());
+			if (null == motifCompteur) {
+				logger.debug(MOTIF_MODIFIE_INEXISTANT);
+				result.getErrors().add(MOTIF_MODIFIE_INEXISTANT);
+				return result;
+			}
+		}
+
+		if (!controlLibelleMotif(motifHeureSupDto.getLibelle(), result))
+			return result;
+
+		if (null == motifCompteur) {
+			motifCompteur = new MotifHeureSup();
+		}
+
+		motifCompteur.setText(motifHeureSupDto.getLibelle());
+
+		pointageRepository.persisEntity(motifCompteur);
+
+		return result;
+	}
+
+	protected boolean controlLibelleMotif(String libelle, ReturnMessageDto result) {
+
+		if (null == libelle || "".equals(libelle)) {
+			logger.debug(LIBELLE_MOTIF_VIDE);
+			result.getErrors().add(LIBELLE_MOTIF_VIDE);
+			return false;
+		}
+		return true;
 	}
 }
