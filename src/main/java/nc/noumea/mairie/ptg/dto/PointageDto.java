@@ -13,20 +13,20 @@ public abstract class PointageDto {
 	private String commentaire;
 	private Integer idRefEtat;
 	private boolean aSupprimer;
-	
+
 	public PointageDto() {
-		
+
 	}
-	
+
 	public PointageDto(Pointage p) {
 		this.idPointage = p.getIdPointage();
 		this.heureDebut = p.getDateDebut();
 		this.heureFin = p.getDateFin();
-		this.motif = p.getMotif() == null ? "" : p.getMotif().getText();
-		this.commentaire = p.getCommentaire() == null ? "" : p.getCommentaire().getText();
+		this.motif = p.getMotif() == null ? null : p.getMotif().getText();
+		this.commentaire = p.getCommentaire() == null ? null : p.getCommentaire().getText();
 		this.idRefEtat = p.getLatestEtatPointage().getEtat().getCodeEtat();
 	}
-	
+
 	public PointageDto(PointageDto pointageDto) {
 		this.idPointage = pointageDto.idPointage;
 		this.heureDebut = pointageDto.heureDebut;
