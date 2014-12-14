@@ -21,6 +21,7 @@ import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.MairiePrimeTableEnum;
+import nc.noumea.mairie.ptg.domain.MotifHeureSup;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
@@ -1027,6 +1028,27 @@ public class PointageRepositoryTest {
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void findAllMotifHeureSup() {
+
+		MotifHeureSup rta = new MotifHeureSup();
+		rta.setIdMotifHsup(1);
+		ptgEntityManager.persist(rta);
+
+		MotifHeureSup rta2 = new MotifHeureSup();
+		rta2.setIdMotifHsup(2);
+		ptgEntityManager.persist(rta2);
+
+		MotifHeureSup rta3 = new MotifHeureSup();
+		rta3.setIdMotifHsup(3);
+		ptgEntityManager.persist(rta3);
+
+		List<MotifHeureSup> result = repository.findAllMotifHeureSup();
+
+		assertEquals(3, result.size());
 	}
 
 }

@@ -1996,4 +1996,87 @@ public class SaisieServiceTest {
 		assertNull(argument.getValue().getPointageParent());
 	}
 
+	@Test
+	public void crudCommentsHeureSup_motif_commentaire_newString() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		MotifHeureSup motif = new MotifHeureSup();
+		motif.setIdMotifHsup(1);
+		motif.setText("essai");
+		String commentaire = "commentaire";
+
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepository.getEntity(MotifHeureSup.class, motif.getIdMotifHsup())).thenReturn(motif);
+
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+
+		// When
+		service.crudCommentsHeureSup(ptg, motif.getIdMotifHsup(), commentaire);
+
+		// Then
+		assertEquals(motif.getText(), ptg.getMotifHsup().getText());
+		assertEquals(commentaire, ptg.getCommentaire().getText());
+	}
+
+	@Test
+	public void crudCommentsHeureSup_motif_commentaire_modifyString() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		MotifHeureSup motif = new MotifHeureSup();
+		motif.setIdMotifHsup(1);
+		motif.setText("value");
+		ptg.setMotifHsup(motif);
+		ptg.setCommentaire(new PtgComment());
+		String commentaire = "commentaire";
+
+
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepository.getEntity(MotifHeureSup.class, motif.getIdMotifHsup())).thenReturn(motif);
+
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+
+		// When
+		service.crudCommentsHeureSup(ptg, motif.getIdMotifHsup(), commentaire);
+
+		// Then
+		assertEquals(motif.getText(), ptg.getMotifHsup().getText());
+		assertEquals(commentaire, ptg.getCommentaire().getText());
+	}
+
+	@Test
+	public void crudCommentsHeureSup_motif_commentaire_deleteComment() {
+
+		// Given
+		MotifHeureSup existingMotif = Mockito.spy(new MotifHeureSup());
+		existingMotif.setText("value");
+		
+		PtgComment existingComment = Mockito.spy(new PtgComment());
+		existingComment.setText("value2");
+		
+		Pointage ptg = new Pointage();
+		ptg.setMotifHsup(existingMotif);
+		ptg.setCommentaire(existingComment);
+
+		String commentaire = "";
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(MotifHeureSup.class, existingMotif.getIdMotifHsup())).thenReturn(null);
+
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+
+		// When
+		service.crudCommentsHeureSup(ptg, existingMotif.getIdMotifHsup(), commentaire);
+
+		// Then
+		assertNull(ptg.getMotifHsup());
+		assertNull(ptg.getCommentaire());
+
+		Mockito.verify(pRepo, Mockito.times(1)).removeEntity(Mockito.isA(PtgComment.class));
+	}
+
 }

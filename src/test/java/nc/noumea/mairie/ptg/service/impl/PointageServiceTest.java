@@ -894,7 +894,7 @@ public class PointageServiceTest {
 		// Given
 		MotifHeureSupDto motif = new MotifHeureSupDto();
 		motif.setIdMotifHsup(1);
-		
+
 		MotifHeureSup hsup = new MotifHeureSup();
 		hsup.setIdMotifHsup(1);
 
@@ -910,5 +910,27 @@ public class PointageServiceTest {
 		// Then
 		assertEquals(1, dto.getErrors().size());
 		assertEquals("Le libellé du motif n'est pas saisi.", dto.getErrors().get(0));
+	}
+
+	@Test
+	public void setMotifHeureSup_OK_create() {
+
+		// Given
+		MotifHeureSupDto motif = new MotifHeureSupDto();
+		motif.setIdMotifHsup(1);
+		motif.setLibelle("libelle");
+
+		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(arRepo.getEntity(MotifHeureSup.class, 1)).thenReturn(new MotifHeureSup());
+
+		// When
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
+
+		ReturnMessageDto dto = service.setMotifHeureSup(motif);
+
+		// Then
+		assertEquals(0, dto.getErrors().size());
+		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(MotifHeureSup.class));
 	}
 }
