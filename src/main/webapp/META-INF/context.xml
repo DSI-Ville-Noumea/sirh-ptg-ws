@@ -35,7 +35,7 @@
 	<!--  -->
 	<!-- WS SIRH -->
 	<!--  -->	
-	<Environment name="PTG_SIRH_WS_BASE_URL" type="java.lang.String" description="SIRH WS endpoint url" 
+	<Environment name="SIRH_WS_URL" type="java.lang.String" description="SIRH WS endpoint url" 
 		value="http://svi-tomcat0:8085/sirhws/" override="false" />
 		
 	<!--  -->
