@@ -53,10 +53,9 @@ public class EtatPayeurService implements IEtatPayeurService {
 				agent = sirhWSConsumer.getAgent(etatPayeur.getIdAgent());
 
 				etatsPayeurDto = new ListEtatsPayeurDto(etatPayeur.getIdEtatPayeur(),
-						etatPayeur.getStatut().toString(), etatPayeur.getType().getIdRefTypePointage(),
-						etatPayeur.getDateEtatPayeur(), etatPayeur.getLabel(), etatPayeur.getFichier(),
-						etatPayeur.getIdAgent(), etatPayeur.getDateEdition(), agent.getDisplayNom(),
-						agent.getDisplayPrenom());
+						etatPayeur.getStatut().toString(), etatPayeur.getDateEtatPayeur(), etatPayeur.getLabel(),
+						etatPayeur.getFichier(), etatPayeur.getIdAgent(), etatPayeur.getDateEdition(),
+						agent.getDisplayNom(), agent.getDisplayPrenom());
 
 				listEtatsPayeurDto.add(etatsPayeurDto);
 			}

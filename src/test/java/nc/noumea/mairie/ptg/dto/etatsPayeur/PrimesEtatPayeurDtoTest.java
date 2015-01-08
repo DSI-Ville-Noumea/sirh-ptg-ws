@@ -14,7 +14,7 @@ public class PrimesEtatPayeurDtoTest {
 
 	@Test
 	public void PrimesEtatPayeurDto_CASE_A_COCHER_ctor() {
-		
+
 		// Given
 		VentilPrime vp = new VentilPrime();
 		vp.setIdAgent(9008767);
@@ -28,17 +28,13 @@ public class PrimesEtatPayeurDtoTest {
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vp, null);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vp.getDateDebutMois(), result.getDate());
-		assertEquals("octobre 2013", result.getPeriode());
-
 		assertEquals("prime", result.getType());
 		assertEquals("12", result.getQuantite());
 	}
-	
+
 	@Test
 	public void PrimesEtatPayeurDto_NB_INDEMNITES_ctor() {
-		
+
 		// Given
 		VentilPrime vp = new VentilPrime();
 		vp.setIdAgent(9008767);
@@ -52,17 +48,13 @@ public class PrimesEtatPayeurDtoTest {
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vp, null);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vp.getDateDebutMois(), result.getDate());
-		assertEquals("octobre 2013", result.getPeriode());
-
 		assertEquals("prime", result.getType());
 		assertEquals("12", result.getQuantite());
 	}
-	
+
 	@Test
 	public void PrimesEtatPayeurDto_NB_HEURES_ctor() {
-		
+
 		// Given
 		VentilPrime vp = new VentilPrime();
 		vp.setIdAgent(9008767);
@@ -78,17 +70,13 @@ public class PrimesEtatPayeurDtoTest {
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vp, hS);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vp.getDateDebutMois(), result.getDate());
-		assertEquals("octobre 2013", result.getPeriode());
-
 		assertEquals("prime", result.getType());
 		assertEquals("1h", result.getQuantite());
 	}
-	
+
 	@Test
 	public void PrimesEtatPayeurDto_PERIODE_HEURES_ctor() {
-		
+
 		// Given
 		VentilPrime vp = new VentilPrime();
 		vp.setIdAgent(9008767);
@@ -104,17 +92,13 @@ public class PrimesEtatPayeurDtoTest {
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vp, hS);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vp.getDateDebutMois(), result.getDate());
-		assertEquals("octobre 2013", result.getPeriode());
-
 		assertEquals("prime", result.getType());
 		assertEquals("1h15", result.getQuantite());
 	}
-	
+
 	@Test
 	public void PrimesEtatPayeurDto_NewOld_NB_INDEMNITES_ctor() {
-		
+
 		// Given
 		VentilPrime vpNew = new VentilPrime();
 		vpNew.setIdAgent(9008767);
@@ -123,7 +107,7 @@ public class PrimesEtatPayeurDtoTest {
 		vpNew.setRefPrime(new RefPrime());
 		vpNew.getRefPrime().setLibelle("prime");
 		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		
+
 		VentilPrime vpOld = new VentilPrime();
 		vpOld.setQuantite(10);
 
@@ -131,17 +115,13 @@ public class PrimesEtatPayeurDtoTest {
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vpNew, vpOld, null);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vpNew.getDateDebutMois(), result.getDate());
-		assertEquals("octobre 2013", result.getPeriode());
-
 		assertEquals("prime", result.getType());
 		assertEquals("2", result.getQuantite());
 	}
-	
+
 	@Test
 	public void PrimesEtatPayeurDto_NewOldNegative_NB_INDEMNITES_ctor() {
-		
+
 		// Given
 		VentilPrime vpNew = new VentilPrime();
 		vpNew.setIdAgent(9008767);
@@ -150,7 +130,7 @@ public class PrimesEtatPayeurDtoTest {
 		vpNew.setRefPrime(new RefPrime());
 		vpNew.getRefPrime().setLibelle("prime");
 		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		
+
 		VentilPrime vpOld = new VentilPrime();
 		vpOld.setQuantite(14);
 
@@ -158,17 +138,13 @@ public class PrimesEtatPayeurDtoTest {
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vpNew, vpOld, null);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vpNew.getDateDebutMois(), result.getDate());
-		assertEquals("octobre 2013", result.getPeriode());
-
 		assertEquals("prime", result.getType());
 		assertEquals("-2", result.getQuantite());
 	}
-	
+
 	@Test
 	public void PrimesEtatPayeurDto_NewOld_NB_HEURES_ctor() {
-		
+
 		// Given
 		VentilPrime vpNew = new VentilPrime();
 		vpNew.setIdAgent(9008767);
@@ -182,22 +158,18 @@ public class PrimesEtatPayeurDtoTest {
 
 		VentilPrime vpOld = new VentilPrime();
 		vpOld.setQuantite(45);
-		
+
 		// When
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vpNew, vpOld, hS);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vpNew.getDateDebutMois(), result.getDate());
-		assertEquals("octobre 2013", result.getPeriode());
-
 		assertEquals("prime", result.getType());
 		assertEquals("15m", result.getQuantite());
 	}
-	
+
 	@Test
 	public void PrimesEtatPayeurDto_NewOld_Negative_NB_HEURES_ctor() {
-		
+
 		// Given
 		VentilPrime vpNew = new VentilPrime();
 		vpNew.setIdAgent(9008767);
@@ -211,15 +183,11 @@ public class PrimesEtatPayeurDtoTest {
 
 		VentilPrime vpOld = new VentilPrime();
 		vpOld.setQuantite(75);
-		
+
 		// When
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vpNew, vpOld, hS);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vpNew.getDateDebutMois(), result.getDate());
-		assertEquals("octobre 2013", result.getPeriode());
-
 		assertEquals("prime", result.getType());
 		assertEquals("- 15m", result.getQuantite());
 	}

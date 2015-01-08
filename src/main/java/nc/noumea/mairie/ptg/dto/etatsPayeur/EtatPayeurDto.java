@@ -17,23 +17,24 @@ public class EtatPayeurDto {
 	private String chainePaie;
 	private String statut;
 	private String periode;
+	private String dateVentilation;
 
-	private List<AbsencesEtatPayeurDto> absences;
-	private List<HeuresSupEtatPayeurDto> heuresSup;
-	private List<PrimesEtatPayeurDto> primes;
+	private List<AbstractItemEtatPayeurDto> agents;
 
 	public EtatPayeurDto() {
-		absences = new ArrayList<AbsencesEtatPayeurDto>();
-		heuresSup = new ArrayList<HeuresSupEtatPayeurDto>();
-		primes = new ArrayList<PrimesEtatPayeurDto>();
+		agents = new ArrayList<AbstractItemEtatPayeurDto>();
 	}
-	
-	public EtatPayeurDto(TypeChainePaieEnum chainePaie, AgentStatutEnum statut, Date firstDayOfPeriod) {
+
+	public EtatPayeurDto(TypeChainePaieEnum chainePaie, AgentStatutEnum statut, Date firstDayOfPeriod,
+			Date dateVentilation) {
 		this();
 		this.chainePaie = chainePaie.toString();
 		this.statut = statut.toString();
 		SimpleDateFormat sdf = new SimpleDateFormat("MMMM yyyy", Locale.FRENCH);
 		this.periode = sdf.format(firstDayOfPeriod);
+		this.agents = new ArrayList<AbstractItemEtatPayeurDto>();
+		SimpleDateFormat sdfVentil = new SimpleDateFormat("dd/MM/yyyy", Locale.FRENCH);
+		this.dateVentilation = sdfVentil.format(dateVentilation);
 	}
 
 	public String getChainePaie() {
@@ -60,27 +61,19 @@ public class EtatPayeurDto {
 		this.periode = periode;
 	}
 
-	public List<AbsencesEtatPayeurDto> getAbsences() {
-		return absences;
+	public List<AbstractItemEtatPayeurDto> getAgents() {
+		return agents;
 	}
 
-	public void setAbsences(List<AbsencesEtatPayeurDto> absences) {
-		this.absences = absences;
+	public void setAgents(List<AbstractItemEtatPayeurDto> agents) {
+		this.agents = agents;
 	}
 
-	public List<HeuresSupEtatPayeurDto> getHeuresSup() {
-		return heuresSup;
+	public String getDateVentilation() {
+		return dateVentilation;
 	}
 
-	public void setHeuresSup(List<HeuresSupEtatPayeurDto> heuresSup) {
-		this.heuresSup = heuresSup;
-	}
-
-	public List<PrimesEtatPayeurDto> getPrimes() {
-		return primes;
-	}
-
-	public void setPrimes(List<PrimesEtatPayeurDto> primes) {
-		this.primes = primes;
+	public void setDateVentilation(String dateVentilation) {
+		this.dateVentilation = dateVentilation;
 	}
 }

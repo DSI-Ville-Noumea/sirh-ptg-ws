@@ -1,12 +1,15 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
+import java.util.Date;
+
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 
-public class PrimesEtatPayeurDto extends AbstractItemEtatPayeurDto {
+public class PrimesEtatPayeurDto {
 
 	private String type;
 	private String quantite;
+	private Date date;
 
 	public PrimesEtatPayeurDto() {
 
@@ -19,10 +22,9 @@ public class PrimesEtatPayeurDto extends AbstractItemEtatPayeurDto {
 	}
 
 	public PrimesEtatPayeurDto(VentilPrime vpNew, VentilPrime vpOld, HelperService hS) {
-		
-		super(vpNew);
 
 		this.type = vpNew.getRefPrime().getLibelle();
+		this.date = vpNew.getDatePrime();
 
 		switch (vpNew.getRefPrime().getTypeSaisie()) {
 			case NB_INDEMNITES:
@@ -31,7 +33,8 @@ public class PrimesEtatPayeurDto extends AbstractItemEtatPayeurDto {
 				break;
 			case NB_HEURES:
 			case PERIODE_HEURES:
-				this.quantite = hS.formatMinutesToString(vpNew.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0));
+				this.quantite = hS.formatMinutesToString(vpNew.getQuantite()
+						- (vpOld != null ? vpOld.getQuantite() : 0));
 				break;
 		}
 	}
@@ -50,5 +53,13 @@ public class PrimesEtatPayeurDto extends AbstractItemEtatPayeurDto {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
 	}
 }

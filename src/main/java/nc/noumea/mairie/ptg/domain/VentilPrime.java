@@ -49,6 +49,10 @@ public class VentilPrime {
     @ManyToOne(optional = false)
     @JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
     private VentilDate ventilDate;
+    
+    @Column(name = "DATE_PRIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date datePrime;
 
     @Version
     @Column(name = "version")
@@ -128,6 +132,14 @@ public class VentilPrime {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public Date getDatePrime() {
+		return datePrime;
+	}
+
+	public void setDatePrime(Date datePrime) {
+		this.datePrime = datePrime;
 	}
     
     

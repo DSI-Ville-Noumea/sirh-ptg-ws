@@ -3,19 +3,14 @@ package nc.noumea.mairie.ptg.dto.etatsPayeur;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 
-public class HeuresSupEtatPayeurDto extends AbstractItemEtatPayeurDto {
+public class HeuresSupEtatPayeurDto {
 
-	private String horsContrat;
-	private String sup;
+	private String normales;
 	private String sup25;
 	private String sup50;
+	private String nuit;
 	private String djf;
 	private String h1Mai;
-	private String nuit;
-	private String normales;
-	private String complementaires;
-	private String simples;
-	private String composees;
 
 	public HeuresSupEtatPayeurDto() {
 
@@ -29,37 +24,16 @@ public class HeuresSupEtatPayeurDto extends AbstractItemEtatPayeurDto {
 
 	public HeuresSupEtatPayeurDto(VentilHsup vhNew, VentilHsup vhOld, HelperService hS) {
 
-		super(vhNew);
-
-		horsContrat = hS.formatMinutesToString(vhNew.getMHorsContrat() - (vhOld != null ? vhOld.getMHorsContrat() : 0));
-		sup = hS.formatMinutesToString(vhNew.getMSup() - (vhOld != null ? vhOld.getMSup() : 0));
-		sup25 = hS.formatMinutesToString((int) vhNew.getMSup25() - (vhOld != null ? vhOld.getMSup25() : 0));
-		sup50 = hS.formatMinutesToString(vhNew.getMSup50() - (vhOld != null ? vhOld.getMSup50() : 0));
+		sup25 = hS.formatMinutesToString(((int) vhNew.getMSup25() - (vhOld != null ? vhOld.getMSup25() : 0))
+				+ (vhNew.getMSimple() - (vhOld != null ? vhOld.getMSimple() : 0)));
+		sup50 = hS.formatMinutesToString((vhNew.getMSup50() - (vhOld != null ? vhOld.getMSup50() : 0))
+				+ (vhNew.getMComposees() - (vhOld != null ? vhOld.getMComposees() : 0)));
 		djf = hS.formatMinutesToString(vhNew.getMsdjf() - (vhOld != null ? vhOld.getMsdjf() : 0));
 		h1Mai = hS.formatMinutesToString(vhNew.getMMai() - (vhOld != null ? vhOld.getMMai() : 0));
 		nuit = hS.formatMinutesToString(vhNew.getMsNuit() - (vhOld != null ? vhOld.getMsNuit() : 0));
-		normales = hS.formatMinutesToString(vhNew.getMNormales() - (vhOld != null ? vhOld.getMNormales() : 0));
-		complementaires = hS.formatMinutesToString(vhNew.getMComplementaires()
-				- (vhOld != null ? vhOld.getMComplementaires() : 0));
-		simples = hS.formatMinutesToString(vhNew.getMSimple() - (vhOld != null ? vhOld.getMSimple() : 0));
-		composees = hS.formatMinutesToString(vhNew.getMComposees() - (vhOld != null ? vhOld.getMComposees() : 0));
+		normales = hS.formatMinutesToString((vhNew.getMNormales() - (vhOld != null ? vhOld.getMNormales() : 0))
+				+ (vhNew.getMComplementaires() - (vhOld != null ? vhOld.getMComplementaires() : 0)));
 
-	}
-
-	public String getHorsContrat() {
-		return horsContrat;
-	}
-
-	public void setHorsContrat(String horsContrat) {
-		this.horsContrat = horsContrat;
-	}
-
-	public String getSup() {
-		return sup;
-	}
-
-	public void setSup(String sup) {
-		this.sup = sup;
 	}
 
 	public String getSup25() {
@@ -108,30 +82,6 @@ public class HeuresSupEtatPayeurDto extends AbstractItemEtatPayeurDto {
 
 	public void setNormales(String normales) {
 		this.normales = normales;
-	}
-
-	public String getComplementaires() {
-		return complementaires;
-	}
-
-	public void setComplementaires(String complementaires) {
-		this.complementaires = complementaires;
-	}
-
-	public String getSimples() {
-		return simples;
-	}
-
-	public void setSimples(String simples) {
-		this.simples = simples;
-	}
-
-	public String getComposees() {
-		return composees;
-	}
-
-	public void setComposees(String composees) {
-		this.composees = composees;
 	}
 
 }

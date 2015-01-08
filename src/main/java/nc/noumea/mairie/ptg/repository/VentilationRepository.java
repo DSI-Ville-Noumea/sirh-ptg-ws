@@ -854,16 +854,20 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilAbsence> getListOfVentilAbsenceWithDateForEtatPayeur(Integer idVentilDate) {
+	public List<VentilAbsence> getListOfVentilAbsenceWithDateForEtatPayeur(Integer idVentilDate, Integer idAgent) {
 		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select tb.* FROM PTG_VENTIL_ABSENCE tb WHERE tb.ID_VENTIL_ABSENCE in  ");
 		sb.append("(select max(id_ventil_absence) from ptg_ventil_absence where id_ventil_date=:ventilDateId and etat=:etat group by id_agent,date_lundi) ");
+		if (idAgent != null)
+			sb.append("and id_Agent = :idAgent ");
 		sb.append("order by date_Lundi asc, id_Agent asc ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilAbsence.class);
 		q.setParameter("ventilDateId", idVentilDate);
+		if (idAgent != null)
+			q.setParameter("idAgent", idAgent);
 		q.setParameter("etat", EtatPointageEnum.VALIDE.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
@@ -874,8 +878,9 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(Integer idAgent, Integer idVentilDate) {
-		
+	public List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(Integer idAgent,
+			Integer idVentilDate) {
+
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
 
 		StringBuilder sb = new StringBuilder();
@@ -894,18 +899,22 @@ public class VentilationRepository implements IVentilationRepository {
 
 		return resultat;
 	}
-	
+
 	@Override
-	public List<VentilHsup> getListOfVentilHeuresSupWithDateForEtatPayeur(Integer idVentilDate) {
+	public List<VentilHsup> getListOfVentilHeuresSupWithDateForEtatPayeur(Integer idVentilDate, Integer idAgent) {
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select tb.* FROM PTG_VENTIL_HSUP tb WHERE tb.ID_VENTIL_HSUP in  ");
 		sb.append("(select max(id_ventil_hsup) from ptg_ventil_hsup where id_ventil_date=:ventilDateId and etat=:etat group by id_agent,date_lundi) ");
+		if (idAgent != null)
+			sb.append("and id_Agent = :idAgent ");
 		sb.append("order by date_Lundi asc, id_Agent asc ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilHsup.class);
 		q.setParameter("ventilDateId", idVentilDate);
+		if (idAgent != null)
+			q.setParameter("idAgent", idAgent);
 		q.setParameter("etat", EtatPointageEnum.VALIDE.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
@@ -916,21 +925,56 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilPrime> getListOfVentilPrimeWithDateForEtatPayeur(Integer idVentilDate) {
+	public List<VentilPrime> getListOfVentilPrimeWithDateForEtatPayeur(Integer idVentilDate, Integer idAgent) {
 		List<VentilPrime> resultat = new ArrayList<VentilPrime>();
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select tb.* FROM PTG_VENTIL_PRIME tb WHERE tb.ID_VENTIL_PRIME in  ");
 		sb.append("(select max(id_ventil_prime) from ptg_ventil_prime where id_ventil_date=:ventilDateId and etat=:etat group by id_agent,date_debut_mois) ");
+		if (idAgent != null)
+			sb.append("and id_Agent = :idAgent ");
 		sb.append("order by date_debut_mois asc, id_Agent asc ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilPrime.class);
 		q.setParameter("ventilDateId", idVentilDate);
+		if (idAgent != null)
+			q.setParameter("idAgent", idAgent);
 		q.setParameter("etat", EtatPointageEnum.VALIDE.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
 		List<VentilPrime> result = q.getResultList();
 		resultat.addAll(result);
+
+		return resultat;
+	}
+
+	@Override
+	public List<Integer> getListOfAgentWithDateForEtatPayeur(Integer idVentilDate) {
+		List<Integer> resultat = new ArrayList<Integer>();
+
+		// pour les absences
+		List<VentilAbsence> listAbs = getListOfVentilAbsenceWithDateForEtatPayeur(idVentilDate, null);
+		for (VentilAbsence abs : listAbs) {
+			Integer id = abs.getIdAgent();
+			if (!resultat.contains(id))
+				resultat.add(id);
+		}
+
+		// pour les hsup
+		List<VentilHsup> listHsup = getListOfVentilHeuresSupWithDateForEtatPayeur(idVentilDate, null);
+		for (VentilHsup hsup : listHsup) {
+			Integer id = hsup.getIdAgent();
+			if (!resultat.contains(id))
+				resultat.add(id);
+		}
+
+		// pour les primes
+		List<VentilPrime> listPrime = getListOfVentilPrimeWithDateForEtatPayeur(idVentilDate, null);
+		for (VentilPrime prime : listPrime) {
+			Integer id = prime.getIdAgent();
+			if (!resultat.contains(id))
+				resultat.add(id);
+		}
 
 		return resultat;
 	}

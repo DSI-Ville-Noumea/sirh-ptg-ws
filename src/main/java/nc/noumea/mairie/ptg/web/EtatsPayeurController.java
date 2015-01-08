@@ -45,96 +45,63 @@ import flexjson.JSONSerializer;
 public class EtatsPayeurController {
 
 	private Logger logger = LoggerFactory.getLogger(EtatsPayeurController.class);
-	
+
 	@Autowired
 	private IExportEtatPayeurService exportEtatPayeurService;
 
 	@Autowired
 	private IAccessRightsService accessRightService;
-	
+
 	@Autowired
 	private HelperService helperService;
-	
+
 	@Autowired
 	private IAgentMatriculeConverterService converterService;
-	
+
 	@Autowired
 	private IEtatPayeurService etatPayeurService;
-	
-	@ResponseBody
-	@RequestMapping(value = "/xml/getAbsences", produces = "application/xml", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ModelAndView getXmlEtatsPayeurAbsences(@RequestParam("statut") String statutString) throws ParseException {
 
-		logger.debug(
-				"entered GET [etatsPayeur/xml/getAbsences] => getXmlEtatsPayeurAbsences with parameter statut = {}",
+	@ResponseBody
+	@RequestMapping(value = "/xml/getEtatPayeur", produces = "application/xml", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ModelAndView getXmlEtatsPayeur(@RequestParam("statut") String statutString) throws ParseException {
+
+		logger.debug("entered GET [etatsPayeur/xml/getEtatPayeur] => getXmlEtatsPayeur with parameter statut = {}",
 				statutString);
 
 		AgentStatutEnum statut = AgentStatutEnum.valueOf(statutString);
-		
-		EtatPayeurDto result = exportEtatPayeurService.getAbsencesEtatPayeurDataForStatut(statut);
-		
+
+		EtatPayeurDto result = exportEtatPayeurService.getEtatPayeurDataForStatut(statut);
+
 		return new ModelAndView("xmlView", "object", result);
 	}
-	
-	@ResponseBody
-	@RequestMapping(value = "/xml/getHeuresSup", produces = "application/xml", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ModelAndView getXmlEtatsPayeurHeuresSup(@RequestParam("statut") String statutString) throws ParseException {
 
-		logger.debug(
-				"entered GET [etatsPayeur/xml/getHeuresSup] => getXmlEtatsPayeurHeuresSup with parameter statut = {}",
-				statutString);
-
-		AgentStatutEnum statut = AgentStatutEnum.valueOf(statutString);
-		
-		EtatPayeurDto result = exportEtatPayeurService.getHeuresSupEtatPayeurDataForStatut(statut);
-		
-		return new ModelAndView("xmlView", "object", result);
-	}
-	
-	@ResponseBody
-	@RequestMapping(value = "/xml/getPrimes", produces = "application/xml", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ModelAndView getXmlEtatsPayeurPrimes(@RequestParam("statut") String statutString) throws ParseException {
-
-		logger.debug(
-				"entered GET [etatsPayeur/xml/getPrimes] => getXmlEtatsPayeurPrimes with parameter statut = {}",
-				statutString);
-
-		AgentStatutEnum statut = AgentStatutEnum.valueOf(statutString);
-		
-		EtatPayeurDto result = exportEtatPayeurService.getPrimesEtatPayeurDataForStatut(statut);
-		
-		return new ModelAndView("xmlView", "object", result);
-	}
-	
 	@ResponseBody
 	@RequestMapping(value = "/canStartExportEtatsPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> canStartExportEtatsPayeur(@RequestParam("statut") String statut) {
 
-		logger.debug("entered GET [etatsPayeur/canStartExportEtatsPayeur] => canStartExportEtatsPayeur with parameter statut = {}", statut);
-		
-		CanStartWorkflowPaieActionDto result = exportEtatPayeurService
-				.canStartExportEtatPayeurAction(helperService.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
-        
+		logger.debug(
+				"entered GET [etatsPayeur/canStartExportEtatsPayeur] => canStartExportEtatsPayeur with parameter statut = {}",
+				statut);
+
+		CanStartWorkflowPaieActionDto result = exportEtatPayeurService.canStartExportEtatPayeurAction(helperService
+				.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
+
 		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
-		
+
 		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
 	}
-	
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/downloadFicheEtatsPayeur", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<byte[]> downloadFicheEtatsPayeur(
-			@RequestParam("idEtatPayeur") Integer idEtatPayeur) {
-		
+	public ResponseEntity<byte[]> downloadFicheEtatsPayeur(@RequestParam("idEtatPayeur") Integer idEtatPayeur) {
+
 		logger.debug(
 				"entered GET [etatsPayeur/downloadFicheEtatsPayeur] => downloadFicheEtatsPayeur with parameters idEtatPayeur = {}",
 				idEtatPayeur);
-		
+
 		Pair<String, String> pathFichier = null;
 		try {
 			pathFichier = etatPayeurService.getPathFichierEtatPayeur(idEtatPayeur);
@@ -142,8 +109,7 @@ public class EtatsPayeurController {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
-		
+
 		byte[] reponseData = null;
 		try {
 			FileInputStream newFile = new FileInputStream(Paths.get(pathFichier.getLeft(), pathFichier.getRight())
@@ -156,28 +122,28 @@ public class EtatsPayeurController {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
+
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/pdf");
 		headers.add("Content-Disposition", String.format("attachment; filename=\"" + pathFichier.getRight() + "\""));
 
 		return new ResponseEntity<byte[]>(reponseData, headers, HttpStatus.OK);
 	}
-	
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/listEtatsPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getListEtatsPayeurByStatut(@RequestParam(value = "statutAgent", required = true) String statutString) {
+	public ResponseEntity<String> getListEtatsPayeurByStatut(
+			@RequestParam(value = "statutAgent", required = true) String statutString) {
 
 		logger.debug(
 				"entered GET [etatsPayeur/listEtatsPayeur] => getListEtatsPayeurByStatut with parameters  statutAgent = {}",
 				statutString);
-		
+
 		AgentStatutEnum statut = AgentStatutEnum.valueOf(statutString);
-		
+
 		List<ListEtatsPayeurDto> result = etatPayeurService.getListEtatsPayeurByStatut(statut);
-		
+
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
 
@@ -186,7 +152,7 @@ public class EtatsPayeurController {
 
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(value = "chainedTransactionManager")
@@ -197,19 +163,19 @@ public class EtatsPayeurController {
 		logger.debug(
 				"entered GET [etatsPayeur/runExportEtatsPayeur] => runExportEtatsPayeur with parameters  statut = {}",
 				statutString);
-		
+
 		AgentStatutEnum statut = AgentStatutEnum.valueOf(statutString);
-		
+
 		ReturnMessageDto result = exportEtatPayeurService.startExportEtatsPayeur(idAgentExporting, statut);
-		
+
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
 		if (result.getErrors().size() != 0)
 			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
-		
+
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/startExportTask", method = RequestMethod.GET)
 	@Transactional(value = "ptgTransactionManager")
@@ -219,42 +185,44 @@ public class EtatsPayeurController {
 		logger.debug(
 				"entered GET [etatsPayeur/startExportTask] => startExportEtatsPayeurTask with parameter idExportEtatsPayeurTask = {}",
 				idExportEtatsPayeurTask);
-		
+
 		exportEtatPayeurService.exportEtatsPayeur(idExportEtatsPayeurTask);
-		
+
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/finishExportTask", method = RequestMethod.GET)
 	@Transactional(value = "chainedTransactionManager")
 	public ResponseEntity<String> finishExportEtatsPayeurTask(
-			@RequestParam(value = "idExportEtatsPayeurTask", required = true) Integer idExportEtatsPayeurTask) throws WorkflowInvalidStateException {
+			@RequestParam(value = "idExportEtatsPayeurTask", required = true) Integer idExportEtatsPayeurTask)
+			throws WorkflowInvalidStateException {
 
 		logger.debug(
 				"entered GET [etatsPayeur/finishExportTask] => finishExportEtatsPayeurTask with parameter idExportEtatsPayeurTask = {}",
 				idExportEtatsPayeurTask);
-		
+
 		exportEtatPayeurService.journalizeEtatsPayeur(idExportEtatsPayeurTask);
-		
+
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/stop", method = RequestMethod.GET)
 	@Transactional(value = "chainedTransactionManager")
-	public ResponseEntity<String> stopExportEtatsPayeur(@RequestParam("typeChainePaie") String typeChainePaie) throws WorkflowInvalidStateException {
+	public ResponseEntity<String> stopExportEtatsPayeur(@RequestParam("typeChainePaie") String typeChainePaie)
+			throws WorkflowInvalidStateException {
 
 		logger.debug(
 				"entered GET [etatsPayeur/stopExportEtatsPayeur] => stopExportEtatsPayeur with parameter typeChainePaie = {}",
 				typeChainePaie);
-		
+
 		try {
 			exportEtatPayeurService.stopExportEtatsPayeur(TypeChainePaieEnum.valueOf(typeChainePaie));
 		} catch (WorkflowInvalidStateException e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 		}
 
-        return new ResponseEntity<String>(HttpStatus.OK);
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 }

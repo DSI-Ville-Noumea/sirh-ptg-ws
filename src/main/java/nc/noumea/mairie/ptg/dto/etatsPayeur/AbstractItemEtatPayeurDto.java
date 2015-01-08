@@ -1,120 +1,54 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
-import nc.noumea.mairie.ptg.domain.VentilAbsence;
-import nc.noumea.mairie.ptg.domain.VentilHsup;
-import nc.noumea.mairie.ptg.domain.VentilPrime;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 
-public abstract class AbstractItemEtatPayeurDto {
+public class AbstractItemEtatPayeurDto {
 
-	private static SimpleDateFormat periodMonthSdf = new SimpleDateFormat("MMMM YYYY", Locale.FRENCH);
+	private AgentWithServiceDto agent;
 
-	private String approbateurNom;
-	private String approbateurPrenom;
-	private Integer approbateurIdAgent;
-	private String approbateurServiceLabel;
-
-	private String nom;
-	private String prenom;
-	private Integer idAgent;
-
-	private Date date;
-	private String periode;
+	private AbsencesEtatPayeurDto absences;
+	private HeuresSupEtatPayeurDto heuresSup;
+	private List<PrimesEtatPayeurDto> primes;
 
 	public AbstractItemEtatPayeurDto() {
-
+		primes = new ArrayList<PrimesEtatPayeurDto>();
+		absences = new AbsencesEtatPayeurDto();
+		heuresSup = new HeuresSupEtatPayeurDto();
+		agent = new AgentWithServiceDto();
 	}
 
-	public AbstractItemEtatPayeurDto(VentilHsup vh) {
-		idAgent = vh.getIdAgent();
-		date = vh.getDateLundi();
-		periode = periodMonthSdf.format(date);
+	public List<PrimesEtatPayeurDto> getPrimes() {
+		return primes;
 	}
 
-	public AbstractItemEtatPayeurDto(VentilAbsence va) {
-		idAgent = va.getIdAgent();
-		date = va.getDateLundi();
-		periode = periodMonthSdf.format(date);
+	public void setPrimes(List<PrimesEtatPayeurDto> primes) {
+		this.primes = primes;
 	}
 
-	public AbstractItemEtatPayeurDto(VentilPrime vp) {
-		idAgent = vp.getIdAgent();
-		date = vp.getDateDebutMois();
-		periode = periodMonthSdf.format(date);
+	public AgentWithServiceDto getAgent() {
+		return agent;
 	}
 
-	public String getApprobateurNom() {
-		return approbateurNom;
+	public void setAgent(AgentWithServiceDto agent) {
+		this.agent = agent;
 	}
 
-	public void setApprobateurNom(String approbateurNom) {
-		this.approbateurNom = approbateurNom;
+	public AbsencesEtatPayeurDto getAbsences() {
+		return absences;
 	}
 
-	public String getApprobateurPrenom() {
-		return approbateurPrenom;
+	public void setAbsences(AbsencesEtatPayeurDto absences) {
+		this.absences = absences;
 	}
 
-	public void setApprobateurPrenom(String approbateurPrenom) {
-		this.approbateurPrenom = approbateurPrenom;
+	public HeuresSupEtatPayeurDto getHeuresSup() {
+		return heuresSup;
 	}
 
-	public Integer getApprobateurIdAgent() {
-		return approbateurIdAgent;
-	}
-
-	public void setApprobateurIdAgent(Integer approbateurIdAgent) {
-		this.approbateurIdAgent = approbateurIdAgent;
-	}
-
-	public String getApprobateurServiceLabel() {
-		return approbateurServiceLabel;
-	}
-
-	public void setApprobateurServiceLabel(String approbateurServiceLabel) {
-		this.approbateurServiceLabel = approbateurServiceLabel;
-	}
-
-	public String getNom() {
-		return nom;
-	}
-
-	public void setNom(String nom) {
-		this.nom = nom;
-	}
-
-	public String getPrenom() {
-		return prenom;
-	}
-
-	public void setPrenom(String prenom) {
-		this.prenom = prenom;
-	}
-
-	public Integer getIdAgent() {
-		return idAgent;
-	}
-
-	public void setIdAgent(Integer idAgent) {
-		this.idAgent = idAgent;
-	}
-
-	public Date getDate() {
-		return date;
-	}
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-	public String getPeriode() {
-		return periode;
-	}
-
-	public void setPeriode(String periode) {
-		this.periode = periode;
+	public void setHeuresSup(HeuresSupEtatPayeurDto heuresSup) {
+		this.heuresSup = heuresSup;
 	}
 }

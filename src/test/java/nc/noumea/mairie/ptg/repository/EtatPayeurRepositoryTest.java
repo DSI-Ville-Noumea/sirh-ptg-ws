@@ -45,7 +45,6 @@ public class EtatPayeurRepositoryTest {
 		etatPayeur.setFichier("testUnit.pdf");
 		etatPayeur.setLabel("test unitaire");
 		etatPayeur.setStatut(AgentStatutEnum.C);
-		etatPayeur.setType(type);
 		etatPayeur.setIdAgent(9005138);
 		ptgEntityManager.persist(etatPayeur);
 
@@ -71,7 +70,6 @@ public class EtatPayeurRepositoryTest {
 		et1.setFichier("testUnit.pdf");
 		et1.setLabel("test unitaire");
 		et1.setStatut(AgentStatutEnum.C);
-		et1.setType(type);
 		et1.setIdAgent(9005138);
 		ptgEntityManager.persist(et1);
 
@@ -80,7 +78,6 @@ public class EtatPayeurRepositoryTest {
 		et2.setFichier("testUnit2.pdf");
 		et2.setLabel("test unitaire 2");
 		et2.setStatut(AgentStatutEnum.C);
-		et2.setType(type);
 		et2.setIdAgent(9005138);
 		ptgEntityManager.persist(et2);
 
@@ -108,7 +105,6 @@ public class EtatPayeurRepositoryTest {
 		etatPayeur.setFichier("testUnit.pdf");
 		etatPayeur.setLabel("test unitaire");
 		etatPayeur.setStatut(AgentStatutEnum.C);
-		etatPayeur.setType(type);
 		etatPayeur.setIdAgent(9005138);
 		ptgEntityManager.persist(etatPayeur);
 
@@ -140,7 +136,6 @@ public class EtatPayeurRepositoryTest {
 		et1.setFichier("testUnit.pdf");
 		et1.setLabel("test unitaire");
 		et1.setStatut(AgentStatutEnum.C);
-		et1.setType(type);
 		et1.setIdAgent(9005138);
 		ptgEntityManager.persist(et1);
 
@@ -149,7 +144,6 @@ public class EtatPayeurRepositoryTest {
 		et2.setFichier("testUnit2.pdf");
 		et2.setLabel("test unitaire 2");
 		et2.setStatut(AgentStatutEnum.C);
-		et2.setType(type);
 		et2.setIdAgent(9005138);
 		ptgEntityManager.persist(et2);
 

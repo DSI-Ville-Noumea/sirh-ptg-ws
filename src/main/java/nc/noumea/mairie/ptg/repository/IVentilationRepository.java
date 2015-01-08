@@ -89,11 +89,11 @@ public interface IVentilationRepository {
 
 	List<VentilHsup> getListOfOldVentilHSForAgentAndDateLundi(Integer idAgent, Date dateLundi, Integer ventilDateId);
 
-	List<VentilAbsence> getListOfVentilAbsenceWithDateForEtatPayeur(Integer idVentilDate);
+	List<VentilAbsence> getListOfVentilAbsenceWithDateForEtatPayeur(Integer idVentilDate, Integer idAgent);
 
-	List<VentilHsup> getListOfVentilHeuresSupWithDateForEtatPayeur(Integer idVentilDate);
+	List<VentilHsup> getListOfVentilHeuresSupWithDateForEtatPayeur(Integer idVentilDate, Integer idAgent);
 
-	List<VentilPrime> getListOfVentilPrimeWithDateForEtatPayeur(Integer idVentilDate);
+	List<VentilPrime> getListOfVentilPrimeWithDateForEtatPayeur(Integer idVentilDate, Integer idAgent);
 
 	List<VentilPrime> getListOfOldVentilPrimeForAgentAndDateDebutMois(Integer idAgent, Date dateDebutMois,
 			Integer ventilDateId);
@@ -102,6 +102,8 @@ public interface IVentilationRepository {
 
 	List<Integer> getListIdAgentsWithPointagesValidatedAndRejetes(Integer idVentilDate);
 
-	List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(
-			Integer idAgent, Integer idVentilDate);
+	List<VentilHsup> getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(Integer idAgent,
+			Integer idVentilDate);
+
+	List<Integer> getListOfAgentWithDateForEtatPayeur(Integer idVentilDate);
 }

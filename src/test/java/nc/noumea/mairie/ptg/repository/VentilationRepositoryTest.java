@@ -2052,7 +2052,7 @@ public class VentilationRepositoryTest {
 		va3.setVentilDate(vd);
 		ptgEntityManager.persist(va3);
 
-		List<VentilAbsence> result = repository.getListOfVentilAbsenceWithDateForEtatPayeur(vd.getIdVentilDate());
+		List<VentilAbsence> result = repository.getListOfVentilAbsenceWithDateForEtatPayeur(vd.getIdVentilDate(), null);
 
 		assertEquals(2, result.size());
 		assertEquals(new LocalDate(2014, 2, 23).toDate(), result.get(1).getDateLundi());
@@ -2086,7 +2086,7 @@ public class VentilationRepositoryTest {
 		va2.setVentilDate(vd);
 		ptgEntityManager.persist(va2);
 
-		List<VentilHsup> result = repository.getListOfVentilHeuresSupWithDateForEtatPayeur(vd.getIdVentilDate());
+		List<VentilHsup> result = repository.getListOfVentilHeuresSupWithDateForEtatPayeur(vd.getIdVentilDate(), null);
 
 		assertEquals(1, result.size());
 		assertEquals(new LocalDate(2014, 2, 23).toDate(), result.get(0).getDateLundi());
@@ -2094,7 +2094,7 @@ public class VentilationRepositoryTest {
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
 	}
-	
+
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp() {
@@ -2104,7 +2104,7 @@ public class VentilationRepositoryTest {
 		vd.setPaye(false);
 		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
 		ptgEntityManager.persist(vd);
-		
+
 		VentilDate vd2 = new VentilDate();
 		vd2.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
 		vd2.setPaye(false);
@@ -2139,7 +2139,8 @@ public class VentilationRepositoryTest {
 		va4.setVentilDate(vd2);
 		ptgEntityManager.persist(va4);
 
-		List<VentilHsup> result = repository.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(9005138, vd.getIdVentilDate());
+		List<VentilHsup> result = repository.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(9005138,
+				vd.getIdVentilDate());
 
 		assertEquals(1, result.size());
 		assertEquals(new LocalDate(2014, 2, 12).toDate(), result.get(0).getDateLundi());
@@ -2182,7 +2183,7 @@ public class VentilationRepositoryTest {
 		vp3.setVentilDate(vd);
 		ptgEntityManager.persist(vp3);
 
-		List<VentilPrime> result = repository.getListOfVentilPrimeWithDateForEtatPayeur(vd.getIdVentilDate());
+		List<VentilPrime> result = repository.getListOfVentilPrimeWithDateForEtatPayeur(vd.getIdVentilDate(), null);
 
 		assertEquals(2, result.size());
 		assertEquals(new LocalDate(2013, 7, 18).toDate(), result.get(0).getDateDebutMois());

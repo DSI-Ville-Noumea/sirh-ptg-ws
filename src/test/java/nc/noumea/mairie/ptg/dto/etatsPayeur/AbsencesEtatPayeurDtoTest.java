@@ -1,7 +1,6 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
 import static org.junit.Assert.assertEquals;
-import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 
@@ -23,15 +22,12 @@ public class AbsencesEtatPayeurDtoTest {
 		Mockito.when(hS.formatMinutesToString(90)).thenReturn("1h30");
 
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(va, RefTypeAbsenceEnum.CONCERTEE, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(va, hS);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(va.getDateLundi(), result.getDate());
-		assertEquals("septembre 2013", result.getPeriode());
-
-		assertEquals("Absence de service fait", result.getType());
-		assertEquals("1h30", result.getQuantite());
+		assertEquals("1h30", result.getQuantiteEntre1HeureEt4Heure());
+		assertEquals("", result.getQuantiteInf1Heure());
+		assertEquals("", result.getQuantiteSup4Heure());
 	}
 
 	@Test
@@ -46,17 +42,14 @@ public class AbsencesEtatPayeurDtoTest {
 		Mockito.when(hS.formatMinutesToString(90)).thenReturn("1h30");
 
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(va, RefTypeAbsenceEnum.NON_CONCERTEE, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(va, hS);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(va.getDateLundi(), result.getDate());
-		assertEquals("septembre 2013", result.getPeriode());
-
-		assertEquals("Absence non concertée", result.getType());
-		assertEquals("1h30", result.getQuantite());
+		assertEquals("1h30", result.getQuantiteEntre1HeureEt4Heure());
+		assertEquals("", result.getQuantiteInf1Heure());
+		assertEquals("", result.getQuantiteSup4Heure());
 	}
-	
+
 	@Test
 	public void AbsencesEtatPayeurDto_absenceConcertee_NewOld_convertMinutesToHeuresString() {
 
@@ -70,17 +63,14 @@ public class AbsencesEtatPayeurDtoTest {
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setMinutesConcertee(30);
-		
+
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, RefTypeAbsenceEnum.CONCERTEE, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vaNew.getDateLundi(), result.getDate());
-		assertEquals("septembre 2013", result.getPeriode());
-
-		assertEquals("Absence de service fait", result.getType());
-		assertEquals("1h", result.getQuantite());
+		assertEquals("1h", result.getQuantiteInf1Heure());
+		assertEquals("", result.getQuantiteEntre1HeureEt4Heure());
+		assertEquals("", result.getQuantiteSup4Heure());
 	}
 
 	@Test
@@ -96,19 +86,16 @@ public class AbsencesEtatPayeurDtoTest {
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setMinutesNonConcertee(120);
-		
+
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, RefTypeAbsenceEnum.NON_CONCERTEE, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vaNew.getDateLundi(), result.getDate());
-		assertEquals("septembre 2013", result.getPeriode());
-
-		assertEquals("Absence non concertée", result.getType());
-		assertEquals("- 30m", result.getQuantite());
+		assertEquals("- 30m", result.getQuantiteInf1Heure());
+		assertEquals("", result.getQuantiteEntre1HeureEt4Heure());
+		assertEquals("", result.getQuantiteSup4Heure());
 	}
-	
+
 	@Test
 	public void AbsencesEtatPayeurDto_absenceImmediate_NewOld_convertMinutesToHeuresString() {
 
@@ -122,17 +109,14 @@ public class AbsencesEtatPayeurDtoTest {
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setMinutesImmediat(30);
-		
+
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, RefTypeAbsenceEnum.IMMEDIATE, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vaNew.getDateLundi(), result.getDate());
-		assertEquals("septembre 2013", result.getPeriode());
-
-		assertEquals("Absence immédiate", result.getType());
-		assertEquals("1h", result.getQuantite());
+		assertEquals("1h", result.getQuantiteInf1Heure());
+		assertEquals("", result.getQuantiteEntre1HeureEt4Heure());
+		assertEquals("", result.getQuantiteSup4Heure());
 	}
 
 	@Test
@@ -148,16 +132,13 @@ public class AbsencesEtatPayeurDtoTest {
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setMinutesImmediat(120);
-		
+
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, RefTypeAbsenceEnum.IMMEDIATE, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
 
 		// Then
-		assertEquals(9008767, (int) result.getIdAgent());
-		assertEquals(vaNew.getDateLundi(), result.getDate());
-		assertEquals("septembre 2013", result.getPeriode());
-
-		assertEquals("Absence immédiate", result.getType());
-		assertEquals("- 30m", result.getQuantite());
+		assertEquals("- 30m", result.getQuantiteInf1Heure());
+		assertEquals("", result.getQuantiteEntre1HeureEt4Heure());
+		assertEquals("", result.getQuantiteSup4Heure());
 	}
 }

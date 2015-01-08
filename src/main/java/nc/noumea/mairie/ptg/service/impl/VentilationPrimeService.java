@@ -41,6 +41,7 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 				vp.setIdAgent(idAgent);
 				vp.setRefPrime(ptg.getRefPrime());
 				vp.setDateDebutMois(dateDebutMois);
+				vp.setDatePrime(ptg.getDateDebut());
 				vp.setEtat(EtatPointageEnum.VENTILE);
 				primesByMonth.put(idRefPrime, vp);
 			}
@@ -65,6 +66,7 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 				vp.setIdAgent(idAgent);
 				vp.setRefPrime(ptg.getRefPrime());
 				vp.setDateDebutMois(dateDebutMois);
+				vp.setDatePrime(ptg.getDateDebut());
 				vp.setEtat(EtatPointageEnum.VENTILE);
 				primesByMonth.put(idRefPrime, vp);
 			}
