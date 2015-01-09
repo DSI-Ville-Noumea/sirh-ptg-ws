@@ -33,8 +33,8 @@ public abstract class PointageDtoKiosque {
 		this.heureFinDate = p.getDateFin();
 		this.heureFin = sdfHeure.format(p.getDateFin());
 		this.minuteFin = sdfMinute.format(p.getDateFin());
-		this.motif = p.getMotif() == null ? null : p.getMotif().getText();
-		this.commentaire = p.getCommentaire() == null ? null : p.getCommentaire().getText();
+		this.motif = p.getMotif() == null ? "" : p.getMotif().getText();
+		this.commentaire = p.getCommentaire() == null ? "" : p.getCommentaire().getText();
 		this.idRefEtat = p.getLatestEtatPointage().getEtat().getCodeEtat();
 	}
 

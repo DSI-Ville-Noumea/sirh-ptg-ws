@@ -23,7 +23,7 @@ public abstract class PointageDto {
 		this.heureDebut = p.getDateDebut();
 		this.heureFin = p.getDateFin();
 		this.motif = p.getMotif() == null ? null : p.getMotif().getText();
-		this.commentaire = p.getCommentaire() == null ? null : p.getCommentaire().getText();
+		this.commentaire = p.getCommentaire() == null ? "" : p.getCommentaire().getText();
 		this.idRefEtat = p.getLatestEtatPointage().getEtat().getCodeEtat();
 	}
 
