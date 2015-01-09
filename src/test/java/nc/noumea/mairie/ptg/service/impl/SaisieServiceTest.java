@@ -27,12 +27,17 @@ import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
+import nc.noumea.mairie.ptg.dto.AbsenceDtoKiosque;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
+import nc.noumea.mairie.ptg.dto.FichePointageDtoKiosque;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
+import nc.noumea.mairie.ptg.dto.HeureSupDtoKiosque;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
+import nc.noumea.mairie.ptg.dto.JourPointageDtoKiosque;
 import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
+import nc.noumea.mairie.ptg.dto.PrimeDtoKiosque;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -58,7 +63,7 @@ public class SaisieServiceTest {
 	public void saveFichePointage_dateIsNotAMonday_throwException() {
 		// Given
 		Date notAMonday = new DateTime(2013, 05, 14, 0, 0, 0).toDate();
-		FichePointageDto fichePointageDto = new FichePointageDto();
+		FichePointageDtoKiosque fichePointageDto = new FichePointageDtoKiosque();
 		fichePointageDto.setDateLundi(notAMonday);
 
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -87,15 +92,16 @@ public class SaisieServiceTest {
 
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
-		dto.setSaisies(Arrays.asList(new JourPointageDto(), new JourPointageDto(), new JourPointageDto(),
-				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
+		dto.setSaisies(Arrays.asList(new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque()));
 
-		AbsenceDto abs3 = new AbsenceDto();
-		abs3.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
-		abs3.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
+		AbsenceDtoKiosque abs3 = new AbsenceDtoKiosque();
+		abs3.setHeureDebutDate(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
+		abs3.setHeureFinDate(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		abs3.setMotif("le motif 3");
 		abs3.setCommentaire("le commentaire 3");
 		abs3.setIdRefTypeAbsence(1);
@@ -174,21 +180,22 @@ public class SaisieServiceTest {
 
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
-		dto.setSaisies(Arrays.asList(new JourPointageDto(), new JourPointageDto(), new JourPointageDto(),
-				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
+		dto.setSaisies(Arrays.asList(new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque()));
 
 		MotifHeureSup motifHSup = new MotifHeureSup();
 		motifHSup.setIdMotifHsup(2);
 		motifHSup.setText("le motif 3");
 
-		HeureSupDto hs1 = new HeureSupDto();
+		HeureSupDtoKiosque hs1 = new HeureSupDtoKiosque();
 		hs1.setRecuperee(false);
 		hs1.setRappelService(false);
-		hs1.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
-		hs1.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
+		hs1.setHeureDebutDate(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
+		hs1.setHeureFinDate(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		hs1.setIdMotifHsup(2);
 		hs1.setCommentaire("le commentaire 3");
 		dto.getSaisies().get(3).getHeuresSup().add(hs1);
@@ -276,23 +283,24 @@ public class SaisieServiceTest {
 		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
 
 		// prime
-		PrimeDto p = new PrimeDto();
+		PrimeDtoKiosque p = new PrimeDtoKiosque();
 		p.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES.toString());
 		p.setIdRefPrime(22);
 		p.setNumRubrique(1111);
 		p.setTitre("Le titre");
-		JourPointageDto j1 = new JourPointageDto();
+		JourPointageDtoKiosque j1 = new JourPointageDtoKiosque();
 		j1.getPrimes().add(p);
-		dto.setSaisies(Arrays.asList(j1, new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1),
-				new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1)));
-		PrimeDto prime7thday = dto.getSaisies().get(6).getPrimes().get(0);
-		prime7thday.setHeureDebut(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
-		prime7thday.setHeureFin(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
+		dto.setSaisies(Arrays.asList(j1, new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1),
+				new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1),
+				new JourPointageDtoKiosque(j1)));
+		PrimeDtoKiosque prime7thday = dto.getSaisies().get(6).getPrimes().get(0);
+		prime7thday.setHeureDebutDate(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
+		prime7thday.setHeureFinDate(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
 		prime7thday.setQuantite(3);
 		prime7thday.setMotif("mot");
 		prime7thday.setCommentaire("com");
@@ -364,24 +372,25 @@ public class SaisieServiceTest {
 		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
 
 		// prime
-		PrimeDto p = new PrimeDto();
+		PrimeDtoKiosque p = new PrimeDtoKiosque();
 		p.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES.toString());
 		p.setIdRefPrime(22);
 		p.setNumRubrique(1111);
 		p.setTitre("Le titre");
-		JourPointageDto j1 = new JourPointageDto();
+		JourPointageDtoKiosque j1 = new JourPointageDtoKiosque();
 		j1.getPrimes().add(p);
-		dto.setSaisies(Arrays.asList(j1, new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1),
-				new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1)));
+		dto.setSaisies(Arrays.asList(j1, new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1),
+				new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1),
+				new JourPointageDtoKiosque(j1)));
 		dto.getSaisies().get(6).setDate(new DateTime(2013, 05, 19, 0, 0, 0).toDate());
-		PrimeDto prime7thday = dto.getSaisies().get(6).getPrimes().get(0);
-		prime7thday.setHeureDebut(null);
-		prime7thday.setHeureFin(null);
+		PrimeDtoKiosque prime7thday = dto.getSaisies().get(6).getPrimes().get(0);
+		prime7thday.setHeureDebutDate(null);
+		prime7thday.setHeureFinDate(null);
 		prime7thday.setQuantite(3);
 		prime7thday.setMotif("mot");
 		prime7thday.setCommentaire("com");
@@ -454,16 +463,16 @@ public class SaisieServiceTest {
 		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
 
 		// prime
-		AbsenceDto abs = new AbsenceDto();
+		AbsenceDtoKiosque abs = new AbsenceDtoKiosque();
 		abs.setIdRefTypeAbsence(1);
-		abs.setHeureDebut(new DateTime(2013, 05, 13, 12, 0, 0).toDate());
-		abs.setHeureFin(new DateTime(2013, 05, 13, 18, 0, 0).toDate());
-		dto.getSaisies().add(new JourPointageDto());
+		abs.setHeureDebutDate(new DateTime(2013, 05, 13, 12, 0, 0).toDate());
+		abs.setHeureFinDate(new DateTime(2013, 05, 13, 18, 0, 0).toDate());
+		dto.getSaisies().add(new JourPointageDtoKiosque());
 		dto.getSaisies().get(0).getAbsences().add(abs);
 
 		Date currentDate = new DateTime(2013, 05, 22, 9, 8, 00).toDate();
@@ -525,11 +534,12 @@ public class SaisieServiceTest {
 		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
-		dto.setSaisies(Arrays.asList(new JourPointageDto(), new JourPointageDto(), new JourPointageDto(),
-				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
+		dto.setSaisies(Arrays.asList(new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque()));
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.isDateAMonday(lundi)).thenReturn(true);
@@ -573,34 +583,35 @@ public class SaisieServiceTest {
 		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
 
 		// prime
-		PrimeDto templateP = new PrimeDto();
+		PrimeDtoKiosque templateP = new PrimeDtoKiosque();
 		templateP.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES.toString());
 		templateP.setIdRefPrime(22);
 		templateP.setNumRubrique(1111);
 		templateP.setTitre("Le titre");
-		JourPointageDto j1 = new JourPointageDto();
+		JourPointageDtoKiosque j1 = new JourPointageDtoKiosque();
 		j1.getPrimes().add(templateP);
-		dto.setSaisies(Arrays.asList(j1, new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1),
-				new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1)));
-		PrimeDto prime7thday = dto.getSaisies().get(6).getPrimes().get(0);
+		dto.setSaisies(Arrays.asList(j1, new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1),
+				new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1),
+				new JourPointageDtoKiosque(j1)));
+		PrimeDtoKiosque prime7thday = dto.getSaisies().get(6).getPrimes().get(0);
 		prime7thday.setIdPointage(2000);
 		prime7thday.setaSupprimer(true);
-		prime7thday.setHeureDebut(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
-		prime7thday.setHeureFin(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
+		prime7thday.setHeureDebutDate(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
+		prime7thday.setHeureFinDate(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
 		prime7thday.setQuantite(3);
 		prime7thday.setMotif("mot");
 		prime7thday.setCommentaire("com");
 		prime7thday.setIdPointage(2000);
-		PrimeDto prime6thday = dto.getSaisies().get(5).getPrimes().get(0);
+		PrimeDtoKiosque prime6thday = dto.getSaisies().get(5).getPrimes().get(0);
 		prime6thday.setIdPointage(1999);
 		prime6thday.setaSupprimer(true);
-		prime6thday.setHeureDebut(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
-		prime6thday.setHeureFin(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
+		prime6thday.setHeureDebutDate(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
+		prime6thday.setHeureFinDate(new DateTime(2013, 05, 19, 11, 0, 0).toDate());
 		prime6thday.setQuantite(3);
 		prime6thday.setMotif("mot");
 		prime6thday.setCommentaire("com");
@@ -666,7 +677,7 @@ public class SaisieServiceTest {
 		ReturnMessageDto srm = new ReturnMessageDto();
 		srm.getErrors().add("Erreur PTG plus 3 mois");
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -805,26 +816,27 @@ public class SaisieServiceTest {
 
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
-		dto.setSaisies(Arrays.asList(new JourPointageDto(), new JourPointageDto(), new JourPointageDto(),
-				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
+		dto.setSaisies(Arrays.asList(new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque()));
 
-		HeureSupDto hs1 = new HeureSupDto();
+		HeureSupDtoKiosque hs1 = new HeureSupDtoKiosque();
 		hs1.setRecuperee(true);
 		hs1.setRappelService(true);
-		hs1.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
-		hs1.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
+		hs1.setHeureDebutDate(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
+		hs1.setHeureFinDate(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		hs1.setMotif("le motif 3");
 		hs1.setCommentaire("le commentaire 3");
 
-		HeureSupDto hs2 = new HeureSupDto();
+		HeureSupDtoKiosque hs2 = new HeureSupDtoKiosque();
 		hs2.setIdPointage(1);
 		hs2.setRecuperee(false);
 		hs2.setRappelService(false);
-		hs2.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
-		hs2.setHeureFin(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
+		hs2.setHeureDebutDate(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
+		hs2.setHeureFinDate(new DateTime(2013, 05, 16, 16, 0, 0).toDate());
 		hs2.setMotif("le motif 3");
 		hs2.setCommentaire("le commentaire 3");
 
@@ -1729,15 +1741,16 @@ public class SaisieServiceTest {
 
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
-		dto.setSaisies(Arrays.asList(new JourPointageDto(), new JourPointageDto(), new JourPointageDto(),
-				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
+		dto.setSaisies(Arrays.asList(new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque()));
 
-		AbsenceDto abs3 = new AbsenceDto();
-		abs3.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
-		abs3.setHeureFin(new DateTime(2013, 05, 17, 16, 0, 0).toDate());
+		AbsenceDtoKiosque abs3 = new AbsenceDtoKiosque();
+		abs3.setHeureDebutDate(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
+		abs3.setHeureFinDate(new DateTime(2013, 05, 17, 16, 0, 0).toDate());
 		abs3.setMotif("le motif 3");
 		abs3.setCommentaire("le commentaire 3");
 		abs3.setIdRefTypeAbsence(1);
@@ -1816,20 +1829,21 @@ public class SaisieServiceTest {
 
 		TypeChainePaieEnum chainePaie = TypeChainePaieEnum.SCV;
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
-		dto.setSaisies(Arrays.asList(new JourPointageDto(), new JourPointageDto(), new JourPointageDto(),
-				new JourPointageDto(), new JourPointageDto(), new JourPointageDto(), new JourPointageDto()));
+		dto.setSaisies(Arrays.asList(new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque(), new JourPointageDtoKiosque(),
+				new JourPointageDtoKiosque(), new JourPointageDtoKiosque()));
 
 		MotifHeureSup motifHsup = new MotifHeureSup();
 		motifHsup.setIdMotifHsup(2);
 		motifHsup.setText("le motif 3");
 
-		HeureSupDto hs1 = new HeureSupDto();
+		HeureSupDtoKiosque hs1 = new HeureSupDtoKiosque();
 		hs1.setRecuperee(true);
-		hs1.setHeureDebut(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
-		hs1.setHeureFin(new DateTime(2013, 05, 17, 16, 0, 0).toDate());
+		hs1.setHeureDebutDate(new DateTime(2013, 05, 16, 15, 0, 0).toDate());
+		hs1.setHeureFinDate(new DateTime(2013, 05, 17, 16, 0, 0).toDate());
 		hs1.setCommentaire("le commentaire 3");
 		hs1.setIdMotifHsup(2);
 		dto.getSaisies().get(3).getHeuresSup().add(hs1);
@@ -1916,23 +1930,24 @@ public class SaisieServiceTest {
 		AgentWithServiceDto agent = new AgentWithServiceDto();
 		agent.setIdAgent(9007654);
 
-		FichePointageDto dto = new FichePointageDto();
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
 		dto.setDateLundi(lundi);
 		dto.setAgent(agent);
 
 		// prime
-		PrimeDto p = new PrimeDto();
+		PrimeDtoKiosque p = new PrimeDtoKiosque();
 		p.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES.toString());
 		p.setIdRefPrime(22);
 		p.setNumRubrique(1111);
 		p.setTitre("Le titre");
-		JourPointageDto j1 = new JourPointageDto();
+		JourPointageDtoKiosque j1 = new JourPointageDtoKiosque();
 		j1.getPrimes().add(p);
-		dto.setSaisies(Arrays.asList(j1, new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1),
-				new JourPointageDto(j1), new JourPointageDto(j1), new JourPointageDto(j1)));
-		PrimeDto prime7thday = dto.getSaisies().get(6).getPrimes().get(0);
-		prime7thday.setHeureDebut(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
-		prime7thday.setHeureFin(new DateTime(2013, 05, 20, 11, 0, 0).toDate());
+		dto.setSaisies(Arrays.asList(j1, new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1),
+				new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1), new JourPointageDtoKiosque(j1),
+				new JourPointageDtoKiosque(j1)));
+		PrimeDtoKiosque prime7thday = dto.getSaisies().get(6).getPrimes().get(0);
+		prime7thday.setHeureDebutDate(new DateTime(2013, 05, 19, 8, 0, 0).toDate());
+		prime7thday.setHeureFinDate(new DateTime(2013, 05, 20, 11, 0, 0).toDate());
 		prime7thday.setQuantite(3);
 		prime7thday.setMotif("mot");
 		prime7thday.setCommentaire("com");
@@ -2032,7 +2047,6 @@ public class SaisieServiceTest {
 		ptg.setCommentaire(new PtgComment());
 		String commentaire = "commentaire";
 
-
 		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pointageRepository.getEntity(MotifHeureSup.class, motif.getIdMotifHsup())).thenReturn(motif);
 
@@ -2053,10 +2067,10 @@ public class SaisieServiceTest {
 		// Given
 		MotifHeureSup existingMotif = Mockito.spy(new MotifHeureSup());
 		existingMotif.setText("value");
-		
+
 		PtgComment existingComment = Mockito.spy(new PtgComment());
 		existingComment.setText("value2");
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setMotifHsup(existingMotif);
 		ptg.setCommentaire(existingComment);

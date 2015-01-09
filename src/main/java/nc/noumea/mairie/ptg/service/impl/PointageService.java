@@ -19,13 +19,18 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
+import nc.noumea.mairie.ptg.dto.AbsenceDtoKiosque;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
+import nc.noumea.mairie.ptg.dto.FichePointageDtoKiosque;
 import nc.noumea.mairie.ptg.dto.FichePointageListDto;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
+import nc.noumea.mairie.ptg.dto.HeureSupDtoKiosque;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
+import nc.noumea.mairie.ptg.dto.JourPointageDtoKiosque;
 import nc.noumea.mairie.ptg.dto.MotifHeureSupDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
+import nc.noumea.mairie.ptg.dto.PrimeDtoKiosque;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
@@ -487,5 +492,102 @@ public class PointageService implements IPointageService {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public FichePointageDtoKiosque getFilledFichePointageForAgentKiosque(int idAgent, Date dateLundi) {
+
+		AgentGeneriqueDto agent = sirhWsConsumer.getAgent(idAgent);
+
+		FichePointageDtoKiosque ficheDto = getFichePointageForAgentKiosque(agent, dateLundi);
+
+		List<Pointage> agentPointages = getLatestPointagesForSaisieForAgentAndDateMonday(idAgent, dateLundi);
+
+		for (Pointage ptg : agentPointages) {
+
+			JourPointageDtoKiosque jour = ficheDto.getSaisies().get(
+					helperService.getWeekDayFromDateBase0(ptg.getDateDebut()));
+
+			switch (ptg.getTypePointageEnum()) {
+				case ABSENCE:
+					AbsenceDtoKiosque abs = new AbsenceDtoKiosque(ptg);
+					jour.getAbsences().add(abs);
+					break;
+
+				case H_SUP:
+					HeureSupDtoKiosque hsup = new HeureSupDtoKiosque(ptg);
+					jour.getHeuresSup().add(hsup);
+					break;
+
+				case PRIME:
+					// Retrieve related primeDto in JourPointageDto and update
+					// it
+					// with value from Pointage
+					PrimeDtoKiosque thePrimeToUpdate = null;
+					for (PrimeDtoKiosque pDto : jour.getPrimes()) {
+						if (pDto.getNumRubrique().equals(ptg.getRefPrime().getNoRubr())) {
+							thePrimeToUpdate = pDto;
+						}
+					}
+					assert thePrimeToUpdate != null;
+					thePrimeToUpdate.updateWithPointage(ptg);
+					break;
+			}
+		}
+
+		return ficheDto;
+	}
+
+	protected FichePointageDtoKiosque getFichePointageForAgentKiosque(AgentGeneriqueDto agent, Date date) {
+
+		if (!helperService.isDateAMonday(date)) {
+			throw new NotAMondayException();
+		}
+
+		// Retrieve division service of agent
+		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(agent.getIdAgent(), date);
+
+		// on construit le dto de l'agent
+		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);
+		agentDto.setCodeService(service.getService());
+		agentDto.setService(service.getServiceLibelle());
+
+		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
+		// contractuel,convention coll
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(agent, helperService.getCurrentDate());
+		agentDto.setStatut(carr.getStatutCarriere().name());
+
+		// on construit le DTO de jourPointage
+		FichePointageDtoKiosque result = new FichePointageDtoKiosque();
+		result.setDateLundi(date);
+		result.setAgent(agentDto);
+		result.setDPM(service.getSigle().toUpperCase().equals("DPM"));
+		result.setSemaine(helperService.getWeekStringFromDate(date));
+
+		JourPointageDtoKiosque jourPointageTemplate = new JourPointageDtoKiosque();
+		jourPointageTemplate.setDate(date);
+		List<Integer> pps = sirhWsConsumer.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		if (pps.size() > 0) {
+			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
+
+			for (RefPrime prime : refPrimes) {
+				jourPointageTemplate.getPrimes().add(new PrimeDtoKiosque(prime));
+			}
+		}
+
+		result.getSaisies().add(jourPointageTemplate);
+
+		// tu as un jour de la semaine type avec toutes les primes
+
+		for (int jour = 1; jour < 7; jour++) {
+			JourPointageDtoKiosque jourSuivant = new JourPointageDtoKiosque(jourPointageTemplate);
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(jourPointageTemplate.getDate());
+			calendar.add(Calendar.DATE, jour);
+			jourSuivant.setDate(calendar.getTime());
+			result.getSaisies().add(jourSuivant);
+		}
+
+		return result;
 	}
 }

@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.web;
 import java.util.Date;
 
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
+import nc.noumea.mairie.ptg.dto.FichePointageDtoKiosque;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
@@ -62,7 +63,7 @@ public class SaisieController {
 			throw new AccessForbiddenException();
 		}
 
-		FichePointageDto fichePointageAgent = pointageService.getFilledFichePointageForAgent(agent, date);
+		FichePointageDtoKiosque fichePointageAgent = pointageService.getFilledFichePointageForAgentKiosque(agent, date);
 		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
 				.deepSerialize(fichePointageAgent);
 
@@ -77,8 +78,8 @@ public class SaisieController {
 
 		logger.debug("entered POST [saisie/fiche] => setFichePointage with parameters idAgent = {}", idAgent);
 
-		FichePointageDto dto = new JSONDeserializer<FichePointageDto>().use(Date.class, new MSDateTransformer())
-				.deserializeInto(fichePointage, new FichePointageDto());
+		FichePointageDtoKiosque dto = new JSONDeserializer<FichePointageDtoKiosque>().use(Date.class, new MSDateTransformer())
+				.deserializeInto(fichePointage, new FichePointageDtoKiosque());
 
 		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		int convertedagent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(dto.getAgent()
@@ -125,8 +126,7 @@ public class SaisieController {
 	public ResponseEntity<String> setFichePointageSIRH(@RequestParam("idAgent") int idAgent,
 			@RequestBody(required = true) String fichePointage) {
 
-		logger.debug(
-				"entered POST [saisie/ficheSIRH] => setFichePointage for SIRH with parameters idAgent = {}",
+		logger.debug("entered POST [saisie/ficheSIRH] => setFichePointage for SIRH with parameters idAgent = {}",
 				idAgent);
 
 		FichePointageDto dto = new JSONDeserializer<FichePointageDto>().use(Date.class, new MSDateTransformer())

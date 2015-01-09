@@ -15,11 +15,17 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.AbsenceDto;
+import nc.noumea.mairie.ptg.dto.AbsenceDtoKiosque;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
+import nc.noumea.mairie.ptg.dto.FichePointageDtoKiosque;
 import nc.noumea.mairie.ptg.dto.HeureSupDto;
+import nc.noumea.mairie.ptg.dto.HeureSupDtoKiosque;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
+import nc.noumea.mairie.ptg.dto.JourPointageDtoKiosque;
 import nc.noumea.mairie.ptg.dto.PointageDto;
+import nc.noumea.mairie.ptg.dto.PointageDtoKiosque;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
+import nc.noumea.mairie.ptg.dto.PrimeDtoKiosque;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -59,8 +65,8 @@ public class SaisieService implements ISaisieService {
 	private ISirhWSConsumer sirhWsConsumer;
 
 	@Override
-	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto) {
-		return saveFichePointage(idAgentOperator, fichePointageDto, false);
+	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDtoKiosque fichePointageDto) {
+		return saveFichePointageKiosque(idAgentOperator, fichePointageDto, false);
 	}
 
 	@Override
@@ -479,6 +485,308 @@ public class SaisieService implements ISaisieService {
 	}
 
 	protected boolean hasTextChangedHSup(Pointage ptg, HeureSupDto hsupDto) {
+
+		boolean motifHasChanged = (ptg.getMotifHsup() == null && hsupDto.getIdMotifHsup() != null || (ptg
+				.getMotifHsup() != null && ptg.getMotifHsup().getIdMotifHsup() != hsupDto.getIdMotifHsup()));
+
+		boolean commentHasChanged = (ptg.getCommentaire() == null && hsupDto.getCommentaire() != null
+				&& !hsupDto.getCommentaire().equals("") || (ptg.getCommentaire() != null && !ptg.getCommentaire()
+				.getText().equals(hsupDto.getCommentaire())));
+
+		return motifHasChanged || commentHasChanged;
+	}
+
+	@Override
+	public ReturnMessageDto saveFichePointageKiosque(Integer idAgentOperator, FichePointageDtoKiosque fichePointageDto,
+			boolean approveModifiedPointages) {
+
+		Date dateLundi = fichePointageDto.getDateLundi();
+
+		if (!helperService.isDateAMonday(dateLundi))
+			throw new NotAMondayException();
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		if (!approveModifiedPointages)
+			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, dateLundi);
+		if (!result.getErrors().isEmpty())
+			return result;
+
+		Integer idAgent = fichePointageDto.getAgent().getIdAgent();
+
+		List<Pointage> originalAgentPointages = pointageService.getLatestPointagesForSaisieForAgentAndDateMonday(
+				idAgent, dateLundi);
+
+		List<Pointage> finalPointages = new ArrayList<Pointage>();
+		boolean isPointageAbsenceModifie = false;
+		boolean isPointageHSupModifie = false;
+
+		for (JourPointageDtoKiosque jourDto : fichePointageDto.getSaisies()) {
+
+			for (AbsenceDtoKiosque abs : jourDto.getAbsences()) {
+
+				if (abs.isaSupprimer())
+					continue;
+
+				// Try to retrieve in the existing original pointages if it
+				// exists
+				Pointage ptg = findPointageAndRemoveFromOriginalsKiosque(originalAgentPointages, abs);
+
+				// If already existing, try and compare if it has changed
+				// compared to the original version
+				if (ptg != null && !hasPointageChangedKiosque(ptg, abs)) {
+					continue;
+				}
+
+				// Only if it has changed, process this pointage
+				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent, dateLundi,
+						helperService.getCurrentDate());
+				if (null != abs.getIdRefTypeAbsence()) {
+					ptg.setRefTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class, abs.getIdRefTypeAbsence()));
+				}
+				ptg.setDateDebut(abs.getHeureDebutDate());
+				ptg.setDateFin(abs.getHeureFinDate());
+				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.ABSENCE.getValue()));
+
+				crudComments(ptg, abs.getMotif(), abs.getCommentaire());
+
+				isPointageAbsenceModifie = true;
+				finalPointages.add(ptg);
+			}
+
+			for (HeureSupDtoKiosque hs : jourDto.getHeuresSup()) {
+
+				if (hs.isaSupprimer())
+					continue;
+
+				// Try to retrieve in the existing original pointages if it
+				// exists
+				Pointage ptg = findPointageAndRemoveFromOriginalsKiosque(originalAgentPointages, hs);
+
+				// If already existing, try and compare if it has changed
+				// compared to the original version
+				if (ptg != null && !hasPointageChangedKiosque(ptg, hs)) {
+					continue;
+				}
+
+				// Only if it has changed, process this pointage
+				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi,
+						helperService.getCurrentDate());
+				// cas de la DMP #11622
+				SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent, ptg.getDateDebut());
+				if (service.getSigle().toUpperCase().equals("DPM")) {
+					ptg.setHeureSupRecuperee(true);
+					ptg.setHeureSupRappelService(hs.getRappelService());
+				} else {
+					ptg.setHeureSupRecuperee(hs.getRecuperee());
+					ptg.setHeureSupRappelService(false);
+				}
+				ptg.setDateDebut(hs.getHeureDebutDate());
+				ptg.setDateFin(hs.getHeureFinDate());
+				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.H_SUP.getValue()));
+
+				crudCommentsHeureSup(ptg, hs.getIdMotifHsup(), hs.getCommentaire());
+
+				isPointageHSupModifie = true;
+				finalPointages.add(ptg);
+			}
+
+			for (PrimeDtoKiosque prime : jourDto.getPrimes()) {
+
+				// if the new pointage has no idPointage, null qte, null
+				// datedebut and datefin, leave it (it is a template)
+				if (prime.isaSupprimer() || prime.getIdPointage() == null && prime.getHeureFin() == null
+						&& (prime.getQuantite() == null || prime.getQuantite().equals(0))) {
+					continue;
+				}
+
+				// Try to retrieve in the existing original pointages if it
+				// exists
+				Pointage ptg = findPointageAndRemoveFromOriginalsKiosque(originalAgentPointages, prime);
+
+				// If already existing, try and compare if it has changed
+				// compared to the original version
+				if (ptg != null && !hasPointageChangedKiosque(ptg, prime)) {
+					continue;
+				}
+
+				// Only if it has changed, process this pointage
+				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, prime.getIdPointage(), idAgent,
+						dateLundi, helperService.getCurrentDate(), prime.getIdRefPrime());
+				ptg.setDateDebut(prime.getHeureDebutDate() == null ? jourDto.getDate() : prime.getHeureDebutDate());
+				ptg.setDateFin(prime.getHeureFinDate());
+				ptg.setQuantite(prime.getQuantite());
+				ptg.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME.getValue()));
+
+				crudComments(ptg, prime.getMotif(), prime.getCommentaire());
+
+				finalPointages.add(ptg);
+			}
+		}
+
+		// calling data consistency
+		ptgDataCosistencyRules.processDataConsistency(result, idAgent, dateLundi, finalPointages);
+
+		// If any blocking error, return the list of problems and do not save
+		if (result.getErrors().size() != 0)
+			return result;
+
+		// si une heure sup ou absence est modifiee,
+		// on repasse toutes les hsup et absence a APPROUVE si celles-ci etaient
+		// en VALIDE ou JOURNALISE
+		// pour qu elles soient reprises en compte dans la ventilation
+		if (isPointageAbsenceModifie || isPointageHSupModifie) {
+
+			originalAgentPointages = pointageService.getLatestPointagesForSaisieForAgentAndDateMonday(idAgent,
+					dateLundi);
+
+			Date currentDateEtat = getCurrentDateEtat(idAgent, dateLundi);
+
+			for (JourPointageDtoKiosque jourDto : fichePointageDto.getSaisies()) {
+				for (AbsenceDtoKiosque abs : jourDto.getAbsences()) {
+
+					if (abs.isaSupprimer())
+						continue;
+
+					// Try to retrieve in the existing original pointages if it
+					// exists
+					Pointage ptg = findPointageAndRemoveFromOriginalsKiosque(originalAgentPointages, abs);
+
+					if (null != ptg
+							&& !isPointageDejaModifie(finalPointages, ptg)
+							&& (EtatPointageEnum.VALIDE.equals(ptg.getLatestEtatPointage().getEtat()) || EtatPointageEnum.JOURNALISE
+									.equals(ptg.getLatestEtatPointage().getEtat()))) {
+						// Only if it has changed, process this pointage
+						ptg = pointageService.getOrCreateNewPointage(idAgentOperator, abs.getIdPointage(), idAgent,
+								dateLundi, helperService.getCurrentDate());
+						if (null != abs.getIdRefTypeAbsence()) {
+							ptg.setRefTypeAbsence(pointageRepository.getEntity(RefTypeAbsence.class,
+									abs.getIdRefTypeAbsence()));
+						}
+						ptg.setType(pointageRepository.getEntity(RefTypePointage.class,
+								RefTypePointageEnum.ABSENCE.getValue()));
+
+						crudComments(ptg, abs.getMotif(), abs.getCommentaire());
+
+						if (!approveModifiedPointages)
+							pointageService.addEtatPointage(ptg, EtatPointageEnum.APPROUVE, idAgentOperator,
+									currentDateEtat);
+
+						finalPointages.add(ptg);
+					}
+				}
+
+				for (HeureSupDtoKiosque hs : jourDto.getHeuresSup()) {
+
+					if (hs.isaSupprimer())
+						continue;
+
+					// Try to retrieve in the existing original pointages if it
+					// exists
+					Pointage ptg = findPointageAndRemoveFromOriginalsKiosque(originalAgentPointages, hs);
+
+					if (null != ptg
+							&& !isPointageDejaModifie(finalPointages, ptg)
+							&& (EtatPointageEnum.VALIDE.equals(ptg.getLatestEtatPointage().getEtat()) || EtatPointageEnum.JOURNALISE
+									.equals(ptg.getLatestEtatPointage().getEtat()))) {
+						// Only if it has changed, process this pointage
+						ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent,
+								dateLundi, helperService.getCurrentDate());
+						ptg.setType(pointageRepository.getEntity(RefTypePointage.class,
+								RefTypePointageEnum.H_SUP.getValue()));
+
+						crudCommentsHeureSup(ptg, hs.getIdMotifHsup(), hs.getCommentaire());
+
+						if (!approveModifiedPointages)
+							pointageService.addEtatPointage(ptg, EtatPointageEnum.APPROUVE, idAgent, currentDateEtat);
+
+						finalPointages.add(ptg);
+					}
+				}
+			}
+		}
+
+		// If called with the approvedModifidPointages parameter, we need to
+		// mark all the modified pointages directly as APPROUVE
+		if (approveModifiedPointages) {
+			markPointagesAsApproved(finalPointages, dateLundi, idAgent, idAgentOperator);
+		}
+
+		savePointages(finalPointages);
+		deletePointages(idAgentOperator, originalAgentPointages);
+
+		return result;
+	}
+
+	protected Pointage findPointageAndRemoveFromOriginalsKiosque(List<Pointage> originalAgentPointages,
+			PointageDtoKiosque dto) {
+
+		Pointage ptg = null;
+
+		for (Pointage p : originalAgentPointages) {
+			if (p.getIdPointage().equals(dto.getIdPointage())) {
+				ptg = p;
+				break;
+			}
+		}
+
+		if (ptg != null)
+			originalAgentPointages.remove(ptg);
+
+		return ptg;
+	}
+
+	protected boolean hasPointageChangedKiosque(Pointage ptg, HeureSupDtoKiosque hSup) {
+
+		boolean hasBeenModified = !(ptg.getHeureSupRecuperee().equals(hSup.getRecuperee())
+				&& ptg.getHeureSupRappelService().equals(hSup.getRappelService())
+				&& ptg.getDateDebut().getTime() == hSup.getHeureDebutDate().getTime() && ptg.getDateFin().getTime() == hSup
+				.getHeureFinDate().getTime());
+
+		return (hasBeenModified || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
+				&& hasTextChangedHSupKiosque(ptg, hSup));
+	}
+
+	protected boolean hasPointageChangedKiosque(Pointage ptg, AbsenceDtoKiosque absence) {
+
+		boolean hasBeenModified = !((null == ptg.getRefTypeAbsence() || ptg.getRefTypeAbsence().getIdRefTypeAbsence()
+				.equals(absence.getIdRefTypeAbsence()))
+				&& ptg.getDateDebut().getTime() == absence.getHeureDebutDate().getTime() && ptg.getDateFin().getTime() == absence
+				.getHeureFinDate().getTime());
+
+		return (hasBeenModified || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
+				&& hasTextChangedKiosque(ptg, absence));
+	}
+
+	protected boolean hasPointageChangedKiosque(Pointage ptg, PrimeDtoKiosque prime) {
+
+		if (ptg.getQuantite() != null)
+			return (!ptg.getQuantite().equals(prime.getQuantite()) || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
+					&& hasTextChangedKiosque(ptg, prime));
+
+		boolean dateDebutHasChanged = !((ptg.getDateDebut() == null && prime.getHeureDebut() == null) || (ptg
+				.getDateDebut() != null && prime.getHeureDebut() != null && ptg.getDateDebut().getTime() == prime
+				.getHeureDebutDate().getTime()));
+		boolean dateFinHasChanged = !((ptg.getDateFin() == null && prime.getHeureFin() == null) || (ptg.getDateFin() != null
+				&& prime.getHeureFin() != null && ptg.getDateFin().getTime() == prime.getHeureFinDate().getTime()));
+
+		return (dateDebutHasChanged || dateFinHasChanged || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
+				&& hasTextChangedKiosque(ptg, prime));
+	}
+
+	protected boolean hasTextChangedKiosque(Pointage ptg, PointageDtoKiosque pointageDto) {
+
+		boolean motifHasChanged = (ptg.getMotif() == null && pointageDto.getMotif() != null
+				&& !pointageDto.getMotif().equals("") || (ptg.getMotif() != null && !ptg.getMotif().getText()
+				.equals(pointageDto.getMotif())));
+
+		boolean commentHasChanged = (ptg.getCommentaire() == null && pointageDto.getCommentaire() != null
+				&& !pointageDto.getCommentaire().equals("") || (ptg.getCommentaire() != null && !ptg.getCommentaire()
+				.getText().equals(pointageDto.getCommentaire())));
+
+		return motifHasChanged || commentHasChanged;
+	}
+
+	protected boolean hasTextChangedHSupKiosque(Pointage ptg, HeureSupDtoKiosque hsupDto) {
 
 		boolean motifHasChanged = (ptg.getMotifHsup() == null && hsupDto.getIdMotifHsup() != null || (ptg
 				.getMotifHsup() != null && ptg.getMotifHsup().getIdMotifHsup() != hsupDto.getIdMotifHsup()));

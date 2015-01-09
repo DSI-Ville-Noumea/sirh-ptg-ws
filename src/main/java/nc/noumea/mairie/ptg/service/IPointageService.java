@@ -9,6 +9,7 @@ import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
+import nc.noumea.mairie.ptg.dto.FichePointageDtoKiosque;
 import nc.noumea.mairie.ptg.dto.FichePointageListDto;
 import nc.noumea.mairie.ptg.dto.MotifHeureSupDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
@@ -19,6 +20,8 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 public interface IPointageService {
 
 	FichePointageDto getFilledFichePointageForAgent(int idAgent, Date dateLundi);
+
+	FichePointageDtoKiosque getFilledFichePointageForAgentKiosque(int idAgent, Date dateLundi);
 
 	List<RefEtatDto> getRefEtats();
 
