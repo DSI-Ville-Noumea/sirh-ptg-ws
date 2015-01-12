@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.dto;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -60,6 +61,17 @@ public class PrimeDtoKiosque extends PointageDtoKiosque {
 				this.setHeureFinDate(ptg.getDateFin());
 				this.setHeureFin(sdfHeure.format(ptg.getDateFin()));
 				this.setMinuteFin(sdfMinute.format(ptg.getDateFin()));
+				Calendar calFinSaisieJ1 = Calendar.getInstance();
+				calFinSaisieJ1.setTime(ptg.getDateFin());
+				Integer jourFin = calFinSaisieJ1.get(Calendar.DAY_OF_MONTH);
+				Calendar calDebutSaisieJ1 = Calendar.getInstance();
+				calDebutSaisieJ1.setTime(ptg.getDateDebut());
+				Integer jourDebut = calDebutSaisieJ1.get(Calendar.DAY_OF_MONTH);
+				if (jourFin > jourDebut) {
+					this.setSaisieJ1("Attention fin de saisie j+1");
+				} else {
+					this.setSaisieJ1(null);
+				}
 				break;
 		}
 	}

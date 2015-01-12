@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.dto;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import nc.noumea.mairie.ptg.domain.Pointage;
@@ -18,6 +19,7 @@ public abstract class PointageDtoKiosque {
 	private String commentaire;
 	private Integer idRefEtat;
 	private boolean aSupprimer;
+	private String saisieJ1;
 
 	public PointageDtoKiosque() {
 
@@ -36,6 +38,17 @@ public abstract class PointageDtoKiosque {
 		this.motif = p.getMotif() == null ? "" : p.getMotif().getText();
 		this.commentaire = p.getCommentaire() == null ? "" : p.getCommentaire().getText();
 		this.idRefEtat = p.getLatestEtatPointage().getEtat().getCodeEtat();
+		Calendar calFinSaisieJ1 = Calendar.getInstance();
+		calFinSaisieJ1.setTime(p.getDateFin());
+		Integer jourFin = calFinSaisieJ1.get(Calendar.DAY_OF_MONTH);
+		Calendar calDebutSaisieJ1 = Calendar.getInstance();
+		calDebutSaisieJ1.setTime(p.getDateDebut());
+		Integer jourDebut = calDebutSaisieJ1.get(Calendar.DAY_OF_MONTH);
+		if (jourFin > jourDebut) {
+			this.saisieJ1 = "Attention fin de saisie j+1";
+		} else {
+			this.saisieJ1 = null;
+		}
 	}
 
 	public PointageDtoKiosque(PointageDtoKiosque pointageDto) {
@@ -133,5 +146,13 @@ public abstract class PointageDtoKiosque {
 
 	public String getHeureFin() {
 		return heureFin;
+	}
+
+	public String getSaisieJ1() {
+		return saisieJ1;
+	}
+
+	public void setSaisieJ1(String saisieJ1) {
+		this.saisieJ1 = saisieJ1;
 	}
 }
