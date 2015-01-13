@@ -13,7 +13,6 @@ import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Spmatr;
-import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
@@ -78,17 +77,6 @@ public class MairieRepository implements IMairieRepository {
 	}
 
 	@Override
-	public List<Sprirc> getListRecuperationBetween(Integer idAgent, Date start, Date end) {
-
-		TypedQuery<Sprirc> query = entityManager.createNamedQuery("getSprircForAgentAndPeriod", Sprirc.class);
-		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
-		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
-		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
-
-		return query.getResultList();
-	}
-
-	@Override
 	public List<Spcong> getListCongeBetween(Integer idAgent, Date start, Date end) {
 
 		TypedQuery<Spcong> query = entityManager.createNamedQuery("getSpcongForAgentAndPeriod", Spcong.class);
@@ -98,11 +86,12 @@ public class MairieRepository implements IMairieRepository {
 
 		return query.getResultList();
 	}
-	
+
 	@Override
 	public List<Spcong> getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Integer idAgent, Date start, Date end) {
 
-		TypedQuery<Spcong> query = entityManager.createNamedQuery("getSpcongWithoutCongesAnnuelsEtAnnulesForAgentAndPeriod", Spcong.class);
+		TypedQuery<Spcong> query = entityManager.createNamedQuery(
+				"getSpcongWithoutCongesAnnuelsEtAnnulesForAgentAndPeriod", Spcong.class);
 		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
 		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
 		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));

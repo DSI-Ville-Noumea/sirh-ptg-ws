@@ -12,7 +12,6 @@ import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
-import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -21,6 +20,7 @@ import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
+import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -40,11 +40,13 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	private ISirhWSConsumer sirhWsConsumer;
 
 	@Autowired
+	private IAbsWsConsumer absWsConsumer;
+
+	@Autowired
 	private HelperService helperService;
 
 	// -- MESSAGES --//
 	public static final String BASE_HOR_MAX = "L'agent dépasse sa base horaire";
-	public static final String RECUP_MSG = "%s : L'agent est en récupération sur cette période.";
 	public static final String CONGE_MSG = "%s : L'agent est en congés payés sur cette période.";
 	public static final String MALADIE_MSG = "%s : L'agent est en maladie sur cette période.";
 	public static final String HS_INA_315_MSG = "L'agent n'a pas droit aux HS sur la période (INA > 315)";
@@ -87,16 +89,37 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkSprircRecuperation(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages) {
+	public ReturnMessageDto checkRecuperation(ReturnMessageDto srm, Integer idAgent, Date dateLundi) {
 
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
+		// pour chaque jour on verifie si en recup
+		// si oui, on ajoute des erreurs
 
-		List<Sprirc> recups = mairieRepository.getListRecuperationBetween(idAgent, dateLundi, end);
+		ReturnMessageDto result = absWsConsumer.checkRecuperation(idAgent, dateLundi, end);
 
-		for (Sprirc recup : recups) {
-			checkInterval(srm, RECUP_MSG, recup.getId().getDatdeb(), recup.getId().getCodem1(), recup.getDatfin(),
-					recup.getCodem2(), pointages);
+		for (String info : result.getInfos()) {
+			srm.getInfos().add(info);
+		}
+		for (String erreur : result.getErrors()) {
+			srm.getErrors().add(erreur);
+		}
+		return srm;
+	}
+
+	@Override
+	public ReturnMessageDto checkReposComp(ReturnMessageDto srm, Integer idAgent, Date dateLundi) {
+
+		Date end = new DateTime(dateLundi).plusDays(7).toDate();
+		// pour chaque jour on verifie si en repos comp
+		// si oui, on ajoute des erreurs
+
+		ReturnMessageDto result = absWsConsumer.checkReposComp(idAgent, dateLundi, end);
+
+		for (String info : result.getInfos()) {
+			srm.getInfos().add(info);
+		}
+		for (String erreur : result.getErrors()) {
+			srm.getErrors().add(erreur);
 		}
 
 		return srm;
@@ -356,7 +379,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		BaseHorairePointageDto baseDto = sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi);
 
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
-		checkSprircRecuperation(srm, idAgent, dateLundi, pointages);
+		// TODO on check les types d'absences du projet SIRH-ABS-WS
+		checkRecuperation(srm, idAgent, dateLundi);
+		checkReposComp(srm, idAgent, dateLundi);
 		checkSpcongConge(srm, idAgent, dateLundi, pointages);
 		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
 		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages, carr, baseDto);

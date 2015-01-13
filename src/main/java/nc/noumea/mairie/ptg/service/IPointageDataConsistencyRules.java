@@ -18,8 +18,9 @@ public interface IPointageDataConsistencyRules {
 	ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto);
 
-	ReturnMessageDto checkSprircRecuperation(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages);
+	ReturnMessageDto checkRecuperation(ReturnMessageDto srm, Integer idAgent, Date dateLundi);
+
+	ReturnMessageDto checkReposComp(ReturnMessageDto srm, Integer idAgent, Date dateLundi);
 
 	ReturnMessageDto checkSpcongConge(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 

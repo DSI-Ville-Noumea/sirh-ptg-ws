@@ -8,7 +8,6 @@ import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Spmatr;
-import nc.noumea.mairie.domain.Sprirc;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
 public interface IMairieRepository {
@@ -29,12 +28,9 @@ public interface IMairieRepository {
 
 	Spadmn getAgentCurrentPosition(AgentGeneriqueDto ag, Date asOfDate);
 
-	List<Sprirc> getListRecuperationBetween(Integer idAgent, Date start, Date end);
-
 	List<Spcong> getListCongeBetween(Integer idAgent, Date start, Date end);
 
 	List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end);
 
-	List<Spcong> getListCongeWithoutCongesAnnuelsEtAnnulesBetween(
-			Integer idAgent, Date start, Date end);
+	List<Spcong> getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Integer idAgent, Date start, Date end);
 }
