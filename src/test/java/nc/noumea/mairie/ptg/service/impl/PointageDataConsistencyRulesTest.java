@@ -61,8 +61,8 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
-		Mockito.doReturn(rmd).when(service).checkRecuperation(rmd, idAgent, dateLundi);
-		Mockito.doReturn(rmd).when(service).checkReposComp(rmd, idAgent, dateLundi);
+		Mockito.doReturn(rmd).when(service).checkRecuperation(rmd, idAgent, pointages);
+		Mockito.doReturn(rmd).when(service).checkReposComp(rmd, idAgent, pointages);
 		Mockito.doReturn(rmd).when(service).checkSpcongConge(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkSpabsenMaladie(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr, base);
@@ -78,8 +78,8 @@ public class PointageDataConsistencyRulesTest {
 		service.processDataConsistency(rmd, idAgent, dateLundi, pointages);
 
 		// Then
-		Mockito.verify(service, Mockito.times(1)).checkRecuperation(rmd, idAgent, dateLundi);
-		Mockito.verify(service, Mockito.times(1)).checkReposComp(rmd, idAgent, dateLundi);
+		Mockito.verify(service, Mockito.times(1)).checkRecuperation(rmd, idAgent, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkReposComp(rmd, idAgent, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkSpcongConge(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkSpabsenMaladie(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr, base);
@@ -98,6 +98,7 @@ public class PointageDataConsistencyRulesTest {
 		// Given
 		Integer idAgent = 9005138;
 		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		List<Pointage> pointages = new ArrayList<Pointage>();
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.checkRecuperation(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
@@ -107,7 +108,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		ReturnMessageDto result = service.checkRecuperation(new ReturnMessageDto(), idAgent, dateLundi);
+		ReturnMessageDto result = service.checkRecuperation(new ReturnMessageDto(), idAgent, pointages);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -119,20 +120,25 @@ public class PointageDataConsistencyRulesTest {
 
 		// Given
 		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		Pointage p = new Pointage();
+		p.setDateDebut(dateDebut);
+		p.setDateFin(dateFin);
+		pointages.add(p);
 
 		ReturnMessageDto res = new ReturnMessageDto();
 		res.getErrors().add("21/05/2013 : L'agent est en récupération sur cette période.");
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkRecuperation(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
-				.thenReturn(res);
+		Mockito.when(absWsConsumer.checkRecuperation(idAgent, dateDebut, dateFin)).thenReturn(res);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		ReturnMessageDto result = service.checkRecuperation(new ReturnMessageDto(), idAgent, dateLundi);
+		ReturnMessageDto result = service.checkRecuperation(new ReturnMessageDto(), idAgent, pointages);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -146,6 +152,7 @@ public class PointageDataConsistencyRulesTest {
 		// Given
 		Integer idAgent = 9005138;
 		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		List<Pointage> pointages = new ArrayList<Pointage>();
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.checkReposComp(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
@@ -155,7 +162,7 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		ReturnMessageDto result = service.checkReposComp(new ReturnMessageDto(), idAgent, dateLundi);
+		ReturnMessageDto result = service.checkReposComp(new ReturnMessageDto(), idAgent, pointages);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -167,20 +174,25 @@ public class PointageDataConsistencyRulesTest {
 
 		// Given
 		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		Pointage p = new Pointage();
+		p.setDateDebut(dateDebut);
+		p.setDateFin(dateFin);
+		pointages.add(p);
 
 		ReturnMessageDto res = new ReturnMessageDto();
 		res.getErrors().add("21/05/2013 : L'agent est en repos compensateur sur cette période.");
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkReposComp(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
-				.thenReturn(res);
+		Mockito.when(absWsConsumer.checkReposComp(idAgent, dateDebut, dateFin)).thenReturn(res);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		ReturnMessageDto result = service.checkReposComp(new ReturnMessageDto(), idAgent, dateLundi);
+		ReturnMessageDto result = service.checkReposComp(new ReturnMessageDto(), idAgent, pointages);
 
 		// Then
 		assertEquals(1, result.getErrors().size());

@@ -10,7 +10,7 @@ public interface IAbsWsConsumer {
 
 	void addReposCompToAgent(Integer idAgent, Date dateLundi, Integer minutes);
 
-	ReturnMessageDto checkRecuperation(Integer idAgent, Date dateLundi, Date end);
+	ReturnMessageDto checkRecuperation(Integer idAgent, Date dateDebut, Date dateFin);
 
-	ReturnMessageDto checkReposComp(Integer idAgent, Date dateLundi, Date end);
+	ReturnMessageDto checkReposComp(Integer idAgent, Date dateDebut, Date dateFin);
 }

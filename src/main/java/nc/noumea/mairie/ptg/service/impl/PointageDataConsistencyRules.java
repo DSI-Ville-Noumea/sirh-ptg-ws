@@ -89,13 +89,13 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkRecuperation(ReturnMessageDto srm, Integer idAgent, Date dateLundi) {
-
-		Date end = new DateTime(dateLundi).plusDays(7).toDate();
-		// pour chaque jour on verifie si en recup
-		// si oui, on ajoute des erreurs
-
-		ReturnMessageDto result = absWsConsumer.checkRecuperation(idAgent, dateLundi, end);
+	public ReturnMessageDto checkRecuperation(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		for (Pointage p : pointages) {
+			// pour chaque pointage on verifie si en recup
+			// si oui, on ajoute des erreurs
+			result = absWsConsumer.checkRecuperation(idAgent, p.getDateDebut(), p.getDateFin());
+		}
 
 		for (String info : result.getInfos()) {
 			srm.getInfos().add(info);
@@ -107,13 +107,13 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkReposComp(ReturnMessageDto srm, Integer idAgent, Date dateLundi) {
-
-		Date end = new DateTime(dateLundi).plusDays(7).toDate();
-		// pour chaque jour on verifie si en repos comp
-		// si oui, on ajoute des erreurs
-
-		ReturnMessageDto result = absWsConsumer.checkReposComp(idAgent, dateLundi, end);
+	public ReturnMessageDto checkReposComp(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		for (Pointage p : pointages) {
+			// pour chaque pointage on verifie si en recup
+			// si oui, on ajoute des erreurs
+			result = absWsConsumer.checkReposComp(idAgent, p.getDateDebut(), p.getDateFin());
+		}
 
 		for (String info : result.getInfos()) {
 			srm.getInfos().add(info);
@@ -121,7 +121,6 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		for (String erreur : result.getErrors()) {
 			srm.getErrors().add(erreur);
 		}
-
 		return srm;
 	}
 
@@ -380,8 +379,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
 		// TODO on check les types d'absences du projet SIRH-ABS-WS
-		checkRecuperation(srm, idAgent, dateLundi);
-		checkReposComp(srm, idAgent, dateLundi);
+		checkRecuperation(srm, idAgent, pointages);
+		checkReposComp(srm, idAgent, pointages);
 		checkSpcongConge(srm, idAgent, dateLundi, pointages);
 		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
 		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages, carr, baseDto);

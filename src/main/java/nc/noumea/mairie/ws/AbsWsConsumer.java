@@ -73,15 +73,15 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	}
 
 	@Override
-	public ReturnMessageDto checkRecuperation(Integer idAgent, Date dateLundi, Date end) {
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+	public ReturnMessageDto checkRecuperation(Integer idAgent, Date dateDebut, Date dateFin) {
+		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
 		String url = String.format(sirhAbsWsBaseUrl + checkRecuperationsUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
-		parameters.put("dateDebut", sf.format(dateLundi));
-		parameters.put("dateFin", sf.format(end));
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
@@ -89,15 +89,15 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	}
 
 	@Override
-	public ReturnMessageDto checkReposComp(Integer idAgent, Date dateLundi, Date end) {
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+	public ReturnMessageDto checkReposComp(Integer idAgent, Date dateDebut, Date dateFin) {
+		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
 		String url = String.format(sirhAbsWsBaseUrl + checkReposCompensateursUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
-		parameters.put("dateDebut", sf.format(dateLundi));
-		parameters.put("dateFin", sf.format(end));
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
