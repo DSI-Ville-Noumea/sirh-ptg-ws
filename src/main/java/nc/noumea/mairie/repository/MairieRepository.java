@@ -77,17 +77,6 @@ public class MairieRepository implements IMairieRepository {
 	}
 
 	@Override
-	public List<Spcong> getListCongeBetween(Integer idAgent, Date start, Date end) {
-
-		TypedQuery<Spcong> query = entityManager.createNamedQuery("getSpcongForAgentAndPeriod", Spcong.class);
-		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
-		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
-		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
-
-		return query.getResultList();
-	}
-
-	@Override
 	public List<Spcong> getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Integer idAgent, Date start, Date end) {
 
 		TypedQuery<Spcong> query = entityManager.createNamedQuery(

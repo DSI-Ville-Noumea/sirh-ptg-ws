@@ -11,9 +11,6 @@ import javax.persistence.Table;
 @Table(name = "SPCONG")
 @NamedQueries({
 @NamedQuery(
-		name = "getSpcongForAgentAndPeriod", 
-		query = "from Spcong sp where sp.id.nomatr = :nomatr and sp.cdvali = 'V' and (sp.id.datdeb <= :start and sp.datfin >= :start or sp.id.datdeb >= :start and sp.id.datdeb <= :end)"),
-@NamedQuery(
 		name = "getSpcongWithoutCongesAnnuelsEtAnnulesForAgentAndPeriod", 
 		query = "from Spcong sp where sp.id.nomatr = :nomatr and sp.cdvali = 'V' and (sp.id.datdeb <= :start and sp.datfin >= :start or sp.id.datdeb >= :start and sp.id.datdeb <= :end)"
 				+ " and sp.id.type2 not in (1, 91, 92, 93, 94) ")
