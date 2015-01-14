@@ -11,7 +11,6 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
-import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -110,7 +109,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkReposComp(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		for (Pointage p : pointages) {
-			// pour chaque pointage on verifie si en recup
+			// pour chaque pointage on verifie si en repos comp
 			// si oui, on ajoute des erreurs
 			result = absWsConsumer.checkReposComp(idAgent, p.getDateDebut(), p.getDateFin());
 		}
@@ -125,18 +124,56 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkSpcongConge(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages) {
-
-		Date end = new DateTime(dateLundi).plusDays(7).toDate();
-
-		List<Spcong> conges = mairieRepository.getListCongeBetween(idAgent, dateLundi, end);
-
-		for (Spcong cg : conges) {
-			checkInterval(srm, CONGE_MSG, cg.getId().getDatdeb(), cg.getCodem1(), cg.getDatfin(), cg.getCodem2(),
-					pointages);
+	public ReturnMessageDto checkAbsencesSyndicales(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		for (Pointage p : pointages) {
+			// pour chaque pointage on verifie si en ASA
+			// si oui, on ajoute des erreurs
+			result = absWsConsumer.checkAbsencesSyndicales(idAgent, p.getDateDebut(), p.getDateFin());
 		}
 
+		for (String info : result.getInfos()) {
+			srm.getInfos().add(info);
+		}
+		for (String erreur : result.getErrors()) {
+			srm.getErrors().add(erreur);
+		}
+		return srm;
+	}
+
+	@Override
+	public ReturnMessageDto checkCongesExceptionnels(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		for (Pointage p : pointages) {
+			// pour chaque pointage on verifie si en conge exceptionnel
+			// si oui, on ajoute des erreurs
+			result = absWsConsumer.checkCongesExceptionnels(idAgent, p.getDateDebut(), p.getDateFin());
+		}
+
+		for (String info : result.getInfos()) {
+			srm.getInfos().add(info);
+		}
+		for (String erreur : result.getErrors()) {
+			srm.getErrors().add(erreur);
+		}
+		return srm;
+	}
+
+	@Override
+	public ReturnMessageDto checkCongeAnnuel(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		for (Pointage p : pointages) {
+			// pour chaque pointage on verifie si en conge annuel
+			// si oui, on ajoute des erreurs
+			result = absWsConsumer.checkCongeAnnuel(idAgent, p.getDateDebut(), p.getDateFin());
+		}
+
+		for (String info : result.getInfos()) {
+			srm.getInfos().add(info);
+		}
+		for (String erreur : result.getErrors()) {
+			srm.getErrors().add(erreur);
+		}
 		return srm;
 	}
 
@@ -381,7 +418,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		// TODO on check les types d'absences du projet SIRH-ABS-WS
 		checkRecuperation(srm, idAgent, pointages);
 		checkReposComp(srm, idAgent, pointages);
-		checkSpcongConge(srm, idAgent, dateLundi, pointages);
+		checkAbsencesSyndicales(srm, idAgent, pointages);
+		checkCongesExceptionnels(srm, idAgent, pointages);
+		checkCongeAnnuel(srm, idAgent,  pointages);
 		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
 		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages, carr, baseDto);
 		checkAgentINAAndHSup(srm, idAgent, dateLundi, pointages, carr, baseDto);

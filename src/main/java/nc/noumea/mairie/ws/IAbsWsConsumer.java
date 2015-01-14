@@ -13,4 +13,10 @@ public interface IAbsWsConsumer {
 	ReturnMessageDto checkRecuperation(Integer idAgent, Date dateDebut, Date dateFin);
 
 	ReturnMessageDto checkReposComp(Integer idAgent, Date dateDebut, Date dateFin);
+
+	ReturnMessageDto checkAbsencesSyndicales(Integer idAgent, Date dateDebut, Date dateFin);
+
+	ReturnMessageDto checkCongesExceptionnels(Integer idAgent, Date dateDebut, Date dateFin);
+
+	ReturnMessageDto checkCongeAnnuel(Integer idAgent, Date dateDebut, Date dateFin);
 }

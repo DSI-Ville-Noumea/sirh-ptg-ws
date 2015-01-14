@@ -28,6 +28,9 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	private static final String addReposCompensateursUrl = "reposcomps/addForPTG";
 	private static final String checkRecuperationsUrl = "recuperations/checkRecuperations";
 	private static final String checkReposCompensateursUrl = "reposcomps/checkReposCompensateurs";
+	private static final String checkAbsencesSyndicalesUrl = "asa/checkAbsencesSyndicales";
+	private static final String checkCongesExceptionnelsUrl = "congeexceptionnel/checkCongesExceptionnels";
+	private static final String checkCongesAnnuelsUrl = "congeannuel/checkCongesAnnuels";
 
 	@Override
 	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes) {
@@ -93,6 +96,54 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
 		String url = String.format(sirhAbsWsBaseUrl + checkReposCompensateursUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(ReturnMessageDto.class, res, url);
+	}
+
+	@Override
+	public ReturnMessageDto checkAbsencesSyndicales(Integer idAgent, Date dateDebut, Date dateFin) {
+		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+		String url = String.format(sirhAbsWsBaseUrl + checkAbsencesSyndicalesUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(ReturnMessageDto.class, res, url);
+	}
+
+	@Override
+	public ReturnMessageDto checkCongesExceptionnels(Integer idAgent, Date dateDebut, Date dateFin) {
+		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+		String url = String.format(sirhAbsWsBaseUrl + checkCongesExceptionnelsUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(ReturnMessageDto.class, res, url);
+	}
+
+	@Override
+	public ReturnMessageDto checkCongeAnnuel(Integer idAgent, Date dateDebut, Date dateFin) {
+		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+
+		String url = String.format(sirhAbsWsBaseUrl + checkCongesAnnuelsUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
