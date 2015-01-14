@@ -74,7 +74,6 @@ public class PointageService implements IPointageService {
 	public static final String LIBELLE_MOTIF_VIDE = "Le libellé du motif n'est pas saisi.";
 
 	// POUR LES MESSAGE A ENVOYE AU PROJET SIRH-ABS-WS
-	public static final String AVERT_MESSAGE_PTG = "Soyez vigilant, vous avez saisi des absences sur des périodes où l’agent a déjà des pointages.";
 	public static final String POINTAGE_MSG = "%s : L'agent est a déjà un pointage sur cette période.";
 
 	protected FichePointageDto getFichePointageForAgent(AgentGeneriqueDto agent, Date date) {
@@ -608,14 +607,11 @@ public class PointageService implements IPointageService {
 		List<Pointage> listePointageHSup = pointageRepository.getListPointagesVerification(convertedIdAgent, fromDate,
 				toDate, RefTypePointageEnum.H_SUP.getValue());
 		listePointage.addAll(listePointageHSup);
-		for (Pointage d : listePointage) {
-			// si le poinatge est dans un bon etat
-			if (EtatPointageEnum.VALIDE.equals(d.getLatestEtatPointage().getEtat())) {
-				String msg = String.format(POINTAGE_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
-				result.getErrors().add(msg);
-			} else {
-				result.getInfos().add(AVERT_MESSAGE_PTG);
-			}
+		if (listePointage.size() > 0) {
+			// on bloque quel que soit l'etat du pointage
+			String msg = String.format(POINTAGE_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+			result.getErrors().add(msg);
+
 		}
 
 		return result;

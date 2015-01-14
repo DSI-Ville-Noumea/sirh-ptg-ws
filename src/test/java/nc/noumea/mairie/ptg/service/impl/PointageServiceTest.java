@@ -933,4 +933,60 @@ public class PointageServiceTest {
 		assertEquals(0, dto.getErrors().size());
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(MotifHeureSup.class));
 	}
+
+	@Test
+	public void checkPointage_OK() {
+
+		// Given
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
+
+		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(
+				arRepo.getListPointagesVerification(idAgent, dateDebut, dateFin, RefTypePointageEnum.ABSENCE.getValue()))
+				.thenReturn(new ArrayList<Pointage>());
+		Mockito.when(
+				arRepo.getListPointagesVerification(idAgent, dateDebut, dateFin, RefTypePointageEnum.H_SUP.getValue()))
+				.thenReturn(new ArrayList<Pointage>());
+
+		// When
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
+
+		ReturnMessageDto dto = service.checkPointage(idAgent, dateDebut, dateFin);
+
+		// Then
+		assertEquals(0, dto.getErrors().size());
+	}
+
+	@Test
+	public void checkPointage_Erros() {
+
+		// Given
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
+		Pointage p = new Pointage();
+		List<Pointage> listePointage = new ArrayList<Pointage>();
+		listePointage.add(p);
+
+		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(
+				arRepo.getListPointagesVerification(idAgent, dateDebut, dateFin, RefTypePointageEnum.ABSENCE.getValue()))
+				.thenReturn(listePointage);
+		Mockito.when(
+				arRepo.getListPointagesVerification(idAgent, dateDebut, dateFin, RefTypePointageEnum.H_SUP.getValue()))
+				.thenReturn(new ArrayList<Pointage>());
+
+		// When
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
+
+		ReturnMessageDto dto = service.checkPointage(idAgent, dateDebut, dateFin);
+
+		// Then
+		assertEquals(1, dto.getErrors().size());
+		assertEquals("01/01/2014 00:00 : L'agent est a déjà un pointage sur cette période.", dto.getErrors().get(0));
+	}
 }
