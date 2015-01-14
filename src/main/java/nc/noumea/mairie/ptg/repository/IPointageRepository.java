@@ -57,4 +57,6 @@ public interface IPointageRepository {
 	List<Integer> getListApprobateursPointagesSaisiesJourDonne();
 
 	List<MotifHeureSup> findAllMotifHeureSup();
+
+	List<Pointage> getListPointagesVerification(Integer idAgent, Date fromDate, Date toDate, Integer idRefType);
 }

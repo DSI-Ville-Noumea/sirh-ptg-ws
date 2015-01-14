@@ -287,4 +287,24 @@ public class PointageRepository implements IPointageRepository {
 	public List<MotifHeureSup> findAllMotifHeureSup() {
 		return ptgEntityManager.createQuery("SELECT o FROM MotifHeureSup o", MotifHeureSup.class).getResultList();
 	}
+
+	@Override
+	public List<Pointage> getListPointagesVerification(Integer idAgent, Date fromDate, Date toDate, Integer idRefType) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select ptg from Pointage ptg ");
+		sb.append("LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type ");
+		sb.append("where (ptg.dateDebut between :fromDate and :toDate or ptg.dateFin between :fromDate and :toDate) ");
+		sb.append("and ptg.type.idRefTypePointage = :idRefTypePointage ");
+		sb.append("and ptg.idAgent = :idAgent ");
+		sb.append("order by ptg.idPointage desc ");
+
+		TypedQuery<Pointage> query = ptgEntityManager.createQuery(sb.toString(), Pointage.class);
+		query.setParameter("fromDate", fromDate);
+		query.setParameter("toDate", toDate);
+		query.setParameter("idRefTypePointage", idRefType);
+		query.setParameter("idAgent", idAgent);
+
+		return query.getResultList();
+	}
 }
