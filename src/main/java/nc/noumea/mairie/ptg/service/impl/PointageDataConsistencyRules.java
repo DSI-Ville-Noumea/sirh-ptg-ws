@@ -46,7 +46,6 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 	// -- MESSAGES --//
 	public static final String BASE_HOR_MAX = "L'agent dépasse sa base horaire";
-	public static final String CONGE_MSG = "%s : L'agent est en congés payés sur cette période.";
 	public static final String MALADIE_MSG = "%s : L'agent est en maladie sur cette période.";
 	public static final String HS_INA_315_MSG = "L'agent n'a pas droit aux HS sur la période (INA > 315)";
 	public static final String BASE_HOR_00Z_MSG = "L'agent est en base horaire \"00Z\" sur la période";
@@ -415,13 +414,15 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		BaseHorairePointageDto baseDto = sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi);
 
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
-		// TODO on check les types d'absences du projet SIRH-ABS-WS
+		// DEBUT on check les types d'absences du projet SIRH-ABS-WS
 		checkRecuperation(srm, idAgent, pointages);
 		checkReposComp(srm, idAgent, pointages);
 		checkAbsencesSyndicales(srm, idAgent, pointages);
 		checkCongesExceptionnels(srm, idAgent, pointages);
-		checkCongeAnnuel(srm, idAgent,  pointages);
+		checkCongeAnnuel(srm, idAgent, pointages);
+		// TODO reste à traiter les maladies
 		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
+		// FIN on check les types d'absences du projet SIRH-ABS-WS
 		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages, carr, baseDto);
 		checkAgentINAAndHSup(srm, idAgent, dateLundi, pointages, carr, baseDto);
 		checkAgentTempsPartielAndHSup(srm, idAgent, dateLundi, pointages, carr, baseDto);
