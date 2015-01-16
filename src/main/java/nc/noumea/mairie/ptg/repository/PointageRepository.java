@@ -294,7 +294,7 @@ public class PointageRepository implements IPointageRepository {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select ptg from Pointage ptg ");
 		sb.append("LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type ");
-		sb.append("where (ptg.dateDebut between :fromDate and :toDate or ptg.dateFin between :fromDate and :toDate) ");
+		sb.append("where ((:fromDate between ptg.dateDebut and ptg.dateFin or :toDate between ptg.dateDebut and ptg.dateFin) or (ptg.dateDebut between :fromDate and :toDate or ptg.dateFin between :fromDate and :toDate)) ");
 		sb.append("and ptg.type.idRefTypePointage = :idRefTypePointage ");
 		sb.append("and ptg.idAgent = :idAgent ");
 		sb.append("order by ptg.idPointage desc ");

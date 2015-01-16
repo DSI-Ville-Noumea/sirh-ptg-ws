@@ -1049,6 +1049,184 @@ public class PointageRepositoryTest {
 		List<MotifHeureSup> result = repository.findAllMotifHeureSup();
 
 		assertEquals(3, result.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListPointagesVerification_Return0Absence() {
+		// Given
+		Integer idAgent = 9005138;
+		Date fromDate = new DateTime(2014, 1, 3, 4, 0).toDate();
+		Date toDate = new DateTime(2014, 1, 3, 6, 0).toDate();
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp);
+
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
+		Pointage p = new Pointage();
+		p.setRefTypeAbsence(refTypeAbsNon);
+		p.setDateDebut(new DateTime(2014, 1, 1, 0, 0).toDate());
+		p.setDateFin(new DateTime(2014, 1, 2, 0, 0).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setHeureSupRecuperee(true);
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		ptgEntityManager.persist(p);
+
+		// When
+		List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,
+				RefTypePointageEnum.ABSENCE.getValue());
+
+		// Then
+		assertEquals(0, result.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListPointagesVerification_Return1Absence() {
+		// Given
+		Integer idAgent = 9005138;
+		Date fromDate = new DateTime(2014, 1, 1, 4, 0).toDate();
+		Date toDate = new DateTime(2014, 1, 1, 6, 0).toDate();
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp);
+
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
+		Pointage p = new Pointage();
+		p.setRefTypeAbsence(refTypeAbsNon);
+		p.setDateDebut(new DateTime(2014, 1, 1, 0, 0).toDate());
+		p.setDateFin(new DateTime(2014, 1, 2, 0, 0).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setHeureSupRecuperee(true);
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		ptgEntityManager.persist(p);
+
+		// When
+		List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,
+				RefTypePointageEnum.ABSENCE.getValue());
+
+		// Then
+		assertEquals(1, result.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListPointagesVerification_Return0Hsup() {
+		// Given
+		Integer idAgent = 9005138;
+		Date fromDate = new DateTime(2014, 1, 3, 4, 0).toDate();
+		Date toDate = new DateTime(2014, 1, 3, 6, 0).toDate();
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
+
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
+		Pointage p = new Pointage();
+		p.setRefTypeAbsence(refTypeAbsNon);
+		p.setDateDebut(new DateTime(2014, 1, 1, 0, 0).toDate());
+		p.setDateFin(new DateTime(2014, 1, 2, 0, 0).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setHeureSupRecuperee(true);
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		ptgEntityManager.persist(p);
+
+		// When
+		List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,
+				RefTypePointageEnum.H_SUP.getValue());
+
+		// Then
+		assertEquals(0, result.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListPointagesVerification_Return1Hsup() {
+		// Given
+		Integer idAgent = 9005138;
+		Date fromDate = new DateTime(2014, 1, 1, 4, 0).toDate();
+		Date toDate = new DateTime(2014, 1, 1, 6, 0).toDate();
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		ptgEntityManager.persist(rtp);
+
+		Pointage p = new Pointage();
+		p.setDateDebut(new DateTime(2014, 1, 1, 0, 0).toDate());
+		p.setDateFin(new DateTime(2014, 1, 2, 0, 0).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setHeureSupRecuperee(true);
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		ptgEntityManager.persist(p);
+
+		// When
+		List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,
+				RefTypePointageEnum.H_SUP.getValue());
+
+		// Then
+		assertEquals(1, result.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListPointagesVerification_Return1HsupBis() {
+		// Given
+		Integer idAgent = 9005138;
+		Date fromDate = new DateTime(2014, 1, 1, 4, 0).toDate();
+		Date toDate = new DateTime(2014, 1, 2, 6, 0).toDate();
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		ptgEntityManager.persist(rtp);
+
+		Pointage p = new Pointage();
+		p.setDateDebut(new DateTime(2014, 1, 2, 0, 0).toDate());
+		p.setDateFin(new DateTime(2014, 1, 3, 0, 0).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setHeureSupRecuperee(true);
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		ptgEntityManager.persist(p);
+
+		// When
+		List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,
+				RefTypePointageEnum.H_SUP.getValue());
+
+		// Then
+		assertEquals(1, result.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
 	}
 
 }

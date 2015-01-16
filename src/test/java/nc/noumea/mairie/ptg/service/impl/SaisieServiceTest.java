@@ -60,7 +60,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class SaisieServiceTest {
 
 	@Test
-	public void saveFichePointage_dateIsNotAMonday_throwException() {
+	public void saveFichePointageKiosque_dateIsNotAMonday_throwException() {
 		// Given
 		Date notAMonday = new DateTime(2013, 05, 14, 0, 0, 0).toDate();
 		FichePointageDtoKiosque fichePointageDto = new FichePointageDtoKiosque();
@@ -83,7 +83,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_noExistingPointage_saveNewAbsence() {
+	public void saveFichePointageKiosque_noExistingPointage_saveNewAbsence() {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -171,7 +171,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_noExistingPointage_saveNewHsup() {
+	public void saveFichePointageKiosque_noExistingPointage_saveNewHsup() {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -276,7 +276,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_noExistingPointage_saveNewPrime() {
+	public void saveFichePointageKiosque_noExistingPointage_saveNewPrime() {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -365,7 +365,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_noExistingPointage_saveNewPrimeQuantite() {
+	public void saveFichePointageKiosque_noExistingPointage_saveNewPrimeQuantite() {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -456,7 +456,7 @@ public class SaisieServiceTest {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
-	public void saveFichePointage_saveNewAbsence_ErrorInConsistency_saveNothingAndReturnMessage() {
+	public void saveFichePointageKiosque_saveNewAbsence_ErrorInConsistency_saveNothingAndReturnMessage() {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -527,7 +527,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_deletedPointageFromDto_delete1PointageKeep1BecauseOldVersion() {
+	public void saveFichePointageKiosque_deletedPointageFromDto_delete1PointageKeep1BecauseOldVersion() {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -576,7 +576,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_delete2PointagesFromDtoUsingASupprimer_delete1PointageKeep1BecauseOldVersio() {
+	public void saveFichePointageKiosque_delete2PointagesFromDtoUsingASupprimer_delete1PointageKeep1BecauseOldVersio() {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -669,7 +669,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_fromKiosque_dateLundiPlus3Mois() {
+	public void saveFichePointageKiosque_fromKiosque_dateLundiPlus3Mois() {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -807,7 +807,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_ExistingPointage_saveNewHsup_WithOthersOldHSup() {
+	public void saveFichePointageKiosque_ExistingPointage_saveNewHsup_WithOthersOldHSup() {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
