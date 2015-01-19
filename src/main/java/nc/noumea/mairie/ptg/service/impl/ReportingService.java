@@ -88,7 +88,7 @@ public class ReportingService implements IReportingService {
 	@Override
 	public byte[] getFichesPointageReportAsByteArray(String csvIdAgents, Date date) throws Exception {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("csvIdAgents", String.valueOf(csvIdAgents));
 		map.put("date", sdf.format(date));

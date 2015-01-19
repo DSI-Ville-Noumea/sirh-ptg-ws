@@ -46,7 +46,7 @@ public class SaisieController {
 	@RequestMapping(value = "/fiche", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getFichePointage(@RequestParam("idAgent") int idAgent,
-			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date, @RequestParam("agent") int agent) {
+			@RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date date, @RequestParam("agent") int agent) {
 
 		logger.debug(
 				"entered GET [saisie/fiche] => getFichePointage with parameters idAgent = {}, date = {} and agent = {}",
@@ -108,7 +108,7 @@ public class SaisieController {
 	@RequestMapping(value = "/ficheSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getFichePointageSIRH(@RequestParam("idAgent") int agent,
-			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date) {
+			@RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date date) {
 
 		logger.debug(
 				"entered GET [saisie/ficheSIRH] => getFichePointage for SIRH with parameters idAgent = {}, date = {}",

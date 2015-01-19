@@ -43,7 +43,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
 		if (date != null) {
-			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 			parameters.put("dateAffectation", sf.format(date));
 		}
 
@@ -61,7 +61,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		parameters.put("idAgent", String.valueOf(idAgent));
 
 		if (date != null) {
-			SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 			parameters.put("date", sf.format(date));
 		}
 
@@ -85,7 +85,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	@Override
 	public boolean isHoliday(LocalDate datePointage) {
 		String url = String.format(sirhWsBaseUrl + sirhHolidayUrl);
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("date", sf.format(datePointage.toDate()));
@@ -100,7 +100,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	@Override
 	public boolean isHoliday(DateTime deb) {
 		String url = String.format(sirhWsBaseUrl + sirhHolidayUrl);
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("date", sf.format(deb.toDate()));
@@ -116,7 +116,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	public List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date) {
 
 		String url = String.format(sirhWsBaseUrl + sirhListPrimePointageUrl);
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", idAgent.toString());
@@ -132,7 +132,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	@Override
 	public boolean isJourFerie(DateTime deb) {
 		String url = String.format(sirhWsBaseUrl + sirhJourFerieUrl);
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("date", sf.format(deb.toDate()));
@@ -146,7 +146,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 	@Override
 	public BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date date) {
-		SimpleDateFormat sf = new SimpleDateFormat("YYYYMMdd");
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 
 		String url = String.format(sirhWsBaseUrl + sirhBaseHorairePointageUrl);
 

@@ -27,7 +27,7 @@ public class FicheController {
 	@RequestMapping(value = "/xml/getFichesPointage", produces = "application/xml", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ModelAndView getXmlFichesPointage(@RequestParam("csvIdAgents") String csvIdAgents,
-			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date) throws ParseException {
+			@RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date date) throws ParseException {
 
 		FichePointageListDto fiches = pointageService.getFichesPointageForUsers(csvIdAgents, date);
 

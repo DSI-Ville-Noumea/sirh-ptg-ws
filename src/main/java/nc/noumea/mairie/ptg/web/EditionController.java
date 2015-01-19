@@ -70,7 +70,7 @@ public class EditionController {
 	@RequestMapping(value = "/downloadFichesPointage", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<byte[]> downloadFichesPointage(@RequestParam("csvIdAgents") String csvIdAgents,
-			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date date, @RequestParam("idAgent") Integer idAgent) {
+			@RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date date, @RequestParam("idAgent") Integer idAgent) {
 
 		logger.debug(
 				"entered GET [edition/downloadFichesPointage] => downloadFichesPointage with parameters csvIdAgents = {}, date = {}, idAgent = {}",

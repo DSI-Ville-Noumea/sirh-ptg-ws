@@ -48,7 +48,7 @@ public class VentilationController {
 	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> startVentilation(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("date") @DateTimeFormat(pattern = "YYYYMMdd") Date ventilationDate,
+			@RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date ventilationDate,
 			@RequestParam(value = "typePointage", required = false) Integer idRefTypePointage,
 			@RequestParam(value = "statut") String statut, @RequestBody String agentsJson) {
 
@@ -209,7 +209,7 @@ public class VentilationController {
 	public ResponseEntity<String> getListeAgentsToShowVentilation(@RequestParam("idDateVentil") Integer idDateVentil,
 			@RequestParam("typePointage") Integer idRefTypePointage, @RequestParam("statut") String statut,
 			@RequestParam("agentMin") Integer agentMin, @RequestParam("agentMax") Integer agentMax,
-			@RequestParam("ventilationDate") @DateTimeFormat(pattern = "YYYYMMdd") Date ventilationDate,
+			@RequestParam("ventilationDate") @DateTimeFormat(pattern = "yyyyMMdd") Date ventilationDate,
 			@RequestParam("allVentilation") boolean allVentilation) {
 
 		RefTypePointageEnum typepointage = RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage);
