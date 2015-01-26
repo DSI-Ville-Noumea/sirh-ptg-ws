@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,6 +56,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String ERROR_7652_MSG = "";
 	public static final String ERROR_POINTAGE_PLUS_3_MOIS = "La semaine sélectionnée est trop ancienne pour être modifiée.";
 	public static final String HS_TPS_PARTIEL_MSG = "L'agent est en temps partiel, il ne peut pas avoir plus de %s heures supplémentaires.";
+	public static final String ERROR_DATE_POINTAGE = "Pour le pointage du %s, la date de fin est antérieure à la date de début.";
 
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
@@ -414,6 +416,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		BaseHorairePointageDto baseDto = sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi);
 
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
+		checkIntervalleDateDebDateFin(srm, idAgent, pointages);
 		// DEBUT on check les types d'absences du projet SIRH-ABS-WS
 		checkRecuperation(srm, idAgent, pointages);
 		checkReposComp(srm, idAgent, pointages);
@@ -431,6 +434,19 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkPrime7651(srm, idAgent, dateLundi, pointages);
 		checkPrime7652(srm, idAgent, dateLundi, pointages);
 		checkPrime7704(srm, idAgent, dateLundi, pointages);
+	}
+
+	private ReturnMessageDto checkIntervalleDateDebDateFin(ReturnMessageDto srm, Integer idAgent,
+			List<Pointage> pointages) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		for (Pointage ptg : pointages) {
+			if (ptg.getDateFin() != null && ptg.getDateDebut() != null && ptg.getDateFin().before(ptg.getDateDebut())) {
+				srm.getErrors().add(String.format(ERROR_DATE_POINTAGE, sdf.format(ptg.getDateDebut())));
+			}
+		}
+		return srm;
+
 	}
 
 	@Override

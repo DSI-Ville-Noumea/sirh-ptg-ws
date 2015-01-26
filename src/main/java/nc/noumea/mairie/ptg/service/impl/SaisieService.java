@@ -534,6 +534,7 @@ public class SaisieService implements ISaisieService {
 				// If already existing, try and compare if it has changed
 				// compared to the original version
 				if (ptg != null && !hasPointageChangedKiosque(ptg, abs)) {
+					result.getInfos().add("Vous n'avez effectué aucune modification depuis le dernier enregistrement.");
 					continue;
 				}
 
@@ -565,6 +566,7 @@ public class SaisieService implements ISaisieService {
 				// If already existing, try and compare if it has changed
 				// compared to the original version
 				if (ptg != null && !hasPointageChangedKiosque(ptg, hs)) {
+					result.getInfos().add("Vous n'avez effectué aucune modification depuis le dernier enregistrement.");
 					continue;
 				}
 
@@ -606,6 +608,7 @@ public class SaisieService implements ISaisieService {
 				// If already existing, try and compare if it has changed
 				// compared to the original version
 				if (ptg != null && !hasPointageChangedKiosque(ptg, prime)) {
+					result.getInfos().add("Vous n'avez effectué aucune modification depuis le dernier enregistrement.");
 					continue;
 				}
 
