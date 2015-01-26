@@ -14,6 +14,7 @@ import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
@@ -57,6 +58,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String ERROR_POINTAGE_PLUS_3_MOIS = "La semaine sélectionnée est trop ancienne pour être modifiée.";
 	public static final String HS_TPS_PARTIEL_MSG = "L'agent est en temps partiel, il ne peut pas avoir plus de %s heures supplémentaires.";
 	public static final String ERROR_DATE_POINTAGE = "Pour le pointage du %s, la date de fin est antérieure à la date de début.";
+	public static final String ERROR_INTERVALLE_POINTAGE = "Pour le pointage du %s, il faut 30 minutes d'intervalle entre la date de début et la date de fin.";
+	public static final String ERROR_PRIME_SAISIE_J1_POINTAGE = "Pour la prime %s du %s, la saisie à J+1 n'est pas autorisée.";
+	public static final String ERROR_PRIME_QUANTITE_POINTAGE = "Pour la prime %s du %s, la quantité ne peut être supérieure à 24.";
 
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
@@ -441,8 +445,39 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		for (Pointage ptg : pointages) {
-			if (ptg.getDateFin() != null && ptg.getDateDebut() != null && ptg.getDateFin().before(ptg.getDateDebut())) {
+			Calendar fin = null;
+			if (ptg.getDateFin() != null) {
+				fin = Calendar.getInstance();
+				fin.setTime(ptg.getDateFin());
+			}
+
+			Calendar debut = Calendar.getInstance();
+			debut.setTime(ptg.getDateDebut());
+			// on verif datefin > datedebut
+			if (fin != null && fin.getTime().before(debut.getTime())) {
 				srm.getErrors().add(String.format(ERROR_DATE_POINTAGE, sdf.format(ptg.getDateDebut())));
+			}
+			// on verif intervalle de 30 min minium entre les 2 dates
+			if (fin != null && (fin.getTimeInMillis() - debut.getTimeInMillis()) < 1800000) {
+				srm.getErrors().add(String.format(ERROR_INTERVALLE_POINTAGE, sdf.format(ptg.getDateDebut())));
+			}
+			// pour les primes
+			if (ptg.getTypePointageEnum().equals(RefTypePointageEnum.PRIME)) {
+				// si 7715 alors saisie j+1 autorisée sinon non
+				if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES)
+						&& ptg.getRefPrime().getNoRubr() != 7715
+						&& debut.get(Calendar.DAY_OF_MONTH) != fin.get(Calendar.DAY_OF_MONTH)) {
+					srm.getErrors().add(
+							String.format(ERROR_PRIME_SAISIE_J1_POINTAGE, ptg.getRefPrime().getLibelle(),
+									sdf.format(ptg.getDateDebut())));
+					// pour les primes de tupe NOMBRE_HEURE, la quantite ne doit
+					// pas depasser 24H
+				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES) && ptg.getQuantite() > 24) {
+					srm.getErrors().add(
+							String.format(ERROR_PRIME_QUANTITE_POINTAGE, ptg.getRefPrime().getLibelle(),
+									sdf.format(ptg.getDateDebut())));
+				}
+
 			}
 		}
 		return srm;
