@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spcarr;
-import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
@@ -18,6 +19,7 @@ import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
+import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -58,6 +60,9 @@ public class VentilationHSupService implements IVentilationHSupService {
 	@Autowired
 	private IVentilationRepository ventilationRepository;
 
+	@Autowired
+	private IAbsWsConsumer absWsConsumer;
+	
 	@Override
 	public VentilHsup processHSupFonctionnaire(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages,
 			VentilDate ventilDate) {
@@ -119,15 +124,15 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 		// second retrieve all the absences in SPCONG
 		// on ne compte pas les conges annuels et les conges annules
-		List<Spcong> listSpCong = mairieRepository.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(idAgent, dateLundi,
+		List<DemandeDto> listConges = absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(idAgent, dateLundi,
 				new DateTime(dateLundi).plusDays(7).toDate());
-		for (Spcong spCong : listSpCong) {
-			DateTime startDate = ptgDataCosistencyRules.getDateDebut(spCong.getId().getDatdeb(), spCong.getCodem1());
+		for (DemandeDto conge : listConges) {
+			DateTime startDate = new DateTime(conge.getDateDebut());
 			if (dateLundi.after(startDate.toDate())) {
 				startDate = new DateTime(dateLundi);
 			}
 
-			DateTime endDate = ptgDataCosistencyRules.getDateFin(spCong.getDatfin(), spCong.getCodem2());
+			DateTime endDate = new DateTime(conge.getDateFin());
 			if (endDate.toDate().after(new DateTime(dateLundi).plusDays(7).toDate())) {
 				endDate = new DateTime(dateLundi).plusDays(7);
 			}
@@ -141,20 +146,35 @@ public class VentilationHSupService implements IVentilationHSupService {
 								.before(endDate.toDate()))) {
 
 					int minutesCongesDay = helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getDayBase(i));
-					// on gere ici les demis journees grace au champ
-					// SPCONG.CODEM1 et SPCONG.CODEM2
-					if (spCong.getId().getDatdeb().equals(spCong.getDatfin()) && startDate.getDayOfWeek() - 1 == i) {
-						if (null != spCong.getCodem1() && null != spCong.getCodem2()
-								&& spCong.getCodem1().equals(spCong.getCodem2())) {
-							minutesCongesDay = minutesCongesDay / 2;
+					// on gere ici les demis journees 
+					DateTime dateDebut = new DateTime(conge.getDateDebut());
+					DateTime dateFin = new DateTime(conge.getDateFin());
+					
+					List<RefTypeSaisiDto> listTypeAbsence = absWsConsumer.getTypeAbsence(conge.getIdTypeDemande());
+					
+					if(null != listTypeAbsence
+							&& !listTypeAbsence.isEmpty()) {
+						
+						if(listTypeAbsence.get(0).getUniteDecompte().equals("minutes")) {
+							minutesCongesDay = conge.getDuree().intValue();
 						}
-					} else if (startDate.getDayOfWeek() - 1 == i && spCong.getCodem1().equals(2)) {
-						minutesCongesDay = minutesCongesDay / 2;
-					} else if (endDate.getDayOfWeek() - 1 == i && spCong.getCodem2().equals(1)) {
-						minutesCongesDay = minutesCongesDay / 2;
-					}
+						if(listTypeAbsence.get(0).getUniteDecompte().equals("jours")) {
+							if(dateDebut.dayOfYear().equals(dateFin.dayOfYear())
+									 && startDate.getDayOfWeek() - 1 == i) {
+								
+								if((dateDebut.getHourOfDay() == 0 && dateFin.getHourOfDay() == 11)
+										|| (dateDebut.getHourOfDay() == 12 && dateFin.getHourOfDay() == 23)) {
+									minutesCongesDay = minutesCongesDay / 2;
+								}
+							} else if(startDate.getDayOfWeek() - 1 == i && dateDebut.getHourOfDay() == 12) {
+								minutesCongesDay = minutesCongesDay / 2;
+							} else if (endDate.getDayOfWeek() - 1 == i && dateFin.getHourOfDay() == 11) {
+								minutesCongesDay = minutesCongesDay / 2;
+							}
+						}
 
-					minutesConges += minutesCongesDay;
+						minutesConges += minutesCongesDay;
+					}
 				}
 			}
 

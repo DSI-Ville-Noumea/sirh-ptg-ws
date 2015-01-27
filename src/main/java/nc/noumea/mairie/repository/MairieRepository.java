@@ -11,7 +11,6 @@ import javax.persistence.TypedQuery;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
-import nc.noumea.mairie.domain.Spcong;
 import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
@@ -74,18 +73,6 @@ public class MairieRepository implements IMairieRepository {
 			return null;
 
 		return result.get(0);
-	}
-
-	@Override
-	public List<Spcong> getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Integer idAgent, Date start, Date end) {
-
-		TypedQuery<Spcong> query = entityManager.createNamedQuery(
-				"getSpcongWithoutCongesAnnuelsEtAnnulesForAgentAndPeriod", Spcong.class);
-		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
-		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
-		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
-
-		return query.getResultList();
 	}
 
 	@Override

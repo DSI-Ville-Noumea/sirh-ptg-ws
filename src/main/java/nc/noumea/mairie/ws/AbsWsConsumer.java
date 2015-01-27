@@ -3,8 +3,11 @@ package nc.noumea.mairie.ws;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
 import org.slf4j.Logger;
@@ -31,6 +34,8 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	private static final String checkAbsencesSyndicalesUrl = "asa/checkAbsencesSyndicales";
 	private static final String checkCongesExceptionnelsUrl = "congeexceptionnel/checkCongesExceptionnels";
 	private static final String checkCongesAnnuelsUrl = "congeannuel/checkCongesAnnuels";
+	private static final String listeDemandesSIRHUrl = "demandes/listeDemandesSIRH";
+	private static final String getTypeAbsenceUrl = "filtres/getTypesSaisi";
 
 	@Override
 	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes) {
@@ -153,6 +158,40 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(ReturnMessageDto.class, res, url);
+	}
+
+	@Override
+	public List<DemandeDto> getListCongeWithoutCongesAnnuelsEtAnnulesBetween(
+			Integer idAgent, Date start, Date end) {
+		
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+		
+		String url = String.format(sirhAbsWsBaseUrl + listeDemandesSIRHUrl);
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgentRecherche", String.valueOf(idAgent));
+		parameters.put("from", sf.format(start));
+		parameters.put("to", sf.format(end));
+		parameters.put("etat", "6"); // etat PRIS
+		parameters.put("groupe", "4"); // conges exceptionnels uniquement
+		parameters.put("aValider", "false");
+		
+		ClientResponse response = createAndFireGetRequest(parameters, url);
+		
+		return readResponseAsList(DemandeDto.class, response, url);
+	}
+
+	@Override
+	public List<RefTypeSaisiDto> getTypeAbsence(Integer idRefTypeAbsence) {
+		
+		String url = String.format(sirhAbsWsBaseUrl + getTypeAbsenceUrl);
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idRefTypeAbsence", String.valueOf(idRefTypeAbsence));
+		
+		ClientResponse response = createAndFireGetRequest(parameters, url);
+		
+		return readResponseAsList(RefTypeSaisiDto.class, response, url);
 	}
 
 }
