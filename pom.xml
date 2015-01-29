@@ -8,10 +8,11 @@
     <version>1.20-SNAPSHOT</version>
     <name>sirh-ptg-ws</name>
     <properties>
-        <aspectj.version>1.8.1</aspectj.version>
+        <aspectj.version>1.8.4</aspectj.version>
         <java.version>7</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.7</slf4j.version>
+        <!-- les tests U ne passent plus en 4.1.1.RELEASE -->
         <spring.version>4.0.6.RELEASE</spring.version>
 		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
     </properties>
