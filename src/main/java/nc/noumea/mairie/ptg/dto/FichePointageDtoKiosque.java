@@ -11,6 +11,7 @@ public class FichePointageDtoKiosque {
 	private String semaine;
 	private List<JourPointageDtoKiosque> saisies;
 	private boolean isDPM;
+	private boolean isINASuperieur315;
 
 	public FichePointageDtoKiosque() {
 		saisies = new ArrayList<JourPointageDtoKiosque>();
@@ -55,4 +56,13 @@ public class FichePointageDtoKiosque {
 	public void setDPM(boolean isDPM) {
 		this.isDPM = isDPM;
 	}
+
+	public boolean isINASuperieur315() {
+		return isINASuperieur315;
+	}
+
+	public void setINASuperieur315(boolean isINASuperieur315) {
+		this.isINASuperieur315 = isINASuperieur315;
+	}
+	
 }

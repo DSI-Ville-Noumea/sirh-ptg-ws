@@ -605,71 +605,7 @@ public class PointageDataConsistencyRulesTest {
 	}
 
 	@Test
-	public void checkAgentINAAndHSup_INALessThan315_NoError() {
-
-		// Given
-		Integer idAgent = 9008765;
-		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-
-		Spbarem barem = new Spbarem();
-		barem.setIna(205);
-		BaseHorairePointageDto bas = new BaseHorairePointageDto();
-		bas.setCodeBaseHorairePointage("A");
-		Spcarr car = new Spcarr();
-		car.setSpbarem(barem);
-		car.setCdcate(1);
-
-		Pointage p1 = new Pointage();
-		p1.setType(new RefTypePointage());
-		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
-		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
-		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-
-		// When
-		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car, bas);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkAgentINAAndHSup_INAEq315_NoError() {
-
-		// Given
-		Integer idAgent = 9008765;
-		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
-
-		Spbarem barem = new Spbarem();
-		barem.setIna(315);
-		BaseHorairePointageDto bas = new BaseHorairePointageDto();
-		bas.setCodeBaseHorairePointage("A");
-		Spcarr car = new Spcarr();
-		car.setSpbarem(barem);
-		car.setCdcate(1);
-
-		Pointage p1 = new Pointage();
-		p1.setType(new RefTypePointage());
-		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
-		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
-		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-
-		// When
-		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car, bas);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkAgentINAAndHSup_INASupTo315_NotDPM_returnError() {
+	public void checkAgentINAAndHSup_INASupTo315_NotDPM_returnNoError() {
 
 		// Given
 		Integer idAgent = 9008765;
@@ -703,9 +639,8 @@ public class PointageDataConsistencyRulesTest {
 				Arrays.asList(p1), car, bas);
 
 		// Then
-		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent n'a pas droit aux HS sur la période (INA > 315)", result.getErrors().get(0));
 	}
 
 	@Test

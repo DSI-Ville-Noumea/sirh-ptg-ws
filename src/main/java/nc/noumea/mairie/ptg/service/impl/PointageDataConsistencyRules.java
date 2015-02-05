@@ -201,7 +201,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
 
-		if ((carr.getStatutCarriere() != AgentStatutEnum.F || carr.getSpbarem().getIna() <= 315)
+		if (carr.getStatutCarriere() != AgentStatutEnum.F
 				&& !baseDto.getCodeBaseHorairePointage().equals("00Z"))
 			return srm;
 
@@ -215,7 +215,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
 
 				if (carr.getSpbarem().getIna() > 315)
-					srm.getErrors().add(HS_INA_315_MSG);
+					ptg.setHeureSupRecuperee(true);
 				else
 					srm.getErrors().add(BASE_HOR_00Z_MSG);
 

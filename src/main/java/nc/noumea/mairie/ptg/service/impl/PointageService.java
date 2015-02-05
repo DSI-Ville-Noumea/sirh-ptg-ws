@@ -101,7 +101,11 @@ public class PointageService implements IPointageService {
 		result.setAgent(agentDto);
 		result.setDPM(service.getSigle().toUpperCase().equals("DPM"));
 		result.setSemaine(helperService.getWeekStringFromDate(date));
-
+		
+		// on recupere l'INA de l agent
+		// #13290 HSup  A recuperer pour INA > 315
+		result.setINASuperieur315(null != carr.getSpbarem() && carr.getSpbarem().getIna() > 315);
+		
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
 		List<Integer> pps = sirhWsConsumer.getPrimePointagesByAgent(agent.getIdAgent(), date);
@@ -567,6 +571,10 @@ public class PointageService implements IPointageService {
 		result.setAgent(agentDto);
 		result.setDPM(service.getSigle().toUpperCase().equals("DPM"));
 		result.setSemaine(helperService.getWeekStringFromDate(date));
+		
+		// on recupere l'INA de l agent
+		// #13290 HSup  A recuperer pour INA > 315
+		result.setINASuperieur315(null != carr.getSpbarem() && carr.getSpbarem().getIna() > 315);
 
 		JourPointageDtoKiosque jourPointageTemplate = new JourPointageDtoKiosque();
 		jourPointageTemplate.setDate(date);
