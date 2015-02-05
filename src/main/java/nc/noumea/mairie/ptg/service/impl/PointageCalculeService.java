@@ -67,12 +67,17 @@ public class PointageCalculeService implements IPointageCalculeService {
 			LocalDate datePointage = new DateTime(ptg.getDateDebut()).toLocalDate();
 
 			Interval inputInterval = new Interval(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin()));
-			Interval primeIntervalInverse = new Interval(new DateTime(datePointage.getYear(),
-					datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 5, 0, 0), new DateTime(
-					datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 21, 0, 0));
+			Interval primeIntervalFirstNight = new Interval(new DateTime(datePointage.getYear(),
+					datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 0, 0, 0), new DateTime(
+					datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 5, 0, 0));
+			Interval primeIntervalSecondNight = new Interval(new DateTime(datePointage.getYear(),
+					datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 21, 0, 0), new DateTime(
+					datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth()+1, 5, 0, 0));
 
-			Interval overlap = primeIntervalInverse.overlap(inputInterval);
-			long dayMinutes = overlap == null ? 0 : overlap.toDuration().getStandardMinutes();
+			Interval overlap = primeIntervalFirstNight.overlap(inputInterval);
+			Interval secondOverlap = primeIntervalSecondNight.overlap(inputInterval);
+			long firstNightMinutes = overlap == null ? 0 : overlap.toDuration().getStandardMinutes();
+			long secondNightMinutes = secondOverlap == null ? 0 : secondOverlap.toDuration().getStandardMinutes();
 			long totalMinutes = inputInterval.toDuration().getStandardMinutes();
 
 			if (prime.getNoRubr().equals(7712)
@@ -91,7 +96,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 			if (prime.getNoRubr().equals(7711)) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
 				existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
-				existingPc.addQuantite((int) (totalMinutes - dayMinutes));
+				existingPc.addQuantite((int) (firstNightMinutes + secondNightMinutes));
 
 				if (!result.contains(existingPc))
 					result.add(existingPc);
