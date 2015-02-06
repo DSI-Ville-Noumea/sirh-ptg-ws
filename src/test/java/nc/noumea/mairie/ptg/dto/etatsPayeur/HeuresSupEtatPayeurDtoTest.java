@@ -17,7 +17,6 @@ public class HeuresSupEtatPayeurDtoTest {
 		VentilHsup vh = new VentilHsup();
 		vh.setDateLundi(new LocalDate(2013, 9, 30).toDate());
 		vh.setIdAgent(9008767);
-		vh.setMComplementaires(10);
 		vh.setMComposees(20);
 		vh.setMHorsContrat(30);
 		vh.setMMai(40);
@@ -51,7 +50,7 @@ public class HeuresSupEtatPayeurDtoTest {
 
 		// Then
 		assertEquals("40m", result.getH1Mai());
-		assertEquals("1h", result.getNormales());
+		assertEquals("50m", result.getNormales());
 		assertEquals("1h", result.getDjf());
 		assertEquals("1h40m", result.getNuit());
 		assertEquals("3h30m", result.getSup25());
@@ -65,7 +64,6 @@ public class HeuresSupEtatPayeurDtoTest {
 		VentilHsup vhNew = new VentilHsup();
 		vhNew.setDateLundi(new LocalDate(2013, 9, 30).toDate());
 		vhNew.setIdAgent(9008767);
-		vhNew.setMComplementaires(10);
 		vhNew.setMComposees(20);
 		vhNew.setMHorsContrat(30);
 		vhNew.setMMai(40);
@@ -80,7 +78,6 @@ public class HeuresSupEtatPayeurDtoTest {
 		VentilHsup vhOld = new VentilHsup();
 		vhOld.setDateLundi(new LocalDate(2013, 9, 30).toDate());
 		vhOld.setIdAgent(9008767);
-		vhOld.setMComplementaires(10);
 		vhOld.setMComposees(20);
 		vhOld.setMHorsContrat(30);
 		vhOld.setMMai(40);

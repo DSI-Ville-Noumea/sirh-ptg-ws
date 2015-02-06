@@ -248,8 +248,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 					// normal
 					// hours
 					nbMinutesSup = (weekMinutes - (weekBase - result.getTotalAbsences()) - result.getMSup() - result
-							.getMComplementaires()) <= 0 ? 0 : (weekMinutes - (weekBase - result.getTotalAbsences())
-							- result.getMSup() - result.getMComplementaires());
+							.getMNormales()) <= 0 ? 0 : (weekMinutes - (weekBase - result.getTotalAbsences())
+							- result.getMSup() - result.getMNormales());
 					// In the whole amount of MinutesSup, take only the ones we
 					// added
 					// with this day of work
@@ -261,7 +261,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 					// Compute the number of MinutesSup considering the week
 					// normal
 					// hours
-					int heuresSupEnresgistrees = result.getMComplementaires() + result.getMSup25() + result.getMSup50();
+					int heuresSupEnresgistrees = result.getMNormales() + result.getMSup25() + result.getMSup50();
 					nbMinutesSup = (weekMinutes - (weekBase - result.getTotalAbsences()) - heuresSupEnresgistrees) <= 0 ? 0
 							: (weekMinutes - (weekBase - result.getTotalAbsences()) - heuresSupEnresgistrees);
 					// In the whole amount of MinutesSup, take only the ones we
@@ -371,7 +371,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 				// on ne prend en compte ici que les heures SUPPLEMENTAIRES
 				// les heures DJF, nuit ou 1er mai ne sont que des heures majorees qui s'ajoutent aux
 				// heures supp deja comptabilisees dans HS compl, HS 25 et HS 50 
-				totalAmountOfHSRecuperees = result.getMComplementairesRecup() + result.getMSup25Recup()
+				totalAmountOfHSRecuperees = result.getMNormalesRecup() + result.getMSup25Recup()
 						+ result.getMSup50Recup();
 				break;
 
@@ -511,7 +511,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		// If we're doing HS JOUR under the BASE_HEBDO_LEGAL = 39, count them as
 		// HS Normale (for people having weekBase != BASE_HEBDO_LEGALE)
 		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE && isHeuresSupSaisies
-				&& (weekBase - result.getTotalAbsences()) + result.getMComplementaires() < BASE_HEBDO_LEGALE) {
+				&& (weekBase - result.getTotalAbsences()) + result.getMNormales() < BASE_HEBDO_LEGALE) {
 
 			int nbMinutesNormalesToAdd = 0;
 
@@ -523,11 +523,11 @@ public class VentilationHSupService implements IVentilationHSupService {
 				nbMinutesNormalesToAdd = nbMinutesSupJour;
 			}
 
-			result.setMComplementaires(result.getMComplementaires() + nbMinutesNormalesToAdd);
+			result.setMNormales(result.getMNormales() + nbMinutesNormalesToAdd);
 			nbMinutesSupJour -= nbMinutesNormalesToAdd;
 
 			if (isHRecuperee) {
-				result.setMComplementairesRecup(result.getMComplementairesRecup() + nbMinutesNormalesToAdd);
+				result.setMNormalesRecup(result.getMNormalesRecup() + nbMinutesNormalesToAdd);
 			}
 
 			if (nbMinutesSupJour == 0)
@@ -591,7 +591,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		// If we're doing HS under the BASE_HEBDO_LEGAL = 39, count them as HS
 		// Complementaires
 		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE
-				&& (weekBase - result.getTotalAbsences()) + result.getMComplementaires() < BASE_HEBDO_LEGALE) {
+				&& (weekBase - result.getTotalAbsences()) + result.getMNormales() < BASE_HEBDO_LEGALE) {
 
 			int nbMinutesComplementairesToAdd = 0;
 
@@ -603,11 +603,11 @@ public class VentilationHSupService implements IVentilationHSupService {
 				nbMinutesComplementairesToAdd = nbMinutesSup;
 			}
 
-			result.setMComplementaires(result.getMComplementaires() + nbMinutesComplementairesToAdd);
+			result.setMNormales(result.getMNormales() + nbMinutesComplementairesToAdd);
 			nbMinutesSup -= nbMinutesComplementairesToAdd;
 
 			if (isHRecuperee) {
-				result.setMComplementairesRecup(result.getMComplementairesRecup() + nbMinutesComplementairesToAdd);
+				result.setMNormalesRecup(result.getMNormalesRecup() + nbMinutesComplementairesToAdd);
 			}
 
 			if (nbMinutesSup == 0)

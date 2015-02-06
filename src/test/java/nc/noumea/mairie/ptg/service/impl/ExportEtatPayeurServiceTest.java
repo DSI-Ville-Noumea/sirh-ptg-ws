@@ -290,12 +290,10 @@ public class ExportEtatPayeurServiceTest {
 		VentilHsup vh1 = new VentilHsup();
 		vh1.setDateLundi(new LocalDate(2013, 9, 2).toDate());
 		vh1.setIdAgent(9008989);
-		vh1.setMComplementaires(30);
 
 		VentilHsup vh2 = new VentilHsup();
 		vh2.setDateLundi(new LocalDate(2013, 9, 9).toDate());
 		vh2.setIdAgent(9006767);
-		vh2.setMComplementaires(60);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
@@ -404,12 +402,11 @@ public class ExportEtatPayeurServiceTest {
 		vh1.setDateLundi(new LocalDate(2013, 8, 26).toDate());
 		vh1.setIdAgent(9008989);
 		vh1.setMMai(60);
-		vh1.setMComplementaires(30);
 
 		VentilHsup vhOld = new VentilHsup();
 		vhOld.setDateLundi(new LocalDate(2013, 8, 26).toDate());
 		vhOld.setMMai(30);
-		vhOld.setMComplementaires(60);
+		vhOld.setMNormales(30);
 		vhOld.setIdAgent(9008989);
 
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -1516,7 +1513,7 @@ public class ExportEtatPayeurServiceTest {
 		vh.setIdAgent(9008989);
 		vh.setMRecuperees(100);
 
-		vh.setMComplementairesRecup(10);
+		vh.setMNormalesRecup(10);
 		vh.setMSup25Recup(20);
 		vh.setMSup50Recup(30);
 		vh.setMsdjfRecup(40);

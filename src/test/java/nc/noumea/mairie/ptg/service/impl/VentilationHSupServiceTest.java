@@ -1146,7 +1146,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMsNuit());
 		assertEquals(0, result.getMsdjf());
 		assertEquals(0, result.getMMai());
-		assertEquals(0, result.getMComplementaires());
 		assertEquals(8 * 60, result.getMSup25());
 		assertEquals(6 * 60, result.getMSup50());
 		assertEquals(0, result.getMNormales());
@@ -1426,7 +1425,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMNormales(), 0);
 		assertEquals(3 * 60, result.getMSimple(), 0);
 		assertEquals(3.5 * 60, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -1518,7 +1516,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMNormales(), 0);
 		assertEquals(3 * 60, result.getMSimple(), 0);
 		assertEquals(7 * 60, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -1603,7 +1600,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMNormales(), 0);
 		assertEquals(3 * 60, result.getMSimple(), 0);
 		assertEquals(1 * 60, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -1736,7 +1732,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMNormales(), 0);
 		assertEquals(3 * 60, result.getMSimple(), 0);
 		assertEquals(13 * 60, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -1839,7 +1834,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMNormales(), 0);
 		assertEquals(3 * 60, result.getMSimple(), 0);
 		assertEquals(9.5 * 60, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -1979,7 +1973,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMNormales(), 0);
 		assertEquals(3 * 60, result.getMSimple(), 0);
 		assertEquals(13 * 60, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -2070,7 +2063,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(2 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -2152,7 +2144,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMNormales(), 0);
 		assertEquals(2 * 60, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -2271,7 +2262,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(2 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -2375,7 +2365,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(6 * 60, result.getMNormales(), 0);
 		assertEquals(3 * 60, result.getMSimple(), 0);
 		assertEquals(1 * 60, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -2468,7 +2457,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0 * 60, result.getMsNuit(), 0);
 		assertEquals(10 * 60, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(6.5 * 60, result.getMSup25(), 0);
@@ -2559,7 +2547,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0 * 60, result.getMsNuit(), 0);
 		assertEquals(17 * 60, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
@@ -2642,7 +2629,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0 * 60, result.getMsNuit(), 0);
 		assertEquals(6 * 60, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(4 * 60, result.getMSup25(), 0);
@@ -2774,7 +2760,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMsNuit(), 0);
 		assertEquals(3 * 60, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
@@ -2877,7 +2862,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(2 * 60, result.getMsNuit(), 0);
 		assertEquals(0, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
@@ -3017,7 +3001,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(1 * 60, result.getMsNuit(), 0);
 		assertEquals(5 * 60, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
@@ -3107,8 +3090,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(3 * 60, result.getMsNuit(), 0);
 		assertEquals(2 * 60, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(4 * 60, result.getMComplementaires(), 0);
+		assertEquals(4 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(0, result.getMSup25(), 0);
@@ -3192,7 +3174,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(1 * 60, result.getMsNuit(), 0);
 		assertEquals(0, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(3 * 60, result.getMSup25(), 0);
@@ -3287,8 +3268,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(1 * 60, result.getMsNuit(), 0);
 		assertEquals(0, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(3 * 60, result.getMComplementaires(), 0);
+		assertEquals(3 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(0, result.getMSup25(), 0);
@@ -3397,8 +3377,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(2 * 60, result.getMsNuit(), 0);
 		assertEquals(0, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(8 * 60, result.getMComplementaires(), 0);
+		assertEquals(8 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(0, result.getMSup25(), 0);
@@ -3508,8 +3487,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(2 * 60, result.getMsNuit(), 0);
 		assertEquals(0, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(2 * 60, result.getMComplementaires(), 0);
+		assertEquals(2 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(6 * 60, result.getMSup25(), 0);
@@ -3627,8 +3605,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(2 * 60, result.getMsNuit(), 0);
 		assertEquals(2 * 60, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(3 * 60, result.getMComplementaires(), 0);
+		assertEquals(3 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(0, result.getMSup25(), 0);
@@ -3731,8 +3708,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(1 * 60, result.getMsNuit(), 0);
 		assertEquals(8 * 60, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(7 * 60, result.getMComplementaires(), 0);
+		assertEquals(7 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(4 * 60, result.getMSup25(), 0);
@@ -3829,7 +3805,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0 * 60, result.getMsNuit(), 0);
 		assertEquals(16.5 * 60, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
@@ -3922,7 +3897,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0 * 60, result.getMsNuit(), 0);
 		assertEquals(27 * 60, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
@@ -4005,7 +3979,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0 * 60, result.getMsNuit(), 0);
 		assertEquals(6 * 60, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
@@ -4137,7 +4110,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(4 * 60, result.getMsNuit(), 0);
 		assertEquals(3 * 60, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
@@ -4241,7 +4213,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(10 * 60, result.getMsNuit(), 0);
 		assertEquals(0, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
@@ -4381,7 +4352,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(7 * 60, result.getMsNuit(), 0);
 		assertEquals(6 * 60, result.getMsdjf(), 0);
 		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
@@ -4472,8 +4442,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(9 * 60, result.getMsNuit(), 0);
 		assertEquals(3 * 60, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(9 * 60, result.getMComplementaires(), 0);
+		assertEquals(9 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(0, result.getMSup25(), 0);
@@ -4557,7 +4526,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(0, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
 		assertEquals(4 * 60, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -4667,10 +4635,9 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(3 * 60, result.getMsNuit(), 0);
 		assertEquals(0, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
+		assertEquals(16 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
-		assertEquals(16 * 60, result.getMComplementaires(), 0);
 		assertEquals(4 * 60, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -4786,10 +4753,9 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(6 * 60, result.getMsNuit(), 0);
 		assertEquals(3 * 60, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
+		assertEquals(7 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
-		assertEquals(7 * 60, result.getMComplementaires(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup50(), 0);
 
@@ -4890,10 +4856,9 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(3 * 60, result.getMsNuit(), 0);
 		assertEquals(8 * 60, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
+		assertEquals(8 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
-		assertEquals(8 * 60, result.getMComplementaires(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
 		assertEquals(4 * 60, result.getMSup50(), 0);
 
@@ -4984,14 +4949,12 @@ public class VentilationHSupServiceTest {
 		assertEquals(2 * 60, result.getMsNuitRecup(), 0);
 		assertEquals(0, result.getMsdjf(), 0);
 		assertEquals(0, result.getMsdjfRecup(), 0);
-		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0, result.getMNormalesRecup(), 0);
+		assertEquals(0.25 * 60, result.getMNormales(), 0);
+		assertEquals(0.25 * 60, result.getMNormalesRecup(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMSimpleRecup(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(0, result.getMComposeesRecup(), 0);
-		assertEquals(0.25 * 60, result.getMComplementaires(), 0);
-		assertEquals(0.25 * 60, result.getMComplementairesRecup(), 0);
 		assertEquals(8 * 60, result.getMSup25(), 0);
 		assertEquals(8 * 60, result.getMSup25Recup(), 0);
 		assertEquals(5.25 * 60, result.getMSup50(), 0);
@@ -5072,8 +5035,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(0, result.getMsNuit(), 0);
 		assertEquals(0, result.getMsdjf(), 0);
-		assertEquals(0, result.getMNormales(), 0);
-		assertEquals(0.25 * 60, result.getMComplementaires(), 0);
+		assertEquals(0.25 * 60, result.getMNormales(), 0);
 		assertEquals(0, result.getMSimple(), 0);
 		assertEquals(0, result.getMComposees(), 0);
 		assertEquals(4.25 * 60, result.getMSup25(), 0);
@@ -5169,8 +5131,6 @@ public class VentilationHSupServiceTest {
 		assertEquals(3 * 60, result.getMSimpleRecup(), 0);
 		assertEquals(10.25 * 60, result.getMComposees(), 0);
 		assertEquals(5.75 * 60, result.getMComposeesRecup(), 0);
-		assertEquals(0, result.getMComplementaires(), 0);
-		assertEquals(0, result.getMComplementairesRecup(), 0);
 		assertEquals(0, result.getMSup25(), 0);
 		assertEquals(0, result.getMSup25Recup(), 0);
 		assertEquals(0, result.getMSup50(), 0);

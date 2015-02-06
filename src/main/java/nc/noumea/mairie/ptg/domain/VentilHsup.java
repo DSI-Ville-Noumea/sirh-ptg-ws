@@ -83,12 +83,6 @@ public class VentilHsup {
     @Column(name = "M_NORMALES_R")
     private int mNormalesRecup;
     
-    @Column(name = "M_COMPLEMENTAIRES")
-    private int mComplementaires;
-    
-    @Column(name = "M_COMPLEMENTAIRES_R")
-    private int mComplementairesRecup;
-    
     @Column(name = "M_SIMPLES")
     private int mSimple;
     
@@ -261,22 +255,6 @@ public class VentilHsup {
 
 	public void setMNormalesRecup(int mNormalesRecup) {
 		this.mNormalesRecup = mNormalesRecup;
-	}
-
-	public int getMComplementaires() {
-		return mComplementaires;
-	}
-
-	public void setMComplementaires(int mComplementaires) {
-		this.mComplementaires = mComplementaires;
-	}
-
-	public int getMComplementairesRecup() {
-		return mComplementairesRecup;
-	}
-
-	public void setMComplementairesRecup(int mComplementairesRecup) {
-		this.mComplementairesRecup = mComplementairesRecup;
 	}
 
 	public int getMSimple() {

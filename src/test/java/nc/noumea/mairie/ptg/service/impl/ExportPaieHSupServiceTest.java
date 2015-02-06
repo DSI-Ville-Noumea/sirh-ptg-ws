@@ -60,7 +60,7 @@ public class ExportPaieHSupServiceTest {
 		h1.setMsNuit(100);
 		h1.setMSimple(110);
 		h1.setMComposees(120);
-		h1.setMComplementaires(125);
+		h1.setMNormales(125);
 		h1.setMRecuperees(130);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -172,7 +172,7 @@ public class ExportPaieHSupServiceTest {
 		h1.setMsNuit(100);
 		h1.setMSimple(110);
 		h1.setMComposees(120);
-		h1.setMComplementaires(125);
+		h1.setMNormales(125);
 		h1.setMRecuperees(130);
 		
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -284,7 +284,7 @@ public class ExportPaieHSupServiceTest {
 		h1.setMsNuit(0);
 		h1.setMSimple(0);
 		h1.setMComposees(0);
-		h1.setMComplementaires(0);
+		h1.setMNormales(0);
 		h1.setMRecuperees(130);
 		
 		HelperService hS = Mockito.mock(HelperService.class);

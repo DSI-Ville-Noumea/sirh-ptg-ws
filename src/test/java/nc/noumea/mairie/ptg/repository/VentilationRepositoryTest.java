@@ -644,8 +644,6 @@ public class VentilationRepositoryTest {
 		vh.setEtat(EtatPointageEnum.VENTILE);
 		vh.setIdAgent(9005139);
 		vh.setMAbsences(0);
-		vh.setMComplementaires(1);
-		vh.setMComplementairesRecup(0);
 		vh.setMComposees(1);
 		vh.setMComposeesRecup(0);
 		vh.setMHorsContrat(1);
@@ -716,8 +714,6 @@ public class VentilationRepositoryTest {
 		vh.setEtat(EtatPointageEnum.VALIDE);
 		vh.setIdAgent(9005139);
 		vh.setMAbsences(0);
-		vh.setMComplementaires(1);
-		vh.setMComplementairesRecup(0);
 		vh.setMComposees(1);
 		vh.setMComposeesRecup(0);
 		vh.setMHorsContrat(1);
@@ -746,8 +742,6 @@ public class VentilationRepositoryTest {
 		vh2.setEtat(EtatPointageEnum.VENTILE);
 		vh2.setIdAgent(9005139);
 		vh2.setMAbsences(0);
-		vh2.setMComplementaires(1);
-		vh2.setMComplementairesRecup(0);
 		vh2.setMComposees(1);
 		vh2.setMComposeesRecup(0);
 		vh2.setMHorsContrat(1);
@@ -933,8 +927,6 @@ public class VentilationRepositoryTest {
 		vh.setEtat(EtatPointageEnum.VENTILE);
 		vh.setIdAgent(9005138);
 		vh.setMAbsences(3);
-		vh.setMComplementaires(1);
-		vh.setMComplementairesRecup(0);
 		vh.setMComposees(5);
 		vh.setMComposeesRecup(1);
 		vh.setMHorsContrat(1);
@@ -946,8 +938,6 @@ public class VentilationRepositoryTest {
 		vh2.setEtat(EtatPointageEnum.VENTILE);
 		vh2.setIdAgent(9005139);
 		vh2.setMAbsences(0);
-		vh2.setMComplementaires(1);
-		vh2.setMComplementairesRecup(0);
 		vh2.setMComposees(1);
 		vh2.setMComposeesRecup(0);
 		vh2.setMHorsContrat(11);
@@ -959,8 +949,6 @@ public class VentilationRepositoryTest {
 		vh3.setEtat(EtatPointageEnum.VALIDE);
 		vh3.setIdAgent(9005139);
 		vh3.setMAbsences(0);
-		vh3.setMComplementaires(1);
-		vh3.setMComplementairesRecup(0);
 		vh3.setMComposees(1);
 		vh3.setMComposeesRecup(0);
 		vh3.setMHorsContrat(11);
@@ -972,8 +960,6 @@ public class VentilationRepositoryTest {
 		vh4.setEtat(EtatPointageEnum.VENTILE);
 		vh4.setIdAgent(9009999);
 		vh4.setMAbsences(0);
-		vh4.setMComplementaires(1);
-		vh4.setMComplementairesRecup(0);
 		vh4.setMComposees(1);
 		vh4.setMComposeesRecup(0);
 		vh4.setMHorsContrat(11);
@@ -1024,8 +1010,6 @@ public class VentilationRepositoryTest {
 		vh.setEtat(EtatPointageEnum.VENTILE);
 		vh.setIdAgent(9005138);
 		vh.setMAbsences(3);
-		vh.setMComplementaires(1);
-		vh.setMComplementairesRecup(0);
 		vh.setMComposees(5);
 		vh.setMComposeesRecup(1);
 		vh.setMHorsContrat(1);
@@ -1037,8 +1021,6 @@ public class VentilationRepositoryTest {
 		vh2.setEtat(EtatPointageEnum.VENTILE);
 		vh2.setIdAgent(9005138);
 		vh2.setMAbsences(0);
-		vh2.setMComplementaires(1);
-		vh2.setMComplementairesRecup(0);
 		vh2.setMComposees(1);
 		vh2.setMComposeesRecup(0);
 		vh2.setMHorsContrat(11);
@@ -1050,8 +1032,6 @@ public class VentilationRepositoryTest {
 		vh3.setEtat(EtatPointageEnum.VENTILE);
 		vh3.setIdAgent(9005138);
 		vh3.setMAbsences(10);
-		vh3.setMComplementaires(1);
-		vh3.setMComplementairesRecup(0);
 		vh3.setMComposees(1);
 		vh3.setMComposeesRecup(0);
 		vh3.setMHorsContrat(11);
@@ -1063,8 +1043,6 @@ public class VentilationRepositoryTest {
 		vh4.setEtat(EtatPointageEnum.VALIDE);
 		vh4.setIdAgent(9005138);
 		vh4.setMAbsences(10);
-		vh4.setMComplementaires(1);
-		vh4.setMComplementairesRecup(0);
 		vh4.setMComposees(1);
 		vh4.setMComposeesRecup(0);
 		vh4.setMHorsContrat(11);
@@ -1076,8 +1054,6 @@ public class VentilationRepositoryTest {
 		vh5.setEtat(EtatPointageEnum.VALIDE);
 		vh5.setIdAgent(9009999);
 		vh5.setMAbsences(10);
-		vh5.setMComplementaires(1);
-		vh5.setMComplementairesRecup(0);
 		vh5.setMComposees(1);
 		vh5.setMComposeesRecup(0);
 		vh5.setMHorsContrat(11);
@@ -1347,8 +1323,6 @@ public class VentilationRepositoryTest {
 		vh.setEtat(EtatPointageEnum.VALIDE);
 		vh.setIdAgent(9005138);
 		vh.setMAbsences(3);
-		vh.setMComplementaires(1);
-		vh.setMComplementairesRecup(0);
 		vh.setMComposees(5);
 		vh.setMComposeesRecup(1);
 		vh.setMHorsContrat(1);
@@ -1360,8 +1334,6 @@ public class VentilationRepositoryTest {
 		vh2.setEtat(EtatPointageEnum.APPROUVE);
 		vh2.setIdAgent(9005139);
 		vh2.setMAbsences(0);
-		vh2.setMComplementaires(1);
-		vh2.setMComplementairesRecup(0);
 		vh2.setMComposees(1);
 		vh2.setMComposeesRecup(0);
 		vh2.setMHorsContrat(11);

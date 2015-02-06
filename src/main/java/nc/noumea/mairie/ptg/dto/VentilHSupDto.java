@@ -17,7 +17,6 @@ public class VentilHSupDto extends VentilDto {
 	private int m1Mai;
 	private int mNuit;
 	private int mNormales;
-	private int mComplementaires;
 	private int mSimples;
 	private int mComposees;
 	private int mRecuperees;
@@ -27,7 +26,6 @@ public class VentilHSupDto extends VentilDto {
 	private int m1maiR;
 	private int mNuitR;
 	private int mNormalesR;
-	private int mComplementairesR;
 	private int mSimplesR;
 	private int mComposeesR;
 
@@ -45,7 +43,6 @@ public class VentilHSupDto extends VentilDto {
 		m1Mai = hibObj.getMMai();
 		mNuit = hibObj.getMsNuit();
 		mNormales = hibObj.getMNormales();
-		mComplementaires = hibObj.getMComplementaires();
 		mSimples = hibObj.getMSimple();
 		mComposees = hibObj.getMComposees();
 		etat = hibObj.getEtat().getCodeEtat();
@@ -56,7 +53,6 @@ public class VentilHSupDto extends VentilDto {
 		m1maiR = hibObj.getMMaiRecup();
 		mNuitR = hibObj.getMsNuitRecup();
 		mNormalesR = hibObj.getMNormalesRecup();
-		mComplementairesR = hibObj.getMComplementairesRecup();
 		mSimplesR = hibObj.getMSimpleRecup();
 		mComposeesR = hibObj.getMComposeesRecup();
 		date = hibObj.getDateLundi();
@@ -144,14 +140,6 @@ public class VentilHSupDto extends VentilDto {
 		this.mNormales = mNormales;
 	}
 
-	public int getmComplementaires() {
-		return mComplementaires;
-	}
-
-	public void setmComplementaires(int mComplementaires) {
-		this.mComplementaires = mComplementaires;
-	}
-
 	public int getmSimples() {
 		return mSimples;
 	}
@@ -222,14 +210,6 @@ public class VentilHSupDto extends VentilDto {
 
 	public void setmNormalesR(int mNormalesR) {
 		this.mNormalesR = mNormalesR;
-	}
-
-	public int getmComplementairesR() {
-		return mComplementairesR;
-	}
-
-	public void setmComplementairesR(int mComplementairesR) {
-		this.mComplementairesR = mComplementairesR;
 	}
 
 	public int getmSimplesR() {

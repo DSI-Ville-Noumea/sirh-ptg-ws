@@ -19,7 +19,6 @@ public class HeuresSupEtatPayeurDto {
 	public HeuresSupEtatPayeurDto(VentilHsup vh, HelperService hS) {
 
 		this(vh, null, hS);
-
 	}
 
 	public HeuresSupEtatPayeurDto(VentilHsup vhNew, VentilHsup vhOld, HelperService hS) {
@@ -31,9 +30,7 @@ public class HeuresSupEtatPayeurDto {
 		djf = hS.formatMinutesToString(vhNew.getMsdjf() - (vhOld != null ? vhOld.getMsdjf() : 0));
 		h1Mai = hS.formatMinutesToString(vhNew.getMMai() - (vhOld != null ? vhOld.getMMai() : 0));
 		nuit = hS.formatMinutesToString(vhNew.getMsNuit() - (vhOld != null ? vhOld.getMsNuit() : 0));
-		normales = hS.formatMinutesToString((vhNew.getMNormales() - (vhOld != null ? vhOld.getMNormales() : 0))
-				+ (vhNew.getMComplementaires() - (vhOld != null ? vhOld.getMComplementaires() : 0)));
-
+		normales = hS.formatMinutesToString((vhNew.getMNormales() - (vhOld != null ? vhOld.getMNormales() : 0)));
 	}
 
 	public String getSup25() {

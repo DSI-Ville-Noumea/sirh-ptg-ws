@@ -22,7 +22,6 @@ public class VentilHSupDtoTest {
         int m_abs = 3214521;
         int m_abs_as400 = 3214522;
         int mSimple = 2;
-        int mComplementaires = 3;
         int mComposees = 4;
         int msdjf = 5;
         int msNuit = 6;
@@ -34,7 +33,6 @@ public class VentilHSupDtoTest {
         vh.setIdVentilHSup(idVentil);
         vh.setDateLundi(new Date(System.currentTimeMillis()));
         vh.setMSimple(mSimple);
-        vh.setMComplementaires(mComplementaires);
         vh.setMComposees(mComposees);
         vh.setMSup(m_sup);
         vh.setMSup25(m_sup_25);
@@ -50,7 +48,6 @@ public class VentilHSupDtoTest {
         assertEquals(idAgent, result.getIdAgent());
         assertEquals(true, result.getDateLundi() != null);
         assertEquals(mSimple, result.getmSimples());
-        assertEquals(mComplementaires, result.getmComplementaires());
         assertEquals(mComposees, result.getmComposees());
         assertEquals(m_sup, result.getmSup());
         assertEquals(m_sup_25, result.getmSup25());
