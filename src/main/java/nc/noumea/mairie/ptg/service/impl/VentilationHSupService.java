@@ -232,42 +232,27 @@ public class VentilationHSupService implements IVentilationHSupService {
 			switch (statut) {
 				case F:
 					// Compute the number of MinutesSup considering the week
-					// normal
-					// hours
+					// normal hours
 					nbMinutesSup = (weekMinutes - (weekBase - result.getTotalAbsences()) - result.getMSup() - result
 							.getMNormales()) <= 0 ? 0 : (weekMinutes - (weekBase - result.getTotalAbsences())
 							- result.getMSup() - result.getMNormales());
-					// In the whole amount of MinutesSup, take only the ones we
-					// added
-					// with this day of work
-					nbMinutesSup = nbMinutesSup > dayBase ? dayBase : nbMinutesSup;
 					generateHSupFonctionnaire(result, weekBase, weekMinutes, dday, nbMinutesSup);
 					break;
 				case C:
 					// Compute the number of MinutesSup considering the week
-					// normal
-					// hours
+					// normal hours
 					nbMinutesSup = (weekMinutes - (weekBase - result.getTotalAbsences()) - result.getMSup() - result
 							.getMNormales()) <= 0 ? 0 : (weekMinutes - (weekBase - result.getTotalAbsences())
 							- result.getMSup() - result.getMNormales());
-					// In the whole amount of MinutesSup, take only the ones we
-					// added
-					// with this day of work
-					nbMinutesSup = nbMinutesSup > dayBase ? dayBase : nbMinutesSup;
 					generateHSupContractuels(result, weekBase, weekMinutes, dday, nbMinutesSup);
 					break;
 				case CC:
 
 					// Compute the number of MinutesSup considering the week
-					// normal
-					// hours
+					// normal hours
 					int heuresSupEnresgistrees = result.getMNormales() + result.getMSup25() + result.getMSup50();
 					nbMinutesSup = (weekMinutes - (weekBase - result.getTotalAbsences()) - heuresSupEnresgistrees) <= 0 ? 0
 							: (weekMinutes - (weekBase - result.getTotalAbsences()) - heuresSupEnresgistrees);
-					// In the whole amount of MinutesSup, take only the ones we
-					// added
-					// with this day of work
-					nbMinutesSup = nbMinutesSup > dayBase ? dayBase : nbMinutesSup;
 					generateHSupConventionCollective(result, weekBase, weekMinutes, nbMinutesSup);
 					break;
 			}
@@ -420,7 +405,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 		int weekMinutesBeforeHSup = weekMinutes - nbMinutesSupJour - nbMinutesSupNuit;
 
 		// If it's a SUNDAY or a HOLIDAY, count the hours as HS DJF
-		if (dday.getDayOfWeek() == 7 || sirhWsConsumer.isJourFerie(dday)) {
+		if (dday.getDayOfWeek() == 7 || sirhWsConsumer.isJourFerie(dday)
+				|| (dday.getDayOfMonth() == 1 && dday.getMonthOfYear() == 5)) {
 			return;
 		}
 
@@ -504,7 +490,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 		int weekMinutesBeforeHSup = weekMinutes - nbMinutesSupJour - nbMinutesSupNuit;
 
 		// If it's a SUNDAY or a HOLIDAY, count the hours as HS DJF
-		if (dday.getDayOfWeek() == 7 || sirhWsConsumer.isJourFerie(dday)) {
+		if (dday.getDayOfWeek() == 7 || sirhWsConsumer.isJourFerie(dday)
+				|| (dday.getDayOfMonth() == 1 && dday.getMonthOfYear() == 5)) {
 			return;
 		}
 
@@ -640,6 +627,18 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 		DateTime dday = minutes.getInterval().getStart();
 
+		// #13304
+		// If it's a 1st of May
+		if (dday.getDayOfMonth() == 1 && dday.getMonthOfYear() == 5) {
+			result.setMMai(result.getMMai() + minutes.getTotalMinutes());
+			result.setMSup(result.getMSup() + minutes.getTotalMinutes());
+			
+			if (isHRecuperee) {
+				result.setMMaiRecup(result.getMMaiRecup() + minutes.getTotalMinutes());
+			}
+			return;
+		}
+		
 		// If it's a SUNDAY or a HOLIDAY, count the hours as HS DJF
 		if (dday.getDayOfWeek() == 7 || sirhWsConsumer.isJourFerie(dday)) {
 
@@ -708,6 +707,18 @@ public class VentilationHSupService implements IVentilationHSupService {
 			return;
 
 		DateTime dday = minutes.getInterval().getStart();
+		// #13304
+		// If it's a 1st of May
+		if (dday.getDayOfMonth() == 1 && dday.getMonthOfYear() == 5) {
+			result.setMMai(result.getMMai() + minutes.getTotalMinutes());
+			result.setMSup(result.getMSup() + minutes.getTotalMinutes());
+
+			if (isHRecuperee) {
+				result.setMMaiRecup(result.getMMaiRecup() + minutes.getTotalMinutes());
+			}
+			return;
+		}
+		
 		// If it's a SUNDAY or a HOLIDAY, count the hours as HS DJF
 		if (dday.getDayOfWeek() == 7 || sirhWsConsumer.isJourFerie(dday)) {
 			result.setMsdjf(result.getMsdjf() + minutes.getNbMinutesJour());
