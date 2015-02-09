@@ -1,4 +1,4 @@
-package nc.noumea.mairie.ptg.domain;
+package nc.noumea.mairie.domain;
 
 public enum MairiePrimeTableEnum {
 	SPPPRM("SPPPRM"), 

@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.domain.Sppprm;
 import nc.noumea.mairie.domain.SppprmId;
 import nc.noumea.mairie.domain.Spprim;
 import nc.noumea.mairie.domain.SpprimId;
-import nc.noumea.mairie.ptg.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;

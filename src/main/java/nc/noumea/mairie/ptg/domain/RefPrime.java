@@ -14,6 +14,7 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.MairiePrimeTableEnum;
 
 @Entity
 @Table(name = "PTG_REF_PRIME")
