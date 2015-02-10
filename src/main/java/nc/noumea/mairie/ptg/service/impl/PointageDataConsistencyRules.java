@@ -61,6 +61,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String ERROR_INTERVALLE_POINTAGE = "Pour le pointage du %s, il faut 30 minutes d'intervalle entre la date de début et la date de fin.";
 	public static final String ERROR_PRIME_SAISIE_J1_POINTAGE = "Pour la prime %s du %s, la saisie à J+1 n'est pas autorisée.";
 	public static final String ERROR_PRIME_QUANTITE_POINTAGE = "Pour la prime %s du %s, la quantité ne peut être supérieure à 24.";
+	public static final String ERROR_PRIME_EPANDAGE_QUANTITE = "Pour la prime %s du %s, la quantité ne peut être supérieure à 2.";
 
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
@@ -457,8 +458,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			if (fin != null && fin.getTime().before(debut.getTime())) {
 				srm.getErrors().add(String.format(ERROR_DATE_POINTAGE, sdf.format(ptg.getDateDebut())));
 			}
-			// on verif intervalle de 30 min minium entre les 2 dates
-			if (fin != null && (fin.getTimeInMillis() - debut.getTimeInMillis()) < 1800000) {
+			// on verif intervalle de 30 min minimum entre les 2 dates
+			if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES)
+					&& fin != null && (fin.getTimeInMillis() - debut.getTimeInMillis()) < 1800000) {
 				srm.getErrors().add(String.format(ERROR_INTERVALLE_POINTAGE, sdf.format(ptg.getDateDebut())));
 			}
 			// pour les primes
@@ -470,11 +472,19 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 					srm.getErrors().add(
 							String.format(ERROR_PRIME_SAISIE_J1_POINTAGE, ptg.getRefPrime().getLibelle(),
 									sdf.format(ptg.getDateDebut())));
-					// pour les primes de tupe NOMBRE_HEURE, la quantite ne doit
+					// pour les primes de type NOMBRE_HEURE, la quantite ne doit
 					// pas depasser 24H
-				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES) && ptg.getQuantite() > 24) {
+				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES) && ptg.getQuantite() > 24*60) {
 					srm.getErrors().add(
 							String.format(ERROR_PRIME_QUANTITE_POINTAGE, ptg.getRefPrime().getLibelle(),
+									sdf.format(ptg.getDateDebut())));
+					// PRIME FICTIVE D EPANDAGE pour le SIPRES
+					// ne peut pas depasser 2H
+				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES) 
+						&& ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.PRIME_EPANDAGE_7716)
+						&& ptg.getQuantite() > 2*60) {
+					srm.getErrors().add(
+							String.format(ERROR_PRIME_EPANDAGE_QUANTITE, ptg.getRefPrime().getLibelle(),
 									sdf.format(ptg.getDateDebut())));
 				}
 

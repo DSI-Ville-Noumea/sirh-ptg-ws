@@ -292,8 +292,16 @@ public class VentilationService implements IVentilationService {
 		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod,
 				dateLundi);
 
-		// persisting all the generated entities linking them to the current
-		// ventil date
+		// on gere les primes d epandage qui comptabiliseront des heures supp.
+		List<Pointage> agentsPointagePrimeForPeriod = ventilationRepository.getListPointagesPrimeByWeekForVentilation(idAgent,
+				fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
+		
+		List<Pointage> filteredAgentsPointagePrimeForPeriod = pointageService.filterOldPointagesAndEtatFromList(
+				agentsPointagePrimeForPeriod, null, null);
+		hSupsVentilees = ventilationHSupService.processHeuresSupEpandageForSIPRES(
+				hSupsVentilees, idAgent, dateLundi, filteredAgentsPointagePrimeForPeriod, carr.getStatutCarriere());
+		
+		// persisting all the generated entities linking them to the current ventil date
 		if (hSupsVentilees != null) {
 			hSupsVentilees.setVentilDate(ventilDate);
 			ventilationRepository.persistEntity(hSupsVentilees);
@@ -306,7 +314,8 @@ public class VentilationService implements IVentilationService {
 
 		return filteredAgentsPointageForPeriod;
 	}
-
+	
+	
 	protected List<Pointage> processPrimesVentilationForMonthAndAgent(VentilDate ventilDate, Integer idAgent,
 			Date dateDebutMois, Date fromVentilDate) {
 

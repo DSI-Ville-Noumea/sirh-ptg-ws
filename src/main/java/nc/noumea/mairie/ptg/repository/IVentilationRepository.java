@@ -106,4 +106,7 @@ public interface IVentilationRepository {
 			Integer idVentilDate);
 
 	List<Integer> getListOfAgentWithDateForEtatPayeur(Integer idVentilDate);
+
+	List<Pointage> getListPointagesPrimeByWeekForVentilation(Integer idAgent,
+			Date fromEtatDate, Date toEtatDate, Date dateLundi);
 }

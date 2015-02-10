@@ -25,4 +25,8 @@ public interface IVentilationHSupService {
 	VentilHsup processHSupConventionCollective(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, boolean has1150Prime, VentilDate ventilDate);
 	
 	Interval getDayHSupJourIntervalForStatut(DateTime day, AgentStatutEnum statut);
+
+	VentilHsup processHeuresSupEpandageForSIPRES(VentilHsup ventilHsup,
+			Integer idAgent, Date dateLundi, List<Pointage> pointages,
+			AgentStatutEnum statut);
 }

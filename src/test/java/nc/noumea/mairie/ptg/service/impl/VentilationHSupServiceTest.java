@@ -11,12 +11,14 @@ import java.util.List;
 
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
+import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
@@ -5556,5 +5558,402 @@ public class VentilationHSupServiceTest {
 		assertEquals(11 * 60, result.getMMai(), 0);
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+	}
+	
+	@Test
+	public void processHeuresSupEpandageForSIPRES_Fonctionnaire_2HSimple() {
+		
+		RefPrime prime = new RefPrime();
+		prime.setNoRubr(7716);
+
+		Date dateLundi = new DateTime(2015,2,9,0,0,0).toDate();
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		
+		Pointage ptg = new Pointage();
+		ptg.setRefPrime(prime);
+		ptg.setQuantite(120);
+		ptg.setDateLundi(dateLundi);
+		ptg.setDateDebut(new DateTime(2015,2,9,5,0,0).toDate());
+		ptg.setDateFin(new DateTime(2015,2,9,7,0,0).toDate());
+		ptg.setType(type);
+		
+		VentilHsup ventilHsup = new VentilHsup();
+		Integer idAgent = 9005138;
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		pointages.add(ptg);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ventilHsup = service.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, pointages, AgentStatutEnum.F);
+		
+		assertEquals(ventilHsup.getMHorsContrat(), 2*60);
+		assertEquals(ventilHsup.getMSimple(), 2*60);
+		assertEquals(ventilHsup.getMComposees(), 0);
+		assertEquals(ventilHsup.getMNormales(), 0);
+		assertEquals(ventilHsup.getMSup25(), 0);
+		assertEquals(ventilHsup.getMSup50(), 0);
+		assertEquals(ventilHsup.getMMai(), 0);
+		assertEquals(ventilHsup.getMsdjf(), 0);
+		assertEquals(ventilHsup.getMsNuit(), 0);
+	}
+	
+	@Test
+	public void processHeuresSupEpandageForSIPRES_Fonctionnaire_8HSimple_6HComposees() {
+		
+		RefPrime prime = new RefPrime();
+		prime.setNoRubr(7716);
+
+		Date dateLundi = new DateTime(2015,2,9,0,0,0).toDate();
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		
+		Pointage ptg = new Pointage();
+		ptg.setRefPrime(prime);
+		ptg.setQuantite(120);
+		ptg.setDateLundi(dateLundi);
+		ptg.setDateDebut(new DateTime(2015,2,9,5,0,0).toDate());
+		ptg.setDateFin(new DateTime(2015,2,9,7,0,0).toDate());
+		ptg.setType(type);
+		
+		Pointage ptg2 = new Pointage();
+		ptg2.setRefPrime(prime);
+		ptg2.setQuantite(120);
+		ptg2.setDateLundi(dateLundi);
+		ptg2.setDateDebut(new DateTime(2015,2,10,5,0,0).toDate());
+		ptg2.setDateFin(new DateTime(2015,2,10,7,0,0).toDate());
+		ptg2.setType(type);
+		
+		Pointage ptg3 = new Pointage();
+		ptg3.setRefPrime(prime);
+		ptg3.setQuantite(120);
+		ptg3.setDateLundi(dateLundi);
+		ptg3.setDateDebut(new DateTime(2015,2,11,5,0,0).toDate());
+		ptg3.setDateFin(new DateTime(2015,2,11,7,0,0).toDate());
+		ptg3.setType(type);
+		
+		Pointage ptg4 = new Pointage();
+		ptg4.setRefPrime(prime);
+		ptg4.setQuantite(120);
+		ptg4.setDateLundi(dateLundi);
+		ptg4.setDateDebut(new DateTime(2015,2,12,5,0,0).toDate());
+		ptg4.setDateFin(new DateTime(2015,2,12,7,0,0).toDate());
+		ptg4.setType(type);
+		
+		Pointage ptg5 = new Pointage();
+		ptg5.setRefPrime(prime);
+		ptg5.setQuantite(120);
+		ptg5.setDateLundi(dateLundi);
+		ptg5.setDateDebut(new DateTime(2015,2,13,5,0,0).toDate());
+		ptg5.setDateFin(new DateTime(2015,2,13,7,0,0).toDate());
+		ptg5.setType(type);
+		
+		Pointage ptg6 = new Pointage();
+		ptg6.setRefPrime(prime);
+		ptg6.setQuantite(120);
+		ptg6.setDateLundi(dateLundi);
+		ptg6.setDateDebut(new DateTime(2015,2,14,5,0,0).toDate());
+		ptg6.setDateFin(new DateTime(2015,2,14,7,0,0).toDate());
+		ptg6.setType(type);
+		
+		Pointage ptg7 = new Pointage();
+		ptg7.setRefPrime(prime);
+		ptg7.setQuantite(120);
+		ptg7.setDateLundi(dateLundi);
+		ptg7.setDateDebut(new DateTime(2015,2,15,5,0,0).toDate());
+		ptg7.setDateFin(new DateTime(2015,2,15,7,0,0).toDate());
+		ptg7.setType(type);
+		
+		VentilHsup ventilHsup = new VentilHsup();
+		Integer idAgent = 9005138;
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		pointages.addAll(Arrays.asList(ptg,ptg2,ptg3,ptg4,ptg5,ptg6,ptg7));
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ventilHsup = service.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, pointages, AgentStatutEnum.F);
+
+		assertEquals(ventilHsup.getMHorsContrat(), 14*60);
+		assertEquals(ventilHsup.getMSimple(), 8*60);
+		assertEquals(ventilHsup.getMComposees(), 6*60);
+		assertEquals(ventilHsup.getMNormales(), 0);
+		assertEquals(ventilHsup.getMSup25(), 0);
+		assertEquals(ventilHsup.getMSup50(), 0);
+		assertEquals(ventilHsup.getMMai(), 0);
+		assertEquals(ventilHsup.getMsdjf(), 0);
+		assertEquals(ventilHsup.getMsNuit(), 0);
+	}
+	
+	@Test
+	public void processHeuresSupEpandageForSIPRES_Fonctionnaire_8HSimple_6HComposees_HeuresSuppDejaPresentes() {
+		
+		RefPrime prime = new RefPrime();
+		prime.setNoRubr(7716);
+
+		Date dateLundi = new DateTime(2015,2,9,0,0,0).toDate();
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		
+		Pointage ptg = new Pointage();
+		ptg.setRefPrime(prime);
+		ptg.setQuantite(120);
+		ptg.setDateLundi(dateLundi);
+		ptg.setDateDebut(new DateTime(2015,2,9,5,0,0).toDate());
+		ptg.setDateFin(new DateTime(2015,2,9,7,0,0).toDate());
+		ptg.setType(type);
+		
+		Pointage ptg2 = new Pointage();
+		ptg2.setRefPrime(prime);
+		ptg2.setQuantite(120);
+		ptg2.setDateLundi(dateLundi);
+		ptg2.setDateDebut(new DateTime(2015,2,10,5,0,0).toDate());
+		ptg2.setDateFin(new DateTime(2015,2,10,7,0,0).toDate());
+		ptg2.setType(type);
+		
+		Pointage ptg3 = new Pointage();
+		ptg3.setRefPrime(prime);
+		ptg3.setQuantite(120);
+		ptg3.setDateLundi(dateLundi);
+		ptg3.setDateDebut(new DateTime(2015,2,11,5,0,0).toDate());
+		ptg3.setDateFin(new DateTime(2015,2,11,7,0,0).toDate());
+		ptg3.setType(type);
+		
+		Pointage ptg4 = new Pointage();
+		ptg4.setRefPrime(prime);
+		ptg4.setQuantite(120);
+		ptg4.setDateLundi(dateLundi);
+		ptg4.setDateDebut(new DateTime(2015,2,12,5,0,0).toDate());
+		ptg4.setDateFin(new DateTime(2015,2,12,7,0,0).toDate());
+		ptg4.setType(type);
+		
+		Pointage ptg5 = new Pointage();
+		ptg5.setRefPrime(prime);
+		ptg5.setQuantite(120);
+		ptg5.setDateLundi(dateLundi);
+		ptg5.setDateDebut(new DateTime(2015,2,13,5,0,0).toDate());
+		ptg5.setDateFin(new DateTime(2015,2,13,7,0,0).toDate());
+		ptg5.setType(type);
+		
+		Pointage ptg6 = new Pointage();
+		ptg6.setRefPrime(prime);
+		ptg6.setQuantite(120);
+		ptg6.setDateLundi(dateLundi);
+		ptg6.setDateDebut(new DateTime(2015,2,14,5,0,0).toDate());
+		ptg6.setDateFin(new DateTime(2015,2,14,7,0,0).toDate());
+		ptg6.setType(type);
+		
+		Pointage ptg7 = new Pointage();
+		ptg7.setRefPrime(prime);
+		ptg7.setQuantite(120);
+		ptg7.setDateLundi(dateLundi);
+		ptg7.setDateDebut(new DateTime(2015,2,15,5,0,0).toDate());
+		ptg7.setDateFin(new DateTime(2015,2,15,7,0,0).toDate());
+		ptg7.setType(type);
+		
+		VentilHsup ventilHsup = new VentilHsup();
+		ventilHsup.setMNormales(1*60);
+		ventilHsup.setMSimple(3*60);
+		ventilHsup.setMComposees(2*60);
+		ventilHsup.setMHorsContrat(5*60);
+		
+		Integer idAgent = 9005138;
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		pointages.addAll(Arrays.asList(ptg,ptg2,ptg3,ptg4,ptg5,ptg6,ptg7));
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ventilHsup = service.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, pointages, AgentStatutEnum.F);
+		
+		assertEquals(ventilHsup.getMHorsContrat(), 19*60);
+		assertEquals(ventilHsup.getMSimple(), 11*60);
+		assertEquals(ventilHsup.getMComposees(), 8*60);
+		assertEquals(ventilHsup.getMNormales(), 1*60);
+		assertEquals(ventilHsup.getMSup25(), 0);
+		assertEquals(ventilHsup.getMSup50(), 0);
+		assertEquals(ventilHsup.getMMai(), 0);
+		assertEquals(ventilHsup.getMsdjf(), 0);
+		assertEquals(ventilHsup.getMsNuit(), 0);
+	}
+	
+	@Test
+	public void processHeuresSupEpandageForSIPRES_Contractuel_8HSimple_6HComposees_HeuresSuppDejaPresentes() {
+		
+		RefPrime prime = new RefPrime();
+		prime.setNoRubr(7716);
+
+		Date dateLundi = new DateTime(2015,2,9,0,0,0).toDate();
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		
+		Pointage ptg = new Pointage();
+		ptg.setRefPrime(prime);
+		ptg.setQuantite(120);
+		ptg.setDateLundi(dateLundi);
+		ptg.setDateDebut(new DateTime(2015,2,9,5,0,0).toDate());
+		ptg.setDateFin(new DateTime(2015,2,9,7,0,0).toDate());
+		ptg.setType(type);
+		
+		Pointage ptg2 = new Pointage();
+		ptg2.setRefPrime(prime);
+		ptg2.setQuantite(120);
+		ptg2.setDateLundi(dateLundi);
+		ptg2.setDateDebut(new DateTime(2015,2,10,5,0,0).toDate());
+		ptg2.setDateFin(new DateTime(2015,2,10,7,0,0).toDate());
+		ptg2.setType(type);
+		
+		Pointage ptg3 = new Pointage();
+		ptg3.setRefPrime(prime);
+		ptg3.setQuantite(120);
+		ptg3.setDateLundi(dateLundi);
+		ptg3.setDateDebut(new DateTime(2015,2,11,5,0,0).toDate());
+		ptg3.setDateFin(new DateTime(2015,2,11,7,0,0).toDate());
+		ptg3.setType(type);
+		
+		Pointage ptg4 = new Pointage();
+		ptg4.setRefPrime(prime);
+		ptg4.setQuantite(120);
+		ptg4.setDateLundi(dateLundi);
+		ptg4.setDateDebut(new DateTime(2015,2,12,5,0,0).toDate());
+		ptg4.setDateFin(new DateTime(2015,2,12,7,0,0).toDate());
+		ptg4.setType(type);
+		
+		Pointage ptg5 = new Pointage();
+		ptg5.setRefPrime(prime);
+		ptg5.setQuantite(120);
+		ptg5.setDateLundi(dateLundi);
+		ptg5.setDateDebut(new DateTime(2015,2,13,5,0,0).toDate());
+		ptg5.setDateFin(new DateTime(2015,2,13,7,0,0).toDate());
+		ptg5.setType(type);
+		
+		Pointage ptg6 = new Pointage();
+		ptg6.setRefPrime(prime);
+		ptg6.setQuantite(120);
+		ptg6.setDateLundi(dateLundi);
+		ptg6.setDateDebut(new DateTime(2015,2,14,5,0,0).toDate());
+		ptg6.setDateFin(new DateTime(2015,2,14,7,0,0).toDate());
+		ptg6.setType(type);
+		
+		Pointage ptg7 = new Pointage();
+		ptg7.setRefPrime(prime);
+		ptg7.setQuantite(120);
+		ptg7.setDateLundi(dateLundi);
+		ptg7.setDateDebut(new DateTime(2015,2,15,5,0,0).toDate());
+		ptg7.setDateFin(new DateTime(2015,2,15,7,0,0).toDate());
+		ptg7.setType(type);
+		
+		VentilHsup ventilHsup = new VentilHsup();
+		ventilHsup.setMNormales(1*60);
+		ventilHsup.setMSup25(3*60);
+		ventilHsup.setMSup50(2*60);
+		ventilHsup.setMHorsContrat(5*60);
+		
+		Integer idAgent = 9005138;
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		pointages.addAll(Arrays.asList(ptg,ptg2,ptg3,ptg4,ptg5,ptg6,ptg7));
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ventilHsup = service.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, pointages, AgentStatutEnum.C);
+
+		assertEquals(ventilHsup.getMHorsContrat(), 19*60);
+		assertEquals(ventilHsup.getMSimple(), 0);
+		assertEquals(ventilHsup.getMComposees(), 0);
+		assertEquals(ventilHsup.getMNormales(), 1*60);
+		assertEquals(ventilHsup.getMSup25(), 11*60);
+		assertEquals(ventilHsup.getMSup50(), 8*60);
+		assertEquals(ventilHsup.getMMai(), 0);
+		assertEquals(ventilHsup.getMsdjf(), 0);
+		assertEquals(ventilHsup.getMsNuit(), 0);
+	}
+	
+	@Test
+	public void processHeuresSupEpandageForSIPRES_ConvColl_8HSimple_6HComposees_HeuresSuppDejaPresentes() {
+		
+		RefPrime prime = new RefPrime();
+		prime.setNoRubr(7716);
+
+		Date dateLundi = new DateTime(2015,2,9,0,0,0).toDate();
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		
+		Pointage ptg = new Pointage();
+		ptg.setRefPrime(prime);
+		ptg.setQuantite(120);
+		ptg.setDateLundi(dateLundi);
+		ptg.setDateDebut(new DateTime(2015,2,9,5,0,0).toDate());
+		ptg.setDateFin(new DateTime(2015,2,9,7,0,0).toDate());
+		ptg.setType(type);
+		
+		Pointage ptg2 = new Pointage();
+		ptg2.setRefPrime(prime);
+		ptg2.setQuantite(120);
+		ptg2.setDateLundi(dateLundi);
+		ptg2.setDateDebut(new DateTime(2015,2,10,5,0,0).toDate());
+		ptg2.setDateFin(new DateTime(2015,2,10,7,0,0).toDate());
+		ptg2.setType(type);
+		
+		Pointage ptg3 = new Pointage();
+		ptg3.setRefPrime(prime);
+		ptg3.setQuantite(120);
+		ptg3.setDateLundi(dateLundi);
+		ptg3.setDateDebut(new DateTime(2015,2,11,5,0,0).toDate());
+		ptg3.setDateFin(new DateTime(2015,2,11,7,0,0).toDate());
+		ptg3.setType(type);
+		
+		Pointage ptg4 = new Pointage();
+		ptg4.setRefPrime(prime);
+		ptg4.setQuantite(120);
+		ptg4.setDateLundi(dateLundi);
+		ptg4.setDateDebut(new DateTime(2015,2,12,5,0,0).toDate());
+		ptg4.setDateFin(new DateTime(2015,2,12,7,0,0).toDate());
+		ptg4.setType(type);
+		
+		Pointage ptg5 = new Pointage();
+		ptg5.setRefPrime(prime);
+		ptg5.setQuantite(120);
+		ptg5.setDateLundi(dateLundi);
+		ptg5.setDateDebut(new DateTime(2015,2,13,5,0,0).toDate());
+		ptg5.setDateFin(new DateTime(2015,2,13,7,0,0).toDate());
+		ptg5.setType(type);
+		
+		Pointage ptg6 = new Pointage();
+		ptg6.setRefPrime(prime);
+		ptg6.setQuantite(120);
+		ptg6.setDateLundi(dateLundi);
+		ptg6.setDateDebut(new DateTime(2015,2,14,5,0,0).toDate());
+		ptg6.setDateFin(new DateTime(2015,2,14,7,0,0).toDate());
+		ptg6.setType(type);
+		
+		Pointage ptg7 = new Pointage();
+		ptg7.setRefPrime(prime);
+		ptg7.setQuantite(120);
+		ptg7.setDateLundi(dateLundi);
+		ptg7.setDateDebut(new DateTime(2015,2,15,5,0,0).toDate());
+		ptg7.setDateFin(new DateTime(2015,2,15,7,0,0).toDate());
+		ptg7.setType(type);
+		
+		VentilHsup ventilHsup = new VentilHsup();
+		ventilHsup.setMNormales(1*60);
+		ventilHsup.setMSup25(3*60);
+		ventilHsup.setMSup50(2*60);
+		ventilHsup.setMHorsContrat(5*60);
+		
+		Integer idAgent = 9005138;
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		pointages.addAll(Arrays.asList(ptg,ptg2,ptg3,ptg4,ptg5,ptg6,ptg7));
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ventilHsup = service.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, pointages, AgentStatutEnum.CC);
+
+		assertEquals(ventilHsup.getMHorsContrat(), 19*60);
+		assertEquals(ventilHsup.getMSimple(), 0);
+		assertEquals(ventilHsup.getMComposees(), 0);
+		assertEquals(ventilHsup.getMNormales(), 1*60);
+		assertEquals(ventilHsup.getMSup25(), 11*60);
+		assertEquals(ventilHsup.getMSup50(), 8*60);
+		assertEquals(ventilHsup.getMMai(), 0);
+		assertEquals(ventilHsup.getMsdjf(), 0);
+		assertEquals(ventilHsup.getMsNuit(), 0);
 	}
 }

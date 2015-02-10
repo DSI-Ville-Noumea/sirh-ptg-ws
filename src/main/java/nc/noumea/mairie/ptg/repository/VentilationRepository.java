@@ -179,6 +179,44 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
+	public List<Pointage> getListPointagesPrimeByWeekForVentilation(Integer idAgent, Date fromEtatDate,
+			Date toEtatDate, Date dateLundi) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT p.* ");
+		sb.append("FROM PTG_ETAT_POINTAGE ep ");
+		sb.append("INNER JOIN PTG_POINTAGE p ON ep.ID_POINTAGE = p.ID_POINTAGE ");
+		sb.append("INNER JOIN ( ");
+		sb.append("SELECT epmax.id_pointage, max(epmax.id_etat_pointage) AS maxIdEtatPointage ");
+		sb.append("FROM ptg_etat_pointage epmax ");
+		sb.append("INNER JOIN ptg_pointage ptg ON ptg.id_pointage = epmax.id_pointage ");
+		sb.append("WHERE ptg.id_agent = :idAgent ");
+		sb.append("GROUP BY epmax.id_pointage)  ");
+		sb.append("maxEtats ON maxEtats.maxIdEtatPointage = ep.id_etat_pointage AND maxEtats.id_pointage = ep.id_pointage ");
+		sb.append("WHERE p.ID_AGENT = :idAgent ");
+		sb.append("AND p.DATE_LUNDI = :dateLundi ");
+		sb.append("AND (p.ID_TYPE_POINTAGE = :typePointagePrime) ");
+		sb.append("AND ((ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve) ");
+		sb.append("OR ep.etat IN (:ventile, :valide)) ");
+		sb.append("ORDER BY id_pointage DESC ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateLundi", dateLundi);
+		q.setParameter("fromEtatDate", fromEtatDate);
+		q.setParameter("toEtatDate", toEtatDate);
+		q.setParameter("approuve", EtatPointageEnum.APPROUVE.getCodeEtat());
+		q.setParameter("ventile", EtatPointageEnum.VENTILE.getCodeEtat());
+		q.setParameter("typePointagePrime", RefTypePointageEnum.PRIME.getValue());
+		q.setParameter("valide", EtatPointageEnum.VALIDE.getCodeEtat());
+
+		@SuppressWarnings("unchecked")
+		List<Pointage> result = q.getResultList();
+
+		return result;
+	}
+
+	@Override
 	public List<Pointage> getListPointagesPrimeForVentilation(Integer idAgent, Date fromEtatDate, Date toEtatDate,
 			Date dateDebutMois) {
 

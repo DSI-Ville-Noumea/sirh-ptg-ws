@@ -21,8 +21,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class VentilationPrimeService implements IVentilationPrimeService {
 
-	// List of rubrique to not aggregate because used for calulating other Primes
-	private static List<Integer> RUBRIQUES_SAISIES_NOT_TAKEN = Arrays.asList(7715);
+	public static Integer PRIME_EPANDAGE_7716 = 7716;
+	// List of rubrique to not aggregate because used for calculating other Primes
+	// #13327 HSup SIPRES (épandage) : creation d une prime FICTIVE 7760
+	private static List<Integer> RUBRIQUES_SAISIES_NOT_TAKEN = Arrays.asList(7715, PRIME_EPANDAGE_7716);
 	
 	@Override
 	public List<VentilPrime> processPrimesAgent(Integer idAgent, List<Pointage> pointages, Date dateDebutMois) {
