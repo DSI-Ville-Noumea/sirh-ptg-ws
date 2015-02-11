@@ -74,7 +74,7 @@ public class PointageService implements IPointageService {
 	public static final String LIBELLE_MOTIF_VIDE = "Le libellé du motif n'est pas saisi.";
 
 	// POUR LES MESSAGE A ENVOYE AU PROJET SIRH-ABS-WS
-	public static final String POINTAGE_MSG = "%s : L'agent est a déjà un pointage sur cette période.";
+	public static final String POINTAGE_MSG = "%s : L'agent a déjà un pointage sur cette période.";
 
 	protected FichePointageDto getFichePointageForAgent(AgentGeneriqueDto agent, Date date) {
 

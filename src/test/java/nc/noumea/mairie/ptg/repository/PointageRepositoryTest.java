@@ -1093,6 +1093,64 @@ public class PointageRepositoryTest {
 
 	@Test
 	@Transactional("ptgTransactionManager")
+	public void getListPointagesVerification_Return0Absence_verifEtat() {
+		// Given
+		Integer idAgent = 9005138;
+		Date fromDate = new DateTime(2014, 1, 1, 4, 0).toDate();
+		Date toDate = new DateTime(2014, 1, 1, 6, 0).toDate();
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp);
+
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
+		
+
+		Pointage p = new Pointage();
+		p.setRefTypeAbsence(refTypeAbsNon);
+		p.setDateDebut(new DateTime(2014, 1, 1, 0, 0).toDate());
+		p.setDateFin(new DateTime(2014, 1, 2, 0, 0).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setHeureSupRecuperee(true);
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		ptgEntityManager.persist(p);
+		
+		for(int i=0; i<10; i++) {
+			
+			EtatPointage etat = new EtatPointage();
+			etat.setDateEtat(new Date());
+			etat.setDateMaj(new Date());
+			etat.setEtat(EtatPointageEnum.getEtatPointageEnum(i));
+			p.getEtats().add(etat);
+			ptgEntityManager.persist(p);
+			etat.setPointage(p);
+			ptgEntityManager.persist(etat);
+			
+			// When
+			List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,
+					RefTypePointageEnum.ABSENCE.getValue());
+			// Then
+			if(i == EtatPointageEnum.APPROUVE.getCodeEtat() 
+					|| i == EtatPointageEnum.VENTILE.getCodeEtat() 
+					|| i == EtatPointageEnum.VALIDE.getCodeEtat()  
+					|| i == EtatPointageEnum.EN_ATTENTE.getCodeEtat() 
+					|| i == EtatPointageEnum.JOURNALISE.getCodeEtat() ) {
+				assertEquals(1, result.size());
+			}else{
+				assertEquals(0, result.size());
+			}
+		}
+		
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
 	public void getListPointagesVerification_Return1Absence() {
 		// Given
 		Integer idAgent = 9005138;
@@ -1107,6 +1165,11 @@ public class PointageRepositoryTest {
 		refTypeAbsNon.setIdRefTypeAbsence(2);
 		ptgEntityManager.persist(refTypeAbsNon);
 
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		etat.setDateEtat(new Date());
+		etat.setDateMaj(new Date());
+
 		Pointage p = new Pointage();
 		p.setRefTypeAbsence(refTypeAbsNon);
 		p.setDateDebut(new DateTime(2014, 1, 1, 0, 0).toDate());
@@ -1115,7 +1178,10 @@ public class PointageRepositoryTest {
 		p.setHeureSupRecuperee(true);
 		p.setIdAgent(9005138);
 		p.setType(rtp);
+		p.getEtats().add(etat);
 		ptgEntityManager.persist(p);
+		etat.setPointage(p);
+		ptgEntityManager.persist(etat);
 
 		// When
 		List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,
@@ -1177,6 +1243,11 @@ public class PointageRepositoryTest {
 		rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 		ptgEntityManager.persist(rtp);
 
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		etat.setDateEtat(new Date());
+		etat.setDateMaj(new Date());
+		
 		Pointage p = new Pointage();
 		p.setDateDebut(new DateTime(2014, 1, 1, 0, 0).toDate());
 		p.setDateFin(new DateTime(2014, 1, 2, 0, 0).toDate());
@@ -1184,7 +1255,10 @@ public class PointageRepositoryTest {
 		p.setHeureSupRecuperee(true);
 		p.setIdAgent(9005138);
 		p.setType(rtp);
+		p.getEtats().add(etat);
 		ptgEntityManager.persist(p);
+		etat.setPointage(p);
+		ptgEntityManager.persist(etat);
 
 		// When
 		List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,
@@ -1209,6 +1283,11 @@ public class PointageRepositoryTest {
 		rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 		ptgEntityManager.persist(rtp);
 
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		etat.setDateEtat(new Date());
+		etat.setDateMaj(new Date());
+
 		Pointage p = new Pointage();
 		p.setDateDebut(new DateTime(2014, 1, 2, 0, 0).toDate());
 		p.setDateFin(new DateTime(2014, 1, 3, 0, 0).toDate());
@@ -1216,7 +1295,10 @@ public class PointageRepositoryTest {
 		p.setHeureSupRecuperee(true);
 		p.setIdAgent(9005138);
 		p.setType(rtp);
+		p.getEtats().add(etat);
 		ptgEntityManager.persist(p);
+		etat.setPointage(p);
+		ptgEntityManager.persist(etat);
 
 		// When
 		List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,

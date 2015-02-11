@@ -1085,6 +1085,6 @@ public class PointageServiceTest {
 
 		// Then
 		assertEquals(1, dto.getErrors().size());
-		assertEquals("01/01/2014 00:00 : L'agent est a déjà un pointage sur cette période.", dto.getErrors().get(0));
+		assertEquals("01/01/2014 00:00 : L'agent a déjà un pointage sur cette période.", dto.getErrors().get(0));
 	}
 }

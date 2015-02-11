@@ -293,10 +293,13 @@ public class PointageRepository implements IPointageRepository {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select ptg from Pointage ptg ");
+		sb.append("JOIN ptg.etats ep ");
 		sb.append("LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type ");
 		sb.append("where ((:fromDate between ptg.dateDebut and ptg.dateFin or :toDate between ptg.dateDebut and ptg.dateFin) or (ptg.dateDebut between :fromDate and :toDate or ptg.dateFin between :fromDate and :toDate)) ");
 		sb.append("and ptg.type.idRefTypePointage = :idRefTypePointage ");
 		sb.append("and ptg.idAgent = :idAgent ");
+		sb.append("and ep.etat in ( :APPROUVE, :VENTILE, :VALIDE, :EN_ATTENTE, :JOURNALISE) ");
+		sb.append("and ep.idEtatPointage in ( select max(ep2.idEtatPointage) from EtatPointage ep2 group by ep2.pointage.idPointage ) ");
 		sb.append("order by ptg.idPointage desc ");
 
 		TypedQuery<Pointage> query = ptgEntityManager.createQuery(sb.toString(), Pointage.class);
@@ -304,6 +307,11 @@ public class PointageRepository implements IPointageRepository {
 		query.setParameter("toDate", toDate);
 		query.setParameter("idRefTypePointage", idRefType);
 		query.setParameter("idAgent", idAgent);
+		query.setParameter("APPROUVE", EtatPointageEnum.APPROUVE);
+		query.setParameter("VENTILE", EtatPointageEnum.VENTILE);
+		query.setParameter("VALIDE", EtatPointageEnum.VALIDE);
+		query.setParameter("EN_ATTENTE", EtatPointageEnum.EN_ATTENTE);
+		query.setParameter("JOURNALISE", EtatPointageEnum.JOURNALISE);
 
 		return query.getResultList();
 	}
