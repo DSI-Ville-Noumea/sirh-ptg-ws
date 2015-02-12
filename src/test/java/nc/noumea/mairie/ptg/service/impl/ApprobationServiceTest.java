@@ -26,6 +26,7 @@ import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -473,10 +474,17 @@ public class ApprobationServiceTest {
 		HelperService hService = Mockito.mock(HelperService.class);
 		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
 
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.doNothing().when(
+				ptgDataCosistencyRules).checkAllAbsences(
+						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
+						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "helperService", hService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -514,10 +522,17 @@ public class ApprobationServiceTest {
 		HelperService hService = Mockito.mock(HelperService.class);
 		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
 
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.doNothing().when(
+				ptgDataCosistencyRules).checkAllAbsences(
+						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
+						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "helperService", hService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -794,10 +809,17 @@ public class ApprobationServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(null);
 
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.doNothing().when(
+				ptgDataCosistencyRules).checkAllAbsences(
+						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
+						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hService);
 		ReflectionTestUtils.setField(service, "ventilRepository", vR);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -837,10 +859,17 @@ public class ApprobationServiceTest {
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(ventilDate);
 
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.doNothing().when(
+				ptgDataCosistencyRules).checkAllAbsences(
+						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
+						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hService);
 		ReflectionTestUtils.setField(service, "ventilRepository", vR);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);

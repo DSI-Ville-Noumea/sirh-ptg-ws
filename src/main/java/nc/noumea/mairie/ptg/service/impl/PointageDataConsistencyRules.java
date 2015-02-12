@@ -459,7 +459,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				srm.getErrors().add(String.format(ERROR_DATE_POINTAGE, sdf.format(ptg.getDateDebut())));
 			}
 			// on verif intervalle de 30 min minimum entre les 2 dates
-			if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES)
+			if (null != ptg.getRefPrime()
+					&& ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES)
 					&& fin != null && (fin.getTimeInMillis() - debut.getTimeInMillis()) < 1800000) {
 				srm.getErrors().add(String.format(ERROR_INTERVALLE_POINTAGE, sdf.format(ptg.getDateDebut())));
 			}
@@ -587,5 +588,24 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		}
 
 		return srm;
+	}
+	
+	/**
+	 * Processes the data consistency of a set of Pointages being input by a
+	 * user. It will check the different business rules in order to make sure
+	 * they're consistent
+	 */
+	@Override
+	public void checkAllAbsences(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+
+		// DEBUT on check les types d'absences du projet SIRH-ABS-WS
+		checkRecuperation(srm, idAgent, pointages);
+		checkReposComp(srm, idAgent, pointages);
+		checkAbsencesSyndicales(srm, idAgent, pointages);
+		checkCongesExceptionnels(srm, idAgent, pointages);
+		checkCongeAnnuel(srm, idAgent, pointages);
+		// TODO reste à traiter les maladies
+		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
+		// FIN on check les types d'absences du projet SIRH-ABS-WS
 	}
 }

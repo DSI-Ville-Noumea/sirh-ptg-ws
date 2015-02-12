@@ -55,4 +55,7 @@ public interface IPointageDataConsistencyRules {
 
 	ReturnMessageDto checkHeureFinSaisieHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, Spcarr carr);
+
+	void checkAllAbsences(ReturnMessageDto srm, Integer idAgent,
+			Date dateLundi, List<Pointage> pointages);
 }

@@ -615,11 +615,15 @@ public class PointageService implements IPointageService {
 		List<Pointage> listePointageHSup = pointageRepository.getListPointagesVerification(convertedIdAgent, fromDate,
 				toDate, RefTypePointageEnum.H_SUP.getValue());
 		listePointage.addAll(listePointageHSup);
+		
+		List<EtatPointageEnum> listEtatsAcceptes = new ArrayList<EtatPointageEnum>();
+		listEtatsAcceptes.addAll(Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.VALIDE, EtatPointageEnum.EN_ATTENTE, EtatPointageEnum.JOURNALISE));
+		
+		listePointage = filterOldPointagesAndEtatFromList(listePointage, listEtatsAcceptes, null);
 		if (listePointage.size() > 0) {
 			// on bloque quel que soit l'etat du pointage
 			String msg = String.format(POINTAGE_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
 			result.getErrors().add(msg);
-
 		}
 
 		return result;

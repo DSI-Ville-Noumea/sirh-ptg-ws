@@ -1059,13 +1059,18 @@ public class PointageServiceTest {
 	}
 
 	@Test
-	public void checkPointage_Erros() {
+	public void checkPointage_Errors() {
 
 		// Given
 		Integer idAgent = 9005138;
 		Date dateDebut = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2014, 1, 1, 0, 0, 0).toDate();
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
 		Pointage p = new Pointage();
+		p.getEtats().add(etat);
 		List<Pointage> listePointage = new ArrayList<Pointage>();
 		listePointage.add(p);
 

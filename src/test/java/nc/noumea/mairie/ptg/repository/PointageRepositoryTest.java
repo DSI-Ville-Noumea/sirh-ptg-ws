@@ -1107,8 +1107,6 @@ public class PointageRepositoryTest {
 		refTypeAbsNon.setIdRefTypeAbsence(2);
 		ptgEntityManager.persist(refTypeAbsNon);
 
-		
-
 		Pointage p = new Pointage();
 		p.setRefTypeAbsence(refTypeAbsNon);
 		p.setDateDebut(new DateTime(2014, 1, 1, 0, 0).toDate());
@@ -1134,15 +1132,7 @@ public class PointageRepositoryTest {
 			List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,
 					RefTypePointageEnum.ABSENCE.getValue());
 			// Then
-			if(i == EtatPointageEnum.APPROUVE.getCodeEtat() 
-					|| i == EtatPointageEnum.VENTILE.getCodeEtat() 
-					|| i == EtatPointageEnum.VALIDE.getCodeEtat()  
-					|| i == EtatPointageEnum.EN_ATTENTE.getCodeEtat() 
-					|| i == EtatPointageEnum.JOURNALISE.getCodeEtat() ) {
-				assertEquals(1, result.size());
-			}else{
-				assertEquals(0, result.size());
-			}
+			assertEquals(1, result.size());
 		}
 		
 		ptgEntityManager.flush();
