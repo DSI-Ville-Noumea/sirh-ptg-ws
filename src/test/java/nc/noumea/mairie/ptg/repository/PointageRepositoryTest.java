@@ -1186,6 +1186,51 @@ public class PointageRepositoryTest {
 
 	@Test
 	@Transactional("ptgTransactionManager")
+	public void getListPointagesVerification_PeriodePlusGrandeQueAbs() {
+		// Given
+		Integer idAgent = 9005138;
+		Date fromDate = new DateTime(2014, 1, 1, 4, 0).toDate();
+		Date toDate = new DateTime(2014, 6, 30, 23, 59).toDate();
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp);
+
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		etat.setDateEtat(new Date());
+		etat.setDateMaj(new Date());
+
+		Pointage p = new Pointage();
+		p.setRefTypeAbsence(refTypeAbsNon);
+		p.setDateDebut(new DateTime(2014, 2, 2, 0, 0).toDate());
+		p.setDateFin(new DateTime(2014, 2, 3, 23, 59).toDate());
+		p.setDateLundi(new LocalDate(2014, 2, 2).toDate());
+		p.setHeureSupRecuperee(true);
+		p.setIdAgent(idAgent);
+		p.setType(rtp);
+		p.getEtats().add(etat);
+		ptgEntityManager.persist(p);
+		etat.setPointage(p);
+		ptgEntityManager.persist(etat);
+
+		// When
+		List<Pointage> result = repository.getListPointagesVerification(idAgent, fromDate, toDate,
+				RefTypePointageEnum.ABSENCE.getValue());
+
+		// Then
+		assertEquals(1, result.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
 	public void getListPointagesVerification_Return0Hsup() {
 		// Given
 		Integer idAgent = 9005138;
