@@ -93,7 +93,7 @@ public class Pointage {
 	@JoinColumn(name = "ID_COMMENT_MOTIF")
 	private PtgComment motif;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
+	@OneToOne(fetch = FetchType.EAGER, optional = true, orphanRemoval = false)
 	@JoinColumn(name = "ID_MOTIF_HSUP")
 	private MotifHeureSup motifHsup;
 
