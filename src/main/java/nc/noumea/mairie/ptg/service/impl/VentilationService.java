@@ -194,6 +194,7 @@ public class VentilationService implements IVentilationService {
 		RefTypePointageEnum pointageType = task.getRefTypePointage() == null ? null : RefTypePointageEnum
 				.getRefTypePointageEnum(task.getRefTypePointage().getIdRefTypePointage());
 		Integer agent = task.getIdAgent();
+		Integer agentRH = task.getIdAgentCreation();
 		VentilDate fromVentilDate = task.getVentilDateFrom();
 		VentilDate toVentilDate = task.getVentilDateTo();
 
@@ -239,7 +240,7 @@ public class VentilationService implements IVentilationService {
 
 		// 7. Mark pointages as etat VENTILE and add this VentilDate to their
 		// list of ventilations
-		markPointagesAsVentile(pointagesVentiles, agent, toVentilDate);
+		markPointagesAsVentile(pointagesVentiles, agentRH, toVentilDate);
 
 		logger.info("Ventilation of idVentilTask [{}] done.", idVentilTask);
 	}

@@ -1134,7 +1134,7 @@ public class VentilationServiceTest {
 				fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
 		Mockito.verify(service, Mockito.times(1)).processPrimesVentilationForMonthAndAgent(toVentilDate, 9005432,
 				datesDebutMois.get(0), fromVentilDate.getDateVentilation());
-		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9005432, toVentilDate);
+		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9001234, toVentilDate);
 	}
 
 	@Test
