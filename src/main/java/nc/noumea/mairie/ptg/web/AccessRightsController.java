@@ -44,7 +44,8 @@ public class AccessRightsController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> listAgentAccessRights(@RequestParam("idAgent") Integer idAgent) {
 
-		logger.debug("entered GET [droits/listeDroitsAgent] => listAgentAccessRights with parameter idAgent = {}", idAgent);
+		logger.debug("entered GET [droits/listeDroitsAgent] => listAgentAccessRights with parameter idAgent = {}",
+				idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -60,7 +61,9 @@ public class AccessRightsController {
 	@RequestMapping(value = "delegataireOperateurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getDelegateAndOperator(@RequestParam("idAgent") Integer idAgent) {
-		logger.debug("entered GET [droits/delegataireOperateurs] => getDelegateAndInputter with parameter idAgent = {}", idAgent);
+		logger.debug(
+				"entered GET [droits/delegataireOperateurs] => getDelegateAndInputter with parameter idAgent = {}",
+				idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -75,21 +78,24 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "delegataireOperateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
-	public ResponseEntity<String> setDelegateAndOperator(@RequestParam("idAgent") Integer idAgent, @RequestBody String delegatorAndOperatorsDtoJson) {
-		logger.debug("entered POST [droits/delegataireOperateurs] => setDelegateAndInputter with parameter idAgent = {}", idAgent);
+	public ResponseEntity<String> setDelegateAndOperator(@RequestParam("idAgent") Integer idAgent,
+			@RequestBody String delegatorAndOperatorsDtoJson) {
+		logger.debug(
+				"entered POST [droits/delegataireOperateurs] => setDelegateAndInputter with parameter idAgent = {}",
+				idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		ReturnMessageDto result = accessRightService
-				.setDelegatorAndOperators(convertedIdAgent, new DelegatorAndOperatorsDto().deserializeFromJSON(delegatorAndOperatorsDtoJson));
+		ReturnMessageDto result = accessRightService.setDelegatorAndOperators(convertedIdAgent,
+				new DelegatorAndOperatorsDto().deserializeFromJSON(delegatorAndOperatorsDtoJson));
 
 		String jsonResult = new JSONSerializer().exclude("*.class").deepSerialize(result);
-		
+
 		if (result.getErrors().size() != 0)
-			return new ResponseEntity<String>(jsonResult, HttpStatus.CONFLICT); 
+			return new ResponseEntity<String>(jsonResult, HttpStatus.CONFLICT);
 		else
 			return new ResponseEntity<String>(jsonResult, HttpStatus.OK);
 	}
@@ -149,7 +155,8 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "agentsApprouves", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
-	public ResponseEntity<String> setApprovedAgents(@RequestParam("idAgent") Integer idAgent, @RequestBody String agentsApprouvesJson) {
+	public ResponseEntity<String> setApprovedAgents(@RequestParam("idAgent") Integer idAgent,
+			@RequestBody String agentsApprouvesJson) {
 
 		logger.debug("entered POST [droits/agentsApprouves] => setApprovedAgents with parameter idAgent = {}", idAgent);
 
@@ -158,8 +165,8 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		List<AgentDto> agDtos = new JSONDeserializer<List<AgentDto>>().use(null, ArrayList.class).use("values", AgentDto.class)
-				.deserialize(agentsApprouvesJson);
+		List<AgentDto> agDtos = new JSONDeserializer<List<AgentDto>>().use(null, ArrayList.class)
+				.use("values", AgentDto.class).deserialize(agentsApprouvesJson);
 
 		try {
 			accessRightService.setAgentsToApprove(convertedIdAgent, agDtos);
@@ -173,9 +180,12 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisis", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getInputAgents(@RequestParam("idAgent") Integer idAgent, @RequestParam("idOperateur") Integer idOperateur) {
+	public ResponseEntity<String> getInputAgents(@RequestParam("idAgent") Integer idAgent,
+			@RequestParam("idOperateur") Integer idOperateur) {
 
-		logger.debug("entered GET [droits/agentsSaisis] => getInputAgents with parameter idAgent = {} and idOperateur = {}", idAgent, idOperateur);
+		logger.debug(
+				"entered GET [droits/agentsSaisis] => getInputAgents with parameter idAgent = {} and idOperateur = {}",
+				idAgent, idOperateur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -197,10 +207,12 @@ public class AccessRightsController {
 	@ResponseBody
 	@RequestMapping(value = "agentsSaisis", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
-	public ResponseEntity<String> setInputAgents(@RequestParam("idAgent") Integer idAgent, @RequestParam("idOperateur") Integer idOperateur,
-			@RequestBody String agentsApprouvesJson) {
+	public ResponseEntity<String> setInputAgents(@RequestParam("idAgent") Integer idAgent,
+			@RequestParam("idOperateur") Integer idOperateur, @RequestBody String agentsApprouvesJson) {
 
-		logger.debug("entered POST [droits/agentsSaisis] => setInputAgents with parameter idAgent = {} and idOperateur = {}", idAgent, idOperateur);
+		logger.debug(
+				"entered POST [droits/agentsSaisis] => setInputAgents with parameter idAgent = {} and idOperateur = {}",
+				idAgent, idOperateur);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -212,11 +224,34 @@ public class AccessRightsController {
 		if (accessRightService.findAgent(convertedIdOperateur) == null)
 			throw new NotFoundException();
 
-		List<AgentDto> agDtos = new JSONDeserializer<List<AgentDto>>().use(null, ArrayList.class).use("values", AgentDto.class)
-				.deserialize(agentsApprouvesJson);
+		List<AgentDto> agDtos = new JSONDeserializer<List<AgentDto>>().use(null, ArrayList.class)
+				.use("values", AgentDto.class).deserialize(agentsApprouvesJson);
 
 		accessRightService.setAgentsToInput(convertedIdAgent, convertedIdOperateur, agDtos);
 
 		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "delegataire", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "ptgTransactionManager")
+	public ResponseEntity<String> setDelegate(@RequestParam("idAgent") Integer idAgent,
+			@RequestBody String delegatorAndOperatorsDtoJson) {
+		logger.debug("entered POST [droits/delegataire] => setDelegate with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent)) {
+			result.getErrors().add(String.format("L'agent [%s] n'est pas approbateur.", convertedIdAgent));
+			String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+			return new ResponseEntity<>(response, HttpStatus.OK);
+		}
+
+		result = accessRightService.setDelegator(convertedIdAgent,
+				new DelegatorAndOperatorsDto().deserializeFromJSON(delegatorAndOperatorsDtoJson), result);
+
+		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 }

@@ -421,4 +421,29 @@ public class AccessRightsService implements IAccessRightsService {
 	public AgentGeneriqueDto findAgent(Integer idAgent) {
 		return sirhWSConsumer.getAgent(idAgent);
 	}
+
+	@Override
+	public ReturnMessageDto setDelegator(Integer idAgent, DelegatorAndOperatorsDto dto, ReturnMessageDto result) {
+
+		Droit droitApprobateur = accessRightsRepository.getApprobateurFetchOperateurs(idAgent);
+
+		if (dto.getDelegataire() != null) {
+			// Check that the new delegataire is not an operator
+			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
+				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
+				result.getErrors().add(
+						String.format(
+								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+								ag.getDisplayNom(), ag.getDisplayPrenom(),
+								matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
+			} else {
+				droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
+			}
+		} else {
+			droitApprobateur.setIdAgentDelegataire(null);
+		}
+		accessRightsRepository.persisEntity(droitApprobateur);
+
+		return result;
+	}
 }
