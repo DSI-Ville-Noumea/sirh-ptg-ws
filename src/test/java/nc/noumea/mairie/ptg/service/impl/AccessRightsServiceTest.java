@@ -1197,50 +1197,6 @@ public class AccessRightsServiceTest {
 	}
 
 	@Test
-	public void setDelegator_NewOperatorIsAlreadyDelegataire_ReturnErrorMessage() {
-
-		// Given
-		Integer idAgent = 9008765;
-		ReturnMessageDto result = new ReturnMessageDto();
-
-		Droit droitAppro = new Droit();
-
-		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
-		Mockito.when(arRepo.isUserApprobatorOrDelegataire(9009999)).thenReturn(true);
-
-		AgentGeneriqueDto ag = new AgentGeneriqueDto();
-		ag.setIdAgent(9009999);
-		ag.setNomUsage("NOM");
-		ag.setPrenomUsage("PRENOM");
-		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sRepo.getAgent(9009999)).thenReturn(ag);
-
-		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
-		Mockito.when(matrService.tryConvertIdAgentToNomatr(9009999)).thenReturn(9999);
-
-		AccessRightsService service = new AccessRightsService();
-		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "sirhWSConsumer", sRepo);
-		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
-
-		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
-		dto.getSaisisseurs().add(new AgentDto());
-		dto.getSaisisseurs().get(0).setIdAgent(9009999);
-
-		// When
-		result = service.setDelegator(idAgent, dto, result);
-
-		// Then
-		assertEquals(1, result.getErrors().size());
-		assertEquals(
-				"L'agent NOM PRENOM [9999] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
-				result.getErrors().get(0));
-		assertEquals(0, result.getInfos().size());
-		assertNull(droitAppro.getIdAgentDelegataire());
-	}
-
-	@Test
 	public void setDelegator_SameExistingDelegataire_DoNothing() {
 
 		// Given
