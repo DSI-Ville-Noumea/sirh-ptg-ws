@@ -101,11 +101,11 @@ public class PointageService implements IPointageService {
 		result.setAgent(agentDto);
 		result.setDPM(service.getSigle().toUpperCase().equals("DPM"));
 		result.setSemaine(helperService.getWeekStringFromDate(date));
-		
+
 		// on recupere l'INA de l agent
-		// #13290 HSup  A recuperer pour INA > 315
+		// #13290 HSup A recuperer pour INA > 315
 		result.setINASuperieur315(null != carr.getSpbarem() && carr.getSpbarem().getIna() > 315);
-		
+
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
 		List<Integer> pps = sirhWsConsumer.getPrimePointagesByAgent(agent.getIdAgent(), date);
@@ -571,10 +571,21 @@ public class PointageService implements IPointageService {
 		result.setAgent(agentDto);
 		result.setDPM(service.getSigle().toUpperCase().equals("DPM"));
 		result.setSemaine(helperService.getWeekStringFromDate(date));
-		
+
 		// on recupere l'INA de l agent
-		// #13290 HSup  A recuperer pour INA > 315
-		result.setINASuperieur315(null != carr.getSpbarem() && carr.getSpbarem().getIna() > 315);
+		// #13290 HSup A recuperer pour INA > 315
+		// #14217 si iban du barem alphanumerique alors on considère INA >315
+		if (null != carr.getSpbarem()) {
+			try {
+				@SuppressWarnings("unused")
+				Integer iban = new Integer(carr.getSpbarem().getIban());
+				result.setINASuperieur315(null != carr.getSpbarem() && carr.getSpbarem().getIna() > 315);
+			} catch (Exception e) {
+				result.setINASuperieur315(true);
+			}
+		} else {
+			result.setINASuperieur315(true);
+		}
 
 		JourPointageDtoKiosque jourPointageTemplate = new JourPointageDtoKiosque();
 		jourPointageTemplate.setDate(date);
@@ -615,10 +626,11 @@ public class PointageService implements IPointageService {
 		List<Pointage> listePointageHSup = pointageRepository.getListPointagesVerification(convertedIdAgent, fromDate,
 				toDate, RefTypePointageEnum.H_SUP.getValue());
 		listePointage.addAll(listePointageHSup);
-		
+
 		List<EtatPointageEnum> listEtatsAcceptes = new ArrayList<EtatPointageEnum>();
-		listEtatsAcceptes.addAll(Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.VALIDE, EtatPointageEnum.EN_ATTENTE, EtatPointageEnum.JOURNALISE));
-		
+		listEtatsAcceptes.addAll(Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE,
+				EtatPointageEnum.VALIDE, EtatPointageEnum.EN_ATTENTE, EtatPointageEnum.JOURNALISE));
+
 		listePointage = filterOldPointagesAndEtatFromList(listePointage, listEtatsAcceptes, null);
 		if (listePointage.size() > 0) {
 			// on bloque quel que soit l'etat du pointage
