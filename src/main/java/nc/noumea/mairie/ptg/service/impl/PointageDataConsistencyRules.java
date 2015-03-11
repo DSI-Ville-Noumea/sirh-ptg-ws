@@ -97,9 +97,13 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkRecuperation(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		for (Pointage p : pointages) {
+			
 			// pour chaque pointage on verifie si en recup
 			// si oui, on ajoute des erreurs
-			result = absWsConsumer.checkRecuperation(idAgent, p.getDateDebut(), p.getDateFin());
+			// #6843 attention on ne check pas les primes
+			if(!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+				result = absWsConsumer.checkRecuperation(idAgent, p.getDateDebut(), p.getDateFin());
+			}
 		}
 
 		for (String info : result.getInfos()) {
@@ -117,7 +121,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		for (Pointage p : pointages) {
 			// pour chaque pointage on verifie si en repos comp
 			// si oui, on ajoute des erreurs
-			result = absWsConsumer.checkReposComp(idAgent, p.getDateDebut(), p.getDateFin());
+			// #6843 attention on ne check pas les primes
+			if(!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+				result = absWsConsumer.checkReposComp(idAgent, p.getDateDebut(), p.getDateFin());
+			}
 		}
 
 		for (String info : result.getInfos()) {
@@ -135,7 +142,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		for (Pointage p : pointages) {
 			// pour chaque pointage on verifie si en ASA
 			// si oui, on ajoute des erreurs
-			result = absWsConsumer.checkAbsencesSyndicales(idAgent, p.getDateDebut(), p.getDateFin());
+			// #6843 attention on ne check pas les primes
+			if(!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+				result = absWsConsumer.checkAbsencesSyndicales(idAgent, p.getDateDebut(), p.getDateFin());
+			}
 		}
 
 		for (String info : result.getInfos()) {
@@ -153,7 +163,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		for (Pointage p : pointages) {
 			// pour chaque pointage on verifie si en conge exceptionnel
 			// si oui, on ajoute des erreurs
-			result = absWsConsumer.checkCongesExceptionnels(idAgent, p.getDateDebut(), p.getDateFin());
+			// #6843 attention on ne check pas les primes
+			if(!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+				result = absWsConsumer.checkCongesExceptionnels(idAgent, p.getDateDebut(), p.getDateFin());
+			}
 		}
 
 		for (String info : result.getInfos()) {
@@ -171,7 +184,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		for (Pointage p : pointages) {
 			// pour chaque pointage on verifie si en conge annuel
 			// si oui, on ajoute des erreurs
-			result = absWsConsumer.checkCongeAnnuel(idAgent, p.getDateDebut(), p.getDateFin());
+			// #6843 attention on ne check pas les primes
+			if(!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+				result = absWsConsumer.checkCongeAnnuel(idAgent, p.getDateDebut(), p.getDateFin());
+			}
 		}
 
 		for (String info : result.getInfos()) {

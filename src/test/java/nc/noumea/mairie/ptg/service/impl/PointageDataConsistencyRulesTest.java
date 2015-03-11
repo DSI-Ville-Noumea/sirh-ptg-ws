@@ -125,9 +125,12 @@ public class PointageDataConsistencyRulesTest {
 		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
 		List<Pointage> pointages = new ArrayList<Pointage>();
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 		Pointage p = new Pointage();
 		p.setDateDebut(dateDebut);
 		p.setDateFin(dateFin);
+		p.setType(type);
 		pointages.add(p);
 
 		ReturnMessageDto res = new ReturnMessageDto();
@@ -146,6 +149,39 @@ public class PointageDataConsistencyRulesTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertEquals("21/05/2013 : L'agent est en récupération sur cette période.", result.getErrors().get(0));
+	}
+
+	@Test
+	public void checkRecuperation_withPrime() {
+
+		// Given
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		Pointage p = new Pointage();
+		p.setDateDebut(dateDebut);
+		p.setDateFin(dateFin);
+		p.setType(type);
+		pointages.add(p);
+
+		ReturnMessageDto res = new ReturnMessageDto();
+		res.getErrors().add("21/05/2013 : L'agent est en récupération sur cette période.");
+
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		Mockito.when(absWsConsumer.checkRecuperation(idAgent, dateDebut, dateFin)).thenReturn(res);
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+
+		// When
+		ReturnMessageDto result = service.checkRecuperation(new ReturnMessageDto(), idAgent, pointages);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 
 	@Test
@@ -180,8 +216,11 @@ public class PointageDataConsistencyRulesTest {
 		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		Pointage p = new Pointage();
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 		p.setDateDebut(dateDebut);
 		p.setDateFin(dateFin);
+		p.setType(type);
 		pointages.add(p);
 
 		ReturnMessageDto res = new ReturnMessageDto();
@@ -200,6 +239,39 @@ public class PointageDataConsistencyRulesTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertEquals("21/05/2013 : L'agent est en repos compensateur sur cette période.", result.getErrors().get(0));
+	}
+
+	@Test
+	public void checkReposComp_withPrime() {
+
+		// Given
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		Pointage p = new Pointage();
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		p.setDateDebut(dateDebut);
+		p.setDateFin(dateFin);
+		p.setType(type);
+		pointages.add(p);
+
+		ReturnMessageDto res = new ReturnMessageDto();
+		res.getErrors().add("21/05/2013 : L'agent est en repos compensateur sur cette période.");
+
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		Mockito.when(absWsConsumer.checkReposComp(idAgent, dateDebut, dateFin)).thenReturn(res);
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+
+		// When
+		ReturnMessageDto result = service.checkReposComp(new ReturnMessageDto(), idAgent, pointages);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 
 	@Test
@@ -234,9 +306,12 @@ public class PointageDataConsistencyRulesTest {
 		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
 		List<Pointage> pointages = new ArrayList<Pointage>();
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
 		Pointage p = new Pointage();
 		p.setDateDebut(dateDebut);
 		p.setDateFin(dateFin);
+		p.setType(type);
 		pointages.add(p);
 
 		ReturnMessageDto res = new ReturnMessageDto();
@@ -255,6 +330,39 @@ public class PointageDataConsistencyRulesTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertEquals("21/05/2013 : L'agent est en absence syndicale sur cette période.", result.getErrors().get(0));
+	}
+
+	@Test
+	public void checkAbsencesSyndicales_withPrime() {
+
+		// Given
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		Pointage p = new Pointage();
+		p.setDateDebut(dateDebut);
+		p.setDateFin(dateFin);
+		p.setType(type);
+		pointages.add(p);
+
+		ReturnMessageDto res = new ReturnMessageDto();
+		res.getErrors().add("21/05/2013 : L'agent est en absence syndicale sur cette période.");
+
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		Mockito.when(absWsConsumer.checkAbsencesSyndicales(idAgent, dateDebut, dateFin)).thenReturn(res);
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+
+		// When
+		ReturnMessageDto result = service.checkAbsencesSyndicales(new ReturnMessageDto(), idAgent, pointages);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 
 	@Test
@@ -290,9 +398,12 @@ public class PointageDataConsistencyRulesTest {
 		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
 		List<Pointage> pointages = new ArrayList<Pointage>();
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 		Pointage p = new Pointage();
 		p.setDateDebut(dateDebut);
 		p.setDateFin(dateFin);
+		p.setType(type);
 		pointages.add(p);
 
 		ReturnMessageDto res = new ReturnMessageDto();
@@ -311,6 +422,39 @@ public class PointageDataConsistencyRulesTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertEquals("21/05/2013 : L'agent est en congé exceptionnel sur cette période.", result.getErrors().get(0));
+	}
+
+	@Test
+	public void checkCongesExceptionnels_withPrime() {
+
+		// Given
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		Pointage p = new Pointage();
+		p.setDateDebut(dateDebut);
+		p.setDateFin(dateFin);
+		p.setType(type);
+		pointages.add(p);
+
+		ReturnMessageDto res = new ReturnMessageDto();
+		res.getErrors().add("21/05/2013 : L'agent est en congé exceptionnel sur cette période.");
+
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		Mockito.when(absWsConsumer.checkCongesExceptionnels(idAgent, dateDebut, dateFin)).thenReturn(res);
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+
+		// When
+		ReturnMessageDto result = service.checkCongesExceptionnels(new ReturnMessageDto(), idAgent, pointages);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 
 	@Test
@@ -344,9 +488,12 @@ public class PointageDataConsistencyRulesTest {
 		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
 		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
 		List<Pointage> pointages = new ArrayList<Pointage>();
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 		Pointage p = new Pointage();
 		p.setDateDebut(dateDebut);
 		p.setDateFin(dateFin);
+		p.setType(type);
 		pointages.add(p);
 
 		ReturnMessageDto res = new ReturnMessageDto();
@@ -365,6 +512,39 @@ public class PointageDataConsistencyRulesTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertEquals("21/05/2013 : L'agent est en congé annuel sur cette période.", result.getErrors().get(0));
+	}
+
+	@Test
+	public void checkCongeAnnuel_withPrime() {
+
+		// Given
+		Integer idAgent = 9005138;
+		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		Pointage p = new Pointage();
+		p.setDateDebut(dateDebut);
+		p.setDateFin(dateFin);
+		p.setType(type);
+		pointages.add(p);
+
+		ReturnMessageDto res = new ReturnMessageDto();
+		res.getErrors().add("21/05/2013 : L'agent est en congé annuel sur cette période.");
+
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		Mockito.when(absWsConsumer.checkCongeAnnuel(idAgent, dateDebut, dateFin)).thenReturn(res);
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+
+		// When
+		ReturnMessageDto result = service.checkCongeAnnuel(new ReturnMessageDto(), idAgent, pointages);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
 	}
 
 	@Test
