@@ -202,6 +202,20 @@ public class AccessRightsService implements IAccessRightsService {
 				DelegatorAndOperatorsDto deleg = getDelegator(da.getIdAgent());
 				agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
 				agentDtos.add(agentDto);
+			} else {
+				// c'est que l'agent n'a pas d'affectation en cours alors on
+				// cherche l'agent sans son service
+				AgentGeneriqueDto agGenerique = sirhWSConsumer.getAgent(da.getIdAgent());
+				if (null == agGenerique) {
+					logger.debug("Aucun agent actif trouvé dans SIRH {}" + da.getIdAgent());
+				} else {
+					AgentWithServiceDto ag = new AgentWithServiceDto(agGenerique);
+					ApprobateurDto agentDto = new ApprobateurDto();
+					agentDto.setApprobateur(ag);
+					DelegatorAndOperatorsDto deleg = getDelegator(da.getIdAgent());
+					agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
+					agentDtos.add(agentDto);
+				}
 			}
 		}
 		Collections.sort(agentDtos, new ApprobateurDtoComparator());
