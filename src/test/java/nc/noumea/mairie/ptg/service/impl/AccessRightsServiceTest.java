@@ -16,6 +16,7 @@ import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.ApprobateurDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
@@ -130,7 +131,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		List<AgentWithServiceDto> dto = service.listAgentsApprobateurs();
+		List<ApprobateurDto> dto = service.listAgentsApprobateurs();
 
 		// Then
 		assertEquals(0, dto.size());
@@ -173,18 +174,23 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(listeDroits);
 
+		IAgentMatriculeConverterService matriculeConvertor = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matriculeConvertor.tryConvertIdAgentToNomatr(9005138)).thenReturn(5138);
+		Mockito.when(matriculeConvertor.tryConvertIdAgentToNomatr(9003041)).thenReturn(3041);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matriculeConvertor);
 
 		// When
-		List<AgentWithServiceDto> dto = service.listAgentsApprobateurs();
+		List<ApprobateurDto> dto = service.listAgentsApprobateurs();
 
 		// Then
 		assertEquals(2, dto.size());
-		assertEquals("CODE2", dto.get(0).getCodeService());
-		assertEquals("CODE", dto.get(1).getCodeService());
+		assertEquals("CODE2", dto.get(0).getApprobateur().getCodeService());
+		assertEquals("CODE", dto.get(1).getApprobateur().getCodeService());
 	}
 
 	@Test

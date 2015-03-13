@@ -9,6 +9,7 @@ import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.ApprobateurDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.ServiceDto;
@@ -16,7 +17,7 @@ import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
-import nc.noumea.mairie.sirh.comparator.AgentWithServiceDtoComparator;
+import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -68,7 +69,7 @@ public class AccessRightsService implements IAccessRightsService {
 		Droit droit = accessRightsRepository.getApprobateurFetchOperateurs(idAgent);
 
 		if (droit == null) {
-			logger.warn("L'agent {} n'est pas approbateur.", matriculeConvertor.tryConvertIdAgentToNomatr(idAgent));
+			logger.warn("L'agent {} n'est pas approbateur.", idAgent);
 			return result;
 		}
 
@@ -76,8 +77,7 @@ public class AccessRightsService implements IAccessRightsService {
 			AgentGeneriqueDto delegataire = sirhWSConsumer.getAgent(droit.getIdAgentDelegataire());
 
 			if (delegataire == null)
-				logger.warn("L'agent délégataire {} n'existe pas.",
-						matriculeConvertor.tryConvertIdAgentToNomatr(droit.getIdAgentDelegataire()));
+				logger.warn("L'agent délégataire {} n'existe pas.", droit.getIdAgentDelegataire());
 			else
 				result.setDelegataire(new AgentDto(delegataire));
 		}
@@ -85,8 +85,7 @@ public class AccessRightsService implements IAccessRightsService {
 		for (Droit operateur : droit.getOperateurs()) {
 			AgentGeneriqueDto ope = sirhWSConsumer.getAgent(operateur.getIdAgent());
 			if (ope == null)
-				logger.warn("L'agent opérateur {} n'existe pas.",
-						matriculeConvertor.tryConvertIdAgentToNomatr(operateur.getIdAgent()));
+				logger.warn("L'agent opérateur {} n'existe pas.", operateur.getIdAgent());
 			else
 				result.getSaisisseurs().add(new AgentDto(ope));
 		}
@@ -192,16 +191,43 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public List<AgentWithServiceDto> listAgentsApprobateurs() {
-		List<AgentWithServiceDto> agentDtos = new ArrayList<AgentWithServiceDto>();
+	public List<ApprobateurDto> listAgentsApprobateurs() {
+		List<ApprobateurDto> agentDtos = new ArrayList<ApprobateurDto>();
 		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
-			AgentWithServiceDto agentDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
+			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			if (agentDto != null)
+			if (agentServiceDto != null) {
+				ApprobateurDto agentDto = new ApprobateurDto();
+				agentDto.setApprobateur(agentServiceDto);
+				DelegatorAndOperatorsDto deleg = getDelegator(da.getIdAgent());
+				agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
 				agentDtos.add(agentDto);
+			}
 		}
-		Collections.sort(agentDtos, new AgentWithServiceDtoComparator());
+		Collections.sort(agentDtos, new ApprobateurDtoComparator());
 		return agentDtos;
+	}
+
+	private DelegatorAndOperatorsDto getDelegator(Integer idAgent) {
+
+		DelegatorAndOperatorsDto result = new DelegatorAndOperatorsDto();
+
+		Droit droit = accessRightsRepository.getApprobateur(idAgent);
+
+		if (droit == null) {
+			logger.warn("L'agent {} n'est pas approbateur.", idAgent);
+			return result;
+		}
+
+		if (droit.getIdAgentDelegataire() != null) {
+			AgentGeneriqueDto delegataire = sirhWSConsumer.getAgent(droit.getIdAgentDelegataire());
+
+			if (delegataire == null)
+				logger.warn("L'agent délégataire {} n'existe pas.", droit.getIdAgentDelegataire());
+			else
+				result.setDelegataire(new AgentDto(delegataire));
+		}
+		return result;
 	}
 
 	@Override

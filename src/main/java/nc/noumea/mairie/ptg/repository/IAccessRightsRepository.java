@@ -29,6 +29,8 @@ public interface IAccessRightsRepository {
 
 	Droit getApprobateurFetchOperateurs(Integer idAgentApprobateur);
 
+	Droit getApprobateur(Integer idAgentApprobateur);
+
 	void persisEntity(Object obj);
 
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent);

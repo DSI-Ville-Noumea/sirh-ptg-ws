@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.ApprobateurDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
@@ -107,7 +108,7 @@ public class AccessRightsController {
 
 		logger.debug("entered GET [droits/approbateurs] => listApprobateurs with no parameter --> for SIRH ");
 
-		List<AgentWithServiceDto> result = accessRightService.listAgentsApprobateurs();
+		List<ApprobateurDto> result = accessRightService.listAgentsApprobateurs();
 
 		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
 	}
