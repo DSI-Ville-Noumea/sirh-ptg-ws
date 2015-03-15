@@ -34,6 +34,20 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
+	public Droit getDroitApprobateurByAgent(Integer idAgent) {
+		TypedQuery<Droit> q = ptgEntityManager.createQuery(
+				"from Droit d where d.approbateur = true and d.idAgent = :idAgent ", Droit.class);
+		q.setParameter("idAgent", idAgent);
+
+		List<Droit> list = q.getResultList();
+		if (list == null || list.size() == 0) {
+			return null;
+		} else {
+			return list.get(0);
+		}
+	}
+
+	@Override
 	public void removeDroitsAgent(DroitsAgent droitsAgent) {
 		ptgEntityManager.remove(droitsAgent);
 	}

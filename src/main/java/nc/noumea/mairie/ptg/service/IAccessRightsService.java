@@ -21,7 +21,9 @@ public interface IAccessRightsService {
 
 	List<ApprobateurDto> listAgentsApprobateurs();
 
-	List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> dto);
+	ReturnMessageDto setApprobateur(AgentWithServiceDto dto);
+
+	ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto);
 
 	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent);
 

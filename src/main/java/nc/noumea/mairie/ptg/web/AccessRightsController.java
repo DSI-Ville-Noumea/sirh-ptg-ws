@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.web;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
@@ -11,6 +12,7 @@ import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,16 +121,34 @@ public class AccessRightsController {
 	public ResponseEntity<String> setApprobateur(@RequestBody String agentsDtoJson) {
 		logger.debug("entered POST [droits/approbateurs] => setApprobateur --> for SIRH ");
 
-		List<AgentWithServiceDto> agDtos = new JSONDeserializer<List<AgentWithServiceDto>>().use(null, ArrayList.class)
-				.use("values", AgentWithServiceDto.class).deserialize(agentsDtoJson);
-		List<AgentWithServiceDto> agentErreur = new ArrayList<AgentWithServiceDto>();
+		AgentWithServiceDto agDtos = new JSONDeserializer<AgentWithServiceDto>().use(Date.class,
+				new MSDateTransformer()).deserializeInto(agentsDtoJson, new AgentWithServiceDto());
+		ReturnMessageDto res = new ReturnMessageDto();
 		try {
-			agentErreur = accessRightService.setApprobateurs(agDtos);
+			res = accessRightService.setApprobateur(agDtos);
 		} catch (Exception e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 		}
 
-		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(agentErreur), HttpStatus.OK);
+		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(res), HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "deleteApprobateurs", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	@Transactional(value = "ptgTransactionManager")
+	public ResponseEntity<String> deleteApprobateur(@RequestBody String agentsDtoJson) {
+		logger.debug("entered POST [droits/deleteApprobateurs] => deleteApprobateur --> for SIRH ");
+
+		AgentWithServiceDto agDtos = new JSONDeserializer<AgentWithServiceDto>().use(Date.class,
+				new MSDateTransformer()).deserializeInto(agentsDtoJson, new AgentWithServiceDto());
+		ReturnMessageDto res = new ReturnMessageDto();
+		try {
+			res = accessRightService.deleteApprobateur(agDtos);
+		} catch (Exception e) {
+			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+		}
+
+		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(res), HttpStatus.OK);
 	}
 
 	@ResponseBody

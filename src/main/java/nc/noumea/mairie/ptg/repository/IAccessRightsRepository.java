@@ -11,6 +11,8 @@ public interface IAccessRightsRepository {
 
 	List<Droit> getAgentAccessRights(int idAgent);
 
+	Droit getDroitApprobateurByAgent(Integer idAgent);
+
 	void removeDroitsAgent(DroitsAgent droitsAgent);
 
 	boolean isUserApprobator(Integer idAgent);

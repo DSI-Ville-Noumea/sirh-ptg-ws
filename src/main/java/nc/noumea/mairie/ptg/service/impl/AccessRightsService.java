@@ -245,70 +245,44 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public List<AgentWithServiceDto> setApprobateurs(List<AgentWithServiceDto> listeDto) {
-		List<Droit> listeAgentAppro = accessRightsRepository.getAgentsApprobateurs();
+	public ReturnMessageDto setApprobateur(AgentWithServiceDto dto) {
+		ReturnMessageDto res = new ReturnMessageDto();
 
-		List<Droit> droitsToDelete = new ArrayList<Droit>(listeAgentAppro);
+		if (accessRightsRepository.isUserOperator(dto.getIdAgent())) {
+			res.getErrors().add("L'agent " + dto.getIdAgent() + " est opérateur.");
+			return res;
+		}
 
-		List<AgentWithServiceDto> listeAgentErreur = new ArrayList<AgentWithServiceDto>();
-
-		for (AgentWithServiceDto agentDto : listeDto) {
-			if (accessRightsRepository.isUserOperator(agentDto.getIdAgent())) {
-				listeAgentErreur.add(agentDto);
-				continue;
-			}
-
-			Droit d = null;
-
-			for (Droit existingDroit : listeAgentAppro) {
-				if (existingDroit.getIdAgent().equals(agentDto.getIdAgent())) {
-					d = existingDroit;
-					break;
-				}
-			}
-
-			if (d != null) {
-				droitsToDelete.remove(d);
-				continue;
-			}
-
+		Droit d = accessRightsRepository.getDroitApprobateurByAgent(dto.getIdAgent());
+		if (d == null) {
 			d = new Droit();
 			d.setApprobateur(true);
 			d.setDateModification(helperService.getCurrentDate());
-			d.setIdAgent(agentDto.getIdAgent());
+			d.setIdAgent(dto.getIdAgent());
 			accessRightsRepository.persisEntity(d);
 		}
+		return res;
 
-		for (Droit droitToDelete : droitsToDelete) {
+	}
+
+	@Override
+	public ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto) {
+		ReturnMessageDto res = new ReturnMessageDto();
+		Droit d = accessRightsRepository.getDroitApprobateurByAgent(dto.getIdAgent());
+		if (d != null) {
 			// First, we remove all the agents this approbateur was approving
 			// this will also delete all the agents its operateurs were filling
 			// in for
-			for (DroitsAgent agentSaisiToDelete : droitToDelete.getAgents()) {
+			for (DroitsAgent agentSaisiToDelete : d.getAgents()) {
 				agentSaisiToDelete.getDroits().clear();
 				accessRightsRepository.removeEntity(agentSaisiToDelete);
 			}
 			// Then we delete the approbateur
-			accessRightsRepository.removeEntity(droitToDelete);
+			accessRightsRepository.removeEntity(d);
+		} else {
+			res.getErrors().add("Aucun droit trouvé pour l'agent " + dto.getIdAgent());
 		}
-		return listeAgentErreur;
-
-		// idem que
-		// for (Droit d : listeAgentAppro) {
-		//
-		// AgentWithServiceDto existingItem = null;
-		//
-		// for (AgentWithServiceDto agentDto : listeDto) {
-		// if (agentDto.getIdAgent().equals(d.getIdAgent())) {
-		// existingItem = agentDto;
-		// break;
-		// }
-		// }
-		//
-		// if (existingItem == null)
-		// d.remove();
-		// }
-		//
-
+		return res;
 	}
 
 	/**
