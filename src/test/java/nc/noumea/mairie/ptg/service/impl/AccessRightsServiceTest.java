@@ -289,7 +289,7 @@ public class AccessRightsServiceTest {
 	}
 
 	@Test
-	public void setAgentsApprobateurs_SuppressionDtoEmpty() {
+	public void deleteApprobateurs_SuppressionDtoEmpty() {
 		// Given
 		Droit d = Mockito.spy(new Droit());
 		d.setIdAgent(9005138);
