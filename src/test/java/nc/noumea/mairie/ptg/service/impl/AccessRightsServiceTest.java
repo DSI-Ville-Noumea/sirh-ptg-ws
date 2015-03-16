@@ -131,7 +131,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		List<ApprobateurDto> dto = service.listAgentsApprobateurs();
+		List<ApprobateurDto> dto = service.listAgentsApprobateurs(null, null);
 
 		// Then
 		assertEquals(0, dto.size());
@@ -185,7 +185,7 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "matriculeConvertor", matriculeConvertor);
 
 		// When
-		List<ApprobateurDto> dto = service.listAgentsApprobateurs();
+		List<ApprobateurDto> dto = service.listAgentsApprobateurs(null, null);
 
 		// Then
 		assertEquals(2, dto.size());

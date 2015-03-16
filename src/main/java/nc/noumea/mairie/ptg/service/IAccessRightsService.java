@@ -19,7 +19,7 @@ public interface IAccessRightsService {
 
 	ReturnMessageDto setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto);
 
-	List<ApprobateurDto> listAgentsApprobateurs();
+	List<ApprobateurDto> listAgentsApprobateurs(Integer idAgent,String codeService);
 
 	ReturnMessageDto setApprobateur(AgentWithServiceDto dto);
 

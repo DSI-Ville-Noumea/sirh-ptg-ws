@@ -193,30 +193,49 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public List<ApprobateurDto> listAgentsApprobateurs() {
+	public List<ApprobateurDto> listAgentsApprobateurs(Integer idAgent, String codeService) {
 		List<ApprobateurDto> agentDtos = new ArrayList<ApprobateurDto>();
-		for (Droit da : accessRightsRepository.getAgentsApprobateurs()) {
+		List<Droit> listeDroit = new ArrayList<Droit>();
+		if (idAgent != null) {
+			Droit d = accessRightsRepository.getDroitApprobateurByAgent(idAgent);
+			if (d != null) {
+				listeDroit.add(d);
+			}
+		} else {
+			listeDroit = accessRightsRepository.getAgentsApprobateurs();
+		}
+		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			if (agentServiceDto != null) {
-				ApprobateurDto agentDto = new ApprobateurDto();
-				agentDto.setApprobateur(agentServiceDto);
-				DelegatorAndOperatorsDto deleg = getDelegator(da.getIdAgent());
-				agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
-				agentDtos.add(agentDto);
-			} else {
-				// c'est que l'agent n'a pas d'affectation en cours alors on
-				// cherche l'agent sans son service
-				AgentGeneriqueDto agGenerique = sirhWSConsumer.getAgent(da.getIdAgent());
-				if (null == agGenerique) {
-					logger.debug("Aucun agent actif trouvé dans SIRH {}" + da.getIdAgent());
-				} else {
-					AgentWithServiceDto ag = new AgentWithServiceDto(agGenerique);
+			if (codeService != null) {
+				if (agentServiceDto != null && agentServiceDto.getCodeService().equals(codeService)) {
 					ApprobateurDto agentDto = new ApprobateurDto();
-					agentDto.setApprobateur(ag);
+					agentDto.setApprobateur(agentServiceDto);
 					DelegatorAndOperatorsDto deleg = getDelegator(da.getIdAgent());
 					agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
 					agentDtos.add(agentDto);
+				}
+			} else {
+				if (agentServiceDto != null) {
+					ApprobateurDto agentDto = new ApprobateurDto();
+					agentDto.setApprobateur(agentServiceDto);
+					DelegatorAndOperatorsDto deleg = getDelegator(da.getIdAgent());
+					agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
+					agentDtos.add(agentDto);
+				} else {
+					// c'est que l'agent n'a pas d'affectation en cours alors on
+					// cherche l'agent sans son service
+					AgentGeneriqueDto agGenerique = sirhWSConsumer.getAgent(da.getIdAgent());
+					if (null == agGenerique) {
+						logger.debug("Aucun agent actif trouvé dans SIRH {}" + da.getIdAgent());
+					} else {
+						AgentWithServiceDto ag = new AgentWithServiceDto(agGenerique);
+						ApprobateurDto agentDto = new ApprobateurDto();
+						agentDto.setApprobateur(ag);
+						DelegatorAndOperatorsDto deleg = getDelegator(da.getIdAgent());
+						agentDto.setDelegataire(deleg != null ? deleg.getDelegataire() : null);
+						agentDtos.add(agentDto);
+					}
 				}
 			}
 		}
