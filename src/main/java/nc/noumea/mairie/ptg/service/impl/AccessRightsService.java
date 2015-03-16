@@ -210,13 +210,14 @@ public class AccessRightsService implements IAccessRightsService {
 		} else {
 			listeDroit = accessRightsRepository.getAgentsApprobateurs();
 		}
-		List<ServiceDto> listeSouService = new ArrayList<>();
+		List<String> listeSouService = new ArrayList<>();
 		if (codeService != null) {
 			// on charge la liste des sous-services du service
-			listeSouService = sirhWSConsumer.getSubServiceOfService(codeService);
-			ServiceDto servCherche = new ServiceDto();
-			servCherche.setService(codeService);
-			listeSouService.add(servCherche);
+			List<ServiceDto> liste = sirhWSConsumer.getSubServiceOfService(codeService);
+			for(ServiceDto s : liste){
+				listeSouService.add(s.getService());
+			}
+			listeSouService.add(codeService);
 		}
 		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
