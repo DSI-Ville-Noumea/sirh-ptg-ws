@@ -268,7 +268,7 @@ public class AccessRightsServiceTest {
 		agentDto.setIdAgent(9005138);
 
 		Date currentDate = new Date();
-		
+
 		Droit d = new Droit();
 		d.setIdAgent(9005138);
 		d.setApprobateur(false);
@@ -276,7 +276,6 @@ public class AccessRightsServiceTest {
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(new ArrayList<Droit>());
-		Mockito.when(arRepo.isUserOperator(9005138)).thenReturn(true);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
@@ -290,8 +289,7 @@ public class AccessRightsServiceTest {
 
 		// Then
 		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
-		assertEquals(1, res.getErrors().size());
-		assertEquals("L'agent 9005138 est opérateur.", res.getErrors().get(0));
+		assertEquals(0, res.getErrors().size());
 	}
 
 	@Test
