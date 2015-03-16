@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
@@ -28,4 +29,6 @@ public interface ISirhWSConsumer {
 	boolean isJourFerie(DateTime deb);
 
 	BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date date);
+
+	List<ServiceDto> getSubServiceOfService(String codeService);
 }

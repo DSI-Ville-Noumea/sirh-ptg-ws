@@ -104,17 +104,20 @@ public class AccessRightsService implements IAccessRightsService {
 
 		if (dto.getDelegataire() != null) {
 			// Check that the new delegataire is not an operator
-//			#14325
-//			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
-//				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
-//				result.getErrors().add(
-//						String.format(
-//								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-//								ag.getDisplayNom(), ag.getDisplayPrenom(),
-//								matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
-//			} else {
-				droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
-//			}
+			// #14325
+			// if
+			// (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent()))
+			// {
+			// AgentGeneriqueDto ag =
+			// sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
+			// result.getErrors().add(
+			// String.format(
+			// "L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(),
+			// matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
+			// } else {
+			droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
+			// }
 		} else {
 			droitApprobateur.setIdAgentDelegataire(null);
 		}
@@ -136,16 +139,19 @@ public class AccessRightsService implements IAccessRightsService {
 
 			// Check that the new operateur is not already delegataire or
 			// approbateur
-//			#14325
-//			if (accessRightsRepository.isUserApprobatorOrDelegataire(operateurDto.getIdAgent())) {
-//				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(operateurDto.getIdAgent());
-//				result.getErrors()
-//						.add(String
-//								.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
-//										ag.getDisplayNom(), ag.getDisplayPrenom(),
-//										matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
-//				continue;
-//			}
+			// #14325
+			// if
+			// (accessRightsRepository.isUserApprobatorOrDelegataire(operateurDto.getIdAgent()))
+			// {
+			// AgentGeneriqueDto ag =
+			// sirhWSConsumer.getAgent(operateurDto.getIdAgent());
+			// result.getErrors()
+			// .add(String
+			// .format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(),
+			// matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
+			// continue;
+			// }
 
 			existingOperateur = new Droit();
 			existingOperateur.setDroitApprobateur(droitApprobateur);
@@ -204,11 +210,19 @@ public class AccessRightsService implements IAccessRightsService {
 		} else {
 			listeDroit = accessRightsRepository.getAgentsApprobateurs();
 		}
+		List<ServiceDto> listeSouService = new ArrayList<>();
+		if (codeService != null) {
+			// on charge la liste des sous-services du service
+			listeSouService = sirhWSConsumer.getSubServiceOfService(codeService);
+			ServiceDto servCherche = new ServiceDto();
+			servCherche.setService(codeService);
+			listeSouService.add(servCherche);
+		}
 		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			if (codeService != null) {
-				if (agentServiceDto != null && agentServiceDto.getCodeService().equals(codeService)) {
+			if (codeService != null ) {
+				if (agentServiceDto != null && listeSouService.contains(agentServiceDto.getCodeService())) {
 					ApprobateurDto agentDto = new ApprobateurDto();
 					agentDto.setApprobateur(agentServiceDto);
 					DelegatorAndOperatorsDto deleg = getDelegator(da.getIdAgent());
@@ -269,10 +283,11 @@ public class AccessRightsService implements IAccessRightsService {
 	public ReturnMessageDto setApprobateur(AgentWithServiceDto dto) {
 		ReturnMessageDto res = new ReturnMessageDto();
 
-//		if (accessRightsRepository.isUserOperator(dto.getIdAgent())) {
-//			res.getErrors().add("L'agent " + dto.getIdAgent() + " est opérateur.");
-//			return res;
-//		}
+		// if (accessRightsRepository.isUserOperator(dto.getIdAgent())) {
+		// res.getErrors().add("L'agent " + dto.getIdAgent() +
+		// " est opérateur.");
+		// return res;
+		// }
 
 		Droit d = accessRightsRepository.getDroitApprobateurByAgent(dto.getIdAgent());
 		if (d == null) {
@@ -464,17 +479,20 @@ public class AccessRightsService implements IAccessRightsService {
 
 		if (dto.getDelegataire() != null) {
 			// Check that the new delegataire is not an operator
-//			#14325
-//			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
-//				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
-//				result.getErrors().add(
-//						String.format(
-//								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-//								ag.getDisplayNom(), ag.getDisplayPrenom(),
-//								matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
-//			} else {
-				droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
-//			}
+			// #14325
+			// if
+			// (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent()))
+			// {
+			// AgentGeneriqueDto ag =
+			// sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
+			// result.getErrors().add(
+			// String.format(
+			// "L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+			// ag.getDisplayNom(), ag.getDisplayPrenom(),
+			// matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
+			// } else {
+			droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
+			// }
 		} else {
 			droitApprobateur.setIdAgentDelegataire(null);
 		}

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
@@ -34,6 +35,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhListPrimePointageUrl = "pointages/listPrimePointages";
 	private static final String sirhJourFerieUrl = "utils/isJourFerie";
 	private static final String sirhBaseHorairePointageUrl = "pointages/baseHoraire";
+	private static final String sirhSubServiceOfServiceUrl = "services/sousServices";
 
 	@Override
 	public SirhWsServiceDto getAgentDirection(Integer idAgent, Date date) {
@@ -157,5 +159,16 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(BaseHorairePointageDto.class, res, url);
+	}
+
+	@Override
+	public List<ServiceDto> getSubServiceOfService(String codeService) {
+		String url = String.format(sirhWsBaseUrl + sirhSubServiceOfServiceUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("codeService", codeService);
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+		return readResponseAsList(ServiceDto.class, res, url);
 	}
 }
