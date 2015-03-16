@@ -267,6 +267,8 @@ public class AccessRightsServiceTest {
 		AgentWithServiceDto agentDto = new AgentWithServiceDto();
 		agentDto.setIdAgent(9005138);
 
+		Date currentDate = new Date();
+		
 		Droit d = new Droit();
 		d.setIdAgent(9005138);
 		d.setApprobateur(false);
@@ -276,14 +278,18 @@ public class AccessRightsServiceTest {
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(new ArrayList<Droit>());
 		Mockito.when(arRepo.isUserOperator(9005138)).thenReturn(true);
 
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
 		ReturnMessageDto res = service.setApprobateur(agentDto);
 
 		// Then
-		Mockito.verify(arRepo, Mockito.never()).persisEntity(Mockito.isA(Droit.class));
+		Mockito.verify(arRepo, Mockito.times(1)).persisEntity(Mockito.isA(Droit.class));
 		assertEquals(1, res.getErrors().size());
 		assertEquals("L'agent 9005138 est opérateur.", res.getErrors().get(0));
 	}
@@ -689,19 +695,17 @@ public class AccessRightsServiceTest {
 		ReturnMessageDto result = service.setDelegatorAndOperators(idAgent, dto);
 
 		// Then
-		assertEquals(1, result.getErrors().size());
-		assertEquals("L'agent NOM PRENOM [9999] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-				result.getErrors().get(0));
+		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertNull(droitAppro.getIdAgentDelegataire());
+		assertEquals(9009999, droitAppro.getIdAgentDelegataire().intValue());
 	}
 
 	@Test
-	public void setDelegatorAndOperators_NewOperatorIsAlreadyDelegataire_ReturnErrorMessage() {
+	public void setDelegatorAndOperators_NewOperatorIsAlreadyDelegataire_ReturnNoErrorMessage() {
 
 		// Given
 		Integer idAgent = 9008765;
-
+		Date currentDate = new Date();
 		Droit droitAppro = new Droit();
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
@@ -718,10 +722,14 @@ public class AccessRightsServiceTest {
 		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(matrService.tryConvertIdAgentToNomatr(9009999)).thenReturn(9999);
 
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sRepo);
 		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
+		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
 		dto.getSaisisseurs().add(new AgentDto());
@@ -731,10 +739,7 @@ public class AccessRightsServiceTest {
 		ReturnMessageDto result = service.setDelegatorAndOperators(idAgent, dto);
 
 		// Then
-		assertEquals(1, result.getErrors().size());
-		assertEquals(
-				"L'agent NOM PRENOM [9999] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
-				result.getErrors().get(0));
+		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertNull(droitAppro.getIdAgentDelegataire());
 	}
@@ -1122,7 +1127,7 @@ public class AccessRightsServiceTest {
 	}
 
 	@Test
-	public void setDelegator_NewDelegataireIsAlreadyOperateur_ReturnErrorMessage() {
+	public void setDelegator_NewDelegataireIsAlreadyOperateur_ReturnNoErrorMessage() {
 
 		// Given
 		Integer idAgent = 9008765;
@@ -1158,11 +1163,9 @@ public class AccessRightsServiceTest {
 		result = service.setDelegator(idAgent, dto, result);
 
 		// Then
-		assertEquals(1, result.getErrors().size());
-		assertEquals("L'agent NOM PRENOM [9999] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-				result.getErrors().get(0));
+		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertNull(droitAppro.getIdAgentDelegataire());
+		assertEquals(9009999, droitAppro.getIdAgentDelegataire().intValue());
 	}
 
 	@Test

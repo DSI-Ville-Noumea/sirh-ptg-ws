@@ -104,16 +104,17 @@ public class AccessRightsService implements IAccessRightsService {
 
 		if (dto.getDelegataire() != null) {
 			// Check that the new delegataire is not an operator
-			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
-				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
-				result.getErrors().add(
-						String.format(
-								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(),
-								matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
-			} else {
+//			#14325
+//			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
+//				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
+//				result.getErrors().add(
+//						String.format(
+//								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+//								ag.getDisplayNom(), ag.getDisplayPrenom(),
+//								matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
+//			} else {
 				droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
-			}
+//			}
 		} else {
 			droitApprobateur.setIdAgentDelegataire(null);
 		}
@@ -135,15 +136,16 @@ public class AccessRightsService implements IAccessRightsService {
 
 			// Check that the new operateur is not already delegataire or
 			// approbateur
-			if (accessRightsRepository.isUserApprobatorOrDelegataire(operateurDto.getIdAgent())) {
-				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(operateurDto.getIdAgent());
-				result.getErrors()
-						.add(String
-								.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
-										ag.getDisplayNom(), ag.getDisplayPrenom(),
-										matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
-				continue;
-			}
+//			#14325
+//			if (accessRightsRepository.isUserApprobatorOrDelegataire(operateurDto.getIdAgent())) {
+//				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(operateurDto.getIdAgent());
+//				result.getErrors()
+//						.add(String
+//								.format("L'agent %s %s [%d] ne peut pas être opérateur car il ou elle est déjà approbateur ou délégataire.",
+//										ag.getDisplayNom(), ag.getDisplayPrenom(),
+//										matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
+//				continue;
+//			}
 
 			existingOperateur = new Droit();
 			existingOperateur.setDroitApprobateur(droitApprobateur);
@@ -248,10 +250,10 @@ public class AccessRightsService implements IAccessRightsService {
 	public ReturnMessageDto setApprobateur(AgentWithServiceDto dto) {
 		ReturnMessageDto res = new ReturnMessageDto();
 
-		if (accessRightsRepository.isUserOperator(dto.getIdAgent())) {
-			res.getErrors().add("L'agent " + dto.getIdAgent() + " est opérateur.");
-			return res;
-		}
+//		if (accessRightsRepository.isUserOperator(dto.getIdAgent())) {
+//			res.getErrors().add("L'agent " + dto.getIdAgent() + " est opérateur.");
+//			return res;
+//		}
 
 		Droit d = accessRightsRepository.getDroitApprobateurByAgent(dto.getIdAgent());
 		if (d == null) {
@@ -443,16 +445,17 @@ public class AccessRightsService implements IAccessRightsService {
 
 		if (dto.getDelegataire() != null) {
 			// Check that the new delegataire is not an operator
-			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
-				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
-				result.getErrors().add(
-						String.format(
-								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
-								ag.getDisplayNom(), ag.getDisplayPrenom(),
-								matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
-			} else {
+//			#14325
+//			if (accessRightsRepository.isUserOperator(dto.getDelegataire().getIdAgent())) {
+//				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(dto.getDelegataire().getIdAgent());
+//				result.getErrors().add(
+//						String.format(
+//								"L'agent %s %s [%d] ne peut pas être délégataire car il ou elle est déjà opérateur.",
+//								ag.getDisplayNom(), ag.getDisplayPrenom(),
+//								matriculeConvertor.tryConvertIdAgentToNomatr(ag.getIdAgent())));
+//			} else {
 				droitApprobateur.setIdAgentDelegataire(dto.getDelegataire().getIdAgent());
-			}
+//			}
 		} else {
 			droitApprobateur.setIdAgentDelegataire(null);
 		}
