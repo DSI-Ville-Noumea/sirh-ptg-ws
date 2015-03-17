@@ -296,7 +296,7 @@ public class ReposCompServiceTest {
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
 		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()),
-				Mockito.eq(hs.getDateLundi()), Mockito.eq(0));
+				Mockito.eq(hs.getDateLundi()), Mockito.eq(9));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -371,7 +371,7 @@ public class ReposCompServiceTest {
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
 		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()),
-				Mockito.eq(hs.getDateLundi()), Mockito.eq(12));
+				Mockito.eq(hs.getDateLundi()), Mockito.eq(18));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -446,7 +446,7 @@ public class ReposCompServiceTest {
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
 		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()),
-				Mockito.eq(hs.getDateLundi()), Mockito.eq(120));
+				Mockito.eq(hs.getDateLundi()), Mockito.eq(135));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -521,7 +521,7 @@ public class ReposCompServiceTest {
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
 		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()),
-				Mockito.eq(hs.getDateLundi()), Mockito.eq(240));
+				Mockito.eq(hs.getDateLundi()), Mockito.eq(247));
 	}
 
 	@Test

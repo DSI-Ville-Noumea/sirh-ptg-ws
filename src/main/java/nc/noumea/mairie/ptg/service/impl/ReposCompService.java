@@ -110,18 +110,19 @@ public class ReposCompService implements IReposCompService {
 			logger.info("Hsups: {} minutes. Total HSups count for year is {} minutes: {} hours.", histo.getLeft()
 					.getMSup(), totalMinutesOfYear, totalMinutesOfYear / 60);
 
-			int nbMinutesBeforeThreshold = (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD) > 0 ? (histo.getLeft()
+			// #14420 prendre en compte les minutes dans l ajout de RC et ne pas arrondir a l heure
+			double nbMinutesBeforeThreshold = (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD) > 0 ? (histo.getLeft()
 					.getMSup() - (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD)) : histo.getLeft().getMSup();
-			int nbMinutesAfterThreshold = totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD > 0 ? histo.getLeft()
+			double nbMinutesAfterThreshold = totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD > 0 ? histo.getLeft()
 					.getMSup() - nbMinutesBeforeThreshold : 0;
 			logger.info("Agent has done {} minutes over than 130H per year.", nbMinutesAfterThreshold);
 
-			int nbMinutesBeforeThresholdToCount = (weekBase + nbMinutesBeforeThreshold) - MAX_MIN_PER_WEEK > 0 ? (weekBase + nbMinutesBeforeThreshold)
+			double nbMinutesBeforeThresholdToCount = (weekBase + nbMinutesBeforeThreshold) - MAX_MIN_PER_WEEK > 0 ? (weekBase + nbMinutesBeforeThreshold)
 					- MAX_MIN_PER_WEEK
 					: 0;
 			logger.info("Agent has done {} minutes more than 42H this week.", nbMinutesBeforeThresholdToCount);
 
-			int nbRecups = (nbMinutesBeforeThresholdToCount / 60) * 12 + (nbMinutesAfterThreshold / 60) * 30;
+			int nbRecups = new Double((nbMinutesBeforeThresholdToCount / 60) * 12 + (nbMinutesAfterThreshold / 60) * 30).intValue();
 
 			logger.info("Agent is accountable for {} minutes.", nbRecups);
 
