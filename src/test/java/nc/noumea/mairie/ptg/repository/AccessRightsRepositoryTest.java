@@ -378,23 +378,14 @@ public class AccessRightsRepositoryTest {
 	@Transactional("ptgTransactionManager")
 	public void getListOfAgentsToInputOrApprove_oneResultWith2SameAgent(){
 
+		Date dateModif = new Date();
+		
 		Droit droit = new Droit();
 			droit.setApprobateur(true);
 			droit.setDateModification(new Date());
 			droit.setIdAgent(9008777);
 			droit.setOperateur(false);
 		ptgEntityManager.persist(droit);
-		
-		Set<Droit> droits = new HashSet<Droit>();
-		droits.add(droit);
-		
-		DroitsAgent agent = new DroitsAgent();
-			agent.setIdAgent(9008777);
-			agent.setCodeService("DEAB");
-			agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
-			agent.setDateModification(new Date());
-			agent.setDroits(droits);
-		ptgEntityManager.persist(agent);
 		
 		Droit droit2 = new Droit();
 			droit2.setApprobateur(true);
@@ -403,16 +394,17 @@ public class AccessRightsRepositoryTest {
 			droit2.setOperateur(false);
 		ptgEntityManager.persist(droit2);
 		
-		Set<Droit> droits2 = new HashSet<Droit>();
-		droits2.add(droit2);
+		Set<Droit> droits = new HashSet<Droit>();
+		droits.add(droit);
+		droits.add(droit2);
 		
-		DroitsAgent agent2 = new DroitsAgent();
-			agent2.setIdAgent(9008777);
-			agent2.setCodeService("DEAB");
-			agent2.setLibelleService("DASP Pôle Administratif et Budgétaire");
-			agent2.setDateModification(new Date());
-			agent2.setDroits(droits2);
-		ptgEntityManager.persist(agent2);
+		DroitsAgent agent = new DroitsAgent();
+			agent.setIdAgent(9008777);
+			agent.setCodeService("DEAB");
+			agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+			agent.setDateModification(dateModif);
+			agent.setDroits(droits);
+		ptgEntityManager.persist(agent);
 		
 		List<DroitsAgent> result = repository.getListOfAgentsToInputOrApprove(9008777);
 		

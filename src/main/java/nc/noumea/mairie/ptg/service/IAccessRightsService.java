@@ -49,4 +49,6 @@ public interface IAccessRightsService {
 
 	ReturnMessageDto setDelegator(Integer idAgentAppro, DelegatorAndOperatorsDto json, ReturnMessageDto result);
 
+	List<AgentDto> getAgentsToInput(Integer idApprobateur, Integer idAgent);
+
 }

@@ -46,4 +46,7 @@ public interface IAccessRightsRepository {
 	 * @return
 	 */
 	Integer getAgentsApprobateur(Integer idAgent);
+
+	List<DroitsAgent> getListOfAgentsToInput(Integer idApprobateur,
+			Integer pIdAgent);
 }

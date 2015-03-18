@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -69,7 +70,8 @@ public class ApprobationService implements IApprobationService {
 
 		// list of agents corresponding to filters
 		List<Integer> agentIds = new ArrayList<Integer>();
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
+		List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService);
+		for (DroitsAgent da : listDroitsAgent) {
 			agentIds.add(da.getIdAgent());
 		}
 
@@ -86,17 +88,17 @@ public class ApprobationService implements IApprobationService {
 			}
 		}
 
-		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType, typeHS);
+		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType, typeHS, listDroitsAgent, idAgent);
 	}
 
 	@Override
 	public List<ConsultPointageDto> getPointagesSIRH(Date fromDate, Date toDate, List<Integer> agentIds,
 			Integer idRefEtat, Integer idRefType, String typeHS) {
-		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType, typeHS);
+		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType, typeHS, null, null);
 	}
 
 	protected List<ConsultPointageDto> createConsultPointageDtoListFromSearch(List<Integer> agentIds, Date fromDate,
-			Date toDate, Integer idRefEtat, Integer idRefType, String typeHS) {
+			Date toDate, Integer idRefEtat, Integer idRefType, String typeHS, List<DroitsAgent> listdroitsAgent, Integer idAgentOpeOrAppro) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 
@@ -137,10 +139,37 @@ public class ApprobationService implements IApprobationService {
 
 			dto.updateEtat(ptg.getLatestEtatPointage(), opeDto);
 			dto.setAgent(agDto);
+			
+			// #14325
+			dto.setApprobation(checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, idAgentOpeOrAppro));
+			
 			result.add(dto);
 		}
 
 		return result;
+	}
+	
+	protected boolean checkDroitApprobationByPointage(Pointage ptg, ConsultPointageDto dto, List<DroitsAgent> listdroitsAgent, Integer idAgentOpeOrAppro){
+		// #14325 modifications sur le cumul des roles
+		// on attribue les droits d approbation pour chaque demande
+		if(dto.isApprobation()) {
+			return true;
+		}
+		
+		if(null != listdroitsAgent) {
+			for(DroitsAgent da : listdroitsAgent) {
+				if(da.getIdAgent().equals(ptg.getIdAgent())) {
+					for(Droit droit : da.getDroits()){
+						if((droit.getIdAgent().equals(idAgentOpeOrAppro)
+								|| droit.getIdAgentDelegataire().equals(idAgentOpeOrAppro))
+								&& droit.isApprobateur()) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

@@ -196,16 +196,36 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 	@Override
 	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer pIdAgent, String pCodeService) {
-
-		String sqlQuery = pCodeService == null ? getListOfAgentsToInputOrApproveWithoutService()
-				: getListOfAgentsToInputOrApproveByService();
-
-		Query q = ptgEntityManager.createNativeQuery(sqlQuery);
+		
+		// #14325 modification des requetes pour la gestion des droits
+		TypedQuery<DroitsAgent> q = ptgEntityManager.createQuery(
+				 pCodeService == null ? getListOfAgentsToInputOrApproveWithoutService()
+							: getListOfAgentsToInputOrApproveByService(),
+							DroitsAgent.class);
 		q.setParameter("idAgent", pIdAgent);
 
 		if (null != pCodeService) {
 			q.setParameter("codeService", pCodeService);
 		}
+
+		List<DroitsAgent> result = q.getResultList();
+
+		return result;
+	}
+
+	// #14325 modifications sur le cumul des roles
+	@Override
+	public List<DroitsAgent> getListOfAgentsToInput(Integer idApprobateur, Integer pIdAgent) {
+		
+		String sqlQuery = "SELECT  distinct(da.id_Agent), da.code_Service, da.libelle_Service " + "from PTG_DROITS_AGENT da "
+				+ "inner join PTG_DROIT_DROITS_AGENT dda on da.id_droits_agent = dda.id_droits_agent "
+				+ "inner join PTG_DROIT d on dda.id_droit = d.id_droit "
+				+ "where d.id_Agent = :idAgent "
+				+ " and d.id_droit_approbateur in ( select dap.id_droit from PTG_DROIT dap where dap.id_agent = :idApprobateur and dap.is_approbateur is true ) " ;
+
+		Query q = ptgEntityManager.createNativeQuery(sqlQuery);
+		q.setParameter("idAgent", pIdAgent);
+		q.setParameter("idApprobateur", idApprobateur);
 
 		List<DroitsAgent> result = new ArrayList<DroitsAgent>();
 		@SuppressWarnings("unchecked")
@@ -225,19 +245,18 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 	private String getListOfAgentsToInputOrApproveWithoutService() {
 
-		return "SELECT  distinct(da.id_Agent), da.code_Service, da.libelle_Service " + "from PTG_DROITS_AGENT da "
-				+ "inner join PTG_DROIT_DROITS_AGENT dda on da.id_droits_agent = dda.id_droits_agent "
-				+ "inner join PTG_DROIT d on dda.id_droit = d.id_droit "
-				+ "where d.id_Agent = :idAgent or d.id_Agent_Delegataire = :idAgent ";
+		return "SELECT da from DroitsAgent da "
+				+ "inner join da.droits d "
+				+ "where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent "
+				+ " group by da ";
 	}
 
 	private String getListOfAgentsToInputOrApproveByService() {
 
-		return "SELECT  distinct(da.id_Agent), da.code_Service, da.libelle_Service "
-				+ "from PTG_DROITS_AGENT da "
-				+ "inner join PTG_DROIT_DROITS_AGENT dda on da.id_droits_agent = dda.id_droits_agent "
-				+ "inner join PTG_DROIT d on dda.id_droit = d.id_droit "
-				+ "where (d.id_Agent = :idAgent or d.id_Agent_Delegataire = :idAgent) and da.code_service = :codeService";
+		return "SELECT da from DroitsAgent da "
+				+ "inner join da.droits d "
+				+ "where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.codeService = :codeService "
+				+ "group by da ";
 	}
 
 	@Override

@@ -1,14 +1,19 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -1782,5 +1787,197 @@ public class ApprobationServiceTest {
 				dateVentilation);
 
 		assertEquals(1, otherPointage.getEtats().size());
+	}
+	
+	@Test
+	public void checkDroitApprobationByPointage() {
+		
+		RefTypePointage typePointagePrime = new RefTypePointage();
+		typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(1);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+		ptg.setType(typePointagePrime);
+		ptg.setRefPrime(refPrime);
+		
+		Droit droit = new Droit();
+		droit.setIdAgent(9005138);
+		
+		List<DroitsAgent> listdroitsAgent = new ArrayList<DroitsAgent>();
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9001234);
+		listdroitsAgent.add(da);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9001235);
+		listdroitsAgent.add(da2);
+		
+		ConsultPointageDto dto = new ConsultPointageDto();
+		
+		ApprobationService service = new ApprobationService();
+		boolean result = service.checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, 9005138);
+		
+		assertFalse(result);
+	}
+	
+	@Test
+	public void checkDroitApprobationByPointage_DroitApprobationDejaATrue() {
+		
+		RefTypePointage typePointagePrime = new RefTypePointage();
+		typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(1);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+		ptg.setType(typePointagePrime);
+		ptg.setRefPrime(refPrime);
+		
+		Droit droit = new Droit();
+		droit.setIdAgent(9005138);
+		
+		List<DroitsAgent> listdroitsAgent = new ArrayList<DroitsAgent>();
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9001234);
+		listdroitsAgent.add(da);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9001235);
+		listdroitsAgent.add(da2);
+		
+		ConsultPointageDto dto = new ConsultPointageDto();
+		dto.setApprobation(true);
+		
+		ApprobationService service = new ApprobationService();
+		boolean result = service.checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, 9005138);
+		
+		assertTrue(result);
+	}
+	
+	@Test
+	public void checkDroitApprobationByPointage_true_approbateur() {
+		
+		RefTypePointage typePointagePrime = new RefTypePointage();
+		typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(1);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+		ptg.setType(typePointagePrime);
+		ptg.setRefPrime(refPrime);
+		
+		Droit droit = new Droit();
+		droit.setIdAgent(9005140);
+		droit.setApprobateur(true);
+
+		Set<Droit> droits = new HashSet<Droit>();
+		droits.add(droit);
+		
+		List<DroitsAgent> listdroitsAgent = new ArrayList<DroitsAgent>();
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+		da.setDroits(droits);
+		listdroitsAgent.add(da);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9001235);
+		listdroitsAgent.add(da2);
+		
+		ConsultPointageDto dto = new ConsultPointageDto();
+		
+		ApprobationService service = new ApprobationService();
+		boolean result = service.checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, 9005140);
+		
+		assertTrue(result);
+	}
+	
+	@Test
+	public void checkDroitApprobationByPointage_true_delegataire() {
+		
+		RefTypePointage typePointagePrime = new RefTypePointage();
+		typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(1);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+		ptg.setType(typePointagePrime);
+		ptg.setRefPrime(refPrime);
+		
+		Droit droit = new Droit();
+		droit.setIdAgent(9001111);
+		droit.setIdAgentDelegataire(9005140);
+		droit.setApprobateur(true);
+
+		Set<Droit> droits = new HashSet<Droit>();
+		droits.add(droit);
+		
+		List<DroitsAgent> listdroitsAgent = new ArrayList<DroitsAgent>();
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+		da.setDroits(droits);
+		listdroitsAgent.add(da);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9001235);
+		listdroitsAgent.add(da2);
+		
+		ConsultPointageDto dto = new ConsultPointageDto();
+		
+		ApprobationService service = new ApprobationService();
+		boolean result = service.checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, 9005140);
+		
+		assertTrue(result);
+	}
+	
+	@Test
+	public void checkDroitApprobationByPointage_false_operateur() {
+		
+		RefTypePointage typePointagePrime = new RefTypePointage();
+		typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(1);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+		ptg.setType(typePointagePrime);
+		ptg.setRefPrime(refPrime);
+		
+		Droit droit = new Droit();
+		droit.setIdAgent(9005140);
+		droit.setApprobateur(false);
+
+		Set<Droit> droits = new HashSet<Droit>();
+		droits.add(droit);
+		
+		List<DroitsAgent> listdroitsAgent = new ArrayList<DroitsAgent>();
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+		da.setDroits(droits);
+		listdroitsAgent.add(da);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9001235);
+		listdroitsAgent.add(da2);
+		
+		ConsultPointageDto dto = new ConsultPointageDto();
+		
+		ApprobationService service = new ApprobationService();
+		boolean result = service.checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, 9005140);
+		
+		assertFalse(result);
 	}
 }
