@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
@@ -173,19 +172,18 @@ public class VisualisationController {
 	@RequestMapping(value = "/changerEtatsSIRH", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> setPointagesEtatSIRH(@RequestParam("idAgent") int idAgent,
-			@RequestParam("statutAgent") String statut,
 			@RequestBody(required = true) String pointagesEtatChangeDtoString) {
 
 		logger.debug(
-				"entered POST [visualisation/changerEtatsSIRH] => setPointagesEtat with parameters idAgent = {} statutAgent={} and ptgEtat={}",
-				idAgent, statut, pointagesEtatChangeDtoString);
+				"entered POST [visualisation/changerEtatsSIRH] => setPointagesEtat with parameters idAgent = {} and ptgEtat={}",
+				idAgent, pointagesEtatChangeDtoString);
 
 		List<PointagesEtatChangeDto> dto = new JSONDeserializer<List<PointagesEtatChangeDto>>()
 				.use(null, ArrayList.class).use("values", PointagesEtatChangeDto.class)
 				.deserialize(pointagesEtatChangeDtoString);
 
 		ReturnMessageDto result = approbationService
-				.setPointagesEtatSIRH(idAgent, dto, AgentStatutEnum.valueOf(statut));
+				.setPointagesEtatSIRH(idAgent, dto);
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
 		if (result.getErrors().size() != 0)

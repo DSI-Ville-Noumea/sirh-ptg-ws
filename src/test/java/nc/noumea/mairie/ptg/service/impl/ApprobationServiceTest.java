@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
@@ -33,6 +34,7 @@ import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -622,8 +624,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdPointage(123);
 
 		// When
-		ReturnMessageDto result = service.setPointagesEtatSIRH(9001234, Arrays.asList(etatDto),
-				AgentStatutEnum.valueOf("F"));
+		ReturnMessageDto result = service.setPointagesEtatSIRH(9001234, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -660,8 +661,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdRefEtat(1);
 
 		// When
-		ReturnMessageDto result = service.setPointagesEtatSIRH(9005678, Arrays.asList(etatDto),
-				AgentStatutEnum.valueOf("F"));
+		ReturnMessageDto result = service.setPointagesEtatSIRH(9005678, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -701,8 +701,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdRefEtat(8);
 
 		// When
-		ReturnMessageDto result = service.setPointagesEtatSIRH(9005678, Arrays.asList(etatDto),
-				AgentStatutEnum.valueOf("F"));
+		ReturnMessageDto result = service.setPointagesEtatSIRH(9005678, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -742,8 +741,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdRefEtat(5);
 
 		// When
-		ReturnMessageDto result = service.setPointagesEtatSIRH(9005678, Arrays.asList(etatDto),
-				AgentStatutEnum.valueOf("F"));
+		ReturnMessageDto result = service.setPointagesEtatSIRH(9005678, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -783,8 +781,7 @@ public class ApprobationServiceTest {
 		etatDto.setIdRefEtat(9);
 
 		// When
-		ReturnMessageDto result = service.setPointagesEtatSIRH(9005678, Arrays.asList(etatDto),
-				AgentStatutEnum.valueOf("F"));
+		ReturnMessageDto result = service.setPointagesEtatSIRH(9005678, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -810,7 +807,8 @@ public class ApprobationServiceTest {
 
 		HelperService hService = Mockito.mock(HelperService.class);
 		Mockito.when(hService.getTypeChainePaieFromStatut(AgentStatutEnum.F)).thenReturn(TypeChainePaieEnum.SHC);
-
+		Mockito.when(hService.getMairieMatrFromIdAgent(ptg.getIdAgent())).thenReturn(5678);
+		
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(null);
 
@@ -819,20 +817,25 @@ public class ApprobationServiceTest {
 				ptgDataCosistencyRules).checkAllAbsences(
 						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
 						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		
+		Spcarr spCarr = new Spcarr();
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(5678, ptg.getDateDebut())).thenReturn(spCarr);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hService);
 		ReflectionTestUtils.setField(service, "ventilRepository", vR);
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
 		etatDto.setIdRefEtat(1);
 
 		// When
-		ReturnMessageDto result = service.setPointagesEtatSIRH(9001234, Arrays.asList(etatDto),
-				AgentStatutEnum.valueOf("F"));
+		ReturnMessageDto result = service.setPointagesEtatSIRH(9001234, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -860,6 +863,7 @@ public class ApprobationServiceTest {
 
 		HelperService hService = Mockito.mock(HelperService.class);
 		Mockito.when(hService.getTypeChainePaieFromStatut(AgentStatutEnum.F)).thenReturn(TypeChainePaieEnum.SHC);
+		Mockito.when(hService.getMairieMatrFromIdAgent(ptg.getIdAgent())).thenReturn(5678);
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(ventilDate);
@@ -870,19 +874,25 @@ public class ApprobationServiceTest {
 						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
 						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
 
+		Spcarr spCarr = new Spcarr();
+		
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(5678, ptg.getDateDebut())).thenReturn(spCarr);
+
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "helperService", hService);
 		ReflectionTestUtils.setField(service, "ventilRepository", vR);
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
 		etatDto.setIdRefEtat(1);
 
 		// When
-		ReturnMessageDto result = service.setPointagesEtatSIRH(9001234, Arrays.asList(etatDto),
-				AgentStatutEnum.valueOf("F"));
+		ReturnMessageDto result = service.setPointagesEtatSIRH(9001234, Arrays.asList(etatDto));
 
 		// Then
 		assertEquals(0, result.getErrors().size());

@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
@@ -26,6 +26,7 @@ import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IApprobationService;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.LocalDate;
@@ -61,6 +62,9 @@ public class ApprobationService implements IApprobationService {
 	
 	@Autowired
 	private IPointageDataConsistencyRules ptgDataCosistencyRules;
+	
+	@Autowired
+	private IMairieRepository mairieRepository;
 
 	@Override
 	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService,
@@ -293,8 +297,7 @@ public class ApprobationService implements IApprobationService {
 	}
 
 	@Override
-	public ReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> etatsDto,
-			AgentStatutEnum statut) {
+	public ReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> etatsDto) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		for (PointagesEtatChangeDto dto : etatsDto) {
@@ -349,7 +352,7 @@ public class ApprobationService implements IApprobationService {
 			
 			// #13380 dans le cas ou on approuve ou saisit, on check si une absence n existe pas sur les memes dates
 			if(targetEtat == EtatPointageEnum.SAISI || targetEtat == EtatPointageEnum.APPROUVE) {
-				ptgDataCosistencyRules.checkAllAbsences(result, idAgent, ptg.getDateLundi(), Arrays.asList(ptg));
+				ptgDataCosistencyRules.checkAllAbsences(result, ptg.getIdAgent(), ptg.getDateLundi(), Arrays.asList(ptg));
 				if(!result.getErrors().isEmpty())
 					continue;
 			}
@@ -357,8 +360,10 @@ public class ApprobationService implements IApprobationService {
 			// at last, create and add the new EtatPointage
 			EtatPointage etat = new EtatPointage();
 
+			Spcarr spcarr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(ptg.getIdAgent()), ptg.getDateDebut());
+			
 			VentilDate lastVentil = ventilRepository.getLatestVentilDate(
-					helperService.getTypeChainePaieFromStatut(statut), false);
+					helperService.getTypeChainePaieFromStatut(spcarr.getStatutCarriere()), false);
 			if (targetEtat == EtatPointageEnum.APPROUVE && lastVentil != null)
 				etat.setDateEtat(lastVentil.getDateVentilation());
 			else

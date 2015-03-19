@@ -3,7 +3,6 @@ package nc.noumea.mairie.ptg.service;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
@@ -23,7 +22,7 @@ public interface IApprobationService {
 
 	ReturnMessageDto setPointagesEtat(Integer idAgent, List<PointagesEtatChangeDto> dto);
 
-	ReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> dto, AgentStatutEnum statut);
+	ReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> dto);
 
 	List<AgentDto> listerTousAgentsPointages();
 }
