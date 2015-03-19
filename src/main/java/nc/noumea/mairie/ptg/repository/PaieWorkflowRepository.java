@@ -17,26 +17,33 @@ public class PaieWorkflowRepository implements IPaieWorkflowRepository {
 
 	@PersistenceContext(unitName = "sirhPersistenceUnit")
 	private EntityManager entityManager;
-	
+
 	@Override
 	public SpWFPaie readCurrentState(TypeChainePaieEnum chainePaie) {
-		
-		TypedQuery<SpWFPaie> query = entityManager.createQuery("select p from SpWFPaie p where p.codeChaine = :chainePaie", SpWFPaie.class);
+
+		TypedQuery<SpWFPaie> query = entityManager.createQuery(
+				"select p from SpWFPaie p where p.codeChaine = :chainePaie", SpWFPaie.class);
 		query.setParameter("chainePaie", chainePaie);
-		
+
 		return query.getSingleResult();
 	}
-	
+
 	@Override
 	public SpWFPaie selectForUpdateState(TypeChainePaieEnum chainePaie) {
-		
+
 		SpWFPaie currentState = entityManager.find(SpWFPaie.class, chainePaie, LockModeType.PESSIMISTIC_WRITE);
-		
+
 		return currentState;
 	}
 
 	@Override
 	public SpWFEtat getEtat(SpWfEtatEnum codeEtat) {
 		return entityManager.find(SpWFEtat.class, codeEtat);
+	}
+
+	@Override
+	public String getLockModeSpWFPaie() {
+		LockModeType lock = entityManager.getLockMode(SpWFPaie.class);
+		return lock.toString();
 	}
 }

@@ -14,6 +14,7 @@ import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.ListEtatsPayeurDto;
+import nc.noumea.mairie.ptg.repository.IPaieWorkflowRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IEtatPayeurService;
@@ -60,6 +61,9 @@ public class EtatsPayeurController {
 
 	@Autowired
 	private IEtatPayeurService etatPayeurService;
+
+	@Autowired
+	private IPaieWorkflowRepository paieWorkflowRepository;
 
 	@ResponseBody
 	@RequestMapping(value = "/xml/getEtatPayeur", produces = "application/xml", method = RequestMethod.GET)
@@ -172,6 +176,11 @@ public class EtatsPayeurController {
 
 		if (result.getErrors().size() != 0)
 			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
+		try {
+			logger.debug("LockMode : " + paieWorkflowRepository.getLockModeSpWFPaie());
+		} catch (Exception e) {
+			logger.debug("Erreur : paieWorkflowRepository BAD" + e.getMessage());
+		}
 
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
@@ -221,6 +230,11 @@ public class EtatsPayeurController {
 			exportEtatPayeurService.stopExportEtatsPayeur(TypeChainePaieEnum.valueOf(typeChainePaie));
 		} catch (WorkflowInvalidStateException e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
+		}
+		try {
+			logger.debug("LockMode : " + paieWorkflowRepository.getLockModeSpWFPaie());
+		} catch (Exception e) {
+			logger.debug("Erreur : paieWorkflowRepository BAD" + e.getMessage());
 		}
 
 		return new ResponseEntity<String>(HttpStatus.OK);
