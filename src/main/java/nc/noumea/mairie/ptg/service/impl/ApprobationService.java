@@ -165,7 +165,8 @@ public class ApprobationService implements IApprobationService {
 				if(da.getIdAgent().equals(ptg.getIdAgent())) {
 					for(Droit droit : da.getDroits()){
 						if((droit.getIdAgent().equals(idAgentOpeOrAppro)
-								|| droit.getIdAgentDelegataire().equals(idAgentOpeOrAppro))
+								|| (null != droit.getIdAgentDelegataire() 
+									&& droit.getIdAgentDelegataire().equals(idAgentOpeOrAppro)))
 								&& droit.isApprobateur()) {
 							return true;
 						}
