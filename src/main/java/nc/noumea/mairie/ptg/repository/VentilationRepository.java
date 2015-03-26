@@ -969,7 +969,8 @@ public class VentilationRepository implements IVentilationRepository {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select tb.* FROM PTG_VENTIL_PRIME tb WHERE tb.ID_VENTIL_PRIME in  ");
-		sb.append("(select max(id_ventil_prime) from ptg_ventil_prime where id_ventil_date=:ventilDateId and etat=:etat group by id_agent,date_debut_mois) ");
+		sb.append("(select max(id_ventil_prime) from ptg_ventil_prime where id_ventil_date=:ventilDateId and etat=:etat "
+				+ "group by id_agent,date_debut_mois,id_ref_prime,date_prime) ");
 		if (idAgent != null)
 			sb.append("and id_Agent = :idAgent ");
 		sb.append("order by date_debut_mois asc, id_Agent asc ");

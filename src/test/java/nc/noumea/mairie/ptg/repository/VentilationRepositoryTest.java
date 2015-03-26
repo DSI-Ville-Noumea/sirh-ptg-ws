@@ -2372,6 +2372,69 @@ public class VentilationRepositoryTest {
 		ptgEntityManager.clear();
 	}
 
+	// #14640 cas reel de recette utilisateur agent DPM avec plusieurs primes
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfVentilPrimeWithDateForEtatPayeur_withManyPrimes() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+		vd.setPaye(false);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+		
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(1);
+		ptgEntityManager.persist(refPrime);
+		
+		RefPrime refPrime6 = new RefPrime();
+		refPrime6.setIdRefPrime(6);
+		ptgEntityManager.persist(refPrime6);
+
+		VentilPrime vp = new VentilPrime();
+		vp.setDateDebutMois(new LocalDate(2015, 2, 1).toDate());
+		vp.setEtat(EtatPointageEnum.VALIDE);
+		vp.setIdAgent(9001111);
+		vp.setQuantite(3);
+		vp.setVentilDate(vd);
+		vp.setDatePrime(new LocalDate(2015, 2, 26).toDate());
+		vp.setRefPrime(refPrime);
+		ptgEntityManager.persist(vp);
+
+		VentilPrime vp2 = new VentilPrime();
+		vp2.setDateDebutMois(new LocalDate(2015, 2, 1).toDate());
+		vp2.setEtat(EtatPointageEnum.VALIDE);
+		vp2.setIdAgent(9004378);
+		vp2.setQuantite(240);
+		vp2.setVentilDate(vd);
+		vp2.setDatePrime(new LocalDate(2015, 2, 26).toDate());
+		vp2.setRefPrime(refPrime);
+		ptgEntityManager.persist(vp2);
+
+		VentilPrime vp3 = new VentilPrime();
+		vp3.setDateDebutMois(new LocalDate(2015, 2, 1).toDate());
+		vp3.setEtat(EtatPointageEnum.VALIDE);
+		vp3.setIdAgent(9004378);
+		vp3.setQuantite(1);
+		vp3.setVentilDate(vd);
+		vp3.setDatePrime(new LocalDate(2015, 2, 26).toDate());
+		vp3.setRefPrime(refPrime6);
+		ptgEntityManager.persist(vp3);
+
+		List<VentilPrime> result = repository.getListOfVentilPrimeWithDateForEtatPayeur(vd.getIdVentilDate(), 9004378);
+
+		assertEquals(2, result.size());
+		assertEquals(new LocalDate(2015, 2, 1).toDate(), result.get(0).getDateDebutMois());
+		assertEquals(1, result.get(0).getQuantite().intValue());
+		assertEquals(9004378, result.get(0).getIdAgent().intValue());
+		assertEquals(new LocalDate(2015, 2, 1).toDate(), result.get(1).getDateDebutMois());
+		assertEquals(240, result.get(1).getQuantite().intValue());
+		assertEquals(9004378, result.get(1).getIdAgent().intValue());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void getListOfVentilPrimeWithDateForEtatPayeur() {
