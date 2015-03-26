@@ -27,6 +27,7 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.AbsencesEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbstractItemEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
+import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurVo;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
@@ -117,6 +118,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	public AbstractItemEtatPayeurDto getHeuresSupEtatPayeurDataForStatut(Integer idAgent,
 			AbstractItemEtatPayeurDto result, VentilDate toVentilDate, VentilDate fromVentilDate) {
 
+		List<HeuresSupEtatPayeurVo> listHSupEtatPayeur = new ArrayList<HeuresSupEtatPayeurVo>();
+		
+		
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
 		for (VentilHsup vh : ventilationRepository.getListOfVentilHeuresSupWithDateForEtatPayeur(
 				toVentilDate.getIdVentilDate(), idAgent)) {
@@ -130,9 +134,16 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			}
 
 			// 3. Then create the DTOs for HSups
-			HeuresSupEtatPayeurDto dtoHsup = new HeuresSupEtatPayeurDto(vh, vhOld, helperService);
-			result.setHeuresSup(dtoHsup);
+			// #14640 on n affiche pas les heures sup recuperees
+			if(vh.getMHorsContrat() - vh.getMRecuperees() != 0
+					|| (null != vhOld && vhOld.getMHorsContrat() - vhOld.getMRecuperees() != 0)) {
+				HeuresSupEtatPayeurVo dtoHsup = new HeuresSupEtatPayeurVo(vh, vhOld);
+				listHSupEtatPayeur.add(dtoHsup);
+			}
 		}
+		
+		// #14640 on additionne les 3 ventils d heures sup pour avoir qu une seule ligne pour l etat payeur
+		result.setHeuresSup(new HeuresSupEtatPayeurDto(listHSupEtatPayeur, helperService));
 
 		return result;
 	}

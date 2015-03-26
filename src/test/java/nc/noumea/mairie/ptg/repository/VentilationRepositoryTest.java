@@ -1,9 +1,6 @@
 package nc.noumea.mairie.ptg.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -2814,5 +2811,86 @@ public class VentilationRepositoryTest {
 				1, 8, 0, 0).toDate(), refPrime.getIdRefPrime());
 
 		assertEquals(0, result.size());
+	}
+	
+
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfAgentWithDateForEtatPayeur() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+		vd.setPaye(false);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+		
+		//////// primes //////////
+		VentilPrime vp = new VentilPrime();
+		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
+		vp.setEtat(EtatPointageEnum.VALIDE);
+		vp.setIdAgent(1);
+		vp.setQuantite(3);
+		vp.setVentilDate(vd);
+		ptgEntityManager.persist(vp);
+
+		VentilPrime vp3 = new VentilPrime();
+		vp3.setDateDebutMois(new LocalDate(2013, 7, 18).toDate());
+		vp3.setEtat(EtatPointageEnum.VALIDE);
+		vp3.setIdAgent(8);
+		vp3.setQuantite(3);
+		vp3.setVentilDate(vd);
+		ptgEntityManager.persist(vp3);
+		
+		//////// hsup //////////
+		VentilHsup vhs = new VentilHsup();
+		vhs.setDateLundi(new LocalDate(2014, 2, 23).toDate());
+		vhs.setEtat(EtatPointageEnum.VALIDE);
+		vhs.setIdAgent(23);
+		vhs.setVentilDate(vd);
+		ptgEntityManager.persist(vhs);
+		
+		//////// absences //////////
+		VentilAbsence va = new VentilAbsence();
+		va.setDateLundi(new LocalDate(2014, 2, 23).toDate());
+		va.setEtat(EtatPointageEnum.VALIDE);
+		va.setIdAgent(17);
+		va.setMinutesConcertee(10);
+		va.setMinutesNonConcertee(10);
+		va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
+
+		VentilAbsence va2 = new VentilAbsence();
+		va2.setDateLundi(new LocalDate(2014, 2, 23).toDate());
+		va2.setEtat(EtatPointageEnum.VALIDE);
+		va2.setIdAgent(40);
+		va2.setMinutesConcertee(12);
+		va2.setMinutesNonConcertee(10);
+		va2.setVentilDate(vd);
+		ptgEntityManager.persist(va2);
+
+		VentilAbsence va3 = new VentilAbsence();
+		va3.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		va3.setEtat(EtatPointageEnum.VALIDE);
+		va3.setIdAgent(9005138);
+		va3.setMinutesConcertee(10);
+		va3.setMinutesNonConcertee(10);
+		va3.setVentilDate(vd);
+		ptgEntityManager.persist(va3);
+
+		List<Integer> result = repository.getListOfAgentWithDateForEtatPayeur(vd.getIdVentilDate());
+
+		assertEquals(6, result.size());
+		
+		Integer idAgentPrcd = 0;
+		for(Integer idAgent : result) {
+			if(idAgent < idAgentPrcd) {
+				fail("error de tri");
+			}
+			idAgentPrcd = idAgent;
+		}
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
 	}
 }

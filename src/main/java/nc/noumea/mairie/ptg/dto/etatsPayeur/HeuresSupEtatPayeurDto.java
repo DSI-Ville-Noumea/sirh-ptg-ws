@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
-import nc.noumea.mairie.ptg.domain.VentilHsup;
+import java.util.List;
+
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 
 public class HeuresSupEtatPayeurDto {
@@ -16,21 +17,32 @@ public class HeuresSupEtatPayeurDto {
 
 	}
 
-	public HeuresSupEtatPayeurDto(VentilHsup vh, HelperService hS) {
+	public HeuresSupEtatPayeurDto(List<HeuresSupEtatPayeurVo> listHSupEtatPayeur, HelperService hS) {
 
-		this(vh, null, hS);
-	}
-
-	public HeuresSupEtatPayeurDto(VentilHsup vhNew, VentilHsup vhOld, HelperService hS) {
-
-		sup25 = hS.formatMinutesToString(((int) vhNew.getMSup25() - (vhOld != null ? vhOld.getMSup25() : 0))
-				+ (vhNew.getMSimple() - (vhOld != null ? vhOld.getMSimple() : 0)));
-		sup50 = hS.formatMinutesToString((vhNew.getMSup50() - (vhOld != null ? vhOld.getMSup50() : 0))
-				+ (vhNew.getMComposees() - (vhOld != null ? vhOld.getMComposees() : 0)));
-		djf = hS.formatMinutesToString(vhNew.getMsdjf() - (vhOld != null ? vhOld.getMsdjf() : 0));
-		h1Mai = hS.formatMinutesToString(vhNew.getMMai() - (vhOld != null ? vhOld.getMMai() : 0));
-		nuit = hS.formatMinutesToString(vhNew.getMsNuit() - (vhOld != null ? vhOld.getMsNuit() : 0));
-		normales = hS.formatMinutesToString((vhNew.getMNormales() - (vhOld != null ? vhOld.getMNormales() : 0)));
+		int mSup25 = 0;
+		int mSup50 = 0;
+		int mDjf = 0;
+		int mH1Mai = 0;
+		int mNuit = 0;
+		int mNormales = 0;
+		
+		if(null != listHSupEtatPayeur) {
+			for(HeuresSupEtatPayeurVo vo : listHSupEtatPayeur) {
+				mSup25 += vo.getSup25();
+				mSup50 += vo.getSup50();
+				mDjf += vo.getDjf();
+				mH1Mai += vo.getH1Mai();
+				mNuit += vo.getNuit();
+				mNormales += vo.getNormales();
+			}
+		}
+		
+		sup25 = hS.formatMinutesToString(mSup25);
+		sup50 = hS.formatMinutesToString(mSup50);
+		djf = hS.formatMinutesToString(mDjf);
+		h1Mai = hS.formatMinutesToString(mH1Mai);
+		nuit = hS.formatMinutesToString(mNuit);
+		normales = hS.formatMinutesToString(mNormales);
 	}
 
 	public String getSup25() {

@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -401,6 +402,7 @@ public class ExportEtatPayeurServiceTest {
 		VentilHsup vh1 = new VentilHsup();
 		vh1.setDateLundi(new LocalDate(2013, 8, 26).toDate());
 		vh1.setIdAgent(9008989);
+		vh1.setMHorsContrat(60);
 		vh1.setMMai(60);
 
 		VentilHsup vhOld = new VentilHsup();
@@ -1536,5 +1538,123 @@ public class ExportEtatPayeurServiceTest {
 
 		double calcul = 10 + 20 * 1.25 + 30 * 1.5 + 40 * 0.75 + 50 * 1 + 60 * 0.75;
 		assertEquals(result, calcul, 0);
+	}
+	
+	@Test
+	public void getHeuresSupEtatPayeurDataForStatut_onlyRecup() {
+		
+		Integer idAgent = 9005138;
+		AbstractItemEtatPayeurDto result = new AbstractItemEtatPayeurDto();
+		result.setHeuresSup(null);
+		VentilDate toVentilDate = new VentilDate();
+		VentilDate fromVentilDate = new VentilDate();
+		fromVentilDate.setDateVentilation(new Date());
+		
+		VentilHsup vh1 = new VentilHsup();
+		vh1.setDateLundi(new LocalDate(2013, 8, 26).toDate());
+		vh1.setIdAgent(9008989);
+		vh1.setMHorsContrat(100);
+		vh1.setMRecuperees(100);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getListOfVentilHeuresSupWithDateForEtatPayeur(toVentilDate.getIdVentilDate(), idAgent))
+				.thenReturn(Arrays.asList(vh1));
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.formatMinutesToString(0)).thenReturn("");
+		
+		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
+		Mockito.doNothing().when(service)
+				.fillAgentsData(Mockito.any(AbstractItemEtatPayeurDto.class), Mockito.any(Integer.class));
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		result = service.getHeuresSupEtatPayeurDataForStatut(idAgent, result, toVentilDate, fromVentilDate);
+		
+		assertEquals("", result.getHeuresSup().getNormales());
+		assertEquals("", result.getHeuresSup().getSup25());
+		assertEquals("", result.getHeuresSup().getSup50());
+		assertEquals("", result.getHeuresSup().getDjf());
+		assertEquals("", result.getHeuresSup().getNuit());
+		assertEquals("", result.getHeuresSup().getH1Mai());
+	}
+	
+	// cas reel d un CC en recette utilisateur #14640
+	@Test
+	public void getHeuresSupEtatPayeurDataForStatut_2VentilHSup() {
+		
+		Integer idAgent = 9005138;
+		AbstractItemEtatPayeurDto result = new AbstractItemEtatPayeurDto();
+		result.setHeuresSup(null);
+		VentilDate toVentilDate = new VentilDate();
+		VentilDate fromVentilDate = new VentilDate();
+		fromVentilDate.setDateVentilation(new Date());
+		
+		VentilHsup vh1 = new VentilHsup();
+		vh1.setDateLundi(new LocalDate(2015, 2, 2).toDate());
+		vh1.setIdAgent(9004241);
+		vh1.setMHorsContrat(120);
+		vh1.setMSup(120);
+		vh1.setMSup25(120);
+		vh1.setMSup50(0);
+		vh1.setMsdjf(0);
+		vh1.setMMai(0);
+		vh1.setMsNuit(0);
+		vh1.setMNormales(0);
+		vh1.setMSimple(0);
+		vh1.setMComposees(0);
+		
+		VentilHsup vh2 = new VentilHsup();
+		vh2.setDateLundi(new LocalDate(2015, 2, 16).toDate());
+		vh2.setIdAgent(9004241);
+		vh2.setMHorsContrat(210);
+		vh2.setMSup(210);
+		vh2.setMSup25(210);
+		vh2.setMSup50(0);
+		vh2.setMsdjf(0);
+		vh2.setMMai(0);
+		vh2.setMsNuit(0);
+		vh2.setMNormales(0);
+		vh2.setMSimple(0);
+		vh2.setMComposees(0);
+		
+		VentilHsup vh3 = new VentilHsup();
+		vh3.setDateLundi(new LocalDate(2015, 2, 23).toDate());
+		vh3.setIdAgent(9004241);
+		vh3.setMHorsContrat(360);
+		vh3.setMSup(360);
+		vh3.setMSup25(360);
+		vh3.setMSup50(0);
+		vh3.setMsdjf(360);
+		vh3.setMMai(0);
+		vh3.setMsNuit(0);
+		vh3.setMNormales(0);
+		vh3.setMSimple(0);
+		vh3.setMComposees(0);
+		
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getListOfVentilHeuresSupWithDateForEtatPayeur(toVentilDate.getIdVentilDate(), idAgent))
+				.thenReturn(Arrays.asList(vh1, vh2, vh3));
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.formatMinutesToString(0)).thenReturn("");
+		Mockito.when(helperService.formatMinutesToString(360)).thenReturn("6h");
+		Mockito.when(helperService.formatMinutesToString(690)).thenReturn("11h30");
+
+		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
+		Mockito.doNothing().when(service)
+				.fillAgentsData(Mockito.any(AbstractItemEtatPayeurDto.class), Mockito.any(Integer.class));
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		result = service.getHeuresSupEtatPayeurDataForStatut(idAgent, result, toVentilDate, fromVentilDate);
+		
+		assertNotNull(result.getHeuresSup());
+		assertEquals("", result.getHeuresSup().getNormales());
+		assertEquals("11h30", result.getHeuresSup().getSup25());
+		assertEquals("", result.getHeuresSup().getSup50());
+		assertEquals("6h", result.getHeuresSup().getDjf());
+		assertEquals("", result.getHeuresSup().getNuit());
+		assertEquals("", result.getHeuresSup().getH1Mai());
 	}
 }

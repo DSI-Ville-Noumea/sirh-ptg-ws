@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -1013,6 +1014,9 @@ public class VentilationRepository implements IVentilationRepository {
 			if (!resultat.contains(id))
 				resultat.add(id);
 		}
+		
+		// #14640 tri par nomatr
+		Collections.sort(resultat);
 
 		return resultat;
 	}
