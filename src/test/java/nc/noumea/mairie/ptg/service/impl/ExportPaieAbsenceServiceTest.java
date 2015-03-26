@@ -78,6 +78,7 @@ public class ExportPaieAbsenceServiceTest {
 		p1.setDateFin(new DateTime(2013, 5, 15, 10, 15, 0).toDate());
 		p1.setRefTypeAbsence(typeAbsence);
 		p1.setType(abs);
+		p1.setIdPointage(1);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
@@ -108,6 +109,7 @@ public class ExportPaieAbsenceServiceTest {
 		assertEquals(1.3d, result.get(0).getNbHeures(), 0);
 	}
 
+	// correction TU suite bug #14681
 	@Test
 	public void exportAbsencesToPaie_2AbsencesSameDaySameAgentSameActi_nothingInDataBase_ReturnOneSppactForBoth() {
 
@@ -120,6 +122,7 @@ public class ExportPaieAbsenceServiceTest {
 		p1.setDateFin(new DateTime(2013, 5, 15, 10, 15, 0).toDate());
 		p1.setRefTypeAbsence(typeAbsence);
 		p1.setType(abs);
+		p1.setIdPointage(1);
 
 		Pointage p2 = new Pointage();
 		p2.setIdAgent(9008765);
@@ -127,6 +130,7 @@ public class ExportPaieAbsenceServiceTest {
 		p2.setDateFin(new DateTime(2013, 5, 15, 15, 15, 0).toDate());
 		p2.setRefTypeAbsence(typeAbsence);
 		p2.setType(abs);
+		p2.setIdPointage(2);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
@@ -134,8 +138,7 @@ public class ExportPaieAbsenceServiceTest {
 		Mockito.when(hS.getIntegerDateMairieFromDate(p2.getDateDebut())).thenReturn(20130515);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(0d)).thenReturn(0);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(1.3d)).thenReturn(90);
-		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(90)).thenReturn(1.3d);
-		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(75)).thenReturn(1.15d);
+		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(165)).thenReturn(2.45d);
 
 		Spacti acti = new Spacti();
 		IMairieRepository mR = Mockito.mock(IMairieRepository.class);
@@ -157,7 +160,7 @@ public class ExportPaieAbsenceServiceTest {
 		assertEquals(20130515, (int) result.get(0).getId().getDateJour());
 		assertEquals(8765, (int) result.get(0).getId().getNomatr());
 		assertEquals(acti, result.get(0).getId().getActivite());
-		assertEquals(1.15d, result.get(0).getNbHeures(), 0);
+		assertEquals(2.45d, result.get(0).getNbHeures(), 0);
 	}
 
 	@Test
@@ -167,6 +170,7 @@ public class ExportPaieAbsenceServiceTest {
 		RefTypeAbsence typeAbsence = new RefTypeAbsence();
 		typeAbsence.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 		Pointage p1 = new Pointage();
+		p1.setIdPointage(1);
 		p1.setIdAgent(9008765);
 		p1.setDateDebut(new DateTime(2013, 5, 15, 8, 45, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 5, 15, 10, 15, 0).toDate());
@@ -176,6 +180,7 @@ public class ExportPaieAbsenceServiceTest {
 		RefTypeAbsence typeAbsenceNon = new RefTypeAbsence();
 		typeAbsenceNon.setIdRefTypeAbsence(RefTypeAbsenceEnum.NON_CONCERTEE.getValue());
 		Pointage p2 = new Pointage();
+		p2.setIdPointage(2);
 		p2.setIdAgent(9008765);
 		p2.setDateDebut(new DateTime(2013, 5, 15, 14, 0, 0).toDate());
 		p2.setDateFin(new DateTime(2013, 5, 15, 15, 15, 0).toDate());
@@ -229,6 +234,7 @@ public class ExportPaieAbsenceServiceTest {
 		RefTypeAbsence typeAbsence = new RefTypeAbsence();
 		typeAbsence.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 		Pointage p1 = new Pointage();
+		p1.setIdPointage(10);
 		p1.setIdAgent(9008765);
 		p1.setDateDebut(new DateTime(2013, 5, 15, 8, 45, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 5, 15, 10, 15, 0).toDate());
@@ -279,6 +285,7 @@ public class ExportPaieAbsenceServiceTest {
 		p1.setDateFin(new DateTime(2013, 5, 15, 8, 45, 0).toDate());
 		p1.setRefTypeAbsence(typeAbsence);
 		p1.setType(abs);
+		p1.setIdPointage(1);
 
 		Spacti acti = new Spacti();
 		IMairieRepository mR = Mockito.mock(IMairieRepository.class);

@@ -49,7 +49,30 @@ public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
 					.getRefTypeAbsence().getIdRefTypeAbsence());
 
 			Period p = new Period(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin()));
-			act.setNbHeures(helperService.convertMinutesToMairieNbHeuresFormat(p.toStandardMinutes().getMinutes()));
+			
+			// #14681 attention, dans l AS400, il ne peut y avoir qu une seule ligne
+			// mais dans le nouveau systeme, l agent peut saisir 2 absences
+			// on cherche une 2e absence sur le meme jour
+			DateTime dateTimeDebutPtg = new DateTime(ptg.getDateDebut());
+			Period periodBis = null; 
+			for(Pointage ptgBis : pointagesOrderedByDateAsc) {
+				if (ptgBis.getTypePointageEnum() != RefTypePointageEnum.ABSENCE)
+					continue;
+				
+				if(ptg.getIdPointage().equals(ptgBis.getIdPointage()))
+					continue;
+				
+				if(!ptg.getRefTypeAbsence().getIdRefTypeAbsence().equals(ptgBis.getRefTypeAbsence().getIdRefTypeAbsence()))
+					continue;
+				
+				DateTime dateTimeDebutPtgBis = new DateTime(ptgBis.getDateDebut());
+				if(dateTimeDebutPtg.getDayOfYear() == dateTimeDebutPtgBis.getDayOfYear()) {
+					periodBis = new Period(new DateTime(ptgBis.getDateDebut()), new DateTime(ptgBis.getDateFin()));
+				}
+			}
+			int minutesTotalOfDay = p.toStandardMinutes().getMinutes() 
+					+ (periodBis != null ? periodBis.toStandardMinutes().getMinutes() : 0);
+			act.setNbHeures(helperService.convertMinutesToMairieNbHeuresFormat(minutesTotalOfDay));
 
 			if (act.getNbHeures() == 0d) {
 				modifiedOrAddedSppact.remove(act);
