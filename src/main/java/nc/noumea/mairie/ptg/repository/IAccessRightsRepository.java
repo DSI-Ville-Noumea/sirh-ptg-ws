@@ -49,4 +49,7 @@ public interface IAccessRightsRepository {
 
 	List<DroitsAgent> getListOfAgentsToInput(Integer idApprobateur,
 			Integer pIdAgent);
+
+	List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent,
+			String pCodeService);
 }

@@ -51,4 +51,6 @@ public interface IAccessRightsService {
 
 	List<AgentDto> getAgentsToInput(Integer idApprobateur, Integer idAgent);
 
+	List<AgentDto> getAgentsToApprove(Integer idAgent, String codeService);
+
 }

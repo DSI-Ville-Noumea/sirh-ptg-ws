@@ -351,10 +351,31 @@ public class AccessRightsService implements IAccessRightsService {
 
 		return result;
 	}
+
+	/**
+	 * Retrieves the agent an approbator is set to Approve 
+	 * This service also filters by service
+	 */
+	// #14694 modifications sur le cumul des roles
+	@Override
+	public List<AgentDto> getAgentsToApprove(Integer idAgent, String codeService) {
+
+		List<AgentDto> result = new ArrayList<AgentDto>();
+
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToApprove(idAgent, codeService)) {
+			AgentDto agDto = new AgentDto();
+			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+			agDto.setIdAgent(da.getIdAgent());
+			agDto.setNom(ag.getDisplayNom());
+			agDto.setPrenom(ag.getDisplayPrenom());
+			result.add(agDto);
+		}
+
+		return result;
+	}
 	
 	/**
-	 * Retrieves the agent an approbator is set to Approve or an Operator is set
-	 * to Input
+	 * Retrieves the agent an Operator is set to Input
 	 */
 	// #14325 modifications sur le cumul des roles
 	@Override

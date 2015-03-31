@@ -355,7 +355,7 @@ public class AccessRightsServiceTest {
 	}
 
 	@Test
-	public void getAgentsToApprove_NoAgents_ReturnEmptyList() {
+	public void getAgentsToApproveOrInput_NoAgents_ReturnEmptyList() {
 
 		// Given
 		Integer idAgent = 9007654;
@@ -374,7 +374,7 @@ public class AccessRightsServiceTest {
 	}
 
 	@Test
-	public void getAgentsToApprove_2Agents_ReturnListOf2() {
+	public void getAgentsToApproveOrInput_2Agents_ReturnListOf2() {
 
 		// Given
 		Integer idAgent = 9007654;
@@ -406,6 +406,44 @@ public class AccessRightsServiceTest {
 
 		// When
 		List<AgentDto> result = service.getAgentsToApproveOrInput(idAgent);
+
+		// Then
+		assertEquals(2, result.size());
+	}
+	
+	@Test
+	public void getAgentsToApprove_2Agents_ReturnListOf2() {
+
+		// Given
+		Integer idAgent = 9007654;
+
+		AgentGeneriqueDto a1 = new AgentGeneriqueDto();
+		a1.setIdAgent(1);
+		AgentGeneriqueDto a2 = new AgentGeneriqueDto();
+		a2.setIdAgent(2);
+
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(1);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(2);
+
+		Droit d = new Droit();
+		d.getAgents().add(da1);
+		d.getAgents().add(da2);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
+
+		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(mRepo.getAgent(1)).thenReturn(a1);
+		Mockito.when(mRepo.getAgent(2)).thenReturn(a2);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", mRepo);
+
+		// When
+		List<AgentDto> result = service.getAgentsToApprove(idAgent, null);
 
 		// Then
 		assertEquals(2, result.size());

@@ -166,7 +166,7 @@ public class AccessRightsController {
 		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		List<AgentDto> result = accessRightService.getAgentsToApproveOrInput(convertedIdAgent);
+		List<AgentDto> result = accessRightService.getAgentsToApprove(convertedIdAgent, null);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
