@@ -48,11 +48,6 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public void removeDroitsAgent(DroitsAgent droitsAgent) {
-		ptgEntityManager.remove(droitsAgent);
-	}
-
-	@Override
 	public boolean isUserApprobator(Integer idAgent) {
 
 		TypedQuery<Long> q = ptgEntityManager.createQuery(
@@ -120,14 +115,6 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	public List<Droit> getAgentsApprobateurs() {
 
 		TypedQuery<Droit> q = ptgEntityManager.createNamedQuery("getAgentsApprobateurs", Droit.class);
-
-		return q.getResultList();
-	}
-
-	@Override
-	public List<Droit> getAgentsOperateurs() {
-
-		TypedQuery<Droit> q = ptgEntityManager.createNamedQuery("getAgentsOperateurs", Droit.class);
 
 		return q.getResultList();
 	}
@@ -281,18 +268,6 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 				+ "inner join da.droits d "
 				+ "where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.codeService = :codeService "
 				+ "group by da ";
-	}
-
-	@Override
-	public Integer getAgentsApprobateur(Integer idAgent) {
-
-		TypedQuery<Integer> q = ptgEntityManager.createNamedQuery("getAgentsApprobateur", Integer.class);
-		q.setParameter("idAgent", idAgent);
-		q.setMaxResults(1);
-
-		List<Integer> results = q.getResultList();
-
-		return results.size() != 0 ? results.get(0) : null;
 	}
 
 }

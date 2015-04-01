@@ -1,8 +1,8 @@
 package nc.noumea.mairie.ptg.repository;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -251,67 +251,7 @@ public class AccessRightsRepositoryTest {
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
 	}
-	
-	@Test
-	@Transactional("ptgTransactionManager")
-	public void getAgentsOperateurs_result(){
-		
-		Droit droitApprobateur1 = new Droit();
-			droitApprobateur1.setApprobateur(false);
-			droitApprobateur1.setDateModification(new Date());
-			droitApprobateur1.setIdAgent(9008767);
-			droitApprobateur1.setOperateur(true);
-			droitApprobateur1.setIdAgentDelegataire(9008769);
-		ptgEntityManager.persist(droitApprobateur1);
-		
-		Droit droitApprobateur2 = new Droit();
-			droitApprobateur2.setApprobateur(false);
-			droitApprobateur2.setDateModification(new Date());
-			droitApprobateur2.setIdAgent(9008767);
-			droitApprobateur2.setOperateur(true);
-			droitApprobateur2.setIdAgentDelegataire(9008769);
-		ptgEntityManager.persist(droitApprobateur2);
-		
-		List<Droit> listDroits = repository.getAgentsOperateurs();
-		
-		assertEquals(2, listDroits.size());
 
-		ptgEntityManager.flush();
-		ptgEntityManager.clear();
-	}
-	
-	@Test
-	@Transactional("ptgTransactionManager")
-	public void getAgentsOperateurs_noResult(){
-		
-		Droit droitApprobateur1 = new Droit();
-			droitApprobateur1.setApprobateur(false);
-			droitApprobateur1.setDateModification(new Date());
-			droitApprobateur1.setIdAgent(9008767);
-			droitApprobateur1.setOperateur(false);
-			droitApprobateur1.setIdAgentDelegataire(9008769);
-		ptgEntityManager.persist(droitApprobateur1);
-		
-		Droit droitApprobateur2 = new Droit();
-			droitApprobateur2.setApprobateur(false);
-			droitApprobateur2.setDateModification(new Date());
-			droitApprobateur2.setIdAgent(9008767);
-			droitApprobateur2.setOperateur(false);
-			droitApprobateur2.setIdAgentDelegataire(9008769);
-		ptgEntityManager.persist(droitApprobateur2);
-		
-		List<Droit> result = null;
-		try {
-			result = repository.getAgentsOperateurs();
-		} catch (Throwable ex) {
-	    }
-	
-		assertEquals(0, result.size());
-
-		ptgEntityManager.flush();
-		ptgEntityManager.clear();
-	}
-	
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void getListOfAgentsToInputOrApprove(){

@@ -13,8 +13,6 @@ public interface IAccessRightsRepository {
 
 	Droit getDroitApprobateurByAgent(Integer idAgent);
 
-	void removeDroitsAgent(DroitsAgent droitsAgent);
-
 	boolean isUserApprobator(Integer idAgent);
 
 	boolean isUserApprobatorOrDelegataire(Integer idAgent);
@@ -24,8 +22,6 @@ public interface IAccessRightsRepository {
 	boolean isUserApprobatorOrOperatorOrDelegataire(Integer idAgent);
 
 	List<Droit> getAgentsApprobateurs();
-
-	List<Droit> getAgentsOperateurs();
 
 	Droit getAgentDroitApprobateurOrOperateurFetchAgents(Integer idAgent, Integer idDroitApprobateur);
 
@@ -38,14 +34,6 @@ public interface IAccessRightsRepository {
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent);
 
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
-
-	/**
-	 * Returns the Id Agent of the Approbateur of a given Agent
-	 * 
-	 * @param idAgent
-	 * @return
-	 */
-	Integer getAgentsApprobateur(Integer idAgent);
 
 	List<DroitsAgent> getListOfAgentsToInput(Integer idApprobateur,
 			Integer pIdAgent);
