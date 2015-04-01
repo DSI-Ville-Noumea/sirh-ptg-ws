@@ -365,6 +365,10 @@ public class AccessRightsService implements IAccessRightsService {
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToApprove(idAgent, codeService)) {
 			AgentDto agDto = new AgentDto();
 			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+			
+			if(null == ag)
+				continue;
+			
 			agDto.setIdAgent(da.getIdAgent());
 			agDto.setNom(ag.getDisplayNom());
 			agDto.setPrenom(ag.getDisplayPrenom());
@@ -386,6 +390,9 @@ public class AccessRightsService implements IAccessRightsService {
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInput(idApprobateur, idAgent)) {
 			AgentDto agDto = new AgentDto();
 			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+			if(null == ag)
+				continue;
+			
 			agDto.setIdAgent(da.getIdAgent());
 			agDto.setNom(ag.getDisplayNom());
 			agDto.setPrenom(ag.getDisplayPrenom());
@@ -401,7 +408,7 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public void setAgentsToApprove(Integer idAgent, List<AgentDto> agents) {
 
-		Droit droitApprobateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgent, null);
+		Droit droitApprobateur = accessRightsRepository.getApprobateur(idAgent);
 
 		List<DroitsAgent> agentsToDelete = new ArrayList<DroitsAgent>(droitApprobateur.getAgents());
 
@@ -443,8 +450,7 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public void setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents) {
 
-		Droit droitApprobateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(
-				idAgentApprobateur, null);
+		Droit droitApprobateur = accessRightsRepository.getApprobateur(idAgentApprobateur);
 		Droit droitOperateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgentOperateur,
 				droitApprobateur.getIdDroit());
 
