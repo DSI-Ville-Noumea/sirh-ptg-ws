@@ -167,7 +167,16 @@ public class ApprobationService implements IApprobationService {
 						if((droit.getIdAgent().equals(idAgentOpeOrAppro)
 								|| (null != droit.getIdAgentDelegataire() 
 									&& droit.getIdAgentDelegataire().equals(idAgentOpeOrAppro)))
-								&& droit.isApprobateur()) {
+								&& droit.isApprobateur()
+								// #14841 on ne peut pas approuver un journalise
+								// j ai ajoute les autres etats pour lesquels l approbateur sera bloque
+								// SIRH ne se fit pas a ce booleen pour afficher les pouces 
+								&& !EtatPointageEnum.JOURNALISE.equals(ptg.getLatestEtatPointage().getEtat())
+								&& !EtatPointageEnum.REFUSE_DEFINITIVEMENT.equals(ptg.getLatestEtatPointage().getEtat())
+								&& !EtatPointageEnum.REJETE_DEFINITIVEMENT.equals(ptg.getLatestEtatPointage().getEtat())
+								&& !EtatPointageEnum.EN_ATTENTE.equals(ptg.getLatestEtatPointage().getEtat())
+								&& !EtatPointageEnum.VALIDE.equals(ptg.getLatestEtatPointage().getEtat())
+								&& !EtatPointageEnum.VENTILE.equals(ptg.getLatestEtatPointage().getEtat())) {
 							return true;
 						}
 					}

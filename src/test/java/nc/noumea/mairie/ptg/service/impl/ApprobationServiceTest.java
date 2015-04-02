@@ -1879,6 +1879,52 @@ public class ApprobationServiceTest {
 		RefPrime refPrime = new RefPrime();
 		refPrime.setIdRefPrime(1);
 		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(1);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+		ptg.setType(typePointagePrime);
+		ptg.setRefPrime(refPrime);
+		ptg.getEtats().add(etat);
+		
+		Droit droit = new Droit();
+		droit.setIdAgent(9005140);
+		droit.setApprobateur(true);
+
+		Set<Droit> droits = new HashSet<Droit>();
+		droits.add(droit);
+		
+		List<DroitsAgent> listdroitsAgent = new ArrayList<DroitsAgent>();
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+		da.setDroits(droits);
+		listdroitsAgent.add(da);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9001235);
+		listdroitsAgent.add(da2);
+		
+		ConsultPointageDto dto = new ConsultPointageDto();
+		
+		ApprobationService service = new ApprobationService();
+		boolean result = service.checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, 9005140);
+		
+		assertTrue(result);
+	}
+	
+
+	
+	@Test
+	public void checkDroitApprobationByPointage_false_approbateurButBadEtat() {
+		
+		RefTypePointage typePointagePrime = new RefTypePointage();
+		typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(1);
+		
 		Pointage ptg = new Pointage();
 		ptg.setIdPointage(1);
 		ptg.setIdAgent(9005138);
@@ -1905,9 +1951,27 @@ public class ApprobationServiceTest {
 		ConsultPointageDto dto = new ConsultPointageDto();
 		
 		ApprobationService service = new ApprobationService();
-		boolean result = service.checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, 9005140);
 		
-		assertTrue(result);
+		for(int i=0; i<10; i++) {
+			
+			EtatPointage etat = new EtatPointage();
+			etat.setEtat(EtatPointageEnum.getEtatPointageEnum(i));
+			ptg.getEtats().clear();
+			ptg.getEtats().add(etat);
+			
+			boolean result = service.checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, 9005140);
+			
+			if(i == EtatPointageEnum.JOURNALISE.getCodeEtat()
+					|| i == EtatPointageEnum.REFUSE_DEFINITIVEMENT.getCodeEtat()
+					|| i == EtatPointageEnum.REJETE_DEFINITIVEMENT.getCodeEtat()
+					|| i == EtatPointageEnum.EN_ATTENTE.getCodeEtat()
+					|| i == EtatPointageEnum.VALIDE.getCodeEtat()
+					|| i == EtatPointageEnum.VENTILE.getCodeEtat()) {
+				assertFalse(result);
+			}else{
+				assertTrue(result);
+			}
+		}
 	}
 	
 	@Test
@@ -1919,12 +1983,16 @@ public class ApprobationServiceTest {
 		RefPrime refPrime = new RefPrime();
 		refPrime.setIdRefPrime(1);
 		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+		
 		Pointage ptg = new Pointage();
 		ptg.setIdPointage(1);
 		ptg.setIdAgent(9005138);
 		ptg.setDateLundi(new Date());
 		ptg.setType(typePointagePrime);
 		ptg.setRefPrime(refPrime);
+		ptg.getEtats().add(etat);
 		
 		Droit droit = new Droit();
 		droit.setIdAgent(9001111);
