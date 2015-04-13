@@ -11,53 +11,47 @@ import org.mockito.Mockito;
 public class AbsencesEtatPayeurDtoTest {
 
 	@Test
-	public void AbsencesEtatPayeurDto_absenceConcertee_convertMinutesToHeuresString() {
+	public void AbsencesEtatPayeurDto_DifferenceBetweenNewVentilAndOldVentil() {
 
 		// Given
-		VentilAbsence va = new VentilAbsence();
-		va.setIdAgent(9008767);
-		va.setDateLundi(new LocalDate(2013, 9, 30).toDate());
-		va.addMinutesConcertee(90);
+		VentilAbsence vaNew = new VentilAbsence();
+		vaNew.setIdAgent(9008767);
+		vaNew.setDateLundi(new LocalDate(2013, 9, 30).toDate());
+		vaNew.addMinutesNonConcertee(90);
+		vaNew.setNombreAbsenceInferieur1(1);
+		vaNew.setNombreAbsenceEntre1Et4(1);
+		vaNew.setNombreAbsenceSuperieur1(3);
+
+		VentilAbsence vaOld = new VentilAbsence();
+		vaOld.setIdAgent(9008767);
+		vaOld.setDateLundi(new LocalDate(2013, 9, 30).toDate());
+		vaOld.addMinutesNonConcertee(90);
+		vaOld.setNombreAbsenceInferieur1(0);
+		vaOld.setNombreAbsenceEntre1Et4(2);
+		vaOld.setNombreAbsenceSuperieur1(1);
+		
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.formatMinutesToString(90)).thenReturn("1h30");
 
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(va, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
 
 		// Then
-		assertEquals("1h30", result.getQuantiteEntre1HeureEt4Heure());
-		assertEquals("", result.getQuantiteInf1Heure());
-		assertEquals("", result.getQuantiteSup4Heure());
+		assertEquals("1", result.getQuantiteInf1Heure());
+		assertEquals("-1", result.getQuantiteEntre1HeureEt4Heure());
+		assertEquals("2", result.getQuantiteSup4Heure());
 	}
 
 	@Test
-	public void AbsencesEtatPayeurDto_absenceNonConcertee_convertMinutesToHeuresString() {
-
-		// Given
-		VentilAbsence va = new VentilAbsence();
-		va.setIdAgent(9008767);
-		va.setDateLundi(new LocalDate(2013, 9, 30).toDate());
-		va.addMinutesNonConcertee(90);
-		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.formatMinutesToString(90)).thenReturn("1h30");
-
-		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(va, hS);
-
-		// Then
-		assertEquals("1h30", result.getQuantiteEntre1HeureEt4Heure());
-		assertEquals("", result.getQuantiteInf1Heure());
-		assertEquals("", result.getQuantiteSup4Heure());
-	}
-
-	@Test
-	public void AbsencesEtatPayeurDto_absenceConcertee_NewOld_convertMinutesToHeuresString() {
+	public void AbsencesEtatPayeurDto_1AbsenceInferieur1() {
 
 		// Given
 		VentilAbsence vaNew = new VentilAbsence();
 		vaNew.setIdAgent(9008767);
 		vaNew.setDateLundi(new LocalDate(2013, 9, 30).toDate());
 		vaNew.setMinutesConcertee(90);
+		vaNew.setNombreAbsenceInferieur1(1);
+		vaNew.setNombreAbsenceEntre1Et4(0);
+		vaNew.setNombreAbsenceSuperieur1(0);
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.formatMinutesToString(60)).thenReturn("1h");
 
@@ -68,21 +62,23 @@ public class AbsencesEtatPayeurDtoTest {
 		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
 
 		// Then
-		assertEquals("1h", result.getQuantiteInf1Heure());
+		assertEquals("1", result.getQuantiteInf1Heure());
 		assertEquals("", result.getQuantiteEntre1HeureEt4Heure());
 		assertEquals("", result.getQuantiteSup4Heure());
 	}
 
 	@Test
-	public void AbsencesEtatPayeurDto_absenceNonConcertee_NewOld_Negative_convertMinutesToHeuresString() {
+	public void AbsencesEtatPayeurDto_1AbsenceEntre1Et4() {
 
 		// Given
 		VentilAbsence vaNew = new VentilAbsence();
 		vaNew.setIdAgent(9008767);
 		vaNew.setDateLundi(new LocalDate(2013, 9, 30).toDate());
 		vaNew.setMinutesNonConcertee(90);
+		vaNew.setNombreAbsenceInferieur1(0);
+		vaNew.setNombreAbsenceEntre1Et4(1);
+		vaNew.setNombreAbsenceSuperieur1(0);
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.formatMinutesToString(-30)).thenReturn("- 30m");
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setMinutesNonConcertee(120);
@@ -91,19 +87,22 @@ public class AbsencesEtatPayeurDtoTest {
 		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
 
 		// Then
-		assertEquals("- 30m", result.getQuantiteInf1Heure());
-		assertEquals("", result.getQuantiteEntre1HeureEt4Heure());
+		assertEquals("", result.getQuantiteInf1Heure());
+		assertEquals("1", result.getQuantiteEntre1HeureEt4Heure());
 		assertEquals("", result.getQuantiteSup4Heure());
 	}
 
 	@Test
-	public void AbsencesEtatPayeurDto_absenceImmediate_NewOld_convertMinutesToHeuresString() {
+	public void AbsencesEtatPayeurDto_2Inferieur1() {
 
 		// Given
 		VentilAbsence vaNew = new VentilAbsence();
 		vaNew.setIdAgent(9008767);
 		vaNew.setDateLundi(new LocalDate(2013, 9, 30).toDate());
 		vaNew.setMinutesImmediat(90);
+		vaNew.setNombreAbsenceInferieur1(2);
+		vaNew.setNombreAbsenceEntre1Et4(0);
+		vaNew.setNombreAbsenceSuperieur1(0);
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.formatMinutesToString(60)).thenReturn("1h");
 
@@ -114,21 +113,23 @@ public class AbsencesEtatPayeurDtoTest {
 		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
 
 		// Then
-		assertEquals("1h", result.getQuantiteInf1Heure());
+		assertEquals("2", result.getQuantiteInf1Heure());
 		assertEquals("", result.getQuantiteEntre1HeureEt4Heure());
 		assertEquals("", result.getQuantiteSup4Heure());
 	}
 
 	@Test
-	public void AbsencesEtatPayeurDto_absenceImmediate_NewOld_Negative_convertMinutesToHeuresString() {
+	public void AbsencesEtatPayeurDto_2Inferieur1_3Superieur4() {
 
 		// Given
 		VentilAbsence vaNew = new VentilAbsence();
 		vaNew.setIdAgent(9008767);
 		vaNew.setDateLundi(new LocalDate(2013, 9, 30).toDate());
 		vaNew.setMinutesImmediat(90);
+		vaNew.setNombreAbsenceInferieur1(2);
+		vaNew.setNombreAbsenceEntre1Et4(0);
+		vaNew.setNombreAbsenceSuperieur1(3);
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.formatMinutesToString(-30)).thenReturn("- 30m");
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setMinutesImmediat(120);
@@ -137,8 +138,8 @@ public class AbsencesEtatPayeurDtoTest {
 		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
 
 		// Then
-		assertEquals("- 30m", result.getQuantiteInf1Heure());
+		assertEquals("2", result.getQuantiteInf1Heure());
 		assertEquals("", result.getQuantiteEntre1HeureEt4Heure());
-		assertEquals("", result.getQuantiteSup4Heure());
+		assertEquals("3", result.getQuantiteSup4Heure());
 	}
 }

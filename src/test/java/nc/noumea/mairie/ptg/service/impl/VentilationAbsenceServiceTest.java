@@ -96,5 +96,58 @@ public class VentilationAbsenceServiceTest {
 		assertEquals(120, result.getMinutesImmediat());
 		assertEquals(dateDebutMois.toDate(), result.getDateLundi());
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+		assertEquals(0, result.getNombreAbsenceInferieur1().intValue());
+		assertEquals(2, result.getNombreAbsenceEntre1Et4().intValue());
+		assertEquals(1, result.getNombreAbsenceSuperieur1().intValue());
+	}
+
+	@Test
+	public void processAbsenceAgent_1AbsenceConcertee1AbsencesNonConcertees1AbsenceImmeidate_ReturnAggregatedAbsences() {
+
+		// Given
+		DateTime dateDebutMois = new DateTime(2013, 5, 1, 0, 0, 0);
+
+		RefTypeAbsence rta1 = new RefTypeAbsence();
+		rta1.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
+
+		Pointage p1 = new Pointage();
+		p1.setDateDebut(new DateTime(2013, 5, 11, 12, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 5, 12, 13, 0, 0).toDate());
+		p1.setType(abs);
+		p1.setRefTypeAbsence(rta1);
+
+		RefTypeAbsence rta2 = new RefTypeAbsence();
+		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.NON_CONCERTEE.getValue());
+
+		Pointage p2 = new Pointage();
+		p2.setDateDebut(new DateTime(2013, 5, 19, 8, 30, 0).toDate());
+		p2.setDateFin(new DateTime(2013, 5, 19, 10, 0, 0).toDate());
+		p2.setType(abs);
+		p2.setRefTypeAbsence(rta2);
+
+		RefTypeAbsence rta3 = new RefTypeAbsence();
+		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.IMMEDIATE.getValue());
+
+		Pointage p3 = new Pointage();
+		p3.setDateDebut(new DateTime(2013, 5, 20, 15, 0, 0).toDate());
+		p3.setDateFin(new DateTime(2013, 5, 20, 16, 00, 0).toDate());
+		p3.setType(abs);
+		p3.setRefTypeAbsence(rta3);
+
+		VentilationAbsenceService service = new VentilationAbsenceService();
+
+		// When
+		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3), dateDebutMois.toDate());
+
+		// Then
+		assertEquals(9008765, (int) result.getIdAgent());
+		assertEquals(1500, result.getMinutesConcertee());
+		assertEquals(90, result.getMinutesNonConcertee());
+		assertEquals(60, result.getMinutesImmediat());
+		assertEquals(dateDebutMois.toDate(), result.getDateLundi());
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+		assertEquals(1, result.getNombreAbsenceInferieur1().intValue());
+		assertEquals(1, result.getNombreAbsenceEntre1Et4().intValue());
+		assertEquals(1, result.getNombreAbsenceSuperieur1().intValue());
 	}
 }

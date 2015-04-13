@@ -46,6 +46,14 @@ public class VentilationAbsenceService implements IVentilationAbsenceService {
 					result.addMinutesImmediate((int) minutes);
 					break;
 			}
+			
+			if (0 < minutes && minutes <= 60) {
+				result.addNombreAbsenceInferieur1(1);
+			} else if (60 < minutes && minutes <= 240) {
+				result.addNombreAbsenceEntre1Et4(1);
+			} else if(240 < minutes) {
+				result.addNombreAbsenceSuperieur1(1);
+			}
 		}
 
 		return result;

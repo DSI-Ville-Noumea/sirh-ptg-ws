@@ -20,29 +20,13 @@ public class AbsencesEtatPayeurDto {
 
 	public AbsencesEtatPayeurDto(VentilAbsence vaNew, VentilAbsence vaOld, HelperService hS) {
 
-		Integer quantiteConcerte = vaNew.getMinutesConcertee() - (vaOld != null ? vaOld.getMinutesConcertee() : 0);
-		Integer quantiteImmediate = vaNew.getMinutesImmediat() - (vaOld != null ? vaOld.getMinutesImmediat() : 0);
-		Integer quantiteNonConcerte = vaNew.getMinutesNonConcertee()
-				- (vaOld != null ? vaOld.getMinutesNonConcertee() : 0);
+		Integer nombreAbsenceInferieur1 = vaNew.getNombreAbsenceInferieur1() - (vaOld != null ? vaOld.getNombreAbsenceInferieur1() : 0);
+		Integer nombreAbsenceEntre1Et4 = vaNew.getNombreAbsenceEntre1Et4() - (vaOld != null ? vaOld.getNombreAbsenceEntre1Et4() : 0);
+		Integer nombreAbsenceSuperieur1 = vaNew.getNombreAbsenceSuperieur1() - (vaOld != null ? vaOld.getNombreAbsenceSuperieur1() : 0);
 
-		Integer total = quantiteConcerte + quantiteImmediate + quantiteNonConcerte;
-		if (total == 0) {
-			quantiteInf1Heure = "";
-			quantiteEntre1HeureEt4Heure = "";
-			quantiteSup4Heure = "";
-		} else if (total <= 60) {
-			quantiteInf1Heure = hS.formatMinutesToString(total);
-			quantiteEntre1HeureEt4Heure = "";
-			quantiteSup4Heure = "";
-		} else if (60 < total && total <= 240) {
-			quantiteInf1Heure = "";
-			quantiteEntre1HeureEt4Heure = hS.formatMinutesToString(total);
-			quantiteSup4Heure = "";
-		} else {
-			quantiteInf1Heure = "";
-			quantiteEntre1HeureEt4Heure = "";
-			quantiteSup4Heure = hS.formatMinutesToString(total);
-		}
+		quantiteInf1Heure = null != nombreAbsenceInferieur1 && 0 != nombreAbsenceInferieur1 ? nombreAbsenceInferieur1.toString() : "";
+		quantiteEntre1HeureEt4Heure = null != nombreAbsenceEntre1Et4 && 0 != nombreAbsenceEntre1Et4 ? nombreAbsenceEntre1Et4.toString() : "";
+		quantiteSup4Heure = null != nombreAbsenceSuperieur1 && 0 != nombreAbsenceSuperieur1 ? nombreAbsenceSuperieur1.toString() : "";
 	}
 
 	public String getQuantiteInf1Heure() {
