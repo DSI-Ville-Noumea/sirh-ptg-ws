@@ -3,7 +3,7 @@ package nc.noumea.mairie.ptg.repository;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.Query;
 
 import nc.noumea.mairie.domain.SpWFEtat;
 import nc.noumea.mairie.domain.SpWFPaie;
@@ -21,11 +21,11 @@ public class PaieWorkflowRepository implements IPaieWorkflowRepository {
 	@Override
 	public SpWFPaie readCurrentState(TypeChainePaieEnum chainePaie) {
 
-		TypedQuery<SpWFPaie> query = entityManager.createQuery(
-				"select p from SpWFPaie p where p.codeChaine = :chainePaie", SpWFPaie.class);
-		query.setParameter("chainePaie", chainePaie);
+		Query query = entityManager.createNativeQuery(
+				"select * from SpWFPaie p where p.cdChaine = :chainePaie with ur", SpWFPaie.class);
+		query.setParameter("chainePaie", chainePaie.toString());
 
-		return query.getSingleResult();
+		return (SpWFPaie) query.getResultList().get(0);
 	}
 
 	@Override
@@ -42,8 +42,8 @@ public class PaieWorkflowRepository implements IPaieWorkflowRepository {
 	}
 
 	@Override
-	public String getLockModeSpWFPaie() {
-		LockModeType lock = entityManager.getLockMode(SpWFPaie.class);
+	public String getLockModeSpWFPaie(Object o) {
+		LockModeType lock = entityManager.getLockMode(o);
 		return lock.toString();
 	}
 }

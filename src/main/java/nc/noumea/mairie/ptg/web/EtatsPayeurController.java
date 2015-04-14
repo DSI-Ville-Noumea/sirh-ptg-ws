@@ -176,11 +176,11 @@ public class EtatsPayeurController {
 
 		if (result.getErrors().size() != 0)
 			return new ResponseEntity<String>(response, HttpStatus.CONFLICT);
-		try {
-			logger.debug("LockMode : " + paieWorkflowRepository.getLockModeSpWFPaie());
-		} catch (Exception e) {
-			logger.debug("Erreur : paieWorkflowRepository BAD" + e.getMessage());
-		}
+//		try {
+//			logger.debug("LockMode : " + paieWorkflowRepository.getLockModeSpWFPaie());
+//		} catch (Exception e) {
+//			logger.debug("Erreur : paieWorkflowRepository BAD" + e.getMessage());
+//		}
 
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
@@ -231,11 +231,11 @@ public class EtatsPayeurController {
 		} catch (WorkflowInvalidStateException e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 		}
-		try {
-			logger.debug("LockMode : " + paieWorkflowRepository.getLockModeSpWFPaie());
-		} catch (Exception e) {
-			logger.debug("Erreur : paieWorkflowRepository BAD" + e.getMessage());
-		}
+//		try {
+//			logger.debug("LockMode : " + paieWorkflowRepository.getLockModeSpWFPaie());
+//		} catch (Exception e) {
+//			logger.debug("Erreur : paieWorkflowRepository BAD" + e.getMessage());
+//		}
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}

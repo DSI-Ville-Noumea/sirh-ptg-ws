@@ -62,11 +62,6 @@ public class ExportPaieController {
 		if (result.getErrors().size() != 0)
 			return new ResponseEntity<String>(resultJson, HttpStatus.CONFLICT);
 
-		try{
-		logger.debug("LockMode : " + paieWorkflowRepository.getLockModeSpWFPaie());
-		}catch(Exception e){
-			logger.debug("Erreur : paieWorkflowRepository BAD"+e.getMessage());
-		}
 		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
 	}
 
@@ -146,11 +141,11 @@ public class ExportPaieController {
 		} catch (WorkflowInvalidStateException e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 		}
-		try{
-		logger.debug("LockMode : " + paieWorkflowRepository.getLockModeSpWFPaie());
-		}catch(Exception e){
-			logger.debug("Erreur : paieWorkflowRepository BAD"+e.getMessage());
-		}
+//		try{
+//		logger.debug("LockMode : " + paieWorkflowRepository.getLockModeSpWFPaie());
+//		}catch(Exception e){
+//			logger.debug("Erreur : paieWorkflowRepository BAD"+e.getMessage());
+//		}
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 }

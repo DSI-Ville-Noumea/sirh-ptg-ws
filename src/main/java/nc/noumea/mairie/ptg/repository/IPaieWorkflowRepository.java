@@ -33,5 +33,5 @@ public interface IPaieWorkflowRepository {
 	 */
 	SpWFPaie selectForUpdateState(TypeChainePaieEnum chainePaie);
 
-	String getLockModeSpWFPaie();
+	String getLockModeSpWFPaie(Object o);
 }
