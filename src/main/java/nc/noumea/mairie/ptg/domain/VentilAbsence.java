@@ -55,7 +55,7 @@ public class VentilAbsence {
 	@Column(name = "version")
 	private Integer version;
 	
-	@Column(name = "NOMBRE_ABSENCE_INFERIEUR_4")
+	@Column(name = "NOMBRE_ABSENCE_INFERIEUR_1")
 	private int nombreAbsenceInferieur1;
 	
 	@Column(name = "NOMBRE_ABSENCE_ENTRE_1_ET_4")
