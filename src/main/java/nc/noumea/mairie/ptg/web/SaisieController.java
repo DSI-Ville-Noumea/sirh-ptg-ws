@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.text.ParseException;
 import java.util.Date;
 
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
@@ -74,7 +75,7 @@ public class SaisieController {
 	@RequestMapping(value = "/fiche", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> setFichePointage(@RequestParam("idAgent") int idAgent,
-			@RequestBody(required = true) String fichePointage) {
+			@RequestBody(required = true) String fichePointage) throws ParseException {
 
 		logger.debug("entered POST [saisie/fiche] => setFichePointage with parameters idAgent = {}", idAgent);
 
@@ -124,7 +125,7 @@ public class SaisieController {
 	@RequestMapping(value = "/ficheSIRH", produces = "application/json;charset=utf-8", consumes = "application/json", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
 	public ResponseEntity<String> setFichePointageSIRH(@RequestParam("idAgent") int idAgent,
-			@RequestBody(required = true) String fichePointage) {
+			@RequestBody(required = true) String fichePointage) throws ParseException {
 
 		logger.debug("entered POST [saisie/ficheSIRH] => setFichePointage for SIRH with parameters idAgent = {}",
 				idAgent);

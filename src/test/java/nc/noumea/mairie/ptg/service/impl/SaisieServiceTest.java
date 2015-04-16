@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -60,7 +61,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 public class SaisieServiceTest {
 
 	@Test
-	public void saveFichePointageKiosque_dateIsNotAMonday_throwException() {
+	public void saveFichePointageKiosque_dateIsNotAMonday_throwException() throws ParseException {
 		// Given
 		Date notAMonday = new DateTime(2013, 05, 14, 0, 0, 0).toDate();
 		FichePointageDtoKiosque fichePointageDto = new FichePointageDtoKiosque();
@@ -71,6 +72,7 @@ public class SaisieServiceTest {
 
 		SaisieService service = new SaisieService();
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		try {
@@ -83,7 +85,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointageKiosque_noExistingPointage_saveNewAbsence() {
+	public void saveFichePointageKiosque_noExistingPointage_saveNewAbsence() throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -148,6 +150,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -171,7 +174,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointageKiosque_noExistingPointage_saveNewHsup() {
+	public void saveFichePointageKiosque_noExistingPointage_saveNewHsup() throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -251,6 +254,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2010");
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -276,7 +280,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointageKiosque_noExistingPointage_saveNewPrime() {
+	public void saveFichePointageKiosque_noExistingPointage_saveNewPrime() throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -340,6 +344,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -365,7 +370,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointageKiosque_noExistingPointage_saveNewPrimeQuantite() {
+	public void saveFichePointageKiosque_noExistingPointage_saveNewPrimeQuantite() throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -430,6 +435,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -456,7 +462,8 @@ public class SaisieServiceTest {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Test
-	public void saveFichePointageKiosque_saveNewAbsence_ErrorInConsistency_saveNothingAndReturnMessage() {
+	public void saveFichePointageKiosque_saveNewAbsence_ErrorInConsistency_saveNothingAndReturnMessage()
+			throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -514,6 +521,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		ReturnMessageDto res = service.saveFichePointage(9001234, dto);
@@ -527,7 +535,8 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointageKiosque_deletedPointageFromDto_delete1PointageKeep1BecauseOldVersion() {
+	public void saveFichePointageKiosque_deletedPointageFromDto_delete1PointageKeep1BecauseOldVersion()
+			throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -567,6 +576,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -576,7 +586,8 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointageKiosque_delete2PointagesFromDtoUsingASupprimer_delete1PointageKeep1BecauseOldVersio() {
+	public void saveFichePointageKiosque_delete2PointagesFromDtoUsingASupprimer_delete1PointageKeep1BecauseOldVersio()
+			throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -659,6 +670,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -669,7 +681,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointageKiosque_fromKiosque_dateLundiPlus3Mois() {
+	public void saveFichePointageKiosque_fromKiosque_dateLundiPlus3Mois() throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -690,6 +702,7 @@ public class SaisieServiceTest {
 		SaisieService service = new SaisieService();
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2015");
 
 		// When
 		ReturnMessageDto result = service.saveFichePointage(9001234, dto);
@@ -699,7 +712,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_fromSIRH_dateLundiPlus3Mois() {
+	public void saveFichePointage_fromSIRH_dateLundiPlus3Mois() throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -797,6 +810,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		service.saveFichePointage(9001234, dto, true);
@@ -807,7 +821,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointageKiosque_ExistingPointage_saveNewHsup_WithOthersOldHSup() {
+	public void saveFichePointageKiosque_ExistingPointage_saveNewHsup_WithOthersOldHSup() throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -913,6 +927,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -1732,7 +1747,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_noExistingPointage_saveNewAbsence_2Days() {
+	public void saveFichePointage_noExistingPointage_saveNewAbsence_2Days() throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -1797,6 +1812,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -1820,7 +1836,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_noExistingPointage_saveNewHsup_2Days() {
+	public void saveFichePointage_noExistingPointage_saveNewHsup_2Days() throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -1899,6 +1915,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", sR);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -1923,7 +1940,7 @@ public class SaisieServiceTest {
 	}
 
 	@Test
-	public void saveFichePointage_noExistingPointage_saveNewPrime_2Days() {
+	public void saveFichePointage_noExistingPointage_saveNewPrime_2Days() throws ParseException {
 
 		// Given
 		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
@@ -1987,6 +2004,7 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", dcMock);
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2011");
 
 		// When
 		service.saveFichePointage(9001234, dto);
@@ -2091,6 +2109,50 @@ public class SaisieServiceTest {
 		assertNull(ptg.getCommentaire());
 
 		Mockito.verify(pRepo, Mockito.times(1)).removeEntity(Mockito.isA(PtgComment.class));
+	}
+
+	@Test
+	public void saveFichePointageKiosque_dateBeforeDateProd() throws ParseException {
+
+		// Given
+		Date lundi = new DateTime(2015, 04, 23, 0, 0, 0).toDate();
+		AgentWithServiceDto agent = new AgentWithServiceDto();
+		agent.setIdAgent(9007654);
+
+		FichePointageDtoKiosque dto = new FichePointageDtoKiosque();
+		dto.setDateLundi(lundi);
+		dto.setAgent(agent);
+
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/04/2015");
+
+		// When
+		ReturnMessageDto result = service.saveFichePointage(9001234, dto);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Saisie impossible pour cette date, merci de contacter la DRH pour effectuer cette saisie.", result.getErrors().get(0));
+	}
+
+	@Test
+	public void saveFichePointage_dateBeforeDateProd() throws ParseException {
+
+		// Given
+		Date lundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		AgentWithServiceDto agent = new AgentWithServiceDto();
+		agent.setIdAgent(9007654);
+
+		FichePointageDto dto = new FichePointageDto();
+		dto.setDateLundi(lundi);
+		dto.setAgent(agent);
+
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "sirhAbsDateBlocagePointage", "24/03/2015");
+
+		// When
+		ReturnMessageDto result = service.saveFichePointage(9001234, dto, false);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Les saisies antérieur au 24/03/2015 sont à effectuer dans l'ancien système (AS400).", result.getErrors().get(0));
 	}
 
 }

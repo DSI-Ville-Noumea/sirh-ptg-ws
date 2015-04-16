@@ -1,5 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +40,7 @@ import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -64,21 +67,34 @@ public class SaisieService implements ISaisieService {
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
 
+	@Autowired
+	@Qualifier("sirhAbsDateBlocagePointage")
+	private String sirhAbsDateBlocagePointage;
+
 	@Override
-	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDtoKiosque fichePointageDto) {
+	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDtoKiosque fichePointageDto)
+			throws ParseException {
 		return saveFichePointageKiosque(idAgentOperator, fichePointageDto, false);
 	}
 
 	@Override
 	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDto fichePointageDto,
-			boolean approveModifiedPointages) {
+			boolean approveModifiedPointages) throws ParseException {
 
+		ReturnMessageDto result = new ReturnMessageDto();
 		Date dateLundi = fichePointageDto.getDateLundi();
+
+		// cf #15027 on bloque la saisie des pointages avant la date de MEP
+		if (dateLundi.before(new SimpleDateFormat("dd/MM/yyyy").parse(sirhAbsDateBlocagePointage))) {
+			result.getErrors().add(
+					"Les saisies antérieur au " + sirhAbsDateBlocagePointage
+							+ " sont à effectuer dans l'ancien système (AS400).");
+			return result;
+		}
 
 		if (!helperService.isDateAMonday(dateLundi))
 			throw new NotAMondayException();
 
-		ReturnMessageDto result = new ReturnMessageDto();
 		if (!approveModifiedPointages)
 			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, dateLundi);
 		if (!result.getErrors().isEmpty())
@@ -498,14 +514,21 @@ public class SaisieService implements ISaisieService {
 
 	@Override
 	public ReturnMessageDto saveFichePointageKiosque(Integer idAgentOperator, FichePointageDtoKiosque fichePointageDto,
-			boolean approveModifiedPointages) {
+			boolean approveModifiedPointages) throws ParseException {
 
 		Date dateLundi = fichePointageDto.getDateLundi();
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		// cf #15027 on bloque la saisie des pointages avant la date de MEP
+		if (dateLundi.before(new SimpleDateFormat("dd/MM/yyyy").parse(sirhAbsDateBlocagePointage))) {
+			result.getErrors().add(
+					"Saisie impossible pour cette date, merci de contacter la DRH pour effectuer cette saisie.");
+			return result;
+		}
 
 		if (!helperService.isDateAMonday(dateLundi))
 			throw new NotAMondayException();
 
-		ReturnMessageDto result = new ReturnMessageDto();
 		if (!approveModifiedPointages)
 			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, dateLundi);
 		if (!result.getErrors().isEmpty())
