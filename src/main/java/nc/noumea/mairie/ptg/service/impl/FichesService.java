@@ -33,7 +33,9 @@ public class FichesService implements IFichesService {
 			agDto.setIdAgent(da.getIdAgent());
 			agDto.setNom(ag.getDisplayNom());
 			agDto.setPrenom(ag.getDisplayPrenom());
-			result.add(agDto);
+			
+			if(!result.contains(agDto))
+				result.add(agDto);
 		}
 
 		return result;

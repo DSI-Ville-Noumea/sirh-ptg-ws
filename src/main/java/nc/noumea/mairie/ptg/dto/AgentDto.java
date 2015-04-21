@@ -51,4 +51,9 @@ public class AgentDto {
 	public void setNomatr(Integer nomatr) {
 		this.nomatr = nomatr;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return idAgent.equals(((AgentDto) obj).getIdAgent());
+	}
 }

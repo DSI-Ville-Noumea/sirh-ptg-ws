@@ -48,4 +48,48 @@ public class FichesServiceTest {
 		assertEquals(ag.getIdAgent(), result.get(0).getIdAgent());
 		assertEquals(1, result.size());
 	}
+
+	// #15193 bug avec des agents en doublon
+	// car un operateur peut etre operateur de plusieurs approbateurs 
+	// approuvant des memes agents
+	@Test
+	public void listAgentsFichesToPrint_testDoublon() {
+
+		// Given
+		Integer idAgent = 906543;
+
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setIdAgent(9005138);
+
+		AgentGeneriqueDto ag2 = new AgentGeneriqueDto();
+		ag2.setIdAgent(9005140);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9005140);
+
+		DroitsAgent da3 = new DroitsAgent();
+		da3.setIdAgent(9005138);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, "DEDA")).thenReturn(Arrays.asList(da, da2, da3));
+
+		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhRepo.getAgent(9005138)).thenReturn(ag);
+		Mockito.when(sirhRepo.getAgent(9005140)).thenReturn(ag2);
+
+		FichesService service = new FichesService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
+
+		// When
+		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, "DEDA");
+
+		// Then
+		assertEquals(ag.getIdAgent(), result.get(0).getIdAgent());
+		assertEquals(ag2.getIdAgent(), result.get(1).getIdAgent());
+		assertEquals(2, result.size());
+	}
 }
