@@ -257,6 +257,70 @@ public class VentilationRepositoryTest {
 		ptgEntityManager.clear();
 	}
 
+	// bug #15212 : probleme avec pointage parent 
+	// cas concret : donnees reprises de la recette
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListIdAgentsForVentilationByDateAndEtat_WithPointageParent() {
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		ptgEntityManager.persist(rtp);
+
+		RefTypeAbsence refTypeAbs = new RefTypeAbsence();
+		refTypeAbs.setIdRefTypeAbsence(1);
+		ptgEntityManager.persist(refTypeAbs);
+
+		Pointage pointageParent = new Pointage();
+		pointageParent.setIdAgent(9004432);
+		pointageParent.setDateLundi(new LocalDate(2015, 3, 2).toDate());
+		pointageParent.setDateDebut(new DateTime(2015, 3, 4, 6, 0, 0).toDate());
+		pointageParent.setDateFin(new DateTime(2015, 3, 4, 13, 0, 0).toDate());
+		pointageParent.setRefTypeAbsence(refTypeAbs);
+		pointageParent.setType(rtp);
+		ptgEntityManager.persist(pointageParent);
+
+		EtatPointage ep = new EtatPointage();
+		ep.setDateEtat(new LocalDate(2015, 3, 31).toDate());
+		ep.setDateMaj(new LocalDate(2015, 3, 31).toDate());
+		ep.setEtat(EtatPointageEnum.APPROUVE);
+		ep.setIdAgent(9005138);
+		ep.setPointage(pointageParent);
+		ptgEntityManager.persist(ep);
+
+		// 1er test sans pointage parent
+		List<Integer> result = repository.getListIdAgentsForVentilationByDateAndEtat(
+				new LocalDate(2015, 3, 15).toDate(), new LocalDate(2015, 4, 12).toDate());
+
+		assertEquals(1, result.size());
+
+		Pointage ptg2 = new Pointage();
+		ptg2.setIdAgent(9004432);
+		ptg2.setDateLundi(new LocalDate(2015, 3, 2).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 3, 4, 7, 45, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 3, 4, 13, 0, 0).toDate());
+		ptg2.setRefTypeAbsence(refTypeAbs);
+		ptg2.setPointageParent(pointageParent);
+		ptg2.setType(rtp);
+		ptgEntityManager.persist(ptg2);
+
+		EtatPointage ep2 = new EtatPointage();
+		ep2.setDateEtat(new LocalDate(2015, 4, 16).toDate());
+		ep2.setDateMaj(new LocalDate(2015, 4, 16).toDate());
+		ep2.setEtat(EtatPointageEnum.VALIDE);
+		ep2.setIdAgent(9005138);
+		ep2.setPointage(ptg2);
+		ptgEntityManager.persist(ep2);
+
+		List<Integer> resultAvecPointageParent = repository.getListIdAgentsForVentilationByDateAndEtat(
+				new LocalDate(2015, 3, 15).toDate(), new LocalDate(2015, 4, 12).toDate());
+
+		assertEquals(0, resultAvecPointageParent.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
 	// @Test
 	@Transactional("ptgTransactionManager")
 	public void getListIdAgentsForExportPaie() {

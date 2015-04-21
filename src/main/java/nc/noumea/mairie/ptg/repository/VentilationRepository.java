@@ -78,8 +78,10 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("INNER JOIN ptg_pointage ptg ON ptg.id_pointage = epmax.id_pointage ");
 		sb.append("GROUP BY epmax.id_pointage)  ");
 		sb.append("maxEtats ON maxEtats.maxIdEtatPointage = ep.id_etat_pointage AND maxEtats.id_pointage = ep.id_pointage ");
-		sb.append("WHERE (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ) ");
-		sb.append("OR ep.etat = :ventile ");
+		sb.append("WHERE ((ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ) ");
+		sb.append("OR ep.etat = :ventile ) ");
+		// bug #15212
+		sb.append("and p.id_pointage not in (select id_pointage_parent from PTG_POINTAGE where id_pointage_parent is not null ) ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString());
 		q.setParameter("fromEtatDate", fromEtatDate);
