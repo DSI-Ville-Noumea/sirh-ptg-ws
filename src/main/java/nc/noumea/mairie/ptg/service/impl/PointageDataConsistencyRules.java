@@ -97,11 +97,11 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkRecuperation(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		for (Pointage p : pointages) {
-			
+
 			// pour chaque pointage on verifie si en recup
 			// si oui, on ajoute des erreurs
 			// #6843 attention on ne check pas les primes
-			if(!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
 				result = absWsConsumer.checkRecuperation(idAgent, p.getDateDebut(), p.getDateFin());
 			}
 		}
@@ -122,7 +122,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			// pour chaque pointage on verifie si en repos comp
 			// si oui, on ajoute des erreurs
 			// #6843 attention on ne check pas les primes
-			if(!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
 				result = absWsConsumer.checkReposComp(idAgent, p.getDateDebut(), p.getDateFin());
 			}
 		}
@@ -143,7 +143,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			// pour chaque pointage on verifie si en ASA
 			// si oui, on ajoute des erreurs
 			// #6843 attention on ne check pas les primes
-			if(!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
 				result = absWsConsumer.checkAbsencesSyndicales(idAgent, p.getDateDebut(), p.getDateFin());
 			}
 		}
@@ -164,7 +164,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			// pour chaque pointage on verifie si en conge exceptionnel
 			// si oui, on ajoute des erreurs
 			// #6843 attention on ne check pas les primes
-			if(!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
 				result = absWsConsumer.checkCongesExceptionnels(idAgent, p.getDateDebut(), p.getDateFin());
 			}
 		}
@@ -185,7 +185,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			// pour chaque pointage on verifie si en conge annuel
 			// si oui, on ajoute des erreurs
 			// #6843 attention on ne check pas les primes
-			if(!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
 				result = absWsConsumer.checkCongeAnnuel(idAgent, p.getDateDebut(), p.getDateFin());
 			}
 		}
@@ -218,25 +218,21 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
 
-		if (carr.getStatutCarriere() != AgentStatutEnum.F
-				&& !baseDto.getCodeBaseHorairePointage().equals("00Z"))
-			return srm;
-
 		// cas de la DPM #11622
 		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent, dateLundi);
-		if (service.getSigle().toUpperCase().equals("DPM")) {
-			return srm;
-		}
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
-
-				if (carr.getSpbarem().getIna() > 315)
-					ptg.setHeureSupRecuperee(true);
-				else
+				// tester si base Z
+				if (baseDto.getCodeBaseHorairePointage().equals("00Z")) {
 					srm.getErrors().add(BASE_HOR_00Z_MSG);
-
-				break;
+					return srm;
+				}
+				// cas de la DPM #11622
+				if (service.getSigle().toUpperCase().equals("DPM") || carr.getSpbarem().getIna() > 315) {
+					ptg.setHeureSupRecuperee(true);
+					return srm;
+				}
 			}
 		}
 
@@ -475,8 +471,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				srm.getErrors().add(String.format(ERROR_DATE_POINTAGE, sdf.format(ptg.getDateDebut())));
 			}
 			// on verif intervalle de 30 min minimum entre les 2 dates
-			if (null != ptg.getRefPrime()
-					&& ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES)
+			if (null != ptg.getRefPrime() && ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES)
 					&& fin != null && (fin.getTimeInMillis() - debut.getTimeInMillis()) < 1800000) {
 				srm.getErrors().add(String.format(ERROR_INTERVALLE_POINTAGE, sdf.format(ptg.getDateDebut())));
 			}
@@ -491,15 +486,16 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 									sdf.format(ptg.getDateDebut())));
 					// pour les primes de type NOMBRE_HEURE, la quantite ne doit
 					// pas depasser 24H
-				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES) && ptg.getQuantite() > 24*60) {
+				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES)
+						&& ptg.getQuantite() > 24 * 60) {
 					srm.getErrors().add(
 							String.format(ERROR_PRIME_QUANTITE_POINTAGE, ptg.getRefPrime().getLibelle(),
 									sdf.format(ptg.getDateDebut())));
 					// PRIME FICTIVE D EPANDAGE pour le SIPRES
 					// ne peut pas depasser 2H
-				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES) 
+				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES)
 						&& ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.PRIME_EPANDAGE_7716)
-						&& ptg.getQuantite() > 2*60) {
+						&& ptg.getQuantite() > 2 * 60) {
 					srm.getErrors().add(
 							String.format(ERROR_PRIME_EPANDAGE_QUANTITE, ptg.getRefPrime().getLibelle(),
 									sdf.format(ptg.getDateDebut())));
@@ -605,7 +601,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		return srm;
 	}
-	
+
 	/**
 	 * Processes the data consistency of a set of Pointages being input by a
 	 * user. It will check the different business rules in order to make sure

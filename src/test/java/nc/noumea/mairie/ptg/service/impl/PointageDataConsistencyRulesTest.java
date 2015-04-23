@@ -785,7 +785,7 @@ public class PointageDataConsistencyRulesTest {
 	}
 
 	@Test
-	public void checkAgentINAAndHSup_INASupTo315_NotDPM_returnNoError() {
+	public void checkAgentINAAndHSup_INASupTo315_ButZ_returnError() {
 
 		// Given
 		Integer idAgent = 9008765;
@@ -794,7 +794,7 @@ public class PointageDataConsistencyRulesTest {
 		Spbarem barem = new Spbarem();
 		barem.setIna(316);
 		BaseHorairePointageDto bas = new BaseHorairePointageDto();
-		bas.setCodeBaseHorairePointage("A");
+		bas.setCodeBaseHorairePointage("00Z");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
 		car.setCdcate(1);
@@ -819,12 +819,13 @@ public class PointageDataConsistencyRulesTest {
 				Arrays.asList(p1), car, bas);
 
 		// Then
-		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getErrors().size());
+		assertEquals("L'agent est en base horaire \"00Z\" sur la période", result.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 	}
 
 	@Test
-	public void checkAgentINAAndHSup_INASupTo315_DPM_returnNothing() {
+	public void checkAgentINAAndHSup_INASupTo315_DPM_returnNothing_ForceRecup() {
 
 		// Given
 		Integer idAgent = 9008765;
@@ -860,10 +861,11 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
+		assertEquals(p1.getHeureSupRecuperee(), true);
 	}
 
 	@Test
-	public void checkAgentINAAndHSup_INASupTo315_Not_F_returnNothing() {
+	public void checkAgentINAAndHSup_INASupTo315_returnNothing_ForceRecup() {
 
 		// Given
 		Integer idAgent = 9008765;
@@ -883,7 +885,14 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
+		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		dtoService.setSigle("TITI");
+
+		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhRepo.getAgentDirection(idAgent, dateLundi)).thenReturn(dtoService);
+
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
@@ -892,10 +901,48 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
+		assertEquals(p1.getHeureSupRecuperee(), true);
 	}
 
 	@Test
-	public void checkAgentINAAndHSup_INALessThan315ButZ_NotDPM_returnError() {
+	public void checkAgentINAAndHSup_INALessThan315_returnOK() {
+
+		// Given
+		Integer idAgent = 9008765;
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+
+		Spbarem barem = new Spbarem();
+		barem.setIna(315);
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("00p");
+		Spcarr car = new Spcarr();
+		car.setSpbarem(barem);
+		car.setCdcate(1);
+
+		Pointage p1 = new Pointage();
+		p1.setType(new RefTypePointage());
+		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		dtoService.setSigle("TITI");
+
+		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhRepo.getAgentDirection(idAgent, dateLundi)).thenReturn(dtoService);
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
+
+		// When
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+	}@Test
+	public void checkAgentINAAndHSup_INALessThan315_ButZ_returnError() {
 
 		// Given
 		Integer idAgent = 9008765;
@@ -935,7 +982,7 @@ public class PointageDataConsistencyRulesTest {
 	}
 
 	@Test
-	public void checkAgentINAAndHSup_INALessThan315ButZ_DPM_ReturnNothing() {
+	public void checkAgentINAAndHSup_INALessThan315_ButDPM_ReturnNothing() {
 
 		// Given
 		Integer idAgent = 9008765;
@@ -944,7 +991,7 @@ public class PointageDataConsistencyRulesTest {
 		Spbarem barem = new Spbarem();
 		barem.setIna(315);
 		BaseHorairePointageDto bas = new BaseHorairePointageDto();
-		bas.setCodeBaseHorairePointage("00Z");
+		bas.setCodeBaseHorairePointage("00I");
 		Spcarr car = new Spcarr();
 		car.setSpbarem(barem);
 		car.setCdcate(1);
@@ -971,6 +1018,7 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(0, result.getInfos().size());
 		assertEquals(0, result.getErrors().size());
+		assertEquals(p1.getHeureSupRecuperee(), true);
 	}
 
 	@Test
