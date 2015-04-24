@@ -54,7 +54,6 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 			case PRET: // PRET
 			case ECRITURE_POINTAGES_TERMINEE: // Ecriture pointage terminée
 			case CALCUL_SALAIRE_TERMINE: // Calcul salaire terminé
-			case JOURNAL_TERMINE: // Journal terminé
 				return true;
 			default:
 				return false;
@@ -92,7 +91,7 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 
 	protected boolean canChangeStateToExportEtatsPayeurStarted(SpWFEtat currentState) {
 
-		return currentState.getCodeEtat() == SpWfEtatEnum.PRE_GEN_COMPTABLE_TERMINEE;
+		return currentState.getCodeEtat() == SpWfEtatEnum.CALCUL_SALAIRE_TERMINE;
 	}
 
 	protected boolean canChangeStateToExportEtatsPayeurDone(SpWFEtat currentState) {
@@ -145,10 +144,12 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 	public boolean canChangeStateToVentilationStarted(SpWFEtat currentState) {
 
 		switch (currentState.getCodeEtat()) {
-			case ECRITURE_POINTAGES_EN_COURS: // Ecriture pointage en cours
-				return false;
-			default:
+			case PRET: // PRET
+			case ECRITURE_POINTAGES_TERMINEE: // Ecriture pointage terminée
+			case CALCUL_SALAIRE_TERMINE: // Calcul salaire terminé
 				return true;
+			default:
+				return false;
 		}
 	}
 }
