@@ -651,6 +651,7 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateDebutMois", dateDebMois);
 		q.setParameter("idLatestVentilPrime", latestVentilPrime.getIdVentilPrime());
+		q.setParameter("idRefPrime", latestVentilPrime.getRefPrime().getIdRefPrime());
 		q.setMaxResults(1);
 
 		List<VentilPrime> vas = q.getResultList();

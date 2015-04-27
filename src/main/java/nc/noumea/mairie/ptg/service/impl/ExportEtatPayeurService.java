@@ -119,8 +119,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			AbstractItemEtatPayeurDto result, VentilDate toVentilDate, VentilDate fromVentilDate) {
 
 		List<HeuresSupEtatPayeurVo> listHSupEtatPayeur = new ArrayList<HeuresSupEtatPayeurVo>();
-		
-		
+
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
 		for (VentilHsup vh : ventilationRepository.getListOfVentilHeuresSupWithDateForEtatPayeur(
 				toVentilDate.getIdVentilDate(), idAgent)) {
@@ -135,15 +134,21 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 			// 3. Then create the DTOs for HSups
 			// #14640 on n affiche pas les heures sup recuperees
-			if(vh.getMHorsContrat() - vh.getMRecuperees() != 0
+			if (vh.getMHorsContrat() - vh.getMRecuperees() != 0
 					|| (null != vhOld && vhOld.getMHorsContrat() - vhOld.getMRecuperees() != 0)) {
 				HeuresSupEtatPayeurVo dtoHsup = new HeuresSupEtatPayeurVo(vh, vhOld);
 				listHSupEtatPayeur.add(dtoHsup);
 			}
 		}
-		
-		// #14640 on additionne les 3 ventils d heures sup pour avoir qu une seule ligne pour l etat payeur
-		result.setHeuresSup(new HeuresSupEtatPayeurDto(listHSupEtatPayeur, helperService));
+
+		// #14640 on additionne les 3 ventils d heures sup pour avoir qu une
+		// seule ligne pour l etat payeur
+		// #15314 si vide alors on ajoute pas la ligne
+		if (listHSupEtatPayeur == null || listHSupEtatPayeur.size() == 0) {
+			return null;
+		} else {
+			result.setHeuresSup(new HeuresSupEtatPayeurDto(listHSupEtatPayeur, helperService));
+		}
 
 		return result;
 	}
@@ -505,6 +510,19 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			getAbsencesEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate);
 			getHeuresSupEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate);
 			getPrimesEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate);
+
+			// #15314 si tout est vide, on supprime la ligne
+			if (dto.getAbsences().getQuantiteEntre1HeureEt4Heure() == null
+					&& dto.getAbsences().getQuantiteInf1Heure() == null
+					&& dto.getAbsences().getQuantiteSup4Heure() == null) {
+				if (dto.getHeuresSup().getDjf() == null && dto.getHeuresSup().getH1Mai() == null
+						&& dto.getHeuresSup().getNormales() == null && dto.getHeuresSup().getNuit() == null
+						&& dto.getHeuresSup().getSup25() == null && dto.getHeuresSup().getSup50() == null) {
+					if (dto.getPrimes() == null || dto.getPrimes().size() == 0) {
+						result.getAgents().remove(dto);
+					}
+				}
+			}
 		}
 
 		return result;

@@ -1680,6 +1680,10 @@ public class VentilationRepositoryTest {
 		vd.setPaye(true);
 		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
 		ptgEntityManager.persist(vd);
+		
+		RefPrime refPrime = new RefPrime();
+		refPrime.setIdRefPrime(5);
+		ptgEntityManager.persist(refPrime);
 
 		VentilPrime vp = new VentilPrime();
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
@@ -1687,6 +1691,7 @@ public class VentilationRepositoryTest {
 		vp.setIdAgent(9005138);
 		vp.setQuantite(3);
 		vp.setVentilDate(vd);
+		vp.setRefPrime(refPrime);
 		ptgEntityManager.persist(vp);
 
 		VentilPrime vp2 = new VentilPrime();
@@ -1695,6 +1700,7 @@ public class VentilationRepositoryTest {
 		vp2.setIdAgent(9005138);
 		vp2.setQuantite(3);
 		vp2.setVentilDate(vd);
+		vp2.setRefPrime(refPrime);
 		ptgEntityManager.persist(vp2);
 
 		VentilPrime result = repository.getPriorVentilPrimeForAgentAndDate(new Integer(9005138), new LocalDate(2013, 7,
