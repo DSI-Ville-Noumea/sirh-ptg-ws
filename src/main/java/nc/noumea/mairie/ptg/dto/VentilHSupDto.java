@@ -58,6 +58,9 @@ public class VentilHSupDto extends VentilDto {
 		date = hibObj.getDateLundi();
 		idAgent = hibObj.getIdAgent();
 		idVentil = hibObj.getIdVentilHSup();
+		
+		if(null != hibObj.getVentilDate())
+			idVentilDate = hibObj.getVentilDate().getIdVentilDate();
 	}
 
 	public int getIdVentilHsup() {

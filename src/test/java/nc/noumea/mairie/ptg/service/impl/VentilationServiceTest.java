@@ -1336,6 +1336,7 @@ public class VentilationServiceTest {
 		List<VentilAbsence> listAbs = new ArrayList<VentilAbsence>();
 
 		VentilDate vd = new VentilDate();
+		vd.setIdVentilDate(1);
 		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
 		vd.setPaye(true);
 		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
@@ -1362,12 +1363,12 @@ public class VentilationServiceTest {
 		listAbs.add(abs2);
 
 		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vRepo.getListOfVentilAbsenceForAgentBeetweenDate(2, 2014, 9005138)).thenReturn(listAbs);
+		Mockito.when(vRepo.getListOfVentilAbsenceForAgentBeetweenDate(2, 2014, 9005138, vd.getIdVentilDate())).thenReturn(listAbs);
 
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
 
-		List<VentilDto> result = service.showVentilationHistory(2, 2014, 9005138, RefTypePointageEnum.ABSENCE, false);
+		List<VentilDto> result = service.showVentilationHistory(2, 2014, 9005138, RefTypePointageEnum.ABSENCE, false, 1);
 
 		assertEquals(2, result.size());
 
@@ -1382,6 +1383,7 @@ public class VentilationServiceTest {
 		List<VentilHsup> listHsup = new ArrayList<VentilHsup>();
 
 		VentilDate vd = new VentilDate();
+		vd.setIdVentilDate(1);
 		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
 		vd.setPaye(true);
 		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
@@ -1396,12 +1398,12 @@ public class VentilationServiceTest {
 		listHsup.add(hs1);
 
 		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vRepo.getListOfVentilHSForAgentBeetweenDate(2, 2014, 9005138)).thenReturn(listHsup);
+		Mockito.when(vRepo.getListOfVentilHSForAgentBeetweenDate(2, 2014, 9005138, vd.getIdVentilDate())).thenReturn(listHsup);
 
 		VentilationService service = Mockito.spy(new VentilationService());
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
 
-		List<VentilDto> result = service.showVentilationHistory(2, 2014, 9005138, RefTypePointageEnum.H_SUP, false);
+		List<VentilDto> result = service.showVentilationHistory(2, 2014, 9005138, RefTypePointageEnum.H_SUP, false, 1);
 
 		assertEquals(1, result.size());
 
@@ -1414,7 +1416,7 @@ public class VentilationServiceTest {
 
 		VentilationService service = Mockito.spy(new VentilationService());
 
-		List<VentilDto> result = service.showVentilationHistory(2, 2014, 9005138, RefTypePointageEnum.PRIME, false);
+		List<VentilDto> result = service.showVentilationHistory(2, 2014, 9005138, RefTypePointageEnum.PRIME, false, null);
 
 		assertEquals(0, result.size());
 	}

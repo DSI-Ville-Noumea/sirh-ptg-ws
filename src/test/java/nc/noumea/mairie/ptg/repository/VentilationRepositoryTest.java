@@ -1923,7 +1923,7 @@ public class VentilationRepositoryTest {
 		va4.setVentilDate(vd);
 		ptgEntityManager.persist(va4);
 
-		List<VentilAbsence> result = repository.getListOfVentilAbsenceForAgentBeetweenDate(2, 2014, 9005138);
+		List<VentilAbsence> result = repository.getListOfVentilAbsenceForAgentBeetweenDate(2, 2014, 9005138, vd.getIdVentilDate());
 
 		assertEquals(1, result.size());
 		assertEquals(new Integer(9005138), result.get(0).getIdAgent());
@@ -1932,7 +1932,7 @@ public class VentilationRepositoryTest {
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
 	}
-
+	
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void getListOfVentilHSForAgentBeetweenDate() {
@@ -1971,7 +1971,7 @@ public class VentilationRepositoryTest {
 		va4.setVentilDate(vd);
 		ptgEntityManager.persist(va4);
 
-		List<VentilHsup> result = repository.getListOfVentilHSForAgentBeetweenDate(2, 2014, 9005138);
+		List<VentilHsup> result = repository.getListOfVentilHSForAgentBeetweenDate(2, 2014, 9005138, vd.getIdVentilDate());
 
 		assertEquals(2, result.size());
 		assertEquals(new Integer(9005138), result.get(0).getIdAgent());
@@ -3016,6 +3016,238 @@ public class VentilationRepositoryTest {
 			}
 			idAgentPrcd = idAgent;
 		}
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+	
+	// #15286 : bug de QUALIF : nomatr 3544
+	// resultat d une ancienne ventilation affichee dans une nouvelle
+	// car meme date de lundi, mais deux ventilations bien distinctes
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfVentilAbsenceForAgentBeetweenDate_nomatr3544() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2015, 4, 12).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+		
+		VentilDate vd2 = new VentilDate();
+		vd2.setDateVentilation(new LocalDate(2015, 5, 3).toDate());
+		vd2.setPaye(false);
+		vd2.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd2);
+
+		// 1er ventilation
+		VentilAbsence va = new VentilAbsence();
+		va.setDateLundi(new LocalDate(2015, 3, 16).toDate());
+		va.setEtat(EtatPointageEnum.VENTILE);
+		va.setIdAgent(9003544);
+		va.setMinutesConcertee(900);
+		va.setMinutesNonConcertee(0);
+		va.setMinutesImmediat(0);
+		va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
+
+		VentilAbsence va2 = new VentilAbsence();
+		va2.setDateLundi(new LocalDate(2015, 3, 30).toDate());
+		va2.setEtat(EtatPointageEnum.VENTILE);
+		va2.setIdAgent(9003544);
+		va2.setMinutesConcertee(420);
+		va2.setMinutesNonConcertee(0);
+		va2.setMinutesImmediat(0);
+		va2.setVentilDate(vd);
+		ptgEntityManager.persist(va2);
+
+		// 2e ventilation
+		VentilAbsence va3 = new VentilAbsence();
+		va3.setDateLundi(new LocalDate(2015, 3, 30).toDate());
+		va3.setEtat(EtatPointageEnum.VENTILE);
+		va3.setIdAgent(9003544);
+		va3.setMinutesConcertee(420);
+		va3.setMinutesNonConcertee(0);
+		va3.setMinutesImmediat(0);
+		va3.setVentilDate(vd2);
+		ptgEntityManager.persist(va3);
+
+		List<VentilAbsence> result = repository.getListOfVentilAbsenceForAgentBeetweenDate(3, 2015, 9003544, vd2.getIdVentilDate());
+
+		assertEquals(1, result.size());
+		assertEquals(new Integer(9003544), result.get(0).getIdAgent());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
+		assertEquals(420, result.get(0).getMinutesConcertee());
+		assertEquals(va3.getIdVentilAbsence(), result.get(0).getIdVentilAbsence());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+	
+	// #15286 : bug de QUALIF : nomatr 3544
+	// resultat d une ancienne ventilation affichee dans une nouvelle
+	// car meme date de lundi, mais deux ventilations bien distinctes
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfVentilAbsenceForAgentBeetweenDateAllVentilation_nomatr3544() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2015, 4, 12).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+		
+		VentilDate vd2 = new VentilDate();
+		vd2.setDateVentilation(new LocalDate(2015, 5, 3).toDate());
+		vd2.setPaye(false);
+		vd2.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd2);
+
+		// 1er ventilation
+		VentilAbsence va = new VentilAbsence();
+		va.setDateLundi(new LocalDate(2015, 3, 16).toDate());
+		va.setEtat(EtatPointageEnum.VALIDE);
+		va.setIdAgent(9003544);
+		va.setMinutesConcertee(900);
+		va.setMinutesNonConcertee(0);
+		va.setMinutesImmediat(0);
+		va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
+
+		VentilAbsence va2 = new VentilAbsence();
+		va2.setDateLundi(new LocalDate(2015, 3, 30).toDate());
+		va2.setEtat(EtatPointageEnum.VALIDE);
+		va2.setIdAgent(9003544);
+		va2.setMinutesConcertee(420);
+		va2.setMinutesNonConcertee(0);
+		va2.setMinutesImmediat(0);
+		va2.setVentilDate(vd);
+		ptgEntityManager.persist(va2);
+
+		// 2e ventilation
+		VentilAbsence va3 = new VentilAbsence();
+		va3.setDateLundi(new LocalDate(2015, 3, 30).toDate());
+		va3.setEtat(EtatPointageEnum.VALIDE);
+		va3.setIdAgent(9003544);
+		va3.setMinutesConcertee(420);
+		va3.setMinutesNonConcertee(0);
+		va3.setMinutesImmediat(0);
+		va3.setVentilDate(vd2);
+		ptgEntityManager.persist(va3);
+
+		List<VentilAbsence> result = repository.getListOfVentilAbsenceForAgentBeetweenDateAllVentilation(3, 2015, 9003544, vd2.getIdVentilDate());
+
+		assertEquals(1, result.size());
+		assertEquals(new Integer(9003544), result.get(0).getIdAgent());
+		assertEquals(EtatPointageEnum.VALIDE, result.get(0).getEtat());
+		assertEquals(420, result.get(0).getMinutesConcertee());
+		assertEquals(va3.getIdVentilAbsence(), result.get(0).getIdVentilAbsence());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+	
+	// #15286 : bug de QUALIF : nomatr 3544
+	// resultat d une ancienne ventilation affichee dans une nouvelle
+	// car meme date de lundi, mais deux ventilations bien distinctes
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfVentilHSForAgentBeetweenDate_nomatr3544() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2015, 4, 12).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+		
+		VentilDate vd2 = new VentilDate();
+		vd2.setDateVentilation(new LocalDate(2015, 5, 3).toDate());
+		vd2.setPaye(false);
+		vd2.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd2);
+
+		// 1er ventilation
+		VentilHsup va = new VentilHsup();
+		va.setDateLundi(new LocalDate(2015, 3, 16).toDate());
+		va.setEtat(EtatPointageEnum.VENTILE);
+		va.setIdAgent(9003544);
+		va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
+
+		VentilHsup va2 = new VentilHsup();
+		va2.setDateLundi(new LocalDate(2015, 3, 30).toDate());
+		va2.setEtat(EtatPointageEnum.VENTILE);
+		va2.setIdAgent(9003544);
+		va2.setVentilDate(vd);
+		ptgEntityManager.persist(va2);
+
+		// 2e ventilation
+		VentilHsup va3 = new VentilHsup();
+		va3.setDateLundi(new LocalDate(2015, 3, 30).toDate());
+		va3.setEtat(EtatPointageEnum.VENTILE);
+		va3.setIdAgent(9003544);
+		va3.setVentilDate(vd2);
+		ptgEntityManager.persist(va3);
+
+		List<VentilHsup> result = repository.getListOfVentilHSForAgentBeetweenDate(3, 2015, 9003544, vd2.getIdVentilDate());
+
+		assertEquals(1, result.size());
+		assertEquals(new Integer(9003544), result.get(0).getIdAgent());
+		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
+		assertEquals(va3.getIdVentilHSup(), result.get(0).getIdVentilHSup());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+	
+	// #15286 : bug de QUALIF : nomatr 3544
+	// resultat d une ancienne ventilation affichee dans une nouvelle
+	// car meme date de lundi, mais deux ventilations bien distinctes
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfVentilHSForAgentBeetweenDateAllVentilation_nomatr3544() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2015, 4, 12).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+		
+		VentilDate vd2 = new VentilDate();
+		vd2.setDateVentilation(new LocalDate(2015, 5, 3).toDate());
+		vd2.setPaye(false);
+		vd2.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd2);
+
+		// 1er ventilation
+		VentilHsup va = new VentilHsup();
+		va.setDateLundi(new LocalDate(2015, 3, 16).toDate());
+		va.setEtat(EtatPointageEnum.VALIDE);
+		va.setIdAgent(9003544);
+		va.setVentilDate(vd);
+		ptgEntityManager.persist(va);
+
+		VentilHsup va2 = new VentilHsup();
+		va2.setDateLundi(new LocalDate(2015, 3, 30).toDate());
+		va2.setEtat(EtatPointageEnum.VALIDE);
+		va2.setIdAgent(9003544);
+		va2.setVentilDate(vd);
+		ptgEntityManager.persist(va2);
+
+		// 2e ventilation
+		VentilHsup va3 = new VentilHsup();
+		va3.setDateLundi(new LocalDate(2015, 3, 30).toDate());
+		va3.setEtat(EtatPointageEnum.VALIDE);
+		va3.setIdAgent(9003544);
+		va3.setVentilDate(vd2);
+		ptgEntityManager.persist(va3);
+
+		List<VentilHsup> result = repository.getListOfVentilHSForAgentBeetweenDateAllVentilation(3, 2015, 9003544, vd2.getIdVentilDate());
+
+		assertEquals(1, result.size());
+		assertEquals(new Integer(9003544), result.get(0).getIdAgent());
+		assertEquals(EtatPointageEnum.VALIDE, result.get(0).getEtat());
+		assertEquals(va3.getIdVentilHSup(), result.get(0).getIdVentilHSup());
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();

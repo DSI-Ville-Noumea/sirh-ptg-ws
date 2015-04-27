@@ -677,19 +677,20 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent) {
+	public List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent, Integer idVentilDate) {
 		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
 		Date dateDeb = new DateTime(annee, mois, 1, 0, 0, 0).toDate();
 		LocalDate lastDayOfMonth = new LocalDate(annee, mois, 1).dayOfMonth().withMaximumValue();
 		Date dateFin = lastDayOfMonth.toDate();
 
-		String query = "FROM VentilAbsence tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi BETWEEN :datdeb AND :datfin and tb.etat = :etat ";
+		String query = "FROM VentilAbsence tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi BETWEEN :datdeb AND :datfin and tb.etat = :etat and tb.ventilDate.idVentilDate = :idVentilDate ";
 
 		TypedQuery<VentilAbsence> q = ptgEntityManager.createQuery(query, VentilAbsence.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("datdeb", dateDeb);
 		q.setParameter("datfin", dateFin);
 		q.setParameter("etat", EtatPointageEnum.VENTILE);
+		q.setParameter("idVentilDate", idVentilDate);
 
 		resultat.addAll(q.getResultList());
 
@@ -698,7 +699,7 @@ public class VentilationRepository implements IVentilationRepository {
 
 	@Override
 	public List<VentilAbsence> getListOfVentilAbsenceForAgentBeetweenDateAllVentilation(Integer mois, Integer annee,
-			Integer idAgent) {
+			Integer idAgent, Integer idVentilDate) {
 		List<VentilAbsence> resultat = new ArrayList<VentilAbsence>();
 		Date dateDeb = new DateTime(annee, mois, 1, 0, 0, 0).toDate();
 		LocalDate lastDayOfMonth = new LocalDate(annee, mois, 1).dayOfMonth().withMaximumValue();
@@ -706,13 +707,14 @@ public class VentilationRepository implements IVentilationRepository {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select * from ptg_ventil_absence ");
-		sb.append("WHERE date_lundi between :datdeb AND :datfin and id_agent = :idAgent  and id_ventil_absence in ");
+		sb.append("WHERE date_lundi between :datdeb AND :datfin and id_agent = :idAgent and id_ventil_date = :idVentilDate and id_ventil_absence in ");
 		sb.append("(select max(id_ventil_absence) from ptg_ventil_absence group by date_lundi,id_agent) ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilAbsence.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("datdeb", dateDeb);
 		q.setParameter("datfin", dateFin);
+		q.setParameter("idVentilDate", idVentilDate);
 
 		@SuppressWarnings("unchecked")
 		List<VentilAbsence> result = q.getResultList();
@@ -722,19 +724,20 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
-	public List<VentilHsup> getListOfVentilHSForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent) {
+	public List<VentilHsup> getListOfVentilHSForAgentBeetweenDate(Integer mois, Integer annee, Integer idAgent, Integer idVentilDate) {
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
 		Date dateDeb = new DateTime(annee, mois, 1, 0, 0, 0).toDate();
 		LocalDate lastDayOfMonth = new LocalDate(annee, mois, 1).dayOfMonth().withMaximumValue();
 		Date dateFin = lastDayOfMonth.toDate();
 
-		String query = "FROM VentilHsup tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi BETWEEN :datdeb AND :datfin AND tb.etat = :etat ";
+		String query = "FROM VentilHsup tb WHERE tb.idAgent = :idAgent AND  tb.dateLundi BETWEEN :datdeb AND :datfin AND tb.etat = :etat and tb.ventilDate.idVentilDate = :idVentilDate ";
 
 		TypedQuery<VentilHsup> q = ptgEntityManager.createQuery(query, VentilHsup.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("datdeb", dateDeb);
 		q.setParameter("datfin", dateFin);
 		q.setParameter("etat", EtatPointageEnum.VENTILE);
+		q.setParameter("idVentilDate", idVentilDate);
 
 		resultat.addAll(q.getResultList());
 
@@ -743,7 +746,7 @@ public class VentilationRepository implements IVentilationRepository {
 
 	@Override
 	public List<VentilHsup> getListOfVentilHSForAgentBeetweenDateAllVentilation(Integer mois, Integer annee,
-			Integer idAgent) {
+			Integer idAgent, Integer idVentilDate) {
 		List<VentilHsup> resultat = new ArrayList<VentilHsup>();
 		Date dateDeb = new DateTime(annee, mois, 1, 0, 0, 0).toDate();
 		LocalDate lastDayOfMonth = new LocalDate(annee, mois, 1).dayOfMonth().withMaximumValue();
@@ -751,13 +754,14 @@ public class VentilationRepository implements IVentilationRepository {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select * from ptg_ventil_hsup ");
-		sb.append("WHERE date_lundi between :datdeb AND :datfin and id_agent = :idAgent  and id_ventil_hsup in ");
+		sb.append("WHERE date_lundi between :datdeb AND :datfin and id_agent = :idAgent and id_ventil_date = :idVentilDate and id_ventil_hsup in ");
 		sb.append("(select max(id_ventil_hsup) from ptg_ventil_hsup group by date_lundi,id_agent) ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), VentilHsup.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("datdeb", dateDeb);
 		q.setParameter("datfin", dateFin);
+		q.setParameter("idVentilDate", idVentilDate);
 
 		@SuppressWarnings("unchecked")
 		List<VentilHsup> result = q.getResultList();

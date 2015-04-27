@@ -187,7 +187,8 @@ public class VentilationController {
 	@Transactional("ptgTransactionManager")
 	public ResponseEntity<String> showVentilationHistory(@RequestParam("mois") Integer mois,
 			@RequestParam("annee") Integer annee, @RequestParam("typePointage") Integer idRefTypePointage,
-			@RequestParam("idAgent") Integer idAgent, @RequestParam("allVentilation") boolean allVentilation) {
+			@RequestParam("idAgent") Integer idAgent, @RequestParam("allVentilation") boolean allVentilation, 
+			@RequestParam("idVentilDate") Integer idVentilDate) {
 
 		RefTypePointageEnum typepointage = RefTypePointageEnum.getRefTypePointageEnum(idRefTypePointage);
 		logger.debug(
@@ -195,7 +196,7 @@ public class VentilationController {
 				mois, annee, idAgent, typepointage.name(), allVentilation);
 
 		List<VentilDto> result = ventilationService.showVentilationHistory(mois, annee, idAgent, typepointage,
-				allVentilation);
+				allVentilation, idVentilDate);
 		if (result.isEmpty()) {
 			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 		}

@@ -10,6 +10,7 @@ public class VentilDto {
 	protected Date date;
 	protected int idAgent;
 	protected int etat;
+	protected int idVentilDate;
 
 	public VentilDto() {
 	}
@@ -44,6 +45,14 @@ public class VentilDto {
 
 	public void setEtat(int etat) {
 		this.etat = etat;
+	}
+
+	public int getIdVentilDate() {
+		return idVentilDate;
+	}
+
+	public void setIdVentilDate(int idVentilDate) {
+		this.idVentilDate = idVentilDate;
 	}
 
 }

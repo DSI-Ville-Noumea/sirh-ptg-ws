@@ -23,6 +23,9 @@ public class VentilPrimeDto extends VentilDto {
 		date = hibObj.getDateDebutMois();
 		idAgent = hibObj.getIdAgent();
 		etat = hibObj.getEtat().getCodeEtat();
+		
+		if(null != hibObj.getVentilDate())
+			idVentilDate = hibObj.getVentilDate().getIdVentilDate();
 	}
 
 	private String formatQuantite(VentilPrime hibObj, HelperService helper) {

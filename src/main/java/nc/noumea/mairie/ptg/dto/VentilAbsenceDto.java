@@ -24,7 +24,9 @@ public class VentilAbsenceDto extends VentilDto {
         date = hibObj.getDateLundi();
         idAgent = hibObj.getIdAgent();
         etat = hibObj.getEtat().getCodeEtat();
-        
+		
+		if(null != hibObj.getVentilDate())
+			idVentilDate = hibObj.getVentilDate().getIdVentilDate();
     }
 
 	public int getMinutesConcertees() {

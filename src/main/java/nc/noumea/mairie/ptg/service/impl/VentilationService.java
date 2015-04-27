@@ -618,7 +618,7 @@ public class VentilationService implements IVentilationService {
 
 	@Override
 	public List<VentilDto> showVentilationHistory(Integer mois, Integer annee, Integer idAgent,
-			RefTypePointageEnum pointageType, boolean allVentilation) {
+			RefTypePointageEnum pointageType, boolean allVentilation, Integer idVentilDate) {
 		logger.debug(
 				"Showing ventilation history of Pointages for idAgent [{}], mois [{}], annee [{}] and pointage type [{}]",
 				idAgent, mois, annee, pointageType);
@@ -630,9 +630,9 @@ public class VentilationService implements IVentilationService {
 				List<VentilAbsence> liste = new ArrayList<VentilAbsence>();
 				if (allVentilation) {
 					liste = ventilationRepository.getListOfVentilAbsenceForAgentBeetweenDateAllVentilation(mois, annee,
-							idAgent);
+							idAgent, idVentilDate);
 				} else {
-					liste = ventilationRepository.getListOfVentilAbsenceForAgentBeetweenDate(mois, annee, idAgent);
+					liste = ventilationRepository.getListOfVentilAbsenceForAgentBeetweenDate(mois, annee, idAgent, idVentilDate);
 				}
 				for (VentilAbsence abs : liste)
 					pointagesVentiles.add(new VentilAbsenceDto(abs));
@@ -644,9 +644,9 @@ public class VentilationService implements IVentilationService {
 				List<VentilHsup> liste = new ArrayList<VentilHsup>();
 				if (allVentilation) {
 					liste = ventilationRepository.getListOfVentilHSForAgentBeetweenDateAllVentilation(mois, annee,
-							idAgent);
+							idAgent, idVentilDate);
 				} else {
-					liste = ventilationRepository.getListOfVentilHSForAgentBeetweenDate(mois, annee, idAgent);
+					liste = ventilationRepository.getListOfVentilHSForAgentBeetweenDate(mois, annee, idAgent, idVentilDate);
 				}
 				for (VentilHsup hs : liste)
 					pointagesVentiles.add(new VentilHSupDto(hs));

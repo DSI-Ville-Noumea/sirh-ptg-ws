@@ -68,7 +68,7 @@ public interface IVentilationService {
 	List<VentilErreurDto> getErreursVentilation(AgentStatutEnum statut);
 
 	List<VentilDto> showVentilationHistory(Integer mois, Integer annee, Integer idAgent,
-			RefTypePointageEnum pointageType, boolean allVentilation);
+			RefTypePointageEnum pointageType, boolean allVentilation, Integer idVentilDate);
 
 	CanStartVentilationDto isVentilationRunning(TypeChainePaieEnum typeChainePaieFromStatut);
 
