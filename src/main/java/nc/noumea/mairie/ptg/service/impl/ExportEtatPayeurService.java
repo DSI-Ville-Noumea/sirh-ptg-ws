@@ -377,7 +377,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		ep.setDateEdition(helperService.getCurrentDate());
 
 		logger.info("Downloading report named [{}]...", ep.getFichier());
-		birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(statut.toString(), ep.getFichier());
+		//#15138 on commente l'appel à BIRT pour le moment car soucis de timeout lors de la génération du BIT
+		//birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(statut.toString(), ep.getFichier());
 		logger.info("Downloading report [{}] done.", ep.getFichier());
 
 		return ep;
