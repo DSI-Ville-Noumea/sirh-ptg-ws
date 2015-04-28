@@ -2,6 +2,7 @@ package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
 import java.util.Date;
 
+import nc.noumea.mairie.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 
@@ -32,6 +33,16 @@ public class PrimesEtatPayeurDto {
 				this.quantite = new Integer(vpNew.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0)).toString();
 				break;
 			case NB_HEURES:
+				// #15317 on arrondi à l'unité supérieure
+				if (vpNew.getRefPrime().getMairiePrimeTableEnum() == MairiePrimeTableEnum.SPPRIM) {
+					Integer qte = vpNew.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0);
+					double quantiteArrondie = hS.convertMinutesToMairieNbHeuresFormat(qte);
+					this.quantite = hS.formatMinutesToString(((int) Math.ceil(quantiteArrondie))*60);
+				} else {
+					this.quantite = hS.formatMinutesToString(vpNew.getQuantite()
+							- (vpOld != null ? vpOld.getQuantite() : 0));
+				}
+				break;
 			case PERIODE_HEURES:
 				this.quantite = hS.formatMinutesToString(vpNew.getQuantite()
 						- (vpOld != null ? vpOld.getQuantite() : 0));

@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
 import static org.junit.Assert.assertEquals;
+import nc.noumea.mairie.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
@@ -165,6 +166,34 @@ public class PrimesEtatPayeurDtoTest {
 		// Then
 		assertEquals("prime", result.getType());
 		assertEquals("15m", result.getQuantite());
+	}
+
+	//#15317
+	@Test
+	public void PrimesEtatPayeurDto_NewOld_NB_HEURES_SPPRIM_ctor() {
+
+		// Given
+		VentilPrime vpNew = new VentilPrime();
+		vpNew.setIdAgent(9008767);
+		vpNew.setDateDebutMois(new LocalDate(2013, 10, 1).toDate());
+		vpNew.setQuantite(172);
+		vpNew.setRefPrime(new RefPrime());
+		vpNew.getRefPrime().setLibelle("prime");
+		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		vpNew.getRefPrime().setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+		HelperService hS = Mockito.mock(HelperService.class);		
+		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(172)).thenReturn(3.0);
+		Mockito.when(hS.formatMinutesToString(180)).thenReturn("3H");
+
+		VentilPrime vpOld = new VentilPrime();
+		vpOld.setQuantite(0);
+
+		// When
+		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vpNew, vpOld, hS);
+
+		// Then
+		assertEquals("prime", result.getType());
+		assertEquals("3H", result.getQuantite());
 	}
 
 	@Test

@@ -11,16 +11,16 @@ public class Spprim {
 
 	@EmbeddedId
 	private SpprimId id;
-	
+
 	@Column(name = "DATFIN", columnDefinition = "numeric")
 	private Integer dateFin;
-	
+
 	@Column(name = "MTPRI", columnDefinition = "decimal")
-	private double montantPrime;
-	
+	private Integer montantPrime;
+
 	@Column(name = "REFARR", columnDefinition = "numeric default 0")
 	private Integer refArr = 0;
-	
+
 	@Column(name = "DATARR", columnDefinition = "numeric default 0")
 	private Integer datArr = 0;
 
@@ -40,11 +40,11 @@ public class Spprim {
 		this.dateFin = dateFin;
 	}
 
-	public double getMontantPrime() {
+	public Integer getMontantPrime() {
 		return montantPrime;
 	}
 
-	public void setMontantPrime(double montantPrime) {
+	public void setMontantPrime(Integer montantPrime) {
 		this.montantPrime = montantPrime;
 	}
 
@@ -63,6 +63,5 @@ public class Spprim {
 	public void setDatArr(Integer datArr) {
 		this.datArr = datArr;
 	}
-	
-	
+
 }

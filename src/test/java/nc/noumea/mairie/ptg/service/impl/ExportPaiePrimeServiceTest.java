@@ -677,7 +677,7 @@ public class ExportPaiePrimeServiceTest {
 		rp.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
 		VentilPrime vp = new VentilPrime();
 		vp.setRefPrime(rp);
-		vp.setQuantite(90);
+		vp.setQuantite(92);
 		vp.setIdAgent(9009898);
 		vp.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 
@@ -687,7 +687,7 @@ public class ExportPaiePrimeServiceTest {
 		Mockito.when(hS.getMairieMatrFromIdAgent(9009898)).thenReturn(9898);
 		Mockito.when(hS.getIntegerDateMairieFromDate(vp.getDateDebutMois())).thenReturn(20130801);
 		Mockito.when(hS.getIntegerDateMairieFromDate(new LocalDate(2013, 9, 1).toDate())).thenReturn(20130901);
-		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(90)).thenReturn(1.3d);
+		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(92)).thenReturn(1.3d);
 		
 		IExportPaieRepository epR = Mockito.mock(IExportPaieRepository.class);
 		Mockito.when(epR.getSpprimForDayAgentAndNorubr(9009898, vp.getDateDebutMois(), rp.getNoRubr())).thenReturn(null);
