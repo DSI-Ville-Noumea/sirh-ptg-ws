@@ -941,7 +941,9 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-	}@Test
+	}
+
+	@Test
 	public void checkAgentINAAndHSup_INALessThan315_ButZ_returnError() {
 
 		// Given
@@ -2107,5 +2109,35 @@ public class PointageDataConsistencyRulesTest {
 
 		assertEquals(0, result.getInfos().size());
 		assertEquals(0, result.getErrors().size());
+	}
+
+	@Test
+	public void checkDateLundiNotSuperieurDateJour_OK() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		Date dateLundi = new Date();
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+
+		srm = service.checkDateLundiNotSuperieurDateJour(srm, dateLundi);
+
+		assertEquals(0, srm.getErrors().size());
+	}
+
+	@Test
+	public void checkDateLundiNotSuperieurDateJour_KO() {
+
+		ReturnMessageDto srm = new ReturnMessageDto();
+
+		GregorianCalendar calStr1 = new GregorianCalendar();
+		calStr1.setTime(new Date());
+		calStr1.add(GregorianCalendar.MONTH, 1);
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+
+		srm = service.checkDateLundiNotSuperieurDateJour(srm, calStr1.getTime());
+
+		assertEquals(1, srm.getErrors().size());
 	}
 }

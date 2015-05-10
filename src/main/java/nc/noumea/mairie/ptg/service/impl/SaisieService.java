@@ -95,8 +95,11 @@ public class SaisieService implements ISaisieService {
 		if (!helperService.isDateAMonday(dateLundi))
 			throw new NotAMondayException();
 
-		if (!approveModifiedPointages)
+		if (!approveModifiedPointages) {
 			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, dateLundi);
+			//#15410 on bloque la saisie des pointages dans le futur
+			result = ptgDataCosistencyRules.checkDateLundiNotSuperieurDateJour(result, dateLundi);
+		}
 		if (!result.getErrors().isEmpty())
 			return result;
 
@@ -529,8 +532,11 @@ public class SaisieService implements ISaisieService {
 		if (!helperService.isDateAMonday(dateLundi))
 			throw new NotAMondayException();
 
-		if (!approveModifiedPointages)
+		if (!approveModifiedPointages) {
 			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, dateLundi);
+			//#15410 on bloque la saisie des pointages dans le futur
+			result = ptgDataCosistencyRules.checkDateLundiNotSuperieurDateJour(result, dateLundi);
+		}
 		if (!result.getErrors().isEmpty())
 			return result;
 

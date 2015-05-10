@@ -56,6 +56,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String ERROR_7651_MSG = "";
 	public static final String ERROR_7652_MSG = "";
 	public static final String ERROR_POINTAGE_PLUS_3_MOIS = "La semaine sélectionnée est trop ancienne pour être modifiée.";
+	public static final String ERROR_POINTAGE_SUP_DATE_JOUR = "La semaine sélectionnée est dans le futur et ne peut donc être modifiée.";
 	public static final String HS_TPS_PARTIEL_MSG = "L'agent est en temps partiel, il ne peut pas avoir plus de %s heures supplémentaires.";
 	public static final String ERROR_DATE_POINTAGE = "Pour le pointage du %s, la date de fin est antérieure à la date de début.";
 	public static final String ERROR_INTERVALLE_POINTAGE = "Pour le pointage du %s, il faut 30 minutes d'intervalle entre la date de début et la date de fin.";
@@ -619,5 +620,13 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		// TODO reste à traiter les maladies
 		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
 		// FIN on check les types d'absences du projet SIRH-ABS-WS
+	}
+
+	@Override
+	public ReturnMessageDto checkDateLundiNotSuperieurDateJour(ReturnMessageDto srm, Date dateLundi) {
+		if (dateLundi.after(new Date())) {
+			srm.getErrors().add(String.format(ERROR_POINTAGE_SUP_DATE_JOUR));
+		}
+		return srm;
 	}
 }

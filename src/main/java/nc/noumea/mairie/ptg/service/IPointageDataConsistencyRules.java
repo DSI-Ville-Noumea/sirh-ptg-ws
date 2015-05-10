@@ -23,7 +23,7 @@ public interface IPointageDataConsistencyRules {
 	ReturnMessageDto checkReposComp(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages);
 
 	ReturnMessageDto checkAbsencesSyndicales(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages);
-	
+
 	ReturnMessageDto checkCongesExceptionnels(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages);
 
 	ReturnMessageDto checkCongeAnnuel(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages);
@@ -49,6 +49,8 @@ public interface IPointageDataConsistencyRules {
 
 	ReturnMessageDto checkDateLundiAnterieurA3Mois(ReturnMessageDto srm, Date dateLundi);
 
+	ReturnMessageDto checkDateLundiNotSuperieurDateJour(ReturnMessageDto srm, Date dateLundi);
+
 	DateTime getDateDebut(Integer dateDeb, Integer codem1);
 
 	DateTime getDateFin(Integer dateFin, Integer codem2);
@@ -56,6 +58,5 @@ public interface IPointageDataConsistencyRules {
 	ReturnMessageDto checkHeureFinSaisieHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, Spcarr carr);
 
-	void checkAllAbsences(ReturnMessageDto srm, Integer idAgent,
-			Date dateLundi, List<Pointage> pointages);
+	void checkAllAbsences(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 }
