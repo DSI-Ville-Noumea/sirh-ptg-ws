@@ -551,9 +551,13 @@ public class PointageService implements IPointageService {
 		if (!helperService.isDateAMonday(date)) {
 			throw new NotAMondayException();
 		}
+		FichePointageDtoKiosque result = new FichePointageDtoKiosque();
 
 		// Retrieve division service of agent
 		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(agent.getIdAgent(), date);
+		if (service == null) {
+			return result;
+		}
 
 		// on construit le dto de l'agent
 		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);
@@ -566,7 +570,6 @@ public class PointageService implements IPointageService {
 		agentDto.setStatut(carr.getStatutCarriere().name());
 
 		// on construit le DTO de jourPointage
-		FichePointageDtoKiosque result = new FichePointageDtoKiosque();
 		result.setDateLundi(date);
 		result.setAgent(agentDto);
 		result.setDPM(service.getSigle().toUpperCase().equals("DPM"));
