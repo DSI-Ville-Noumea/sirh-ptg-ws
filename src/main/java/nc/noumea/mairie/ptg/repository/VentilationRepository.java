@@ -620,6 +620,7 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateLundi", dateLundi);
 		q.setParameter("idLatestVentilAbsence", latestVentilAbsence.getIdVentilAbsence());
+		q.setParameter("idVentilDate", latestVentilAbsence.getVentilDate().getIdVentilDate());
 		q.setMaxResults(1);
 
 		List<VentilAbsence> vas = q.getResultList();
@@ -635,6 +636,7 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateLundi", dateLundi);
 		q.setParameter("idLatestVentilHSup", latestVentilHsup.getIdVentilHSup());
+		q.setParameter("idVentilDate", latestVentilHsup.getVentilDate().getIdVentilDate());
 		q.setMaxResults(1);
 
 		List<VentilHsup> vas = q.getResultList();
@@ -651,6 +653,7 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("dateDebutMois", dateDebMois);
 		q.setParameter("idLatestVentilPrime", latestVentilPrime.getIdVentilPrime());
+		q.setParameter("idVentilDate", latestVentilPrime.getVentilDate().getIdVentilDate());
 		q.setParameter("idRefPrime", latestVentilPrime.getRefPrime().getIdRefPrime());
 		q.setMaxResults(1);
 
@@ -977,7 +980,7 @@ public class VentilationRepository implements IVentilationRepository {
 		StringBuilder sb = new StringBuilder();
 		sb.append("select tb.* FROM PTG_VENTIL_PRIME tb WHERE tb.ID_VENTIL_PRIME in  ");
 		sb.append("(select max(id_ventil_prime) from ptg_ventil_prime where id_ventil_date=:ventilDateId and etat=:etat "
-				+ "group by id_agent,date_debut_mois,id_ref_prime,date_prime) ");
+				+ "group by id_agent,date_debut_mois,id_ref_prime) ");
 		if (idAgent != null)
 			sb.append("and id_Agent = :idAgent ");
 		sb.append("order by date_debut_mois asc, id_Agent asc ");

@@ -19,7 +19,7 @@ import javax.persistence.Version;
 
 @Entity
 @Table(name = "PTG_VENTIL_ABSENCE")
-@NamedQuery(name = "getPriorVentilAbsenceForAgentAndDate", query = "select va from VentilAbsence va where va.idVentilAbsence != :idLatestVentilAbsence and va.idAgent = :idAgent and va.dateLundi = :dateLundi order by va.idVentilAbsence desc")
+@NamedQuery(name = "getPriorVentilAbsenceForAgentAndDate", query = "select va from VentilAbsence va where va.idVentilAbsence != :idLatestVentilAbsence and va.ventilDate.idVentilDate != :idVentilDate and va.idAgent = :idAgent and va.dateLundi = :dateLundi order by va.idVentilAbsence desc")
 public class VentilAbsence {
 
 	@Id

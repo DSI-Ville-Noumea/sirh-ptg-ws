@@ -20,7 +20,7 @@ import javax.persistence.Version;
 
 @Entity
 @Table(name = "PTG_VENTIL_PRIME") 
-@NamedQuery(name = "getPriorVentilPrimeForAgentAndDate", query = "select vp from VentilPrime vp where vp.idVentilPrime != :idLatestVentilPrime and vp.idAgent = :idAgent and vp.dateDebutMois = :dateDebutMois and vp.refPrime.idRefPrime=:idRefPrime order by vp.idVentilPrime desc")
+@NamedQuery(name = "getPriorVentilPrimeForAgentAndDate", query = "select vp from VentilPrime vp where vp.idVentilPrime != :idLatestVentilPrime and vp.ventilDate.idVentilDate != :idVentilDate and vp.idAgent = :idAgent and vp.dateDebutMois = :dateDebutMois and vp.refPrime.idRefPrime=:idRefPrime order by vp.idVentilPrime desc")
 public class VentilPrime {
 
 	@Id 
