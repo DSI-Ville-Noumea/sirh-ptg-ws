@@ -20,6 +20,7 @@ public class AbsencesEtatPayeurDto {
 
 	public AbsencesEtatPayeurDto(VentilAbsence vaNew, VentilAbsence vaOld, HelperService hS) {
 
+		// #14977
 		Integer nombreAbsenceInferieur1 = vaNew.getNombreAbsenceInferieur1() - (vaOld != null ? vaOld.getNombreAbsenceInferieur1() : 0);
 		Integer nombreAbsenceEntre1Et4 = vaNew.getNombreAbsenceEntre1Et4() - (vaOld != null ? vaOld.getNombreAbsenceEntre1Et4() : 0);
 		Integer nombreAbsenceSuperieur1 = vaNew.getNombreAbsenceSuperieur1() - (vaOld != null ? vaOld.getNombreAbsenceSuperieur1() : 0);
