@@ -65,14 +65,15 @@ public class PointageCalculeService implements IPointageCalculeService {
 		for (Pointage ptg : getPointagesPrime(pointages, 7715)) {
 
 			LocalDate datePointage = new DateTime(ptg.getDateDebut()).toLocalDate();
-
+			LocalDate datePointageJPlus1 = datePointage.plusDays(1); 
+					
 			Interval inputInterval = new Interval(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin()));
 			Interval primeIntervalFirstNight = new Interval(new DateTime(datePointage.getYear(),
 					datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 0, 0, 0), new DateTime(
 					datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 5, 0, 0));
 			Interval primeIntervalSecondNight = new Interval(new DateTime(datePointage.getYear(),
 					datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 21, 0, 0), new DateTime(
-					datePointage.getYear(), datePointage.getMonthOfYear(), datePointage.getDayOfMonth()+1, 5, 0, 0));
+							datePointageJPlus1.getYear(), datePointageJPlus1.getMonthOfYear(), datePointageJPlus1.getDayOfMonth(), 5, 0, 0));
 
 			Interval overlap = primeIntervalFirstNight.overlap(inputInterval);
 			Interval secondOverlap = primeIntervalSecondNight.overlap(inputInterval);
