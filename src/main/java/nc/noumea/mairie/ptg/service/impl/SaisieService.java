@@ -304,7 +304,7 @@ public class SaisieService implements ISaisieService {
 		}
 
 		savePointages(finalPointages);
-		deletePointages(idAgentOperator, originalAgentPointages);
+		deletePointages(result, idAgentOperator, originalAgentPointages);
 
 		return result;
 	}
@@ -390,7 +390,7 @@ public class SaisieService implements ISaisieService {
 	 * 
 	 * @param pointagesToDelete
 	 */
-	protected void deletePointages(Integer idAgentOperator, List<Pointage> pointagesToDelete) {
+	protected void deletePointages(ReturnMessageDto result, Integer idAgentOperator, List<Pointage> pointagesToDelete) {
 		// Delete anything that was not updated from the saving process
 		for (Pointage pointageToDelete : pointagesToDelete) {
 
@@ -398,6 +398,10 @@ public class SaisieService implements ISaisieService {
 			if (pointageToDelete.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI) {
 				pointageRepository.removeEntity(pointageToDelete);
 				continue;
+			// sinon message erreur
+			// #15502
+			} else {
+				result.getErrors().add("Vous ne pouvez pas supprimer un pointage à l'état Validée ou Approuvée.");
 			}
 		}
 	}
@@ -548,6 +552,7 @@ public class SaisieService implements ISaisieService {
 		List<Pointage> finalPointages = new ArrayList<Pointage>();
 		boolean isPointageAbsenceModifie = false;
 		boolean isPointageHSupModifie = false;
+		boolean isPointagePrimeModifie = false;
 
 		for (JourPointageDtoKiosque jourDto : fichePointageDto.getSaisies()) {
 
@@ -563,7 +568,6 @@ public class SaisieService implements ISaisieService {
 				// If already existing, try and compare if it has changed
 				// compared to the original version
 				if (ptg != null && !hasPointageChangedKiosque(ptg, abs)) {
-					result.getInfos().add("Vous n'avez effectué aucune modification depuis le dernier enregistrement.");
 					continue;
 				}
 
@@ -595,7 +599,6 @@ public class SaisieService implements ISaisieService {
 				// If already existing, try and compare if it has changed
 				// compared to the original version
 				if (ptg != null && !hasPointageChangedKiosque(ptg, hs)) {
-					result.getInfos().add("Vous n'avez effectué aucune modification depuis le dernier enregistrement.");
 					continue;
 				}
 
@@ -637,7 +640,6 @@ public class SaisieService implements ISaisieService {
 				// If already existing, try and compare if it has changed
 				// compared to the original version
 				if (ptg != null && !hasPointageChangedKiosque(ptg, prime)) {
-					result.getInfos().add("Vous n'avez effectué aucune modification depuis le dernier enregistrement.");
 					continue;
 				}
 
@@ -651,6 +653,7 @@ public class SaisieService implements ISaisieService {
 
 				crudComments(ptg, prime.getMotif(), prime.getCommentaire());
 
+				isPointagePrimeModifie = true;
 				finalPointages.add(ptg);
 			}
 		}
@@ -736,6 +739,12 @@ public class SaisieService implements ISaisieService {
 				}
 			}
 		}
+		
+		// #15506
+		// on n affiche le message qu une seule fois
+		if (!isPointageAbsenceModifie && !isPointageHSupModifie && !isPointagePrimeModifie && originalAgentPointages.isEmpty()) {
+			result.getInfos().add("Vous n'avez effectué aucune modification depuis le dernier enregistrement.");
+		}
 
 		// If called with the approvedModifidPointages parameter, we need to
 		// mark all the modified pointages directly as APPROUVE
@@ -744,7 +753,7 @@ public class SaisieService implements ISaisieService {
 		}
 
 		savePointages(finalPointages);
-		deletePointages(idAgentOperator, originalAgentPointages);
+		deletePointages(result, idAgentOperator, originalAgentPointages);
 
 		return result;
 	}

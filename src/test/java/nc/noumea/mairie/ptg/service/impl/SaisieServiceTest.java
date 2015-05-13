@@ -583,7 +583,7 @@ public class SaisieServiceTest {
 		.thenReturn(new ReturnMessageDto());
 
 		SaisieService service = Mockito.spy(new SaisieService());
-		Mockito.doNothing().when(service).deletePointages(9001234, Arrays.asList(p, p2));
+		Mockito.doNothing().when(service).deletePointages(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(List.class));
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
@@ -594,7 +594,7 @@ public class SaisieServiceTest {
 		service.saveFichePointage(9001234, dto);
 
 		// Then
-		Mockito.verify(service, Mockito.times(1)).deletePointages(9001234, Arrays.asList(p, p2));
+		Mockito.verify(service, Mockito.times(1)).deletePointages(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(List.class));
 	}
 
 	@Test
@@ -974,10 +974,36 @@ public class SaisieServiceTest {
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 
 		// When
-		service.deletePointages(9001234, ptgToDelete);
+		service.deletePointages(new ReturnMessageDto(), 9001234, ptgToDelete);
 
 		// Then
 		Mockito.verify(pRepo, Mockito.times(1)).removeEntity(Mockito.isA(Pointage.class));
+	}
+
+	// #15508
+	@Test
+	public void deletePointages_1PointageValide_RemoveIt() {
+
+		// Given
+		Pointage p1 = Mockito.spy(new Pointage());
+		EtatPointage e1 = new EtatPointage();
+		e1.setEtat(EtatPointageEnum.VALIDE);
+		p1.getEtats().add(e1);
+
+		List<Pointage> ptgToDelete = Arrays.asList(p1);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+
+		ReturnMessageDto rmd = Mockito.spy(new ReturnMessageDto());
+		// When
+		service.deletePointages(rmd, 9001234, ptgToDelete);
+
+		// Then
+		Mockito.verify(pRepo, Mockito.times(0)).removeEntity(Mockito.isA(Pointage.class));
+		assertEquals(rmd.getErrors().get(0).toString(), "Vous ne pouvez pas supprimer un pointage à l'état Validée ou Approuvée.");
 	}
 
 	@Test
