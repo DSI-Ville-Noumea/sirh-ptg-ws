@@ -61,6 +61,7 @@ public class VentilationAbsenceServiceTest {
 		rta1.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 
 		Pointage p1 = new Pointage();
+		p1.setIdPointage(1);
 		p1.setDateDebut(new DateTime(2013, 5, 11, 12, 0, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 5, 12, 13, 0, 0).toDate());
 		p1.setType(abs);
@@ -70,6 +71,7 @@ public class VentilationAbsenceServiceTest {
 		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.NON_CONCERTEE.getValue());
 
 		Pointage p2 = new Pointage();
+		p2.setIdPointage(2);
 		p2.setDateDebut(new DateTime(2013, 5, 19, 8, 30, 0).toDate());
 		p2.setDateFin(new DateTime(2013, 5, 19, 10, 0, 0).toDate());
 		p2.setType(abs);
@@ -79,6 +81,7 @@ public class VentilationAbsenceServiceTest {
 		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.IMMEDIATE.getValue());
 
 		Pointage p3 = new Pointage();
+		p3.setIdPointage(3);
 		p3.setDateDebut(new DateTime(2013, 5, 20, 15, 0, 0).toDate());
 		p3.setDateFin(new DateTime(2013, 5, 20, 17, 00, 0).toDate());
 		p3.setType(abs);
@@ -102,7 +105,7 @@ public class VentilationAbsenceServiceTest {
 	}
 
 	@Test
-	public void processAbsenceAgent_1AbsenceConcertee1AbsencesNonConcertees1AbsenceImmeidate_ReturnAggregatedAbsences() {
+	public void processAbsenceAgent_1AbsenceConcertee1AbsencesNonConcertees1AbsenceImmediate_ReturnAggregatedAbsences() {
 
 		// Given
 		DateTime dateDebutMois = new DateTime(2013, 5, 1, 0, 0, 0);
@@ -111,6 +114,7 @@ public class VentilationAbsenceServiceTest {
 		rta1.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
 
 		Pointage p1 = new Pointage();
+		p1.setIdPointage(1);
 		p1.setDateDebut(new DateTime(2013, 5, 11, 12, 0, 0).toDate());
 		p1.setDateFin(new DateTime(2013, 5, 12, 13, 0, 0).toDate());
 		p1.setType(abs);
@@ -120,6 +124,7 @@ public class VentilationAbsenceServiceTest {
 		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.NON_CONCERTEE.getValue());
 
 		Pointage p2 = new Pointage();
+		p2.setIdPointage(2);
 		p2.setDateDebut(new DateTime(2013, 5, 19, 8, 30, 0).toDate());
 		p2.setDateFin(new DateTime(2013, 5, 19, 10, 0, 0).toDate());
 		p2.setType(abs);
@@ -129,6 +134,7 @@ public class VentilationAbsenceServiceTest {
 		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.IMMEDIATE.getValue());
 
 		Pointage p3 = new Pointage();
+		p3.setIdPointage(3);
 		p3.setDateDebut(new DateTime(2013, 5, 20, 15, 0, 0).toDate());
 		p3.setDateFin(new DateTime(2013, 5, 20, 16, 00, 0).toDate());
 		p3.setType(abs);
@@ -144,6 +150,85 @@ public class VentilationAbsenceServiceTest {
 		assertEquals(1500, result.getMinutesConcertee());
 		assertEquals(90, result.getMinutesNonConcertee());
 		assertEquals(60, result.getMinutesImmediat());
+		assertEquals(dateDebutMois.toDate(), result.getDateLundi());
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+		assertEquals(1, result.getNombreAbsenceInferieur1().intValue());
+		assertEquals(1, result.getNombreAbsenceEntre1Et4().intValue());
+		assertEquals(1, result.getNombreAbsenceSuperieur1().intValue());
+	}
+	
+
+	// #15518 
+	@Test
+	public void processAbsenceAgent_AbsencesMemeJour() {
+
+		// Given
+		DateTime dateDebutMois = new DateTime(2015, 5, 1, 0, 0, 0);
+
+		RefTypeAbsence rta1 = new RefTypeAbsence();
+		rta1.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
+
+		RefTypeAbsence rta2 = new RefTypeAbsence();
+		rta2.setIdRefTypeAbsence(RefTypeAbsenceEnum.NON_CONCERTEE.getValue());
+
+		RefTypeAbsence rta3 = new RefTypeAbsence();
+		rta3.setIdRefTypeAbsence(RefTypeAbsenceEnum.IMMEDIATE.getValue());
+
+		// 1er jour : 2 absences de 30 minutes
+		Pointage p1 = new Pointage();
+		p1.setIdPointage(1);
+		p1.setDateDebut(new DateTime(2015, 5, 11, 12, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2015, 5, 11, 12, 30, 0).toDate());
+		p1.setType(abs);
+		p1.setRefTypeAbsence(rta1);
+
+		Pointage p2 = new Pointage();
+		p2.setIdPointage(2);
+		p2.setDateDebut(new DateTime(2015, 5, 11, 15, 30, 0).toDate());
+		p2.setDateFin(new DateTime(2015, 5, 11, 16, 0, 0).toDate());
+		p2.setType(abs);
+		p2.setRefTypeAbsence(rta2);
+
+		// 2e jour : 2 absences de 1h
+		Pointage p3 = new Pointage();
+		p3.setIdPointage(3);
+		p3.setDateDebut(new DateTime(2015, 5, 20, 8, 0, 0).toDate());
+		p3.setDateFin(new DateTime(2015, 5, 20, 9, 0, 0).toDate());
+		p3.setType(abs);
+		p3.setRefTypeAbsence(rta3);
+		
+		Pointage p4 = new Pointage();
+		p4.setIdPointage(4);
+		p4.setDateDebut(new DateTime(2015, 5, 20, 15, 0, 0).toDate());
+		p4.setDateFin(new DateTime(2015, 5, 20, 16, 0, 0).toDate());
+		p4.setType(abs);
+		p4.setRefTypeAbsence(rta3);
+
+		// 3e jour : 2 absences de 2h
+		Pointage p5 = new Pointage();
+		p5.setIdPointage(5);
+		p5.setDateDebut(new DateTime(2015, 5, 22, 8, 0, 0).toDate());
+		p5.setDateFin(new DateTime(2015, 5, 22, 10, 0, 0).toDate());
+		p5.setType(abs);
+		p5.setRefTypeAbsence(rta2);
+		
+		Pointage p6 = new Pointage();
+		p6.setIdPointage(6);
+		p6.setDateDebut(new DateTime(2015, 5, 22, 15, 0, 0).toDate());
+		p6.setDateFin(new DateTime(2015, 5, 22, 17, 30, 0).toDate());
+		p6.setType(abs);
+		p6.setRefTypeAbsence(rta3);
+		
+		VentilationAbsenceService service = new VentilationAbsenceService();
+
+		// When
+		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3, p4, p5, p6), dateDebutMois.toDate());
+
+		// Then
+		assertEquals(9008765, (int) result.getIdAgent());
+		assertEquals(30, result.getMinutesConcertee());
+		assertEquals(150, result.getMinutesNonConcertee());
+		assertEquals(270, result.getMinutesImmediat());
 		assertEquals(dateDebutMois.toDate(), result.getDateLundi());
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 		assertEquals(1, result.getNombreAbsenceInferieur1().intValue());
