@@ -56,6 +56,7 @@ public class VentilationAbsenceService implements IVentilationAbsenceService {
 				listPointagesDejaComptabilises.add(ptg);
 				// on cherche si 2e absence
 				Pointage secondeAbsence = getSecondAbsenceSameDay(absPointages, ptg);
+				// si 2e absence non null et non comptabilisee egalement
 				if(null != secondeAbsence
 						&& !listPointagesDejaComptabilises.contains(secondeAbsence)) {
 					listPointagesDejaComptabilises.add(secondeAbsence);
