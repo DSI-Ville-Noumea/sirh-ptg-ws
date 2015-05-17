@@ -16,6 +16,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.ColumnText;
 import com.lowagie.text.pdf.PdfContentByte;
@@ -152,22 +153,34 @@ public class Tset extends PdfPageEventHelper {
 		tableau2.addCell("2.2");
 		document.add(tableau2);
 
-//		// on genere les numeros de page
-//		PdfReader reader = new PdfReader(baos.toByteArray());
-//		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("/home/nicno85/Bureau/etatPayeur.pdf"));
-//		PdfContentByte under = null;
-//		int totalPages = reader.getNumberOfPages();
-//		for (int page = 1; page <= totalPages; page++) {
-//			under = stamper.getUnderContent(page);
-//			String pageXofY = String.format("Page %d of %d", page, totalPages);
-//			ColumnText.showTextAligned(writer.getDirectContent(), Element.ALIGN_LEFT, new Phrase(pageXofY), 2, 2, 0);
-//		}
-//		reader.close();
-//		stamper.close();
-//		
-
-
 		// on ferme le document
 		document.close();
+
+		// on gere le nombre de page avant la fermeture du document
+		// Create a reader
+		PdfReader reader = new PdfReader(baos.toByteArray());
+		// Create a stamper
+		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("/home/nicno85/Bureau/etatPayeur.pdf"));
+		// Loop over the pages and add a header to each page
+		int n = reader.getNumberOfPages();
+		for (int i = 1; i <= n; i++) {
+			getHeaderTable(i, n).writeSelectedRows(0, -1, 34, 503, stamper.getOverContent(i));
+		}
+		// Close the stamper
+		stamper.close();
+		reader.close();
+
+	}
+
+	public static PdfPTable getHeaderTable(int x, int y) {
+		PdfPTable table = new PdfPTable(2);
+		table.setTotalWidth(527);
+		table.setLockedWidth(true);
+		table.getDefaultCell().setFixedHeight(20);
+		table.getDefaultCell().setBorder(Rectangle.BOTTOM);
+		table.addCell("FOOBAR FILMFESTIVAL");
+		table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
+		table.addCell(String.format("Page %d of %d", x, y));
+		return table;
 	}
 }
