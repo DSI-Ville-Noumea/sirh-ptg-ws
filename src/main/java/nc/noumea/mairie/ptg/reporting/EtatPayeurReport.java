@@ -92,6 +92,7 @@ public class EtatPayeurReport {
 		FileOutputStream fileoutputstream = new FileOutputStream(Paths.get(storagePathEcriture, ep.getFichier())
 				.toString());
 		IOUtils.write(baos.toByteArray(), fileoutputstream);
+		fileoutputstream.close();
 
 	}
 
