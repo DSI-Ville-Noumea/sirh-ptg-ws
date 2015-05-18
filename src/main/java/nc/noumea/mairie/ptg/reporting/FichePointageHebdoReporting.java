@@ -2,7 +2,6 @@ package nc.noumea.mairie.ptg.reporting;
 
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -14,7 +13,6 @@ import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.FichePointageListDto;
 import nc.noumea.mairie.ptg.dto.JourPointageDto;
-import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.reporting.vo.CellVo;
 import nc.noumea.mairie.ptg.service.IPointageService;
 
@@ -26,8 +24,6 @@ import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfStamper;
 import com.lowagie.text.pdf.PdfWriter;
 
 @Service("FichePointageHebdoReporting")
@@ -42,16 +38,12 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 
 	public void getFichePointageHebdoReporting() throws DocumentException, IOException {
 
-		EtatPayeurDto dto = new EtatPayeurDto();
-		dto.setChainePaie("SHC");
-		dto.setPeriode("mars 2015");
-
 		Document document = new Document(PageSize.A4);
-
-		// http://blog.infin-it.fr/2010/08/05/sample-generation-de-document-pdf-avec-itext-1ere-partie/
-		// http://www.jmdoudoux.fr/java/dej/chap-generation-documents.htm
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PdfWriter.getInstance(document, baos);
+
+		// on genere les metadata
+		addMetaData(document, "Fiche de pointage hebdomadaire", 9005138);
 
 		// on ouvre le document
 		document.open();
@@ -62,16 +54,9 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		// on ferme le document
 		document.close();
 
-		// on gere le nombre de page avant la fermeture du document
-		// Create a reader
-		PdfReader reader = new PdfReader(baos.toByteArray());
-		// Create a stamper
-		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(
-				"/home/rebjo84/Bureau/FichePointageHebdoReporting.pdf"));
-
-		// Close the stamper
-		stamper.close();
-		reader.close();
+		// on génere les numeros de page
+		// genereNumeroPageA3Paysage(Paths.get(storagePathEcriture,
+		// ep.getFichier()).toString());
 	}
 
 	protected void writeDocument(Document document) throws DocumentException {
