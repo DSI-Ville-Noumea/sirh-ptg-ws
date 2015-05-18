@@ -11,6 +11,8 @@ import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -30,53 +32,66 @@ import com.lowagie.text.pdf.PdfWriter;
 @Service
 public class EtatPayeurReport {
 
+	private Logger logger = LoggerFactory.getLogger(EtatPayeurReport.class);
+
 	@Autowired
 	private IExportEtatPayeurService exportEtatPayeurService;
 
 	@Autowired
-	@Qualifier("sirhFileEtatPayeurPath")
-	private String storagePath;
+	@Qualifier("sirhFileEtatPayeurPathWrite")
+	private String storagePathEcriture;
 
 	public void downloadEtatPayeurByStatut(AgentStatutEnum statut, EtatPayeur ep) throws DocumentException,
 			MalformedURLException, IOException {
 
 		// on recupere le DTO
 		EtatPayeurDto result = exportEtatPayeurService.getEtatPayeurDataForStatut(statut);
+		if (result.getStatut() != null) {
+			// on crée le document
+			Document document = new Document(PageSize.A3.rotate());
+			PdfWriter.getInstance(document, new FileOutputStream(Paths.get(storagePathEcriture, ep.getFichier())
+					.toString()));
+			String titre = getTitreDocument(result);
 
-		// on crée le document
-		Document document = new Document(PageSize.A3.rotate());
-		PdfWriter.getInstance(document, new FileOutputStream(Paths.get(storagePath, ep.getFichier()).toString()));
-		String titre = getTitreDocument(result);
+			document.addTitle(titre);
+			document.addAuthor(ep.getIdAgent().toString());
+			document.addSubject("Etat du payeur");
+			document.open();
 
-		document.addTitle(titre);
-		document.addAuthor(ep.getIdAgent().toString());
-		document.addSubject("Etat du payeur");
-		document.open();
+			Paragraph paragraph2 = new Paragraph(titre);
+			paragraph2.setAlignment(Element.ALIGN_CENTER);
+			// on ajoute le titre, le logo sur le document
+			try {
+				logger.debug("Test ajout image au document");
+				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+				String path = classLoader.getResource("/images/logo_mairie.png").getPath();
+				logger.debug("Test ajout image au document PATH " + path);
+				Image logo = Image.getInstance(path);
+				logo.scaleToFit(30, 30);
+				paragraph2.add(logo);
+			} catch (Exception e) {
 
-		// on ajoute le titre, le logo sur le document
-		Image logo = Image.getInstance("logo_mairie.png");
-		logo.scaleToFit(30, 30);
+			}
+			document.add(paragraph2);
 
-		Paragraph paragraph2 = new Paragraph(titre);
-		paragraph2.add(logo);
-		paragraph2.setAlignment(Element.ALIGN_CENTER);
-		document.add(paragraph2);
+			// TODO Auto-generated method stub
 
-		// TODO Auto-generated method stub
-
-		// on ferme le document
-		document.close();
-		// on génere les numeros de page
-		genereNumeroPage(ep);
+			// on ferme le document
+			document.close();
+			// on génere les numeros de page
+			// genereNumeroPage(ep);
+			// TODO faire en sorte d'ajouter les numeros de page
+		}
 
 	}
 
 	private void genereNumeroPage(EtatPayeur ep) throws FileNotFoundException, DocumentException, IOException {
+
 		// Create a reader
-		PdfReader reader = new PdfReader(Paths.get(storagePath, ep.getFichier()).toString());
+		PdfReader reader = new PdfReader(Paths.get(storagePathEcriture, ep.getFichier()).toString());
 		// Create a stamper
-		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(Paths.get(storagePath, ep.getFichier())
-				.toString()));
+		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(Paths
+				.get(storagePathEcriture, ep.getFichier()).toString()));
 		// Loop over the pages and add a header to each page
 		int n = reader.getNumberOfPages();
 		for (int i = 1; i <= n; i++) {
