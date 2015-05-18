@@ -64,9 +64,11 @@
 	<!--  -->	
 	<Environment name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR" type="java.lang.String" description="SIRH Etat Payeur File Path" 
 		value="file://///cristal/drh$/DRH/SIRH-document/DEV/Document_Associe/Pointages" override="false" />
+		<!-- <param-value>file:///mnt/sirh-document/Document_Associe/Pointages</param-value> --> 
 		
 	<Environment name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR_ECRITURE" type="java.lang.String" description="SIRH Etat Payeur File Path for write" 
 		value="//cristal/drh$/DRH/SIRH-document/DEV/Document_Associe/Pointages" override="false" />
+		<!-- <param-value>/mnt/sirh-document/Document_Associe/Pointages</param-value> --> 
 		
 		
 		 		
