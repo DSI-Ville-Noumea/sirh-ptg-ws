@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 
 import com.lowagie.text.Chunk;
@@ -58,7 +59,7 @@ public class Tset extends PdfPageEventHelper {
 
 		document.open();
 		String chainePaie = "HORS CONVENTION";
-		if (dto.getChainePaie().equals("SHC")) {
+		if (dto.getChainePaie().equals(TypeChainePaieEnum.SHC.toString())) {
 			chainePaie = "CONVENTION COLLECTIVE";
 		}
 		String titre = "ETAT DES ELEMENTS DE SALAIRE " + chainePaie + " A PAYER SUR " + dto.getPeriode().toUpperCase();

@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.nio.file.Paths;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
@@ -69,7 +70,7 @@ public class EtatPayeurReporting extends AbstractReporting {
 
 	private String getTitreDocument(EtatPayeurDto dto) {
 		String chainePaie = "HORS CONVENTION";
-		if (dto.getChainePaie().equals("SHC")) {
+		if (dto.getChainePaie().equals(TypeChainePaieEnum.SHC.toString())) {
 			chainePaie = "CONVENTION COLLECTIVE";
 		}
 		return "ETAT DES ELEMENTS DE SALAIRE " + chainePaie + " A PAYER SUR " + dto.getPeriode().toUpperCase();
