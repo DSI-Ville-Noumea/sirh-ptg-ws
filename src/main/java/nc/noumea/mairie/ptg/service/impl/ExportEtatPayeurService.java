@@ -381,9 +381,16 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		ep.setDateEdition(helperService.getCurrentDate());
 
 		logger.info("Downloading report named [{}]...", ep.getFichier());
-		//#15138 on commente l'appel à BIRT pour le moment car soucis de timeout lors de la génération du BIT
-		//birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(statut.toString(), ep.getFichier());
-		etatPayeurReport.downloadEtatPayeurByStatut(statut, ep);
+		// #15138 on commente l'appel à BIRT pour le moment car soucis de
+		// timeout lors de la génération du BIT
+		// birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(statut.toString(),
+		// ep.getFichier());
+		try {
+			etatPayeurReport.downloadEtatPayeurByStatut(statut, ep);
+		} catch (Exception e) {
+			logger.error("Un erreur est survenue dans la generation du rapport des etats du payeur pour le statut "
+					+ statut.toString());
+		}
 		logger.info("Downloading report [{}] done.", ep.getFichier());
 
 		return ep;
@@ -533,8 +540,6 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 		return result;
 	}
-	
-
 
 	@Override
 	public void exportEtatsPayeurTest(Integer idExportEtatsPayeurTask) {
@@ -553,18 +558,13 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 		// 2. Call Birt and store files
 		logger.info("Calling Birt reports...");
-		List<EtatPayeur> etats = callBirtEtatsPayeurForChainePaieTest(task.getIdAgent(), task.getTypeChainePaie(),
-				vd.getDateVentilation());
-
-		
+		callBirtEtatsPayeurForChainePaieTest(task.getIdAgent(), task.getTypeChainePaie(), vd.getDateVentilation());
 
 		// 4. Save records for exported files
 		logger.info("Saving generated reports...");
-		
 
 		logger.info("Export Etats Payeurs done.");
 	}
-
 
 	protected List<EtatPayeur> callBirtEtatsPayeurForChainePaieTest(Integer agentIdExporting,
 			TypeChainePaieEnum chainePaie, Date ventilationDate) {
@@ -601,8 +601,10 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		ep.setDateEdition(helperService.getCurrentDate());
 
 		logger.info("Downloading report named [{}]...", ep.getFichier());
-		//#15138 on commente l'appel à BIRT pour le moment car soucis de timeout lors de la génération du BIT
-		//birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(statut.toString(), ep.getFichier());
+		// #15138 on commente l'appel à BIRT pour le moment car soucis de
+		// timeout lors de la génération du BIT
+		// birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(statut.toString(),
+		// ep.getFichier());
 		etatPayeurReport.downloadEtatPayeurByStatut(statut, ep);
 		logger.info("Downloading report [{}] done.", ep.getFichier());
 

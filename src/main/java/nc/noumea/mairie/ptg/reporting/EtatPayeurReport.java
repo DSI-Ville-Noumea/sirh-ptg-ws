@@ -13,8 +13,6 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -33,8 +31,6 @@ import com.lowagie.text.pdf.PdfWriter;
 
 @Service
 public class EtatPayeurReport {
-
-	private Logger logger = LoggerFactory.getLogger(EtatPayeurReport.class);
 
 	@Autowired
 	private IExportEtatPayeurService exportEtatPayeurService;
