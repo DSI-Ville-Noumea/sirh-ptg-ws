@@ -50,8 +50,6 @@ public class EtatPayeurReporting extends AbstractReporting {
 			// on ecrit dans le document
 			writeDocument(document, result);
 
-			// TODO Auto-generated method stub
-
 			// on ferme le document
 			document.close();
 			// on génere les numeros de page
