@@ -39,7 +39,7 @@ public class Tset extends PdfPageEventHelper {
 		dto.setChainePaie("SHC");
 		dto.setPeriode("mars 2015");
 
-		Document document = new Document(PageSize.A4.rotate());
+		Document document = new Document(PageSize.A3.rotate());
 
 		// http://blog.infin-it.fr/2010/08/05/sample-generation-de-document-pdf-avec-itext-1ere-partie/
 		// http://www.jmdoudoux.fr/java/dej/chap-generation-documents.htm

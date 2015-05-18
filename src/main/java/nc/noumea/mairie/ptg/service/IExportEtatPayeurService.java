@@ -68,4 +68,6 @@ public interface IExportEtatPayeurService {
 	void stopExportEtatsPayeur(TypeChainePaieEnum typeChainePaie) throws WorkflowInvalidStateException;
 
 	EtatPayeurDto getEtatPayeurDataForStatut(AgentStatutEnum statut);
+	
+	void exportEtatsPayeurTest(Integer idExportEtatsPayeurTask);
 }

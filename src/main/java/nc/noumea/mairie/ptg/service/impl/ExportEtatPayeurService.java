@@ -29,6 +29,7 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurVo;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
+import nc.noumea.mairie.ptg.reporting.EtatPayeurReport;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
@@ -76,6 +77,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 	@Autowired
 	private IBirtEtatsPayeurWsConsumer birtEtatsPayeurWsConsumer;
+
+	@Autowired
+	private EtatPayeurReport etatPayeurReport;
 
 	@Autowired
 	private IAbsWsConsumer absWsConsumer;
@@ -379,6 +383,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		logger.info("Downloading report named [{}]...", ep.getFichier());
 		//#15138 on commente l'appel à BIRT pour le moment car soucis de timeout lors de la génération du BIT
 		//birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(statut.toString(), ep.getFichier());
+		etatPayeurReport.downloadEtatPayeurByStatut(statut, ep);
 		logger.info("Downloading report [{}] done.", ep.getFichier());
 
 		return ep;
@@ -527,5 +532,80 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		}
 
 		return result;
+	}
+	
+
+
+	@Override
+	public void exportEtatsPayeurTest(Integer idExportEtatsPayeurTask) {
+
+		ExportEtatsPayeurTask task = pointageRepository.getEntity(ExportEtatsPayeurTask.class, idExportEtatsPayeurTask);
+
+		if (task == null) {
+			logger.info("The given idExportEtatsPayeurTask [{}] does not match any task in database. Exiting.",
+					idExportEtatsPayeurTask);
+			return;
+		}
+
+		// 1. Retrieve latest ventilDate in order to date the reports
+		logger.info("Retrieving ventilation date for chaine paie [{}]", task.getTypeChainePaie());
+		VentilDate vd = task.getVentilDate();
+
+		// 2. Call Birt and store files
+		logger.info("Calling Birt reports...");
+		List<EtatPayeur> etats = callBirtEtatsPayeurForChainePaieTest(task.getIdAgent(), task.getTypeChainePaie(),
+				vd.getDateVentilation());
+
+		
+
+		// 4. Save records for exported files
+		logger.info("Saving generated reports...");
+		
+
+		logger.info("Export Etats Payeurs done.");
+	}
+
+
+	protected List<EtatPayeur> callBirtEtatsPayeurForChainePaieTest(Integer agentIdExporting,
+			TypeChainePaieEnum chainePaie, Date ventilationDate) {
+
+		List<EtatPayeur> etats = new ArrayList<EtatPayeur>();
+
+		try {
+			switch (chainePaie) {
+				case SCV:
+					etats.add(exportEtatPayeurTest(agentIdExporting, AgentStatutEnum.CC, ventilationDate));
+					break;
+
+				case SHC:
+					etats.add(exportEtatPayeurTest(agentIdExporting, AgentStatutEnum.F, ventilationDate));
+					etats.add(exportEtatPayeurTest(agentIdExporting, AgentStatutEnum.C, ventilationDate));
+					break;
+			}
+		} catch (Exception ex) {
+			throw new ExportEtatsPayeurServiceException(
+					"An error occured while retrieving reports from SIRH-REPORTS for Etats Payeur.", ex);
+		}
+
+		return etats;
+	}
+
+	protected EtatPayeur exportEtatPayeurTest(Integer idAgent, AgentStatutEnum statut, Date date) throws Exception {
+
+		EtatPayeur ep = new EtatPayeur();
+		ep.setFichier(String.format("%s-%s.pdf", sfd.format(date), statut));
+		ep.setLabel(String.format("%s-%s", sfd.format(date), statut));
+		ep.setDateEtatPayeur(new LocalDate(date).withDayOfMonth(1).toDate());
+		ep.setStatut(statut);
+		ep.setIdAgent(idAgent);
+		ep.setDateEdition(helperService.getCurrentDate());
+
+		logger.info("Downloading report named [{}]...", ep.getFichier());
+		//#15138 on commente l'appel à BIRT pour le moment car soucis de timeout lors de la génération du BIT
+		//birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(statut.toString(), ep.getFichier());
+		etatPayeurReport.downloadEtatPayeurByStatut(statut, ep);
+		logger.info("Downloading report [{}] done.", ep.getFichier());
+
+		return ep;
 	}
 }
