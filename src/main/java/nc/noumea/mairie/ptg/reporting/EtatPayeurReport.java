@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.reporting;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,20 +60,12 @@ public class EtatPayeurReport {
 			document.addSubject("Etat du payeur");
 			document.open();
 
+			// on ajoute le titre, le logo sur le document
 			Paragraph paragraph2 = new Paragraph(titre);
 			paragraph2.setAlignment(Element.ALIGN_CENTER);
-			// on ajoute le titre, le logo sur le document
-			try {
-				logger.debug("Test ajout image au document");
-				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-				String path = classLoader.getResource("/images/logo_mairie.png").getPath();
-				logger.debug("Test ajout image au document PATH " + path);
-				Image logo = Image.getInstance(path);
-				logo.scaleToFit(30, 30);
-				paragraph2.add(logo);
-			} catch (Exception e) {
-
-			}
+			Image logo = Image.getInstance(this.getClass().getClassLoader().getResource("images/logo_mairie.png"));
+			logo.scaleToFit(50, 50);
+			paragraph2.add(logo);
 			document.add(paragraph2);
 
 			// TODO Auto-generated method stub
@@ -79,8 +73,7 @@ public class EtatPayeurReport {
 			// on ferme le document
 			document.close();
 			// on génere les numeros de page
-			// genereNumeroPage(ep);
-			// TODO faire en sorte d'ajouter les numeros de page
+			genereNumeroPage(ep);
 		}
 
 	}
@@ -90,8 +83,8 @@ public class EtatPayeurReport {
 		// Create a reader
 		PdfReader reader = new PdfReader(Paths.get(storagePathEcriture, ep.getFichier()).toString());
 		// Create a stamper
-		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(Paths
-				.get(storagePathEcriture, ep.getFichier()).toString()));
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PdfStamper stamper = new PdfStamper(reader, baos);
 		// Loop over the pages and add a header to each page
 		int n = reader.getNumberOfPages();
 		for (int i = 1; i <= n; i++) {
@@ -100,6 +93,9 @@ public class EtatPayeurReport {
 		// Close the stamper
 		stamper.close();
 		reader.close();
+		FileOutputStream fileoutputstream = new FileOutputStream(Paths.get(storagePathEcriture, ep.getFichier())
+				.toString());
+		IOUtils.write(baos.toByteArray(), fileoutputstream);
 
 	}
 
