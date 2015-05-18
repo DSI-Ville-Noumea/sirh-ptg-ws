@@ -38,18 +38,18 @@ import com.lowagie.text.pdf.PdfWriter;
 
 @Service("FichePointageHebdoReporting")
 public class FichePointageHebdoReporting extends AbstractReporting {
-	
+
 	private Logger logger = LoggerFactory.getLogger(FichePointageHebdoReporting.class);
-	
+
 	private SimpleDateFormat sdfddMMyyyy = new SimpleDateFormat("dd/MM/yyyy");
 	private SimpleDateFormat sdfNomJour = new SimpleDateFormat("E");
 	private SimpleDateFormat sdfHHmm = new SimpleDateFormat("HH:mm");
-	
+
 	@Autowired
 	private IPointageService pointageService;
-	
+
 	public void getFichePointageHebdoReporting() throws DocumentException, IOException {
-		
+
 		EtatPayeurDto dto = new EtatPayeurDto();
 		dto.setChainePaie("SHC");
 		dto.setPeriode("mars 2015");
@@ -59,14 +59,14 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		// http://blog.infin-it.fr/2010/08/05/sample-generation-de-document-pdf-avec-itext-1ere-partie/
 		// http://www.jmdoudoux.fr/java/dej/chap-generation-documents.htm
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PdfWriter writer = PdfWriter.getInstance(document, baos);
-		
+		PdfWriter.getInstance(document, baos);
+
 		// on ouvre le document
 		document.open();
-		
+
 		// on ecrit dans le document
 		writeDocument(document);
-		
+
 		// on ferme le document
 		document.close();
 
@@ -74,32 +74,33 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		// Create a reader
 		PdfReader reader = new PdfReader(baos.toByteArray());
 		// Create a stamper
-		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream("/home/rebjo84/Bureau/FichePointageHebdoReporting.pdf"));
-		
+		PdfStamper stamper = new PdfStamper(reader, new FileOutputStream(
+				"/home/rebjo84/Bureau/FichePointageHebdoReporting.pdf"));
+
 		// Close the stamper
 		stamper.close();
 		reader.close();
 	}
-	
+
 	protected void writeDocument(Document document) throws DocumentException {
-		
+
 		// le titre
 		writeTitle(document, "Fiche de pointage hebdomadaire");
-		
+
 		// on recupere les donnees
 		FichePointageListDto fiches = pointageService.getFichesPointageForUsers("9004117", new Date());
-		
-		if(null != fiches) {
-			for(FichePointageDto fiche : fiches.getFiches()) {
+
+		if (null != fiches) {
+			for (FichePointageDto fiche : fiches.getFiches()) {
 				// tableau informations
 				writeTableauInformation(document, fiches.getFiches().get(0));
 				// tableau fiche hebdo
 				writeTableauPointageHebdo(document, fiche);
 			}
 		}
-		
+
 	}
-	
+
 	protected void writeTitle(Document document, String title) throws DocumentException {
 
 		Image logo = null;
@@ -119,51 +120,53 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 		paragraph.setSpacingBefore(10);
 		paragraph.setSpacingAfter(10);
-		
+
 		document.add(paragraph);
 	}
-	
+
 	protected void writeTableauPointageHebdo(Document document, FichePointageDto fiche) throws DocumentException {
-		
-		PdfPTable table = writeTableau(document, new float[]{2,2,2,2,2,2,2,2});
+
+		PdfPTable table = writeTableau(document, new float[] { 2, 2, 2, 2, 2, 2, 2, 2 });
 		table.setSpacingBefore(10);
 		table.setSpacingAfter(10);
-		
+
 		// 1er ligne : DATE
 		List<CellVo> listValuesLigne1 = new ArrayList<CellVo>();
 		listValuesLigne1.add(new CellVo(""));
-		for(JourPointageDto jour : fiche.getSaisies()){
+		for (JourPointageDto jour : fiche.getSaisies()) {
 			listValuesLigne1.add(new CellVo(sdfddMMyyyy.format(jour.getDate()), true, 1, Color.GRAY));
 		}
 		writeLine(table, 3, Element.ALIGN_CENTER, listValuesLigne1);
-		
+
 		// 2e ligne : nom jour
 		List<CellVo> listValuesLigne2 = new ArrayList<CellVo>();
 		listValuesLigne2.add(new CellVo("", false));
-		for(JourPointageDto jour : fiche.getSaisies()){
+		for (JourPointageDto jour : fiche.getSaisies()) {
 			listValuesLigne2.add(new CellVo(sdfNomJour.format(jour.getDate()), true, 1, Color.GRAY));
 		}
 		writeLine(table, 3, Element.ALIGN_CENTER, listValuesLigne2);
-		
+
 		// on ecrit les heures supp.
 		writeHeuresSup(table, fiche);
 		// on ecrit les absences
 		writeAbsences(table, fiche);
-		
+
 		document.add(table);
 	}
-	
+
 	protected void writeHeuresSup(PdfPTable table, FichePointageDto fiche) {
 
 		// 3e ligne : titre Heures Supplementaires
-		writeLine(table, 3, Element.ALIGN_CENTER, Arrays.asList(new CellVo(""), new CellVo("Heures Supplémentaires", true, 7, Color.ORANGE)));
-		
+		writeLine(table, 3, Element.ALIGN_CENTER,
+				Arrays.asList(new CellVo(""), new CellVo("Heures Supplémentaires", true, 7, Color.ORANGE)));
+
 		// on traite les donnees
 		Integer nombreLigneHeuresSup = 1;
-		for(JourPointageDto jour : fiche.getSaisies()){
-			nombreLigneHeuresSup = jour.getHeuresSup().size() > nombreLigneHeuresSup ? jour.getHeuresSup().size() : nombreLigneHeuresSup;
+		for (JourPointageDto jour : fiche.getSaisies()) {
+			nombreLigneHeuresSup = jour.getHeuresSup().size() > nombreLigneHeuresSup ? jour.getHeuresSup().size()
+					: nombreLigneHeuresSup;
 		}
-		
+
 		List<CellVo> ligneHeureDebut = new ArrayList<CellVo>();
 		ligneHeureDebut.add(new CellVo("Heure de début"));
 		List<CellVo> ligneHeureFin = new ArrayList<CellVo>();
@@ -174,17 +177,16 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		ligneMotif.add(new CellVo("Motif"));
 		List<CellVo> ligneCommentaire = new ArrayList<CellVo>();
 		ligneCommentaire.add(new CellVo("Commentaire"));
-		
-		for(JourPointageDto jour : fiche.getSaisies()) {
-			for(int i=0; i<nombreLigneHeuresSup; i++) {
-				if(i < jour.getHeuresSup().size()
-						&& null != jour.getHeuresSup().get(i)){
+
+		for (JourPointageDto jour : fiche.getSaisies()) {
+			for (int i = 0; i < nombreLigneHeuresSup; i++) {
+				if (i < jour.getHeuresSup().size() && null != jour.getHeuresSup().get(i)) {
 					ligneHeureDebut.add(new CellVo(sdfHHmm.format(jour.getHeuresSup().get(i).getHeureDebut())));
 					ligneHeureFin.add(new CellVo(sdfHHmm.format(jour.getHeuresSup().get(i).getHeureFin())));
 					lignePayeRecupere.add(new CellVo(jour.getHeuresSup().get(i).getRecuperee() ? "Récupéré" : "Payé"));
 					ligneMotif.add(new CellVo(jour.getHeuresSup().get(i).getMotif()));
 					ligneCommentaire.add(new CellVo(jour.getHeuresSup().get(i).getCommentaire()));
-				}else{
+				} else {
 					ligneHeureDebut.add(new CellVo(""));
 					ligneHeureFin.add(new CellVo(""));
 					lignePayeRecupere.add(new CellVo(""));
@@ -205,19 +207,20 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		// 5e ligne : Heure de debut
 		writeLine(table, 3, Element.ALIGN_CENTER, ligneCommentaire);
 	}
-	
-	
+
 	protected void writeAbsences(PdfPTable table, FichePointageDto fiche) {
 
 		// 3e ligne : titre Heures Supplementaires
-		writeLine(table, 3, Element.ALIGN_CENTER, Arrays.asList(new CellVo(""), new CellVo("Absences", true, 7, Color.ORANGE)));
-		
+		writeLine(table, 3, Element.ALIGN_CENTER,
+				Arrays.asList(new CellVo(""), new CellVo("Absences", true, 7, Color.ORANGE)));
+
 		// on traite les donnees
 		Integer nombreLigneAbsence = 1;
-		for(JourPointageDto jour : fiche.getSaisies()){
-			nombreLigneAbsence = jour.getAbsences().size() > nombreLigneAbsence ? jour.getAbsences().size() : nombreLigneAbsence;
+		for (JourPointageDto jour : fiche.getSaisies()) {
+			nombreLigneAbsence = jour.getAbsences().size() > nombreLigneAbsence ? jour.getAbsences().size()
+					: nombreLigneAbsence;
 		}
-		
+
 		List<CellVo> ligneHeureDebut = new ArrayList<CellVo>();
 		ligneHeureDebut.add(new CellVo("Heure de début"));
 		List<CellVo> ligneHeureFin = new ArrayList<CellVo>();
@@ -228,17 +231,17 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		ligneMotif.add(new CellVo("Motif"));
 		List<CellVo> ligneCommentaire = new ArrayList<CellVo>();
 		ligneCommentaire.add(new CellVo("Commentaire"));
-		
-		for(JourPointageDto jour : fiche.getSaisies()) {
-			for(int i=0; i<nombreLigneAbsence; i++) {
-				if(i < jour.getAbsences().size()
-						&& null != jour.getAbsences().get(i)){
+
+		for (JourPointageDto jour : fiche.getSaisies()) {
+			for (int i = 0; i < nombreLigneAbsence; i++) {
+				if (i < jour.getAbsences().size() && null != jour.getAbsences().get(i)) {
 					ligneHeureDebut.add(new CellVo(sdfHHmm.format(jour.getAbsences().get(i).getHeureDebut())));
 					ligneHeureFin.add(new CellVo(sdfHHmm.format(jour.getAbsences().get(i).getHeureFin())));
-					lignePayeRecupere.add(new CellVo(RefTypeAbsenceEnum.getRefTypeAbsenceEnum(jour.getAbsences().get(i).getIdRefTypeAbsence()).toString()));
+					lignePayeRecupere.add(new CellVo(RefTypeAbsenceEnum.getRefTypeAbsenceEnum(
+							jour.getAbsences().get(i).getIdRefTypeAbsence()).toString()));
 					ligneMotif.add(new CellVo(jour.getAbsences().get(i).getMotif()));
 					ligneCommentaire.add(new CellVo(jour.getAbsences().get(i).getCommentaire()));
-				}else{
+				} else {
 					ligneHeureDebut.add(new CellVo(""));
 					ligneHeureFin.add(new CellVo(""));
 					lignePayeRecupere.add(new CellVo(""));
@@ -259,21 +262,20 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		// 5e ligne : Heure de debut
 		writeLine(table, 3, Element.ALIGN_CENTER, ligneCommentaire);
 	}
-	
 
-	
-	
 	protected void writePrimes(PdfPTable table, FichePointageDto fiche) {
 
 		// 3e ligne : titre Heures Supplementaires
-		writeLine(table, 3, Element.ALIGN_CENTER, Arrays.asList(new CellVo(""), new CellVo("Primes", true, 7, Color.ORANGE)));
-		
+		writeLine(table, 3, Element.ALIGN_CENTER,
+				Arrays.asList(new CellVo(""), new CellVo("Primes", true, 7, Color.ORANGE)));
+
 		// on traite les donnees
 		Integer nombreLigneAbsence = 1;
-		for(JourPointageDto jour : fiche.getSaisies()){
-			nombreLigneAbsence = jour.getAbsences().size() > nombreLigneAbsence ? jour.getAbsences().size() : nombreLigneAbsence;
+		for (JourPointageDto jour : fiche.getSaisies()) {
+			nombreLigneAbsence = jour.getAbsences().size() > nombreLigneAbsence ? jour.getAbsences().size()
+					: nombreLigneAbsence;
 		}
-		
+
 		List<CellVo> ligneHeureDebut = new ArrayList<CellVo>();
 		ligneHeureDebut.add(new CellVo("Heure de début"));
 		List<CellVo> ligneHeureFin = new ArrayList<CellVo>();
@@ -284,17 +286,17 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		ligneMotif.add(new CellVo("Motif"));
 		List<CellVo> ligneCommentaire = new ArrayList<CellVo>();
 		ligneCommentaire.add(new CellVo("Commentaire"));
-		
-		for(JourPointageDto jour : fiche.getSaisies()) {
-			for(int i=0; i<nombreLigneAbsence; i++) {
-				if(i < jour.getAbsences().size()
-						&& null != jour.getAbsences().get(i)){
+
+		for (JourPointageDto jour : fiche.getSaisies()) {
+			for (int i = 0; i < nombreLigneAbsence; i++) {
+				if (i < jour.getAbsences().size() && null != jour.getAbsences().get(i)) {
 					ligneHeureDebut.add(new CellVo(sdfHHmm.format(jour.getAbsences().get(i).getHeureDebut())));
 					ligneHeureFin.add(new CellVo(sdfHHmm.format(jour.getAbsences().get(i).getHeureFin())));
-					lignePayeRecupere.add(new CellVo(RefTypeAbsenceEnum.getRefTypeAbsenceEnum(jour.getAbsences().get(i).getIdRefTypeAbsence()).toString()));
+					lignePayeRecupere.add(new CellVo(RefTypeAbsenceEnum.getRefTypeAbsenceEnum(
+							jour.getAbsences().get(i).getIdRefTypeAbsence()).toString()));
 					ligneMotif.add(new CellVo(jour.getAbsences().get(i).getMotif()));
 					ligneCommentaire.add(new CellVo(jour.getAbsences().get(i).getCommentaire()));
-				}else{
+				} else {
 					ligneHeureDebut.add(new CellVo(""));
 					ligneHeureFin.add(new CellVo(""));
 					lignePayeRecupere.add(new CellVo(""));
@@ -315,17 +317,23 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		// 5e ligne : Heure de debut
 		writeLine(table, 3, Element.ALIGN_CENTER, ligneCommentaire);
 	}
-	
+
 	protected void writeTableauInformation(Document document, FichePointageDto fiche) throws DocumentException {
-		
-		PdfPTable table = writeTableau(document, new float[]{2,6});
+
+		PdfPTable table = writeTableau(document, new float[] { 2, 6 });
 		table.setSpacingBefore(10);
 		table.setSpacingAfter(10);
-		
-		writeLine(table, 3, Element.ALIGN_LEFT, Arrays.asList(new CellVo("Entité :", true), new CellVo(fiche.getAgent().getService())));
-		writeLine(table, 3, Element.ALIGN_LEFT, Arrays.asList(new CellVo("Agent :", true), 
-				new CellVo(fiche.getAgent().getNomatr() + " - " + fiche.getAgent().getNom() + " " + fiche.getAgent().getPrenom())));
-		writeLine(table, 3, Element.ALIGN_LEFT, Arrays.asList(new CellVo("Semaine :", true), new CellVo(fiche.getSemaine())));
+
+		writeLine(table, 3, Element.ALIGN_LEFT,
+				Arrays.asList(new CellVo("Entité :", true), new CellVo(fiche.getAgent().getService())));
+		writeLine(
+				table,
+				3,
+				Element.ALIGN_LEFT,
+				Arrays.asList(new CellVo("Agent :", true), new CellVo(fiche.getAgent().getNomatr() + " - "
+						+ fiche.getAgent().getNom() + " " + fiche.getAgent().getPrenom())));
+		writeLine(table, 3, Element.ALIGN_LEFT,
+				Arrays.asList(new CellVo("Semaine :", true), new CellVo(fiche.getSemaine())));
 		document.add(table);
 	}
 }

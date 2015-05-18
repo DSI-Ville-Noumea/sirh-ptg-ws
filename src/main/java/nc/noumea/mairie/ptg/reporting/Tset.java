@@ -12,14 +12,9 @@ import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
 import com.lowagie.text.HeaderFooter;
-import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
-import com.lowagie.text.Phrase;
-import com.lowagie.text.Rectangle;
 import com.lowagie.text.Table;
-import com.lowagie.text.pdf.ColumnText;
-import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfReader;
@@ -44,7 +39,7 @@ public class Tset extends PdfPageEventHelper {
 		// http://blog.infin-it.fr/2010/08/05/sample-generation-de-document-pdf-avec-itext-1ere-partie/
 		// http://www.jmdoudoux.fr/java/dej/chap-generation-documents.htm
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PdfWriter writer = PdfWriter.getInstance(document, baos);
+		PdfWriter.getInstance(document, baos);
 
 		document.addTitle("Hello World");
 
@@ -68,11 +63,11 @@ public class Tset extends PdfPageEventHelper {
 		}
 		String titre = "ETAT DES ELEMENTS DE SALAIRE " + chainePaie + " A PAYER SUR " + dto.getPeriode().toUpperCase();
 
-		Image logo = Image.getInstance("logo_mairie.png");
-		logo.scaleToFit(30, 30);
+		// Image logo = Image.getInstance("logo_mairie.png");
+		// logo.scaleToFit(30, 30);
 
 		Paragraph paragraph2 = new Paragraph(titre);
-		paragraph2.add(logo);
+		// paragraph2.add(logo);
 		paragraph2.setAlignment(Element.ALIGN_CENTER);
 		document.add(paragraph2);
 
@@ -164,7 +159,7 @@ public class Tset extends PdfPageEventHelper {
 		// Loop over the pages and add a header to each page
 		int n = reader.getNumberOfPages();
 		for (int i = 1; i <= n; i++) {
-			getHeaderTable(i, n).writeSelectedRows(0, -1, 34, 503, stamper.getOverContent(i));
+			getHeaderTable(i, n).writeSelectedRows(0, -1, 34, 800, stamper.getOverContent(i));
 		}
 		// Close the stamper
 		stamper.close();
@@ -173,14 +168,13 @@ public class Tset extends PdfPageEventHelper {
 	}
 
 	public static PdfPTable getHeaderTable(int x, int y) {
-		PdfPTable table = new PdfPTable(2);
-		table.setTotalWidth(527);
+		PdfPTable table = new PdfPTable(1);
+		table.setTotalWidth(PageSize.A3.rotate().getWidth() - 100);
 		table.setLockedWidth(true);
 		table.getDefaultCell().setFixedHeight(20);
-		table.getDefaultCell().setBorder(Rectangle.BOTTOM);
-		table.addCell("FOOBAR FILMFESTIVAL");
+		table.getDefaultCell().setBorder(0);
 		table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
-		table.addCell(String.format("Page %d of %d", x, y));
+		table.addCell(String.format("Page %d / %d", x, y));
 		return table;
 	}
 }
