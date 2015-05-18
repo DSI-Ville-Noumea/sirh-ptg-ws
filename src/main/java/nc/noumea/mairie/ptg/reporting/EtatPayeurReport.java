@@ -84,7 +84,7 @@ public class EtatPayeurReport {
 		// Loop over the pages and add a header to each page
 		int n = reader.getNumberOfPages();
 		for (int i = 1; i <= n; i++) {
-			getHeaderTable(i, n).writeSelectedRows(0, -1, 34, 503, stamper.getOverContent(i));
+			getHeaderTable(i, n).writeSelectedRows(0, -1, 34, 800, stamper.getOverContent(i));
 		}
 		// Close the stamper
 		stamper.close();
@@ -97,14 +97,13 @@ public class EtatPayeurReport {
 	}
 
 	private PdfPTable getHeaderTable(int x, int y) {
-		PdfPTable table = new PdfPTable(2);
-		table.setTotalWidth(527);
+		PdfPTable table = new PdfPTable(1);
+		table.setTotalWidth(PageSize.A3.rotate().getWidth() - 100);
 		table.setLockedWidth(true);
 		table.getDefaultCell().setFixedHeight(20);
-		table.getDefaultCell().setBorder(Rectangle.BOTTOM);
-		table.addCell("FOOBAR FILMFESTIVAL");
+		table.getDefaultCell().setBorder(0);
 		table.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
-		table.addCell(String.format("Page %d of %d", x, y));
+		table.addCell(String.format("Page %d / %d", x, y));
 		return table;
 	}
 

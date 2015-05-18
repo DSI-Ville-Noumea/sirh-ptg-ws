@@ -385,12 +385,12 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		// timeout lors de la génération du BIT
 		// birtEtatsPayeurWsConsumer.downloadEtatPayeurByStatut(statut.toString(),
 		// ep.getFichier());
-		try {
-			etatPayeurReport.downloadEtatPayeurByStatut(statut, ep);
-		} catch (Exception e) {
-			logger.error("Un erreur est survenue dans la generation du rapport des etats du payeur pour le statut "
-					+ statut.toString());
-		}
+//		try {
+//			etatPayeurReport.downloadEtatPayeurByStatut(statut, ep);
+//		} catch (Exception e) {
+//			logger.error("Un erreur est survenue dans la generation du rapport des etats du payeur pour le statut "
+//					+ statut.toString());
+//		}
 		logger.info("Downloading report [{}] done.", ep.getFichier());
 
 		return ep;
