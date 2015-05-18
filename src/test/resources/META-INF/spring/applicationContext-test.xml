@@ -101,4 +101,6 @@
 	<bean class="java.lang.String" id="sirhAbsWsBaseUrl" />
 	
 	<bean class="java.lang.String" id="sirhAbsDateBlocagePointage" />
+	
+	<bean class="java.lang.String" id="sirhFileEtatPayeurPathWrite" />
 </beans>
