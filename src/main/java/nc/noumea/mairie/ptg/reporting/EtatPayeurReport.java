@@ -57,6 +57,8 @@ public class EtatPayeurReport extends AbstractReporting {
 			document.open();
 
 			// on ajoute le titre, le logo sur le document
+			writeTitle(document, titre,this.getClass().getClassLoader().getResource("images/logo_mairie.png"));
+			
 			Paragraph paragraph2 = new Paragraph(titre);
 			paragraph2.setAlignment(Element.ALIGN_CENTER);
 			Image logo = Image.getInstance(this.getClass().getClassLoader().getResource("images/logo_mairie.png"));

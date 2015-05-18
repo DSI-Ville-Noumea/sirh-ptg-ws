@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,18 +18,13 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.reporting.vo.CellVo;
 import nc.noumea.mairie.ptg.service.IPointageService;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.lowagie.text.BadElementException;
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
 import com.lowagie.text.Element;
-import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
@@ -38,8 +32,6 @@ import com.lowagie.text.pdf.PdfWriter;
 
 @Service("FichePointageHebdoReporting")
 public class FichePointageHebdoReporting extends AbstractReporting {
-
-	private Logger logger = LoggerFactory.getLogger(FichePointageHebdoReporting.class);
 
 	private SimpleDateFormat sdfddMMyyyy = new SimpleDateFormat("dd/MM/yyyy");
 	private SimpleDateFormat sdfNomJour = new SimpleDateFormat("E");
@@ -85,7 +77,8 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 	protected void writeDocument(Document document) throws DocumentException {
 
 		// le titre
-		writeTitle(document, "Fiche de pointage hebdomadaire");
+		writeTitle(document, "Fiche de pointage hebdomadaire",
+				this.getClass().getClassLoader().getResource("images/logo_mairie.png"));
 
 		// on recupere les donnees
 		FichePointageListDto fiches = pointageService.getFichesPointageForUsers("9004117", new Date());
@@ -99,29 +92,6 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 			}
 		}
 
-	}
-
-	protected void writeTitle(Document document, String title) throws DocumentException {
-
-		Image logo = null;
-		try {
-			logo = Image.getInstance("logo_mairie.png");
-			logo.scaleToFit(30, 30);
-		} catch (BadElementException e) {
-			logger.debug(e.getMessage());
-		} catch (MalformedURLException e) {
-			logger.debug(e.getMessage());
-		} catch (IOException e) {
-			logger.debug(e.getMessage());
-		}
-
-		Paragraph paragraph = new Paragraph(title);
-		paragraph.add(logo);
-		paragraph.setAlignment(Element.ALIGN_CENTER);
-		paragraph.setSpacingBefore(10);
-		paragraph.setSpacingAfter(10);
-
-		document.add(paragraph);
 	}
 
 	protected void writeTableauPointageHebdo(Document document, FichePointageDto fiche) throws DocumentException {
