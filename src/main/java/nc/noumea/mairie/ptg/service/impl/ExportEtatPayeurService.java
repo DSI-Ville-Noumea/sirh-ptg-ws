@@ -29,7 +29,7 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurVo;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
-import nc.noumea.mairie.ptg.reporting.EtatPayeurReport;
+import nc.noumea.mairie.ptg.reporting.EtatPayeurReporting;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
@@ -79,7 +79,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	private IBirtEtatsPayeurWsConsumer birtEtatsPayeurWsConsumer;
 
 	@Autowired
-	private EtatPayeurReport etatPayeurReport;
+	private EtatPayeurReporting etatPayeurReport;
 
 	@Autowired
 	private IAbsWsConsumer absWsConsumer;
