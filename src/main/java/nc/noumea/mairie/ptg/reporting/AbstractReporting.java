@@ -24,6 +24,7 @@ import com.lowagie.text.Image;
 import com.lowagie.text.PageSize;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPageEventHelper;
@@ -52,10 +53,24 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 		}
 
 		Paragraph paragraph = new Paragraph(title);
-		paragraph.add(logo);
 		paragraph.setAlignment(Element.ALIGN_CENTER);
 
-		document.add(paragraph);
+		PdfPCell cellTitre = new PdfPCell();
+		cellTitre.addElement(paragraph);
+		cellTitre.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		cellTitre.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cellTitre.setBorder(Rectangle.NO_BORDER);
+		
+		PdfPCell cellLogo = new PdfPCell();
+		cellLogo.addElement(logo);
+		cellLogo.setBorder(Rectangle.NO_BORDER);
+		
+		PdfPTable table = new PdfPTable(new float[] {1,7});
+		table.setWidthPercentage(100f);
+		table.addCell(cellLogo);
+		table.addCell(cellTitre);
+		
+		document.add(table);
 	}
 
 	protected PdfPTable writeTableau(Document document, float[] relativeWidth) throws DocumentException {
@@ -65,6 +80,13 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 		return table;
 	}
 
+	protected void writeLine(PdfPTable table, Integer padding, List<CellVo> values) {
+
+		for (CellVo value : values) {
+			table.addCell(writeCell(padding, null, value));
+		}
+	}
+
 	protected void writeLine(PdfPTable table, Integer padding, int horizontalAlign, List<CellVo> values) {
 
 		for (CellVo value : values) {
@@ -72,24 +94,38 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 		}
 	}
 
-	protected PdfPCell writeCell(Integer padding, int horizontalAlign, CellVo value) {
+	protected PdfPCell writeCell(Integer padding, CellVo value) {
+		return writeCell(padding, null, value);
+	}
+	
+	protected PdfPCell writeCell(Integer padding, Integer horizontalAlign, CellVo value) {
 
 		PdfPCell pdfWordCell = new PdfPCell();
 		pdfWordCell.setPadding(padding);
 		pdfWordCell.setUseAscender(true);
 		pdfWordCell.setUseDescender(true);
 		pdfWordCell.setBackgroundColor(value.getBackgroundColor());
-		pdfWordCell.setHorizontalAlignment(horizontalAlign);
 
 		// /!\ COLSPAN
 		pdfWordCell.setColspan(value.getColspan());
-
+		
+		// on cree la phrase pour le FONT
+		Phrase phrase = null;
 		if (value.isBold()) {
-			pdfWordCell.addElement(new Phrase(value.getText(), fontBold));
+			phrase = new Phrase(value.getText(), fontBold);
 		} else {
-			pdfWordCell.addElement(new Phrase(value.getText(), fontNormal));
+			phrase = new Phrase(value.getText(), fontNormal);
 		}
-
+		// on cree le Paragraph pour l alignement
+		Paragraph paragraph = new Paragraph(phrase);
+		if(null != value.getHorizontalAlign()) {
+			paragraph.setAlignment(value.getHorizontalAlign());
+		}else if(null != horizontalAlign) {
+			paragraph.setAlignment(horizontalAlign);
+		}
+		
+		pdfWordCell.addElement(paragraph);
+		
 		return pdfWordCell;
 	}
 
@@ -130,7 +166,7 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 
 		document.addTitle(titre);
 		document.addAuthor(idAuthor.toString());
-		document.addSubject("Etat du payeur");
+		document.addSubject(titre);
 
 	}
 }
