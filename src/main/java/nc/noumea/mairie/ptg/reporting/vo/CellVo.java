@@ -2,6 +2,8 @@ package nc.noumea.mairie.ptg.reporting.vo;
 
 import java.awt.Color;
 
+import com.lowagie.text.Font;
+
 public class CellVo {
 	
 	private String text;
@@ -9,6 +11,9 @@ public class CellVo {
 	private Integer colspan;
 	private Color backgroundColor;
 	private Integer horizontalAlign;
+	private boolean isBorder;
+	
+	private Font font;
 
 	/**
 	 * @param text texte a afficher
@@ -18,9 +23,25 @@ public class CellVo {
 	 *  - pas de couleur en fond (backgroundColor = null)
 	 *  - colspan = 1
 	 *  - aligne a gauche
+	 *  - avec bordure
 	 */
 	public CellVo(String text) {
 		this(text, false);
+	}
+	
+	/**
+	 * @param text texte a afficher
+	 * @param font font police
+	 * @see
+	 * Par defaut :
+	 *  - text non gras (normal)
+	 *  - pas de couleur en fond (backgroundColor = null)
+	 *  - colspan = 1
+	 *  - aligne a gauche
+	 *  - avec bordure
+	 */
+	public CellVo(String text, Font font) {
+		this(text, false, 1, null, null, true, font);
 	}
 	
 	/**
@@ -31,6 +52,7 @@ public class CellVo {
 	 *  - pas de couleur en fond (backgroundColor = null)
 	 *  - colspan = 1
 	 *  - aligne a gauche
+	 *  - avec bordure
 	 */
 	public CellVo(String text, boolean isBold) {
 		this(text, isBold, 1, null, null);
@@ -45,6 +67,7 @@ public class CellVo {
 	 *  - text non gras (normal)
 	 *  - pas de couleur en fond (backgroundColor = null)
 	 *  - aligne a gauche
+	 *  - avec bordure
 	 */
 	public CellVo(String text, Integer colspan) {
 		this(text, false, colspan, null, null);
@@ -59,6 +82,7 @@ public class CellVo {
 	 * Par defaut :
 	 *  - text non gras (normal)
 	 *  - pas de couleur en fond (backgroundColor = null)
+	 *  - avec bordure
 	 */
 	public CellVo(String text, Integer colspan, Integer horizontalAlign) {
 		this(text, false, colspan, null, horizontalAlign);
@@ -73,6 +97,7 @@ public class CellVo {
 	 *  - text non gras (normal)
 	 *  - colspan = 1
 	 *  - aligne a gauche
+	 *  - avec bordure
 	 */
 	public CellVo(String text, Color backgroundColor) {
 		this(text, false, 1, backgroundColor, null);
@@ -87,6 +112,7 @@ public class CellVo {
 	 * @see
 	 * Par defaut :
 	 *  - aligne a gauche
+	 *  - avec bordure
 	 */
 	public CellVo(String text, boolean isBold, Integer colspan, Color backgroundColor) {
 		this(text, isBold, colspan, backgroundColor, null);
@@ -99,14 +125,51 @@ public class CellVo {
 	 * @param colspan colspan pour les colonnes d un tableau
 	 * @param backgroundColor couleur en fond 
 	 * @param horizontalAlign alignement horizontal du text 
+	 * @see
+	 * Par defaut :
+	 *  - avec bordure
 	 */
 	public CellVo(String text, boolean isBold, Integer colspan, Color backgroundColor, Integer horizontalAlign) {
+		this(text, isBold, colspan, backgroundColor, horizontalAlign, true);
+	}
+	
+	/**
+	 * 
+	 * @param text texte a afficher
+	 * @param isBold texte en gras ou non
+	 * @param colspan colspan pour les colonnes d un tableau
+	 * @param backgroundColor couleur en fond 
+	 * @param horizontalAlign alignement horizontal du text 
+	 * @param isBorder bordure ou non d une case d un tableau
+	 */
+	public CellVo(String text, boolean isBold, Integer colspan, Color backgroundColor, Integer horizontalAlign, boolean isBorder) {
 		super();
 		this.text = text;
 		this.isBold = isBold;
 		this.colspan = colspan;
 		this.backgroundColor = backgroundColor;
 		this.horizontalAlign = horizontalAlign;
+		this.isBorder = isBorder;
+	}
+	
+	/**
+	 * 
+	 * @param text texte a afficher
+	 * @param isBold texte en gras ou non
+	 * @param colspan colspan pour les colonnes d un tableau
+	 * @param backgroundColor couleur en fond 
+	 * @param horizontalAlign alignement horizontal du text 
+	 * @param isBorder bordure ou non d une case d un tableau
+	 */
+	public CellVo(String text, boolean isBold, Integer colspan, Color backgroundColor, Integer horizontalAlign, boolean isBorder, Font font) {
+		super();
+		this.text = text;
+		this.isBold = isBold;
+		this.colspan = colspan;
+		this.backgroundColor = backgroundColor;
+		this.horizontalAlign = horizontalAlign;
+		this.isBorder = isBorder;
+		this.font = font;
 	}
 	
 	public String getText() {
@@ -144,4 +207,21 @@ public class CellVo {
 		this.horizontalAlign = horizontalAlign;
 	}
 
+	public boolean isBorder() {
+		return isBorder;
+	}
+
+	public void setBorder(boolean isBorder) {
+		this.isBorder = isBorder;
+	}
+
+	public Font getFont() {
+		return font;
+	}
+
+	public void setFont(Font font) {
+		this.font = font;
+	}
+	
+	
 }
