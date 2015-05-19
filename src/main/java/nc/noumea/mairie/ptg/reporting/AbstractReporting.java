@@ -35,8 +35,9 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 
 	private Logger logger = LoggerFactory.getLogger(AbstractReporting.class);
 
-	private Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
-	private Font fontBold = FontFactory.getFont("Arial", 8, Font.BOLD);
+	protected Font fontNormal8 = FontFactory.getFont("Arial", 8, Font.NORMAL);
+	protected Font fontNormal10 = FontFactory.getFont("Arial", 9, Font.NORMAL);
+	protected Font fontBold10 = FontFactory.getFont("Arial", 9, Font.BOLD);
 
 	protected void writeTitle(Document document, String title, URL urlImage, boolean border, boolean isBold)
 			throws DocumentException {
@@ -46,7 +47,7 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 			Image logo = null;
 			try {
 				logo = Image.getInstance(urlImage);
-				logo.scaleToFit(50, 50);
+				logo.scaleToFit(100, 100);
 			} catch (BadElementException e) {
 				logger.debug(e.getMessage());
 			} catch (MalformedURLException e) {
@@ -57,13 +58,13 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 
 			cellLogo = new PdfPCell();
 			cellLogo.addElement(logo);
-
-			if (!border)
+			
+			if(!border)
 				cellLogo.setBorder(Rectangle.NO_BORDER);
 		}
 		Paragraph paragraph = null;
 		if (isBold)
-			paragraph = new Paragraph(title, fontBold);
+			paragraph = new Paragraph(title, fontBold10);
 		else
 			paragraph = new Paragraph(title);
 
@@ -106,7 +107,7 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 		}
 	}
 
-	protected void writeLine(PdfPTable table, Integer padding, int horizontalAlign, List<CellVo> values) {
+	protected void writeLine(PdfPTable table, Integer padding, Integer horizontalAlign, List<CellVo> values) {
 
 		for (CellVo value : values) {
 			table.addCell(writeCell(padding, horizontalAlign, value));
@@ -127,22 +128,28 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 
 		// /!\ COLSPAN
 		pdfWordCell.setColspan(value.getColspan());
-
+		
+		// border
+		if(!value.isBorder())
+			pdfWordCell.setBorder(Rectangle.NO_BORDER);
+		
 		// on cree la phrase pour le FONT
 		Phrase phrase = null;
-		if (value.isBold()) {
-			phrase = new Phrase(value.getText(), fontBold);
+		if(null != value.getFont()) {
+			phrase = new Phrase(value.getText(), value.getFont());
+		}else if (value.isBold()) {
+			phrase = new Phrase(value.getText(), fontBold10);
 		} else {
-			phrase = new Phrase(value.getText(), fontNormal);
+			phrase = new Phrase(value.getText(), fontNormal10);
 		}
 		// on cree le Paragraph pour l alignement
 		Paragraph paragraph = new Paragraph(phrase);
-		if (null != value.getHorizontalAlign()) {
+		if(null != value.getHorizontalAlign()) {
 			paragraph.setAlignment(value.getHorizontalAlign());
-		} else if (null != horizontalAlign) {
+		}else if(null != horizontalAlign) {
 			paragraph.setAlignment(horizontalAlign);
 		}
-
+		
 		pdfWordCell.addElement(paragraph);
 
 		return pdfWordCell;
@@ -159,7 +166,7 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 		// Loop over the pages and add a header to each page
 		int n = reader.getNumberOfPages();
 		for (int i = 1; i <= n; i++) {
-			getHeaderTableA3Paysage(i, n).writeSelectedRows(0, -1, 34, 800, stamper.getOverContent(i));
+			getHeaderTableA3Paysage(i, n).writeSelectedRows(0, -1, 34, 830, stamper.getOverContent(i));
 		}
 		// Close the stamper
 		stamper.close();
@@ -186,7 +193,7 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 		document.addTitle(titre);
 		if (idAuthor != null)
 			document.addAuthor(idAuthor.toString());
+		
 		document.addSubject(titre);
-
 	}
 }

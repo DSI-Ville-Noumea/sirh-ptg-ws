@@ -229,21 +229,4 @@ public class EtatsPayeurController {
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
-	
-
-
-	@ResponseBody
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
-	@Transactional(value = "ptgTransactionManager")
-	public ResponseEntity<String> test(
-			@RequestParam(value = "idExportEtatsPayeurTask", required = true) Integer idExportEtatsPayeurTask) {
-
-		logger.debug(
-				"entered GET [etatsPayeur/test] => test with parameter idExportEtatsPayeurTask = {}",
-				idExportEtatsPayeurTask);
-
-		exportEtatPayeurService.exportEtatsPayeurTest(idExportEtatsPayeurTask);
-
-		return new ResponseEntity<String>(HttpStatus.OK);
-	}
 }
