@@ -1,7 +1,7 @@
 package nc.noumea.mairie.ptg.reporting;
 
 import java.awt.Color;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,22 +36,27 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 	@Autowired
 	private IPointageService pointageService;
 
-	public void getFichePointageHebdoReporting(String idAgent, Date dateLundi) throws DocumentException, IOException {
+	public byte[] getFichePointageHebdoReporting(String csvIdAgent, Date dateLundi, Integer idAgent)
+			throws DocumentException, IOException {
 
 		Document document = new Document(PageSize.A4);
-		PdfWriter.getInstance(document, new FileOutputStream("/home/nicno85/Bureau/fichePointage.pdf"));
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PdfWriter.getInstance(document, baos);
 
 		// on genere les metadata
-		addMetaData(document, "Fiche de pointage hebdomadaire", null);
+		addMetaData(document, "Fiche de pointage hebdomadaire", idAgent);
 
 		// on ouvre le document
 		document.open();
 
 		// on ecrit dans le document
-		writeDocument(document, idAgent, dateLundi);
+		writeDocument(document, csvIdAgent, dateLundi);
 
 		// on ferme le document
 		document.close();
+
+		// on envoie le flux
+		return baos.toByteArray();
 	}
 
 	protected void writeDocument(Document document, String csvIdAgent, Date dateLundi) throws DocumentException {
@@ -236,7 +241,8 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 			List<CellVo> ligneCommentaire = new ArrayList<CellVo>();
 			ligneCommentaire.add(new CellVo("Commentaire", 1, Element.ALIGN_LEFT));
 
-			for (@SuppressWarnings("unused") JourPointageDto jour : fiche.getSaisies()) {
+			for (@SuppressWarnings("unused")
+			JourPointageDto jour : fiche.getSaisies()) {
 				ligneNombre.add(new CellVo(""));
 				ligneMotif.add(new CellVo(""));
 				ligneCommentaire.add(new CellVo(""));

@@ -33,7 +33,6 @@ public class FicheController {
 	@Autowired
 	@Qualifier("FichePointageHebdoReporting")
 	private FichePointageHebdoReporting fichePointageHebdoReporting;
-	
 
 	@ResponseBody
 	@RequestMapping(value = "/xml/getFichesPointage", produces = "application/xml", method = RequestMethod.GET)
@@ -45,7 +44,7 @@ public class FicheController {
 
 		return new ModelAndView("xmlView", "object", fiches);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "/pdf/getFichesPointage", produces = "application/xml", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
@@ -53,13 +52,12 @@ public class FicheController {
 			@RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date date) throws ParseException {
 
 		try {
-			fichePointageHebdoReporting.getFichePointageHebdoReporting(csvIdAgents, date);
+			fichePointageHebdoReporting.getFichePointageHebdoReporting(csvIdAgents, date, null);
 		} catch (DocumentException e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 		} catch (IOException e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 		}
-
 
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
