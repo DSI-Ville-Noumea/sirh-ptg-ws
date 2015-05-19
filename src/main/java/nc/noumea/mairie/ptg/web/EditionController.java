@@ -121,12 +121,12 @@ public class EditionController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		if (!accessRightService.canUserAccessPrint(convertedIdAgent))
-			throw new AccessForbiddenException();
+//		if (!accessRightService.canUserAccessPrint(convertedIdAgent))
+//			throw new AccessForbiddenException();
 
 		byte[] responseData = null;
 		try {
-			responseData = fichePointageHebdoReporting.getFichePointageHebdoReporting(csvIdAgents, date, idAgent);
+			responseData = fichePointageHebdoReporting.getFichePointageHebdoReporting(csvIdAgents, date, convertedIdAgent);
 		} catch (DocumentException e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
