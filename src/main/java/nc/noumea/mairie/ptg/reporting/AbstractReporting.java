@@ -38,19 +38,29 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 	private Font fontNormal = FontFactory.getFont("Arial", 8, Font.NORMAL);
 	private Font fontBold = FontFactory.getFont("Arial", 8, Font.BOLD);
 
-	protected void writeTitle(Document document, String title, URL urlImage) throws DocumentException {
+	protected void writeTitle(Document document, String title, URL urlImage, boolean border) throws DocumentException {
 
-		Image logo = null;
-		try {
-			logo = Image.getInstance(urlImage);
-			logo.scaleToFit(50, 50);
-		} catch (BadElementException e) {
-			logger.debug(e.getMessage());
-		} catch (MalformedURLException e) {
-			logger.debug(e.getMessage());
-		} catch (IOException e) {
-			logger.debug(e.getMessage());
+		PdfPCell cellLogo = null;
+		if(null != urlImage) {
+			Image logo = null;
+			try {
+				logo = Image.getInstance(urlImage);
+				logo.scaleToFit(50, 50);
+			} catch (BadElementException e) {
+				logger.debug(e.getMessage());
+			} catch (MalformedURLException e) {
+				logger.debug(e.getMessage());
+			} catch (IOException e) {
+				logger.debug(e.getMessage());
+			}
+			
+			cellLogo = new PdfPCell();
+			cellLogo.addElement(logo);
+			
+			if(!border)
+				cellLogo.setBorder(Rectangle.NO_BORDER);
 		}
+		
 
 		Paragraph paragraph = new Paragraph(title);
 		paragraph.setAlignment(Element.ALIGN_CENTER);
@@ -59,15 +69,20 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 		cellTitre.addElement(paragraph);
 		cellTitre.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		cellTitre.setHorizontalAlignment(Element.ALIGN_CENTER);
-		cellTitre.setBorder(Rectangle.NO_BORDER);
+		cellTitre.setFixedHeight(2);
 		
-		PdfPCell cellLogo = new PdfPCell();
-		cellLogo.addElement(logo);
-		cellLogo.setBorder(Rectangle.NO_BORDER);
+		if(!border)
+			cellTitre.setBorder(Rectangle.NO_BORDER);
 		
-		PdfPTable table = new PdfPTable(new float[] {1,7});
+		PdfPTable table = null;
+		if(null != urlImage) {
+			table = new PdfPTable(new float[] {1,7});
+			table.addCell(cellLogo);
+		}else{
+			table = new PdfPTable(new float[] {1});
+		}
+		
 		table.setWidthPercentage(100f);
-		table.addCell(cellLogo);
 		table.addCell(cellTitre);
 		
 		document.add(table);

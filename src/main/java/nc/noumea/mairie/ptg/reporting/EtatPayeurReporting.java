@@ -62,7 +62,7 @@ public class EtatPayeurReporting extends AbstractReporting {
 
 		// on ajoute le titre, le logo sur le document
 		writeTitle(document, getTitreDocument(result),
-				this.getClass().getClassLoader().getResource("images/logo_mairie.png"));
+				this.getClass().getClassLoader().getResource("images/logo_mairie.png"), false);
 
 	}
 

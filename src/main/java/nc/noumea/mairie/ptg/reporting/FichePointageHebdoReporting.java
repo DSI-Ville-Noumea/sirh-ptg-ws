@@ -75,8 +75,7 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 	protected void writeDocument(Document document, String idAgent, Date dateLundi) throws DocumentException {
 
 		// le titre
-		writeTitle(document, "Fiche de pointage hebdomadaire",
-				this.getClass().getClassLoader().getResource("images/logo_mairie.png"));
+		writeTitle(document, "Fiche de pointage hebdomadaire", null, true);
 
 		// on recupere les donnees
 		FichePointageListDto fiches = pointageService.getFichesPointageForUsers(idAgent, dateLundi);
