@@ -30,8 +30,8 @@ public class PaieWorkflowRepository implements IPaieWorkflowRepository {
 
 	@Override
 	public SpWFPaie selectForUpdateState(TypeChainePaieEnum chainePaie) {
-
-		SpWFPaie currentState = entityManager.find(SpWFPaie.class, chainePaie, LockModeType.PESSIMISTIC_WRITE);
+		  
+		SpWFPaie currentState = entityManager.find(SpWFPaie.class, chainePaie);
 
 		return currentState;
 	}
