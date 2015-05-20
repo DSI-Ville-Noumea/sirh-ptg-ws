@@ -84,8 +84,7 @@ public class EditionController {
 			@RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date date,
 			@RequestParam("idAgent") Integer idAgent) {
 
-		logger.debug(
-				"entered GET [edition/downloadFichesPointage] => downloadFichesPointage with parameters csvIdAgents = {}, date = {}, idAgent = {}",
+		logger.debug("entered GET [edition/test] => test with parameters csvIdAgents = {}, date = {}, idAgent = {}",
 				csvIdAgents, date, idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
@@ -94,39 +93,9 @@ public class EditionController {
 			throw new AccessForbiddenException();
 
 		byte[] responseData = null;
-
 		try {
-			responseData = reportingService.getFichesPointageReportAsByteArray(csvIdAgents, date);
-		} catch (Exception e) {
-			logger.error(e.getMessage(), e);
-			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.add("Content-Type", "application/pdf");
-		headers.add("Content-Disposition", String.format("attachment; filename=\"fichePointage.pdf\""));
-
-		return new ResponseEntity<byte[]>(responseData, headers, HttpStatus.OK);
-	}
-
-	@ResponseBody
-	@RequestMapping(value = "/test", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ResponseEntity<byte[]> test(@RequestParam("csvIdAgents") String csvIdAgents,
-			@RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date date,
-			@RequestParam("idAgent") Integer idAgent) {
-
-		logger.debug("entered GET [edition/test] => test with parameters csvIdAgents = {}, date = {}, idAgent = {}",
-				csvIdAgents, date, idAgent);
-
-		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-
-//		if (!accessRightService.canUserAccessPrint(convertedIdAgent))
-//			throw new AccessForbiddenException();
-
-		byte[] responseData = null;
-		try {
-			responseData = fichePointageHebdoReporting.getFichePointageHebdoReporting(csvIdAgents, date, convertedIdAgent);
+			responseData = fichePointageHebdoReporting.getFichePointageHebdoReporting(csvIdAgents, date,
+					convertedIdAgent);
 		} catch (DocumentException e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
