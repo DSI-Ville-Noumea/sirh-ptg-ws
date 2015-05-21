@@ -133,7 +133,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		BaseHorairePointageDto baseDto = sirhWsConsumer
 				.getBaseHorairePointageAgent(idAgent, dateLundi);
 
-		// second retrieve all the absences in SPCONG
+		// second retrieve all the absences 
 		// on ne compte pas les conges annuels et les conges annules
 		List<DemandeDto> listConges = absWsConsumer
 				.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(idAgent,

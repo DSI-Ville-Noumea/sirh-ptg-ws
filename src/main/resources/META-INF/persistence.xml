@@ -42,7 +42,6 @@
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>nc.noumea.mairie.domain.Sprubr</class>
         <class>nc.noumea.mairie.domain.Spcarr</class>
-        <class>nc.noumea.mairie.domain.Spcong</class>
         <class>nc.noumea.mairie.domain.Spabsen</class>
         <class>nc.noumea.mairie.domain.Spbhor</class>
         <class>nc.noumea.mairie.domain.Spbarem</class>
