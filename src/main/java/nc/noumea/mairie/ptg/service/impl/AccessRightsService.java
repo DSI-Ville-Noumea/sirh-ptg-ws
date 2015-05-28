@@ -341,15 +341,37 @@ public class AccessRightsService implements IAccessRightsService {
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
-			AgentDto agDto = new AgentDto();
-			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-			agDto.setIdAgent(da.getIdAgent());
-			agDto.setNom(ag.getDisplayNom());
-			agDto.setPrenom(ag.getDisplayPrenom());
-			result.add(agDto);
+			// #15684 bug doublon
+			if (isContainAgentInList(result, da)) {
+				AgentDto agDto = new AgentDto();
+				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+				agDto.setIdAgent(da.getIdAgent());
+				agDto.setNom(ag.getDisplayNom());
+				agDto.setPrenom(ag.getDisplayPrenom());
+				result.add(agDto);
+			}
 		}
 
 		return result;
+	}
+
+	// #15684 bug doublon
+	private boolean isContainAgentInList(List<AgentDto> listAgents, DroitsAgent ag) {
+
+		if (null == ag) {
+			return false;
+		}
+
+		if (null != listAgents) {
+			for (AgentDto agent : listAgents) {
+				if (null != agent && null != agent.getIdAgent() && null != ag.getIdAgent()
+						&& agent.getIdAgent().equals(ag.getIdAgent())) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**
