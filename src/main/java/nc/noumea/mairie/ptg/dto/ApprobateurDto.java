@@ -13,7 +13,6 @@ public class ApprobateurDto implements IJSONSerialize, IJSONDeserialize<Approbat
 
 	@Override
 	public String serializeInJSON() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

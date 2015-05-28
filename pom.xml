@@ -14,7 +14,6 @@
 		<slf4j.version>1.7.7</slf4j.version>
 		<!-- les tests U ne passent plus en 4.1.1.RELEASE -->
 		<spring.version>4.0.6.RELEASE</spring.version>
-		<maven.build.timestamp.format>yyyyMMdd-HHmm</maven.build.timestamp.format>
 	</properties>
 
 	<issueManagement>
@@ -26,25 +25,6 @@
 		<developerConnection>scm:svn:https://svn.ville-noumea.nc/sed/sirh-ptg-ws/trunk</developerConnection>
 		<url>https://svn.ville-noumea.nc/sed/sirh-ptg-ws/trunk</url>
 	</scm>
-	<distributionManagement>
-		<repository>
-			<uniqueVersion>false</uniqueVersion>
-			<id>devTomcat</id>
-			<name>devTomcat</name>
-			<url>file:\\cristal\DSI$\DSI\PROJETS\doxia\${project.name}</url>
-		</repository>
-		<snapshotRepository>
-			<uniqueVersion>true</uniqueVersion>
-			<id>devTomcat</id>
-			<name>devTomcat</name>
-			<url>sftp://172.16.24.19/</url>
-		</snapshotRepository>
-		<site>
-			<id>sirhptgws.website.prod</id>
-			<name>SIRH PTG Website Prod</name>
-			<url>file:\\cristal\dsi$\DSI\PROJETS\doxia\SIRH-PTG-WS</url>
-		</site>
-	</distributionManagement>
 
 	<repositories>
 		<repository>
@@ -307,20 +287,8 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>sirh-ptg-ws##${maven.build.timestamp}-${project.version}</finalName>
+		<finalName>sirh-ptg-ws##${project.version}</finalName>
 		<plugins>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.7</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.apache.maven.wagon</groupId>
-						<artifactId>wagon-ssh</artifactId>
-						<version>1.0-beta-7</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>

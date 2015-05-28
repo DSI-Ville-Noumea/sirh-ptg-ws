@@ -44,7 +44,6 @@ public class AgentWithServiceDto extends AgentDto implements IJSONSerialize, IJS
 
 	@Override
 	public String serializeInJSON() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
