@@ -385,16 +385,19 @@ public class AccessRightsService implements IAccessRightsService {
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToApprove(idAgent, codeService)) {
-			AgentDto agDto = new AgentDto();
-			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-			
-			if(null == ag)
-				continue;
-			
-			agDto.setIdAgent(da.getIdAgent());
-			agDto.setNom(ag.getDisplayNom());
-			agDto.setPrenom(ag.getDisplayPrenom());
-			result.add(agDto);
+			// #15684 bug doublon
+			if (isContainAgentInList(result, da)) {
+				AgentDto agDto = new AgentDto();
+				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+				
+				if(null == ag)
+					continue;
+				
+				agDto.setIdAgent(da.getIdAgent());
+				agDto.setNom(ag.getDisplayNom());
+				agDto.setPrenom(ag.getDisplayPrenom());
+				result.add(agDto);
+			}
 		}
 
 		return result;
@@ -410,15 +413,18 @@ public class AccessRightsService implements IAccessRightsService {
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInput(idApprobateur, idAgent)) {
-			AgentDto agDto = new AgentDto();
-			AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-			if(null == ag)
-				continue;
-			
-			agDto.setIdAgent(da.getIdAgent());
-			agDto.setNom(ag.getDisplayNom());
-			agDto.setPrenom(ag.getDisplayPrenom());
-			result.add(agDto);
+			// #15684 bug doublon
+			if (isContainAgentInList(result, da)) {
+				AgentDto agDto = new AgentDto();
+				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+				if(null == ag)
+					continue;
+				
+				agDto.setIdAgent(da.getIdAgent());
+				agDto.setNom(ag.getDisplayNom());
+				agDto.setPrenom(ag.getDisplayPrenom());
+				result.add(agDto);
+			}
 		}
 
 		return result;
