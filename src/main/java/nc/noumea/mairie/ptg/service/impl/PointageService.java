@@ -310,12 +310,6 @@ public class PointageService implements IPointageService {
 	}
 
 	@Override
-	public List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate,
-			RefTypePointageEnum type, List<EtatPointageEnum> etats) {
-		return getLatestPointagesForAgentsAndDates(Arrays.asList(idAgent), fromDate, toDate, type, etats, null);
-	}
-
-	@Override
 	public List<Pointage> getLatestPointagesForAgentsAndDates(List<Integer> idAgents, Date fromDate, Date toDate,
 			RefTypePointageEnum type, List<EtatPointageEnum> etats, String typeHS) {
 

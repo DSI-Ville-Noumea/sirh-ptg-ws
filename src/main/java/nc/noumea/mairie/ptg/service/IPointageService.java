@@ -84,25 +84,6 @@ public interface IPointageService {
 
 	/**
 	 * This method searches through the list of Pointages given a set of filters
-	 * (agentId, from and to dates for dateDebut of a Pointage and type (H_SUP,
-	 * PRIME, ABSENCE). In the case a Pointage has multiple records (to keep
-	 * history on its different statuses) Only the latest version will be
-	 * returned. Then we filter on the Etat (status) of the Pointage. This means
-	 * that if a Pointage's old version satisfies all the filters but its new
-	 * version doesn't this Pointage will not be returned at all.
-	 * 
-	 * @param idAgent
-	 * @param fromDate
-	 * @param toDate
-	 * @param type
-	 * @param etats
-	 * @return
-	 */
-	List<Pointage> getLatestPointagesForAgentAndDates(Integer idAgent, Date fromDate, Date toDate,
-			RefTypePointageEnum type, List<EtatPointageEnum> etats);
-
-	/**
-	 * This method searches through the list of Pointages given a set of filters
 	 * (idAgents, from and to dates for dateDebut of a Pointage and type (H_SUP,
 	 * PRIME, ABSENCE). In the case a Pointage has multiple records (to keep
 	 * history on its different statuses) Only the latest version will be
