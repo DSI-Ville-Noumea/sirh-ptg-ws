@@ -39,5 +39,5 @@ public interface IAccessRightsRepository {
 			Integer pIdAgent);
 
 	List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent,
-			String pCodeService);
+			String pCodeService, boolean withRoleDelegataire);
 }

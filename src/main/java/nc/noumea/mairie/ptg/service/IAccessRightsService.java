@@ -53,4 +53,7 @@ public interface IAccessRightsService {
 
 	List<AgentDto> getAgentsToApprove(Integer idAgent, String codeService);
 
+	List<AgentDto> getAgentsToApproveWithoutDelegateRole(Integer idAgent,
+			String codeService);
+
 }

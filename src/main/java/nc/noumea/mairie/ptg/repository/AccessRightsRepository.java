@@ -177,17 +177,22 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent, String pCodeService) {
+	public List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent, String pCodeService, boolean withRoleDelegataire) {
 		// #14694 modification des requetes pour la gestion des droits
 		String sqlQuery = "SELECT da from DroitsAgent da "
 				+ "inner join da.droits d "
-				+ "where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) "
-				+ "and d.approbateur is true ";
+				+ "where d.approbateur is true ";
 		
-				if (null != pCodeService) {
-					sqlQuery += "and da.codeService = :codeService ";
-				}
-				sqlQuery += "group by da ";
+		if(withRoleDelegataire) {
+			sqlQuery += " and (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) ";
+		}else{
+			sqlQuery += " and d.idAgent = :idAgent ";
+		}
+		
+		if (null != pCodeService) {
+			sqlQuery += "and da.codeService = :codeService ";
+		}
+		sqlQuery += "group by da ";
 
 		TypedQuery<DroitsAgent> q = ptgEntityManager.createQuery(sqlQuery,
 					DroitsAgent.class);

@@ -426,7 +426,7 @@ public class AccessRightsRepositoryTest {
 			agent.setDroits(droits);
 		ptgEntityManager.persist(agent);
 		
-		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008777, null);
+		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008777, null, true);
 		
 		assertEquals(1, result.size());
 		assertEquals("9008777", result.get(0).getIdAgent().toString());
@@ -457,7 +457,7 @@ public class AccessRightsRepositoryTest {
 			agent.setDroits(droits);
 		ptgEntityManager.persist(agent);
 		
-		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008767, "DEAB");
+		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008767, "DEAB", true);
 		
 		assertEquals(1, result.size());
 		assertEquals("9008767", result.get(0).getIdAgent().toString());
@@ -488,7 +488,7 @@ public class AccessRightsRepositoryTest {
 			agent.setDroits(droits);
 		ptgEntityManager.persist(agent);
 		
-		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008777, null);
+		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008777, null, true);
 		
 		assertEquals(0, result.size());
 
@@ -518,7 +518,7 @@ public class AccessRightsRepositoryTest {
 			agent.setDroits(droits);
 		ptgEntityManager.persist(agent);
 		
-		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008767, "DEAB");
+		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008767, "DEAB", true);
 		
 		assertEquals(0, result.size());
 
@@ -558,7 +558,7 @@ public class AccessRightsRepositoryTest {
 			agent.setDroits(droits);
 		ptgEntityManager.persist(agent);
 		
-		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008777, null);
+		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008777, null, true);
 		
 		assertEquals(1, result.size());
 		assertEquals("9008777", result.get(0).getIdAgent().toString());
@@ -578,6 +578,45 @@ public class AccessRightsRepositoryTest {
 			droit.setOperateur(false);
 		ptgEntityManager.persist(droit);
 		
+		Droit droit2 = new Droit();
+			droit2.setApprobateur(true);
+			droit2.setDateModification(new Date());
+			droit2.setIdAgent(9008767);
+			droit2.setOperateur(false);
+		ptgEntityManager.persist(droit2);
+		
+		Set<Droit> droits = new HashSet<Droit>();
+		droits.add(droit);
+		droits.add(droit2);
+		
+		DroitsAgent agent = new DroitsAgent();
+			agent.setIdAgent(9008769);
+			agent.setCodeService("DEAB");
+			agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+			agent.setDateModification(new Date());
+			agent.setDroits(droits);
+		ptgEntityManager.persist(agent);
+		
+		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008767, "DEAB", true);
+		
+		assertEquals(1, result.size());
+		assertEquals("9008769", result.get(0).getIdAgent().toString());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfAgentsToApprove_withService_2Agents_withDelegataire(){
+
+		Droit droit = new Droit();
+			droit.setApprobateur(true);
+			droit.setDateModification(new Date());
+			droit.setIdAgent(9005138);
+			droit.setOperateur(false);
+		ptgEntityManager.persist(droit);
+		
 		Set<Droit> droits = new HashSet<Droit>();
 		droits.add(droit);
 		
@@ -592,27 +631,81 @@ public class AccessRightsRepositoryTest {
 		Droit droit2 = new Droit();
 			droit2.setApprobateur(true);
 			droit2.setDateModification(new Date());
-			droit2.setIdAgent(9008767);
+			droit2.setIdAgent(9002990);
 			droit2.setOperateur(false);
+			droit2.setIdAgentDelegataire(9005138);
 		ptgEntityManager.persist(droit2);
 		
 		Set<Droit> droits2 = new HashSet<Droit>();
-		droits.add(droit2);
+		droits2.add(droit2);
 		
 		DroitsAgent agent2 = new DroitsAgent();
-			agent2.setIdAgent(9008767);
+			agent2.setIdAgent(9008789);
 			agent2.setCodeService("DEAB");
 			agent2.setLibelleService("DASP Pôle Administratif et Budgétaire");
 			agent2.setDateModification(new Date());
 			agent2.setDroits(droits2);
 		ptgEntityManager.persist(agent2);
 		
-		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9008767, "DEAB");
+		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9005138, "DEAB", true);
 		
-		assertEquals(1, result.size());
+		assertEquals(2, result.size());
 		assertEquals("9008767", result.get(0).getIdAgent().toString());
+		assertEquals("9008789", result.get(1).getIdAgent().toString());
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
 	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListOfAgentsToApprove_withService_1Agent_withoutDelegataire(){
+
+		Droit droit = new Droit();
+			droit.setApprobateur(true);
+			droit.setDateModification(new Date());
+			droit.setIdAgent(9005138);
+			droit.setOperateur(false);
+		ptgEntityManager.persist(droit);
+		
+		Set<Droit> droits = new HashSet<Droit>();
+		droits.add(droit);
+		
+		DroitsAgent agent = new DroitsAgent();
+			agent.setIdAgent(9008767);
+			agent.setCodeService("DEAB");
+			agent.setLibelleService("DASP Pôle Administratif et Budgétaire");
+			agent.setDateModification(new Date());
+			agent.setDroits(droits);
+		ptgEntityManager.persist(agent);
+		
+		Droit droit2 = new Droit();
+			droit2.setApprobateur(true);
+			droit2.setDateModification(new Date());
+			droit2.setIdAgent(9002990);
+			droit2.setOperateur(false);
+			droit2.setIdAgentDelegataire(9005138);
+		ptgEntityManager.persist(droit2);
+		
+		Set<Droit> droits2 = new HashSet<Droit>();
+		droits2.add(droit2);
+		
+		DroitsAgent agent2 = new DroitsAgent();
+			agent2.setIdAgent(9008789);
+			agent2.setCodeService("DEAB");
+			agent2.setLibelleService("DASP Pôle Administratif et Budgétaire");
+			agent2.setDateModification(new Date());
+			agent2.setDroits(droits2);
+		ptgEntityManager.persist(agent2);
+		
+		List<DroitsAgent> result = repository.getListOfAgentsToApprove(9005138, "DEAB", false);
+		
+		assertEquals(1, result.size());
+		assertEquals("9008767", result.get(0).getIdAgent().toString()); 
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+	
+	
 }
