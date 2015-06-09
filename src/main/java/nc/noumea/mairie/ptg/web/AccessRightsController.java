@@ -113,7 +113,7 @@ public class AccessRightsController {
 				"entered GET [droits/approbateurs] => listApprobateurs with parameter idAgent = {} and codeService = {} --> for SIRH ",
 				idAgent, codeService);
 
-		List<ApprobateurDto> result = accessRightService.listAgentsApprobateurs(idAgent,codeService);
+		List<ApprobateurDto> result = accessRightService.listAgentsApprobateurs(idAgent, codeService);
 
 		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
 	}
@@ -179,7 +179,8 @@ public class AccessRightsController {
 	/**
 	 * #15897 bug dans SIRH
 	 * 
-	 * @param idAgent de l approbateur
+	 * @param idAgent
+	 *            de l approbateur
 	 * @return List<AgentDto> la liste des agents affectes a l approbateur
 	 */
 	@ResponseBody
@@ -305,5 +306,41 @@ public class AccessRightsController {
 
 		String response = new JSONSerializer().exclude("*.class").deepSerialize(result);
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "isUserApprobateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> isUserApprobateur(@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug("entered GET [droits/isUserApprobateur] => isUserApprobateur with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (accessRightService.findAgent(convertedIdAgent) == null)
+			throw new NotFoundException();
+
+		if (accessRightService.isUserApprobateur(convertedIdAgent))
+			return new ResponseEntity<String>(HttpStatus.OK);
+		else
+			return new ResponseEntity<String>(HttpStatus.CONFLICT);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "isUserOperateur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> isUserOperateur(@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug("entered GET [droits/isUserOperateur] => isUserOperateur with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		if (accessRightService.findAgent(convertedIdAgent) == null)
+			throw new NotFoundException();
+
+		if (accessRightService.isUserOperateur(convertedIdAgent))
+			return new ResponseEntity<String>(HttpStatus.OK);
+		else
+			return new ResponseEntity<String>(HttpStatus.CONFLICT);
 	}
 }

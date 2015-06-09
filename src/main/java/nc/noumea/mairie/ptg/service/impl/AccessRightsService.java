@@ -214,7 +214,7 @@ public class AccessRightsService implements IAccessRightsService {
 		if (codeService != null) {
 			// on charge la liste des sous-services du service
 			List<ServiceDto> liste = sirhWSConsumer.getSubServiceOfService(codeService);
-			for(ServiceDto s : liste){
+			for (ServiceDto s : liste) {
 				listeSouService.add(s.getService());
 			}
 			listeSouService.add(codeService);
@@ -222,7 +222,7 @@ public class AccessRightsService implements IAccessRightsService {
 		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			if (codeService != null ) {
+			if (codeService != null) {
 				if (agentServiceDto != null && listeSouService.contains(agentServiceDto.getCodeService())) {
 					ApprobateurDto agentDto = new ApprobateurDto();
 					agentDto.setApprobateur(agentServiceDto);
@@ -375,8 +375,8 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	/**
-	 * Retrieves the agent an approbator is set to Approve without his delegator role
-	 * This service also filters by service
+	 * Retrieves the agent an approbator is set to Approve without his delegator
+	 * role This service also filters by service
 	 */
 	@Override
 	public List<AgentDto> getAgentsToApproveWithoutDelegateRole(Integer idAgent, String codeService) {
@@ -385,8 +385,8 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	/**
-	 * Retrieves the agent an approbator is set to Approve 
-	 * This service also filters by service
+	 * Retrieves the agent an approbator is set to Approve This service also
+	 * filters by service
 	 */
 	// #14694 modifications sur le cumul des roles
 	@Override
@@ -396,23 +396,24 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	/**
-	 * Retrieves the agent an approbator is set to Approve 
-	 * This service also filters by service
+	 * Retrieves the agent an approbator is set to Approve This service also
+	 * filters by service
 	 */
 	// #14694 modifications sur le cumul des roles
 	private List<AgentDto> getAgentsToApprove(Integer idAgent, String codeService, boolean withRoleDelegataire) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToApprove(idAgent, codeService, withRoleDelegataire)) {
+		for (DroitsAgent da : accessRightsRepository
+				.getListOfAgentsToApprove(idAgent, codeService, withRoleDelegataire)) {
 			// #15684 bug doublon
 			if (isContainAgentInList(result, da)) {
 				AgentDto agDto = new AgentDto();
 				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-				
-				if(null == ag)
+
+				if (null == ag)
 					continue;
-				
+
 				agDto.setIdAgent(da.getIdAgent());
 				agDto.setNom(ag.getDisplayNom());
 				agDto.setPrenom(ag.getDisplayPrenom());
@@ -422,14 +423,14 @@ public class AccessRightsService implements IAccessRightsService {
 
 		return result;
 	}
-	
+
 	/**
 	 * Retrieves the agent an Operator is set to Input
 	 */
 	// #14325 modifications sur le cumul des roles
 	@Override
 	public List<AgentDto> getAgentsToInput(Integer idApprobateur, Integer idAgent) {
-		
+
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInput(idApprobateur, idAgent)) {
@@ -437,9 +438,9 @@ public class AccessRightsService implements IAccessRightsService {
 			if (isContainAgentInList(result, da)) {
 				AgentDto agDto = new AgentDto();
 				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-				if(null == ag)
+				if (null == ag)
 					continue;
-				
+
 				agDto.setIdAgent(da.getIdAgent());
 				agDto.setNom(ag.getDisplayNom());
 				agDto.setPrenom(ag.getDisplayPrenom());
@@ -596,5 +597,30 @@ public class AccessRightsService implements IAccessRightsService {
 		accessRightsRepository.persisEntity(droitApprobateur);
 
 		return result;
+	}
+
+	@Override
+	public boolean isUserApprobateur(Integer idAgent) {
+		boolean res = false;
+		for (Droit da : accessRightsRepository.getAgentAccessRights(idAgent)) {
+			if (da.isApprobateur()) {
+				res = true;
+				break;
+			}
+
+		}
+		return res;
+	}
+
+	@Override
+	public boolean isUserOperateur(Integer idAgent) {
+		boolean res = false;
+		for (Droit da : accessRightsRepository.getAgentAccessRights(idAgent)) {
+			if (da.isOperateur()) {
+				res = true;
+				break;
+			}
+		}
+		return res;
 	}
 }
