@@ -25,40 +25,39 @@ import javax.validation.constraints.NotNull;
 @Table(name = "PTG_DROITS_AGENT")
 @NamedQueries({
 		@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "from DroitsAgent da INNER JOIN FETCH da.droits d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
-		@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "from DroitsAgent da INNER JOIN FETCH da.droits d where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.codeService = :codeService")
-})
+		@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "from DroitsAgent da INNER JOIN FETCH da.droits d where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.codeService = :codeService") })
 public class DroitsAgent {
 
-	@Id 
+	@Id
 	@Column(name = "ID_DROITS_AGENT")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idDroitsAgent;
-	
+
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
-	
+
 	@Column(name = "CODE_SERVICE")
 	private String codeService;
-	
+
 	@Column(name = "LIBELLE_SERVICE")
 	private String libelleService;
-	
+
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
-	
+
 	@ManyToMany(cascade = CascadeType.PERSIST)
-	@JoinTable(
-			name = "PTG_DROIT_DROITS_AGENT", 
-			inverseJoinColumns = @JoinColumn(name = "ID_DROIT"), 
-			joinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
+	@JoinTable(name = "PTG_DROIT_DROITS_AGENT", inverseJoinColumns = @JoinColumn(name = "ID_DROIT"), joinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
 	private Set<Droit> droits = new HashSet<Droit>();
 
+	@Column(name = "ID_SERVICE_ADS")
+	private Integer idServiceADS;
+
 	@Version
-    @Column(name = "version")
+	@Column(name = "version")
 	private Integer version;
-	
+
 	public Integer getIdDroitsAgent() {
 		return idDroitsAgent;
 	}
@@ -115,8 +114,7 @@ public class DroitsAgent {
 		this.version = version;
 	}
 
-	public DroitsAgent(Integer idAgent,
-			String codeService, String libelleService) {
+	public DroitsAgent(Integer idAgent, String codeService, String libelleService) {
 		super();
 		this.idAgent = idAgent;
 		this.codeService = codeService;
@@ -125,7 +123,13 @@ public class DroitsAgent {
 
 	public DroitsAgent() {
 	}
-	
-	
-	
+
+	public Integer getIdServiceADS() {
+		return idServiceADS;
+	}
+
+	public void setIdServiceADS(Integer idServiceADS) {
+		this.idServiceADS = idServiceADS;
+	}
+
 }
