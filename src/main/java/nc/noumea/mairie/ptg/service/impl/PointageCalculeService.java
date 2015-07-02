@@ -99,7 +99,8 @@ public class PointageCalculeService implements IPointageCalculeService {
 				existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
 				existingPc.addQuantite((int) (firstNightMinutes + secondNightMinutes));
 
-				if (!result.contains(existingPc))
+				if (!result.contains(existingPc)
+						&& !existingPc.getQuantite().equals(0))
 					result.add(existingPc);
 
 				continue;

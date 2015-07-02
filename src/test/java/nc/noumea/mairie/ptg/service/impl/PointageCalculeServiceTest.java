@@ -199,6 +199,52 @@ public class PointageCalculeServiceTest {
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
 	}
+	
+	// bug/evol #16622
+	// donnees de PROD
+	@Test
+	public void generatePointage7711withOne7715_Having1ShiftInDailyHours() {
+
+		// Given
+		RefPrime pr1 = new RefPrime();
+		pr1.setNoRubr(7715);
+		
+		Date dateLundi = new LocalDate(2015, 6, 22).toDate();
+
+		Pointage p1 = new Pointage();
+		p1.setIdAgent(9002252);
+		p1.setDateLundi(dateLundi);
+		p1.setDateDebut(new DateTime(2015, 6, 24, 8, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2015, 6, 24, 18, 0, 0).toDate());
+		p1.setType(prime);
+		p1.setRefPrime(pr1);
+		
+		Date dateLundi2 = new LocalDate(2015, 6, 29).toDate();
+
+		Pointage p2 = new Pointage();
+		p2.setIdAgent(9002252);
+		p2.setDateLundi(dateLundi2);
+		p2.setDateDebut(new DateTime(2015, 7, 1, 8, 0, 0).toDate());
+		p2.setDateFin(new DateTime(2015, 7, 1, 17, 30, 0).toDate());
+		p2.setType(prime);
+		p2.setRefPrime(pr1);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(RefTypePointage.class, RefTypePointageEnum.PRIME.getValue())).thenReturn(prime);
+
+		PointageCalculeService service = new PointageCalculeService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+
+		RefPrime rp7711 = new RefPrime();
+		rp7711.setNoRubr(7711);
+
+		// When
+		List<PointageCalcule> result = service.generatePointage7711_12_13(p1.getIdAgent(), dateLundi, rp7711,
+				Arrays.asList(p1, p2));
+
+		// Then
+		assertEquals(0, result.size());
+	}
 
 	@Test
 	public void generatePointage7712withOne7715_ASunday() {
