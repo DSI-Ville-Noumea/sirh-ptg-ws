@@ -27,7 +27,7 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 	@Override
 	public void changeStateToExportPaieStarted(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException {
 
-		SpWFPaie state = paieWorkflowRepository.selectForUpdateState(chainePaie);
+		SpWFPaie state = paieWorkflowRepository.readCurrentState(chainePaie);
 
 		if (canChangeStateToExportPaieStarted(state.getEtat())) {
 			state.setEtat(paieWorkflowRepository.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS));
@@ -68,7 +68,7 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 	@Override
 	public void changeStateToExportPaieDone(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException {
 
-		SpWFPaie state = paieWorkflowRepository.selectForUpdateState(chainePaie);
+		SpWFPaie state = paieWorkflowRepository.readCurrentState(chainePaie);
 
 		if (canChangeStateToExportPaieDone(state.getEtat())) {
 			state.setEtat(paieWorkflowRepository.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE));
@@ -103,7 +103,7 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 	public void changeStateToExportEtatsPayeurStarted(TypeChainePaieEnum chainePaie)
 			throws WorkflowInvalidStateException {
 
-		SpWFPaie state = paieWorkflowRepository.selectForUpdateState(chainePaie);
+		SpWFPaie state = paieWorkflowRepository.readCurrentState(chainePaie);
 
 		if (canChangeStateToExportEtatsPayeurStarted(state.getEtat())) {
 			state.setEtat(paieWorkflowRepository.getEtat(SpWfEtatEnum.ETATS_PAYEUR_EN_COURS));
@@ -119,7 +119,7 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 	@Override
 	public void changeStateToExportEtatsPayeurDone(TypeChainePaieEnum chainePaie) throws WorkflowInvalidStateException {
 
-		SpWFPaie state = paieWorkflowRepository.selectForUpdateState(chainePaie);
+		SpWFPaie state = paieWorkflowRepository.readCurrentState(chainePaie);
 
 		if (canChangeStateToExportEtatsPayeurDone(state.getEtat())) {
 			state.setEtat(paieWorkflowRepository.getEtat(SpWfEtatEnum.ETATS_PAYEUR_TERMINES));

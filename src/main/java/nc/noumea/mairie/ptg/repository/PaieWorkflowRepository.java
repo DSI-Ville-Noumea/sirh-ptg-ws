@@ -28,13 +28,14 @@ public class PaieWorkflowRepository implements IPaieWorkflowRepository {
 		return (SpWFPaie) query.getResultList().get(0);
 	}
 
-	@Override
-	public SpWFPaie selectForUpdateState(TypeChainePaieEnum chainePaie) {
-		  
-		SpWFPaie currentState = entityManager.find(SpWFPaie.class, chainePaie);
-
-		return currentState;
-	}
+	// #16727 probleme lock sur SPWFPAIE
+//	@Override
+//	public SpWFPaie selectForUpdateState(TypeChainePaieEnum chainePaie) {
+//		  
+//		SpWFPaie currentState = entityManager.find(SpWFPaie.class, chainePaie);
+//
+//		return currentState;
+//	}
 
 	@Override
 	public SpWFEtat getEtat(SpWfEtatEnum codeEtat) {

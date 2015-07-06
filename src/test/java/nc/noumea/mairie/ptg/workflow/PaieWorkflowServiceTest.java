@@ -293,7 +293,7 @@ public class PaieWorkflowServiceTest {
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e0);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
-		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		Mockito.when(wfR.readCurrentState(chainePaie)).thenReturn(state);
 		SpWFEtat e2 = new SpWFEtat();
 		e2.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE);
 		Mockito.when(wfR.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE)).thenReturn(e2);
@@ -323,7 +323,7 @@ public class PaieWorkflowServiceTest {
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e0);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
-		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		Mockito.when(wfR.readCurrentState(chainePaie)).thenReturn(state);
 		SpWFEtat e2 = new SpWFEtat();
 		e2.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE);
 		Mockito.when(wfR.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_TERMINEE)).thenReturn(e2);
@@ -355,7 +355,7 @@ public class PaieWorkflowServiceTest {
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e3);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
-		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		Mockito.when(wfR.readCurrentState(chainePaie)).thenReturn(state);
 		SpWFEtat e1 = new SpWFEtat();
 		e1.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS);
 		Mockito.when(wfR.getEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS)).thenReturn(e1);
@@ -388,7 +388,7 @@ public class PaieWorkflowServiceTest {
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e2);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
-		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		Mockito.when(wfR.readCurrentState(chainePaie)).thenReturn(state);
 		SpWFEtat e1 = new SpWFEtat();
 		e1.setCodeEtat(SpWfEtatEnum.ECRITURE_POINTAGES_EN_COURS);
 		e1.setLibelleEtat("UN");
@@ -419,7 +419,7 @@ public class PaieWorkflowServiceTest {
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e0);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
-		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		Mockito.when(wfR.readCurrentState(chainePaie)).thenReturn(state);
 		SpWFEtat e9 = new SpWFEtat();
 		e9.setCodeEtat(SpWfEtatEnum.ETATS_PAYEUR_TERMINES);
 		Mockito.when(wfR.getEtat(SpWfEtatEnum.ETATS_PAYEUR_TERMINES)).thenReturn(e9);
@@ -451,7 +451,7 @@ public class PaieWorkflowServiceTest {
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e1);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
-		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		Mockito.when(wfR.readCurrentState(chainePaie)).thenReturn(state);
 		SpWFEtat e9 = new SpWFEtat();
 		e9.setCodeEtat(SpWfEtatEnum.ETATS_PAYEUR_TERMINES);
 		Mockito.when(wfR.getEtat(SpWfEtatEnum.ETATS_PAYEUR_TERMINES)).thenReturn(e9);
@@ -481,7 +481,7 @@ public class PaieWorkflowServiceTest {
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e3);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
-		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		Mockito.when(wfR.readCurrentState(chainePaie)).thenReturn(state);
 		SpWFEtat e8 = new SpWFEtat();
 		e8.setCodeEtat(SpWfEtatEnum.ETATS_PAYEUR_EN_COURS);
 		Mockito.when(wfR.getEtat(SpWfEtatEnum.ETATS_PAYEUR_EN_COURS)).thenReturn(e8);
@@ -514,7 +514,7 @@ public class PaieWorkflowServiceTest {
 		SpWFPaie state = new SpWFPaie();
 		state.setEtat(e2);
 		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
-		Mockito.when(wfR.selectForUpdateState(chainePaie)).thenReturn(state);
+		Mockito.when(wfR.readCurrentState(chainePaie)).thenReturn(state);
 		SpWFEtat e8 = new SpWFEtat();
 		e8.setCodeEtat(SpWfEtatEnum.ETATS_PAYEUR_EN_COURS);
 		e8.setLibelleEtat("NEUF");
