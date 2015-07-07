@@ -228,7 +228,7 @@ public class SaisieService implements ISaisieService {
 		// pour qu elles soient reprises en compte dans la ventilation
 		if (isPointageAbsenceModifie || isPointageHSupModifie) {
 
-			originalAgentPointages = pointageService.getLatestPointagesForSaisieForAgentAndDateMonday(idAgent,
+			List<Pointage> originalAgentPointagesTemp = pointageService.getLatestPointagesForSaisieForAgentAndDateMonday(idAgent,
 					dateLundi);
 
 			Date currentDateEtat = getCurrentDateEtat(idAgent, dateLundi);
@@ -241,7 +241,7 @@ public class SaisieService implements ISaisieService {
 
 					// Try to retrieve in the existing original pointages if it
 					// exists
-					Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, abs);
+					Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointagesTemp, abs);
 
 					if (null != ptg
 							&& !isPointageDejaModifie(finalPointages, ptg)
@@ -274,7 +274,7 @@ public class SaisieService implements ISaisieService {
 
 					// Try to retrieve in the existing original pointages if it
 					// exists
-					Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, hs);
+					Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointagesTemp, hs);
 
 					if (null != ptg
 							&& !isPointageDejaModifie(finalPointages, ptg)
