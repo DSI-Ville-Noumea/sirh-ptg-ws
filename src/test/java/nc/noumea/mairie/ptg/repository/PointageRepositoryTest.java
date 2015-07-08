@@ -601,6 +601,85 @@ public class PointageRepositoryTest {
 
 	@Test
 	@Transactional("ptgTransactionManager")
+	public void getPointagesVentilesForAgentByDateLundi_ok() {
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
+
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
+		Pointage p = new Pointage();
+		p.setRefTypeAbsence(refTypeAbsNon);
+		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setHeureSupRecuperee(true);
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		ptgEntityManager.persist(p);
+
+		Set<Pointage> pointages = new HashSet<Pointage>();
+		pointages.add(p);
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+		vd.setPaye(true);
+		vd.setPointages(pointages);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+
+		List<Pointage> result = repository.getPointagesVentilesForAgentByDateLundi(new Integer(9005138), vd.getIdVentilDate(), p.getDateLundi());
+
+		assertEquals(1, result.size());
+		assertEquals(RefTypeAbsenceEnum.NON_CONCERTEE.getValue(), result.get(0).getRefTypeAbsence()
+				.getIdRefTypeAbsence());
+		assertEquals(true, result.get(0).getHeureSupRecuperee());
+		assertEquals(new LocalDate(2013, 7, 22).toDate(), result.get(0).getDateDebut());
+		assertEquals(new LocalDate(2013, 7, 29).toDate(), result.get(0).getDateFin());
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getPointagesVentilesForAgentByDateLundi_badDateLundi() {
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
+
+		RefTypeAbsence refTypeAbsNon = new RefTypeAbsence();
+		refTypeAbsNon.setIdRefTypeAbsence(2);
+		ptgEntityManager.persist(refTypeAbsNon);
+
+		Pointage p = new Pointage();
+		p.setRefTypeAbsence(refTypeAbsNon);
+		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setHeureSupRecuperee(true);
+		p.setIdAgent(9005138);
+		p.setType(rtp);
+		ptgEntityManager.persist(p);
+
+		Set<Pointage> pointages = new HashSet<Pointage>();
+		pointages.add(p);
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+		vd.setPaye(true);
+		vd.setPointages(pointages);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+
+		List<Pointage> result = repository.getPointagesVentilesForAgentByDateLundi(new Integer(9005138), vd.getIdVentilDate(), new LocalDate(2013, 7, 30).toDate());
+
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
 	public void getPointagesCalculesVentilesForAgent() {
 
 		RefTypePointage rtp = new RefTypePointage();

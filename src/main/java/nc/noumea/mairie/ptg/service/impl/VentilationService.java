@@ -287,11 +287,15 @@ public class VentilationService implements IVentilationService {
 		List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(
 				agentsPointageForPeriod, Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE), null);
 
+		// #16789 on recupere les pointages ventiles puis rejetes pour mettre a jour la ventilation
+		List<Pointage> listPointageRejetesVentilesOrderedByDateAsc = pointageService
+				.getPointagesVentilesAndRejetesForAgentByDateLundi(idAgent, ventilDate, dateLundi);
+		
 		boolean has1150Prime = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
 				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime, ventilDate);
 		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod,
-				dateLundi);
+				dateLundi, listPointageRejetesVentilesOrderedByDateAsc);
 
 		// on gere les primes d epandage qui comptabiliseront des heures supp.
 		List<Pointage> agentsPointagePrimeForPeriod = ventilationRepository.getListPointagesPrimeByWeekForVentilation(idAgent,

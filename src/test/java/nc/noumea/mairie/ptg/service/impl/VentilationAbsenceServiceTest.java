@@ -45,7 +45,7 @@ public class VentilationAbsenceServiceTest {
 		VentilationAbsenceService service = new VentilationAbsenceService();
 
 		// When
-		VentilAbsence result = service.processAbsenceAgent(9008765, pointages, dateDebutMois.toDate());
+		VentilAbsence result = service.processAbsenceAgent(9008765, pointages, dateDebutMois.toDate(), new ArrayList<Pointage>());
 
 		// Then
 		assertNull(result);
@@ -90,7 +90,7 @@ public class VentilationAbsenceServiceTest {
 		VentilationAbsenceService service = new VentilationAbsenceService();
 
 		// When
-		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3), dateDebutMois.toDate());
+		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3), dateDebutMois.toDate(), new ArrayList<Pointage>());
 
 		// Then
 		assertEquals(9008765, (int) result.getIdAgent());
@@ -143,7 +143,7 @@ public class VentilationAbsenceServiceTest {
 		VentilationAbsenceService service = new VentilationAbsenceService();
 
 		// When
-		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3), dateDebutMois.toDate());
+		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3), dateDebutMois.toDate(), new ArrayList<Pointage>());
 
 		// Then
 		assertEquals(9008765, (int) result.getIdAgent());
@@ -222,7 +222,7 @@ public class VentilationAbsenceServiceTest {
 		VentilationAbsenceService service = new VentilationAbsenceService();
 
 		// When
-		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3, p4, p5, p6), dateDebutMois.toDate());
+		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3, p4, p5, p6), dateDebutMois.toDate(), new ArrayList<Pointage>());
 
 		// Then
 		assertEquals(9008765, (int) result.getIdAgent());
@@ -234,5 +234,39 @@ public class VentilationAbsenceServiceTest {
 		assertEquals(1, result.getNombreAbsenceInferieur1().intValue());
 		assertEquals(1, result.getNombreAbsenceEntre1Et4().intValue());
 		assertEquals(1, result.getNombreAbsenceSuperieur1().intValue());
+	}
+
+	// #16789 
+	@Test
+	public void processAbsenceAgent_AbsencesVentileesRejetees() {
+
+		// Given
+		DateTime dateDebutMois = new DateTime(2015, 5, 1, 0, 0, 0);
+
+		RefTypeAbsence rta1 = new RefTypeAbsence();
+		rta1.setIdRefTypeAbsence(RefTypeAbsenceEnum.CONCERTEE.getValue());
+
+		Pointage p1 = new Pointage();
+		p1.setIdPointage(1);
+		p1.setDateDebut(new DateTime(2015, 5, 11, 12, 0, 0).toDate());
+		p1.setDateFin(new DateTime(2015, 5, 11, 12, 30, 0).toDate());
+		p1.setType(abs);
+		p1.setRefTypeAbsence(rta1);
+		
+		VentilationAbsenceService service = new VentilationAbsenceService();
+
+		// When
+		VentilAbsence result = service.processAbsenceAgent(9008765, new ArrayList<Pointage>(), dateDebutMois.toDate(), Arrays.asList(p1));
+
+		// Then
+		assertEquals(9008765, (int) result.getIdAgent());
+		assertEquals(0, result.getMinutesConcertee());
+		assertEquals(0, result.getMinutesNonConcertee());
+		assertEquals(0, result.getMinutesImmediat());
+		assertEquals(dateDebutMois.toDate(), result.getDateLundi());
+		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
+		assertEquals(0, result.getNombreAbsenceInferieur1().intValue());
+		assertEquals(0, result.getNombreAbsenceEntre1Et4().intValue());
+		assertEquals(0, result.getNombreAbsenceSuperieur1().intValue());
 	}
 }

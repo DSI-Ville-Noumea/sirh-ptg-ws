@@ -336,7 +336,7 @@ public class VentilationServiceTest {
 		IVentilationAbsenceService absV = Mockito.mock(IVentilationAbsenceService.class);
 		Mockito.when(
 				absV.processAbsenceAgent(Mockito.eq(idAgent), Mockito.anyListOf(Pointage.class),
-						Mockito.any(Date.class))).thenReturn(ventilAbs);
+						Mockito.any(Date.class), Mockito.anyListOf(Pointage.class))).thenReturn(ventilAbs);
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(Arrays.asList(1128));

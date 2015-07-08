@@ -59,4 +59,7 @@ public interface IPointageRepository {
 	List<MotifHeureSup> findAllMotifHeureSup();
 
 	List<Pointage> getListPointagesVerification(Integer idAgent, Date fromDate, Date toDate, Integer idRefType);
+
+	List<Pointage> getPointagesVentilesForAgentByDateLundi(Integer idAgent,
+			Integer idVentilDate, Date dateLundi);
 }

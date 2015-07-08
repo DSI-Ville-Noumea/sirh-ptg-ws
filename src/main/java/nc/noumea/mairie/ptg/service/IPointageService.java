@@ -154,4 +154,7 @@ public interface IPointageService {
 	ReturnMessageDto setMotifHeureSup(MotifHeureSupDto motifHeureSupDto);
 
 	ReturnMessageDto checkPointage(Integer convertedIdAgent, Date fromDate, Date toDate);
+
+	List<Pointage> getPointagesVentilesAndRejetesForAgentByDateLundi(
+			Integer idAgent, VentilDate ventilDate, Date dateLundi);
 }
