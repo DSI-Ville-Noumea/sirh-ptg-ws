@@ -63,11 +63,11 @@ public class PrimeDtoKiosque extends PointageDtoKiosque {
 				this.setMinuteFin(sdfMinute.format(ptg.getDateFin()));
 				Calendar calFinSaisieJ1 = Calendar.getInstance();
 				calFinSaisieJ1.setTime(ptg.getDateFin());
-				Integer jourFin = calFinSaisieJ1.get(Calendar.DAY_OF_MONTH);
+				Integer jourFin = calFinSaisieJ1.get(Calendar.DAY_OF_YEAR);
 				Calendar calDebutSaisieJ1 = Calendar.getInstance();
 				calDebutSaisieJ1.setTime(ptg.getDateDebut());
-				Integer jourDebut = calDebutSaisieJ1.get(Calendar.DAY_OF_MONTH);
-				if (jourFin > jourDebut) {
+				Integer jourDebut = calDebutSaisieJ1.get(Calendar.DAY_OF_YEAR);
+				if (!jourFin.equals(jourDebut)) {
 					this.setSaisieJ1("Attention fin de saisie j+1");
 				} else {
 					this.setSaisieJ1(null);
