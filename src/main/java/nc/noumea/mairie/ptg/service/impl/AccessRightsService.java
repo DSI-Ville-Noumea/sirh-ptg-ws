@@ -375,16 +375,6 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	/**
-	 * Retrieves the agent an approbator is set to Approve without his delegator
-	 * role This service also filters by service
-	 */
-	@Override
-	public List<AgentDto> getAgentsToApproveWithoutDelegateRole(Integer idAgent, String codeService) {
-
-		return getAgentsToApprove(idAgent, codeService, false);
-	}
-
-	/**
 	 * Retrieves the agent an approbator is set to Approve This service also
 	 * filters by service
 	 */
@@ -392,20 +382,9 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public List<AgentDto> getAgentsToApprove(Integer idAgent, String codeService) {
 
-		return getAgentsToApprove(idAgent, codeService, true);
-	}
-
-	/**
-	 * Retrieves the agent an approbator is set to Approve This service also
-	 * filters by service
-	 */
-	// #14694 modifications sur le cumul des roles
-	private List<AgentDto> getAgentsToApprove(Integer idAgent, String codeService, boolean withRoleDelegataire) {
-
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		for (DroitsAgent da : accessRightsRepository
-				.getListOfAgentsToApprove(idAgent, codeService, withRoleDelegataire)) {
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToApprove(idAgent, codeService)) {
 			// #15684 bug doublon
 			if (isContainAgentInList(result, da)) {
 				AgentDto agDto = new AgentDto();

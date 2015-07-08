@@ -529,8 +529,8 @@ public class AccessRightsServiceTest {
 		da5.setIdAgent(9005157);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToApprove(idAgent, "SED", true)).thenReturn(
-				Arrays.asList(da1, da2, da3, da4, da5));
+		Mockito.when(arRepo.getListOfAgentsToApprove(idAgent, "SED"))
+				.thenReturn(Arrays.asList(da1, da2, da3, da4, da5));
 
 		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(mRepo.getAgent(9005138)).thenReturn(a1);
@@ -572,7 +572,7 @@ public class AccessRightsServiceTest {
 		d.getAgents().add(da2);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToApprove(idAgent, null, true)).thenReturn(Arrays.asList(da1, da2));
+		Mockito.when(arRepo.getListOfAgentsToApprove(idAgent, null)).thenReturn(Arrays.asList(da1, da2));
 
 		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(mRepo.getAgent(1)).thenReturn(a1);

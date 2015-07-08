@@ -35,9 +35,7 @@ public interface IAccessRightsRepository {
 
 	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, String codeService);
 
-	List<DroitsAgent> getListOfAgentsToInput(Integer idApprobateur,
-			Integer pIdAgent);
+	List<DroitsAgent> getListOfAgentsToInput(Integer idApprobateur, Integer pIdAgent);
 
-	List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent,
-			String pCodeService, boolean withRoleDelegataire);
+	List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent, String pCodeService);
 }

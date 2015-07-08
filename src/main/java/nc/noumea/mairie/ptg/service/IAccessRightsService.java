@@ -53,9 +53,6 @@ public interface IAccessRightsService {
 
 	List<AgentDto> getAgentsToApprove(Integer idAgent, String codeService);
 
-	List<AgentDto> getAgentsToApproveWithoutDelegateRole(Integer idAgent,
-			String codeService);
-
 	boolean isUserApprobateur(Integer idAgent);
 
 	boolean isUserOperateur(Integer idAgent);

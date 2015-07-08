@@ -176,35 +176,6 @@ public class AccessRightsController {
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 
-	/**
-	 * #15897 bug dans SIRH
-	 * 
-	 * @param idAgent
-	 *            de l approbateur
-	 * @return List<AgentDto> la liste des agents affectes a l approbateur
-	 */
-	@ResponseBody
-	@RequestMapping(value = "agentsApprouvesForSIRH", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
-	public ResponseEntity<String> getApprovedAgentsForSIRH(@RequestParam("idAgent") Integer idAgent) {
-
-		logger.debug("entered GET [droits/agentsApprouves] => getApprovedAgents with parameter idAgent = {}", idAgent);
-
-		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
-
-		if (!accessRightService.canUserAccessAccessRights(convertedIdAgent))
-			throw new AccessForbiddenException();
-
-		List<AgentDto> result = accessRightService.getAgentsToApproveWithoutDelegateRole(convertedIdAgent, null);
-
-		if (result.size() == 0)
-			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
-
-		String response = new JSONSerializer().exclude("*.class").serialize(result);
-
-		return new ResponseEntity<String>(response, HttpStatus.OK);
-	}
-
 	@ResponseBody
 	@RequestMapping(value = "agentsApprouves", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	@Transactional(value = "ptgTransactionManager")
