@@ -90,7 +90,7 @@ public class EtatPayeurReporting extends AbstractReporting {
 
 	private String getTitreDocument(EtatPayeurDto dto) {
 		String chainePaie = "HORS CONVENTION";
-		if (dto.getChainePaie().equals(TypeChainePaieEnum.SHC.toString())) {
+		if (dto.getChainePaie().equals(TypeChainePaieEnum.SCV.toString())) {
 			chainePaie = "CONVENTION COLLECTIVE";
 		}
 		return "ETAT DES ELEMENTS DE SALAIRE " + chainePaie + " A PAYER SUR " + dto.getPeriode().toUpperCase();
