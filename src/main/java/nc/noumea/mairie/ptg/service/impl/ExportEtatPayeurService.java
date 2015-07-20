@@ -96,6 +96,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	public AbstractItemEtatPayeurDto getAbsencesEtatPayeurDataForStatut(Integer idAgent,
 			AbstractItemEtatPayeurDto result, VentilDate toVentilDate, VentilDate fromVentilDate) {
 
+		List<AbsencesEtatPayeurDto> listAbsencesEtatPayeurDto = new ArrayList<AbsencesEtatPayeurDto>();
+		
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
 		for (VentilAbsence va : ventilationRepository.getListOfVentilAbsenceWithDateForEtatPayeur(
 				toVentilDate.getIdVentilDate(), idAgent)) {
@@ -111,10 +113,17 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 			// 3. Then create the DTOs for Absence if the value is other than 0
 			// or different from previous one
-			AbsencesEtatPayeurDto dtoAbs = new AbsencesEtatPayeurDto(va, vaOld, helperService);
-			result.setAbsences(dtoAbs);
-
+			AbsencesEtatPayeurDto dtoAbs = new AbsencesEtatPayeurDto(va, vaOld);
+			listAbsencesEtatPayeurDto.add(dtoAbs);
 		}
+		
+		// #17035 on additionne les ventils absences pour avoir qu une
+		// seule ligne pour l etat payeur
+		// #15314 si vide alors on ajoute pas la ligne
+		if (!listAbsencesEtatPayeurDto.isEmpty()) {
+			result.setAbsences(new AbsencesEtatPayeurDto(listAbsencesEtatPayeurDto));
+		}
+
 
 		return result;
 	}
@@ -290,7 +299,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 			if (vh.getMRecuperees() != 0) {
 				int nbMinutesRecupereesTotal = calculMinutesRecuperation(vh);
-				absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(), vh.getDateLundi(), nbMinutesRecupereesTotal);
+				absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(), vh.getDateLundi(), nbMinutesRecupereesTotal); //, vh.getMRecuperees()
 			}
 		}
 

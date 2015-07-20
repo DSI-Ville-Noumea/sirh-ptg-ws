@@ -278,6 +278,94 @@ public class ExportEtatPayeurServiceTest {
 				Mockito.any(Integer.class));
 	}
 
+	// bug en PROD #17035
+	@Test
+	public void getAbsencesEtatPayeurDataForStatut_1Agents4VentilAbsence() {
+
+		// Given
+		VentilDate toVentilDate = new VentilDate();
+		toVentilDate.setDateVentilation(new DateTime(2015, 7, 5, 23, 59, 9).toDate());
+		VentilDate fromVentilDate = new VentilDate();
+		fromVentilDate.setDateVentilation(new DateTime(2015, 5, 31, 23, 59, 9).toDate());
+		AgentStatutEnum statut = AgentStatutEnum.CC;
+
+		VentilAbsence va1 = new VentilAbsence();
+		va1.setDateLundi(new LocalDate(2015, 6, 1).toDate());
+		va1.setMinutesConcertee(2100);
+		va1.setIdAgent(9003315);
+		va1.setNombreAbsenceInferieur1(0);
+		va1.setNombreAbsenceEntre1Et4(1);
+		va1.setNombreAbsenceSuperieur1(4);
+
+		VentilAbsence va2 = new VentilAbsence();
+		va2.setDateLundi(new LocalDate(2015, 6, 8).toDate());
+		va2.setMinutesConcertee(2100);
+		va2.setIdAgent(9003315);
+		va2.setNombreAbsenceInferieur1(0);
+		va2.setNombreAbsenceEntre1Et4(1);
+		va2.setNombreAbsenceSuperieur1(4);
+
+		VentilAbsence va3 = new VentilAbsence();
+		va3.setDateLundi(new LocalDate(2015, 6, 15).toDate());
+		va3.setMinutesConcertee(2100);
+		va3.setIdAgent(9003315);
+		va3.setNombreAbsenceInferieur1(0);
+		va3.setNombreAbsenceEntre1Et4(1);
+		va3.setNombreAbsenceSuperieur1(4);
+
+		VentilAbsence va4 = new VentilAbsence();
+		va4.setDateLundi(new LocalDate(2015, 6, 22).toDate());
+		va4.setMinutesConcertee(2100);
+		va4.setIdAgent(9003315);
+		va4.setNombreAbsenceInferieur1(0);
+		va4.setNombreAbsenceEntre1Et4(0);
+		va4.setNombreAbsenceSuperieur1(1);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
+		Mockito.when(hS.getMairieMatrFromIdAgent(9003315)).thenReturn(3315);
+		Mockito.when(hS.formatMinutesToString(-30)).thenReturn("- 30m");
+		Mockito.when(hS.formatMinutesToString(30)).thenReturn("30m");
+
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
+		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, true)).thenReturn(fromVentilDate);
+		Mockito.when(vR.getPriorVentilAbsenceForAgentAndDate(va1.getIdAgent(), va1.getDateLundi(), va1)).thenReturn(
+				null);
+		Mockito.when(vR.getListOfVentilAbsenceWithDateForEtatPayeur(toVentilDate.getIdVentilDate(), 9003315))
+				.thenReturn(Arrays.asList(va1, va2, va3, va4));
+		Mockito.when(vR.getListOfAgentWithDateForEtatPayeur(toVentilDate.getIdVentilDate())).thenReturn(
+				Arrays.asList(9003315));
+
+		Spcarr spcarr1 = new Spcarr();
+		spcarr1.setCdcate(7);
+		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
+		Mockito.when(sR.getAgentCurrentCarriere(3315, toVentilDate.getDateVentilation())).thenReturn(spcarr1);
+
+		ExportEtatPayeurService service = Mockito.spy(new ExportEtatPayeurService());
+		Mockito.doNothing().when(service)
+				.fillAgentsData(Mockito.any(AbstractItemEtatPayeurDto.class), Mockito.any(Integer.class));
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+		ReflectionTestUtils.setField(service, "mairieRepository", sR);
+
+		// When
+		EtatPayeurDto result = service.getEtatPayeurDataForStatut(statut);
+
+		// Then
+		assertEquals("SCV", result.getChainePaie());
+		assertEquals("juillet 2015", result.getPeriode());
+		assertEquals("CC", result.getStatut());
+
+		assertEquals(1, result.getAgents().size());
+		assertEquals("", result.getAgents().get(0).getAbsences().getQuantiteInf1Heure());
+		assertEquals("3", result.getAgents().get(0).getAbsences().getQuantiteEntre1HeureEt4Heure());
+		assertEquals("13", result.getAgents().get(0).getAbsences().getQuantiteSup4Heure());
+
+		Mockito.verify(service, Mockito.times(1)).fillAgentsData(Mockito.any(AbstractItemEtatPayeurDto.class),
+				Mockito.any(Integer.class));
+	}
+
 	@Test
 	public void getHeuresSupEtatPayeurDataForStatut_2Agents_ReturnEmptyDTO() {
 

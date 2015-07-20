@@ -2,11 +2,9 @@ package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
 import static org.junit.Assert.assertEquals;
 import nc.noumea.mairie.ptg.domain.VentilAbsence;
-import nc.noumea.mairie.ptg.service.impl.HelperService;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class AbsencesEtatPayeurDtoTest {
 
@@ -29,11 +27,9 @@ public class AbsencesEtatPayeurDtoTest {
 		vaOld.setNombreAbsenceInferieur1(0);
 		vaOld.setNombreAbsenceEntre1Et4(2);
 		vaOld.setNombreAbsenceSuperieur1(1);
-		
-		HelperService hS = Mockito.mock(HelperService.class);
 
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld);
 
 		// Then
 		assertEquals("1", result.getQuantiteInf1Heure());
@@ -52,14 +48,12 @@ public class AbsencesEtatPayeurDtoTest {
 		vaNew.setNombreAbsenceInferieur1(1);
 		vaNew.setNombreAbsenceEntre1Et4(0);
 		vaNew.setNombreAbsenceSuperieur1(0);
-		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.formatMinutesToString(60)).thenReturn("1h");
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setMinutesConcertee(30);
 
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld);
 
 		// Then
 		assertEquals("1", result.getQuantiteInf1Heure());
@@ -78,13 +72,12 @@ public class AbsencesEtatPayeurDtoTest {
 		vaNew.setNombreAbsenceInferieur1(0);
 		vaNew.setNombreAbsenceEntre1Et4(1);
 		vaNew.setNombreAbsenceSuperieur1(0);
-		HelperService hS = Mockito.mock(HelperService.class);
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setMinutesNonConcertee(120);
 
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld);
 
 		// Then
 		assertEquals("", result.getQuantiteInf1Heure());
@@ -103,14 +96,12 @@ public class AbsencesEtatPayeurDtoTest {
 		vaNew.setNombreAbsenceInferieur1(2);
 		vaNew.setNombreAbsenceEntre1Et4(0);
 		vaNew.setNombreAbsenceSuperieur1(0);
-		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.formatMinutesToString(60)).thenReturn("1h");
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setMinutesImmediat(30);
 
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld);
 
 		// Then
 		assertEquals("2", result.getQuantiteInf1Heure());
@@ -129,13 +120,12 @@ public class AbsencesEtatPayeurDtoTest {
 		vaNew.setNombreAbsenceInferieur1(2);
 		vaNew.setNombreAbsenceEntre1Et4(0);
 		vaNew.setNombreAbsenceSuperieur1(3);
-		HelperService hS = Mockito.mock(HelperService.class);
 
 		VentilAbsence vaOld = new VentilAbsence();
 		vaOld.setMinutesImmediat(120);
 
 		// When
-		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld, hS);
+		AbsencesEtatPayeurDto result = new AbsencesEtatPayeurDto(vaNew, vaOld);
 
 		// Then
 		assertEquals("2", result.getQuantiteInf1Heure());
