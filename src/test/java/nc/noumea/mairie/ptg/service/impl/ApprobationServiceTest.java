@@ -36,6 +36,7 @@ import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -2063,4 +2064,150 @@ public class ApprobationServiceTest {
 		
 		assertFalse(result);
 	}
+	
+	@Test 
+	public void addRecuperationProvisoireToAgent_addRecup_toApprove() {
+
+		EtatPointageEnum targetEtat = EtatPointageEnum.APPROUVE;
+
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new Date());
+		ptg.setDateFin(new Date());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin()))
+			.thenReturn(10);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		
+		service.addRecuperationProvisoireToAgent(targetEtat, ptg);
+
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+				ptg.getIdAgent(), ptg.getDateDebut(), 10, ptg.getIdPointage());
+		
+	}
+	
+	@Test 
+	public void addRecuperationProvisoireToAgent_substractRecup() {
+
+		EtatPointageEnum targetEtat = EtatPointageEnum.REFUSE;
+
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new Date());
+		ptg.setDateFin(new Date());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin()))
+			.thenReturn(10);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		
+		service.addRecuperationProvisoireToAgent(targetEtat, ptg);
+
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+				ptg.getIdAgent(), ptg.getDateDebut(), -10, ptg.getIdPointage());
+	}
+	
+	@Test 
+	public void addRecuperationProvisoireToAgent_badType() {
+
+		EtatPointageEnum targetEtat = EtatPointageEnum.REFUSE;
+
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new Date());
+		ptg.setDateFin(new Date());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin()))
+			.thenReturn(10);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		
+		service.addRecuperationProvisoireToAgent(targetEtat, ptg);
+
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(
+				Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt());
+	}
+	
+	@Test 
+	public void addRecuperationProvisoireToAgent_isNotHSupRecupere() {
+
+		EtatPointageEnum targetEtat = EtatPointageEnum.REFUSE;
+
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new Date());
+		ptg.setDateFin(new Date());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(false);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin()))
+			.thenReturn(10);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		
+		service.addRecuperationProvisoireToAgent(targetEtat, ptg);
+
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(
+				Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt());
+	}
+
 }

@@ -325,4 +325,16 @@ public class HelperServiceTest {
 		HelperService service = new HelperService();
 		assertEquals(9005138, service.getIdAgentFromMairieMatr(5138).intValue());
 	}
+	
+	@Test
+	public void getDureeBetweenDateDebutAndDateFin() {
+		
+		Date dateDebut = new DateTime(2015,7,20,8,0,0).toDate();
+		Date dateFin = new DateTime(2015,7,20,12,0,0).toDate();
+		
+		HelperService service = new HelperService();
+		Integer duree = service.getDureeBetweenDateDebutAndDateFin(dateDebut, dateFin);
+		
+		assertEquals(240, (int)duree);
+	}
 }
