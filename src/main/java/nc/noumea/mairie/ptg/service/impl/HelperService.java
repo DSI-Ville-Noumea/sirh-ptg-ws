@@ -9,6 +9,7 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -142,5 +143,14 @@ public class HelperService {
 			return TypeChainePaieEnum.SCV;
 		else
 			return TypeChainePaieEnum.SHC;
+	}
+	
+	public Integer getDureeBetweenDateDebutAndDateFin(Date dateDebut, Date dateFin) {
+		
+		DateTime startDate = new DateTime(dateDebut);
+		DateTime endDate = new DateTime(dateFin);
+		
+		Interval interval = new Interval(startDate, endDate);
+		return new Long(interval.toDuration().getStandardMinutes()).intValue();
 	}
 }

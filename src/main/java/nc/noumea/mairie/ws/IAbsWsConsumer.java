@@ -9,7 +9,7 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
 public interface IAbsWsConsumer {
 
-	void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes);
+	void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes, Integer minutesNonMajorees);
 
 	void addReposCompToAgent(Integer idAgent, Date dateLundi, Integer minutes);
 
@@ -26,4 +26,7 @@ public interface IAbsWsConsumer {
 	List<DemandeDto> getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Integer idAgent, Date start, Date end);
 
 	List<RefTypeSaisiDto> getTypeAbsence(Integer idRefTypeAbsence);
+
+	void addRecuperationsToCompteurProvisoireAgent(Integer idAgent, Date date,
+			Integer minutes, Integer idPointage);
 }

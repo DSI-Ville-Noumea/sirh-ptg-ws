@@ -425,6 +425,7 @@ public class ApprobationServiceTest {
 		Pointage ptg = new Pointage();
 		ptg.setIdAgent(9005678);
 		ptg.setIdPointage(9);
+		ptg.setType(new RefTypePointage());
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.SAISI);
 		ptg.getEtats().add(etat);
@@ -466,6 +467,7 @@ public class ApprobationServiceTest {
 		Pointage ptg = new Pointage();
 		ptg.setIdAgent(9005678);
 		ptg.setIdPointage(9);
+		ptg.setType(new RefTypePointage());
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.APPROUVE);
 		ptg.getEtats().add(etat);
@@ -514,6 +516,7 @@ public class ApprobationServiceTest {
 		Pointage ptg = new Pointage();
 		ptg.setIdAgent(9005678);
 		ptg.setIdPointage(9);
+		ptg.setType(new RefTypePointage());
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.REFUSE);
 		ptg.getEtats().add(etat);
@@ -798,6 +801,7 @@ public class ApprobationServiceTest {
 		Pointage ptg = new Pointage();
 		ptg.setIdAgent(9005678);
 		ptg.setIdPointage(9);
+		ptg.setType(new RefTypePointage());
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.SAISI);
 		ptg.getEtats().add(etat);
@@ -851,6 +855,7 @@ public class ApprobationServiceTest {
 		Pointage ptg = new Pointage();
 		ptg.setIdAgent(9005678);
 		ptg.setIdPointage(9);
+		ptg.setType(new RefTypePointage());
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.SAISI);
 		ptg.getEtats().add(etat);

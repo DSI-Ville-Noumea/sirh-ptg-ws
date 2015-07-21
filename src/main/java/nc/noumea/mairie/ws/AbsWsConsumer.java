@@ -28,6 +28,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	private String sirhAbsWsBaseUrl;
 
 	private static final String addRecuperationsUrl = "recuperations/addForPTG";
+	private static final String addRecuperationsProvisoireUrl = "recuperations/addProvisoireForPTG";
 	private static final String addReposCompensateursUrl = "reposcomps/addForPTG";
 	private static final String checkRecuperationsUrl = "recuperations/checkRecuperations";
 	private static final String checkReposCompensateursUrl = "reposcomps/checkReposCompensateurs";
@@ -38,7 +39,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	private static final String getTypeAbsenceUrl = "filtres/getTypesSaisi";
 
 	@Override
-	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes) {
+	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes, Integer minutesNonMajorees) { 
 
 		logger.info("Updating recuperations for Agent [{}] Date Monday [{}] with value [{}]...", idAgent, dateLundi,
 				minutes);
@@ -52,6 +53,29 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		parameters.put("dateLundi", sdf.format(dateLundi));
 		parameters.put("minutes", String.valueOf(minutes));
+		parameters.put("minutesNonMajorees", String.valueOf(minutesNonMajorees));
+
+		ClientResponse res = createAndFirePostRequest(parameters, url);
+
+		readResponse(res, url);
+	}
+	
+	@Override
+	public void addRecuperationsToCompteurProvisoireAgent(Integer idAgent, Date date, Integer minutes, Integer idPointage) { 
+
+		logger.info("Updating recuperations for Agent [{}] Date [{}] with value [{}]...", idAgent, date,
+				minutes);
+
+		String url = String.format(sirhAbsWsBaseUrl + addRecuperationsProvisoireUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+
+		parameters.put("idAgent", String.valueOf(idAgent));
+
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		parameters.put("date", sdf.format(date));
+		parameters.put("minutes", String.valueOf(minutes));
+		parameters.put("idPointage", String.valueOf(idPointage));
 
 		ClientResponse res = createAndFirePostRequest(parameters, url);
 

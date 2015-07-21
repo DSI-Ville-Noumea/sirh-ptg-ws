@@ -299,7 +299,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 			if (vh.getMRecuperees() != 0) {
 				int nbMinutesRecupereesTotal = calculMinutesRecuperation(vh);
-				absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(), vh.getDateLundi(), nbMinutesRecupereesTotal); //, vh.getMRecuperees()
+				absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(), vh.getDateLundi(), nbMinutesRecupereesTotal, vh.getMRecuperees()); 
 			}
 		}
 

@@ -970,7 +970,7 @@ public class ExportEtatPayeurServiceTest {
 
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(EtatPayeur.class));
-		Mockito.verify(ac, Mockito.times(1)).addRecuperationsToAgent(9009999, vh2.getDateLundi(), 90);
+		Mockito.verify(ac, Mockito.times(1)).addRecuperationsToAgent(9009999, vh2.getDateLundi(), 90, 90);
 	}
 
 	@Test
@@ -1234,7 +1234,7 @@ public class ExportEtatPayeurServiceTest {
 		service.exportEtatsPayeur(99);
 
 		// Then
-		Mockito.verify(ac, Mockito.never()).addRecuperationsToAgent(9009999, null, 90);
+		Mockito.verify(ac, Mockito.never()).addRecuperationsToAgent(9009999, null, 90, 0);
 	}
 
 	@SuppressWarnings("unchecked")

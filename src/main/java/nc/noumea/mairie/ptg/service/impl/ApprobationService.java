@@ -27,6 +27,7 @@ import nc.noumea.mairie.ptg.service.IApprobationService;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.repository.IMairieRepository;
+import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.LocalDate;
@@ -65,6 +66,9 @@ public class ApprobationService implements IApprobationService {
 
 	@Autowired
 	private IMairieRepository mairieRepository;
+	
+	@Autowired
+	private IAbsWsConsumer absWsConsumer;
 
 	@Override
 	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService,
@@ -302,6 +306,8 @@ public class ApprobationService implements IApprobationService {
 				if (!result.getErrors().isEmpty())
 					continue;
 			}
+			
+			addRecuperationProvisoireToAgent(targetEtat, ptg);
 
 			// at last, create and add the new EtatPointage
 			EtatPointage etat = new EtatPointage();
@@ -404,6 +410,8 @@ public class ApprobationService implements IApprobationService {
 			} else {
 				dateEtat = helperService.getCurrentDate();
 			}
+			
+			addRecuperationProvisoireToAgent(targetEtat, ptg);
 
 			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat, ptg, dateEtat);
 			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(idAgent, dto, currentEtat, ptg,
@@ -538,6 +546,31 @@ public class ApprobationService implements IApprobationService {
 			result.add(agDto);
 		}
 		return result;
+	}
+	
+	protected void addRecuperationProvisoireToAgent(EtatPointageEnum targetEtat, Pointage ptg) {
+		
+		// si le pointage est une heure sup en recuperation
+		if(RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum())
+				&& ptg.getHeureSupRecuperee()) {
+			
+			// calcul du nombre de minutes
+			Integer nombreMinutes = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
+			EtatPointageEnum currentEtat = ptg.getLatestEtatPointage().getEtat();
+			
+			if(EtatPointageEnum.APPROUVE.equals(targetEtat)
+					&& (EtatPointageEnum.SAISI.equals(currentEtat)
+							|| EtatPointageEnum.REFUSE.equals(currentEtat)
+							|| EtatPointageEnum.REJETE.equals(currentEtat))) {
+				absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, ptg.getIdPointage());
+			}
+			if((EtatPointageEnum.REFUSE.equals(targetEtat)
+					|| EtatPointageEnum.REJETE.equals(targetEtat)
+					|| EtatPointageEnum.SAISI.equals(targetEtat))
+					&& EtatPointageEnum.APPROUVE.equals(currentEtat)) {
+				absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getDateDebut(), 0-nombreMinutes, ptg.getIdPointage());
+			}
+		}
 	}
 
 }
