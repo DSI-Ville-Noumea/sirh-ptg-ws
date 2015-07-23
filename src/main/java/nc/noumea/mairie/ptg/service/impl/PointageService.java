@@ -546,8 +546,8 @@ public class PointageService implements IPointageService {
 							thePrimeToUpdate = pDto;
 						}
 					}
-					assert thePrimeToUpdate != null;
-					thePrimeToUpdate.updateWithPointage(ptg);
+					if(thePrimeToUpdate != null)
+						thePrimeToUpdate.updateWithPointage(ptg);
 					break;
 			}
 		}
