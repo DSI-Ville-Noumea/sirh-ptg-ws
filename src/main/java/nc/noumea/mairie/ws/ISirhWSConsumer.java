@@ -3,9 +3,8 @@ package nc.noumea.mairie.ws;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
-import nc.noumea.mairie.ptg.dto.ServiceDto;
-import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 
@@ -13,8 +12,6 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 public interface ISirhWSConsumer {
-
-	SirhWsServiceDto getAgentDirection(Integer idAgent, Date date);
 
 	AgentWithServiceDto getAgentService(Integer idAgent, Date date);
 
@@ -30,5 +27,5 @@ public interface ISirhWSConsumer {
 
 	BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date date);
 
-	List<ServiceDto> getSubServiceOfService(String codeService);
+	EntiteDto getAgentDirection(Integer idAgent, Date date);
 }

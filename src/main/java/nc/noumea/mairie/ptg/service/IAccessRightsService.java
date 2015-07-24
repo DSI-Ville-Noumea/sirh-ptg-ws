@@ -2,13 +2,13 @@ package nc.noumea.mairie.ptg.service;
 
 import java.util.List;
 
+import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.ApprobateurDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
 public interface IAccessRightsService {
@@ -19,7 +19,7 @@ public interface IAccessRightsService {
 
 	ReturnMessageDto setDelegatorAndOperators(Integer idAgent, DelegatorAndOperatorsDto dto);
 
-	List<ApprobateurDto> listAgentsApprobateurs(Integer idAgent,String codeService);
+	List<ApprobateurDto> listAgentsApprobateurs(Integer idAgent, Integer idServiceADS);
 
 	ReturnMessageDto setApprobateur(AgentWithServiceDto dto);
 
@@ -27,9 +27,9 @@ public interface IAccessRightsService {
 
 	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent);
 
-	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService);
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds);
 
-	List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent);
+	List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent);
 
 	void setAgentsToApprove(Integer idAgent, List<AgentDto> agents);
 
@@ -51,7 +51,7 @@ public interface IAccessRightsService {
 
 	List<AgentDto> getAgentsToInput(Integer idApprobateur, Integer idAgent);
 
-	List<AgentDto> getAgentsToApprove(Integer idAgent, String codeService);
+	List<AgentDto> getAgentsToApprove(Integer idAgent, Integer idServiceAds);
 
 	boolean isUserApprobateur(Integer idAgent);
 

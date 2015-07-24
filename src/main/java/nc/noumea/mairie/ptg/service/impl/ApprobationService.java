@@ -71,7 +71,7 @@ public class ApprobationService implements IApprobationService {
 	private IAbsWsConsumer absWsConsumer;
 
 	@Override
-	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, String codeService,
+	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, Integer idServiceAds,
 			Integer agent, Integer idRefEtat, Integer idRefType, String typeHS) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
@@ -79,7 +79,7 @@ public class ApprobationService implements IApprobationService {
 		// list of agents corresponding to filters
 		List<Integer> agentIds = new ArrayList<Integer>();
 		List<DroitsAgent> listDroitsAgent = accessRightsRepository
-				.getListOfAgentsToInputOrApprove(idAgent, codeService);
+				.getListOfAgentsToInputOrApprove(idAgent, idServiceAds);
 		for (DroitsAgent da : listDroitsAgent) {
 			agentIds.add(da.getIdAgent());
 		}

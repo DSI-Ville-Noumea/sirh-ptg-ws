@@ -24,8 +24,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "PTG_DROITS_AGENT")
 @NamedQueries({
-		@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "from DroitsAgent da INNER JOIN FETCH da.droits d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
-		@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "from DroitsAgent da INNER JOIN FETCH da.droits d where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.codeService = :codeService") })
+		@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "select da from DroitsAgent da INNER JOIN FETCH da.droits d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
+		@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "select da from DroitsAgent da INNER JOIN FETCH da.droits d where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.idServiceADS = :idServiceADS") })
 public class DroitsAgent {
 
 	@Id
@@ -36,9 +36,6 @@ public class DroitsAgent {
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
-
-	@Column(name = "CODE_SERVICE")
-	private String codeService;
 
 	@Column(name = "LIBELLE_SERVICE")
 	private String libelleService;
@@ -57,6 +54,13 @@ public class DroitsAgent {
 	@Version
 	@Column(name = "version")
 	private Integer version;
+	
+	public DroitsAgent(Integer idAgent, Integer idServiceADS, String libelleService) {
+		super();
+		this.idAgent = idAgent;
+		this.libelleService = libelleService;
+		this.idServiceADS = idServiceADS;
+	}
 
 	public Integer getIdDroitsAgent() {
 		return idDroitsAgent;
@@ -72,14 +76,6 @@ public class DroitsAgent {
 
 	public void setIdAgent(Integer idAgent) {
 		this.idAgent = idAgent;
-	}
-
-	public String getCodeService() {
-		return codeService;
-	}
-
-	public void setCodeService(String codeService) {
-		this.codeService = codeService;
 	}
 
 	public String getLibelleService() {
@@ -112,13 +108,6 @@ public class DroitsAgent {
 
 	public void setVersion(Integer version) {
 		this.version = version;
-	}
-
-	public DroitsAgent(Integer idAgent, String codeService, String libelleService) {
-		super();
-		this.idAgent = idAgent;
-		this.codeService = codeService;
-		this.libelleService = libelleService;
 	}
 
 	public DroitsAgent() {

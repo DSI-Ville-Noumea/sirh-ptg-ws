@@ -32,7 +32,7 @@ public class FichesServiceTest {
 		da.setIdAgent(9005138);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, "DEDA")).thenReturn(Arrays.asList(da));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, 17)).thenReturn(Arrays.asList(da));
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhRepo.getAgent(9005138)).thenReturn(ag);
@@ -42,7 +42,7 @@ public class FichesServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
-		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, "DEDA");
+		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, 17);
 
 		// Then
 		assertEquals(ag.getIdAgent(), result.get(0).getIdAgent());
@@ -74,7 +74,7 @@ public class FichesServiceTest {
 		da3.setIdAgent(9005138);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, "DEDA")).thenReturn(Arrays.asList(da, da2, da3));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, 17)).thenReturn(Arrays.asList(da, da2, da3));
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhRepo.getAgent(9005138)).thenReturn(ag);
@@ -85,7 +85,7 @@ public class FichesServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
-		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, "DEDA");
+		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, 17);
 
 		// Then
 		assertEquals(ag.getIdAgent(), result.get(0).getIdAgent());

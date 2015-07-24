@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -35,13 +36,13 @@ import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -65,6 +66,9 @@ public class PointageService implements IPointageService {
 	private ISirhWSConsumer sirhWsConsumer;
 
 	@Autowired
+	private IAdsWSConsumer adshWsConsumer;
+
+	@Autowired
 	private HelperService helperService;
 
 	@Autowired
@@ -83,12 +87,12 @@ public class PointageService implements IPointageService {
 		}
 
 		// Retrieve division service of agent
-		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(agent.getIdAgent(), date);
+		EntiteDto direction = sirhWsConsumer.getAgentDirection(agent.getIdAgent(), date);
 
 		// on construit le dto de l'agent
 		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);
-		agentDto.setCodeService(service.getService());
-		agentDto.setService(service.getServiceLibelle());
+		agentDto.setIdServiceADS(direction.getIdEntite());
+		agentDto.setService(direction.getLabel());
 
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
@@ -99,7 +103,7 @@ public class PointageService implements IPointageService {
 		FichePointageDto result = new FichePointageDto();
 		result.setDateLundi(date);
 		result.setAgent(agentDto);
-		result.setDPM(service.getSigle().toUpperCase().equals("DPM"));
+		result.setDPM(direction.getSigle().toUpperCase().equals("DPM"));
 		result.setSemaine(helperService.getWeekStringFromDate(date));
 
 		// on recupere l'INA de l agent
@@ -563,15 +567,15 @@ public class PointageService implements IPointageService {
 		FichePointageDtoKiosque result = new FichePointageDtoKiosque();
 
 		// Retrieve division service of agent
-		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(agent.getIdAgent(), date);
-		if (service == null) {
+		EntiteDto direction = sirhWsConsumer.getAgentDirection(agent.getIdAgent(), date);
+		if (direction == null) {
 			return result;
 		}
 
 		// on construit le dto de l'agent
 		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);
-		agentDto.setCodeService(service.getService());
-		agentDto.setService(service.getServiceLibelle());
+		agentDto.setIdServiceADS(direction.getIdEntite());
+		agentDto.setService(direction.getLabel());
 
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
@@ -581,7 +585,7 @@ public class PointageService implements IPointageService {
 		// on construit le DTO de jourPointage
 		result.setDateLundi(date);
 		result.setAgent(agentDto);
-		result.setDPM(service.getSigle().toUpperCase().equals("DPM"));
+		result.setDPM(direction.getSigle().toUpperCase().equals("DPM"));
 		result.setSemaine(helperService.getWeekStringFromDate(date));
 
 		// on recupere l'INA de l agent

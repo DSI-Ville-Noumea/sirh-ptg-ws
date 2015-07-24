@@ -54,7 +54,7 @@ public class ApprobationServiceTest {
 		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
 		Date toDateQuery = new DateTime(2013, 05, 21, 0, 0, 0).toDate();
-		String codeService = null;
+		Integer idServiceAds = null;
 		Integer agent = null;
 		Integer idRefEtat = null;
 		Integer idRefType = 1;
@@ -67,7 +67,7 @@ public class ApprobationServiceTest {
 		da2.setIdAgent(9001235);
 		das.add(da2);
 		IAccessRightsRepository arRepo = Mockito.mock(AccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, codeService)).thenReturn(das);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, idServiceAds)).thenReturn(das);
 
 		Pointage ptg = new Pointage();
 		ptg.setIdAgent(9001234);
@@ -114,7 +114,7 @@ public class ApprobationServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, codeService, agent,
+		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, idServiceAds, agent,
 				idRefEtat, idRefType, null);
 
 		// Then
@@ -131,7 +131,7 @@ public class ApprobationServiceTest {
 		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
 		Date toDateQuery = new DateTime(2013, 05, 21, 0, 0, 0).toDate();
-		String codeService = null;
+		Integer idServiceAds = null;
 		Integer agent = null;
 		Integer idRefType = 1;
 		Integer idRefEtat = EtatPointageEnum.SAISI.getCodeEtat();
@@ -141,7 +141,7 @@ public class ApprobationServiceTest {
 		da.setIdAgent(9001234);
 		das.add(da);
 		IAccessRightsRepository arRepo = Mockito.mock(AccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, codeService)).thenReturn(das);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, idServiceAds)).thenReturn(das);
 
 		Pointage ptg2 = new Pointage();
 		ptg2.setIdAgent(9001234);
@@ -174,7 +174,7 @@ public class ApprobationServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, codeService, agent,
+		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, idServiceAds, agent,
 				idRefEtat, idRefType, null);
 
 		// Then
@@ -189,20 +189,20 @@ public class ApprobationServiceTest {
 		Integer idAgent = 9008765;
 		Date fromDate = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2013, 05, 20, 0, 0, 0).toDate();
-		String codeService = null;
+		Integer idServiceAds = null;
 		Integer agent = 9001235;
 		Integer idRefEtat = null;
 		Integer idRefType = null;
 
 		IAccessRightsRepository arRepo = Mockito.mock(AccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, codeService)).thenReturn(
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, idServiceAds)).thenReturn(
 				new ArrayList<DroitsAgent>());
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 
 		// When
-		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, codeService, agent,
+		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, idServiceAds, agent,
 				idRefEtat, idRefType, null);
 
 		// Then

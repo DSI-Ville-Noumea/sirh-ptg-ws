@@ -746,7 +746,7 @@ public class ExportEtatPayeurServiceTest {
 		AgentWithServiceDto agDto = new AgentWithServiceDto();
 		agDto.setNom("nomusage2");
 		agDto.setPrenom("prenomusage2");
-		agDto.setCodeService("CODE");
+		agDto.setIdServiceADS(55);
 		agDto.setService("Label");
 		agDto.setSigleService("Sigle");
 		ISirhWSConsumer swc = Mockito.mock(ISirhWSConsumer.class);

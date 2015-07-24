@@ -23,11 +23,11 @@ public class FichesService implements IFichesService {
 	private IAccessRightsRepository accessRightsRepository;
 
 	@Override
-	public List<AgentDto> listAgentsFichesToPrint(Integer idAgent, String codeService) {
+	public List<AgentDto> listAgentsFichesToPrint(Integer idAgent, Integer idServiceAds) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceAds)) {
 			AgentGeneriqueDto ag = sirhWsConsumer.getAgent(da.getIdAgent());
 			AgentDto agDto = new AgentDto();
 			agDto.setIdAgent(da.getIdAgent());

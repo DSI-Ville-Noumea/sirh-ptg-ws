@@ -3,13 +3,13 @@ package nc.noumea.mairie.ptg.web;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.MotifHeureSupDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
@@ -83,7 +83,7 @@ public class FiltreController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<ServiceDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent);
+		List<EntiteDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent);
 
 		if (services.size() == 0)
 			throw new NoContentException();
@@ -97,14 +97,14 @@ public class FiltreController {
 	@RequestMapping(value = "/agents", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getAgents(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "codeService", required = false) String codeService) {
+			@RequestParam(value = "idServiceAds", required = false) Integer idServiceAds) {
 
-		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and codeService = {}",
-				idAgent, codeService);
+		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and idServiceAds = {}",
+				idAgent, idServiceAds);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, codeService);
+		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, idServiceAds);
 
 		if (services.size() == 0)
 			throw new NoContentException();

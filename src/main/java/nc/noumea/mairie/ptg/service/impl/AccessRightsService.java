@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
@@ -12,13 +13,13 @@ import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.ApprobateurDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.dto.ServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
@@ -39,6 +40,9 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWSConsumer;
+
+	@Autowired
+	private IAdsWSConsumer adsWsConsumer;
 
 	@Autowired
 	private IAgentMatriculeConverterService matriculeConvertor;
@@ -199,7 +203,7 @@ public class AccessRightsService implements IAccessRightsService {
 	}
 
 	@Override
-	public List<ApprobateurDto> listAgentsApprobateurs(Integer idAgent, String codeService) {
+	public List<ApprobateurDto> listAgentsApprobateurs(Integer idAgent, Integer idServiceADS) {
 		List<ApprobateurDto> agentDtos = new ArrayList<ApprobateurDto>();
 		List<Droit> listeDroit = new ArrayList<Droit>();
 		if (idAgent != null) {
@@ -210,20 +214,25 @@ public class AccessRightsService implements IAccessRightsService {
 		} else {
 			listeDroit = accessRightsRepository.getAgentsApprobateurs();
 		}
-		List<String> listeSouService = new ArrayList<>();
-		if (codeService != null) {
+		List<Integer> listeSouService = new ArrayList<>();
+
+		if (idServiceADS != null) {
 			// on charge la liste des sous-services du service
-			List<ServiceDto> liste = sirhWSConsumer.getSubServiceOfService(codeService);
-			for (ServiceDto s : liste) {
-				listeSouService.add(s.getService());
+			List<EntiteDto> liste = new ArrayList<EntiteDto>();
+			EntiteDto entiteParent = adsWsConsumer.getEntiteWithChildrenByIdEntite(idServiceADS);
+			liste.addAll(entiteParent.getEnfants());
+
+			for (EntiteDto s : liste) {
+				listeSouService.add(s.getIdEntite());
 			}
-			listeSouService.add(codeService);
+			listeSouService.add(idServiceADS);
 		}
+		
 		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
-			if (codeService != null) {
-				if (agentServiceDto != null && listeSouService.contains(agentServiceDto.getCodeService())) {
+			if (idServiceADS != null) {
+				if (agentServiceDto != null && listeSouService.contains(agentServiceDto.getIdServiceADS())) {
 					ApprobateurDto agentDto = new ApprobateurDto();
 					agentDto.setApprobateur(agentServiceDto);
 					DelegatorAndOperatorsDto deleg = getDelegator(da.getIdAgent());
@@ -336,11 +345,11 @@ public class AccessRightsService implements IAccessRightsService {
 	 * to Input. This service also filters by service
 	 */
 	@Override
-	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, String codeService) {
+	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, codeService)) {
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceAds)) {
 			// #15684 bug doublon
 			if (isContainAgentInList(result, da)) {
 				AgentDto agDto = new AgentDto();
@@ -380,11 +389,11 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	// #14694 modifications sur le cumul des roles
 	@Override
-	public List<AgentDto> getAgentsToApprove(Integer idAgent, String codeService) {
+	public List<AgentDto> getAgentsToApprove(Integer idAgent, Integer idServiceAds) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToApprove(idAgent, codeService)) {
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToApprove(idAgent, idServiceAds)) {
 			// #15684 bug doublon
 			if (isContainAgentInList(result, da)) {
 				AgentDto agDto = new AgentDto();
@@ -462,7 +471,7 @@ public class AccessRightsService implements IAccessRightsService {
 			existingAgent = new DroitsAgent();
 			existingAgent.setIdAgent(ag.getIdAgent());
 			existingAgent.getDroits().add(droitApprobateur);
-			existingAgent.setCodeService(dto.getCodeService());
+			existingAgent.setIdServiceADS(dto.getIdServiceADS());
 			existingAgent.setLibelleService(dto.getService());
 
 			existingAgent.setDateModification(helperService.getCurrentDate());
@@ -523,22 +532,22 @@ public class AccessRightsService implements IAccessRightsService {
 	 * build the filters (by service)
 	 */
 	@Override
-	public List<ServiceDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
+	public List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
 
-		List<ServiceDto> result = new ArrayList<ServiceDto>();
+		List<EntiteDto> result = new ArrayList<EntiteDto>();
 
-		List<String> codeServices = new ArrayList<String>();
+		List<Integer> idsServices = new ArrayList<Integer>();
 
 		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent)) {
 
-			if (codeServices.contains(da.getCodeService()))
+			if (idsServices.contains(da.getIdServiceADS()))
 				continue;
 
-			codeServices.add(da.getCodeService());
-			ServiceDto svDto = new ServiceDto();
-			svDto.setCodeService(da.getCodeService());
-			svDto.setService(da.getLibelleService());
-			result.add(svDto);
+			idsServices.add(da.getIdServiceADS());
+			EntiteDto entiteDto = new EntiteDto();
+				entiteDto.setIdEntite(da.getIdServiceADS());
+				entiteDto.setLabel(da.getLibelleService());
+			result.add(entiteDto);
 		}
 
 		return result;

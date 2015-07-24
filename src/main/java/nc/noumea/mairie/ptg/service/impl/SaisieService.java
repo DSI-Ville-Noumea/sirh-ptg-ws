@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -29,7 +30,6 @@ import nc.noumea.mairie.ptg.dto.PointageDtoKiosque;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.PrimeDtoKiosque;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
@@ -164,7 +164,7 @@ public class SaisieService implements ISaisieService {
 				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi,
 						helperService.getCurrentDate());
 				// cas de la DMP #11622
-				SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent, ptg.getDateDebut());
+				EntiteDto service = sirhWsConsumer.getAgentDirection(idAgent, ptg.getDateDebut());
 				if (service.getSigle().toUpperCase().equals("DPM")) {
 					ptg.setHeureSupRecuperee(true);
 					ptg.setHeureSupRappelService(hs.getRappelService());
@@ -606,7 +606,7 @@ public class SaisieService implements ISaisieService {
 				ptg = pointageService.getOrCreateNewPointage(idAgentOperator, hs.getIdPointage(), idAgent, dateLundi,
 						helperService.getCurrentDate());
 				// cas de la DMP #11622
-				SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent, ptg.getDateDebut());
+				EntiteDto service = sirhWsConsumer.getAgentDirection(idAgent, ptg.getDateDebut());
 				if (service.getSigle().toUpperCase().equals("DPM")) {
 					ptg.setHeureSupRecuperee(true);
 					ptg.setHeureSupRappelService(hs.getRappelService());
