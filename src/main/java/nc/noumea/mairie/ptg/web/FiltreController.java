@@ -97,14 +97,14 @@ public class FiltreController {
 	@RequestMapping(value = "/agents", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getAgents(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "idServiceAds", required = false) Integer idServiceAds) {
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
-		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and idServiceAds = {}",
-				idAgent, idServiceAds);
+		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and idServiceADS = {}",
+				idAgent, idServiceADS);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, idServiceAds);
+		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, idServiceADS);
 
 		if (services.size() == 0)
 			throw new NoContentException();

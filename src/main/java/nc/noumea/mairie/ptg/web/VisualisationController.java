@@ -51,7 +51,7 @@ public class VisualisationController {
 	public ResponseEntity<String> getListePointages(@RequestParam("idAgent") int idAgent,
 			@RequestParam("from") @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
 			@RequestParam("to") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
-			@RequestParam(value = "idServiceAds", required = false) Integer idServiceAds,
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS,
 			@RequestParam(value = "agent", required = false) Integer agent,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat,
 			@RequestParam(value = "type", required = false) Integer idRefType,
@@ -59,7 +59,7 @@ public class VisualisationController {
 
 		logger.debug(
 				"entered GET [visualisation/pointages] => getListePointages with parameters idAgent = {}, from = {}, to = {}, idServiceAds = {}, agent = {}, etat = {} and type = {} and typeHS = {}",
-				idAgent, fromDate, toDate, idServiceAds, agent, idRefEtat, idRefType, typeHS);
+				idAgent, fromDate, toDate, idServiceADS, agent, idRefEtat, idRefType, typeHS);
 
 		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 		Integer convertedAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(agent);
@@ -68,7 +68,7 @@ public class VisualisationController {
 			throw new AccessForbiddenException();
 
 		List<ConsultPointageDto> result = approbationService.getPointages(convertedIdAgent, fromDate, toDate,
-				idServiceAds, convertedAgent, idRefEtat, idRefType, typeHS);
+				idServiceADS, convertedAgent, idRefEtat, idRefType, typeHS);
 
 		if (result.size() == 0)
 			return new ResponseEntity<String>(HttpStatus.NO_CONTENT);
