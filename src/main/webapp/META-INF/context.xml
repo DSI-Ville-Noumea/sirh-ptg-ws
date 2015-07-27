@@ -43,13 +43,13 @@
 	<!-- WS SIRH -->
 	<!--  -->	
 	<Environment name="SIRH_WS_URL" type="java.lang.String" description="SIRH WS endpoint url" 
-		value="http://svi-tomcat0:8085/sirhws/" override="false" />
+		value="http://svi-tomcat0:8087/sirhws/" override="false" />
 		
 	<!--  -->
 	<!-- WS ABS -->
 	<!--  -->	
 	<Environment name="SIRH_ABS_WS_URL" type="java.lang.String" description="SIRH WS endpoint url" 
-		value="http://svi-tomcat0:8085/sirh-abs-ws/" override="false" />
+		value="http://svi-tomcat0:8087/sirh-abs-ws/" override="false" />
 		
 	<!--  -->
 	<!-- Parametre pour savoir avant quelle date la saisie des pointages est interdite(correspond à la date de MEP finale) -->
