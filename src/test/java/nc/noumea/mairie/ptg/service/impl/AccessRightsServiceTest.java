@@ -643,6 +643,67 @@ public class AccessRightsServiceTest {
 		// see callback for persisEntity
 	}
 
+	@SuppressWarnings("rawtypes")
+	@Test
+	public void setAgentsToApprove_1NewAgent_ButExistinginDroitsAgent() {
+
+		// Given
+		AgentDto ag = new AgentDto();
+		ag.setIdAgent(9008765);
+		List<AgentDto> agsDto = Arrays.asList(ag);
+
+		final Date currentDate = new DateTime(2013, 4, 9, 12, 9, 34).toDate();
+
+		final Droit droit = new Droit();
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getApprobateur(777)).thenReturn(droit);
+		Mockito.doAnswer(new Answer() {
+			public Object answer(InvocationOnMock invocation) {
+				Object[] args = invocation.getArguments();
+				DroitsAgent obj = (DroitsAgent) args[0];
+
+				assertEquals(13, (int) obj.getIdDroitsAgent());
+				assertEquals(9008765, (int) obj.getIdAgent());
+				assertEquals(13, obj.getIdServiceADS().intValue());
+				assertEquals("service", obj.getLibelleService());
+				assertEquals(droit, obj.getDroits().iterator().next());
+				assertEquals(currentDate, obj.getDateModification());
+
+				return true;
+
+			}
+		}).when(arRepo).persisEntity(Mockito.any(DroitsAgent.class));
+		
+		DroitsAgent droitsAgent = new DroitsAgent();
+		droitsAgent.setIdAgent(ag.getIdAgent());
+		droitsAgent.setIdDroitsAgent(13);
+		
+		Mockito.when(arRepo.getDroitsAgent(ag.getIdAgent())).thenReturn(droitsAgent);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+
+		AgentWithServiceDto agDto = new AgentWithServiceDto();
+		agDto.setIdAgent(9008765);
+		agDto.setService("service");
+		agDto.setIdServiceADS(13);
+
+		ISirhWSConsumer ws = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(ws.getAgentService(9008765, currentDate)).thenReturn(agDto);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", ws);
+
+		// When
+		service.setAgentsToApprove(777, agsDto);
+
+		// Then
+		// see callback for persisEntity
+	}
+
 	@Test
 	public void setAgentsToApprove_1ExistingAgent_DoNothing() {
 

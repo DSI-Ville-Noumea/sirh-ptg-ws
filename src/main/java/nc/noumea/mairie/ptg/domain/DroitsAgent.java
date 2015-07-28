@@ -24,6 +24,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "PTG_DROITS_AGENT")
 @NamedQueries({
+		@NamedQuery(name = "getDroitsAgent", query = "select da from DroitsAgent da where da.idAgent = :idAgent"),
 		@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "select da from DroitsAgent da INNER JOIN FETCH da.droits d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
 		@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "select da from DroitsAgent da INNER JOIN FETCH da.droits d where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.idServiceADS = :idServiceADS") })
 public class DroitsAgent {

@@ -465,17 +465,25 @@ public class AccessRightsService implements IAccessRightsService {
 				continue;
 
 			AgentWithServiceDto dto = sirhWSConsumer.getAgentService(ag.getIdAgent(), helperService.getCurrentDate());
-			if (dto == null)
+			if (dto == null) {
+				logger.warn("L'agent {} n'existe pas.", ag.getIdAgent());
 				continue;
+			}
+			
+			DroitsAgent newDroitAgent = accessRightsRepository.getDroitsAgent(dto.getIdAgent());
 
-			existingAgent = new DroitsAgent();
-			existingAgent.setIdAgent(ag.getIdAgent());
-			existingAgent.getDroits().add(droitApprobateur);
-			existingAgent.setIdServiceADS(dto.getIdServiceADS());
-			existingAgent.setLibelleService(dto.getService());
+			if (newDroitAgent == null) {
+				newDroitAgent = new DroitsAgent();
+				newDroitAgent.setIdAgent(dto.getIdAgent());
+			}
+			
+			newDroitAgent.setIdAgent(ag.getIdAgent());
+			newDroitAgent.getDroits().add(droitApprobateur);
+			newDroitAgent.setIdServiceADS(dto.getIdServiceADS());
+			newDroitAgent.setLibelleService(dto.getService());
 
-			existingAgent.setDateModification(helperService.getCurrentDate());
-			accessRightsRepository.persisEntity(existingAgent);
+			newDroitAgent.setDateModification(helperService.getCurrentDate());
+			accessRightsRepository.persisEntity(newDroitAgent);
 		}
 
 		for (DroitsAgent agToDelete : agentsToDelete) {

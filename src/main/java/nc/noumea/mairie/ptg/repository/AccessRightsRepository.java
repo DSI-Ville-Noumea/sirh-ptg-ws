@@ -264,4 +264,14 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 				+ "group by da ";
 	}
 
+	@Override
+	public DroitsAgent getDroitsAgent(Integer idAgent) {
+
+		TypedQuery<DroitsAgent> q = ptgEntityManager.createNamedQuery("getDroitsAgent", DroitsAgent.class);
+		q.setParameter("idAgent", idAgent);
+		List<DroitsAgent> ds = q.getResultList();
+
+		return ds.size() == 0 ? null : ds.get(0);
+	}
+
 }

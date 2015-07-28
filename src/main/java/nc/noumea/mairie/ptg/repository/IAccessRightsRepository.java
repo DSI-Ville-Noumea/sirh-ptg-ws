@@ -38,4 +38,6 @@ public interface IAccessRightsRepository {
 	List<DroitsAgent> getListOfAgentsToInput(Integer idApprobateur, Integer pIdAgent);
 
 	List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent, Integer idServiceADS);
+
+	DroitsAgent getDroitsAgent(Integer idAgent);
 }
