@@ -28,5 +28,5 @@ public interface IAbsWsConsumer {
 	List<RefTypeSaisiDto> getTypeAbsence(Integer idRefTypeAbsence);
 
 	void addRecuperationsToCompteurProvisoireAgent(Integer idAgent, Date date,
-			Integer minutes, Integer idPointage);
+			Integer minutes, Integer idPointage, Integer idPointageParent);
 }

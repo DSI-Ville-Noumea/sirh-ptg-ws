@@ -548,7 +548,8 @@ public class ApprobationService implements IApprobationService {
 		return result;
 	}
 	
-	protected void addRecuperationProvisoireToAgent(EtatPointageEnum targetEtat, Pointage ptg) {
+	@Override
+	public void addRecuperationProvisoireToAgent(EtatPointageEnum targetEtat, Pointage ptg) {
 		
 		// si le pointage est une heure sup en recuperation
 		if(RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum())
@@ -558,17 +559,21 @@ public class ApprobationService implements IApprobationService {
 			Integer nombreMinutes = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
 			EtatPointageEnum currentEtat = ptg.getLatestEtatPointage().getEtat();
 			
+			// dans le cas ou le pointage est approuve
 			if(EtatPointageEnum.APPROUVE.equals(targetEtat)
 					&& (EtatPointageEnum.SAISI.equals(currentEtat)
 							|| EtatPointageEnum.REFUSE.equals(currentEtat)
 							|| EtatPointageEnum.REJETE.equals(currentEtat))) {
-				absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, ptg.getIdPointage());
+				absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, ptg.getIdPointage(), 
+						null != ptg.getPointageParent() ? ptg.getPointageParent().getIdPointage() : null);
 			}
+			// dans le cas ou le pointage est refuse, rejete
 			if((EtatPointageEnum.REFUSE.equals(targetEtat)
 					|| EtatPointageEnum.REJETE.equals(targetEtat)
 					|| EtatPointageEnum.SAISI.equals(targetEtat))
 					&& EtatPointageEnum.APPROUVE.equals(currentEtat)) {
-				absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getDateDebut(), 0-nombreMinutes, ptg.getIdPointage());
+				absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getDateDebut(), 0, ptg.getIdPointage(), 
+						null != ptg.getPointageParent() ? ptg.getPointageParent().getIdPointage() : null);
 			}
 		}
 	}

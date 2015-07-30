@@ -37,6 +37,7 @@ import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.ISaisieService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
 import nc.noumea.mairie.repository.IMairieRepository;
+import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,9 @@ public class SaisieService implements ISaisieService {
 
 	@Autowired
 	private IPointageService pointageService;
+
+	@Autowired
+	private IAbsWsConsumer absWsConsumer;
 
 	@Autowired
 	private HelperService helperService;
@@ -305,6 +309,8 @@ public class SaisieService implements ISaisieService {
 
 		savePointages(finalPointages);
 		deletePointages(result, idAgentOperator, originalAgentPointages);
+		
+		majCompteurRecuperationProvisoire(finalPointages);
 
 		return result;
 	}
@@ -754,6 +760,8 @@ public class SaisieService implements ISaisieService {
 
 		savePointages(finalPointages);
 		deletePointages(result, idAgentOperator, originalAgentPointages);
+		
+		majCompteurRecuperationProvisoire(finalPointages);
 
 		return result;
 	}
@@ -837,5 +845,40 @@ public class SaisieService implements ISaisieService {
 				.getText().equals(hsupDto.getCommentaire())));
 
 		return motifHasChanged || commentHasChanged;
+	}
+	
+	protected void majCompteurRecuperationProvisoire(List<Pointage> listPointage) {
+		
+		if(null != listPointage) {
+			for(Pointage ptg : listPointage) {
+				
+				// si le pointage est une heure sup
+				if(RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum())) {
+					
+					// dans le cas ou on a modifie un pointage avec un etat autre que SAISI
+					// un second pointage se cree avec un pointage parent
+					// et que ce pointage modifie (pointage parent) etait des HSup en recuperation
+					if(null != ptg.getPointageParent()
+							&& null != ptg.getPointageParent().getIdPointage()
+							&& ptg.getPointageParent().getHeureSupRecuperee()) {
+						
+						absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getPointageParent().getDateDebut(), 0, 
+								null != ptg.getPointageParent() ? ptg.getPointageParent().getIdPointage() : null, null);
+					}
+					// depuis SIRH, le nouveau pointage est directement mis a approuve
+					if(ptg.getHeureSupRecuperee()
+							&& null != ptg.getLatestEtatPointageWithPointageNotPersist()
+							&& EtatPointageEnum.APPROUVE.equals(ptg.getLatestEtatPointageWithPointageNotPersist().getEtat())) {
+						// calcul du nombre de minutes
+						Integer nombreMinutes = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
+						
+						absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, 
+								ptg.getIdPointage() , null);
+					}
+					// depuis le kiosque
+					// le nouveau pointage creditera le compteur lors de l approbation
+				}
+			}
+		}
 	}
 }

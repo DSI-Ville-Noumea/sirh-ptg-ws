@@ -61,7 +61,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	}
 	
 	@Override
-	public void addRecuperationsToCompteurProvisoireAgent(Integer idAgent, Date date, Integer minutes, Integer idPointage) { 
+	public void addRecuperationsToCompteurProvisoireAgent(Integer idAgent, Date date, Integer minutes, Integer idPointage, Integer idPointageParent) { 
 
 		logger.info("Updating recuperations for Agent [{}] Date [{}] with value [{}]...", idAgent, date,
 				minutes);
@@ -76,6 +76,9 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 		parameters.put("date", sdf.format(date));
 		parameters.put("minutes", String.valueOf(minutes));
 		parameters.put("idPointage", String.valueOf(idPointage));
+		if(null != idPointageParent) {
+			parameters.put("idPointageParent", String.valueOf(idPointageParent));
+		}
 
 		ClientResponse res = createAndFirePostRequest(parameters, url);
 

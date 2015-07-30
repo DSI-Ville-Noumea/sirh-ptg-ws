@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.domain;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -118,6 +119,15 @@ public class Pointage {
 	@Transient
 	public EtatPointage getLatestEtatPointage() {
 		return etats.iterator().next();
+	}
+	
+	@Transient
+	public EtatPointage getLatestEtatPointageWithPointageNotPersist() {
+		// ici si le pointage n est pas encore persiste en base, 
+		// l annotation @OrderBy ne fonctionne pas 
+		// on trie donc nous meme
+		Collections.sort(etats);
+		return null != etats && !etats.isEmpty() ? etats.iterator().next() : null;
 	}
 
 	@Transient

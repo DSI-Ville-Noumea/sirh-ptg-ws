@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "PTG_ETAT_POINTAGE")
-public class EtatPointage {
+public class EtatPointage implements Comparable<EtatPointage> {
 
 	@Id 
 	@Column(name = "ID_ETAT_POINTAGE")
@@ -107,6 +107,11 @@ public class EtatPointage {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	@Override
+	public int compareTo(EtatPointage arg0) {
+		return 0-this.idEtatPointage.compareTo(arg0.idEtatPointage);
 	}
 	
 }

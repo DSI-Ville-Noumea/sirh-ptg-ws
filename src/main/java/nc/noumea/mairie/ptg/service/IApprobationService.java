@@ -3,6 +3,8 @@ package nc.noumea.mairie.ptg.service;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
@@ -25,4 +27,7 @@ public interface IApprobationService {
 	ReturnMessageDto setPointagesEtatSIRH(Integer idAgent, List<PointagesEtatChangeDto> dto);
 
 	List<AgentDto> listerTousAgentsPointages();
+
+	void addRecuperationProvisoireToAgent(EtatPointageEnum targetEtat,
+			Pointage ptg);
 }

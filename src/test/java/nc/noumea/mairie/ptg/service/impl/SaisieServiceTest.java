@@ -47,6 +47,7 @@ import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
 import nc.noumea.mairie.repository.IMairieRepository;
+import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -2370,6 +2371,241 @@ public class SaisieServiceTest {
 		// Then
 		Mockito.verify(pRepo, Mockito.times(1)).savePointage(Mockito.isA(Pointage.class));
 		Mockito.verify(pRepo, Mockito.never()).removeEntity(Mockito.isA(Pointage.class));
+	}
+	
+	@Test 
+	public void majCompteurRecuperationProvisoire_badTypePointage() {
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		
+		Pointage pointage = new Pointage();
+		pointage.setIdAgent(9005138);
+		pointage.setDateLundi(new DateTime(2015, 6, 22, 0, 0, 0).toDate());
+		pointage.setDateDebut(new DateTime(2015, 6, 26, 15, 0, 0).toDate());
+		pointage.setIdPointage(1);
+		pointage.setType(type);
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		pointage.getEtats().add(etat);
+		
+		List<Pointage> listPointage = new ArrayList<Pointage>();
+		listPointage.add(pointage);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		
+		service.majCompteurRecuperationProvisoire(listPointage);
+		
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
+	}
+	
+	@Test 
+	public void majCompteurRecuperationProvisoire_badEtat() {
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage pointage = new Pointage();
+		pointage.setIdAgent(9005138);
+		pointage.setDateLundi(new DateTime(2015, 6, 22, 0, 0, 0).toDate());
+		pointage.setDateDebut(new DateTime(2015, 6, 26, 15, 0, 0).toDate());
+		pointage.setIdPointage(1);
+		pointage.setType(type);
+		pointage.setHeureSupRecuperee(true);
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+		
+		pointage.getEtats().add(etat);
+		
+		List<Pointage> listPointage = new ArrayList<Pointage>();
+		listPointage.add(pointage);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		
+		service.majCompteurRecuperationProvisoire(listPointage);
+		
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
+	}
+	
+	@Test 
+	public void majCompteurRecuperationProvisoire_noHeureRecuperee() {
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage pointage = new Pointage();
+		pointage.setIdAgent(9005138);
+		pointage.setDateLundi(new DateTime(2015, 6, 22, 0, 0, 0).toDate());
+		pointage.setDateDebut(new DateTime(2015, 6, 26, 15, 0, 0).toDate());
+		pointage.setIdPointage(1);
+		pointage.setType(type);
+		pointage.setHeureSupRecuperee(false);
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		pointage.getEtats().add(etat);
+		
+		List<Pointage> listPointage = new ArrayList<Pointage>();
+		listPointage.add(pointage);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		
+		service.majCompteurRecuperationProvisoire(listPointage);
+		
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
+	}
+	
+	@Test 
+	public void majCompteurRecuperationProvisoire_pointageApprouve_majCompteur() {
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage pointage = new Pointage();
+		pointage.setIdAgent(9005138);
+		pointage.setDateLundi(new DateTime(2015, 6, 22, 0, 0, 0).toDate());
+		pointage.setDateDebut(new DateTime(2015, 6, 26, 15, 0, 0).toDate());
+		pointage.setDateFin(new DateTime(2015, 6, 26, 16, 0, 0).toDate());
+		pointage.setIdPointage(1);
+		pointage.setType(type);
+		pointage.setHeureSupRecuperee(true);
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		pointage.getEtats().add(etat);
+		
+		List<Pointage> listPointage = new ArrayList<Pointage>();
+		listPointage.add(pointage);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(pointage.getDateDebut(), pointage.getDateFin())).thenReturn(60);
+		
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		service.majCompteurRecuperationProvisoire(listPointage);
+		
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+				pointage.getIdAgent(), pointage.getDateDebut(), 60, pointage.getIdPointage(), null);
+	}
+
+	@Test 
+	public void majCompteurRecuperationProvisoire_pointageApprouveWithPointageParent_majCompteur() {
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage pointageParent = new Pointage();
+		pointageParent.setIdAgent(9005138);
+		pointageParent.setDateLundi(new DateTime(2015, 6, 22, 0, 0, 0).toDate());
+		pointageParent.setDateDebut(new DateTime(2015, 6, 26, 11, 0, 0).toDate());
+		pointageParent.setDateFin(new DateTime(2015, 6, 26, 16, 0, 0).toDate());
+		pointageParent.setIdPointage(1);
+		pointageParent.setType(type);
+		pointageParent.setHeureSupRecuperee(true);
+		
+		Pointage pointage = new Pointage();
+		pointage.setIdAgent(9005138);
+		pointage.setDateLundi(new DateTime(2015, 6, 22, 0, 0, 0).toDate());
+		pointage.setDateDebut(new DateTime(2015, 6, 26, 15, 0, 0).toDate());
+		pointage.setDateFin(new DateTime(2015, 6, 26, 16, 0, 0).toDate());
+		pointage.setIdPointage(1);
+		pointage.setType(type);
+		pointage.setHeureSupRecuperee(true);
+		pointage.setPointageParent(pointageParent);
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		pointage.getEtats().add(etat);
+		
+		List<Pointage> listPointage = new ArrayList<Pointage>();
+		listPointage.add(pointage);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(pointage.getDateDebut(), pointage.getDateFin())).thenReturn(60);
+		
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		service.majCompteurRecuperationProvisoire(listPointage);
+		
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+				pointageParent.getIdAgent(), pointageParent.getDateDebut(), 0, pointageParent.getIdPointage(), null);
+		
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+				pointage.getIdAgent(), pointage.getDateDebut(), 60, pointage.getIdPointage(), null);
+	}
+	
+	@Test 
+	public void majCompteurRecuperationProvisoire_pointageApprouveWithPointageParentNonRecupere_majCompteur() {
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage pointageParent = new Pointage();
+		pointageParent.setIdAgent(9005138);
+		pointageParent.setDateLundi(new DateTime(2015, 6, 22, 0, 0, 0).toDate());
+		pointageParent.setDateDebut(new DateTime(2015, 6, 26, 11, 0, 0).toDate());
+		pointageParent.setDateFin(new DateTime(2015, 6, 26, 16, 0, 0).toDate());
+		pointageParent.setIdPointage(1);
+		pointageParent.setType(type);
+		pointageParent.setHeureSupRecuperee(false);
+		
+		Pointage pointage = new Pointage();
+		pointage.setIdAgent(9005138);
+		pointage.setDateLundi(new DateTime(2015, 6, 22, 0, 0, 0).toDate());
+		pointage.setDateDebut(new DateTime(2015, 6, 26, 15, 0, 0).toDate());
+		pointage.setDateFin(new DateTime(2015, 6, 26, 16, 0, 0).toDate());
+		pointage.setIdPointage(1);
+		pointage.setType(type);
+		pointage.setHeureSupRecuperee(true);
+		pointage.setPointageParent(pointageParent);
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		pointage.getEtats().add(etat);
+		
+		List<Pointage> listPointage = new ArrayList<Pointage>();
+		listPointage.add(pointage);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(pointage.getDateDebut(), pointage.getDateFin())).thenReturn(60);
+		
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		service.majCompteurRecuperationProvisoire(listPointage);
+		
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(
+				pointageParent.getIdAgent(), pointageParent.getDateDebut(), 0, pointageParent.getIdPointage(), null);
+		
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+				pointage.getIdAgent(), pointage.getDateDebut(), 60, pointage.getIdPointage(), null);
 	}
 
 }
