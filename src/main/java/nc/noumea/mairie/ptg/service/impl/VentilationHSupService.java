@@ -405,17 +405,21 @@ public class VentilationHSupService implements IVentilationHSupService {
 		switch (statut) {
 		case F:
 			totalAmountOfHSRecuperees = result.getMComposeesRecup()
-					+ result.getMNormalesRecup() + result.getMsdjfRecup()
-					+ result.getMSimpleRecup() + result.getMsNuitRecup();
+				+ result.getMNormalesRecup() + result.getMsdjfRecup()
+				+ result.getMSimpleRecup() + result.getMsNuitRecup();
 			break;
 		case C:
+			totalAmountOfHSRecuperees = result.getMNormalesRecup()
+				+ result.getMSup25Recup() + result.getMSup50Recup()
+				+ result.getMsdjfRecup() + result.getMsNuitRecup();
+			break;
 		case CC:
 			// on ne prend en compte ici que les heures SUPPLEMENTAIRES
 			// les heures DJF, nuit ou 1er mai ne sont que des heures majorees
 			// qui s'ajoutent aux
 			// heures supp deja comptabilisees dans HS compl, HS 25 et HS 50
 			totalAmountOfHSRecuperees = result.getMNormalesRecup()
-					+ result.getMSup25Recup() + result.getMSup50Recup();
+				+ result.getMSup25Recup() + result.getMSup50Recup();
 			break;
 
 		}
@@ -452,7 +456,6 @@ public class VentilationHSupService implements IVentilationHSupService {
 					+ minutesNotAccountedFor);
 			break;
 		}
-
 	}
 
 	protected void generateHSupFonctionnaire(VentilHsup result, int weekBase,
