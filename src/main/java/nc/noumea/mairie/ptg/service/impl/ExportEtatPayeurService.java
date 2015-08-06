@@ -299,7 +299,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 			if (vh.getMRecuperees() != 0) {
 				int nbMinutesRecupereesTotal = calculMinutesRecuperation(vh);
-				absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(), vh.getDateLundi(), nbMinutesRecupereesTotal, vh.getMRecuperees()); 
+				if(nbMinutesRecupereesTotal > 0)
+					absWsConsumer.addRecuperationsToAgent(vh.getIdAgent(), vh.getDateLundi(), nbMinutesRecupereesTotal); 
 			}
 		}
 
@@ -475,8 +476,10 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(vh.getIdAgent()),
 				vh.getDateLundi());
 		// dans le cas des fonctionnaires et contractuels : pas de majoration
+		// et avec la nouvelle evol #17538, on alimente le compteur lors de l approbation
+		// et non plus ici
 		if (carr.getStatutCarriere().equals(AgentStatutEnum.C) || carr.getStatutCarriere().equals(AgentStatutEnum.F)) {
-			return vh.getMRecuperees() + vh.getMRappelService();
+			return 0;
 		}
 		// pour les conventions collectives
 		// on prend l heure supplementaire + la majoration

@@ -862,7 +862,7 @@ public class SaisieService implements ISaisieService {
 							&& null != ptg.getPointageParent().getIdPointage()
 							&& ptg.getPointageParent().getHeureSupRecuperee()) {
 						
-						absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getPointageParent().getDateDebut(), 0, 
+						absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getPointageParent().getDateDebut(), 0, 
 								null != ptg.getPointageParent() ? ptg.getPointageParent().getIdPointage() : null, null);
 					}
 					// depuis SIRH, le nouveau pointage est directement mis a approuve
@@ -872,7 +872,7 @@ public class SaisieService implements ISaisieService {
 						// calcul du nombre de minutes
 						Integer nombreMinutes = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
 						
-						absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, 
+						absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, 
 								ptg.getIdPointage() , null);
 					}
 					// depuis le kiosque

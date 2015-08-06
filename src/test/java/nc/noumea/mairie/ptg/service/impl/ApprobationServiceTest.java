@@ -2097,7 +2097,7 @@ public class ApprobationServiceTest {
 		
 		service.addRecuperationProvisoireToAgent(targetEtat, ptg);
 
-		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(
 				ptg.getIdAgent(), ptg.getDateDebut(), 10, ptg.getIdPointage(), null);
 		
 	}
@@ -2110,15 +2110,11 @@ public class ApprobationServiceTest {
 		RefTypePointage typePointage = new RefTypePointage();
 		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		EtatPointage etat = new EtatPointage();
-		etat.setEtat(EtatPointageEnum.APPROUVE);
-		
 		Pointage ptg = new Pointage();
 		ptg.setIdAgent(9005138);
 		ptg.setIdPointage(1);
 		ptg.setDateDebut(new Date());
 		ptg.setDateFin(new Date());
-		ptg.getEtats().add(etat);
 		ptg.setType(typePointage);
 		ptg.setHeureSupRecuperee(true);
 
@@ -2132,10 +2128,24 @@ public class ApprobationServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		
-		service.addRecuperationProvisoireToAgent(targetEtat, ptg);
+		
+		for(int i=0; i<10; i++) {
+			EtatPointage etat = new EtatPointage();
+				etat.setEtat(EtatPointageEnum.getEtatPointageEnum(i));
+			ptg.getEtats().clear();
+			ptg.getEtats().add(etat);
 
-		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
-				ptg.getIdAgent(), ptg.getDateDebut(), 0, ptg.getIdPointage(), null);
+			Mockito.reset(absWsConsumer);
+			service.addRecuperationProvisoireToAgent(targetEtat, ptg);
+			
+			if(i == 1 || i == 4 || i == 7 || i == 9 ) {
+				Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(
+					ptg.getIdAgent(), ptg.getDateDebut(), 0, ptg.getIdPointage(), null);
+			}else{
+				Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurAgentForOnePointage(
+						ptg.getIdAgent(), ptg.getDateDebut(), 0, ptg.getIdPointage(), null);
+			}
+		}
 	}
 	
 	@Test 
@@ -2170,7 +2180,7 @@ public class ApprobationServiceTest {
 		
 		service.addRecuperationProvisoireToAgent(targetEtat, ptg);
 
-		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurAgentForOnePointage(
 				Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
 	}
 	
@@ -2206,7 +2216,7 @@ public class ApprobationServiceTest {
 		
 		service.addRecuperationProvisoireToAgent(targetEtat, ptg);
 
-		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurAgentForOnePointage(
 				Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
 	}
 

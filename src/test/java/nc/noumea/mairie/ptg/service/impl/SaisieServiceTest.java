@@ -2401,7 +2401,7 @@ public class SaisieServiceTest {
 		
 		service.majCompteurRecuperationProvisoire(listPointage);
 		
-		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurAgentForOnePointage(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
 	}
 	
 	@Test 
@@ -2433,7 +2433,7 @@ public class SaisieServiceTest {
 		
 		service.majCompteurRecuperationProvisoire(listPointage);
 		
-		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurAgentForOnePointage(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
 	}
 	
 	@Test 
@@ -2465,7 +2465,7 @@ public class SaisieServiceTest {
 		
 		service.majCompteurRecuperationProvisoire(listPointage);
 		
-		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurAgentForOnePointage(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
 	}
 	
 	@Test 
@@ -2502,7 +2502,7 @@ public class SaisieServiceTest {
 		
 		service.majCompteurRecuperationProvisoire(listPointage);
 		
-		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(
 				pointage.getIdAgent(), pointage.getDateDebut(), 60, pointage.getIdPointage(), null);
 	}
 
@@ -2550,10 +2550,10 @@ public class SaisieServiceTest {
 		
 		service.majCompteurRecuperationProvisoire(listPointage);
 		
-		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(
 				pointageParent.getIdAgent(), pointageParent.getDateDebut(), 0, pointageParent.getIdPointage(), null);
 		
-		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(
 				pointage.getIdAgent(), pointage.getDateDebut(), 60, pointage.getIdPointage(), null);
 	}
 	
@@ -2601,10 +2601,10 @@ public class SaisieServiceTest {
 		
 		service.majCompteurRecuperationProvisoire(listPointage);
 		
-		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurProvisoireAgent(
+		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurAgentForOnePointage(
 				pointageParent.getIdAgent(), pointageParent.getDateDebut(), 0, pointageParent.getIdPointage(), null);
 		
-		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurProvisoireAgent(
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(
 				pointage.getIdAgent(), pointage.getDateDebut(), 60, pointage.getIdPointage(), null);
 	}
 

@@ -906,8 +906,10 @@ public class ExportEtatPayeurServiceTest {
 		assertEquals(EtatPointageEnum.JOURNALISE, p2.getEtat());
 	}
 
+
+	// #17538
 	@Test
-	public void exportEtatsPayeur_CallEtatPayeursAndSendRecupsToAbs() throws WorkflowInvalidStateException {
+	public void exportEtatsPayeur_CallEtatPayeursAndNotSendRecupsToAbs() throws WorkflowInvalidStateException {
 
 		// Given
 		Integer idAgentExporting = 9008987;
@@ -970,7 +972,7 @@ public class ExportEtatPayeurServiceTest {
 
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(EtatPayeur.class));
-		Mockito.verify(ac, Mockito.times(1)).addRecuperationsToAgent(9009999, vh2.getDateLundi(), 90, 90);
+		Mockito.verify(ac, Mockito.never()).addRecuperationsToAgent(9009999, vh2.getDateLundi(), 90);
 	}
 
 	@Test
@@ -1234,7 +1236,7 @@ public class ExportEtatPayeurServiceTest {
 		service.exportEtatsPayeur(99);
 
 		// Then
-		Mockito.verify(ac, Mockito.never()).addRecuperationsToAgent(9009999, null, 90, 0);
+		Mockito.verify(ac, Mockito.never()).addRecuperationsToAgent(9009999, null, 90);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -1456,6 +1458,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.verify(pS, Mockito.times(1)).changeStateToExportEtatsPayeurDone(TypeChainePaieEnum.SCV);
 	}
 
+	// #17538
 	@Test
 	public void calculMinutesRecuperation_fonctionnaire() {
 
@@ -1480,9 +1483,10 @@ public class ExportEtatPayeurServiceTest {
 
 		int result = service.calculMinutesRecuperation(vh);
 
-		assertEquals(result, 100);
+		assertEquals(result, 0);
 	}
 
+	// #17538
 	@Test
 	public void calculMinutesRecuperation_contractuel() {
 
@@ -1507,9 +1511,10 @@ public class ExportEtatPayeurServiceTest {
 
 		int result = service.calculMinutesRecuperation(vh);
 
-		assertEquals(result, 100);
+		assertEquals(result, 0);
 	}
 
+	// #17538
 	@Test
 	public void calculMinutesRecuperation_fonctionnaire_avec_HSRappelService() {
 
@@ -1535,9 +1540,10 @@ public class ExportEtatPayeurServiceTest {
 
 		int result = service.calculMinutesRecuperation(vh);
 
-		assertEquals(result, 150);
+		assertEquals(result, 0);
 	}
 
+	// #17538
 	@Test
 	public void calculMinutesRecuperation_contractuel_avec_HSRappelService() {
 
@@ -1563,7 +1569,7 @@ public class ExportEtatPayeurServiceTest {
 
 		int result = service.calculMinutesRecuperation(vh);
 
-		assertEquals(result, 170);
+		assertEquals(result, 0);
 	}
 
 	@Test

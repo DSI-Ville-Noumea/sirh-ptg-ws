@@ -28,7 +28,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	private String sirhAbsWsBaseUrl;
 
 	private static final String addRecuperationsUrl = "recuperations/addForPTG";
-	private static final String addRecuperationsProvisoireUrl = "recuperations/addProvisoireForPTG";
+	private static final String addRecuperationsForPointagePTGUrl = "recuperations/addForPointagePTG";
 	private static final String addReposCompensateursUrl = "reposcomps/addForPTG";
 	private static final String checkRecuperationsUrl = "recuperations/checkRecuperations";
 	private static final String checkReposCompensateursUrl = "reposcomps/checkReposCompensateurs";
@@ -39,7 +39,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	private static final String getTypeAbsenceUrl = "filtres/getTypesSaisi";
 
 	@Override
-	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes, Integer minutesNonMajorees) { 
+	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes) { 
 
 		logger.info("Updating recuperations for Agent [{}] Date Monday [{}] with value [{}]...", idAgent, dateLundi,
 				minutes);
@@ -53,7 +53,6 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		parameters.put("dateLundi", sdf.format(dateLundi));
 		parameters.put("minutes", String.valueOf(minutes));
-		parameters.put("minutesNonMajorees", String.valueOf(minutesNonMajorees));
 
 		ClientResponse res = createAndFirePostRequest(parameters, url);
 
@@ -61,12 +60,12 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	}
 	
 	@Override
-	public void addRecuperationsToCompteurProvisoireAgent(Integer idAgent, Date date, Integer minutes, Integer idPointage, Integer idPointageParent) { 
+	public void addRecuperationsToCompteurAgentForOnePointage(Integer idAgent, Date date, Integer minutes, Integer idPointage, Integer idPointageParent) { 
 
-		logger.info("Updating recuperations for Agent [{}] Date [{}] with value [{}]...", idAgent, date,
-				minutes);
+		logger.info("Updating recuperations for Agent [{}] Date [{}] Pointage [{}] with value [{}]...", idAgent, date,
+				minutes, idPointage);
 
-		String url = String.format(sirhAbsWsBaseUrl + addRecuperationsProvisoireUrl);
+		String url = String.format(sirhAbsWsBaseUrl + addRecuperationsForPointagePTGUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 

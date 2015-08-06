@@ -563,16 +563,24 @@ public class ApprobationService implements IApprobationService {
 			if(EtatPointageEnum.APPROUVE.equals(targetEtat)
 					&& (EtatPointageEnum.SAISI.equals(currentEtat)
 							|| EtatPointageEnum.REFUSE.equals(currentEtat)
-							|| EtatPointageEnum.REJETE.equals(currentEtat))) {
-				absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, ptg.getIdPointage(), 
+							|| EtatPointageEnum.REJETE.equals(currentEtat))
+							// cas special pour la reprise de donnees lors de la MEP
+							// le jour de la MEP : il va falloir reapprouver les pointages approuves afin de crediter les compteurs
+							// une verification est faite cote ABS sur l ID Pointage
+							|| EtatPointageEnum.APPROUVE.equals(currentEtat)) {
+				absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, ptg.getIdPointage(), 
 						null != ptg.getPointageParent() ? ptg.getPointageParent().getIdPointage() : null);
 			}
 			// dans le cas ou le pointage est refuse, rejete
 			if((EtatPointageEnum.REFUSE.equals(targetEtat)
 					|| EtatPointageEnum.REJETE.equals(targetEtat)
 					|| EtatPointageEnum.SAISI.equals(targetEtat))
-					&& EtatPointageEnum.APPROUVE.equals(currentEtat)) {
-				absWsConsumer.addRecuperationsToCompteurProvisoireAgent(ptg.getIdAgent(), ptg.getDateDebut(), 0, ptg.getIdPointage(), 
+					&& (EtatPointageEnum.APPROUVE.equals(currentEtat)
+//							|| EtatPointageEnum.VENTILE.equals(currentEtat)
+//							|| EtatPointageEnum.VALIDE.equals(currentEtat)
+//							|| EtatPointageEnum.JOURNALISE.equals(currentEtat))
+							)) {
+				absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), 0, ptg.getIdPointage(), 
 						null != ptg.getPointageParent() ? ptg.getPointageParent().getIdPointage() : null);
 			}
 		}
