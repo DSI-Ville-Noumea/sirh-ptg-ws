@@ -307,7 +307,7 @@ public class ApprobationService implements IApprobationService {
 					continue;
 			}
 			
-			addRecuperationProvisoireToAgent(targetEtat, ptg);
+			addRecuperationToAgent(targetEtat, ptg);
 
 			// at last, create and add the new EtatPointage
 			EtatPointage etat = new EtatPointage();
@@ -411,7 +411,7 @@ public class ApprobationService implements IApprobationService {
 				dateEtat = helperService.getCurrentDate();
 			}
 			
-			addRecuperationProvisoireToAgent(targetEtat, ptg);
+			addRecuperationToAgent(targetEtat, ptg);
 
 			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat, ptg, dateEtat);
 			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(idAgent, dto, currentEtat, ptg,
@@ -549,7 +549,7 @@ public class ApprobationService implements IApprobationService {
 	}
 	
 	@Override
-	public void addRecuperationProvisoireToAgent(EtatPointageEnum targetEtat, Pointage ptg) {
+	public void addRecuperationToAgent(EtatPointageEnum targetEtat, Pointage ptg) {
 		
 		// si le pointage est une heure sup en recuperation
 		if(RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum())
@@ -557,6 +557,10 @@ public class ApprobationService implements IApprobationService {
 			
 			// calcul du nombre de minutes
 			Integer nombreMinutes = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
+			if(ptg.getHeureSupRappelService()) {
+				nombreMinutes += nombreMinutes;
+			}
+			
 			EtatPointageEnum currentEtat = ptg.getLatestEtatPointage().getEtat();
 			
 			// dans le cas ou le pointage est approuve
@@ -576,10 +580,9 @@ public class ApprobationService implements IApprobationService {
 					|| EtatPointageEnum.REJETE.equals(targetEtat)
 					|| EtatPointageEnum.SAISI.equals(targetEtat))
 					&& (EtatPointageEnum.APPROUVE.equals(currentEtat)
-//							|| EtatPointageEnum.VENTILE.equals(currentEtat)
-//							|| EtatPointageEnum.VALIDE.equals(currentEtat)
-//							|| EtatPointageEnum.JOURNALISE.equals(currentEtat))
-							)) {
+							|| EtatPointageEnum.VENTILE.equals(currentEtat)
+							|| EtatPointageEnum.VALIDE.equals(currentEtat)
+							|| EtatPointageEnum.JOURNALISE.equals(currentEtat))) {
 				absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), 0, ptg.getIdPointage(), 
 						null != ptg.getPointageParent() ? ptg.getPointageParent().getIdPointage() : null);
 			}

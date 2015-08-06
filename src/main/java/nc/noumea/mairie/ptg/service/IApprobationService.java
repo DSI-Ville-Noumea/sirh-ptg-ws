@@ -28,6 +28,6 @@ public interface IApprobationService {
 
 	List<AgentDto> listerTousAgentsPointages();
 
-	void addRecuperationProvisoireToAgent(EtatPointageEnum targetEtat,
+	void addRecuperationToAgent(EtatPointageEnum targetEtat,
 			Pointage ptg);
 }
