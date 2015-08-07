@@ -912,6 +912,150 @@ public class VentilationRepositoryTest {
 		ptgEntityManager.clear();
 	}
 
+	// bug #17553 en cas de rappel sur un mois precedent
+	// => s assurer que l on prend que le dernier resultat de pointage calcule
+	// pour eviter de comptabiliser deux fois les primes
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListPointagesCalculesPrimeForVentilation_withDoublon() {
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2015, 8, 4).toDate());
+		vd.setPaye(false);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+		ptgEntityManager.persist(rtp);
+
+		RefPrime rp = new RefPrime();
+		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+		rp.setCalculee(true);
+		rp.setDescription(null);
+		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+		rp.setNoRubr(7711);
+		rp.setStatut(AgentStatutEnum.F);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		ptgEntityManager.persist(rp);
+
+		RefPrime rpPanier = new RefPrime();
+		rpPanier.setAide("Prime Panier");
+		rpPanier.setCalculee(true);
+		rpPanier.setDescription(null);
+		rpPanier.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+		rpPanier.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
+		rpPanier.setNoRubr(7713);
+		rpPanier.setStatut(AgentStatutEnum.F);
+		rpPanier.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rpPanier);
+
+		PointageCalcule pc = new PointageCalcule();
+		pc.setDateDebut(new LocalDate(2015, 6, 1).toDate());
+		pc.setDateFin(null);
+		pc.setDateLundi(new LocalDate(2015, 6, 1).toDate());
+		pc.setEtat(EtatPointageEnum.VALIDE);
+		pc.setIdAgent(9004377);
+		pc.setLastVentilDate(vd);
+		pc.setQuantite(240);
+		pc.setRefPrime(rp);
+		pc.setType(rtp);
+		ptgEntityManager.persist(pc);
+
+		PointageCalcule pc2 = new PointageCalcule();
+		pc2.setDateDebut(new LocalDate(2015, 6, 1).toDate());
+		pc2.setDateFin(null);
+		pc2.setDateLundi(new LocalDate(2015, 6, 1).toDate());
+		pc2.setEtat(EtatPointageEnum.VALIDE);
+		pc2.setIdAgent(9004377);
+		pc2.setLastVentilDate(vd);
+		pc2.setQuantite(240);
+		pc2.setRefPrime(rp);
+		pc2.setType(rtp);
+		ptgEntityManager.persist(pc2);
+
+		PointageCalcule pc3 = new PointageCalcule();
+		pc3.setDateDebut(new LocalDate(2015, 6, 2).toDate());
+		pc3.setDateFin(null);
+		pc3.setDateLundi(new LocalDate(2015, 6, 1).toDate());
+		pc3.setEtat(EtatPointageEnum.VALIDE);
+		pc3.setIdAgent(9004377);
+		pc3.setLastVentilDate(vd);
+		pc3.setQuantite(240);
+		pc3.setRefPrime(rp);
+		pc3.setType(rtp);
+		ptgEntityManager.persist(pc3);
+
+		PointageCalcule pc4 = new PointageCalcule();
+		pc4.setDateDebut(new LocalDate(2015, 6, 2).toDate());
+		pc4.setDateFin(null);
+		pc4.setDateLundi(new LocalDate(2015, 6, 1).toDate());
+		pc4.setEtat(EtatPointageEnum.VALIDE);
+		pc4.setIdAgent(9004377);
+		pc4.setLastVentilDate(vd);
+		pc4.setQuantite(240);
+		pc4.setRefPrime(rp);
+		pc4.setType(rtp);
+		ptgEntityManager.persist(pc4);
+
+		PointageCalcule pc5 = new PointageCalcule();
+		pc5.setDateDebut(new LocalDate(2015, 6, 2).toDate());
+		pc5.setDateFin(null);
+		pc5.setDateLundi(new LocalDate(2015, 6, 1).toDate());
+		pc5.setEtat(EtatPointageEnum.VALIDE);
+		pc5.setIdAgent(9004377);
+		pc5.setLastVentilDate(vd);
+		pc5.setQuantite(1);
+		pc5.setRefPrime(rpPanier);
+		pc5.setType(rtp);
+		ptgEntityManager.persist(pc5);
+
+		PointageCalcule pc6 = new PointageCalcule();
+		pc6.setDateDebut(new LocalDate(2015, 6, 2).toDate());
+		pc6.setDateFin(null);
+		pc6.setDateLundi(new LocalDate(2015, 6, 1).toDate());
+		pc6.setEtat(EtatPointageEnum.VALIDE);
+		pc6.setIdAgent(9004377);
+		pc6.setLastVentilDate(vd);
+		pc6.setQuantite(1);
+		pc6.setRefPrime(rpPanier);
+		pc6.setType(rtp);
+		ptgEntityManager.persist(pc6);
+
+		PointageCalcule pc7 = new PointageCalcule();
+		pc7.setDateDebut(new LocalDate(2015, 6, 4).toDate());
+		pc7.setDateFin(null);
+		pc7.setDateLundi(new LocalDate(2015, 6, 1).toDate());
+		pc7.setEtat(EtatPointageEnum.VALIDE);
+		pc7.setIdAgent(9004377);
+		pc7.setLastVentilDate(vd);
+		pc7.setQuantite(1);
+		pc7.setRefPrime(rpPanier);
+		pc7.setType(rtp);
+		ptgEntityManager.persist(pc7);
+
+		PointageCalcule pc8 = new PointageCalcule();
+		pc8.setDateDebut(new LocalDate(2015, 6, 4).toDate());
+		pc8.setDateFin(null);
+		pc8.setDateLundi(new LocalDate(2015, 6, 1).toDate());
+		pc8.setEtat(EtatPointageEnum.VALIDE);
+		pc8.setIdAgent(9004377);
+		pc8.setLastVentilDate(vd);
+		pc8.setQuantite(240);
+		pc8.setRefPrime(rp);
+		pc8.setType(rtp);
+		ptgEntityManager.persist(pc8);
+
+		List<PointageCalcule> result = repository.getListPointagesCalculesPrimeForVentilation(new Integer(9004377),
+				new LocalDate(2015, 6, 2).toDate());
+
+		assertEquals(5, result.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void getLatestVentilDaten() {

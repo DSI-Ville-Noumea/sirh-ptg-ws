@@ -330,6 +330,7 @@ public class VentilationRepository implements IVentilationRepository {
 		return result;
 	}
 
+	// bug #17553
 	@Override
 	public List<PointageCalcule> getListPointagesCalculesPrimeForVentilation(Integer idAgent, Date dateDebutMois) {
 
@@ -338,6 +339,13 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("FROM PTG_POINTAGE_CALCULE pc ");
 		sb.append("WHERE pc.ID_AGENT = :idAgent ");
 		sb.append("AND extract(MONTH FROM pc.DATE_DEBUT) = :month ");
+		sb.append("AND pc.ID_POINTAGE_CALCULE in ( ");
+		
+		sb.append("SELECT max(pcmax.id_pointage_calcule) AS maxIdPointageCalcule ");
+		sb.append("FROM PTG_POINTAGE_CALCULE pcmax ");
+		sb.append("WHERE pcmax.ID_AGENT = :idAgent ");
+		sb.append("AND extract(MONTH FROM pcmax.DATE_DEBUT) = :month ");
+		sb.append("GROUP BY pcmax.DATE_DEBUT, pcmax.ID_REF_PRIME) ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), PointageCalcule.class);
 		q.setParameter("idAgent", idAgent);
