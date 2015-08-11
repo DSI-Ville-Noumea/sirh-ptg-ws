@@ -227,7 +227,7 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 			listeSouService.add(idServiceADS);
 		}
-		
+
 		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
 					helperService.getCurrentDate());
@@ -469,19 +469,19 @@ public class AccessRightsService implements IAccessRightsService {
 				logger.warn("L'agent {} n'existe pas.", ag.getIdAgent());
 				continue;
 			}
-			
+
 			DroitsAgent newDroitAgent = accessRightsRepository.getDroitsAgent(dto.getIdAgent());
 
 			if (newDroitAgent == null) {
 				newDroitAgent = new DroitsAgent();
 				newDroitAgent.setIdAgent(dto.getIdAgent());
 			}
-			
+
 			newDroitAgent.setIdAgent(ag.getIdAgent());
 			newDroitAgent.getDroits().add(droitApprobateur);
 			newDroitAgent.setIdServiceADS(dto.getIdServiceADS());
 			EntiteDto serv = adsWsConsumer.getEntiteWithChildrenByIdEntite(dto.getIdServiceADS());
-			newDroitAgent.setCodeService(serv.getCodeServi());
+			newDroitAgent.setCodeService(serv == null ? null : serv.getCodeServi());
 			newDroitAgent.setLibelleService(dto.getService());
 
 			newDroitAgent.setDateModification(helperService.getCurrentDate());
@@ -555,8 +555,8 @@ public class AccessRightsService implements IAccessRightsService {
 
 			idsServices.add(da.getIdServiceADS());
 			EntiteDto entiteDto = new EntiteDto();
-				entiteDto.setIdEntite(da.getIdServiceADS());
-				entiteDto.setLabel(da.getLibelleService());
+			entiteDto.setIdEntite(da.getIdServiceADS());
+			entiteDto.setLabel(da.getLibelleService());
 			result.add(entiteDto);
 		}
 

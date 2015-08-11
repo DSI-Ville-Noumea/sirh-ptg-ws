@@ -24,6 +24,7 @@ import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
@@ -631,10 +632,14 @@ public class AccessRightsServiceTest {
 		ISirhWSConsumer ws = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(ws.getAgentService(9008765, currentDate)).thenReturn(agDto);
 
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getEntiteWithChildrenByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", ws);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 
 		// When
 		service.setAgentsToApprove(777, agsDto);
@@ -692,10 +697,16 @@ public class AccessRightsServiceTest {
 		ISirhWSConsumer ws = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(ws.getAgentService(9008765, currentDate)).thenReturn(agDto);
 
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getEntiteWithChildrenByIdEntite(agDto.getIdServiceADS())).thenReturn(null);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", ws);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
+		
+		
 
 		// When
 		service.setAgentsToApprove(777, agsDto);
