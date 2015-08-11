@@ -59,12 +59,11 @@ public class DroitsAgent {
 	@Column(name = "version")
 	private Integer version;
 
-	public DroitsAgent(Integer idAgent, Integer idServiceADS, String libelleService, String codeService) {
+	public DroitsAgent(Integer idAgent, Integer idServiceADS, String libelleService) {
 		super();
 		this.idAgent = idAgent;
 		this.libelleService = libelleService;
 		this.idServiceADS = idServiceADS;
-		this.codeService = codeService;
 	}
 
 	public Integer getIdDroitsAgent() {
