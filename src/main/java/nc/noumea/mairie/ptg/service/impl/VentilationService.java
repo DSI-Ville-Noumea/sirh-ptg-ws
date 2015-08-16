@@ -297,14 +297,17 @@ public class VentilationService implements IVentilationService {
 		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod,
 				dateLundi, listPointageRejetesVentilesOrderedByDateAsc);
 
-		// on gere les primes d epandage qui comptabiliseront des heures supp.
-		List<Pointage> agentsPointagePrimeForPeriod = ventilationRepository.getListPointagesPrimeByWeekForVentilation(idAgent,
-				fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
+		// ce code ne sert plus voir #13816
+		// on ne supprime pas pour autant le code, car ils sont de nouveau en renegociation avec les syndicats
 		
-		List<Pointage> filteredAgentsPointagePrimeForPeriod = pointageService.filterOldPointagesAndEtatFromList(
-				agentsPointagePrimeForPeriod, null, null);
-		hSupsVentilees = ventilationHSupService.processHeuresSupEpandageForSIPRES(
-				hSupsVentilees, idAgent, dateLundi, filteredAgentsPointagePrimeForPeriod, carr.getStatutCarriere());
+		// on gere les primes d epandage qui comptabiliseront des heures supp.
+//		List<Pointage> agentsPointagePrimeForPeriod = ventilationRepository.getListPointagesPrimeByWeekForVentilation(idAgent,
+//				fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
+//		
+//		List<Pointage> filteredAgentsPointagePrimeForPeriod = pointageService.filterOldPointagesAndEtatFromList(
+//				agentsPointagePrimeForPeriod, null, null);
+//		hSupsVentilees = ventilationHSupService.processHeuresSupEpandageForSIPRES(
+//				hSupsVentilees, idAgent, dateLundi, filteredAgentsPointagePrimeForPeriod, carr.getStatutCarriere());
 		
 		// persisting all the generated entities linking them to the current ventil date
 		if (hSupsVentilees != null) {
