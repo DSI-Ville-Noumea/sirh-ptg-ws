@@ -1599,6 +1599,7 @@ public class ExportEtatPayeurServiceTest {
 		assertEquals(result, 0);
 	}
 
+	// #17538 : nouvelle gestion des compteurs de RECUP
 	@Test
 	public void calculMinutesRecuperation_convColl_cas2() {
 
@@ -1629,8 +1630,8 @@ public class ExportEtatPayeurServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		int result = service.calculMinutesRecuperation(vh);
-
-		double calcul = 10 + 20 * 1.25 + 30 * 1.5 + 40 * 0.75 + 50 * 1 + 60 * 0.75;
+		// #17538 : nouvelle gestion des compteurs de RECUP
+		double calcul = 0 + 20 * 0.25 + 30 * 0.5 + 40 * 0.75 + 50 * 1 + 60 * 0.75;
 		assertEquals(result, calcul, 0);
 	}
 
