@@ -204,7 +204,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		item.getAgent().setNomatr(ag.getNomatr());
 
 		AgentWithServiceDto agDto = sirhWsConsumer.getAgentService(idAgent, helperService.getCurrentDate());
-		item.getAgent().setSigleService(agDto.getSigleService());
+		// #17897 dans le cas ou les agents n ont plus d affectation
+		item.getAgent().setSigleService(null != agDto ? agDto.getSigleService() : "");
 	}
 
 	/**
@@ -395,8 +396,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		try {
 			etatPayeurReport.downloadEtatPayeurByStatut(statut, ep);
 		} catch (Exception e) {
-			logger.error("Un erreur est survenue dans la generation du rapport des etats du payeur pour le statut "
+			logger.error("Une erreur est survenue dans la generation du rapport des etats du payeur pour le statut "
 					+ statut.toString());
+			throw e;
 		}
 		logger.info("Downloading report [{}] done.", ep.getFichier());
 
