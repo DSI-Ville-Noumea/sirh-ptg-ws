@@ -159,6 +159,16 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("AND (p.ID_TYPE_POINTAGE = :typePointageHSUP OR p.ID_TYPE_POINTAGE = :typePointageABS) ");
 		sb.append("AND ((ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve) ");
 		sb.append("OR ep.etat IN (:ventile, :valide, :journalise, :refuse, :rejete)) ");
+		// bug #18186
+		sb.append("AND p.ID_POINTAGE not in (  ");
+			sb.append("select enfant.ID_POINTAGE_PARENT ");
+			sb.append("from PTG_POINTAGE enfant ");
+			sb.append("where enfant.ID_AGENT = :idAgent ");
+			sb.append("AND (enfant.ID_TYPE_POINTAGE = :typePointageHSUP OR enfant.ID_TYPE_POINTAGE = :typePointageABS) ");
+			sb.append("AND enfant.DATE_LUNDI = :dateLundi ");
+			sb.append("AND enfant.ID_POINTAGE_PARENT is not null ");
+		sb.append(") ");
+
 		sb.append("ORDER BY id_pointage DESC ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
