@@ -177,21 +177,21 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent, String pCodeService) {
+	public List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent, Integer idServiceADS) {
 		// #14694 modification des requetes pour la gestion des droits
 		String sqlQuery = "SELECT da from DroitsAgent da " + "inner join da.droits d " + "where d.approbateur is true "
 				+ " and d.idAgent = :idAgent ";
 
-		if (null != pCodeService) {
-			sqlQuery += "and da.codeService = :codeService ";
+		if (null != idServiceADS) {
+			sqlQuery += "and da.idServiceADS = :idServiceADS ";
 		}
 		sqlQuery += "group by da ";
 
 		TypedQuery<DroitsAgent> q = ptgEntityManager.createQuery(sqlQuery, DroitsAgent.class);
 
 		q.setParameter("idAgent", idAgent);
-		if (null != pCodeService) {
-			q.setParameter("codeService", pCodeService);
+		if (null != idServiceADS) {
+			q.setParameter("idServiceADS", idServiceADS);
 		}
 
 		return q.getResultList();
@@ -203,16 +203,16 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer pIdAgent, String pCodeService) {
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer pIdAgent, Integer idServiceADS) {
 
 		// #14325 modification des requetes pour la gestion des droits
 		TypedQuery<DroitsAgent> q = ptgEntityManager.createQuery(
-				pCodeService == null ? getListOfAgentsToInputOrApproveWithoutService()
+				idServiceADS == null ? getListOfAgentsToInputOrApproveWithoutService()
 						: getListOfAgentsToInputOrApproveByService(), DroitsAgent.class);
 		q.setParameter("idAgent", pIdAgent);
 
-		if (null != pCodeService) {
-			q.setParameter("codeService", pCodeService);
+		if (null != idServiceADS) {
+			q.setParameter("idServiceADS", idServiceADS);
 		}
 
 		List<DroitsAgent> result = q.getResultList();
@@ -224,7 +224,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public List<DroitsAgent> getListOfAgentsToInput(Integer idApprobateur, Integer pIdAgent) {
 
-		String sqlQuery = "SELECT  distinct(da.id_Agent), da.code_Service, da.libelle_Service "
+		String sqlQuery = "SELECT  distinct(da.id_Agent), da.id_service_ads, da.libelle_Service "
 				+ "from PTG_DROITS_AGENT da "
 				+ "inner join PTG_DROIT_DROITS_AGENT dda on da.id_droits_agent = dda.id_droits_agent "
 				+ "inner join PTG_DROIT d on dda.id_droit = d.id_droit "
@@ -241,10 +241,10 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 
 		for (Object[] r : l) {
 			Integer idAgent = (Integer) r[0];
-			String codeService = (String) r[1];
+			Integer idServiceADS = (Integer) r[1];
 			String libelleService = (String) r[2];
 
-			DroitsAgent da = new DroitsAgent(idAgent, codeService, libelleService);
+			DroitsAgent da = new DroitsAgent(idAgent, idServiceADS, libelleService);
 			result.add(da);
 		}
 
@@ -260,8 +260,18 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	private String getListOfAgentsToInputOrApproveByService() {
 
 		return "SELECT da from DroitsAgent da " + "inner join da.droits d "
-				+ "where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.codeService = :codeService "
+				+ "where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.idServiceADS = :idServiceADS "
 				+ "group by da ";
+	}
+
+	@Override
+	public DroitsAgent getDroitsAgent(Integer idAgent) {
+
+		TypedQuery<DroitsAgent> q = ptgEntityManager.createNamedQuery("getDroitsAgent", DroitsAgent.class);
+		q.setParameter("idAgent", idAgent);
+		List<DroitsAgent> ds = q.getResultList();
+
+		return ds.size() == 0 ? null : ds.get(0);
 	}
 
 }

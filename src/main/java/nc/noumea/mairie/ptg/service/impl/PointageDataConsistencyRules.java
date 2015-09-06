@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
@@ -16,7 +17,6 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
@@ -220,7 +220,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
 
 		// cas de la DPM #11622
-		SirhWsServiceDto service = sirhWsConsumer.getAgentDirection(idAgent, dateLundi);
+		EntiteDto service = sirhWsConsumer.getAgentDirection(idAgent, dateLundi);
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {

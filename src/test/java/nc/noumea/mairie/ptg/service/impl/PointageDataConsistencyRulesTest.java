@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.domain.Spadmn;
@@ -20,7 +21,6 @@ import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
@@ -805,7 +805,7 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -845,7 +845,7 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("DPM");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -885,7 +885,7 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -925,7 +925,7 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -964,7 +964,7 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -1004,7 +1004,7 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
-		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("DPM");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);

@@ -32,6 +32,13 @@
 		jmxEnabled="true" username="opensirh" password="***REMOVED***"
 		driverClassName="com.ibm.as400.access.AS400JDBCDriver" url="jdbc:as400://robinnw;naming=system;libraries=MAIRIE,SYSIBM;" />
 
+	<!-- -->
+	<!-- WS DE ADS -->
+	<!-- -->
+	<Environment name="ADS_WS_URL" type="java.lang.String"
+		description="ADS WS endpoint url" value="http://svi-tomcat0:8077/"
+		override="false" />
+	
 	<!--  -->
 	<!-- WS SIRH -->
 	<!--  -->	

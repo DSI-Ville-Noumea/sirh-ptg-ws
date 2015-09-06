@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
@@ -40,7 +41,6 @@ import nc.noumea.mairie.ptg.dto.PointageDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.PrimeDtoKiosque;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
@@ -245,7 +245,7 @@ public class SaisieServiceTest {
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
 
-		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("DPM");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -942,7 +942,7 @@ public class SaisieServiceTest {
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
 
-		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -1965,7 +1965,7 @@ public class SaisieServiceTest {
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
 
-		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
@@ -2345,7 +2345,7 @@ public class SaisieServiceTest {
 		IMairieRepository sR = Mockito.mock(IMairieRepository.class);
 		Mockito.when(sR.getAgentCurrentCarriere(7654, lundi)).thenReturn(carr);
 
-		SirhWsServiceDto dtoService = new SirhWsServiceDto();
+		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("TITI");
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);

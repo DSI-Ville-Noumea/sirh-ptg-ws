@@ -6,7 +6,7 @@ import flexjson.JSONDeserializer;
 public class AgentWithServiceDto extends AgentDto implements IJSONSerialize, IJSONDeserialize<AgentWithServiceDto> {
 
 	private String service;
-	private String codeService;
+	private Integer idServiceADS;
 	private String statut;
 	private String sigleService;
 
@@ -25,13 +25,13 @@ public class AgentWithServiceDto extends AgentDto implements IJSONSerialize, IJS
 	public void setService(String service) {
 		this.service = service;
 	}
-
-	public String getCodeService() {
-		return codeService;
+	
+	public Integer getIdServiceADS() {
+		return idServiceADS;
 	}
 
-	public void setCodeService(String codeService) {
-		this.codeService = codeService;
+	public void setIdServiceADS(Integer idServiceADS) {
+		this.idServiceADS = idServiceADS;
 	}
 
 	public String getStatut() {

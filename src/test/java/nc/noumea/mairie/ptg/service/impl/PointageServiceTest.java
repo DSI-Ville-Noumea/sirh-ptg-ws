@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.Spbarem;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.SpcarrId;
@@ -32,7 +33,6 @@ import nc.noumea.mairie.ptg.dto.MotifHeureSupDto;
 import nc.noumea.mairie.ptg.dto.PrimeDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.dto.SirhWsServiceDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
@@ -69,11 +69,10 @@ public class PointageServiceTest {
 		// Given
 		Integer idAgent = 9007654;
 
-		SirhWsServiceDto siserv = new SirhWsServiceDto();
-		siserv.setService("SERVICE");
-		siserv.setServiceLibelle("LIB SERVICE");
-		siserv.setSigle("SIGLE");
-		siserv.setSigleParent("SIGLE PARENT");
+		EntiteDto entite = new EntiteDto();
+		entite.setIdEntite(66);
+		entite.setLabel("LIB SERVICE");
+		entite.setSigle("SIGLE");
 
 		Spbarem spbarem = new Spbarem();
 		spbarem.setIna(315);
@@ -106,7 +105,7 @@ public class PointageServiceTest {
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
 		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
@@ -159,11 +158,10 @@ public class PointageServiceTest {
 		// Given
 		Integer idAgent = 9007654;
 
-		SirhWsServiceDto siserv = new SirhWsServiceDto();
-		siserv.setService("SERVICE");
-		siserv.setServiceLibelle("LIB SERVICE");
-		siserv.setSigle("SIGLE");
-		siserv.setSigleParent("SIGLE PARENT");
+		EntiteDto entite = new EntiteDto();
+		entite.setIdEntite(66);
+		entite.setLabel("LIB SERVICE");
+		entite.setSigle("SIGLE");
 
 		Spbarem spbarem = new Spbarem();
 		spbarem.setIna(316);
@@ -196,7 +194,7 @@ public class PointageServiceTest {
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
 		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
@@ -1100,11 +1098,10 @@ public class PointageServiceTest {
 		// Given
 		Integer idAgent = 9007654;
 
-		SirhWsServiceDto siserv = new SirhWsServiceDto();
-		siserv.setService("SERVICE");
-		siserv.setServiceLibelle("LIB SERVICE");
-		siserv.setSigle("SIGLE");
-		siserv.setSigleParent("SIGLE PARENT");
+		EntiteDto entite = new EntiteDto();
+		entite.setIdEntite(66);
+		entite.setLabel("LIB SERVICE");
+		entite.setSigle("SIGLE");
 
 		Spbarem spbarem = new Spbarem();
 		spbarem.setIna(315);
@@ -1138,7 +1135,7 @@ public class PointageServiceTest {
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
 		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
@@ -1191,11 +1188,10 @@ public class PointageServiceTest {
 		// Given
 		Integer idAgent = 9007654;
 
-		SirhWsServiceDto siserv = new SirhWsServiceDto();
-		siserv.setService("SERVICE");
-		siserv.setServiceLibelle("LIB SERVICE");
-		siserv.setSigle("SIGLE");
-		siserv.setSigleParent("SIGLE PARENT");
+		EntiteDto entite = new EntiteDto();
+		entite.setIdEntite(66);
+		entite.setLabel("LIB SERVICE");
+		entite.setSigle("SIGLE");
 
 		Spbarem spbarem = new Spbarem();
 		spbarem.setIna(316);
@@ -1229,7 +1225,7 @@ public class PointageServiceTest {
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
 		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
@@ -1282,11 +1278,10 @@ public class PointageServiceTest {
 		// Given
 		Integer idAgent = 9007654;
 
-		SirhWsServiceDto siserv = new SirhWsServiceDto();
-		siserv.setService("SERVICE");
-		siserv.setServiceLibelle("LIB SERVICE");
-		siserv.setSigle("SIGLE");
-		siserv.setSigleParent("SIGLE PARENT");
+		EntiteDto entite = new EntiteDto();
+		entite.setIdEntite(66);
+		entite.setLabel("LIB SERVICE");
+		entite.setSigle("SIGLE");
 
 		Spbarem spbarem = new Spbarem();
 		spbarem.setIna(0);
@@ -1320,7 +1315,7 @@ public class PointageServiceTest {
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(siserv);
+		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
 		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);

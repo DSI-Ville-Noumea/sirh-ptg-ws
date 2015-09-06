@@ -107,13 +107,13 @@ public class AccessRightsController {
 	@RequestMapping(value = "approbateurs", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> listApprobateurs(@RequestParam(value = "idAgent", required = false) Integer idAgent,
-			@RequestParam(value = "codeService", required = false) String codeService) {
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
 		logger.debug(
-				"entered GET [droits/approbateurs] => listApprobateurs with parameter idAgent = {} and codeService = {} --> for SIRH ",
-				idAgent, codeService);
+				"entered GET [droits/approbateurs] => listApprobateurs with parameter idAgent = {} and idServiceADS = {} --> for SIRH ",
+				idAgent, idServiceADS);
 
-		List<ApprobateurDto> result = accessRightService.listAgentsApprobateurs(idAgent, codeService);
+		List<ApprobateurDto> result = accessRightService.listAgentsApprobateurs(idAgent, idServiceADS);
 
 		return new ResponseEntity<String>(new JSONSerializer().exclude("*.class").serialize(result), HttpStatus.OK);
 	}

@@ -56,18 +56,18 @@ public class EditionController {
 	@RequestMapping(value = "listeFiches", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> getFichesToPrint(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "codeService", required = false) String codeService) {
+			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
 		logger.debug(
-				"entered GET [edition/listeFiches] => getFichesToPrint with parameters idAgent = {}, codeService = {}",
-				idAgent, codeService);
+				"entered GET [edition/listeFiches] => getFichesToPrint with parameters idAgent = {}, idServiceADS = {}",
+				idAgent, idServiceADS);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		if (!accessRightService.canUserAccessPrint(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		List<AgentDto> agents = ficheService.listAgentsFichesToPrint(convertedIdAgent, codeService);
+		List<AgentDto> agents = ficheService.listAgentsFichesToPrint(convertedIdAgent, idServiceADS);
 
 		if (agents.size() == 0)
 			throw new NoContentException();

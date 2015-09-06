@@ -6,5 +6,5 @@ import nc.noumea.mairie.ptg.dto.AgentDto;
 
 public interface IFichesService {
 
-	List<AgentDto> listAgentsFichesToPrint(Integer idAgent, String codeService);
+	List<AgentDto> listAgentsFichesToPrint(Integer idAgent, Integer idServiceAds);
 }

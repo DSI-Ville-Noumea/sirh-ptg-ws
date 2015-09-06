@@ -24,8 +24,9 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "PTG_DROITS_AGENT")
 @NamedQueries({
-		@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "from DroitsAgent da INNER JOIN FETCH da.droits d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
-		@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "from DroitsAgent da INNER JOIN FETCH da.droits d where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.codeService = :codeService") })
+		@NamedQuery(name = "getDroitsAgent", query = "select da from DroitsAgent da where da.idAgent = :idAgent"),
+		@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "select da from DroitsAgent da INNER JOIN FETCH da.droits d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
+		@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "select da from DroitsAgent da INNER JOIN FETCH da.droits d where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.idServiceADS = :idServiceADS") })
 public class DroitsAgent {
 
 	@Id
@@ -58,6 +59,13 @@ public class DroitsAgent {
 	@Column(name = "version")
 	private Integer version;
 
+	public DroitsAgent(Integer idAgent, Integer idServiceADS, String libelleService) {
+		super();
+		this.idAgent = idAgent;
+		this.libelleService = libelleService;
+		this.idServiceADS = idServiceADS;
+	}
+
 	public Integer getIdDroitsAgent() {
 		return idDroitsAgent;
 	}
@@ -72,14 +80,6 @@ public class DroitsAgent {
 
 	public void setIdAgent(Integer idAgent) {
 		this.idAgent = idAgent;
-	}
-
-	public String getCodeService() {
-		return codeService;
-	}
-
-	public void setCodeService(String codeService) {
-		this.codeService = codeService;
 	}
 
 	public String getLibelleService() {
@@ -114,13 +114,6 @@ public class DroitsAgent {
 		this.version = version;
 	}
 
-	public DroitsAgent(Integer idAgent, String codeService, String libelleService) {
-		super();
-		this.idAgent = idAgent;
-		this.codeService = codeService;
-		this.libelleService = libelleService;
-	}
-
 	public DroitsAgent() {
 	}
 
@@ -130,6 +123,14 @@ public class DroitsAgent {
 
 	public void setIdServiceADS(Integer idServiceADS) {
 		this.idServiceADS = idServiceADS;
+	}
+
+	public String getCodeService() {
+		return codeService;
+	}
+
+	public void setCodeService(String codeService) {
+		this.codeService = codeService;
 	}
 
 }
