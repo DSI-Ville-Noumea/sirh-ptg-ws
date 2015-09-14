@@ -227,10 +227,17 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 			listeSouService.add(idServiceADS);
 		}
+		
+		List<Integer> listAgentDto = new ArrayList<Integer>();
+		for(Droit da : listeDroit) {
+			listAgentDto.add(da.getIdAgent());
+		}
+		
+		List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, 
+				helperService.getCurrentDate());
 
 		for (Droit da : listeDroit) {
-			AgentWithServiceDto agentServiceDto = sirhWSConsumer.getAgentService(da.getIdAgent(),
-					helperService.getCurrentDate());
+			AgentWithServiceDto agentServiceDto = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());
 			if (idServiceADS != null) {
 				if (agentServiceDto != null && listeSouService.contains(agentServiceDto.getIdServiceADS())) {
 					ApprobateurDto agentDto = new ApprobateurDto();
@@ -265,6 +272,19 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		Collections.sort(agentDtos, new ApprobateurDtoComparator());
 		return agentDtos;
+	}
+	
+	private AgentWithServiceDto getAgentOfListAgentWithServiceDto(List<AgentWithServiceDto> listAgents, Integer idAgent) {
+		
+		if(null != listAgents
+				&& null != idAgent) {
+			for(AgentWithServiceDto agent : listAgents) {
+				if(agent.getIdAgent().equals(idAgent)){
+					return agent;
+				}
+			}
+		}
+		return null;
 	}
 
 	private DelegatorAndOperatorsDto getDelegator(Integer idAgent) {

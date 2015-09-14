@@ -28,4 +28,7 @@ public interface ISirhWSConsumer {
 	BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date date);
 
 	EntiteDto getAgentDirection(Integer idAgent, Date date);
+
+	List<AgentWithServiceDto> getListAgentsWithService(
+			List<Integer> listAgentDto, Date date);
 }

@@ -128,8 +128,16 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(new ArrayList<Droit>());
 
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+
+		Date currentDate = new DateTime(2013, 4, 9, 12, 9, 34).toDate();
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 
 		// When
 		List<ApprobateurDto> dto = service.listAgentsApprobateurs(null, null);
@@ -171,6 +179,12 @@ public class AccessRightsServiceTest {
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentService(9005138, currentDate)).thenReturn(agDto1);
 		Mockito.when(wsMock.getAgentService(9003041, currentDate)).thenReturn(agDto2);
+		
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDto1);
+		listAgentsServiceDto.add(agDto2);
+		Mockito.when(wsMock.getListAgentsWithService(Arrays.asList(9005138,9003041), 
+				currentDate)).thenReturn(listAgentsServiceDto);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(listeDroits);
@@ -178,7 +192,7 @@ public class AccessRightsServiceTest {
 		IAgentMatriculeConverterService matriculeConvertor = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(matriculeConvertor.tryConvertIdAgentToNomatr(9005138)).thenReturn(5138);
 		Mockito.when(matriculeConvertor.tryConvertIdAgentToNomatr(9003041)).thenReturn(3041);
-
+		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);

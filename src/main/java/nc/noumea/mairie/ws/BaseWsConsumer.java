@@ -46,10 +46,10 @@ public abstract class BaseWsConsumer {
 		try {
 			if (isPost)
 				if (postContent != null)
-					response = webResource.accept(MediaType.APPLICATION_JSON_VALUE).post(ClientResponse.class);
-				else
 					response = webResource.accept(MediaType.APPLICATION_JSON_VALUE).post(ClientResponse.class,
 							postContent);
+				else
+					response = webResource.accept(MediaType.APPLICATION_JSON_VALUE).post(ClientResponse.class);
 			else
 				response = webResource.accept(MediaType.APPLICATION_JSON_VALUE).get(ClientResponse.class);
 		} catch (ClientHandlerException ex) {

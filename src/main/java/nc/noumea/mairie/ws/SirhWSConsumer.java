@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 
 import com.sun.jersey.api.client.ClientResponse;
 
+import flexjson.JSONSerializer;
+
 @Service
 public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
@@ -29,6 +31,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 	private static final String sirhAgentDirectionUrl = "agents/direction";
 	private static final String sirhAgentServiceUrl = "services/agent";
+	private static final String sirhListAgentsWithServiceUrl = "services/listAgentsWithService";
 	private static final String sirhAgentUrl = "agents/getAgent";
 	private static final String sirhHolidayUrl = "utils/isHoliday";
 	private static final String sirhListPrimePointageUrl = "pointages/listPrimePointages";
@@ -68,6 +71,26 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(AgentWithServiceDto.class, res, url);
+	}
+
+	@Override
+	public List<AgentWithServiceDto> getListAgentsWithService(List<Integer> listAgentDto, Date date) {
+
+		String url = String.format(sirhWsBaseUrl + sirhListAgentsWithServiceUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		
+		String json = new JSONSerializer().exclude("*.class")
+				.deepSerialize(listAgentDto);
+
+		if (date != null) {
+			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+			parameters.put("date", sf.format(date));
+		}
+
+		ClientResponse res = createAndFirePostRequest(parameters, url, json);
+
+		return readResponseAsList(AgentWithServiceDto.class, res, url);
 	}
 
 	@Override
