@@ -101,9 +101,9 @@ public class ApprobationServiceTest {
 						Mockito.eq(letat), Mockito.anyString())).thenReturn(Arrays.asList(ptg, ptg2));
 
 		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new AgentGeneriqueDto());
-		Mockito.when(mRepo.getAgent(9001235)).thenReturn(new AgentGeneriqueDto());
-		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new AgentGeneriqueDto());
+		
+		List<AgentGeneriqueDto> listAgents = new ArrayList<AgentGeneriqueDto>();
+		Mockito.when(mRepo.getListAgents(Arrays.asList(9001234, 9001235, 9005138))).thenReturn(listAgents);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
@@ -162,8 +162,8 @@ public class ApprobationServiceTest {
 				Arrays.asList(ptg2));
 
 		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new AgentGeneriqueDto());
-		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new AgentGeneriqueDto());
+		List<AgentGeneriqueDto> listAgents = new ArrayList<AgentGeneriqueDto>();
+		Mockito.when(mRepo.getListAgents(Arrays.asList(9001234, 9005138))).thenReturn(listAgents);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 
@@ -591,8 +591,9 @@ public class ApprobationServiceTest {
 				Arrays.asList(ptg2));
 
 		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(mRepo.getAgent(9001234)).thenReturn(new AgentGeneriqueDto());
-		Mockito.when(mRepo.getAgent(9005138)).thenReturn(new AgentGeneriqueDto());
+		
+		List<AgentGeneriqueDto> listAgents = new ArrayList<AgentGeneriqueDto>();
+		Mockito.when(mRepo.getListAgents(Arrays.asList(9001234, 9005138))).thenReturn(listAgents);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 

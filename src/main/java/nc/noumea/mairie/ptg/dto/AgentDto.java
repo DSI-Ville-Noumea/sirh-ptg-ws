@@ -14,10 +14,12 @@ public class AgentDto {
 	}
 
 	public AgentDto(AgentGeneriqueDto agent) {
-		nom = agent.getDisplayNom();
-		prenom = agent.getDisplayPrenom();
-		idAgent = agent.getIdAgent();
-		nomatr = agent.getNomatr();
+		if(null != agent) {
+			nom = agent.getDisplayNom();
+			prenom = agent.getDisplayPrenom();
+			idAgent = agent.getIdAgent();
+			nomatr = agent.getNomatr();
+		}
 	}
 
 	public String getNom() {

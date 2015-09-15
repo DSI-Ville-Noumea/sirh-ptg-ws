@@ -27,6 +27,7 @@ import nc.noumea.mairie.ptg.service.IApprobationService;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.repository.IMairieRepository;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -121,33 +122,27 @@ public class ApprobationService implements IApprobationService {
 				new LocalDate(toDate).plusDays(1).toDate(), RefTypePointageEnum.getRefTypePointageEnum(idRefType),
 				idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)), typeHS);
 
-		// creation d un HashMap pour garder en memoire les agents deja
-		// retournes
-		// ceci evite de faire trop d appel a SIRH-WS, ce qui est tres gourmand
-		// en temps
-		// pour 300 lignes de pointage, le bout de code ci-dessous pouvait
-		// prendre jusque 1 minute avant la modif
-		Map<Integer, AgentDto> mapAgentDto = new HashMap<Integer, AgentDto>();
+		List<Integer> listAgentDto = new ArrayList<Integer>();
+		for(Pointage ptg : pointages) {
+			if(!listAgentDto.contains(ptg.getIdAgent())) {
+				listAgentDto.add(ptg.getIdAgent());
+			}
+			if(!listAgentDto.contains(ptg.getLatestEtatPointage().getIdAgent())) {
+				listAgentDto.add(ptg.getLatestEtatPointage().getIdAgent());
+			}
+		}
+		
+		// dans un souci de performances, on n affichera toçujours le service de l agent a la date du jour
+		// ce qui permet de ne faire qu un seul appel a SIRH-WS
+		// et non plus un appel par demande (avec la date de la demande)
+		List<AgentGeneriqueDto> listAgentsExistants = sirhWSConsumer.getListAgents(listAgentDto);
 
 		for (Pointage ptg : pointages) {
 
-			AgentDto agDto = null;
-			if (mapAgentDto.containsKey(ptg.getIdAgent())) {
-				agDto = mapAgentDto.get(ptg.getIdAgent());
-			} else {
-				agDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getIdAgent()));
-				mapAgentDto.put(ptg.getIdAgent(), agDto);
-			}
+			AgentDto agDto = new AgentDto(getAgentOfListAgentWithServiceDto(listAgentsExistants, ptg.getIdAgent()));
+			AgentDto opeDto = new AgentDto(getAgentOfListAgentWithServiceDto(listAgentsExistants, ptg.getLatestEtatPointage().getIdAgent()));
 
 			ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
-
-			AgentDto opeDto = null;
-			if (mapAgentDto.containsKey(ptg.getLatestEtatPointage().getIdAgent())) {
-				opeDto = mapAgentDto.get(ptg.getLatestEtatPointage().getIdAgent());
-			} else {
-				opeDto = new AgentDto(sirhWSConsumer.getAgent(ptg.getLatestEtatPointage().getIdAgent()));
-				mapAgentDto.put(ptg.getLatestEtatPointage().getIdAgent(), opeDto);
-			}
 
 			dto.updateEtat(ptg.getLatestEtatPointage(), opeDto);
 			dto.setAgent(agDto);
@@ -159,6 +154,19 @@ public class ApprobationService implements IApprobationService {
 		}
 
 		return result;
+	}
+	
+	private AgentGeneriqueDto getAgentOfListAgentWithServiceDto(List<AgentGeneriqueDto> listAgents, Integer idAgent) {
+		
+		if(null != listAgents
+				&& null != idAgent) {
+			for(AgentGeneriqueDto agent : listAgents) {
+				if(agent.getIdAgent().equals(idAgent)){
+					return agent;
+				}
+			}
+		}
+		return null;
 	}
 
 	protected boolean checkDroitApprobationByPointage(Pointage ptg, ConsultPointageDto dto,
