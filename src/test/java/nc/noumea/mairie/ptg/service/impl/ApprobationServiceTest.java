@@ -2259,7 +2259,7 @@ public class ApprobationServiceTest {
 		service.addRecuperationToAgent(targetEtat, ptg);
 
 		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(
-				ptg.getIdAgent(), ptg.getDateDebut(), 4*60, ptg.getIdPointage(), null);
+				ptg.getIdAgent(), ptg.getDateDebut(), 0, ptg.getIdPointage(), null);
 	}
 
 }

@@ -575,11 +575,7 @@ public class ApprobationService implements IApprobationService {
 			if(EtatPointageEnum.APPROUVE.equals(targetEtat)
 					&& (EtatPointageEnum.SAISI.equals(currentEtat)
 							|| EtatPointageEnum.REFUSE.equals(currentEtat)
-							|| EtatPointageEnum.REJETE.equals(currentEtat))
-							// cas special pour la reprise de donnees lors de la MEP
-							// le jour de la MEP : il va falloir reapprouver les pointages approuves afin de crediter les compteurs
-							// une verification est faite cote ABS sur l ID Pointage
-							|| EtatPointageEnum.APPROUVE.equals(currentEtat)) {
+							|| EtatPointageEnum.REJETE.equals(currentEtat))) {
 				absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, ptg.getIdPointage(), 
 						null != ptg.getPointageParent() ? ptg.getPointageParent().getIdPointage() : null);
 			}
