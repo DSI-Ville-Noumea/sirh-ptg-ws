@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
+import nc.noumea.mairie.ads.dto.StatutEntiteEnum;
 import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
@@ -58,8 +59,7 @@ public class AccessRightsService implements IAccessRightsService {
 			result.setSaisie(result.isSaisie() || da.isApprobateur() || da.isOperateur());
 			result.setVisualisation(result.isVisualisation() || da.isApprobateur() || da.isOperateur());
 			result.setApprobation(result.isApprobation() || da.isApprobateur());
-			result.setGestionDroitsAcces(result.isGestionDroitsAcces()
-					|| (da.getIdAgent().equals(idAgent) && da.isApprobateur()));
+			result.setGestionDroitsAcces(result.isGestionDroitsAcces() || (da.getIdAgent().equals(idAgent) && da.isApprobateur()));
 		}
 
 		return result;
@@ -227,14 +227,13 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 			listeSouService.add(idServiceADS);
 		}
-		
+
 		List<Integer> listAgentDto = new ArrayList<Integer>();
-		for(Droit da : listeDroit) {
+		for (Droit da : listeDroit) {
 			listAgentDto.add(da.getIdAgent());
 		}
-		
-		List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, 
-				helperService.getCurrentDate());
+
+		List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, helperService.getCurrentDate());
 
 		for (Droit da : listeDroit) {
 			AgentWithServiceDto agentServiceDto = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());
@@ -273,13 +272,12 @@ public class AccessRightsService implements IAccessRightsService {
 		Collections.sort(agentDtos, new ApprobateurDtoComparator());
 		return agentDtos;
 	}
-	
+
 	private AgentWithServiceDto getAgentOfListAgentWithServiceDto(List<AgentWithServiceDto> listAgents, Integer idAgent) {
-		
-		if(null != listAgents
-				&& null != idAgent) {
-			for(AgentWithServiceDto agent : listAgents) {
-				if(agent.getIdAgent().equals(idAgent)){
+
+		if (null != listAgents && null != idAgent) {
+			for (AgentWithServiceDto agent : listAgents) {
+				if (agent.getIdAgent().equals(idAgent)) {
 					return agent;
 				}
 			}
@@ -393,8 +391,7 @@ public class AccessRightsService implements IAccessRightsService {
 
 		if (null != listAgents) {
 			for (AgentDto agent : listAgents) {
-				if (null != agent && null != agent.getIdAgent() && null != ag.getIdAgent()
-						&& agent.getIdAgent().equals(ag.getIdAgent())) {
+				if (null != agent && null != agent.getIdAgent() && null != ag.getIdAgent() && agent.getIdAgent().equals(ag.getIdAgent())) {
 					return false;
 				}
 			}
@@ -518,13 +515,10 @@ public class AccessRightsService implements IAccessRightsService {
 	public void setAgentsToInput(Integer idAgentApprobateur, Integer idAgentOperateur, List<AgentDto> agents) {
 
 		Droit droitApprobateur = accessRightsRepository.getApprobateur(idAgentApprobateur);
-		Droit droitOperateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgentOperateur,
-				droitApprobateur.getIdDroit());
+		Droit droitOperateur = accessRightsRepository.getAgentDroitApprobateurOrOperateurFetchAgents(idAgentOperateur, droitApprobateur.getIdDroit());
 
 		if (!droitApprobateur.getOperateurs().contains(droitOperateur)) {
-			logger.warn(
-					"Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est pas un opérateur de l'agent {}.",
-					idAgentApprobateur, idAgentOperateur);
+			logger.warn("Impossible de modifier la liste des agents saisis de l'opérateur {} car il n'est pas un opérateur de l'agent {}.", idAgentApprobateur, idAgentOperateur);
 			throw new AccessForbiddenException();
 		}
 
@@ -573,11 +567,16 @@ public class AccessRightsService implements IAccessRightsService {
 			if (idsServices.contains(da.getIdServiceADS()))
 				continue;
 
-			idsServices.add(da.getIdServiceADS());
-			EntiteDto entiteDto = new EntiteDto();
-			entiteDto.setIdEntite(da.getIdServiceADS());
-			entiteDto.setLabel(da.getLibelleService());
-			result.add(entiteDto);
+			EntiteDto svDto = adsWsConsumer.getEntiteByIdEntite(da.getIdServiceADS());
+			if (svDto != null) {
+				idsServices.add(da.getIdServiceADS());
+				if (!svDto.getIdStatut().toString().equals(String.valueOf(StatutEntiteEnum.ACTIF.getIdRefStatutEntite()))) {
+					svDto.setLabel(svDto.getLabel() + "(" + StatutEntiteEnum.getStatutEntiteEnum(svDto.getIdStatut()).getLibStatutEntite() + ")");
+				} else {
+					svDto.setLabel(svDto.getLabel());
+				}
+				result.add(svDto);
+			}
 		}
 
 		return result;

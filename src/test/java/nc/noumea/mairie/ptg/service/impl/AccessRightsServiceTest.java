@@ -1308,16 +1308,33 @@ public class AccessRightsServiceTest {
 		// Given
 		DroitsAgent d1 = new DroitsAgent();
 		d1.setIdServiceADS(16);
-		d1.setLibelleService("Service 1");
+		d1.setLibelleService("Service 1 old");
 		DroitsAgent d2 = new DroitsAgent();
 		d2.setIdServiceADS(25);
-		d2.setLibelleService("Service 2");
+		d2.setLibelleService("Service 2 old");
+		
+
+		EntiteDto entiteDto2 = new EntiteDto();
+		entiteDto2.setIdEntite(25);
+		entiteDto2.setLabel("Service 2");
+		entiteDto2.setIdStatut(1);
+		
+
+		EntiteDto entiteDto = new EntiteDto();
+		entiteDto.setIdEntite(16);
+		entiteDto.setLabel("Service 1");
+		entiteDto.setIdStatut(0);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9008888)).thenReturn(Arrays.asList(d1, d2));
 
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntite(16)).thenReturn(entiteDto);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntite(25)).thenReturn(entiteDto2);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 
 		// When
 		List<EntiteDto> result = service.getAgentsServicesToApproveOrInput(9008888);
@@ -1325,9 +1342,9 @@ public class AccessRightsServiceTest {
 		// Then
 		assertEquals(2, result.size());
 		assertEquals(d1.getIdServiceADS(), result.get(0).getIdEntite());
-		assertEquals(d1.getLibelleService(), result.get(0).getLabel());
+		assertEquals("Service 1(Prévision)", result.get(0).getLabel());
 		assertEquals(d2.getIdServiceADS(), result.get(1).getIdEntite());
-		assertEquals(d2.getLibelleService(), result.get(1).getLabel());
+		assertEquals("Service 2", result.get(1).getLabel());
 	}
 
 	@Test
@@ -1340,12 +1357,21 @@ public class AccessRightsServiceTest {
 		DroitsAgent d2 = new DroitsAgent();
 		d2.setIdServiceADS(33);
 		d2.setLibelleService("Service 1");
+		
+		EntiteDto entiteDto = new EntiteDto();
+		entiteDto.setIdEntite(33);
+		entiteDto.setLabel("TEST");
+		entiteDto.setIdStatut(1);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9008888)).thenReturn(Arrays.asList(d1, d2));
 
+		IAdsWSConsumer adsWsConsumer = Mockito.mock(IAdsWSConsumer.class);
+		Mockito.when(adsWsConsumer.getEntiteByIdEntite(d1.getIdServiceADS())).thenReturn(entiteDto);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 
 		// When
 		List<EntiteDto> result = service.getAgentsServicesToApproveOrInput(9008888);
@@ -1353,7 +1379,7 @@ public class AccessRightsServiceTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals(d1.getIdServiceADS(), result.get(0).getIdEntite());
-		assertEquals(d1.getLibelleService(), result.get(0).getLabel());
+		assertEquals(entiteDto.getLabel(), result.get(0).getLabel());
 	}
 
 	@Test
