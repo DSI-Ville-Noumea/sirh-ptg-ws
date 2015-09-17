@@ -54,11 +54,11 @@
 
 	<dependencies>
 		<!-- Pour generer des PDF -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>com.itextpdf</groupId> -->
-<!-- 			<artifactId>itextpdf</artifactId> -->
-<!-- 			<version>5.0.6</version> -->
-<!-- 		</dependency> -->
+		<!-- <dependency> -->
+		<!-- <groupId>com.itextpdf</groupId> -->
+		<!-- <artifactId>itextpdf</artifactId> -->
+		<!-- <version>5.0.6</version> -->
+		<!-- </dependency> -->
 		<dependency>
 			<groupId>com.lowagie</groupId>
 			<artifactId>itext</artifactId>
@@ -284,6 +284,16 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-vfs2</artifactId>
 			<version>2.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
 		</dependency>
 	</dependencies>
 	<build>

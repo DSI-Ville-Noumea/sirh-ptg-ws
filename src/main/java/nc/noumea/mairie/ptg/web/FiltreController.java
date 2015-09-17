@@ -77,7 +77,7 @@ public class FiltreController {
 	@ResponseBody
 	@RequestMapping(value = "/services", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getServices(@RequestParam("idAgent") Integer idAgent) {
+	public List<EntiteDto> getServices(@RequestParam("idAgent") Integer idAgent) {
 
 		logger.debug("entered GET [filtres/services] => getServices with parameter idAgent = {}", idAgent);
 
@@ -88,19 +88,15 @@ public class FiltreController {
 		if (services.size() == 0)
 			throw new NoContentException();
 
-		String json = new JSONSerializer().exclude("*.class").serialize(services);
-
-		return new ResponseEntity<String>(json, HttpStatus.OK);
+		return services;
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/agents", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getAgents(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
+	public ResponseEntity<String> getAgents(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
-		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and idServiceADS = {}",
-				idAgent, idServiceADS);
+		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and idServiceADS = {}", idAgent, idServiceADS);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -152,8 +148,7 @@ public class FiltreController {
 
 		logger.debug("entered POST [filtres/setMotifHsup] => setMotifHsup");
 
-		MotifHeureSupDto dto = new JSONDeserializer<MotifHeureSupDto>().use(Date.class, new MSDateTransformer())
-				.deserializeInto(motifHeureSupDto, new MotifHeureSupDto());
+		MotifHeureSupDto dto = new JSONDeserializer<MotifHeureSupDto>().use(Date.class, new MSDateTransformer()).deserializeInto(motifHeureSupDto, new MotifHeureSupDto());
 
 		ReturnMessageDto srm = pointageService.setMotifHeureSup(dto);
 
