@@ -183,8 +183,16 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			}
 
 			// 3. Then create the DTOs for Primes
-			PrimesEtatPayeurDto dtoPrime = new PrimesEtatPayeurDto(vp, vpOld, helperService);
-			result.getPrimes().add(dtoPrime);
+			// #18592 supprimer les lignes a 0
+			if(null != vp
+					&& null != vp.getQuantite()) {
+				int qte = vp.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0);
+			
+				if(0 != qte) {
+					PrimesEtatPayeurDto dtoPrime = new PrimesEtatPayeurDto(vp, vpOld, helperService);
+					result.getPrimes().add(dtoPrime);
+				}
+			}
 		}
 
 		return result;
