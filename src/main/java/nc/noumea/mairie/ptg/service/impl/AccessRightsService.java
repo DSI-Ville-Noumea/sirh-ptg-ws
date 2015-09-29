@@ -22,6 +22,7 @@ import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
+import nc.noumea.mairie.ws.SirhWSUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,9 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private IAgentMatriculeConverterService matriculeConvertor;
+	
+	@Autowired
+	private SirhWSUtils sirhWSUtils;
 
 	@Override
 	public AccessRightsDto getAgentAccessRights(Integer idAgent) {
@@ -236,7 +240,7 @@ public class AccessRightsService implements IAccessRightsService {
 		List<AgentWithServiceDto> listAgentsServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDto, helperService.getCurrentDate());
 
 		for (Droit da : listeDroit) {
-			AgentWithServiceDto agentServiceDto = getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());
+			AgentWithServiceDto agentServiceDto = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent());
 			if (idServiceADS != null) {
 				if (agentServiceDto != null && listeSouService.contains(agentServiceDto.getIdServiceADS())) {
 					ApprobateurDto agentDto = new ApprobateurDto();
@@ -271,18 +275,6 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 		Collections.sort(agentDtos, new ApprobateurDtoComparator());
 		return agentDtos;
-	}
-
-	private AgentWithServiceDto getAgentOfListAgentWithServiceDto(List<AgentWithServiceDto> listAgents, Integer idAgent) {
-
-		if (null != listAgents && null != idAgent) {
-			for (AgentWithServiceDto agent : listAgents) {
-				if (agent.getIdAgent().equals(idAgent)) {
-					return agent;
-				}
-			}
-		}
-		return null;
 	}
 
 	private DelegatorAndOperatorsDto getDelegator(Integer idAgent) {
@@ -366,16 +358,30 @@ public class AccessRightsService implements IAccessRightsService {
 	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
+		
+		List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceAds);
+		
+		List<Integer> listIdsAgent = new ArrayList<Integer>();
+		for (DroitsAgent da : listDroitsAgent) {
+			if(!listIdsAgent.contains(da.getIdAgent()))
+				listIdsAgent.add(da.getIdAgent());
+		}
+		
+		List<AgentGeneriqueDto> listAgentsExistants = sirhWSConsumer.getListAgents(listIdsAgent);
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceAds)) {
+		for (DroitsAgent da : listDroitsAgent) {
 			// #15684 bug doublon
 			if (isContainAgentInList(result, da)) {
 				AgentDto agDto = new AgentDto();
-				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
-				agDto.setIdAgent(da.getIdAgent());
-				agDto.setNom(ag.getDisplayNom());
-				agDto.setPrenom(ag.getDisplayPrenom());
-				result.add(agDto);
+				
+				AgentGeneriqueDto ag = sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentsExistants, da.getIdAgent());
+				
+				if(null != ag) {
+					agDto.setIdAgent(da.getIdAgent());
+					agDto.setNom(ag.getDisplayNom());
+					agDto.setPrenom(ag.getDisplayPrenom());
+					result.add(agDto);
+				}
 			}
 		}
 
@@ -561,13 +567,18 @@ public class AccessRightsService implements IAccessRightsService {
 		List<EntiteDto> result = new ArrayList<EntiteDto>();
 
 		List<Integer> idsServices = new ArrayList<Integer>();
+		
+		// #18709 optimiser les appels ADS
+		EntiteDto root = adsWsConsumer.getWholeTree();
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent)) {
+		List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent);
+		
+		for (DroitsAgent da : listDroitsAgent) {
 
 			if (idsServices.contains(da.getIdServiceADS()))
 				continue;
 
-			EntiteDto svDto = adsWsConsumer.getEntiteByIdEntite(da.getIdServiceADS());
+			EntiteDto svDto = adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da.getIdServiceADS(), root);
 			if (svDto != null) {
 				idsServices.add(da.getIdServiceADS());
 				if (!svDto.getIdStatut().toString().equals(String.valueOf(StatutEntiteEnum.ACTIF.getIdRefStatutEntite()))) {

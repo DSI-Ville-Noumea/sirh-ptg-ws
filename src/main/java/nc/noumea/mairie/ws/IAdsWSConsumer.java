@@ -9,4 +9,9 @@ public interface IAdsWSConsumer {
 	EntiteDto getInfoSiservByIdEntite(Integer idEntite);
 
 	EntiteDto getEntiteByIdEntite(Integer idEntite);
+
+	EntiteDto getWholeTree();
+
+	EntiteDto getEntiteByIdEntiteOptimiseWithWholeTree(Integer idEntite,
+			EntiteDto root);
 }

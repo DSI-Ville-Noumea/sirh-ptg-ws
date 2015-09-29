@@ -184,14 +184,14 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public List<AgentGeneriqueDto> getListAgents(List<Integer> listAgentDto) {
+	public List<AgentGeneriqueDto> getListAgents(List<Integer> listIdsAgent) {
 
 		String url = String.format(sirhWsBaseUrl + sirhGetListAgentsUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		
 		String json = new JSONSerializer().exclude("*.class")
-				.deepSerialize(listAgentDto);
+				.deepSerialize(listIdsAgent);
 
 		ClientResponse res = createAndFirePostRequest(parameters, url, json);
 

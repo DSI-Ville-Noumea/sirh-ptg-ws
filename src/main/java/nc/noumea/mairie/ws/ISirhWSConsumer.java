@@ -32,5 +32,5 @@ public interface ISirhWSConsumer {
 	List<AgentWithServiceDto> getListAgentsWithService(
 			List<Integer> listAgentDto, Date date);
 
-	List<AgentGeneriqueDto> getListAgents(List<Integer> listAgentDto);
+	List<AgentGeneriqueDto> getListAgents(List<Integer> listIdsAgent);
 }

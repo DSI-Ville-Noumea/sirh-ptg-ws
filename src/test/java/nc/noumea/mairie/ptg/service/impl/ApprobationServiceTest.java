@@ -38,6 +38,7 @@ import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
+import nc.noumea.mairie.ws.SirhWSUtils;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -106,12 +107,14 @@ public class ApprobationServiceTest {
 		Mockito.when(mRepo.getListAgents(Arrays.asList(9001234, 9001235, 9005138))).thenReturn(listAgents);
 
 		HelperService hS = Mockito.mock(HelperService.class);
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 
 		// When
 		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, idServiceAds, agent,
@@ -175,12 +178,14 @@ public class ApprobationServiceTest {
 		Mockito.when(mRepo.getListAgents(Arrays.asList(9001234, 9005138))).thenReturn(listAgents);
 
 		HelperService hS = Mockito.mock(HelperService.class);
-
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
+		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 
 		// When
 		List<ConsultPointageDto> result = service.getPointages(idAgent, fromDate, toDate, idServiceAds, agent,
@@ -607,11 +612,14 @@ public class ApprobationServiceTest {
 		Mockito.when(mRepo.getListAgents(Arrays.asList(9001234, 9005138))).thenReturn(listAgents);
 
 		HelperService hS = Mockito.mock(HelperService.class);
+		
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", mRepo);
 		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 
 		// When
 		List<ConsultPointageDto> result = service.getPointagesSIRH(fromDate, toDate, idAgents, idRefEtat, idRefType,
