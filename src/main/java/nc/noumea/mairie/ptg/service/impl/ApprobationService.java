@@ -154,6 +154,12 @@ public class ApprobationService implements IApprobationService {
 			// #14325
 			dto.setApprobation(checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, idAgentOpeOrAppro));
 
+			// #17613 : ne pas afficher les pouces vert/rouge en fonction des
+			// etats
+			dto.setAffichageBoutonAccepter(dto.isApprobation() && !ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.APPROUVE));
+			dto.setAffichageBoutonRefuser(dto.isApprobation() && !ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.REFUSE));
+						
+						
 			result.add(dto);
 		}
 
