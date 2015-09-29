@@ -121,6 +121,10 @@ public class ApprobationServiceTest {
 		assertEquals(2, result.size());
 		assertEquals(1, (int) result.get(0).getIdPointage());
 		assertEquals(2, (int) result.get(1).getIdPointage());
+		assertFalse(result.get(0).isAffichageBoutonAccepter());
+		assertFalse(result.get(0).isAffichageBoutonRefuser());
+		assertFalse(result.get(1).isAffichageBoutonAccepter());
+		assertFalse(result.get(1).isAffichageBoutonRefuser());
 	}
 
 	@Test
@@ -137,8 +141,13 @@ public class ApprobationServiceTest {
 		Integer idRefEtat = EtatPointageEnum.SAISI.getCodeEtat();
 
 		List<DroitsAgent> das = new ArrayList<DroitsAgent>();
+		Droit droit = new Droit();
+		droit.setIdAgent(idAgent);
+		droit.setApprobateur(true);
+		
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9001234);
+		da.getDroits().add(droit);
 		das.add(da);
 		IAccessRightsRepository arRepo = Mockito.mock(AccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, idServiceAds)).thenReturn(das);
@@ -180,6 +189,8 @@ public class ApprobationServiceTest {
 		// Then
 		assertEquals(1, result.size());
 		assertEquals(2, (int) result.get(0).getIdPointage());
+		assertTrue(result.get(0).isAffichageBoutonAccepter());
+		assertTrue(result.get(0).isAffichageBoutonRefuser());
 	}
 
 	@Test

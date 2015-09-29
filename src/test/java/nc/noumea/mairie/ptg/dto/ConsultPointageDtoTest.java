@@ -63,6 +63,8 @@ public class ConsultPointageDtoTest {
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("2h45m", dto.getQuantite());
 		assertFalse(dto.isHeuresSupRecuperees());
+		assertFalse(dto.isAffichageBoutonAccepter());
+		assertFalse(dto.isAffichageBoutonRefuser());
 	}
 
 	@Test
@@ -108,6 +110,8 @@ public class ConsultPointageDtoTest {
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("45m", dto.getQuantite());
 		assertFalse(dto.isHeuresSupRecuperees());
+		assertFalse(dto.isAffichageBoutonAccepter());
+		assertFalse(dto.isAffichageBoutonRefuser());
 	}
 	
 	@Test
@@ -154,6 +158,8 @@ public class ConsultPointageDtoTest {
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("45m", dto.getQuantite());
 		assertTrue(dto.isHeuresSupRecuperees());
+		assertFalse(dto.isAffichageBoutonAccepter());
+		assertFalse(dto.isAffichageBoutonRefuser());
 	}
 
 	@Test
@@ -204,6 +210,8 @@ public class ConsultPointageDtoTest {
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("1h15m", dto.getQuantite());
 		assertFalse(dto.isHeuresSupRecuperees());
+		assertFalse(dto.isAffichageBoutonAccepter());
+		assertFalse(dto.isAffichageBoutonRefuser());
 	}
 
 	@Test
@@ -254,6 +262,8 @@ public class ConsultPointageDtoTest {
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("1h", dto.getQuantite());
 		assertFalse(dto.isHeuresSupRecuperees());
+		assertFalse(dto.isAffichageBoutonAccepter());
+		assertFalse(dto.isAffichageBoutonRefuser());
 	}
 
 	@Test
@@ -304,6 +314,8 @@ public class ConsultPointageDtoTest {
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("15m", dto.getQuantite());
 		assertFalse(dto.isHeuresSupRecuperees());
+		assertFalse(dto.isAffichageBoutonAccepter());
+		assertFalse(dto.isAffichageBoutonRefuser());
 	}
 
 	@Test
@@ -351,6 +363,8 @@ public class ConsultPointageDtoTest {
 		assertEquals("commentaire", dto.getCommentaire());
 		assertEquals("1", dto.getQuantite());
 		assertFalse(dto.isHeuresSupRecuperees());
+		assertFalse(dto.isAffichageBoutonAccepter());
+		assertFalse(dto.isAffichageBoutonRefuser());
 	}
 
 	@Test
@@ -372,5 +386,7 @@ public class ConsultPointageDtoTest {
 		assertEquals(new DateTime(2013, 05, 24, 7, 56, 0).toDate(), dto.getDateSaisie());
 		assertEquals(EtatPointageEnum.APPROUVE.getCodeEtat(), (int) dto.getIdRefEtat());
 		assertEquals(9005138, (int) dto.getOperateur().getIdAgent());
+		assertFalse(dto.isAffichageBoutonAccepter());
+		assertFalse(dto.isAffichageBoutonRefuser());
 	}
 }

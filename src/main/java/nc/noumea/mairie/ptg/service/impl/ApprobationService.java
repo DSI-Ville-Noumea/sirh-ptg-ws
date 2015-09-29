@@ -67,20 +67,18 @@ public class ApprobationService implements IApprobationService {
 
 	@Autowired
 	private IMairieRepository mairieRepository;
-	
+
 	@Autowired
 	private IAbsWsConsumer absWsConsumer;
 
 	@Override
-	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, Integer idServiceAds,
-			Integer agent, Integer idRefEtat, Integer idRefType, String typeHS) {
+	public List<ConsultPointageDto> getPointages(Integer idAgent, Date fromDate, Date toDate, Integer idServiceAds, Integer agent, Integer idRefEtat, Integer idRefType, String typeHS) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 
 		// list of agents corresponding to filters
 		List<Integer> agentIds = new ArrayList<Integer>();
-		List<DroitsAgent> listDroitsAgent = accessRightsRepository
-				.getListOfAgentsToInputOrApprove(idAgent, idServiceAds);
+		List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceAds);
 		for (DroitsAgent da : listDroitsAgent) {
 			agentIds.add(da.getIdAgent());
 		}
@@ -98,41 +96,37 @@ public class ApprobationService implements IApprobationService {
 			}
 		}
 
-		return createConsultPointageDtoListFromSearch(agentIds.size() == 0 ? Arrays.asList(0) : agentIds, fromDate,
-				toDate, idRefEtat, idRefType, typeHS, listDroitsAgent, idAgent);
+		return createConsultPointageDtoListFromSearch(agentIds.size() == 0 ? Arrays.asList(0) : agentIds, fromDate, toDate, idRefEtat, idRefType, typeHS, listDroitsAgent, idAgent);
 	}
 
 	@Override
-	public List<ConsultPointageDto> getPointagesSIRH(Date fromDate, Date toDate, List<Integer> agentIds,
-			Integer idRefEtat, Integer idRefType, String typeHS) {
-		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType, typeHS, null,
-				null);
+	public List<ConsultPointageDto> getPointagesSIRH(Date fromDate, Date toDate, List<Integer> agentIds, Integer idRefEtat, Integer idRefType, String typeHS) {
+		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType, typeHS, null, null);
 	}
 
-	protected List<ConsultPointageDto> createConsultPointageDtoListFromSearch(List<Integer> agentIds, Date fromDate,
-			Date toDate, Integer idRefEtat, Integer idRefType, String typeHS, List<DroitsAgent> listdroitsAgent,
-			Integer idAgentOpeOrAppro) {
+	protected List<ConsultPointageDto> createConsultPointageDtoListFromSearch(List<Integer> agentIds, Date fromDate, Date toDate, Integer idRefEtat, Integer idRefType, String typeHS,
+			List<DroitsAgent> listdroitsAgent, Integer idAgentOpeOrAppro) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 
 		// get pointages with filters
 		// We convert the 'toDate' date into the next day at 00H00 because the
 		// query will take it as a timestamp.
-		List<Pointage> pointages = pointageService.getLatestPointagesForAgentsAndDates(agentIds, fromDate,
-				new LocalDate(toDate).plusDays(1).toDate(), RefTypePointageEnum.getRefTypePointageEnum(idRefType),
-				idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)), typeHS);
+		List<Pointage> pointages = pointageService.getLatestPointagesForAgentsAndDates(agentIds, fromDate, new LocalDate(toDate).plusDays(1).toDate(),
+				RefTypePointageEnum.getRefTypePointageEnum(idRefType), idRefEtat == null ? null : Arrays.asList(EtatPointageEnum.getEtatPointageEnum(idRefEtat)), typeHS);
 
 		List<Integer> listAgentDto = new ArrayList<Integer>();
-		for(Pointage ptg : pointages) {
-			if(!listAgentDto.contains(ptg.getIdAgent())) {
+		for (Pointage ptg : pointages) {
+			if (!listAgentDto.contains(ptg.getIdAgent())) {
 				listAgentDto.add(ptg.getIdAgent());
 			}
-			if(!listAgentDto.contains(ptg.getLatestEtatPointage().getIdAgent())) {
+			if (!listAgentDto.contains(ptg.getLatestEtatPointage().getIdAgent())) {
 				listAgentDto.add(ptg.getLatestEtatPointage().getIdAgent());
 			}
 		}
-		
-		// dans un souci de performances, on n affichera toçujours le service de l agent a la date du jour
+
+		// dans un souci de performances, on n affichera toçujours le service de
+		// l agent a la date du jour
 		// ce qui permet de ne faire qu un seul appel a SIRH-WS
 		// et non plus un appel par demande (avec la date de la demande)
 		List<AgentGeneriqueDto> listAgentsExistants = sirhWSConsumer.getListAgents(listAgentDto);
@@ -150,18 +144,21 @@ public class ApprobationService implements IApprobationService {
 			// #14325
 			dto.setApprobation(checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, idAgentOpeOrAppro));
 
+			// #17613 : ne pas afficher les pouces vert/rouge en fonction des
+			// etats
+			dto.setAffichageBoutonAccepter(dto.isApprobation() && !ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.APPROUVE));
+			dto.setAffichageBoutonRefuser(dto.isApprobation() && !ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.REFUSE));
 			result.add(dto);
 		}
 
 		return result;
 	}
-	
+
 	private AgentGeneriqueDto getAgentOfListAgentWithServiceDto(List<AgentGeneriqueDto> listAgents, Integer idAgent) {
-		
-		if(null != listAgents
-				&& null != idAgent) {
-			for(AgentGeneriqueDto agent : listAgents) {
-				if(agent.getIdAgent().equals(idAgent)){
+
+		if (null != listAgents && null != idAgent) {
+			for (AgentGeneriqueDto agent : listAgents) {
+				if (agent.getIdAgent().equals(idAgent)) {
 					return agent;
 				}
 			}
@@ -169,8 +166,7 @@ public class ApprobationService implements IApprobationService {
 		return null;
 	}
 
-	protected boolean checkDroitApprobationByPointage(Pointage ptg, ConsultPointageDto dto,
-			List<DroitsAgent> listdroitsAgent, Integer idAgentOpeOrAppro) {
+	protected boolean checkDroitApprobationByPointage(Pointage ptg, ConsultPointageDto dto, List<DroitsAgent> listdroitsAgent, Integer idAgentOpeOrAppro) {
 		// #14325 modifications sur le cumul des roles
 		// on attribue les droits d approbation pour chaque demande
 		if (dto.isApprobation()) {
@@ -181,22 +177,16 @@ public class ApprobationService implements IApprobationService {
 			for (DroitsAgent da : listdroitsAgent) {
 				if (da.getIdAgent().equals(ptg.getIdAgent())) {
 					for (Droit droit : da.getDroits()) {
-						if ((droit.getIdAgent().equals(idAgentOpeOrAppro) || (null != droit.getIdAgentDelegataire() && droit
-								.getIdAgentDelegataire().equals(idAgentOpeOrAppro)))
+						if ((droit.getIdAgent().equals(idAgentOpeOrAppro) || (null != droit.getIdAgentDelegataire() && droit.getIdAgentDelegataire().equals(idAgentOpeOrAppro)))
 								&& droit.isApprobateur()
 								// #14841 on ne peut pas approuver un journalise
 								// j ai ajoute les autres etats pour lesquels l
 								// approbateur sera bloque
 								// SIRH ne se fit pas a ce booleen pour afficher
 								// les pouces
-								&& !EtatPointageEnum.JOURNALISE.equals(ptg.getLatestEtatPointage().getEtat())
-								&& !EtatPointageEnum.REFUSE_DEFINITIVEMENT
-										.equals(ptg.getLatestEtatPointage().getEtat())
-								&& !EtatPointageEnum.REJETE_DEFINITIVEMENT
-										.equals(ptg.getLatestEtatPointage().getEtat())
-								&& !EtatPointageEnum.EN_ATTENTE.equals(ptg.getLatestEtatPointage().getEtat())
-								&& !EtatPointageEnum.VALIDE.equals(ptg.getLatestEtatPointage().getEtat())
-								&& !EtatPointageEnum.VENTILE.equals(ptg.getLatestEtatPointage().getEtat())) {
+								&& !EtatPointageEnum.JOURNALISE.equals(ptg.getLatestEtatPointage().getEtat()) && !EtatPointageEnum.REFUSE_DEFINITIVEMENT.equals(ptg.getLatestEtatPointage().getEtat())
+								&& !EtatPointageEnum.REJETE_DEFINITIVEMENT.equals(ptg.getLatestEtatPointage().getEtat()) && !EtatPointageEnum.EN_ATTENTE.equals(ptg.getLatestEtatPointage().getEtat())
+								&& !EtatPointageEnum.VALIDE.equals(ptg.getLatestEtatPointage().getEtat()) && !EtatPointageEnum.VENTILE.equals(ptg.getLatestEtatPointage().getEtat())) {
 							return true;
 						}
 					}
@@ -274,47 +264,38 @@ public class ApprobationService implements IApprobationService {
 			// Pointage
 			if (!droitsAgentsIds.contains(ptg.getIdAgent())) {
 				result.getErrors().add(
-						String.format("L'agent %s n'a pas le droit de mettre à jour le pointage %s de l'agent %s.",
-								matriculeConvertor.tryConvertIdAgentToNomatr(idAgent), ptg.getIdPointage(),
+						String.format("L'agent %s n'a pas le droit de mettre à jour le pointage %s de l'agent %s.", matriculeConvertor.tryConvertIdAgentToNomatr(idAgent), ptg.getIdPointage(),
 								matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent())));
 				continue;
 			}
 
 			// Check whether the current target and if it can be updated
 			EtatPointage currentEtat = ptg.getLatestEtatPointage();
-			if (currentEtat.getEtat() != EtatPointageEnum.SAISI && currentEtat.getEtat() != EtatPointageEnum.APPROUVE
-					&& currentEtat.getEtat() != EtatPointageEnum.REFUSE) {
-				result.getErrors()
-						.add(String
-								.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.",
-										ptg.getIdPointage(), matriculeConvertor.tryConvertIdAgentToNomatr(ptg
-												.getIdAgent()), currentEtat.getEtat().name()));
+			if (currentEtat.getEtat() != EtatPointageEnum.SAISI && currentEtat.getEtat() != EtatPointageEnum.APPROUVE && currentEtat.getEtat() != EtatPointageEnum.REFUSE) {
+				result.getErrors().add(
+						String.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.", ptg.getIdPointage(),
+								matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()), currentEtat.getEtat().name()));
 				continue;
 			}
 
 			// Check whether the target EtatPointage is authorized
 			EtatPointageEnum targetEtat = EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat());
 
-			if (targetEtat != EtatPointageEnum.APPROUVE && targetEtat != EtatPointageEnum.REFUSE
-					&& targetEtat != EtatPointageEnum.SAISI) {
-				result.getErrors()
-						.add(String
-								.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.",
-										ptg.getIdPointage(),
-										matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()),
-										targetEtat.name()));
+			if (targetEtat != EtatPointageEnum.APPROUVE && targetEtat != EtatPointageEnum.REFUSE && targetEtat != EtatPointageEnum.SAISI) {
+				result.getErrors().add(
+						String.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.", ptg.getIdPointage(),
+								matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()), targetEtat.name()));
 				continue;
 			}
 
 			// #13380 dans le cas ou on approuve ou saisit, on check si une
 			// absence n existe pas sur les memes dates
 			if (targetEtat == EtatPointageEnum.SAISI || targetEtat == EtatPointageEnum.APPROUVE) {
-				ptgDataCosistencyRules.checkAllAbsences(result, ptg.getIdAgent(), ptg.getDateLundi(),
-						Arrays.asList(ptg));
+				ptgDataCosistencyRules.checkAllAbsences(result, ptg.getIdAgent(), ptg.getDateLundi(), Arrays.asList(ptg));
 				if (!result.getErrors().isEmpty())
 					continue;
 			}
-			
+
 			addRecuperationToAgent(targetEtat, ptg);
 
 			// at last, create and add the new EtatPointage
@@ -349,46 +330,36 @@ public class ApprobationService implements IApprobationService {
 			EtatPointageEnum targetEtat = EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat());
 			boolean ok = true;
 
-			if (currentEtat != EtatPointageEnum.SAISI && currentEtat != EtatPointageEnum.EN_ATTENTE
-					&& currentEtat != EtatPointageEnum.REJETE && currentEtat != EtatPointageEnum.APPROUVE
+			if (currentEtat != EtatPointageEnum.SAISI && currentEtat != EtatPointageEnum.EN_ATTENTE && currentEtat != EtatPointageEnum.REJETE && currentEtat != EtatPointageEnum.APPROUVE
 					&& targetEtat == EtatPointageEnum.APPROUVE) {
 				ok = false;
 			}
 
-			if (currentEtat != EtatPointageEnum.APPROUVE && currentEtat != EtatPointageEnum.REJETE
-					&& currentEtat != EtatPointageEnum.VENTILE && targetEtat == EtatPointageEnum.EN_ATTENTE) {
+			if (currentEtat != EtatPointageEnum.APPROUVE && currentEtat != EtatPointageEnum.REJETE && currentEtat != EtatPointageEnum.VENTILE && targetEtat == EtatPointageEnum.EN_ATTENTE) {
 				ok = false;
 			}
-			if (currentEtat != EtatPointageEnum.APPROUVE && currentEtat != EtatPointageEnum.EN_ATTENTE
-					&& currentEtat != EtatPointageEnum.VENTILE && currentEtat != EtatPointageEnum.VALIDE
+			if (currentEtat != EtatPointageEnum.APPROUVE && currentEtat != EtatPointageEnum.EN_ATTENTE && currentEtat != EtatPointageEnum.VENTILE && currentEtat != EtatPointageEnum.VALIDE
 					&& targetEtat == EtatPointageEnum.REJETE) {
 				ok = false;
 			}
 			if (!ok) {
 				result.getErrors().add(
-						String.format(
-								"Impossible de mettre à %s le pointage %s de l'agent %s car celui-ci est à l'état %s.",
-								targetEtat.name(), ptg.getIdPointage(),
+						String.format("Impossible de mettre à %s le pointage %s de l'agent %s car celui-ci est à l'état %s.", targetEtat.name(), ptg.getIdPointage(),
 								matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()), currentEtat.name()));
 				continue;
 			}
 
-			if (targetEtat != EtatPointageEnum.APPROUVE && targetEtat != EtatPointageEnum.REJETE
-					&& targetEtat != EtatPointageEnum.EN_ATTENTE) {
-				result.getErrors()
-						.add(String
-								.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REJETE ou EN_ATTENTE sont acceptés depuis SIRH.",
-										ptg.getIdPointage(),
-										matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()),
-										targetEtat.name()));
+			if (targetEtat != EtatPointageEnum.APPROUVE && targetEtat != EtatPointageEnum.REJETE && targetEtat != EtatPointageEnum.EN_ATTENTE) {
+				result.getErrors().add(
+						String.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REJETE ou EN_ATTENTE sont acceptés depuis SIRH.", ptg.getIdPointage(),
+								matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()), targetEtat.name()));
 				continue;
 			}
 
 			// #13380 dans le cas ou on approuve ou saisit, on check si une
 			// absence n existe pas sur les memes dates
 			if (targetEtat == EtatPointageEnum.SAISI || targetEtat == EtatPointageEnum.APPROUVE) {
-				ptgDataCosistencyRules.checkAllAbsences(result, ptg.getIdAgent(), ptg.getDateLundi(),
-						Arrays.asList(ptg));
+				ptgDataCosistencyRules.checkAllAbsences(result, ptg.getIdAgent(), ptg.getDateLundi(), Arrays.asList(ptg));
 				if (!result.getErrors().isEmpty())
 					continue;
 			}
@@ -396,11 +367,9 @@ public class ApprobationService implements IApprobationService {
 			// at last, create and add the new EtatPointage
 			EtatPointage etat = new EtatPointage();
 
-			Spcarr spcarr = mairieRepository.getAgentCurrentCarriere(
-					helperService.getMairieMatrFromIdAgent(ptg.getIdAgent()), ptg.getDateDebut());
+			Spcarr spcarr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(ptg.getIdAgent()), ptg.getDateDebut());
 
-			VentilDate lastVentil = ventilRepository.getLatestVentilDate(
-					helperService.getTypeChainePaieFromStatut(spcarr.getStatutCarriere()), false);
+			VentilDate lastVentil = ventilRepository.getLatestVentilDate(helperService.getTypeChainePaieFromStatut(spcarr.getStatutCarriere()), false);
 			if (targetEtat == EtatPointageEnum.APPROUVE && lastVentil != null)
 				etat.setDateEtat(lastVentil.getDateVentilation());
 			else
@@ -418,12 +387,11 @@ public class ApprobationService implements IApprobationService {
 			} else {
 				dateEtat = helperService.getCurrentDate();
 			}
-			
+
 			addRecuperationToAgent(targetEtat, ptg);
 
 			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat, ptg, dateEtat);
-			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(idAgent, dto, currentEtat, ptg,
-					dateEtat);
+			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(idAgent, dto, currentEtat, ptg, dateEtat);
 			reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat, ptg, dateEtat);
 		}
 		return result;
@@ -443,24 +411,18 @@ public class ApprobationService implements IApprobationService {
 	 * @param dateEtat
 	 *            Date
 	 */
-	protected void reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(Integer idAgent,
-			PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
+	protected void reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(Integer idAgent, PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
 
-		if (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
-				&& EtatPointageEnum.VALIDE.equals(currentEtat)
+		if (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat())) && EtatPointageEnum.VALIDE.equals(currentEtat)
 				&& (RefTypePointageEnum.PRIME.equals(ptg.getTypePointageEnum()))) {
 
-			List<Pointage> listePointagesPrimeAgent = ventilationRepository
-					.getListPointagesPrimeValideByMoisAndRefPrime(ptg.getIdAgent(), ptg.getDateDebut(), ptg
-							.getRefPrime().getIdRefPrime());
+			List<Pointage> listePointagesPrimeAgent = ventilationRepository.getListPointagesPrimeValideByMoisAndRefPrime(ptg.getIdAgent(), ptg.getDateDebut(), ptg.getRefPrime().getIdRefPrime());
 
-			List<Pointage> filteredListePointagesPrimeAgent = pointageService.filterOldPointagesAndEtatFromList(
-					listePointagesPrimeAgent, Arrays.asList(EtatPointageEnum.VALIDE), null);
+			List<Pointage> filteredListePointagesPrimeAgent = pointageService.filterOldPointagesAndEtatFromList(listePointagesPrimeAgent, Arrays.asList(EtatPointageEnum.VALIDE), null);
 
 			if (null != filteredListePointagesPrimeAgent && !filteredListePointagesPrimeAgent.isEmpty()) {
 				for (Pointage pointage : filteredListePointagesPrimeAgent) {
-					if (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
-							&& (RefTypePointageEnum.PRIME.equals(pointage.getTypePointageEnum()))
+					if (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat()) && (RefTypePointageEnum.PRIME.equals(pointage.getTypePointageEnum()))
 							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {
 
 						EtatPointage etat = new EtatPointage();
@@ -476,24 +438,19 @@ public class ApprobationService implements IApprobationService {
 		}
 	}
 
-	protected void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(Integer idAgent,
-			PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
+	protected void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(Integer idAgent, PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
 
-		if (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
-				&& EtatPointageEnum.VALIDE.equals(currentEtat)
-				&& (RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE
-						.equals(ptg.getTypePointageEnum()))) {
+		if (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat())) && EtatPointageEnum.VALIDE.equals(currentEtat)
+				&& (RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE.equals(ptg.getTypePointageEnum()))) {
 			// si on REJETE un pointages VALIDE
 			// on reinitialise les autres pointages du meme agent pour la meme
 			// semaine
 			// a APPROUVE pour prise en compte dans la ventilation
-			List<Pointage> listePointagesAgent = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(
-					ptg.getIdAgent(), ptg.getDateLundi());
+			List<Pointage> listePointagesAgent = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi());
 			if (null != listePointagesAgent && !listePointagesAgent.isEmpty()) {
 				for (Pointage pointage : listePointagesAgent) {
 					if (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
-							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE
-									.equals(pointage.getTypePointageEnum()))
+							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE.equals(pointage.getTypePointageEnum()))
 							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {
 
 						EtatPointage etat = new EtatPointage();
@@ -509,24 +466,19 @@ public class ApprobationService implements IApprobationService {
 		}
 	}
 
-	protected void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(Integer idAgent,
-			PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
+	protected void reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(Integer idAgent, PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
 
-		if (EtatPointageEnum.APPROUVE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
-				&& EtatPointageEnum.REJETE.equals(currentEtat)
-				&& (RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE
-						.equals(ptg.getTypePointageEnum()))) {
+		if (EtatPointageEnum.APPROUVE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat())) && EtatPointageEnum.REJETE.equals(currentEtat)
+				&& (RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE.equals(ptg.getTypePointageEnum()))) {
 			// si on REJETE un pointages VALIDE
 			// on reinitialise les autres pointages du meme agent pour la meme
 			// semaine
 			// a APPROUVE pour prise en compte dans la ventilation
-			List<Pointage> listePointagesAgent = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(
-					ptg.getIdAgent(), ptg.getDateLundi());
+			List<Pointage> listePointagesAgent = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi());
 			if (null != listePointagesAgent && !listePointagesAgent.isEmpty()) {
 				for (Pointage pointage : listePointagesAgent) {
 					if (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
-							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE
-									.equals(pointage.getTypePointageEnum()))
+							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE.equals(pointage.getTypePointageEnum()))
 							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {
 
 						EtatPointage etat = new EtatPointage();
@@ -555,40 +507,33 @@ public class ApprobationService implements IApprobationService {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public void addRecuperationToAgent(EtatPointageEnum targetEtat, Pointage ptg) {
-		
+
 		// si le pointage est une heure sup en recuperation
-		if(RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum())
-				&& ptg.getHeureSupRecuperee()) {
-			
+		if (RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum()) && ptg.getHeureSupRecuperee()) {
+
 			// calcul du nombre de minutes
 			Integer nombreMinutes = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
-			if(ptg.getHeureSupRappelService()) {
+			if (ptg.getHeureSupRappelService()) {
 				nombreMinutes += nombreMinutes;
 			}
-			
+
 			EtatPointageEnum currentEtat = ptg.getLatestEtatPointage().getEtat();
-			
+
 			// dans le cas ou le pointage est approuve
-			if(EtatPointageEnum.APPROUVE.equals(targetEtat)
-					&& (EtatPointageEnum.SAISI.equals(currentEtat)
-							|| EtatPointageEnum.REFUSE.equals(currentEtat)
-							|| EtatPointageEnum.REJETE.equals(currentEtat))) {
-				absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, ptg.getIdPointage(), 
-						null != ptg.getPointageParent() ? ptg.getPointageParent().getIdPointage() : null);
+			if (EtatPointageEnum.APPROUVE.equals(targetEtat)
+					&& (EtatPointageEnum.SAISI.equals(currentEtat) || EtatPointageEnum.REFUSE.equals(currentEtat) || EtatPointageEnum.REJETE.equals(currentEtat))) {
+				absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, ptg.getIdPointage(), null != ptg.getPointageParent() ? ptg
+						.getPointageParent().getIdPointage() : null);
 			}
 			// dans le cas ou le pointage est refuse, rejete
-			if((EtatPointageEnum.REFUSE.equals(targetEtat)
-					|| EtatPointageEnum.REJETE.equals(targetEtat)
-					|| EtatPointageEnum.SAISI.equals(targetEtat))
-					&& (EtatPointageEnum.APPROUVE.equals(currentEtat)
-							|| EtatPointageEnum.VENTILE.equals(currentEtat)
-							|| EtatPointageEnum.VALIDE.equals(currentEtat)
-							|| EtatPointageEnum.JOURNALISE.equals(currentEtat))) {
-				absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), 0, ptg.getIdPointage(), 
-						null != ptg.getPointageParent() ? ptg.getPointageParent().getIdPointage() : null);
+			if ((EtatPointageEnum.REFUSE.equals(targetEtat) || EtatPointageEnum.REJETE.equals(targetEtat) || EtatPointageEnum.SAISI.equals(targetEtat))
+					&& (EtatPointageEnum.APPROUVE.equals(currentEtat) || EtatPointageEnum.VENTILE.equals(currentEtat) || EtatPointageEnum.VALIDE.equals(currentEtat) || EtatPointageEnum.JOURNALISE
+							.equals(currentEtat))) {
+				absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), 0, ptg.getIdPointage(), null != ptg.getPointageParent() ? ptg.getPointageParent()
+						.getIdPointage() : null);
 			}
 		}
 	}

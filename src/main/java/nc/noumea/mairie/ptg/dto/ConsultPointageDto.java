@@ -24,6 +24,9 @@ public class ConsultPointageDto {
 	private boolean heuresSupRappelEnService;
 
 	private boolean isApprobation;
+	// # 17613 pour affichage des boutons
+	private boolean isAffichageBoutonAccepter;
+	private boolean isAffichageBoutonRefuser;
 
 	public ConsultPointageDto() {
 
@@ -50,8 +53,7 @@ public class ConsultPointageDto {
 			case H_SUP:
 				quantite = helper.formatMinutesToString(debut, fin);
 				heuresSupRecuperees = null == ptg.getHeureSupRecuperee() ? false : ptg.getHeureSupRecuperee();
-				heuresSupRappelEnService = null == ptg.getHeureSupRappelService() ? false : ptg
-						.getHeureSupRappelService();
+				heuresSupRappelEnService = null == ptg.getHeureSupRappelService() ? false : ptg.getHeureSupRappelService();
 				break;
 			case PRIME:
 				typePointage = ptg.getRefPrime().getLibelle();
@@ -195,6 +197,22 @@ public class ConsultPointageDto {
 
 	public void setApprobation(boolean isApprobation) {
 		this.isApprobation = isApprobation;
+	}
+
+	public boolean isAffichageBoutonAccepter() {
+		return isAffichageBoutonAccepter;
+	}
+
+	public void setAffichageBoutonAccepter(boolean isAffichageBoutonAccepter) {
+		this.isAffichageBoutonAccepter = isAffichageBoutonAccepter;
+	}
+
+	public boolean isAffichageBoutonRefuser() {
+		return isAffichageBoutonRefuser;
+	}
+
+	public void setAffichageBoutonRefuser(boolean isAffichageBoutonRefuser) {
+		this.isAffichageBoutonRefuser = isAffichageBoutonRefuser;
 	}
 
 }
