@@ -31,6 +31,8 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
 public class PointageDataConsistencyRulesTest {
@@ -1785,7 +1787,7 @@ public class PointageDataConsistencyRulesTest {
 		Pointage p1 = new Pointage();
 		p1.setType(new RefTypePointage());
 		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
-		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
+		p1.setDateFin(new DateTime(2013, 05, 17, 11, 15, 0).toDate()); // 4h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		HelperService hS = Mockito.mock(HelperService.class);
@@ -1804,6 +1806,9 @@ public class PointageDataConsistencyRulesTest {
 		assertEquals(0, result.getInfos().size());
 	}
 
+	// #18728 : evol sur le calcul
+	// ici la personne est a temps partiel à 20h par semaine
+	// il a donc le droit à 20h x 20% = 4 HSup
 	@Test
 	public void checkAgentTempsPartielAndHSup_KO() {
 
@@ -1829,7 +1834,15 @@ public class PointageDataConsistencyRulesTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseCalculee())).thenReturn(1200);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseLegale())).thenReturn(2340);
-		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(600)).thenReturn(10.0d);
+
+		Mockito.doAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
+				assertEquals(nombreMinutesHSupAutorisees, new Integer(4*60).intValue());
+				return nombreMinutesHSupAutorisees/60;
+			}
+		}).when(hS).convertMinutesToMairieNbHeuresFormat(Mockito.anyInt());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -1841,7 +1854,7 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 29 heures supplémentaires.", result
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 heures supplémentaires.", result
 				.getErrors().get(0));
 	}
 
@@ -1864,7 +1877,7 @@ public class PointageDataConsistencyRulesTest {
 		Pointage p1 = new Pointage();
 		p1.setType(new RefTypePointage());
 		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
-		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
+		p1.setDateFin(new DateTime(2013, 05, 17, 12, 15, 0).toDate()); // 5h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
 		Pointage p2 = new Pointage();
@@ -1889,6 +1902,11 @@ public class PointageDataConsistencyRulesTest {
 		assertEquals(0, result.getInfos().size());
 	}
 
+	// #18728 : evol sur le calcul
+	// ici la personne est a temps partiel à 20h30 par semaine
+	// il a donc le droit à 20h30 x 20% = 4 HSUP
+	// + 1 heure d absence 
+	// soit 5 HSup
 	@Test
 	public void checkAgentTempsPartielAndHSup_WithAbsence_KO() {
 
@@ -1898,7 +1916,7 @@ public class PointageDataConsistencyRulesTest {
 
 		BaseHorairePointageDto bas = new BaseHorairePointageDto();
 		bas.setCodeBaseHorairePointage("A");
-		bas.setBaseCalculee(20.5);
+		bas.setBaseCalculee(20.5); 
 		bas.setBaseLegale(39.0);
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(0.5);
@@ -1920,7 +1938,15 @@ public class PointageDataConsistencyRulesTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseCalculee())).thenReturn(1200);
 		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseLegale())).thenReturn(2340);
-		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(600)).thenReturn(10.485d);
+
+		Mockito.doAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
+				assertEquals(nombreMinutesHSupAutorisees, new Integer(5*60).intValue());
+				return nombreMinutesHSupAutorisees/60;
+			}
+		}).when(hS).convertMinutesToMairieNbHeuresFormat(Mockito.anyInt());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -1932,7 +1958,62 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 28,52 heures supplémentaires.", result
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 5 heures supplémentaires.", result
+				.getErrors().get(0));
+	}
+
+	// #18728 : evol sur le calcul
+	// cas de Luc (repris du redmine)
+	// ici la personne est a temps partiel à 35h par semaine
+	// il a donc le droit à 35h x 20% = 7 HSUP
+	// mais comme 35h + 7HSup > 39h legale
+	// il ne peut faire faire que 4HSup
+	@Test
+	public void checkAgentTempsPartielAndHSup_KO_casTempsPartiel35h() {
+
+		// Given
+		Integer idAgent = 9008765;
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
+		bas.setBaseCalculee(35.0); 
+		bas.setBaseLegale(39.0);
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(0.5);
+		Spcarr car = new Spcarr();
+		car.setSpbhor(spbhor);
+
+		Pointage p1 = new Pointage();
+		p1.setType(new RefTypePointage());
+		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 18, 16, 15, 0).toDate()); // 33h
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseCalculee())).thenReturn(1200);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseLegale())).thenReturn(2340);
+
+		Mockito.doAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
+				assertEquals(nombreMinutesHSupAutorisees, new Integer(4*60).intValue());
+				return nombreMinutesHSupAutorisees/60;
+			}
+		}).when(hS).convertMinutesToMairieNbHeuresFormat(Mockito.anyInt());
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		// When
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas);
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 heures supplémentaires.", result
 				.getErrors().get(0));
 	}
 

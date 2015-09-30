@@ -587,17 +587,20 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				}
 			}
 
-			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getBaseCalculee()) * carr
-					.getSpbhor().getTaux());
+			//  #18728
+			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getBaseCalculee()));
+			// base calculee x 20% = HSup autorisees
+			int baseLegaleHsupMax =  (int) weekBase + new Double(weekBase * 0.2).intValue();
+			// mais si temps effectif de travail hebdomadaire > 39h
+			// alors on bloque a 39h
+			baseLegaleHsupMax = baseLegaleHsupMax > 39*60 ? 39*60 : baseLegaleHsupMax;
 
-			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > helperService
-					.convertMairieNbHeuresFormatToMinutes(baseDto.getBaseLegale())) {
+			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > baseLegaleHsupMax) {
 				DecimalFormat df = new DecimalFormat("0.##");
-				double nombre = baseDto.getBaseLegale() - helperService.convertMinutesToMairieNbHeuresFormat(weekBase);
+				double nombre = helperService.convertMinutesToMairieNbHeuresFormat(baseLegaleHsupMax - weekBase + minutesAbsWeek);
 				String msg = String.format(HS_TPS_PARTIEL_MSG, df.format(nombre));
 				srm.getErrors().add(msg);
 			}
-
 		}
 
 		return srm;
