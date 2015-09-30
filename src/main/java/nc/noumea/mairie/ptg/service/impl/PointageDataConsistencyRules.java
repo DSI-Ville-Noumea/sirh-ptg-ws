@@ -1,6 +1,5 @@
 package nc.noumea.mairie.ptg.service.impl;
 
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -51,7 +50,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String MALADIE_MSG = "%s : L'agent est en maladie sur cette période.";
 	public static final String HS_INA_315_MSG = "L'agent n'a pas droit aux HS sur la période (INA > 315)";
 	public static final String BASE_HOR_00Z_MSG = "L'agent est en base horaire \"00Z\" sur la période";
-	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité sur cette période.";
+	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité le %s.";
 	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez saisi des primes et/ou heures supplémentaires sur des périodes où l’agent était absent.";
 	public static final String ERROR_7651_MSG = "";
 	public static final String ERROR_7652_MSG = "";
@@ -67,6 +66,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
 			"62", "63", "64", "65", "66");
 
+
+	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	
 	@Override
 	public ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
@@ -244,10 +246,14 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, AgentGeneriqueDto ag) {
 
-		Spadmn adm = mairieRepository.getAgentCurrentPosition(ag, dateLundi);
-
-		if (!ACTIVITE_CODES.contains(adm.getCdpadm()))
-			srm.getErrors().add(INACTIVITE_MSG);
+		if(null != pointages) {
+			for(Pointage ptg : pointages) {
+				Spadmn adm = mairieRepository.getAgentCurrentPosition(ag, ptg.getDateDebut());
+	
+				if (null == adm || !ACTIVITE_CODES.contains(adm.getCdpadm()))
+					srm.getErrors().add(String.format(INACTIVITE_MSG, sdf.format(ptg.getDateDebut())));
+			}
+		}
 
 		return srm;
 	}
@@ -457,7 +463,6 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	private ReturnMessageDto checkIntervalleDateDebDateFin(ReturnMessageDto srm, Integer idAgent,
 			List<Pointage> pointages) {
 
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		for (Pointage ptg : pointages) {
 			Calendar fin = null;
 			if (ptg.getDateFin() != null) {

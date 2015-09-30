@@ -1032,18 +1032,25 @@ public class PointageDataConsistencyRulesTest {
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9007865);
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		Date dateDebut = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 
 		Spadmn sp = new Spadmn();
 		sp.setCdpadm("01");
 
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateLundi)).thenReturn(sp);
+		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateLundi)).thenReturn(null);
+		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateDebut)).thenReturn(sp);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
+		List<Pointage> listPointages = new ArrayList<Pointage>();
+		Pointage ptg = new Pointage();
+		ptg.setDateDebut(dateDebut);
+		listPointages.add(ptg);
+		
 		// When
-		ReturnMessageDto result = service.checkAgentInactivity(new ReturnMessageDto(), 9007865, dateLundi, null, ag);
+		ReturnMessageDto result = service.checkAgentInactivity(new ReturnMessageDto(), 9007865, dateLundi, listPointages, ag);
 
 		// Then
 		assertEquals(0, result.getInfos().size());
@@ -1057,23 +1064,30 @@ public class PointageDataConsistencyRulesTest {
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9007865);
 		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+		Date dateDebut = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 
 		Spadmn sp = new Spadmn();
 		sp.setCdpadm("99");
 
 		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateLundi)).thenReturn(sp);
+		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateLundi)).thenReturn(null);
+		Mockito.when(mRepo.getAgentCurrentPosition(ag, dateDebut)).thenReturn(sp);
+
+		List<Pointage> listPointages = new ArrayList<Pointage>();
+		Pointage ptg = new Pointage();
+		ptg.setDateDebut(dateDebut);
+		listPointages.add(ptg);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 
 		// When
-		ReturnMessageDto result = service.checkAgentInactivity(new ReturnMessageDto(), 9007865, dateLundi, null, ag);
+		ReturnMessageDto result = service.checkAgentInactivity(new ReturnMessageDto(), 9007865, dateLundi, listPointages, ag);
 
 		// Then
 		assertEquals(0, result.getInfos().size());
 		assertEquals(1, result.getErrors().size());
-		assertEquals("L'agent n'est pas en activité sur cette période.", result.getErrors().get(0));
+		assertEquals("L'agent n'est pas en activité le 15/05/2013.", result.getErrors().get(0));
 	}
 
 	@Test
