@@ -1840,9 +1840,9 @@ public class PointageDataConsistencyRulesTest {
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
 				assertEquals(nombreMinutesHSupAutorisees, new Integer(4*60).intValue());
-				return nombreMinutesHSupAutorisees/60;
+				return new Integer(nombreMinutesHSupAutorisees/60).toString() + "h";
 			}
-		}).when(hS).convertMinutesToMairieNbHeuresFormat(Mockito.anyInt());
+		}).when(hS).formatMinutesToString(Mockito.anyInt());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -1854,7 +1854,7 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 heures supplémentaires.", result
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4h d'heures supplémentaires.", result
 				.getErrors().get(0));
 	}
 
@@ -1944,9 +1944,9 @@ public class PointageDataConsistencyRulesTest {
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
 				assertEquals(nombreMinutesHSupAutorisees, new Integer(5*60).intValue());
-				return nombreMinutesHSupAutorisees/60;
+				return new Integer(nombreMinutesHSupAutorisees/60).toString() + "h";
 			}
-		}).when(hS).convertMinutesToMairieNbHeuresFormat(Mockito.anyInt());
+		}).when(hS).formatMinutesToString(Mockito.anyInt());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -1958,7 +1958,7 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 5 heures supplémentaires.", result
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 5h d'heures supplémentaires.", result
 				.getErrors().get(0));
 	}
 
@@ -1999,9 +1999,9 @@ public class PointageDataConsistencyRulesTest {
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
 				assertEquals(nombreMinutesHSupAutorisees, new Integer(4*60).intValue());
-				return nombreMinutesHSupAutorisees/60;
+				return new Integer(nombreMinutesHSupAutorisees/60).toString();
 			}
-		}).when(hS).convertMinutesToMairieNbHeuresFormat(Mockito.anyInt());
+		}).when(hS).formatMinutesToString(Mockito.anyInt());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "helperService", hS);
@@ -2013,7 +2013,7 @@ public class PointageDataConsistencyRulesTest {
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 heures supplémentaires.", result
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 d'heures supplémentaires.", result
 				.getErrors().get(0));
 	}
 

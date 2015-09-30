@@ -57,7 +57,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String ERROR_7652_MSG = "";
 	public static final String ERROR_POINTAGE_PLUS_3_MOIS = "La semaine sélectionnée est trop ancienne pour être modifiée.";
 	public static final String ERROR_POINTAGE_SUP_DATE_JOUR = "La semaine sélectionnée est dans le futur et ne peut donc être modifiée.";
-	public static final String HS_TPS_PARTIEL_MSG = "L'agent est en temps partiel, il ne peut pas avoir plus de %s heures supplémentaires.";
+	public static final String HS_TPS_PARTIEL_MSG = "L'agent est en temps partiel, il ne peut pas avoir plus de %s d'heures supplémentaires.";
 	public static final String ERROR_DATE_POINTAGE = "Pour le pointage du %s, la date de fin est antérieure à la date de début.";
 	public static final String ERROR_INTERVALLE_POINTAGE = "Pour le pointage du %s, il faut 30 minutes d'intervalle entre la date de début et la date de fin.";
 	public static final String ERROR_PRIME_SAISIE_J1_POINTAGE = "Pour la prime %s du %s, la saisie à J+1 n'est pas autorisée.";
@@ -596,9 +596,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			baseLegaleHsupMax = baseLegaleHsupMax > 39*60 ? 39*60 : baseLegaleHsupMax;
 
 			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > baseLegaleHsupMax) {
-				DecimalFormat df = new DecimalFormat("0.##");
-				double nombre = helperService.convertMinutesToMairieNbHeuresFormat(baseLegaleHsupMax - weekBase + minutesAbsWeek);
-				String msg = String.format(HS_TPS_PARTIEL_MSG, df.format(nombre));
+				String nombre = helperService.formatMinutesToString(baseLegaleHsupMax - weekBase + minutesAbsWeek);
+				String msg = String.format(HS_TPS_PARTIEL_MSG, nombre);
 				srm.getErrors().add(msg);
 			}
 		}
