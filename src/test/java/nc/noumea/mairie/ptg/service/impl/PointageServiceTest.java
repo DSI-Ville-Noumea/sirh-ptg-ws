@@ -1166,6 +1166,93 @@ public class PointageServiceTest {
 		assertEquals("F", dto.getAgent().getStatut());
 		assertEquals(7, dto.getSaisies().size());
 		assertFalse(dto.isINASuperieur315());
+		assertFalse(dto.isDPM());
+		assertEquals(7058, (int) dto.getSaisies().get(0).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(0).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(1).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(1).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(2).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(2).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(3).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(3).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(4).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(4).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(5).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(5).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(6).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(6).getPrimes().get(1).getNumRubrique());
+	}
+
+	@Test
+	public void getAgentFichePointageKiosque_pasDeDirection() throws ParseException {
+
+		// Given
+		Integer idAgent = 9007654;
+
+		Spbarem spbarem = new Spbarem();
+		spbarem.setIna(315);
+		spbarem.setIban("12");
+		
+		SpcarrId carrId = new SpcarrId();
+		carrId.setNomatr(7654);
+		carrId.setDatdeb(20120506);
+		Spcarr carr = new Spcarr();
+		carr.setId(carrId);
+		carr.setCdcate(1);
+		carr.setSpbarem(spbarem);
+
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setIdAgent(9007654);
+
+		List<Integer> listePrimePointage = new ArrayList<Integer>();
+
+		listePrimePointage.add(7058);
+		listePrimePointage.add(7059);
+
+		RefPrime rp1 = new RefPrime();
+		rp1.setNoRubr(7058);
+		rp1.setIdRefPrime(1111);
+		rp1.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		RefPrime rp2 = new RefPrime();
+		rp2.setNoRubr(7059);
+		rp2.setIdRefPrime(2222);
+		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+
+		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(null);
+		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
+
+		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
+				Arrays.asList(rp1, rp2));
+
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(agent, d)).thenReturn(carr);
+
+		HelperService helperMock = Mockito.mock(HelperService.class);
+		Mockito.when(helperMock.getCurrentDate()).thenReturn(d);
+		Mockito.when(helperMock.isDateAMonday(d)).thenReturn(true);
+		Mockito.when(helperMock.getWeekStringFromDate(d)).thenReturn("week string");
+
+		// When
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", wsMock);
+		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "helperService", helperMock);
+
+		FichePointageDtoKiosque dto = service.getFichePointageForAgentKiosque(agent, d);
+
+		// Then
+		assertEquals(d, dto.getDateLundi());
+		assertEquals("week string", dto.getSemaine());
+		assertEquals(9007654, (int) dto.getAgent().getIdAgent());
+		assertEquals("F", dto.getAgent().getStatut());
+		assertEquals(7, dto.getSaisies().size());
+		assertFalse(dto.isINASuperieur315());
+		assertFalse(dto.isDPM());
 		assertEquals(7058, (int) dto.getSaisies().get(0).getPrimes().get(0).getNumRubrique());
 		assertEquals(7059, (int) dto.getSaisies().get(0).getPrimes().get(1).getNumRubrique());
 		assertEquals(7058, (int) dto.getSaisies().get(1).getPrimes().get(0).getNumRubrique());
@@ -1256,6 +1343,98 @@ public class PointageServiceTest {
 		assertEquals("F", dto.getAgent().getStatut());
 		assertEquals(7, dto.getSaisies().size());
 		assertTrue(dto.isINASuperieur315());
+		assertFalse(dto.isDPM());
+		assertEquals(7058, (int) dto.getSaisies().get(0).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(0).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(1).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(1).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(2).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(2).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(3).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(3).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(4).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(4).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(5).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(5).getPrimes().get(1).getNumRubrique());
+		assertEquals(7058, (int) dto.getSaisies().get(6).getPrimes().get(0).getNumRubrique());
+		assertEquals(7059, (int) dto.getSaisies().get(6).getPrimes().get(1).getNumRubrique());
+	}
+	
+	@Test
+	public void getAgentFichePointageKiosque_DPM() throws ParseException {
+
+		// Given
+		Integer idAgent = 9007654;
+
+		EntiteDto entite = new EntiteDto();
+		entite.setIdEntite(66);
+		entite.setLabel("LIB SERVICE");
+		entite.setSigle("DPM");
+
+		Spbarem spbarem = new Spbarem();
+		spbarem.setIna(316);
+		spbarem.setIban("12");
+		
+		SpcarrId carrId = new SpcarrId();
+		carrId.setNomatr(7654);
+		carrId.setDatdeb(20120506);
+		Spcarr carr = new Spcarr();
+		carr.setId(carrId);
+		carr.setCdcate(1);
+		carr.setSpbarem(spbarem);
+
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+		agent.setIdAgent(9007654);
+
+		List<Integer> listePrimePointage = new ArrayList<Integer>();
+
+		listePrimePointage.add(7058);
+		listePrimePointage.add(7059);
+
+		RefPrime rp1 = new RefPrime();
+		rp1.setNoRubr(7058);
+		rp1.setIdRefPrime(1111);
+		rp1.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		RefPrime rp2 = new RefPrime();
+		rp2.setNoRubr(7059);
+		rp2.setIdRefPrime(2222);
+		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+
+		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
+
+		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
+		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
+
+		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
+				Arrays.asList(rp1, rp2));
+
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(agent, d)).thenReturn(carr);
+
+		HelperService helperMock = Mockito.mock(HelperService.class);
+		Mockito.when(helperMock.getCurrentDate()).thenReturn(d);
+		Mockito.when(helperMock.isDateAMonday(d)).thenReturn(true);
+		Mockito.when(helperMock.getWeekStringFromDate(d)).thenReturn("week string");
+
+		// When
+		PointageService service = new PointageService();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", wsMock);
+		ReflectionTestUtils.setField(service, "pointageRepository", arRepo);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "helperService", helperMock);
+
+		FichePointageDtoKiosque dto = service.getFichePointageForAgentKiosque(agent, d);
+
+		// Then
+		assertEquals(d, dto.getDateLundi());
+		assertEquals("week string", dto.getSemaine());
+		assertEquals(9007654, (int) dto.getAgent().getIdAgent());
+		assertEquals("F", dto.getAgent().getStatut());
+		assertEquals(7, dto.getSaisies().size());
+		assertTrue(dto.isINASuperieur315());
+		assertTrue(dto.isDPM());
 		assertEquals(7058, (int) dto.getSaisies().get(0).getPrimes().get(0).getNumRubrique());
 		assertEquals(7059, (int) dto.getSaisies().get(0).getPrimes().get(1).getNumRubrique());
 		assertEquals(7058, (int) dto.getSaisies().get(1).getPrimes().get(0).getNumRubrique());
@@ -1346,6 +1525,7 @@ public class PointageServiceTest {
 		assertEquals("F", dto.getAgent().getStatut());
 		assertEquals(7, dto.getSaisies().size());
 		assertTrue(dto.isINASuperieur315());
+		assertFalse(dto.isDPM());
 		assertEquals(7058, (int) dto.getSaisies().get(0).getPrimes().get(0).getNumRubrique());
 		assertEquals(7059, (int) dto.getSaisies().get(0).getPrimes().get(1).getNumRubrique());
 		assertEquals(7058, (int) dto.getSaisies().get(1).getPrimes().get(0).getNumRubrique());

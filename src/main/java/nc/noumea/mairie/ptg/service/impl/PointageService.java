@@ -91,9 +91,11 @@ public class PointageService implements IPointageService {
 
 		// on construit le dto de l'agent
 		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);
-		agentDto.setIdServiceADS(direction.getIdEntite());
-		agentDto.setService(direction.getLabel());
-
+		if(null != direction) {
+			agentDto.setIdServiceADS(direction.getIdEntite());
+			agentDto.setService(direction.getLabel());
+		}
+		
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(agent, helperService.getCurrentDate());
@@ -103,7 +105,7 @@ public class PointageService implements IPointageService {
 		FichePointageDto result = new FichePointageDto();
 		result.setDateLundi(date);
 		result.setAgent(agentDto);
-		result.setDPM(direction.getSigle().toUpperCase().equals("DPM"));
+		result.setDPM(null != direction ? direction.getSigle().toUpperCase().equals("DPM") : false);
 		result.setSemaine(helperService.getWeekStringFromDate(date));
 
 		// on recupere l'INA de l agent
@@ -195,8 +197,9 @@ public class PointageService implements IPointageService {
 							thePrimeToUpdate = pDto;
 						}
 					}
-					assert thePrimeToUpdate != null;
-					thePrimeToUpdate.updateWithPointage(ptg);
+					if(thePrimeToUpdate != null)
+						thePrimeToUpdate.updateWithPointage(ptg);
+					
 					break;
 			}
 		}
@@ -568,14 +571,11 @@ public class PointageService implements IPointageService {
 
 		// Retrieve division service of agent
 		EntiteDto direction = sirhWsConsumer.getAgentDirection(agent.getIdAgent(), date);
-		if (direction == null) {
-			return result;
-		}
-
+		
 		// on construit le dto de l'agent
 		AgentWithServiceDto agentDto = new AgentWithServiceDto(agent);
-		agentDto.setIdServiceADS(direction.getIdEntite());
-		agentDto.setService(direction.getLabel());
+		agentDto.setIdServiceADS(null != direction ? direction.getIdEntite() : null);
+		agentDto.setService(null != direction ? direction.getLabel() : "");
 
 		// on recherche sa carriere pour avoir son statut (Fonctionnaire,
 		// contractuel,convention coll
@@ -585,7 +585,7 @@ public class PointageService implements IPointageService {
 		// on construit le DTO de jourPointage
 		result.setDateLundi(date);
 		result.setAgent(agentDto);
-		result.setDPM(direction.getSigle().toUpperCase().equals("DPM"));
+		result.setDPM(null != direction ? direction.getSigle().toUpperCase().equals("DPM") : false);
 		result.setSemaine(helperService.getWeekStringFromDate(date));
 
 		// on recupere l'INA de l agent
