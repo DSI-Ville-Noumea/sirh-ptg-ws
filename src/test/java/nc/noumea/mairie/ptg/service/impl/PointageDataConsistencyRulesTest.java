@@ -96,6 +96,66 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.verify(service, Mockito.times(1)).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages,
 				carr, base);
 	}
+	
+	@Test
+	public void processDataConsistency_CheckDataMethodsAreCalled_pasAffectation() {
+
+		// Given
+		Integer idAgent = 9005138;
+		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		Spcarr carr = new Spcarr();
+		AgentGeneriqueDto agent = new AgentGeneriqueDto();
+
+		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mRepo.getAgentCurrentCarriere(agent, dateLundi)).thenReturn(carr);
+
+		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(agent);
+		Mockito.when(sRepo.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(null);
+
+		PointageDataConsistencyRules service = Mockito.spy(new PointageDataConsistencyRules());
+		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
+
+		Mockito.doReturn(rmd).when(service).checkRecuperation(rmd, idAgent, pointages);
+		Mockito.doReturn(rmd).when(service).checkReposComp(rmd, idAgent, pointages);
+		Mockito.doReturn(rmd).when(service).checkAbsencesSyndicales(rmd, idAgent, pointages);
+		Mockito.doReturn(rmd).when(service).checkCongesExceptionnels(rmd, idAgent, pointages);
+		Mockito.doReturn(rmd).when(service).checkCongeAnnuel(rmd, idAgent, pointages);
+		Mockito.doReturn(rmd).when(service).checkSpabsenMaladie(rmd, idAgent, dateLundi, pointages);
+		Mockito.doReturn(rmd).when(service).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr, null);
+		Mockito.doReturn(rmd).when(service).checkAgentINAAndHSup(rmd, idAgent, dateLundi, pointages, carr, null);
+		Mockito.doReturn(rmd).when(service).checkAgentInactivity(rmd, idAgent, dateLundi, pointages, agent);
+		Mockito.doReturn(rmd).when(service).checkPrime7650(rmd, idAgent, dateLundi, pointages);
+		Mockito.doReturn(rmd).when(service).checkPrime7651(rmd, idAgent, dateLundi, pointages);
+		Mockito.doReturn(rmd).when(service).checkPrime7652(rmd, idAgent, dateLundi, pointages);
+		Mockito.doReturn(rmd).when(service)
+				.checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, null);
+
+		// When
+		service.processDataConsistency(rmd, idAgent, dateLundi, pointages);
+
+		// Then
+		Mockito.verify(service, Mockito.times(1)).checkRecuperation(rmd, idAgent, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkReposComp(rmd, idAgent, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkAbsencesSyndicales(rmd, idAgent, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkCongesExceptionnels(rmd, idAgent, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkCongeAnnuel(rmd, idAgent, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkSpabsenMaladie(rmd, idAgent, dateLundi, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr, null);
+		Mockito.verify(service, Mockito.times(1)).checkAgentINAAndHSup(rmd, idAgent, dateLundi, pointages, carr, null);
+		Mockito.verify(service, Mockito.times(1)).checkAgentInactivity(rmd, idAgent, dateLundi, pointages, agent);
+		Mockito.verify(service, Mockito.times(1)).checkPrime7650(rmd, idAgent, dateLundi, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkPrime7651(rmd, idAgent, dateLundi, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkPrime7652(rmd, idAgent, dateLundi, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages,
+				carr, null);
+		
+		assertEquals(rmd.getErrors().get(0), "L'agent n'a pas d'affectation ou la base horaire de pointage n'y est pas renseignée."); 
+	}
 
 	@Test
 	public void checkRecuperation_NoError() {

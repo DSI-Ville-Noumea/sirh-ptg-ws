@@ -51,6 +51,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String HS_INA_315_MSG = "L'agent n'a pas droit aux HS sur la période (INA > 315)";
 	public static final String BASE_HOR_00Z_MSG = "L'agent est en base horaire \"00Z\" sur la période";
 	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité le %s.";
+	public static final String PAS_AFFECTATION_MSG = "L'agent n'a pas d'affectation ou la base horaire de pointage n'y est pas renseignée.";
 	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez saisi des primes et/ou heures supplémentaires sur des périodes où l’agent était absent.";
 	public static final String ERROR_7651_MSG = "";
 	public static final String ERROR_7652_MSG = "";
@@ -227,7 +228,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
 				// tester si base Z
-				if (baseDto.getCodeBaseHorairePointage().equals("00Z")) {
+				if (null != baseDto
+						&& baseDto.getCodeBaseHorairePointage().equals("00Z")) {
 					srm.getErrors().add(BASE_HOR_00Z_MSG);
 					return srm;
 				}
@@ -443,6 +445,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		BaseHorairePointageDto baseDto = sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine);
+		// #19084
+		if(null == baseDto){
+			srm.getErrors().add(PAS_AFFECTATION_MSG);
+		}
 
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
 		checkIntervalleDateDebDateFin(srm, idAgent, pointages);
