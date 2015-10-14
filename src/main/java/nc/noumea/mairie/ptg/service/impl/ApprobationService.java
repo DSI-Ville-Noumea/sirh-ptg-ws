@@ -16,6 +16,7 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.ConsultPointageDto;
 import nc.noumea.mairie.ptg.dto.PointagesEtatChangeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -83,8 +84,20 @@ public class ApprobationService implements IApprobationService {
 
 		// list of agents corresponding to filters
 		List<Integer> agentIds = new ArrayList<Integer>();
-		List<DroitsAgent> listDroitsAgent = accessRightsRepository
-				.getListOfAgentsToInputOrApprove(idAgent, idServiceAds);
+		List<DroitsAgent> listDroitsAgentTemp = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent);
+		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
+		if (idServiceAds != null) {
+			for (DroitsAgent da : listDroitsAgentTemp) {
+				// #18722 : pour chaque agent on va recuperer son
+				// service
+				AgentWithServiceDto agDtoServ = sirhWSConsumer.getAgentService(da.getIdAgent(), new Date());
+				if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceAds.toString())) {
+					listDroitsAgent.add(da);
+				}
+			}
+		} else {
+			listDroitsAgent.addAll(listDroitsAgentTemp);
+		}
 		for (DroitsAgent da : listDroitsAgent) {
 			agentIds.add(da.getIdAgent());
 		}

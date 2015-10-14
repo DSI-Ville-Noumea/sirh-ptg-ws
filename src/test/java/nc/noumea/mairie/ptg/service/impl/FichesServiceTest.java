@@ -3,10 +3,12 @@ package nc.noumea.mairie.ptg.service.impl;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -24,25 +26,30 @@ public class FichesServiceTest {
 
 		// Given
 		Integer idAgent = 906543;
+		Date dateJour = new Date();
 
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9005138);
 
 		DroitsAgent da = new DroitsAgent();
 		da.setIdAgent(9005138);
+		
+		AgentWithServiceDto agDtoServ = new AgentWithServiceDto();
+		agDtoServ.setIdServiceADS(17);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, 17)).thenReturn(Arrays.asList(da));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da));
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhRepo.getAgent(9005138)).thenReturn(ag);
+		Mockito.when(sirhRepo.getAgentService(9005138,dateJour)).thenReturn(agDtoServ);
 
 		FichesService service = new FichesService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
-		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, 17);
+		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, 17,dateJour);
 
 		// Then
 		assertEquals(ag.getIdAgent(), result.get(0).getIdAgent());
@@ -57,6 +64,7 @@ public class FichesServiceTest {
 
 		// Given
 		Integer idAgent = 906543;
+		Date dateJour = new Date();
 
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
 		ag.setIdAgent(9005138);
@@ -72,20 +80,28 @@ public class FichesServiceTest {
 
 		DroitsAgent da3 = new DroitsAgent();
 		da3.setIdAgent(9005138);
+		
+		AgentWithServiceDto agDtoServ2 = new AgentWithServiceDto();
+		agDtoServ2.setIdServiceADS(17);
+		
+		AgentWithServiceDto agDtoServ = new AgentWithServiceDto();
+		agDtoServ.setIdServiceADS(17);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, 17)).thenReturn(Arrays.asList(da, da2, da3));
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da, da2, da3));
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhRepo.getAgent(9005138)).thenReturn(ag);
 		Mockito.when(sirhRepo.getAgent(9005140)).thenReturn(ag2);
+		Mockito.when(sirhRepo.getAgentService(9005138,dateJour)).thenReturn(agDtoServ);
+		Mockito.when(sirhRepo.getAgentService(9005140,dateJour)).thenReturn(agDtoServ2);
 
 		FichesService service = new FichesService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
-		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, 17);
+		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, 17,dateJour);
 
 		// Then
 		assertEquals(ag.getIdAgent(), result.get(0).getIdAgent());

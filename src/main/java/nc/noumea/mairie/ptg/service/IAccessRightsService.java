@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.service;
 
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
@@ -25,11 +26,9 @@ public interface IAccessRightsService {
 
 	ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto);
 
-	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent);
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds, Date date);
 
-	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds);
-
-	List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent);
+	List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent, Date date);
 
 	void setAgentsToApprove(Integer idAgent, List<AgentDto> agents);
 
@@ -51,7 +50,7 @@ public interface IAccessRightsService {
 
 	List<AgentDto> getAgentsToInput(Integer idApprobateur, Integer idAgent);
 
-	List<AgentDto> getAgentsToApprove(Integer idAgent, Integer idServiceAds);
+	List<AgentDto> getAgentsToApprove(Integer idAgent, Integer idServiceAds, Date date);
 
 	boolean isUserApprobateur(Integer idAgent);
 

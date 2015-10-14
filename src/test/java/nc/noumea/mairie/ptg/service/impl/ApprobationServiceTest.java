@@ -68,7 +68,7 @@ public class ApprobationServiceTest {
 		da2.setIdAgent(9001235);
 		das.add(da2);
 		IAccessRightsRepository arRepo = Mockito.mock(AccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, idServiceAds)).thenReturn(das);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(das);
 
 		Pointage ptg = new Pointage();
 		ptg.setIdAgent(9001234);
@@ -153,7 +153,7 @@ public class ApprobationServiceTest {
 		da.getDroits().add(droit);
 		das.add(da);
 		IAccessRightsRepository arRepo = Mockito.mock(AccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, idServiceAds)).thenReturn(das);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(das);
 
 		Pointage ptg2 = new Pointage();
 		ptg2.setIdAgent(9001234);
@@ -211,7 +211,7 @@ public class ApprobationServiceTest {
 		Integer idRefType = null;
 
 		IAccessRightsRepository arRepo = Mockito.mock(AccessRightsRepository.class);
-		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent, idServiceAds)).thenReturn(
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(
 				new ArrayList<DroitsAgent>());
 
 		ApprobationService service = new ApprobationService();

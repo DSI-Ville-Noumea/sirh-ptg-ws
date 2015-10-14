@@ -176,92 +176,64 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 		return r.get(0);
 	}
 
-	@Override
-	public List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent, Integer idServiceADS) {
-		// #14694 modification des requetes pour la gestion des droits
-		String sqlQuery = "SELECT da from DroitsAgent da " + "inner join da.droits d " + "where d.approbateur is true "
-				+ " and d.idAgent = :idAgent ";
-
-		if (null != idServiceADS) {
-			sqlQuery += "and da.idServiceADS = :idServiceADS ";
-		}
-		sqlQuery += "group by da ";
-
-		TypedQuery<DroitsAgent> q = ptgEntityManager.createQuery(sqlQuery, DroitsAgent.class);
-
-		q.setParameter("idAgent", idAgent);
-		if (null != idServiceADS) {
-			q.setParameter("idServiceADS", idServiceADS);
-		}
-
-		return q.getResultList();
-	}
-
-	@Override
-	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent) {
-		return getListOfAgentsToInputOrApprove(idAgent, null);
-	}
-
-	@Override
-	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer pIdAgent, Integer idServiceADS) {
-
-		// #14325 modification des requetes pour la gestion des droits
-		TypedQuery<DroitsAgent> q = ptgEntityManager.createQuery(
-				idServiceADS == null ? getListOfAgentsToInputOrApproveWithoutService()
-						: getListOfAgentsToInputOrApproveByService(), DroitsAgent.class);
-		q.setParameter("idAgent", pIdAgent);
-
-		if (null != idServiceADS) {
-			q.setParameter("idServiceADS", idServiceADS);
-		}
-
-		List<DroitsAgent> result = q.getResultList();
-
-		return result;
-	}
-
 	// #14325 modifications sur le cumul des roles
 	@Override
 	public List<DroitsAgent> getListOfAgentsToInput(Integer idApprobateur, Integer pIdAgent) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT  distinct(da.id_Agent)  as id_agent  from PTG_DROITS_AGENT da ");
+		sb.append("inner join PTG_DROIT_DROITS_AGENT dda on da.id_droits_agent = dda.id_droits_agent ");
+		sb.append("inner join PTG_DROIT d on dda.id_droit = d.id_droit ");
+		sb.append("where d.id_Agent = :idAgent ");
+		sb.append("and d.id_droit_approbateur in ( select dap.id_droit from PTG_DROIT dap where dap.id_agent = :idApprobateur and dap.is_approbateur is true ) ");
 
-		String sqlQuery = "SELECT  distinct(da.id_Agent), da.id_service_ads, da.libelle_Service "
-				+ "from PTG_DROITS_AGENT da "
-				+ "inner join PTG_DROIT_DROITS_AGENT dda on da.id_droits_agent = dda.id_droits_agent "
-				+ "inner join PTG_DROIT d on dda.id_droit = d.id_droit "
-				+ "where d.id_Agent = :idAgent "
-				+ " and d.id_droit_approbateur in ( select dap.id_droit from PTG_DROIT dap where dap.id_agent = :idApprobateur and dap.is_approbateur is true ) ";
-
-		Query q = ptgEntityManager.createNativeQuery(sqlQuery);
+		Query q = ptgEntityManager.createNativeQuery(sb.toString());
 		q.setParameter("idAgent", pIdAgent);
 		q.setParameter("idApprobateur", idApprobateur);
 
 		List<DroitsAgent> result = new ArrayList<DroitsAgent>();
 		@SuppressWarnings("unchecked")
-		List<Object[]> l = q.getResultList();
+		List<Integer> listeId = q.getResultList();
 
-		for (Object[] r : l) {
-			Integer idAgent = (Integer) r[0];
-			Integer idServiceADS = (Integer) r[1];
-			String libelleService = (String) r[2];
-
-			DroitsAgent da = new DroitsAgent(idAgent, idServiceADS, libelleService);
+		for (Integer r : listeId) {
+			DroitsAgent da = new DroitsAgent(r);
 			result.add(da);
 		}
 
 		return result;
 	}
 
-	private String getListOfAgentsToInputOrApproveWithoutService() {
+	@Override
+	public List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent) {
+		// #14694 modification des requetes pour la gestion des droits
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT da from DroitsAgent da ");
+		sb.append("inner join da.droits d ");
+		sb.append("where d.approbateur is true ");
+		sb.append("and d.idAgent = :idAgent ");
+		sb.append("group by da ");
 
-		return "SELECT da from DroitsAgent da " + "inner join da.droits d "
-				+ "where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent " + " group by da ";
+		TypedQuery<DroitsAgent> q = ptgEntityManager.createQuery(sb.toString(), DroitsAgent.class);
+		q.setParameter("idAgent", idAgent);
+
+		return q.getResultList();
 	}
 
-	private String getListOfAgentsToInputOrApproveByService() {
+	@Override
+	public List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer pIdAgent) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT da from DroitsAgent da ");
+		sb.append("inner join da.droits d ");
+		sb.append("where d.idAgent = :idAgent ");
+		sb.append("or d.idAgentDelegataire = :idAgent ");
+		sb.append("group by da ");
 
-		return "SELECT da from DroitsAgent da " + "inner join da.droits d "
-				+ "where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.idServiceADS = :idServiceADS "
-				+ "group by da ";
+		// #14325 modification des requetes pour la gestion des droits
+		TypedQuery<DroitsAgent> q = ptgEntityManager.createQuery(sb.toString(), DroitsAgent.class);
+		q.setParameter("idAgent", pIdAgent);
+
+		List<DroitsAgent> result = q.getResultList();
+
+		return result;
 	}
 
 	@Override

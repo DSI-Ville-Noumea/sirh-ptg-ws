@@ -2,6 +2,7 @@ package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
@@ -343,24 +344,29 @@ public class AccessRightsService implements IAccessRightsService {
 
 	/**
 	 * Retrieves the agent an approbator is set to Approve or an Operator is set
-	 * to Input
-	 */
-	@Override
-	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent) {
-		return getAgentsToApproveOrInput(idAgent, null);
-	}
-
-	/**
-	 * Retrieves the agent an approbator is set to Approve or an Operator is set
 	 * to Input. This service also filters by service
 	 */
 	@Override
-	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds) {
+	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds, Date date) {
 
-		List<AgentDto> result = new ArrayList<AgentDto>();
-		
-		List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent, idServiceAds);
-		
+		List<AgentDto> resultAg = new ArrayList<AgentDto>();
+
+		List<DroitsAgent> listDroitsAgentTemp = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent);
+
+		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
+		if (idServiceAds != null) {
+			for (DroitsAgent da : listDroitsAgentTemp) {
+				// #18722 : pour chaque agent on va recuperer son
+				// service
+				AgentWithServiceDto agDtoServ = sirhWSConsumer.getAgentService(da.getIdAgent(), date);
+				if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceAds.toString())) {
+					listDroitsAgent.add(da);
+				}
+			}
+		} else {
+			listDroitsAgent.addAll(listDroitsAgentTemp);
+		}
+
 		List<Integer> listIdsAgent = new ArrayList<Integer>();
 		for (DroitsAgent da : listDroitsAgent) {
 			if(!listIdsAgent.contains(da.getIdAgent()))
@@ -371,21 +377,21 @@ public class AccessRightsService implements IAccessRightsService {
 
 		for (DroitsAgent da : listDroitsAgent) {
 			// #15684 bug doublon
-			if (isContainAgentInList(result, da)) {
+			if (isContainAgentInList(resultAg, da)) {
 				AgentDto agDto = new AgentDto();
-				
+
 				AgentGeneriqueDto ag = sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentsExistants, da.getIdAgent());
-				
-				if(null != ag) {
+
+				if (null != ag) {
 					agDto.setIdAgent(da.getIdAgent());
 					agDto.setNom(ag.getDisplayNom());
 					agDto.setPrenom(ag.getDisplayPrenom());
-					result.add(agDto);
+					resultAg.add(agDto);
 				}
 			}
 		}
 
-		return result;
+		return resultAg;
 	}
 
 	// #15684 bug doublon
@@ -412,23 +418,46 @@ public class AccessRightsService implements IAccessRightsService {
 	 */
 	// #14694 modifications sur le cumul des roles
 	@Override
-	public List<AgentDto> getAgentsToApprove(Integer idAgent, Integer idServiceAds) {
+	public List<AgentDto> getAgentsToApprove(Integer idAgent, Integer idServiceAds, Date date) {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToApprove(idAgent, idServiceAds)) {
-			// #15684 bug doublon
-			if (isContainAgentInList(result, da)) {
-				AgentDto agDto = new AgentDto();
-				AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToApprove(idAgent)) {
+			if (idServiceAds != null) {
+				// #18722 : pour chaque agent on va recuperer son
+				// service
+				AgentWithServiceDto agDtoServ = sirhWSConsumer.getAgentService(da.getIdAgent(), date);
+				if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceAds.toString())) {
 
-				if (null == ag)
-					continue;
+					// #15684 bug doublon
+					if (isContainAgentInList(result, da)) {
+						AgentDto agDto = new AgentDto();
+						AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
 
-				agDto.setIdAgent(da.getIdAgent());
-				agDto.setNom(ag.getDisplayNom());
-				agDto.setPrenom(ag.getDisplayPrenom());
-				result.add(agDto);
+						if (null == ag)
+							continue;
+
+						agDto.setIdAgent(da.getIdAgent());
+						agDto.setNom(ag.getDisplayNom());
+						agDto.setPrenom(ag.getDisplayPrenom());
+						result.add(agDto);
+					}
+				}
+			} else {
+
+				// #15684 bug doublon
+				if (isContainAgentInList(result, da)) {
+					AgentDto agDto = new AgentDto();
+					AgentGeneriqueDto ag = sirhWSConsumer.getAgent(da.getIdAgent());
+
+					if (null == ag)
+						continue;
+
+					agDto.setIdAgent(da.getIdAgent());
+					agDto.setNom(ag.getDisplayNom());
+					agDto.setPrenom(ag.getDisplayPrenom());
+					result.add(agDto);
+				}
 			}
 		}
 
@@ -502,10 +531,6 @@ public class AccessRightsService implements IAccessRightsService {
 
 			newDroitAgent.setIdAgent(ag.getIdAgent());
 			newDroitAgent.getDroits().add(droitApprobateur);
-			newDroitAgent.setIdServiceADS(dto.getIdServiceADS());
-			EntiteDto serv = adsWsConsumer.getInfoSiservByIdEntite(dto.getIdServiceADS());
-			newDroitAgent.setCodeService(serv == null ? null : serv.getCodeServi());
-			newDroitAgent.setLibelleService(dto.getService());
 
 			newDroitAgent.setDateModification(helperService.getCurrentDate());
 			accessRightsRepository.persisEntity(newDroitAgent);
@@ -562,7 +587,7 @@ public class AccessRightsService implements IAccessRightsService {
 	 * build the filters (by service)
 	 */
 	@Override
-	public List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent) {
+	public List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent, Date date) {
 
 		List<EntiteDto> result = new ArrayList<EntiteDto>();
 
@@ -575,18 +600,22 @@ public class AccessRightsService implements IAccessRightsService {
 		
 		for (DroitsAgent da : listDroitsAgent) {
 
-			if (idsServices.contains(da.getIdServiceADS()))
-				continue;
+			// #18722 : pour chaque agent on va recuperer son service
+			AgentWithServiceDto agDto = sirhWSConsumer.getAgentService(da.getIdAgent(), date);
+			if (agDto != null && agDto.getIdServiceADS() != null) {
+				if (idsServices.contains(agDto.getIdServiceADS()))
+					continue;
 
-			EntiteDto svDto = adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(da.getIdServiceADS(), root);
-			if (svDto != null) {
-				idsServices.add(da.getIdServiceADS());
-				if (!svDto.getIdStatut().toString().equals(String.valueOf(StatutEntiteEnum.ACTIF.getIdRefStatutEntite()))) {
-					svDto.setLabel(svDto.getLabel() + "(" + StatutEntiteEnum.getStatutEntiteEnum(svDto.getIdStatut()).getLibStatutEntite() + ")");
-				} else {
-					svDto.setLabel(svDto.getLabel());
+				EntiteDto svDto = adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(agDto.getIdServiceADS(), root);
+				if (svDto != null) {
+					idsServices.add(agDto.getIdServiceADS());
+					if (!svDto.getIdStatut().toString().equals(String.valueOf(StatutEntiteEnum.ACTIF.getIdRefStatutEntite()))) {
+						svDto.setLabel(svDto.getLabel() + "(" + StatutEntiteEnum.getStatutEntiteEnum(svDto.getIdStatut()).getLibStatutEntite() + ")");
+					} else {
+						svDto.setLabel(svDto.getLabel());
+					}
+					result.add(svDto);
 				}
-				result.add(svDto);
 			}
 		}
 

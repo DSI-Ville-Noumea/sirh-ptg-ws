@@ -55,19 +55,16 @@ public class EditionController {
 	@ResponseBody
 	@RequestMapping(value = "listeFiches", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<String> getFichesToPrint(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
+	public ResponseEntity<String> getFichesToPrint(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
 
-		logger.debug(
-				"entered GET [edition/listeFiches] => getFichesToPrint with parameters idAgent = {}, idServiceADS = {}",
-				idAgent, idServiceADS);
+		logger.debug("entered GET [edition/listeFiches] => getFichesToPrint with parameters idAgent = {}, idServiceADS = {}", idAgent, idServiceADS);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		if (!accessRightService.canUserAccessPrint(convertedIdAgent))
 			throw new AccessForbiddenException();
 
-		List<AgentDto> agents = ficheService.listAgentsFichesToPrint(convertedIdAgent, idServiceADS);
+		List<AgentDto> agents = ficheService.listAgentsFichesToPrint(convertedIdAgent, idServiceADS, new Date());
 
 		if (agents.size() == 0)
 			throw new NoContentException();
@@ -80,12 +77,10 @@ public class EditionController {
 	@ResponseBody
 	@RequestMapping(value = "/downloadFichesPointage", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
-	public ResponseEntity<byte[]> downloadFichesPointage(@RequestParam("csvIdAgents") String csvIdAgents,
-			@RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date date,
+	public ResponseEntity<byte[]> downloadFichesPointage(@RequestParam("csvIdAgents") String csvIdAgents, @RequestParam("date") @DateTimeFormat(pattern = "yyyyMMdd") Date date,
 			@RequestParam("idAgent") Integer idAgent) {
 
-		logger.debug("entered GET [edition/test] => test with parameters csvIdAgents = {}, date = {}, idAgent = {}",
-				csvIdAgents, date, idAgent);
+		logger.debug("entered GET [edition/test] => test with parameters csvIdAgents = {}, date = {}, idAgent = {}", csvIdAgents, date, idAgent);
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
@@ -94,8 +89,7 @@ public class EditionController {
 
 		byte[] responseData = null;
 		try {
-			responseData = fichePointageHebdoReporting.getFichePointageHebdoReporting(csvIdAgents, date,
-					convertedIdAgent);
+			responseData = fichePointageHebdoReporting.getFichePointageHebdoReporting(csvIdAgents, date, convertedIdAgent);
 		} catch (DocumentException e) {
 			logger.error(e.getMessage(), e);
 			return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);

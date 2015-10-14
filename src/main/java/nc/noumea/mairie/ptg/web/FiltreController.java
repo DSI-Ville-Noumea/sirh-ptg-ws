@@ -83,7 +83,7 @@ public class FiltreController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<EntiteDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent);
+		List<EntiteDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent, new Date());
 
 		if (services.size() == 0)
 			throw new NoContentException();
@@ -100,7 +100,7 @@ public class FiltreController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, idServiceADS);
+		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, idServiceADS, new Date());
 
 		if (services.size() == 0)
 			throw new NoContentException();

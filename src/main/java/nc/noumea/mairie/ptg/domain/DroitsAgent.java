@@ -23,10 +23,7 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "PTG_DROITS_AGENT")
-@NamedQueries({
-		@NamedQuery(name = "getDroitsAgent", query = "select da from DroitsAgent da where da.idAgent = :idAgent"),
-		@NamedQuery(name = "getListOfAgentsToInputOrApprove", query = "select da from DroitsAgent da INNER JOIN FETCH da.droits d where d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent"),
-		@NamedQuery(name = "getListOfAgentsToInputOrApproveByService", query = "select da from DroitsAgent da INNER JOIN FETCH da.droits d where (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent) and da.idServiceADS = :idServiceADS") })
+@NamedQueries({ @NamedQuery(name = "getDroitsAgent", query = "select da from DroitsAgent da where da.idAgent = :idAgent") })
 public class DroitsAgent {
 
 	@Id
@@ -38,12 +35,6 @@ public class DroitsAgent {
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
 
-	@Column(name = "CODE_SERVICE")
-	private String codeService;
-
-	@Column(name = "LIBELLE_SERVICE")
-	private String libelleService;
-
 	@Column(name = "DATE_MODIFICATION")
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateModification;
@@ -52,18 +43,13 @@ public class DroitsAgent {
 	@JoinTable(name = "PTG_DROIT_DROITS_AGENT", inverseJoinColumns = @JoinColumn(name = "ID_DROIT"), joinColumns = @JoinColumn(name = "ID_DROITS_AGENT"))
 	private Set<Droit> droits = new HashSet<Droit>();
 
-	@Column(name = "ID_SERVICE_ADS")
-	private Integer idServiceADS;
-
 	@Version
 	@Column(name = "version")
 	private Integer version;
 
-	public DroitsAgent(Integer idAgent, Integer idServiceADS, String libelleService) {
+	public DroitsAgent(Integer idAgent) {
 		super();
 		this.idAgent = idAgent;
-		this.libelleService = libelleService;
-		this.idServiceADS = idServiceADS;
 	}
 
 	public Integer getIdDroitsAgent() {
@@ -80,14 +66,6 @@ public class DroitsAgent {
 
 	public void setIdAgent(Integer idAgent) {
 		this.idAgent = idAgent;
-	}
-
-	public String getLibelleService() {
-		return libelleService;
-	}
-
-	public void setLibelleService(String libelleService) {
-		this.libelleService = libelleService;
 	}
 
 	public Date getDateModification() {
@@ -115,22 +93,6 @@ public class DroitsAgent {
 	}
 
 	public DroitsAgent() {
-	}
-
-	public Integer getIdServiceADS() {
-		return idServiceADS;
-	}
-
-	public void setIdServiceADS(Integer idServiceADS) {
-		this.idServiceADS = idServiceADS;
-	}
-
-	public String getCodeService() {
-		return codeService;
-	}
-
-	public void setCodeService(String codeService) {
-		this.codeService = codeService;
 	}
 
 }

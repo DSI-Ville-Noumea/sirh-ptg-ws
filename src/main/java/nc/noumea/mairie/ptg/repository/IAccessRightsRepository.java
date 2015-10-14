@@ -31,13 +31,12 @@ public interface IAccessRightsRepository {
 
 	void persisEntity(Object obj);
 
-	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent);
-
-	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer idAgent, Integer idServiceADS);
-
 	List<DroitsAgent> getListOfAgentsToInput(Integer idApprobateur, Integer pIdAgent);
+	
+	List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent);
 
-	List<DroitsAgent> getListOfAgentsToApprove(Integer idAgent, Integer idServiceADS);
+	List<DroitsAgent> getListOfAgentsToInputOrApprove(Integer pIdAgent);
 
 	DroitsAgent getDroitsAgent(Integer idAgent);
+
 }
