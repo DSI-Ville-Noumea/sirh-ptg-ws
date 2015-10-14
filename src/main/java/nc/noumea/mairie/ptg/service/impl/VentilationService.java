@@ -291,7 +291,9 @@ public class VentilationService implements IVentilationService {
 		List<Pointage> listPointageRejetesVentilesOrderedByDateAsc = pointageService
 				.getPointagesVentilesAndRejetesForAgentByDateLundi(idAgent, ventilDate, dateLundi);
 		
-		boolean has1150Prime = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi).contains(1150);
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		
+		boolean has1150Prime = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
 				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime, ventilDate);
 		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod,

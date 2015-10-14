@@ -103,10 +103,11 @@ public class PointageServiceTest {
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
-		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
+		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d, dateFinSemaine)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
@@ -192,10 +193,11 @@ public class PointageServiceTest {
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
-		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
+		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d, dateFinSemaine)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
@@ -1133,10 +1135,11 @@ public class PointageServiceTest {
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
-		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
+		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d, dateFinSemaine)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
@@ -1219,10 +1222,11 @@ public class PointageServiceTest {
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(null);
-		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
+		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d, dateFinSemaine)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
@@ -1310,10 +1314,11 @@ public class PointageServiceTest {
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
-		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
+		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d, dateFinSemaine)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
@@ -1401,10 +1406,11 @@ public class PointageServiceTest {
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
-		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
+		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d, dateFinSemaine)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(
@@ -1492,10 +1498,11 @@ public class PointageServiceTest {
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
 
 		ISirhWSConsumer wsMock = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(wsMock.getAgentDirection(idAgent, d)).thenReturn(entite);
-		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d)).thenReturn(listePrimePointage);
+		Mockito.when(wsMock.getPrimePointagesByAgent(agent.getIdAgent(), d, dateFinSemaine)).thenReturn(listePrimePointage);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(arRepo.getRefPrimes(Arrays.asList(7058, 7059), carr.getStatutCarriere())).thenReturn(

@@ -92,8 +92,11 @@ public class ReposCompService implements IReposCompService {
 				logger.info("Agent status is [{}]. Stopping process for that week.", carr.getStatutCarriere());
 				continue;
 			}
+			
+			Date dateFinSemaine = new DateTime(vhs.getDateLundi()).plusDays(7).toDate();
 			BaseHorairePointageDto baseDto = sirhWSConsumer.getBaseHorairePointageAgent(task.getIdAgent(),
-					vhs.getDateLundi());
+					vhs.getDateLundi(), dateFinSemaine);
+			
 			if (baseDto == null || baseDto.getIdBaseHorairePointage() == null) {
 				logger.info("BaseHoraireAgent  is null. Stopping process for that week.");
 				continue;

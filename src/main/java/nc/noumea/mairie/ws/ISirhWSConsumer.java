@@ -21,11 +21,11 @@ public interface ISirhWSConsumer {
 
 	boolean isHoliday(DateTime deb);
 
-	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date);
+	List<Integer> getPrimePointagesByAgent(Integer idAgent, Date dateDebut, Date dateFin);
 
 	boolean isJourFerie(DateTime deb);
 
-	BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date date);
+	BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date dateDebut, Date dateFin);
 
 	EntiteDto getAgentDirection(Integer idAgent, Date date);
 
@@ -33,4 +33,7 @@ public interface ISirhWSConsumer {
 			List<Integer> listAgentDto, Date date);
 
 	List<AgentGeneriqueDto> getListAgents(List<Integer> listIdsAgent);
+
+	List<BaseHorairePointageDto> getListBaseHorairePointageAgent(
+			Integer idAgent, Date dateDebut, Date dateFin);
 }

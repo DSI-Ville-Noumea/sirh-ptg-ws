@@ -114,7 +114,10 @@ public class PointageService implements IPointageService {
 
 		JourPointageDto jourPointageTemplate = new JourPointageDto();
 		jourPointageTemplate.setDate(date);
-		List<Integer> pps = sirhWsConsumer.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		
+		Date dateFinSemaine = new DateTime(date).plusDays(7).toDate();
+		
+		List<Integer> pps = sirhWsConsumer.getPrimePointagesByAgent(agent.getIdAgent(), date, dateFinSemaine);
 		if (pps.size() > 0) {
 			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
 
@@ -605,7 +608,10 @@ public class PointageService implements IPointageService {
 
 		JourPointageDtoKiosque jourPointageTemplate = new JourPointageDtoKiosque();
 		jourPointageTemplate.setDate(date);
-		List<Integer> pps = sirhWsConsumer.getPrimePointagesByAgent(agent.getIdAgent(), date);
+		
+		Date dateFinSemaine = new DateTime(date).plusDays(7).toDate();
+		
+		List<Integer> pps = sirhWsConsumer.getPrimePointagesByAgent(agent.getIdAgent(), date, dateFinSemaine);
 		if (pps.size() > 0) {
 			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
 

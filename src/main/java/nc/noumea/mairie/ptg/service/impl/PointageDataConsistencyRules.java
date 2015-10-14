@@ -437,7 +437,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
-		BaseHorairePointageDto baseDto = sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi);
+		
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		BaseHorairePointageDto baseDto = sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine);
 
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
 		checkIntervalleDateDebDateFin(srm, idAgent, pointages);

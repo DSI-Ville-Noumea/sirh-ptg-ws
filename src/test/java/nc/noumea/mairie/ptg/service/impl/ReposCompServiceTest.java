@@ -203,7 +203,7 @@ public class ReposCompServiceTest {
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(
 				base);
 
 		ReposCompService service = new ReposCompService();
@@ -278,7 +278,7 @@ public class ReposCompServiceTest {
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(
 				base);
 
 		ReposCompService service = new ReposCompService();
@@ -353,7 +353,7 @@ public class ReposCompServiceTest {
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(
 				base);
 
 		ReposCompService service = new ReposCompService();
@@ -428,7 +428,7 @@ public class ReposCompServiceTest {
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(
 				base);
 
 		ReposCompService service = new ReposCompService();
@@ -503,7 +503,7 @@ public class ReposCompServiceTest {
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(
 				base);
 
 		ReposCompService service = new ReposCompService();

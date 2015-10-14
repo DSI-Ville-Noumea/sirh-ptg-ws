@@ -184,7 +184,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -270,7 +270,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -372,7 +372,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -490,7 +490,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -600,7 +600,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -686,7 +686,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -796,7 +796,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -910,7 +910,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -1024,7 +1024,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -1112,7 +1112,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 04, 1, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -1219,7 +1219,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -1291,7 +1291,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -1389,7 +1389,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -1480,7 +1480,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -1564,7 +1564,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -1696,7 +1696,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -1798,7 +1798,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -1937,7 +1937,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -2027,7 +2027,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -2108,7 +2108,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -2226,7 +2226,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -2329,7 +2329,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -2423,7 +2423,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -2513,7 +2513,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -2595,7 +2595,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -2726,7 +2726,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -2828,7 +2828,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -2967,7 +2967,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -3057,7 +3057,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -3138,7 +3138,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -3221,7 +3221,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		// les conges maternite
 		List<DemandeDto> listConges = new ArrayList<DemandeDto>();
@@ -3330,7 +3330,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		// les conges maternite
 		List<DemandeDto> listConges = new ArrayList<DemandeDto>();
@@ -3439,7 +3439,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		// les conges maternite
 		List<DemandeDto> listConges = new ArrayList<DemandeDto>();
@@ -3572,7 +3572,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -3675,7 +3675,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -3771,7 +3771,7 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -3863,7 +3863,7 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -3945,7 +3945,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -4076,7 +4076,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -4179,7 +4179,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -4318,7 +4318,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -4409,7 +4409,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -4490,7 +4490,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -4606,7 +4606,7 @@ public class VentilationHSupServiceTest {
 		Mockito.when(absWsConsumer.getTypeAbsence(conge2.getIdTypeDemande())).thenReturn(listTypeDemande2);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 		
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 		Mockito.when(
@@ -4720,7 +4720,7 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -4823,7 +4823,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -4926,7 +4926,7 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -5017,7 +5017,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -5105,7 +5105,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -5196,7 +5196,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -5302,7 +5302,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -5405,7 +5405,7 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -5510,7 +5510,7 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(38.45); 
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
@@ -5965,7 +5965,7 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(39.0);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 		
 		Date dateLundi = new DateTime(2015,7,6,0,0,0).toDate();
 		Integer idAgent = 9004670;
@@ -6061,7 +6061,7 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(39.0);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 		
 		Date dateLundi = new DateTime(2015,6,29,0,0,0).toDate();
 		Integer idAgent = 9005490;
@@ -6148,7 +6148,7 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(39.0);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
 		
 		Date dateLundi = new DateTime(2015,6,15,0,0,0).toDate();
 		Integer idAgent = 9004744;

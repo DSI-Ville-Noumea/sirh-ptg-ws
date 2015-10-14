@@ -189,6 +189,8 @@ public class VentilationServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(7); // CC
 
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		
 		List<Pointage> plist = Arrays.asList(p1);
 		IVentilationRepository ventilRepo = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(
@@ -202,7 +204,7 @@ public class VentilationServiceTest {
 		Mockito.when(pService.filterOldPointagesAndEtatFromList(plist, null, null)).thenReturn(plist);
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(Arrays.asList(1128, 1135));
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(Arrays.asList(1128, 1135));
 
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
 		Mockito.doAnswer(new Answer<Object>() {
@@ -253,6 +255,8 @@ public class VentilationServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(7); // CC
 
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+
 		List<Pointage> plist = Arrays.asList(p1);
 		IVentilationRepository ventilRepo = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(
@@ -266,7 +270,7 @@ public class VentilationServiceTest {
 		Mockito.when(pService.filterOldPointagesAndEtatFromList(plist, null, null)).thenReturn(plist);
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(
 				Arrays.asList(1128, 1150, 1135));
 
 		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
@@ -311,6 +315,8 @@ public class VentilationServiceTest {
 		Date fromEtatDate = new LocalDate().toDate();
 		Date toEtatDate = new LocalDate().toDate();
 
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+
 		Pointage p1 = new Pointage();
 		p1.setType(abs);
 		p1.setDateDebut(new LocalDate(2013, 7, 4).toDate());
@@ -339,7 +345,7 @@ public class VentilationServiceTest {
 						Mockito.any(Date.class), Mockito.anyListOf(Pointage.class))).thenReturn(ventilAbs);
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi)).thenReturn(Arrays.asList(1128));
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(Arrays.asList(1128));
 
 		VentilationService service = new VentilationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilRepo);

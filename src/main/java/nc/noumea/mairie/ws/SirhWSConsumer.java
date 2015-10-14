@@ -137,14 +137,15 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public List<Integer> getPrimePointagesByAgent(Integer idAgent, Date date) {
+	public List<Integer> getPrimePointagesByAgent(Integer idAgent, Date dateDebut, Date dateFin) {
 
 		String url = String.format(sirhWsBaseUrl + sirhListPrimePointageUrl);
 		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", idAgent.toString());
-		parameters.put("date", sf.format(date));
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
@@ -169,18 +170,35 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date date) {
+	public BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date dateDebut, Date dateFin) {
+		
+		List<BaseHorairePointageDto> list = getListBaseHorairePointageAgent(idAgent, dateDebut, dateFin);
+		
+		if(null != list
+				&& !list.isEmpty()) {
+			return list.get(0);
+		}
+		return null;
+	}
+
+	/**
+	 * Retourne la liste des bases horaires par rapport à la liste des affectations de l'agent 
+	 * triees par date de debut dans l ordre croissant
+	 */
+	@Override
+	public List<BaseHorairePointageDto> getListBaseHorairePointageAgent(Integer idAgent, Date dateDebut, Date dateFin) {
 		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 
 		String url = String.format(sirhWsBaseUrl + sirhBaseHorairePointageUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
-		parameters.put("date", sf.format(date));
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
-		return readResponse(BaseHorairePointageDto.class, res, url);
+		return readResponseAsList(BaseHorairePointageDto.class, res, url);
 	}
 
 	@Override

@@ -43,6 +43,7 @@ public class PointageDataConsistencyRulesTest {
 		// Given
 		Integer idAgent = 9005138;
 		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		ReturnMessageDto rmd = new ReturnMessageDto();
 		Spcarr carr = new Spcarr();
@@ -55,7 +56,7 @@ public class PointageDataConsistencyRulesTest {
 
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(idAgent)).thenReturn(agent);
-		Mockito.when(sRepo.getBaseHorairePointageAgent(idAgent, dateLundi)).thenReturn(base);
+		Mockito.when(sRepo.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(base);
 
 		PointageDataConsistencyRules service = Mockito.spy(new PointageDataConsistencyRules());
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
