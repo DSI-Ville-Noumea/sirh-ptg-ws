@@ -613,7 +613,7 @@ public class SaisieService implements ISaisieService {
 						helperService.getCurrentDate());
 				// cas de la DMP #11622
 				EntiteDto service = sirhWsConsumer.getAgentDirection(idAgent, ptg.getDateDebut());
-				if (service.getSigle().toUpperCase().equals("DPM")) {
+				if (null != service && service.getSigle().toUpperCase().equals("DPM")) {
 					ptg.setHeureSupRecuperee(true);
 					ptg.setHeureSupRappelService(hs.getRappelService());
 				} else {
