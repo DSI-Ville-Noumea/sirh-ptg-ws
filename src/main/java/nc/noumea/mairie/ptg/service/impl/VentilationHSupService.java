@@ -130,26 +130,10 @@ public class VentilationHSupService implements IVentilationHSupService {
 			}
 		}
 		
+		// #18197
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
-
 		BaseHorairePointageDto baseDto = sirhWsConsumer
 				.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine);
-		
-		// #18197 
-//		if(null == baseDto) {
-//			for (int i = 0; i < 7; i++) {
-//				DateTime date = new DateTime(dateLundi).plusDays(i);
-//				baseDto = sirhWsConsumer
-//						.getBaseHorairePointageAgent(idAgent, date.toDate());
-//				
-//				if(null != baseDto) {
-//					for(int j=i; j>=0; j--) {
-//						baseDto.setDayBase(j, 0.0);
-//					}
-//					break;
-//				}
-//			}
-//		}
 
 		// second retrieve all the absences 
 		// on ne compte pas les conges annuels et les conges annules
