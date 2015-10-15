@@ -38,7 +38,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 	public List<PointageCalcule> calculatePointagesForAgentAndWeek(Integer idAgent, AgentStatutEnum statut,
 			Date dateLundi, List<Pointage> agentPointages) {
 
-		List<Integer> norubrs = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi);
+		List<Integer> norubrs = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi,null);
 		List<RefPrime> refPrimes = pointageRepository.getRefPrimesCalculees(norubrs, statut);
 
 		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>();

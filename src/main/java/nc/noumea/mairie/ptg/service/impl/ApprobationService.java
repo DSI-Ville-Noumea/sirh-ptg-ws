@@ -87,10 +87,17 @@ public class ApprobationService implements IApprobationService {
 		List<DroitsAgent> listDroitsAgentTemp = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent);
 		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
 		if (idServiceAds != null) {
+			// #18722 : pour chaque agent on va recuperer son
+			// service
+			List<Integer> listAgentDtoAppro = new ArrayList<Integer>();
 			for (DroitsAgent da : listDroitsAgentTemp) {
-				// #18722 : pour chaque agent on va recuperer son
-				// service
-				AgentWithServiceDto agDtoServ = sirhWSConsumer.getAgentService(da.getIdAgent(), new Date());
+				if (!listAgentDtoAppro.contains(da.getIdAgent()))
+					listAgentDtoAppro.add(da.getIdAgent());
+			}
+			List<AgentWithServiceDto> listAgentsApproServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoAppro, new Date());
+
+			for (DroitsAgent da : listDroitsAgentTemp) {
+				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsApproServiceDto, da.getIdAgent());
 				if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceAds.toString())) {
 					listDroitsAgent.add(da);
 				}

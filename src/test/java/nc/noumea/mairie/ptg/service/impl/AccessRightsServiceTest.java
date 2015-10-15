@@ -466,25 +466,34 @@ public class AccessRightsServiceTest {
 		da5.setIdAgent(9005157);
 
 		AgentWithServiceDto agDtoServ3 = new AgentWithServiceDto();
+		agDtoServ3.setIdAgent(9005157);
 		agDtoServ3.setIdServiceADS(13);
 		AgentWithServiceDto agDtoServ2 = new AgentWithServiceDto();
+		agDtoServ2.setIdAgent(9005131);
 		agDtoServ2.setIdServiceADS(13);
 		AgentWithServiceDto agDtoServ = new AgentWithServiceDto();
+		agDtoServ.setIdAgent(9005138);
 		agDtoServ.setIdServiceADS(13);
+
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDtoServ);
+		listAgentsServiceDto.add(agDtoServ2);
+		listAgentsServiceDto.add(agDtoServ3);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da1, da2, da3, da4, da5));
 
 		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(mRepo.getListAgents(Arrays.asList(9005138, 9005131, 9005157))).thenReturn(listAgentGeneriqueDto);
-		Mockito.when(mRepo.getAgentService(9005138, dateJour)).thenReturn(agDtoServ);
-		Mockito.when(mRepo.getAgentService(9005131, dateJour)).thenReturn(agDtoServ2);
-		Mockito.when(mRepo.getAgentService(9005157, dateJour)).thenReturn(agDtoServ3);
+		Mockito.when(mRepo.getListAgentsWithService(Arrays.asList(9005138, 9005131, 9005157), dateJour)).thenReturn(Arrays.asList(agDtoServ, agDtoServ2, agDtoServ3));
 
 		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
 		Mockito.when(sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentGeneriqueDto, a1.getIdAgent())).thenReturn(a1);
 		Mockito.when(sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentGeneriqueDto, a2.getIdAgent())).thenReturn(a2);
 		Mockito.when(sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentGeneriqueDto, a3.getIdAgent())).thenReturn(a3);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, a1.getIdAgent())).thenReturn(agDtoServ);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, a2.getIdAgent())).thenReturn(agDtoServ2);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, a3.getIdAgent())).thenReturn(agDtoServ3);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -576,10 +585,18 @@ public class AccessRightsServiceTest {
 
 		AgentWithServiceDto agDtoServ3 = new AgentWithServiceDto();
 		agDtoServ3.setIdServiceADS(15);
+		agDtoServ3.setIdAgent(9005138);
 		AgentWithServiceDto agDtoServ2 = new AgentWithServiceDto();
 		agDtoServ2.setIdServiceADS(15);
+		agDtoServ2.setIdAgent(9005131);
 		AgentWithServiceDto agDtoServ = new AgentWithServiceDto();
 		agDtoServ.setIdServiceADS(15);
+		agDtoServ.setIdAgent(9005157);
+
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDtoServ3);
+		listAgentsServiceDto.add(agDtoServ2);
+		listAgentsServiceDto.add(agDtoServ);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToApprove(idAgent)).thenReturn(Arrays.asList(da1, da2, da3, da4, da5));
@@ -588,13 +605,17 @@ public class AccessRightsServiceTest {
 		Mockito.when(mRepo.getAgent(9005138)).thenReturn(a1);
 		Mockito.when(mRepo.getAgent(9005131)).thenReturn(a2);
 		Mockito.when(mRepo.getAgent(9005157)).thenReturn(a3);
-		Mockito.when(mRepo.getAgentService(9005157, dateJour)).thenReturn(agDtoServ);
-		Mockito.when(mRepo.getAgentService(9005131, dateJour)).thenReturn(agDtoServ2);
-		Mockito.when(mRepo.getAgentService(9005138, dateJour)).thenReturn(agDtoServ3);
+		Mockito.when(mRepo.getListAgentsWithService(Arrays.asList(9005138, 9005131, 9005157), dateJour)).thenReturn(Arrays.asList(agDtoServ3, agDtoServ2, agDtoServ));
+
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, 9005157)).thenReturn(agDtoServ);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, 9005131)).thenReturn(agDtoServ2);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, 9005138)).thenReturn(agDtoServ3);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 
 		// When
 		List<AgentDto> result = service.getAgentsToApprove(idAgent, 15, dateJour);
@@ -1351,9 +1372,15 @@ public class AccessRightsServiceTest {
 
 		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
 		agDto2.setIdServiceADS(entiteDto2.getIdEntite());
+		agDto2.setIdAgent(d2.getIdAgent());
 
 		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
 		agDto1.setIdServiceADS(entiteDto.getIdEntite());
+		agDto1.setIdAgent(d1.getIdAgent());
+
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDto1);
+		listAgentsServiceDto.add(agDto2);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9008888)).thenReturn(Arrays.asList(d1, d2));
@@ -1364,13 +1391,17 @@ public class AccessRightsServiceTest {
 		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(agDto2.getIdServiceADS(), entiteDto)).thenReturn(entiteDto2);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgentService(d1.getIdAgent(), dateJour)).thenReturn(agDto1);
-		Mockito.when(sirhWSConsumer.getAgentService(d2.getIdAgent(), dateJour)).thenReturn(agDto2);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d1.getIdAgent(), d2.getIdAgent()), dateJour)).thenReturn(Arrays.asList(agDto1, agDto2));
+
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, d1.getIdAgent())).thenReturn(agDto1);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, d2.getIdAgent())).thenReturn(agDto2);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 
 		// When
 		List<EntiteDto> result = service.getAgentsServicesToApproveOrInput(9008888, dateJour);
@@ -1389,10 +1420,21 @@ public class AccessRightsServiceTest {
 		// Given
 		Date dateJour = new Date();
 		DroitsAgent d1 = new DroitsAgent();
+		d1.setIdAgent(1);
 		DroitsAgent d2 = new DroitsAgent();
+		d2.setIdAgent(2);
+
+		AgentWithServiceDto agDto2 = new AgentWithServiceDto();
+		agDto2.setIdAgent(2);
+		agDto2.setIdServiceADS(33);
 
 		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
+		agDto1.setIdAgent(1);
 		agDto1.setIdServiceADS(33);
+
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDto1);
+		listAgentsServiceDto.add(agDto2);
 
 		EntiteDto entiteDto = new EntiteDto();
 		entiteDto.setIdEntite(33);
@@ -1407,12 +1449,17 @@ public class AccessRightsServiceTest {
 		Mockito.when(adsWsConsumer.getEntiteByIdEntiteOptimiseWithWholeTree(agDto1.getIdServiceADS(), entiteDto)).thenReturn(entiteDto);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getAgentService(d1.getIdAgent(), dateJour)).thenReturn(agDto1);
+		Mockito.when(sirhWSConsumer.getListAgentsWithService(Arrays.asList(d1.getIdAgent(), d2.getIdAgent()), dateJour)).thenReturn(Arrays.asList(agDto1, agDto2));
+
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, agDto1.getIdAgent())).thenReturn(agDto1);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, agDto2.getIdAgent())).thenReturn(agDto2);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "adsWsConsumer", adsWsConsumer);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 
 		// When
 		List<EntiteDto> result = service.getAgentsServicesToApproveOrInput(9008888, dateJour);

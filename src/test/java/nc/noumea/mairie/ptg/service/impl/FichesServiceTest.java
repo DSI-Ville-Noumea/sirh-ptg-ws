@@ -2,6 +2,7 @@ package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,7 @@ import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
+import nc.noumea.mairie.ws.SirhWSUtils;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -35,18 +37,28 @@ public class FichesServiceTest {
 		da.setIdAgent(9005138);
 		
 		AgentWithServiceDto agDtoServ = new AgentWithServiceDto();
+		agDtoServ.setIdAgent(9005138);
 		agDtoServ.setIdServiceADS(17);
+
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDtoServ);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da));
 
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhRepo.getAgent(9005138)).thenReturn(ag);
-		Mockito.when(sirhRepo.getAgentService(9005138,dateJour)).thenReturn(agDtoServ);
+		Mockito.when(sirhRepo.getListAgentsWithService(Arrays.asList(9005138),dateJour)).thenReturn(Arrays.asList(agDtoServ));
+
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent())).thenReturn(agDtoServ);
 
 		FichesService service = new FichesService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
+		
+		
 
 		// When
 		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, 17,dateJour);
@@ -83,9 +95,15 @@ public class FichesServiceTest {
 		
 		AgentWithServiceDto agDtoServ2 = new AgentWithServiceDto();
 		agDtoServ2.setIdServiceADS(17);
+		agDtoServ2.setIdAgent(9005138);
 		
 		AgentWithServiceDto agDtoServ = new AgentWithServiceDto();
 		agDtoServ.setIdServiceADS(17);
+		agDtoServ.setIdAgent(9005140);
+
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDtoServ);
+		listAgentsServiceDto.add(agDtoServ2);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da, da2, da3));
@@ -93,19 +111,24 @@ public class FichesServiceTest {
 		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhRepo.getAgent(9005138)).thenReturn(ag);
 		Mockito.when(sirhRepo.getAgent(9005140)).thenReturn(ag2);
-		Mockito.when(sirhRepo.getAgentService(9005138,dateJour)).thenReturn(agDtoServ);
-		Mockito.when(sirhRepo.getAgentService(9005140,dateJour)).thenReturn(agDtoServ2);
+		Mockito.when(sirhRepo.getListAgentsWithService(Arrays.asList(9005138,9005140),dateJour)).thenReturn(Arrays.asList(agDtoServ,agDtoServ2));
+
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent())).thenReturn(agDtoServ);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da2.getIdAgent())).thenReturn(agDtoServ2);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da3.getIdAgent())).thenReturn(agDtoServ);
 
 		FichesService service = new FichesService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 
 		// When
 		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, 17,dateJour);
 
 		// Then
+		assertEquals(2, result.size());
 		assertEquals(ag.getIdAgent(), result.get(0).getIdAgent());
 		assertEquals(ag2.getIdAgent(), result.get(1).getIdAgent());
-		assertEquals(2, result.size());
 	}
 }

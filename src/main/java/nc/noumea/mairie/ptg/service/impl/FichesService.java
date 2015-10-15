@@ -11,6 +11,7 @@ import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.service.IFichesService;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
+import nc.noumea.mairie.ws.SirhWSUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class FichesService implements IFichesService {
 	private ISirhWSConsumer sirhWsConsumer;
 
 	@Autowired
+	private SirhWSUtils sirhWSUtils;
+
+	@Autowired
 	private IAccessRightsRepository accessRightsRepository;
 
 	@Override
@@ -29,12 +33,30 @@ public class FichesService implements IFichesService {
 
 		List<AgentDto> result = new ArrayList<AgentDto>();
 
-		for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent)) {
+		if (idServiceAds == null) {
+			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent)) {
+				AgentGeneriqueDto ag = sirhWsConsumer.getAgent(da.getIdAgent());
+				AgentDto agDto = new AgentDto();
+				agDto.setIdAgent(da.getIdAgent());
+				agDto.setNom(ag.getDisplayNom());
+				agDto.setPrenom(ag.getDisplayPrenom());
 
-			if (idServiceAds != null) {
-				// #18722 : pour chaque agent on va recuperer son
-				// service
-				AgentWithServiceDto agDtoServ = sirhWsConsumer.getAgentService(da.getIdAgent(), date);
+				if (!result.contains(agDto))
+					result.add(agDto);
+			}
+		} else {
+
+			// #18722 : pour chaque agent on va recuperer son
+			// service
+			List<Integer> listAgentDtoAppro = new ArrayList<Integer>();
+			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent)) {
+				if (!listAgentDtoAppro.contains(da.getIdAgent()))
+					listAgentDtoAppro.add(da.getIdAgent());
+			}
+			List<AgentWithServiceDto> listAgentsApproServiceDto = sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, date);
+
+			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent)) {
+				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsApproServiceDto, da.getIdAgent());
 				if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceAds.toString())) {
 
 					AgentGeneriqueDto ag = sirhWsConsumer.getAgent(da.getIdAgent());
@@ -46,15 +68,6 @@ public class FichesService implements IFichesService {
 					if (!result.contains(agDto))
 						result.add(agDto);
 				}
-			} else {
-				AgentGeneriqueDto ag = sirhWsConsumer.getAgent(da.getIdAgent());
-				AgentDto agDto = new AgentDto();
-				agDto.setIdAgent(da.getIdAgent());
-				agDto.setNom(ag.getDisplayNom());
-				agDto.setPrenom(ag.getDisplayPrenom());
-
-				if (!result.contains(agDto))
-					result.add(agDto);
 			}
 		}
 
