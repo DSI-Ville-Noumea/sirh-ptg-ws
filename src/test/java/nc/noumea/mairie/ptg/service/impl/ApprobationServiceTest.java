@@ -374,10 +374,15 @@ public class ApprobationServiceTest {
 		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
 
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), 
+				Mockito.any(Date.class))).thenReturn(new ReturnMessageDto());
+
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -415,10 +420,15 @@ public class ApprobationServiceTest {
 		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
 
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), 
+				Mockito.any(Date.class))).thenReturn(new ReturnMessageDto());
+
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -458,10 +468,15 @@ public class ApprobationServiceTest {
 		HelperService hService = Mockito.mock(HelperService.class);
 		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
 
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), 
+				Mockito.any(Date.class))).thenReturn(new ReturnMessageDto());
+
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "helperService", hService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
 
 		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
 		etatDto.setIdPointage(123);
@@ -485,6 +500,7 @@ public class ApprobationServiceTest {
 		ptg.setIdAgent(9005678);
 		ptg.setIdPointage(9);
 		ptg.setType(new RefTypePointage());
+		ptg.setDateLundi(new Date());
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.APPROUVE);
 		ptg.getEtats().add(etat);
@@ -505,6 +521,9 @@ public class ApprobationServiceTest {
 				ptgDataCosistencyRules).checkAllAbsences(
 						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
 						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), 
+				Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());;
 		
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
@@ -534,6 +553,7 @@ public class ApprobationServiceTest {
 		ptg.setIdAgent(9005678);
 		ptg.setIdPointage(9);
 		ptg.setType(new RefTypePointage());
+		ptg.setDateLundi(new Date());
 		EtatPointage etat = new EtatPointage();
 		etat.setEtat(EtatPointageEnum.REFUSE);
 		ptg.getEtats().add(etat);
@@ -554,6 +574,9 @@ public class ApprobationServiceTest {
 				ptgDataCosistencyRules).checkAllAbsences(
 						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
 						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), 
+				Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
@@ -573,6 +596,234 @@ public class ApprobationServiceTest {
 		assertEquals(2, ptg.getEtats().size());
 		assertEquals(EtatPointageEnum.REFUSE, ptg.getEtats().get(0).getEtat());
 		assertEquals(EtatPointageEnum.APPROUVE, ptg.getEtats().get(1).getEtat());
+	}
+
+	// evol #18224
+	@Test
+	public void setPointagesEtat_JOURNALISE_to_REJETE_AddNewEtatPointage() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005678);
+		ptg.setIdPointage(9);
+		ptg.setType(new RefTypePointage());
+		ptg.setDateLundi(new Date());
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.JOURNALISE);
+		ptg.getEtats().add(etat);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(Pointage.class, 123)).thenReturn(ptg);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005678);
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(Arrays.asList(da));
+
+		HelperService hService = Mockito.mock(HelperService.class);
+		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
+
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.doNothing().when(
+				ptgDataCosistencyRules).checkAllAbsences(
+						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
+						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), 
+				Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());;
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
+
+		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
+		etatDto.setIdPointage(123);
+		etatDto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+
+		// When
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(2, ptg.getEtats().size());
+		assertEquals(EtatPointageEnum.JOURNALISE, ptg.getEtats().get(0).getEtat());
+		assertEquals(EtatPointageEnum.REJETE, ptg.getEtats().get(1).getEtat());
+	}
+
+	// evol #18224
+	@Test
+	public void setPointagesEtat_JOURNALISE_to_REJETE_plus3mois() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005678);
+		ptg.setIdPointage(9);
+		ptg.setType(new RefTypePointage());
+		ptg.setDateLundi(new Date());
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.JOURNALISE);
+		ptg.getEtats().add(etat);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(Pointage.class, 123)).thenReturn(ptg);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005678);
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(Arrays.asList(da));
+
+		HelperService hService = Mockito.mock(HelperService.class);
+		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
+
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.doNothing().when(
+				ptgDataCosistencyRules).checkAllAbsences(
+						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
+						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		rmd.getErrors().add("pointage plus de 3 mois");
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), 
+				Mockito.isA(Date.class))).thenReturn(rmd);;
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
+
+		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
+		etatDto.setIdPointage(123);
+		etatDto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+
+		// When
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals("pointage plus de 3 mois", result.getErrors().get(0));
+		assertEquals(1, ptg.getEtats().size());
+		assertEquals(EtatPointageEnum.JOURNALISE, ptg.getEtats().get(0).getEtat());
+	}
+
+	// evol #18224
+	@Test
+	public void setPointagesEtat_JOURNALISE_to_REFUSER_error() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005678);
+		ptg.setIdPointage(9);
+		ptg.setType(new RefTypePointage());
+		ptg.setDateLundi(new Date());
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.JOURNALISE);
+		ptg.getEtats().add(etat);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(Pointage.class, 123)).thenReturn(ptg);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005678);
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(Arrays.asList(da));
+
+		HelperService hService = Mockito.mock(HelperService.class);
+		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
+
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.doNothing().when(
+				ptgDataCosistencyRules).checkAllAbsences(
+						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
+						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), 
+				Mockito.isA(Date.class))).thenReturn(rmd);
+
+		IAgentMatriculeConverterService matriculeConvertor = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matriculeConvertor.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matriculeConvertor);
+
+		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
+		etatDto.setIdPointage(123);
+		etatDto.setIdRefEtat(EtatPointageEnum.REFUSE.getCodeEtat());
+
+		// When
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Impossible de mettre à jour le pointage 9 de l'agent 5678 à l'état REFUSE. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.", result.getErrors().get(0));
+		assertEquals(1, ptg.getEtats().size());
+		assertEquals(EtatPointageEnum.JOURNALISE, ptg.getEtats().get(0).getEtat());
+	}
+
+	// evol #18224
+	@Test
+	public void setPointagesEtat_APPROUVE_to_REJETE_error() {
+
+		// Given
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005678);
+		ptg.setIdPointage(9);
+		ptg.setType(new RefTypePointage());
+		ptg.setDateLundi(new Date());
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		ptg.getEtats().add(etat);
+
+		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pRepo.getEntity(Pointage.class, 123)).thenReturn(ptg);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005678);
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(9001234)).thenReturn(Arrays.asList(da));
+
+		HelperService hService = Mockito.mock(HelperService.class);
+		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
+
+		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
+		Mockito.doNothing().when(
+				ptgDataCosistencyRules).checkAllAbsences(
+						Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), 
+						Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), 
+				Mockito.isA(Date.class))).thenReturn(rmd);
+
+		IAgentMatriculeConverterService matriculeConvertor = Mockito.mock(IAgentMatriculeConverterService.class);
+		Mockito.when(matriculeConvertor.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "helperService", hService);
+		ReflectionTestUtils.setField(service, "ptgDataCosistencyRules", ptgDataCosistencyRules);
+		ReflectionTestUtils.setField(service, "matriculeConvertor", matriculeConvertor);
+
+		PointagesEtatChangeDto etatDto = new PointagesEtatChangeDto();
+		etatDto.setIdPointage(123);
+		etatDto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+
+		// When
+		ReturnMessageDto result = service.setPointagesEtat(9001234, Arrays.asList(etatDto));
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Impossible de mettre à jour le pointage 9 de l'agent 5678 à l'état REJETE. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.", result.getErrors().get(0));
+		assertEquals(1, ptg.getEtats().size());
+		assertEquals(EtatPointageEnum.APPROUVE, ptg.getEtats().get(0).getEtat());
 	}
 
 	@Test
@@ -743,7 +994,7 @@ public class ApprobationServiceTest {
 		ptg.setIdAgent(9005678);
 		ptg.setIdPointage(9);
 		EtatPointage etat = new EtatPointage();
-		etat.setEtat(EtatPointageEnum.JOURNALISE);
+		etat.setEtat(EtatPointageEnum.SAISI);
 		ptg.getEtats().add(etat);
 
 		IPointageRepository pRepo = Mockito.mock(IPointageRepository.class);
@@ -771,7 +1022,7 @@ public class ApprobationServiceTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(1, ptg.getEtats().size());
 		assertEquals(
-				"Impossible de mettre à REJETE le pointage 9 de l'agent 5678 car celui-ci est à l'état JOURNALISE.",
+				"Impossible de mettre à REJETE le pointage 9 de l'agent 5678 car celui-ci est à l'état SAISI.",
 				result.getErrors().get(0));
 	}
 
@@ -1677,7 +1928,7 @@ public class ApprobationServiceTest {
 		IPointageService pointageService = Mockito.mock(IPointageService.class);
 		Mockito.when(
 				pointageService.filterOldPointagesAndEtatFromList(listePointagesAgent,
-						Arrays.asList(EtatPointageEnum.VALIDE), null)).thenReturn(listePointagesAgent);
+						Arrays.asList(EtatPointageEnum.VALIDE, EtatPointageEnum.JOURNALISE), null)).thenReturn(listePointagesAgent);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
@@ -1987,8 +2238,7 @@ public class ApprobationServiceTest {
 			
 			boolean result = service.checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, 9005140);
 			
-			if(i == EtatPointageEnum.JOURNALISE.getCodeEtat()
-					|| i == EtatPointageEnum.REFUSE_DEFINITIVEMENT.getCodeEtat()
+			if(i == EtatPointageEnum.REFUSE_DEFINITIVEMENT.getCodeEtat()
 					|| i == EtatPointageEnum.REJETE_DEFINITIVEMENT.getCodeEtat()
 					|| i == EtatPointageEnum.EN_ATTENTE.getCodeEtat()
 					|| i == EtatPointageEnum.VALIDE.getCodeEtat()

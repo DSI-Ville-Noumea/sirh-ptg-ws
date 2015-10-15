@@ -169,10 +169,13 @@ public class ApprobationService implements IApprobationService {
 
 			// #17613 : ne pas afficher les pouces vert/rouge en fonction des
 			// etats
-			dto.setAffichageBoutonAccepter(dto.isApprobation() && !ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.APPROUVE));
-			dto.setAffichageBoutonRefuser(dto.isApprobation() && !ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.REFUSE));
-						
-						
+			dto.setAffichageBoutonAccepter(dto.isApprobation() 
+					&& (ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.SAISI)
+							|| ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.REFUSE)));
+			dto.setAffichageBoutonRefuser(dto.isApprobation() && (ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.SAISI)
+					|| ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.APPROUVE)));
+			dto.setAffichageBoutonRejeter(dto.isApprobation() && ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.JOURNALISE));
+			
 			result.add(dto);
 		}
 
@@ -199,7 +202,7 @@ public class ApprobationService implements IApprobationService {
 								// approbateur sera bloque
 								// SIRH ne se fit pas a ce booleen pour afficher
 								// les pouces
-								&& !EtatPointageEnum.JOURNALISE.equals(ptg.getLatestEtatPointage().getEtat())
+//								&& !EtatPointageEnum.JOURNALISE.equals(ptg.getLatestEtatPointage().getEtat())
 								&& !EtatPointageEnum.REFUSE_DEFINITIVEMENT
 										.equals(ptg.getLatestEtatPointage().getEtat())
 								&& !EtatPointageEnum.REJETE_DEFINITIVEMENT
@@ -289,11 +292,20 @@ public class ApprobationService implements IApprobationService {
 								matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent())));
 				continue;
 			}
+			
+			// #18224 REJETER un pointage JOURNALISE : 
+			// on ne peut pas modifier un pointage de plus de 3 mois dans le kiosque
+			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, ptg.getDateLundi());
+			if(!result.getErrors().isEmpty()) {
+				break;
+			}
 
 			// Check whether the current target and if it can be updated
 			EtatPointage currentEtat = ptg.getLatestEtatPointage();
 			if (currentEtat.getEtat() != EtatPointageEnum.SAISI && currentEtat.getEtat() != EtatPointageEnum.APPROUVE
-					&& currentEtat.getEtat() != EtatPointageEnum.REFUSE) {
+					&& currentEtat.getEtat() != EtatPointageEnum.REFUSE 
+					// #18224 on doit pouvoir rejeter un pointage journalise de moins de 3 mois
+					&& currentEtat.getEtat() != EtatPointageEnum.JOURNALISE) {
 				result.getErrors()
 						.add(String
 								.format("Impossible de mettre à jour le pointage %s de l'agent %s car celui-ci est à l'état %s.",
@@ -306,13 +318,30 @@ public class ApprobationService implements IApprobationService {
 			EtatPointageEnum targetEtat = EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat());
 
 			if (targetEtat != EtatPointageEnum.APPROUVE && targetEtat != EtatPointageEnum.REFUSE
-					&& targetEtat != EtatPointageEnum.SAISI) {
+					&& targetEtat != EtatPointageEnum.SAISI
+					// #18224 on doit pouvoir rejeter un pointage journalise de moins de 3 mois
+					&& targetEtat != EtatPointageEnum.REJETE) {
 				result.getErrors()
 						.add(String
 								.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.",
 										ptg.getIdPointage(),
 										matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()),
 										targetEtat.name()));
+				continue;
+			}
+			
+			// #18224 des pointages journalises ne peuvent etre que rejetees
+			// et on ne peut rejeter que des pointages journalises
+			if((currentEtat.getEtat() == EtatPointageEnum.JOURNALISE
+					&& targetEtat != EtatPointageEnum.REJETE)
+					|| (currentEtat.getEtat() != EtatPointageEnum.JOURNALISE
+							&& targetEtat == EtatPointageEnum.REJETE)) {
+				result.getErrors()
+				.add(String
+						.format("Impossible de mettre à jour le pointage %s de l'agent %s à l'état %s. Seuls APPROUVE, REFUSE ou SAISI sont acceptés.",
+								ptg.getIdPointage(),
+								matriculeConvertor.tryConvertIdAgentToNomatr(ptg.getIdAgent()),
+								targetEtat.name()));
 				continue;
 			}
 
@@ -335,6 +364,11 @@ public class ApprobationService implements IApprobationService {
 			etat.setIdAgent(idAgent);
 			etat.setEtat(targetEtat);
 			ptg.getEtats().add(etat);
+			
+			// #18224
+			Date dateEtat = helperService.getCurrentDate();
+			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat.getEtat(), ptg, dateEtat);
+			reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat.getEtat(), ptg, dateEtat);
 		}
 
 		return result;
@@ -371,6 +405,8 @@ public class ApprobationService implements IApprobationService {
 			}
 			if (currentEtat != EtatPointageEnum.APPROUVE && currentEtat != EtatPointageEnum.EN_ATTENTE
 					&& currentEtat != EtatPointageEnum.VENTILE && currentEtat != EtatPointageEnum.VALIDE
+					// #18224 on doit pouvoir rejeter un pointage journalise
+					&& currentEtat != EtatPointageEnum.JOURNALISE
 					&& targetEtat == EtatPointageEnum.REJETE) {
 				ok = false;
 			}
@@ -457,7 +493,7 @@ public class ApprobationService implements IApprobationService {
 			PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
 
 		if (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
-				&& EtatPointageEnum.VALIDE.equals(currentEtat)
+				&& (EtatPointageEnum.VALIDE.equals(currentEtat) || EtatPointageEnum.JOURNALISE.equals(currentEtat))
 				&& (RefTypePointageEnum.PRIME.equals(ptg.getTypePointageEnum()))) {
 
 			List<Pointage> listePointagesPrimeAgent = ventilationRepository
@@ -465,11 +501,12 @@ public class ApprobationService implements IApprobationService {
 							.getRefPrime().getIdRefPrime());
 
 			List<Pointage> filteredListePointagesPrimeAgent = pointageService.filterOldPointagesAndEtatFromList(
-					listePointagesPrimeAgent, Arrays.asList(EtatPointageEnum.VALIDE), null);
+					listePointagesPrimeAgent, Arrays.asList(EtatPointageEnum.VALIDE, EtatPointageEnum.JOURNALISE), null);
 
 			if (null != filteredListePointagesPrimeAgent && !filteredListePointagesPrimeAgent.isEmpty()) {
 				for (Pointage pointage : filteredListePointagesPrimeAgent) {
-					if (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
+					if ( (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
+							|| EtatPointageEnum.JOURNALISE.equals(pointage.getLatestEtatPointage().getEtat()))
 							&& (RefTypePointageEnum.PRIME.equals(pointage.getTypePointageEnum()))
 							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {
 
@@ -490,7 +527,7 @@ public class ApprobationService implements IApprobationService {
 			PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
 
 		if (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
-				&& EtatPointageEnum.VALIDE.equals(currentEtat)
+				&& (EtatPointageEnum.VALIDE.equals(currentEtat) || EtatPointageEnum.JOURNALISE.equals(currentEtat))
 				&& (RefTypePointageEnum.H_SUP.equals(ptg.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE
 						.equals(ptg.getTypePointageEnum()))) {
 			// si on REJETE un pointages VALIDE
@@ -501,7 +538,9 @@ public class ApprobationService implements IApprobationService {
 					ptg.getIdAgent(), ptg.getDateLundi());
 			if (null != listePointagesAgent && !listePointagesAgent.isEmpty()) {
 				for (Pointage pointage : listePointagesAgent) {
-					if (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
+					if ( (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
+							// TODO voir avec Michel pour ce point
+							|| EtatPointageEnum.JOURNALISE.equals(pointage.getLatestEtatPointage().getEtat()))
 							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE
 									.equals(pointage.getTypePointageEnum()))
 							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {

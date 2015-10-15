@@ -27,6 +27,7 @@ public class ConsultPointageDto {
 	// # 17613 pour affichage des boutons
 	private boolean isAffichageBoutonAccepter;
 	private boolean isAffichageBoutonRefuser;
+	private boolean isAffichageBoutonRejeter;
 
 	public ConsultPointageDto() {
 
@@ -215,4 +216,11 @@ public class ConsultPointageDto {
 		this.isAffichageBoutonRefuser = isAffichageBoutonRefuser;
 	}
 
+	public boolean isAffichageBoutonRejeter() {
+		return isAffichageBoutonRejeter;
+	}
+
+	public void setAffichageBoutonRejeter(boolean isAffichageBoutonRejeter) {
+		this.isAffichageBoutonRejeter = isAffichageBoutonRejeter;
+	}
 }
