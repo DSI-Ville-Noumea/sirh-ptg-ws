@@ -169,7 +169,7 @@ public class HelperService {
 		DateTime endDate = new DateTime(dateFin);
 
 		// on boucle sur tous les jours de la periode
-		while (startDate.isBefore(endDate)) {
+		while (startDate.isBefore(endDate) || startDate.equals(endDate)) {
 
 			// si jeudi
 			if (startDate.getDayOfWeek() == DateTimeConstants.MONDAY) {

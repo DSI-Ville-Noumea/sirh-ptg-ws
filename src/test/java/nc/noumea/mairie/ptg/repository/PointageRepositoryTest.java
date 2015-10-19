@@ -1,8 +1,6 @@
 package nc.noumea.mairie.ptg.repository;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +22,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.MotifHeureSup;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
+import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
@@ -1423,6 +1422,123 @@ public class PointageRepositoryTest {
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListPointages_oneResult() {
+
+		RefPrime rp = new RefPrime();
+		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+		rp.setCalculee(false);
+		rp.setDescription(null);
+		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+		rp.setNoRubr(7711);
+		rp.setStatut(AgentStatutEnum.F);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
+		
+		RefTypePointage prime = new RefTypePointage();
+		prime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		ptgEntityManager.persist(prime);
+
+		Pointage ptg = new Pointage();
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setPointage(ptg);
+		etat.setDateEtat(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etat.setDateMaj(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etat.setIdAgent(9000003);
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		ptgEntityManager.persist(etat);
+		
+		ptg.getEtats().add(etat);
+		ptg.setIdAgent(9008765);
+		ptg.setType(prime);
+		ptg.setDateLundi(new LocalDate(2013, 7, 22).toDate());
+		ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		ptg.setRefPrime(rp);
+		ptgEntityManager.persist(ptg);
+
+		List<Pointage> result = repository.getListPointages(ptg.getIdAgent(), ptg.getDateDebut(), prime.getIdRefTypePointage(), rp.getIdRefPrime());
+
+		assertEquals(1, result.size());
+		assertEquals(ptg.getIdAgent(), result.get(0).getIdAgent());
+		assertEquals(ptg.getDateDebut(), result.get(0).getDateDebut());
+		assertEquals(ptg.getType().getIdRefTypePointage(), result.get(0).getType().getIdRefTypePointage());
+		assertEquals(ptg.getRefPrime().getIdRefPrime(), result.get(0).getRefPrime().getIdRefPrime());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListPointages_badAgent_badPrime_badDate_badType() {
+
+		RefPrime rp = new RefPrime();
+		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+		rp.setCalculee(false);
+		rp.setDescription(null);
+		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+		rp.setNoRubr(7711);
+		rp.setStatut(AgentStatutEnum.F);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
+		
+		RefTypePointage prime = new RefTypePointage();
+		prime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		ptgEntityManager.persist(prime);
+
+		Pointage ptg = new Pointage();
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setPointage(ptg);
+		etat.setDateEtat(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etat.setDateMaj(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etat.setIdAgent(9000003);
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		ptgEntityManager.persist(etat);
+		
+		ptg.getEtats().add(etat);
+		ptg.setIdAgent(9008765);
+		ptg.setType(prime);
+		ptg.setDateLundi(new LocalDate(2013, 7, 22).toDate());
+		ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		ptg.setRefPrime(rp);
+		ptgEntityManager.persist(ptg);
+
+		List<Pointage> result = repository.getListPointages(ptg.getIdAgent()+1, ptg.getDateDebut(), prime.getIdRefTypePointage(), rp.getIdRefPrime());
+		assertEquals(0, result.size());
+
+		result = repository.getListPointages(ptg.getIdAgent(), ptg.getDateFin(), prime.getIdRefTypePointage(), rp.getIdRefPrime());
+		assertEquals(0, result.size());
+
+		result = repository.getListPointages(ptg.getIdAgent(), ptg.getDateDebut(), prime.getIdRefTypePointage()+1, rp.getIdRefPrime());
+		assertEquals(0, result.size());
+
+		result = repository.getListPointages(ptg.getIdAgent(), ptg.getDateDebut(), prime.getIdRefTypePointage(), rp.getIdRefPrime()+1);
+		assertEquals(0, result.size());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getCommentaireByText() {
+		
+		PtgComment comment = new PtgComment();
+		comment.setText("text");
+		ptgEntityManager.persist(comment);
+		
+		PtgComment result = repository.getCommentaireByText("text");
+		assertEquals("text", result.getText());
+		
+		result = repository.getCommentaireByText("text" + "a");
+		assertNull(result);
 	}
 
 }

@@ -11,7 +11,7 @@ public interface IPointageCalculeService {
 
 	List<PointageCalcule> calculatePointagesForAgentAndWeek(Integer idAgent, AgentStatutEnum statut, Date dateLundi, List<Pointage> agentPointages);
 
-	void generatePointageTID_7720_7721_7722(Integer idAgentRH, Integer idAgent,
+	List<Pointage> generatePointageTID_7720_7721_7722(Integer idAgentRH, Integer idAgent,
 			AgentStatutEnum statut, Date dateLundi, List<Pointage> pointages);
 	
 }

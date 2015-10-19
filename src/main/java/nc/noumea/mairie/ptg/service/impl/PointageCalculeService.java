@@ -214,11 +214,13 @@ public class PointageCalculeService implements IPointageCalculeService {
 	}
 
 	@Override
-	public void generatePointageTID_7720_7721_7722(Integer idAgentRH, Integer idAgent, AgentStatutEnum statut, Date dateLundi, List<Pointage> pointages) {
+	public List<Pointage> generatePointageTID_7720_7721_7722(Integer idAgentRH, Integer idAgent, AgentStatutEnum statut, Date dateLundi, List<Pointage> pointages) {
 		
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		List<Integer> norubrs = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine);
 		List<RefPrime> refPrimes = pointageRepository.getRefPrimes(norubrs, statut);
+		
+		List<Pointage> result = new ArrayList<Pointage>();
 		
 		for (RefPrime prime : refPrimes) {
 
@@ -226,13 +228,16 @@ public class PointageCalculeService implements IPointageCalculeService {
 				case 7720:
 				case 7721:
 				case 7722:	
-					generatePointageTID_7720_7721_7722(idAgentRH, idAgent, dateLundi, prime, pointages);
+					result.addAll(generatePointageTID_7720_7721_7722(idAgentRH, idAgent, dateLundi, prime, pointages));
 					break;
 			}
 		}
+		return result;
 	}
 	
-	private void generatePointageTID_7720_7721_7722(Integer idAgentRH, Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
+	private List<Pointage> generatePointageTID_7720_7721_7722(Integer idAgentRH, Integer idAgent, Date dateLundi, RefPrime prime, List<Pointage> pointages) {
+		
+		List<Pointage> result = new ArrayList<Pointage>();
 		
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		
@@ -408,7 +413,11 @@ public class PointageCalculeService implements IPointageCalculeService {
 			etatPtg.setPointage(ptg);
 			
 			pointageRepository.persisEntity(ptg);
+			
+			result.add(ptg);
 		}
+		
+		return result;
 	}
 	
 	private List<Pointage> getPointagesHSupForDay(List<Pointage> pointages, DateTime day) {

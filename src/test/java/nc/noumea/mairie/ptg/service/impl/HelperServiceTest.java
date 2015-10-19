@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
@@ -336,5 +337,41 @@ public class HelperServiceTest {
 		Integer duree = service.getDureeBetweenDateDebutAndDateFin(dateDebut, dateFin);
 		
 		assertEquals(240, (int)duree);
+	}
+	
+	@Test
+	public void getListDateLundiBetWeenTwoDate() {
+		
+		Date dateDebut = new DateTime(2015,9,1,0,0,0).toDate();
+		Date dateFin = new DateTime(2015,10,1,0,0,0).toDate();
+		
+		HelperService service = new HelperService();
+		List<Date> nombreLundi = service.getListDateLundiBetWeenTwoDate(dateDebut, dateFin);
+		
+		assertEquals(nombreLundi.size(), 4);
+	}
+	
+	@Test
+	public void getListDateLundiBetWeenTwoDate_dateFinEstLundi() {
+		
+		Date dateDebut = new DateTime(2015,8,1,0,0,0).toDate();
+		Date dateFin = new DateTime(2015,8,31,0,0,0).toDate();
+		
+		HelperService service = new HelperService();
+		List<Date> nombreLundi = service.getListDateLundiBetWeenTwoDate(dateDebut, dateFin);
+		
+		assertEquals(nombreLundi.size(), 5);
+	}
+	
+	@Test
+	public void getListDateLundiBetWeenTwoDate_dateDebutEstLundi() {
+		
+		Date dateDebut = new DateTime(2015,6,1,0,0,0).toDate();
+		Date dateFin = new DateTime(2015,6,30,0,0,0).toDate();
+		
+		HelperService service = new HelperService();
+		List<Date> nombreLundi = service.getListDateLundiBetWeenTwoDate(dateDebut, dateFin);
+		
+		assertEquals(nombreLundi.size(), 5);
 	}
 }
