@@ -123,19 +123,19 @@ public class ApprobationService implements IApprobationService {
 		}
 
 		return createConsultPointageDtoListFromSearch(agentIds.size() == 0 ? Arrays.asList(0) : agentIds, fromDate,
-				toDate, idRefEtat, idRefType, typeHS, listDroitsAgent, idAgent);
+				toDate, idRefEtat, idRefType, typeHS, listDroitsAgent, idAgent, false);
 	}
 
 	@Override
 	public List<ConsultPointageDto> getPointagesSIRH(Date fromDate, Date toDate, List<Integer> agentIds,
 			Integer idRefEtat, Integer idRefType, String typeHS) {
 		return createConsultPointageDtoListFromSearch(agentIds, fromDate, toDate, idRefEtat, idRefType, typeHS, null,
-				null);
+				null, true);
 	}
 
 	protected List<ConsultPointageDto> createConsultPointageDtoListFromSearch(List<Integer> agentIds, Date fromDate,
 			Date toDate, Integer idRefEtat, Integer idRefType, String typeHS, List<DroitsAgent> listdroitsAgent,
-			Integer idAgentOpeOrAppro) {
+			Integer idAgentOpeOrAppro, boolean isFromSirh) {
 
 		List<ConsultPointageDto> result = new ArrayList<ConsultPointageDto>();
 
@@ -163,27 +163,32 @@ public class ApprobationService implements IApprobationService {
 
 		for (Pointage ptg : pointages) {
 
-			AgentDto agDto = new AgentDto(sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentsExistants, ptg.getIdAgent()));
-			AgentDto opeDto = new AgentDto(sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentsExistants, ptg.getLatestEtatPointage().getIdAgent()));
-
-			ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
-
-			dto.updateEtat(ptg.getLatestEtatPointage(), opeDto);
-			dto.setAgent(agDto);
-
-			// #14325
-			dto.setApprobation(checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, idAgentOpeOrAppro));
-
-			// #17613 : ne pas afficher les pouces vert/rouge en fonction des
-			// etats
-			dto.setAffichageBoutonAccepter(dto.isApprobation() 
-					&& (ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.SAISI)
-							|| ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.REFUSE)));
-			dto.setAffichageBoutonRefuser(dto.isApprobation() && (ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.SAISI)
-					|| ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.APPROUVE)));
-			dto.setAffichageBoutonRejeter(dto.isApprobation() && ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.JOURNALISE));
-			
-			result.add(dto);
+			// #18234 : les TID ne doivent pas apparaitre côté kiosque
+			if(isFromSirh 
+					|| null == ptg.getRefPrime() 
+					|| ptg.getRefPrime().isAffichageKiosque()) {
+				AgentDto agDto = new AgentDto(sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentsExistants, ptg.getIdAgent()));
+				AgentDto opeDto = new AgentDto(sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentsExistants, ptg.getLatestEtatPointage().getIdAgent()));
+	
+				ConsultPointageDto dto = new ConsultPointageDto(ptg, helperService);
+	
+				dto.updateEtat(ptg.getLatestEtatPointage(), opeDto);
+				dto.setAgent(agDto);
+	
+				// #14325
+				dto.setApprobation(checkDroitApprobationByPointage(ptg, dto, listdroitsAgent, idAgentOpeOrAppro));
+	
+				// #17613 : ne pas afficher les pouces vert/rouge en fonction des
+				// etats
+				dto.setAffichageBoutonAccepter(dto.isApprobation() 
+						&& (ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.SAISI)
+								|| ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.REFUSE)));
+				dto.setAffichageBoutonRefuser(dto.isApprobation() && (ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.SAISI)
+						|| ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.APPROUVE)));
+				dto.setAffichageBoutonRejeter(dto.isApprobation() && ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.JOURNALISE));
+				
+				result.add(dto);
+			}
 		}
 
 		return result;

@@ -149,6 +149,20 @@ public class VentilationService implements IVentilationService {
 					}
 				}
 			}
+
+			// evolution #18234 generation des pointages TID pour les primes pointages TID affectées à l'affectation de l agent 
+			if (null == pointageType
+					|| pointageType.equals(RefTypePointageEnum.PRIME)){
+				
+				List<Integer> listIdAgentWithTIDAGenerer = sirhWsConsumer.getListAgentsWithPrimeTIDOnAffectation(fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+				if (null != listIdAgentWithTIDAGenerer) {
+					for (Integer idAgentWithTIDAGenerer : listIdAgentWithTIDAGenerer) {
+						if (!agents.contains(idAgentWithTIDAGenerer)) {
+							agents.add(idAgentWithTIDAGenerer);
+						}
+					}
+				}
+			}
 		}
 
 		logger.info("Found {} agents to ventilate pointages for (based on available pointages) and before filtering.",
@@ -204,6 +218,7 @@ public class VentilationService implements IVentilationService {
 
 		// 2. remove existing ventilations
 		removePreviousVentilations(toVentilDate, agent, pointageType);
+		
 
 		// 3. select all distinct dates of pointages needing ventilation
 		List<Date> pointagesToVentilateDates = ventilationRepository.getDistinctDatesOfPointages(agent,
@@ -218,6 +233,22 @@ public class VentilationService implements IVentilationService {
 				pointagesVentiles.addAll(processHSupAndAbsVentilationForWeekAndAgent(toVentilDate, agent, carr,
 						dateLundi, fromVentilDate.getDateVentilation()));
 			}
+		}
+		
+		//5 bis 
+		// evolution #18234 generation des pointages TID pour les primes pointages TID affectées à l'affectation de l agent
+		for(Date dateLundi : helperService.getListDateLundiBetWeenTwoDate(fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation())) {
+			
+			// Retrieve all pointages for that period
+			List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesAbsenceAndHSupForVentilation(
+					agent, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), dateLundi);
+
+			// Then filter them (if they have parent pointages to be excluded for
+			// ex.)
+			List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(
+					agentsPointageForPeriod, Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE), null);
+			
+			pointageCalculeService.generatePointageTID_7720_7721_7722(agentRH, agent, carr.getStatutCarriere(), dateLundi, filteredAgentsPointageForPeriod);
 		}
 
 		// 5. Pointages generated (Primes)
@@ -234,7 +265,7 @@ public class VentilationService implements IVentilationService {
 			for (Date dateDebutMois : getDistinctDateDebutMoisFromListOfDates(pointagesToVentilateDates)) {
 
 				pointagesVentiles.addAll(processPrimesVentilationForMonthAndAgent(toVentilDate, agent, dateDebutMois,
-						fromVentilDate.getDateVentilation()));
+						fromVentilDate.getDateVentilation(), carr.getStatutCarriere()));
 			}
 		}
 
@@ -327,7 +358,7 @@ public class VentilationService implements IVentilationService {
 	
 	
 	protected List<Pointage> processPrimesVentilationForMonthAndAgent(VentilDate ventilDate, Integer idAgent,
-			Date dateDebutMois, Date fromVentilDate) {
+			Date dateDebutMois, Date fromVentilDate, AgentStatutEnum statut) {
 
 		logger.debug("Ventilation of PRIME pointages for date 1st of month [{}]...", dateDebutMois);
 
@@ -344,7 +375,7 @@ public class VentilationService implements IVentilationService {
 		List<VentilPrime> primesVentilees = new ArrayList<VentilPrime>();
 
 		primesVentilees.addAll(ventilationPrimeService.processPrimesAgent(idAgent, filteredAgentsPointageForPeriod,
-				dateDebutMois));
+				dateDebutMois, statut));
 		primesVentilees.addAll(ventilationPrimeService.processPrimesCalculeesAgent(idAgent,
 				agentsPointagesCalculesForPeriod, dateDebutMois));
 

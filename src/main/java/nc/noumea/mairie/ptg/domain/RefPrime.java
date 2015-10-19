@@ -19,8 +19,8 @@ import nc.noumea.mairie.domain.MairiePrimeTableEnum;
 @Entity
 @Table(name = "PTG_REF_PRIME")
 @NamedQueries({
-		@NamedQuery(name = "getRefPrimesNotCalculated", query = "from RefPrime rf where rf.noRubr in (:noRubrList) and rf.statut = :statut and rf.calculee = false order by rf.noRubr"),
-		@NamedQuery(name = "getRefPrimesCalculated", query = "from RefPrime rf where rf.noRubr in (:noRubrList) and rf.statut = :statut and rf.calculee = true order by rf.noRubr"),
+		@NamedQuery(name = "getRefPrimesNotCalculated", query = "select rf from RefPrime rf where rf.noRubr in (:noRubrList) and rf.statut = :statut and rf.calculee = false order by rf.noRubr"),
+		@NamedQuery(name = "getRefPrimesCalculated", query = "select rf from RefPrime rf where rf.noRubr in (:noRubrList) and rf.statut = :statut and rf.calculee = true order by rf.noRubr"),
 		@NamedQuery(name = "getListPrimesWithStatusByIdDesc", query = "select ptg from RefPrime ptg where ptg.statut = :statut order by ptg.noRubr"),
 		@NamedQuery(name = "getRefPrimesByNorubr", query = "select ptg from RefPrime ptg where ptg.noRubr=:noRubr"),
 		@NamedQuery(name = "getListPrimesByIdDesc", query = "select ptg from RefPrime ptg order by ptg.noRubr")
@@ -59,6 +59,9 @@ public class RefPrime {
 
 	@Column(name = "AIDE", columnDefinition = "nvarchar2")
 	private String aide;
+
+	@Column(name = "IS_AFFICHAGE_KIOSQUE")
+	private boolean affichageKiosque;
 	
 	@Version
     @Column(name = "version")
@@ -144,5 +147,11 @@ public class RefPrime {
 		this.version = version;
 	}
 
-	
+	public boolean isAffichageKiosque() {
+		return affichageKiosque;
+	}
+
+	public void setAffichageKiosque(boolean affichageKiosque) {
+		this.affichageKiosque = affichageKiosque;
+	}
 }

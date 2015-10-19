@@ -7,6 +7,7 @@ import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.MotifHeureSup;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
+import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
@@ -62,4 +63,9 @@ public interface IPointageRepository {
 
 	List<Pointage> getPointagesVentilesForAgentByDateLundi(Integer idAgent,
 			Integer idVentilDate, Date dateLundi);
+
+	List<Pointage> getListPointages(Integer idAgent, Date dateDebut,
+			Integer idRefType, Integer idRefPrime);
+
+	PtgComment getCommentaireByText(String text);
 }

@@ -14,6 +14,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.MotifHeureSup;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
+import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
@@ -325,5 +326,36 @@ public class PointageRepository implements IPointageRepository {
 		query.setParameter("idAgent", idAgent);
 
 		return query.getResultList();
+	}
+
+	@Override
+	public List<Pointage> getListPointages(Integer idAgent, Date dateDebut, Integer idRefType, Integer idRefPrime) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select ptg from Pointage ptg ");
+		sb.append("LEFT JOIN FETCH ptg.etats ");
+		sb.append("where ptg.dateDebut = :dateDebut ");
+		sb.append("and ptg.type.idRefTypePointage = :idRefTypePointage ");
+		sb.append("and ptg.refPrime.idRefPrime = :idRefPrime ");
+		sb.append("and ptg.idAgent = :idAgent ");
+		sb.append("order by ptg.idPointage desc ");
+
+		TypedQuery<Pointage> query = ptgEntityManager.createQuery(sb.toString(), Pointage.class);
+		query.setParameter("dateDebut", dateDebut);
+
+		query.setParameter("idRefTypePointage", idRefType);
+		query.setParameter("idRefPrime", idRefPrime);
+		query.setParameter("idAgent", idAgent);
+
+		return query.getResultList();
+	}
+	
+	@Override
+	public PtgComment getCommentaireByText(String text) {
+		
+		TypedQuery<PtgComment> query = ptgEntityManager.createNamedQuery("getCommentaireByText", PtgComment.class);
+		query.setParameter("text", text);
+		
+		return !query.getResultList().isEmpty() ? query.getResultList().get(0) : null;
 	}
 }

@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
@@ -61,7 +62,7 @@ public class VentilationPrimeServiceTest {
 		Date dateDebutMois = new DateTime(2012, 04, 1, 0, 0, 0).toDate();
 		
 		// When
-		List<VentilPrime> result = service.processPrimesAgent(9007865, Arrays.asList(p1, p2, p3), dateDebutMois);
+		List<VentilPrime> result = service.processPrimesAgent(9007865, Arrays.asList(p1, p2, p3), dateDebutMois, AgentStatutEnum.F);
 		
 		// Then
 		assertEquals(0, result.size());
@@ -105,7 +106,7 @@ public class VentilationPrimeServiceTest {
 		Date dateDebutMois = new DateTime(2012, 04, 1, 0, 0, 0).toDate();
 		
 		// When
-		List<VentilPrime> result = service.processPrimesAgent(9007865, Arrays.asList(p1, p2, p3), dateDebutMois);
+		List<VentilPrime> result = service.processPrimesAgent(9007865, Arrays.asList(p1, p2, p3), dateDebutMois, AgentStatutEnum.F);
 		
 		// Then
 		assertEquals(2, result.size());
@@ -167,7 +168,7 @@ public class VentilationPrimeServiceTest {
 		Date dateDebutMois = new DateTime(2012, 04, 1, 0, 0, 0).toDate();
 		
 		// When
-		List<VentilPrime> result = service.processPrimesAgent(9007865, Arrays.asList(p1, p2, p3, p4), dateDebutMois);
+		List<VentilPrime> result = service.processPrimesAgent(9007865, Arrays.asList(p1, p2, p3, p4), dateDebutMois, AgentStatutEnum.F);
 		
 		// Then
 		assertEquals(1, result.size());

@@ -399,15 +399,18 @@ public class SaisieService implements ISaisieService {
 	protected void deletePointages(ReturnMessageDto result, Integer idAgentOperator, List<Pointage> pointagesToDelete) {
 		// Delete anything that was not updated from the saving process
 		for (Pointage pointageToDelete : pointagesToDelete) {
-
-			// If the Pointage was SAISI, simply remove it
-			if (pointageToDelete.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI) {
-				pointageRepository.removeEntity(pointageToDelete);
-				continue;
-			// sinon message erreur
-			// #15502
-			} else {
-				result.getErrors().add("Vous ne pouvez pas supprimer un pointage à l'état Validée ou Approuvée.");
+			// #18234
+			if(null == pointageToDelete.getRefPrime()
+					|| pointageToDelete.getRefPrime().isAffichageKiosque()) {
+				// If the Pointage was SAISI, simply remove it
+				if (pointageToDelete.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI) {
+					pointageRepository.removeEntity(pointageToDelete);
+					continue;
+				// sinon message erreur
+				// #15502
+				} else {
+					result.getErrors().add("Vous ne pouvez pas supprimer un pointage à l'état Validée ou Approuvée.");
+				}
 			}
 		}
 	}

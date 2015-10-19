@@ -3,12 +3,15 @@ package nc.noumea.mairie.ptg.service.impl;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
@@ -152,5 +155,30 @@ public class HelperService {
 		
 		Interval interval = new Interval(startDate, endDate);
 		return new Long(interval.toDuration().getStandardMinutes()).intValue();
+	}
+	
+	public List<Date> getListDateLundiBetWeenTwoDate(Date dateDebut, Date dateFin) {
+
+		List<Date> result = new ArrayList<Date>();
+		// on calcule le nombre de vendredi
+		DateTime startDate = new DateTime(dateDebut).withHourOfDay(0).withMinuteOfHour(0)
+				.withSecondOfMinute(0); // on met les heures et minutes a
+										// zero afin de bien comptabiliser
+										// le nombre de vendredi dans la
+										// boucle while
+		DateTime endDate = new DateTime(dateFin);
+
+		// on boucle sur tous les jours de la periode
+		while (startDate.isBefore(endDate)) {
+
+			// si jeudi
+			if (startDate.getDayOfWeek() == DateTimeConstants.MONDAY) {
+				result.add(startDate.toDate());
+			}
+
+			startDate = startDate.plusDays(1);
+		}
+		
+		return result;
 	}
 }

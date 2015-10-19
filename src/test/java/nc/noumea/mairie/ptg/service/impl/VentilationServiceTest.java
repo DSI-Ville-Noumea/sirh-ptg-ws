@@ -399,7 +399,7 @@ public class VentilationServiceTest {
 		IVentilationPrimeService primeV = Mockito.mock(IVentilationPrimeService.class);
 		Mockito.when(
 				primeV.processPrimesAgent(Mockito.eq(idAgent), Mockito.anyListOf(Pointage.class),
-						Mockito.eq(dateDebutMois))).thenReturn(Arrays.asList(ventilPrime));
+						Mockito.eq(dateDebutMois), Mockito.eq(AgentStatutEnum.F))).thenReturn(Arrays.asList(ventilPrime));
 
 		VentilPrime ventilPrime2 = Mockito.spy(new VentilPrime());
 		Mockito.doAnswer(new Answer<Object>() {
@@ -417,7 +417,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 
 		// When
-		service.processPrimesVentilationForMonthAndAgent(ventilDate, idAgent, dateDebutMois, fromEtatDate);
+		service.processPrimesVentilationForMonthAndAgent(ventilDate, idAgent, dateDebutMois, fromEtatDate, AgentStatutEnum.F);
 
 		// Then
 		assertEquals(EtatPointageEnum.VENTILE, p2.getEtat());
@@ -468,7 +468,7 @@ public class VentilationServiceTest {
 		IVentilationPrimeService primeV = Mockito.mock(IVentilationPrimeService.class);
 		Mockito.when(
 				primeV.processPrimesAgent(Mockito.eq(idAgent), Mockito.anyListOf(Pointage.class),
-						Mockito.eq(dateDebutMois))).thenReturn(new ArrayList<VentilPrime>());
+						Mockito.eq(dateDebutMois), Mockito.eq(AgentStatutEnum.F))).thenReturn(new ArrayList<VentilPrime>());
 
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
@@ -485,7 +485,7 @@ public class VentilationServiceTest {
 		ReflectionTestUtils.setField(service, "pointageService", pService);
 
 		// When
-		service.processPrimesVentilationForMonthAndAgent(ventilDate, idAgent, dateDebutMois, fromEtatDate);
+		service.processPrimesVentilationForMonthAndAgent(ventilDate, idAgent, dateDebutMois, fromEtatDate, AgentStatutEnum.F);
 
 		// Then
 		Mockito.verify(ventilRepo, Mockito.times(1)).persistEntity(Mockito.isA(VentilPrime.class));
@@ -1122,7 +1122,7 @@ public class VentilationServiceTest {
 		Mockito.doReturn(ptgVentiles)
 				.when(service)
 				.processPrimesVentilationForMonthAndAgent(toVentilDate, 9005432, datesDebutMois.get(0),
-						fromVentilDate.getDateVentilation());
+						fromVentilDate.getDateVentilation(), null);
 
 		Mockito.doNothing().when(service).markPointagesAsVentile(ptgVentiles, 9005432, toVentilDate);
 
@@ -1139,7 +1139,7 @@ public class VentilationServiceTest {
 		Mockito.verify(service, Mockito.times(1)).calculatePointages(9005432, datesLundi.get(0),
 				fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
 		Mockito.verify(service, Mockito.times(1)).processPrimesVentilationForMonthAndAgent(toVentilDate, 9005432,
-				datesDebutMois.get(0), fromVentilDate.getDateVentilation());
+				datesDebutMois.get(0), fromVentilDate.getDateVentilation(), null);
 		Mockito.verify(service, Mockito.times(1)).markPointagesAsVentile(ptgVentiles, 9001234, toVentilDate);
 	}
 

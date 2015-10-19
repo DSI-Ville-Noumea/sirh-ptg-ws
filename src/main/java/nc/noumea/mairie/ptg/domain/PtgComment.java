@@ -5,11 +5,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 @Entity
 @Table(name = "PTG_COMMENT")
+@NamedQueries({
+	@NamedQuery(name = "getCommentaireByText", query = "select comment from PtgComment comment where comment.text = :text ") 
+})
 public class PtgComment {
 
 	@Id 

@@ -661,6 +661,7 @@ public class SaisieServiceTest {
 		RefPrime refPrime = new RefPrime();
 		refPrime.setIdRefPrime(22);
 		refPrime.setNoRubr(1111);
+		refPrime.setAffichageKiosque(true);
 
 		Pointage existingPointageApprouve = new Pointage();
 		existingPointageApprouve.setIdAgent(agent.getIdAgent());
@@ -798,6 +799,7 @@ public class SaisieServiceTest {
 		RefPrime refPrime = new RefPrime();
 		refPrime.setIdRefPrime(22);
 		refPrime.setNoRubr(1111);
+		refPrime.setAffichageKiosque(true);
 
 		Pointage existingPointageApprouve = new Pointage();
 		existingPointageApprouve.setIdAgent(agent.getIdAgent());

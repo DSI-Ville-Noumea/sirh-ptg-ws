@@ -1129,10 +1129,12 @@ public class PointageServiceTest {
 		rp1.setNoRubr(7058);
 		rp1.setIdRefPrime(1111);
 		rp1.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		rp1.setAffichageKiosque(true);
 		RefPrime rp2 = new RefPrime();
 		rp2.setNoRubr(7059);
 		rp2.setIdRefPrime(2222);
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+		rp2.setAffichageKiosque(true);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
@@ -1216,10 +1218,12 @@ public class PointageServiceTest {
 		rp1.setNoRubr(7058);
 		rp1.setIdRefPrime(1111);
 		rp1.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		rp1.setAffichageKiosque(true);
 		RefPrime rp2 = new RefPrime();
 		rp2.setNoRubr(7059);
 		rp2.setIdRefPrime(2222);
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+		rp2.setAffichageKiosque(true);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
@@ -1308,10 +1312,12 @@ public class PointageServiceTest {
 		rp1.setNoRubr(7058);
 		rp1.setIdRefPrime(1111);
 		rp1.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		rp1.setAffichageKiosque(true);
 		RefPrime rp2 = new RefPrime();
 		rp2.setNoRubr(7059);
 		rp2.setIdRefPrime(2222);
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+		rp2.setAffichageKiosque(true);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
@@ -1400,10 +1406,12 @@ public class PointageServiceTest {
 		rp1.setNoRubr(7058);
 		rp1.setIdRefPrime(1111);
 		rp1.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		rp1.setAffichageKiosque(true);
 		RefPrime rp2 = new RefPrime();
 		rp2.setNoRubr(7059);
 		rp2.setIdRefPrime(2222);
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+		rp2.setAffichageKiosque(true);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();
@@ -1492,10 +1500,12 @@ public class PointageServiceTest {
 		rp1.setNoRubr(7058);
 		rp1.setIdRefPrime(1111);
 		rp1.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
+		rp1.setAffichageKiosque(true);
 		RefPrime rp2 = new RefPrime();
 		rp2.setNoRubr(7059);
 		rp2.setIdRefPrime(2222);
 		rp2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+		rp2.setAffichageKiosque(true);
 
 		Date d = new DateTime(2013, 05, 15, 0, 0, 0).toDate();
 		Date dateFinSemaine = new DateTime(2013, 05, 15, 0, 0, 0).plusDays(7).toDate();

@@ -616,7 +616,9 @@ public class PointageService implements IPointageService {
 			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
 
 			for (RefPrime prime : refPrimes) {
-				jourPointageTemplate.getPrimes().add(new PrimeDtoKiosque(prime));
+				if(prime.isAffichageKiosque()) {
+					jourPointageTemplate.getPrimes().add(new PrimeDtoKiosque(prime));
+				}
 			}
 		}
 

@@ -36,4 +36,7 @@ public interface ISirhWSConsumer {
 
 	List<BaseHorairePointageDto> getListBaseHorairePointageAgent(
 			Integer idAgent, Date dateDebut, Date dateFin);
+
+	List<Integer> getListAgentsWithPrimeTIDOnAffectation(Date dateDebut,
+			Date dateFin);
 }

@@ -38,6 +38,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhListPrimePointageUrl = "pointages/listPrimePointages";
 	private static final String sirhJourFerieUrl = "utils/isJourFerie";
 	private static final String sirhBaseHorairePointageUrl = "pointages/baseHoraire";
+	private static final String sirhlistAgentsWithPrimeTIDOnAffectationUrl = "pointages/listAgentsWithPrimeTIDOnAffectation";
 
 	@Override
 	public EntiteDto getAgentDirection(Integer idAgent, Date date) {
@@ -214,5 +215,22 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFirePostRequest(parameters, url, json);
 
 		return readResponseAsList(AgentGeneriqueDto.class, res, url);
+	}
+
+	@Override
+	public List<Integer> getListAgentsWithPrimeTIDOnAffectation(Date dateDebut, Date dateFin) {
+
+		String url = String.format(sirhWsBaseUrl + sirhlistAgentsWithPrimeTIDOnAffectationUrl);
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		List<Integer> listeNumPrime = readResponseAsList(Integer.class, res, url);
+
+		return listeNumPrime;
 	}
 }
