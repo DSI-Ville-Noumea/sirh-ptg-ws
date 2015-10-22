@@ -28,4 +28,10 @@ public interface IMairieRepository {
 	Spadmn getAgentCurrentPosition(AgentGeneriqueDto ag, Date asOfDate);
 
 	List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end);
+	
+	List<Spadmn> getListPAOfAgentBetween2Date(Integer noMatr, Date fromDate,
+			Date toDate);
+
+	String getDerniereFiliereOfAgentOnPeriod(Integer noMatr, Date fromDate,
+			Date toDate);
 }

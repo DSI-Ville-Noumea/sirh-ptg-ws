@@ -30,4 +30,7 @@ public interface IAbsWsConsumer {
 	void addRecuperationsToCompteurAgentForOnePointage(Integer idAgent,
 			Date date, Integer minutes, Integer idPointage,
 			Integer idPointageParent);
+
+	List<DemandeDto> getListAbsencesForListAgentsBetween2Dates(
+			List<Integer> listIdsAgent, Date start, Date end);
 }

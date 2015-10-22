@@ -9,6 +9,7 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.sirh.dto.JourDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -180,5 +181,42 @@ public class HelperService {
 		}
 		
 		return result;
+	}
+	
+	public Date getDatePremierJourOfMonth(Date dateMonth) {
+		
+		DateTime date = new DateTime(dateMonth)
+		    .withDayOfMonth(1)
+			.withHourOfDay(0)
+			.withMinuteOfHour(0)
+			.withSecondOfMinute(0)
+			.withMillisOfSecond(0);
+
+		return date.toDate();
+	}
+	
+	public Date getDateDernierJourOfMonth(Date dateMonth) {
+		
+		DateTime date = new DateTime(dateMonth)
+			.dayOfMonth().withMaximumValue()
+			.withHourOfDay(23)
+			.withMinuteOfHour(59)
+			.withSecondOfMinute(59)
+			.withMillisOfSecond(0);
+
+		return date.toDate();
+	}
+
+	public boolean isJourHoliday(List<JourDto> listJoursFeries, Date dateJour) {
+		if (null != listJoursFeries) {
+			DateTime dateTimeJour = new DateTime(dateJour);
+			for (JourDto jourFerie : listJoursFeries) {
+				DateTime dateTimeFerie = new DateTime(jourFerie.getJour());
+				if (dateTimeFerie.getDayOfYear() == dateTimeJour.getDayOfYear()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

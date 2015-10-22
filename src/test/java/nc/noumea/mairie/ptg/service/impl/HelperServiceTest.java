@@ -7,11 +7,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.sirh.dto.JourDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -373,5 +375,86 @@ public class HelperServiceTest {
 		List<Date> nombreLundi = service.getListDateLundiBetWeenTwoDate(dateDebut, dateFin);
 		
 		assertEquals(nombreLundi.size(), 5);
+	}
+	
+	@Test 
+	public void getDatePremierJourOfMonth() {
+		
+		HelperService service = new HelperService();
+		Date date = service.getDatePremierJourOfMonth(new DateTime(2015,2,13,8,30,0).toDate());
+		
+		assertEquals(date, new DateTime(2015,2,1,0,0,0).toDate());
+	}
+	
+	@Test 
+	public void getDateDernierJourOfMonth() {
+		
+		HelperService service = new HelperService();
+		Date date = service.getDateDernierJourOfMonth(new DateTime(2015,2,13,8,30,0).toDate());
+		assertEquals(date, new DateTime(2015,2,28,23,59,59).toDate());
+		
+		date = service.getDateDernierJourOfMonth(new DateTime(2015,6,13,8,30,0).toDate());
+		assertEquals(date, new DateTime(2015,6,30,23,59,59).toDate());
+		
+		date = service.getDateDernierJourOfMonth(new DateTime(2015,12,13,8,30,0).toDate());
+		assertEquals(date, new DateTime(2015,12,31,23,59,59).toDate());
+	}
+	
+	@Test
+	public void isJourHoliday_true() {
+		
+		Date dateJour = new DateTime(2015,11,1,0,0,0).toDate();
+		
+		JourDto jourFerie = new JourDto();
+		jourFerie.setFerie(true);
+		jourFerie.setJour(new DateTime(2015,11,1,0,0,0).toDate());
+		
+		List<JourDto> listJoursFeries = new ArrayList<JourDto>();
+		listJoursFeries.add(jourFerie);
+		
+		HelperService service = new HelperService();
+		assertTrue(service.isJourHoliday(listJoursFeries, dateJour));
+	}
+	
+	@Test
+	public void isJourHoliday_true_2joursFeries() {
+		
+		Date dateJour = new DateTime(2015,11,11,0,0,0).toDate();
+		
+		JourDto jourFerie = new JourDto();
+		jourFerie.setFerie(true);
+		jourFerie.setJour(new DateTime(2015,11,1,0,0,0).toDate());
+		
+		JourDto jourFerie2 = new JourDto();
+		jourFerie2.setFerie(true);
+		jourFerie2.setJour(new DateTime(2015,11,11,0,0,0).toDate());
+		
+		List<JourDto> listJoursFeries = new ArrayList<JourDto>();
+		listJoursFeries.add(jourFerie);
+		listJoursFeries.add(jourFerie2);
+		
+		HelperService service = new HelperService();
+		assertTrue(service.isJourHoliday(listJoursFeries, dateJour));
+	}
+	
+	@Test
+	public void isJourHoliday_false() {
+		
+		Date dateJour = new DateTime(2015,11,12,0,0,0).toDate();
+		
+		JourDto jourFerie = new JourDto();
+		jourFerie.setFerie(true);
+		jourFerie.setJour(new DateTime(2015,11,1,0,0,0).toDate());
+		
+		JourDto jourFerie2 = new JourDto();
+		jourFerie2.setFerie(true);
+		jourFerie2.setJour(new DateTime(2015,11,11,0,0,0).toDate());
+		
+		List<JourDto> listJoursFeries = new ArrayList<JourDto>();
+		listJoursFeries.add(jourFerie);
+		listJoursFeries.add(jourFerie2);
+		
+		HelperService service = new HelperService();
+		assertFalse(service.isJourHoliday(listJoursFeries, dateJour));
 	}
 }

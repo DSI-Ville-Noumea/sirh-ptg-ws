@@ -2,6 +2,8 @@ package nc.noumea.mairie.abs.dto;
 
 import java.util.Date;
 
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+
 public class DemandeDto {
 
 	private Integer idDemande;
@@ -43,6 +45,11 @@ public class DemandeDto {
 	private boolean isDepassementCompteur;
 	private boolean isDepassementMultiple;
 	private String commentaire;
+	
+
+	private RefGroupeAbsenceDto groupeAbsence;
+
+	private AgentWithServiceDto agentWithServiceDto;
 	
 	public DemandeDto() {
 	}
@@ -332,4 +339,19 @@ public class DemandeDto {
 		this.isDepassementMultiple = isDepassementMultiple;
 	}
 
+	public RefGroupeAbsenceDto getGroupeAbsence() {
+		return groupeAbsence;
+	}
+
+	public void setGroupeAbsence(RefGroupeAbsenceDto groupeAbsence) {
+		this.groupeAbsence = groupeAbsence;
+	}
+
+	public AgentWithServiceDto getAgentWithServiceDto() {
+		return agentWithServiceDto;
+	}
+
+	public void setAgentWithServiceDto(AgentWithServiceDto agentWithServiceDto) {
+		this.agentWithServiceDto = agentWithServiceDto;
+	}
 }

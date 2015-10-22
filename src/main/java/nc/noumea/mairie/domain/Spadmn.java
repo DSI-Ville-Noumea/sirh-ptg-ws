@@ -3,14 +3,18 @@ package nc.noumea.mairie.domain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+
 @Entity
 @Table(name = "SPADMN")
-@NamedQuery(
-		name = "getAgentSpadmnAsOfDate",
-		query = "from Spadmn sp where sp.id.nomatr = :nomatr and sp.id.datdeb <= :dateFormatMairie and (sp.datfin > :dateFormatMairie or sp.datfin = 0)")
+@NamedQueries ({
+	@NamedQuery(name = "getAgentSpadmnAsOfDate", query = "select sp from Spadmn sp where sp.id.nomatr = :nomatr and sp.id.datdeb <= :dateFormatMairie and (sp.datfin > :dateFormatMairie or sp.datfin = 0)"),
+	@NamedQuery(name = "getAgentListSpadmnBetweenTwoDate", query = "select sp from Spadmn sp where sp.id.nomatr = :nomatr "
+			+ "and sp.id.datdeb <= :toDate and (sp.datfin > :fromDate or sp.datfin = 0)")
+})
 public class Spadmn {
 
 	@Id

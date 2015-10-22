@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import nc.noumea.mairie.domain.Spabsen;
@@ -97,6 +98,48 @@ public class MairieRepository implements IMairieRepository {
 		Spadmn adm = qSpadmn.getSingleResult();
 
 		return adm;
+	}
+
+	@Override
+	public List<Spadmn> getListPAOfAgentBetween2Date(Integer noMatr, Date fromDate, Date toDate) {
+		
+		TypedQuery<Spadmn> qSpadmn = entityManager.createNamedQuery("getAgentListSpadmnBetweenTwoDate", Spadmn.class);
+		qSpadmn.setParameter("nomatr", noMatr);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		int fromDateMairie = Integer.valueOf(sdf.format(fromDate));
+		qSpadmn.setParameter("fromDate", fromDateMairie);
+		int toDateMairie = Integer.valueOf(sdf.format(toDate));
+		qSpadmn.setParameter("toDate", toDateMairie);
+
+		return qSpadmn.getResultList();
+	}
+	
+	@Override
+	public String getDerniereFiliereOfAgentOnPeriod(Integer noMatr, Date fromDate, Date toDate) {
+		
+		StringBuffer query = new StringBuffer();
+		query.append("select c.cdfili from mairie.spcarr a ");
+		query.append("inner join mairie.SPGRADN b on a.CDGRAD=b.CDGRAD "); 
+		query.append("inner join mairie.SPGENG c on b.CODGRG=c.CDGENG ");
+		query.append("where a.nomatr = :nomatr and a.datdeb <= :toDate and (a.datfin >= :fromDate or a.datfin = 0) ");
+		query.append("order by a.datdeb desc");
+		
+		Query q = entityManager.createNativeQuery(query.toString(), String.class);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		int fromDateMairie = Integer.valueOf(sdf.format(fromDate));
+		q.setParameter("fromDate", fromDateMairie);
+		int toDateMairie = Integer.valueOf(sdf.format(toDate));
+		q.setParameter("toDate", toDateMairie);
+
+		q.setParameter("nomatr", noMatr);
+		
+		if(null != q.getResultList()
+				&& !q.getResultList().isEmpty()) {
+			return (String)q.getResultList().get(0);
+		}
+		return null;
 	}
 
 }

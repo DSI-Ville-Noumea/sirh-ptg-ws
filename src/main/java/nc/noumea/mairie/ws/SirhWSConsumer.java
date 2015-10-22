@@ -8,8 +8,10 @@ import java.util.Map;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
+import nc.noumea.mairie.sirh.dto.JourDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -37,8 +39,10 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhHolidayUrl = "utils/isHoliday";
 	private static final String sirhListPrimePointageUrl = "pointages/listPrimePointages";
 	private static final String sirhJourFerieUrl = "utils/isJourFerie";
+	private static final String listeJoursFeriesUrl = "utils/listeJoursFeries";
 	private static final String sirhBaseHorairePointageUrl = "pointages/baseHoraire";
 	private static final String sirhlistAgentsWithPrimeTIDOnAffectationUrl = "pointages/listAgentsWithPrimeTIDOnAffectation";
+	private static final String sirhlisteAffectationDtosForListAgentByPeriodeUrl = "pointages/listeAffectationDtosForListAgentByPeriode";
 
 	@Override
 	public EntiteDto getAgentDirection(Integer idAgent, Date date) {
@@ -232,5 +236,41 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		List<Integer> listeNumPrime = readResponseAsList(Integer.class, res, url);
 
 		return listeNumPrime;
+	}
+
+	@Override
+	public List<AffectationDto> getListAffectationDtoBetweenTwoDateAndForListAgent(
+			List<Integer> listIdsAgent, Date dateDebut, Date dateFin) {
+
+		String url = String.format(sirhWsBaseUrl + sirhlisteAffectationDtosForListAgentByPeriodeUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		
+		String json = new JSONSerializer().exclude("*.class")
+				.deepSerialize(listIdsAgent);
+
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+		parameters.put("dateDebut", sf.format(dateDebut));
+		parameters.put("dateFin", sf.format(dateFin));
+
+		ClientResponse res = createAndFirePostRequest(parameters, url, json);
+
+		return readResponseAsList(AffectationDto.class, res, url);
+	}
+
+	@Override
+	public List<JourDto> getListeJoursFeries(Date dateDebut, Date dateFin) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+
+		String url = String.format(sirhWsBaseUrl + listeJoursFeriesUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("dateDebut", sdf.format(dateDebut));
+		parameters.put("dateFin", sdf.format(dateFin));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponseAsList(JourDto.class, res, url);
 	}
 }

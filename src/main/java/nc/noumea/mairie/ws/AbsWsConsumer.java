@@ -219,5 +219,33 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 		
 		return readResponseAsList(RefTypeSaisiDto.class, response, url);
 	}
+	
+	@Override
+	public List<DemandeDto> getListAbsencesForListAgentsBetween2Dates(
+			List<Integer> listIdsAgent, Date start, Date end) {
+		
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+		
+		String url = String.format(sirhAbsWsBaseUrl + listeDemandesSIRHUrl);
+		Map<String, String> parameters = new HashMap<String, String>();
+		
+		if (null != listIdsAgent && !listIdsAgent.isEmpty()) {
+			String listIdsAgentString = "";
+			for (Integer idAgent : listIdsAgent) {
+				listIdsAgentString += idAgent + ",";
+			}
+			listIdsAgentString = listIdsAgentString.substring(0, listIdsAgentString.length() - 1);
+			parameters.put("idAgents", listIdsAgentString);
+		}
+		
+		parameters.put("from", sf.format(start));
+		parameters.put("to", sf.format(end));
+		parameters.put("etat", "6"); // etat PRIS
+		parameters.put("aValider", "false");
+		
+		ClientResponse response = createAndFireGetRequest(parameters, url);
+		
+		return readResponseAsList(DemandeDto.class, response, url);
+	}
 
 }
