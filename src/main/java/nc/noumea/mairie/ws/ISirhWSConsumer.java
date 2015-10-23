@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
@@ -46,4 +47,6 @@ public interface ISirhWSConsumer {
 			Date dateDebut, Date dateFin);
 
 	List<JourDto> getListeJoursFeries(Date dateDebut, Date dateFin);
+
+	ReturnMessageDto isUtilisateurSIRH(Integer idAgent);
 }

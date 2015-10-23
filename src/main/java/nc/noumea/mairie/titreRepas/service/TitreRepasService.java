@@ -13,8 +13,10 @@ import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
+import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.ptg.service.impl.PointageDataConsistencyRules;
 import nc.noumea.mairie.repository.IMairieRepository;
@@ -30,7 +32,9 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TitreRepasService implements ITitreRepasService {
 
 	@Autowired
@@ -48,8 +52,12 @@ public class TitreRepasService implements ITitreRepasService {
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
 	
+	@Autowired
+	private IAccessRightsService accessRightsService;
+	
 	public static final String ERREUR_DROIT_AGENT = "Vous n'avez pas les droits de traiter cette demande de Titre Repas.";
 	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS = "Vous ne pouvez commander les Titres Repas qu'entre le 1 et 10 de chaque mois.";
+	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR = "Vous ne pouvez saisir des demandes de Titres Repas qu'entre le 1 du mois et l'édition du payeur.";
 	public static final String AUCUNE_PA_ACTIVE_MOIS_PRECEDENT = "L'agent %s n'a pas travaillé le mois précédent.";
 	public static final String AUCUNE_BASE_CONGE = "La base congé n'est pas renseignée pour l'agent %s.";
 	public static final String PRIME_PANIER = "L'agent a le droit au prime panier et ne peut donc pas commander des Titres Repas.";
@@ -70,13 +78,58 @@ public class TitreRepasService implements ITitreRepasService {
 	public ReturnMessageDto enregistreListTitreDemandeFromKiosque(Integer idAgentConnecte,
 			List<TitreRepasDemandeDto> listTitreRepasDemandeDto) {
 		
+		////// Verifie les droits ////////
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		if(!accessRightsService.isUserApprobateur(idAgentConnecte)
+				&& !accessRightsService.isUserOperateur(idAgentConnecte)) {
+			rmd.getErrors().add(ERREUR_DROIT_AGENT);
+			return rmd;
+		}
 		
+		// saisie entre le 1 et le 10
+		// si au dela du 10 du mois, cela ne sert a rien de faire tous les appels ci-dessous
+		rmd = checkDateJourBetween1And10ofMonth(rmd);
+		if(!rmd.getErrors().isEmpty())
+			return rmd;
 		
+		/////////////////////////////////////////////////////////////////
+		///////// on recupere toutes les donnees qui nous interessent ///
+		// /!\ EN UNE SEULE FOIS /!\ //
+		List<Integer> listIdsAgent = new ArrayList<Integer>();
+		for(TitreRepasDemandeDto dto : listTitreRepasDemandeDto) {
+			if(!listIdsAgent.contains(dto.getIdAgent())) {
+				listIdsAgent.add(dto.getIdAgent());
+			}
+		}
 		
+		Date dateDebutMois = helperService.getDatePremierJourOfMonth(new Date());
+		Date dateFinMois = helperService.getDateDernierJourOfMonth(new Date());
 		
-//		absWsConsumer.getListAbsencesForListAgentsBetween2Dates(listIdsAgent, start, end);
+		List<JourDto> listJourFerieMoisEnCours = sirhWsConsumer.getListeJoursFeries(dateDebutMois, dateFinMois);
+		List<AffectationDto> listAffectation = sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(
+		listIdsAgent, dateDebutMois, dateFinMois);
+		List<DemandeDto> listAbsences = absWsConsumer.getListAbsencesForListAgentsBetween2Dates(listIdsAgent, dateDebutMois, dateFinMois);
+		List<RefTypeSaisiCongeAnnuelDto> listBasesConges = getListBasesConges();
+		/////////////////////////////////////////////////////////////////
 		
-		return null;
+		ReturnMessageDto result = new ReturnMessageDto();
+		for(TitreRepasDemandeDto dto : listTitreRepasDemandeDto) {
+
+			// on trie les donnees pour l agent concerne
+			AffectationDto affectation = getDernierAffectationByAgent(dto.getIdAgent(), listAffectation);
+			RefTypeSaisiCongeAnnuelDto baseCongeAgent = getRefTypeSaisiCongeAnnuelDto(listBasesConges, affectation.getBaseConge());
+			List<DemandeDto> listAbsencesAgent = getListeAbsencesByAgent(listAbsences, dto.getIdAgent());
+			
+			ReturnMessageDto response = enregistreTitreDemandeOneByOne(
+					idAgentConnecte, dto, listAbsencesAgent, 
+					baseCongeAgent, listJourFerieMoisEnCours, affectation, false);
+			
+			if(!response.getErrors().isEmpty()) {
+				result.getErrors().addAll(response.getErrors());
+			}
+		}
+		
+		return result;
 	}
 	
 	/**
@@ -88,13 +141,58 @@ public class TitreRepasService implements ITitreRepasService {
 	@Override
 	public ReturnMessageDto enregistreListTitreDemandeFromSIRH(Integer idAgentConnecte,
 			List<TitreRepasDemandeDto> listTitreRepasDemandeDto) {
-		// TODO Auto-generated method stub
+
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		////// Verifie les droits ////////
+		ReturnMessageDto messageSIRH = sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte);
+		if(!messageSIRH.getErrors().isEmpty()	) {
+			rmd.getErrors().add(ERREUR_DROIT_AGENT);
+			return rmd;
+		}
 		
+		// action possible entre le 1 du mois et la génération
+		rmd = checkDateJourBetween1OfMonthAndGeneration(rmd);
+		if(!rmd.getErrors().isEmpty())
+			return rmd;
 		
+		/////////////////////////////////////////////////////////////////
+		///////// on recupere toutes les donnees qui nous interessent ///
+		// /!\ EN UNE SEULE FOIS /!\ //
+		List<Integer> listIdsAgent = new ArrayList<Integer>();
+		for(TitreRepasDemandeDto dto : listTitreRepasDemandeDto) {
+			if(!listIdsAgent.contains(dto.getIdAgent())) {
+				listIdsAgent.add(dto.getIdAgent());
+			}
+		}
 		
-//		absWsConsumer.getListAbsencesForListAgentsBetween2Dates(listIdsAgent, start, end);
+		Date dateDebutMois = helperService.getDatePremierJourOfMonth(new Date());
+		Date dateFinMois = helperService.getDateDernierJourOfMonth(new Date());
 		
-		return null;
+		List<JourDto> listJourFerieMoisEnCours = sirhWsConsumer.getListeJoursFeries(dateDebutMois, dateFinMois);
+		List<AffectationDto> listAffectation = sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(
+		listIdsAgent, dateDebutMois, dateFinMois);
+		List<DemandeDto> listAbsences = absWsConsumer.getListAbsencesForListAgentsBetween2Dates(listIdsAgent, dateDebutMois, dateFinMois);
+		List<RefTypeSaisiCongeAnnuelDto> listBasesConges = getListBasesConges();
+		/////////////////////////////////////////////////////////////////
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		for(TitreRepasDemandeDto dto : listTitreRepasDemandeDto) {
+			
+			// on trie les donnees pour l agent concerne
+			AffectationDto affectation = getDernierAffectationByAgent(dto.getIdAgent(), listAffectation);
+			RefTypeSaisiCongeAnnuelDto baseCongeAgent = getRefTypeSaisiCongeAnnuelDto(listBasesConges, affectation.getBaseConge());
+			List<DemandeDto> listAbsencesAgent = getListeAbsencesByAgent(listAbsences, dto.getIdAgent());
+			
+			ReturnMessageDto response = enregistreTitreDemandeOneByOne(
+					idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent, 
+					listJourFerieMoisEnCours, affectation, true);
+			
+			if(!response.getErrors().isEmpty()) {
+				result.getInfos().addAll(response.getErrors());
+			}
+		}
+		
+		return result;
 	}
 
 	/**
@@ -109,14 +207,20 @@ public class TitreRepasService implements ITitreRepasService {
 	@Override
 	public ReturnMessageDto enregistreTitreDemandeAgent(Integer idAgentConnecte, 
 			TitreRepasDemandeDto dto) {
-		
+
+		ReturnMessageDto rmd = new ReturnMessageDto();
 		////// Verifie les droits ////////
 		if(null == idAgentConnecte
 				|| !idAgentConnecte.equals(dto.getIdAgent())){
-			ReturnMessageDto rmd = new ReturnMessageDto();
 			rmd.getErrors().add(ERREUR_DROIT_AGENT);
 			return rmd;
 		}
+		
+		// saisie entre le 1 et le 10
+		// si au dela du 10 du mois, cela ne sert a rien de faire tous les appels ci-dessous
+		rmd = checkDateJourBetween1And10ofMonth(rmd);
+		if(!rmd.getErrors().isEmpty())
+			return rmd;
 		
 		/////////////////////////////////////////////////////////////////
 		///////// on recupere toutes les donnees qui nous interessent ///
@@ -132,9 +236,9 @@ public class TitreRepasService implements ITitreRepasService {
 		
 		List<RefTypeSaisiCongeAnnuelDto> listBasesConges = getListBasesConges();
 		RefTypeSaisiCongeAnnuelDto baseCongeAgent = getRefTypeSaisiCongeAnnuelDto(listBasesConges, affectation.getBaseConge());
-		//////////////////////////////////////////////////////////////////
+		/////////////////////////////////////////////////////////////////
 		
-		return enregistreTitreDemandeOneByOne(dto, listAbsences, baseCongeAgent, listJourFerieMoisEnCours, affectation);
+		return enregistreTitreDemandeOneByOne(idAgentConnecte, dto, listAbsences, baseCongeAgent, listJourFerieMoisEnCours, affectation, false);
 	}
 	
 	/**
@@ -156,9 +260,10 @@ public class TitreRepasService implements ITitreRepasService {
 	 * @return ReturnMessageDto
 	 */
 	protected ReturnMessageDto enregistreTitreDemandeOneByOne(
+			Integer idAgentConnecte, 
 			TitreRepasDemandeDto dto, List<DemandeDto> listAbsences,
 			RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries,
-			AffectationDto affectation) {
+			AffectationDto affectation, boolean isSIRH) {
 		
 		ReturnMessageDto result = new ReturnMessageDto();
 		
@@ -172,7 +277,7 @@ public class TitreRepasService implements ITitreRepasService {
 		
 		result = checkDroitATitreRepas(result, dto.getIdAgent(), dto.getDateMonth(), 
 				listAbsences, baseCongeAgent, listJoursFeries, affectation);
-		if(!result.getErrors().isEmpty())
+		if(!result.getErrors().isEmpty() && !isSIRH)
 			return result;
 		
 		// on verifie si une demande existe deja 
@@ -211,7 +316,7 @@ public class TitreRepasService implements ITitreRepasService {
 		etat.setCommande(dto.getCommande());
 		etat.setDateMaj(new Date());
 		etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
-		etat.setIdAgent(dto.getIdAgent());
+		etat.setIdAgent(idAgentConnecte);
 		etat.setTitreRepasDemande(trDemande);
 		
 		trDemande.getEtats().add(etat);
@@ -259,10 +364,6 @@ public class TitreRepasService implements ITitreRepasService {
 	public ReturnMessageDto checkDroitATitreRepas(ReturnMessageDto rmd, Integer idAgent, 
 			Date dateMonthEnCours, List<DemandeDto> listAbsences,
 			RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries, AffectationDto affectation) {
-		
-		rmd = checkDateJourBetween1And10ofMonth(rmd);
-		if(!rmd.getErrors().isEmpty())
-			return rmd;
 		
 		Date dateMoisPrecedent = new DateTime(dateMonthEnCours).minusMonths(1).toDate();
 		
@@ -346,6 +447,25 @@ public class TitreRepasService implements ITitreRepasService {
 			rmd.getErrors().add(DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS);
 		}
 		
+		return rmd;
+	}
+	
+	protected ReturnMessageDto checkDateJourBetween1OfMonthAndGeneration(ReturnMessageDto rmd) {
+		
+		DateTime dateJour = new DateTime(helperService.getCurrentDate());
+		
+		List<TitreRepasEtatPayeur> listEtatPayeur = titreRepasRepository.getListTitreRepasEtatPayeur();
+		if(null != listEtatPayeur
+				&& !listEtatPayeur.isEmpty()) {
+			TitreRepasEtatPayeur lastEtatPayeur = listEtatPayeur.get(0);
+
+			DateTime dateEtatPayeur = new DateTime(lastEtatPayeur.getDateEtatPayeur());
+			if(dateEtatPayeur.isBefore(dateJour)
+					&& dateEtatPayeur.getDayOfMonth() < dateJour.getDayOfMonth()) {
+
+				rmd.getErrors().add(DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR);
+			}
+		}
 		return rmd;
 	}
 	
@@ -597,5 +717,20 @@ public class TitreRepasService implements ITitreRepasService {
 		return result;
 	}
 	
-
+	private List<DemandeDto> getListeAbsencesByAgent(List<DemandeDto> listAbsences, Integer idAgent) {
+		
+		List<DemandeDto> result = new ArrayList<DemandeDto>();
+		
+		if(null != listAbsences) {
+			for(DemandeDto demande : listAbsences) {
+				if(null != demande.getAgentWithServiceDto()
+						&& null != demande.getAgentWithServiceDto().getIdAgent()
+						&& demande.getAgentWithServiceDto().getIdAgent().equals(idAgent)) {
+					result.add(demande);
+				}
+			}
+		}
+		
+		return result;
+	}
 }

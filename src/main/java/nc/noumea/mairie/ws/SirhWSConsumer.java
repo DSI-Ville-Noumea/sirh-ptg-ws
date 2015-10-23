@@ -8,6 +8,7 @@ import java.util.Map;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
@@ -43,6 +44,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhBaseHorairePointageUrl = "pointages/baseHoraire";
 	private static final String sirhlistAgentsWithPrimeTIDOnAffectationUrl = "pointages/listAgentsWithPrimeTIDOnAffectation";
 	private static final String sirhlisteAffectationDtosForListAgentByPeriodeUrl = "pointages/listeAffectationDtosForListAgentByPeriode";
+	private static final String isUtilisateurSIRHServiceUrl = "utilisateur/isUtilisateurSIRH";
 
 	@Override
 	public EntiteDto getAgentDirection(Integer idAgent, Date date) {
@@ -272,5 +274,25 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponseAsList(JourDto.class, res, url);
+	}
+
+	@Override
+	public ReturnMessageDto isUtilisateurSIRH(Integer idAgent) {
+
+		String url = String.format(sirhWsBaseUrl + isUtilisateurSIRHServiceUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		ReturnMessageDto result = new ReturnMessageDto();
+		try {
+			result = readResponse(ReturnMessageDto.class, res, url);
+		} catch (WSConsumerException e) {
+			result.getErrors().add("L'agent n'existe pas dans l'AD.");
+		}
+
+		return result;
 	}
 }

@@ -21,8 +21,11 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 	
 	@Override
 	public List<TitreRepasEtatPayeur> getListTitreRepasEtatPayeur() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		TypedQuery<TitreRepasEtatPayeur> query = ptgEntityManager
+				.createNamedQuery("getListEditionsTitreRepasEtatPayeur", 
+						TitreRepasEtatPayeur.class);
+		return query.getResultList();
 	}
 
 	@Override

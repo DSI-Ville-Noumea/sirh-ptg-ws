@@ -15,6 +15,7 @@ import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -23,6 +24,7 @@ import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
+import nc.noumea.mairie.titreRepas.repository.ITitreRepasRepository;
 
 import org.joda.time.DateTime;
 import org.junit.Test;
@@ -881,5 +883,55 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		
 		assertTrue(service.checkAgentIsFiliereIncendie(idAgent, dateMoisPrecedent));
+	}
+	
+	@Test 
+	public void checkDateJourBetween1OfMonthAndGeneration_ok() {
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015,10,22,0,0,0).toDate());
+
+		TitreRepasEtatPayeur etatPayeur = new TitreRepasEtatPayeur();
+		etatPayeur.setDateEtatPayeur(new DateTime(2015,10,23,0,0,0).toDate());
+		
+		List<TitreRepasEtatPayeur> listEtatPayeur = new ArrayList<TitreRepasEtatPayeur>();
+		listEtatPayeur.add(etatPayeur);
+				
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getListTitreRepasEtatPayeur()).thenReturn(listEtatPayeur);
+				
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		
+		rmd = service.checkDateJourBetween1OfMonthAndGeneration(rmd);
+		
+		assertEquals(0, rmd.getErrors().size());
+	}
+	
+	@Test 
+	public void checkDateJourBetween1OfMonthAndGeneration_ko() {
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015,10,24,0,0,0).toDate());
+
+		TitreRepasEtatPayeur etatPayeur = new TitreRepasEtatPayeur();
+		etatPayeur.setDateEtatPayeur(new DateTime(2015,10,23,0,0,0).toDate());
+		
+		List<TitreRepasEtatPayeur> listEtatPayeur = new ArrayList<TitreRepasEtatPayeur>();
+		listEtatPayeur.add(etatPayeur);
+				
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getListTitreRepasEtatPayeur()).thenReturn(listEtatPayeur);
+				
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		
+		rmd = service.checkDateJourBetween1OfMonthAndGeneration(rmd);
+		
+		assertEquals(TitreRepasService.DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR, rmd.getErrors().get(0));
 	}
 }
