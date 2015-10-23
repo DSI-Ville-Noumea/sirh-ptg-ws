@@ -337,7 +337,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 					DateTime dateFin = new DateTime(conge.getDateFin());
 
 					List<RefTypeSaisiDto> listTypeAbsence = absWsConsumer
-							.getTypeAbsence(conge.getIdTypeDemande());
+							.getTypeSaisiAbsence(conge.getIdTypeDemande());
 
 					if (null != listTypeAbsence && !listTypeAbsence.isEmpty()) {
 

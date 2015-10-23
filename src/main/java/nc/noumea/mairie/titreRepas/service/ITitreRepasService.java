@@ -10,16 +10,26 @@ import nc.noumea.mairie.sirh.dto.JourDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurDto;
-
 public interface ITitreRepasService {
 
+
 	/**
-	 * Enregistre une liste de demande de Titre Repas.
+	 * Enregistre une liste de demande de Titre Repas depuis le Kiosque RH.
 	 * 
 	 * @param listTitreRepasDemandeDto List<TitreRepasDemandeDto>
 	 * @return ReturnMessageDto
 	 */
-	ReturnMessageDto enregistreListTitreDemande(List<TitreRepasDemandeDto> listTitreRepasDemandeDto);
+	ReturnMessageDto enregistreListTitreDemandeFromKiosque(Integer idAgentConnecte, List<TitreRepasDemandeDto> listTitreRepasDemandeDto);
+
+	/**
+	 * Enregistre une liste de demande de Titre Repas depuis SIRH.
+	 * 
+	 * @param listTitreRepasDemandeDto List<TitreRepasDemandeDto>
+	 * @return ReturnMessageDto
+	 */
+	ReturnMessageDto enregistreListTitreDemandeFromSIRH(
+			Integer idAgentConnecte,
+			List<TitreRepasDemandeDto> listTitreRepasDemandeDto);
 	
 	/**
 	 * Enregistre une demande de Titre Repas pour l'agent lui-meme
@@ -27,7 +37,7 @@ public interface ITitreRepasService {
 	 * @param titreRepasDemandeDto TitreRepasDemandeDto
 	 * @return ReturnMessageDto
 	 */
-	ReturnMessageDto enregistreTitreDemandeAgent(TitreRepasDemandeDto titreRepasDemandeDto);
+	ReturnMessageDto enregistreTitreDemandeAgent(Integer idAgentConnecte, TitreRepasDemandeDto titreRepasDemandeDto);
 	
 	/**
 	 * Retourne une liste de demande de Titre Repas.
@@ -75,7 +85,7 @@ public interface ITitreRepasService {
 	 */
 	ReturnMessageDto checkDroitATitreRepas(ReturnMessageDto rmd,
 			Integer idAgent, Date dateMonthEnCours,
-			List<DemandeDto> listAbences,
+			List<DemandeDto> listAbsences,
 			RefTypeSaisiCongeAnnuelDto baseCongeAgent,
 			List<JourDto> listJoursFeries, AffectationDto affectation);
 

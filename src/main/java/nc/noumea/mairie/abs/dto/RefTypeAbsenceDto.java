@@ -1,8 +1,9 @@
-package nc.noumea.mairie.ptg.dto;
+package nc.noumea.mairie.abs.dto;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
 import nc.noumea.mairie.ptg.domain.RefTypeAbsence;
+import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 
 /**
  * ATTENTION 
@@ -16,6 +17,7 @@ public class RefTypeAbsenceDto {
 
 	private Integer idRefTypeAbsence;
 	private String libelle;
+	private RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto;
 
 	public RefTypeAbsenceDto() {
 	}
@@ -25,6 +27,16 @@ public class RefTypeAbsenceDto {
 		this.idRefTypeAbsence = type.getIdRefTypeAbsence();
 		this.libelle = type.getLabel();
 
+	}
+	
+
+	public RefTypeSaisiCongeAnnuelDto getTypeSaisiCongeAnnuelDto() {
+		return typeSaisiCongeAnnuelDto;
+	}
+
+	public void setTypeSaisiCongeAnnuelDto(
+			RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto) {
+		this.typeSaisiCongeAnnuelDto = typeSaisiCongeAnnuelDto;
 	}
 
 	public String getLibelle() {

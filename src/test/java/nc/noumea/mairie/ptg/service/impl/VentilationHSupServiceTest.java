@@ -3239,7 +3239,7 @@ public class VentilationHSupServiceTest {
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
 						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(listConges);
-		Mockito.when(absWsConsumer.getTypeAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
 
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 		Mockito.when(
@@ -3348,7 +3348,7 @@ public class VentilationHSupServiceTest {
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
 						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(listConges);
-		Mockito.when(absWsConsumer.getTypeAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
 
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 		Mockito.when(
@@ -3458,7 +3458,7 @@ public class VentilationHSupServiceTest {
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
 						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(listConges);
-		Mockito.when(absWsConsumer.getTypeAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
 
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 		Mockito.when(
@@ -4602,8 +4602,8 @@ public class VentilationHSupServiceTest {
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
 						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(listConges);
-		Mockito.when(absWsConsumer.getTypeAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
-		Mockito.when(absWsConsumer.getTypeAbsence(conge2.getIdTypeDemande())).thenReturn(listTypeDemande2);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge2.getIdTypeDemande())).thenReturn(listTypeDemande2);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);

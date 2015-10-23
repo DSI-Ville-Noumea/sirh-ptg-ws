@@ -14,8 +14,10 @@ public interface ITitreRepasRepository {
 	
 	void persist(TitreRepasEtatPayeur titreRepasDemande);
 	
-	List<TitreRepasDemande> getListTitreRepasDemande(List<Integer> listIdsAgent, Date fromDate, Date toDate, Integer etat, boolean commande, Date dateMonth);
+	List<TitreRepasDemande> getListTitreRepasDemande(List<Integer> listIdsAgent, Date fromDate, Date toDate, Integer etat, Boolean commande, Date dateMonth);
 	
 	void persist(TitreRepasDemande titreRepasDemande);
+
+	TitreRepasDemande getTitreRepasDemandeById(Integer idTrDemande);
 	
 }

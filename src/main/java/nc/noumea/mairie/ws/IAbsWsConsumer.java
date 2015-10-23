@@ -25,7 +25,7 @@ public interface IAbsWsConsumer {
 	
 	List<DemandeDto> getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Integer idAgent, Date start, Date end);
 
-	List<RefTypeSaisiDto> getTypeAbsence(Integer idRefTypeAbsence);
+	List<RefTypeSaisiDto> getTypeSaisiAbsence(Integer idRefTypeAbsence);
 
 	void addRecuperationsToCompteurAgentForOnePointage(Integer idAgent,
 			Date date, Integer minutes, Integer idPointage,
@@ -33,4 +33,6 @@ public interface IAbsWsConsumer {
 
 	List<DemandeDto> getListAbsencesForListAgentsBetween2Dates(
 			List<Integer> listIdsAgent, Date start, Date end);
+
+	List<nc.noumea.mairie.abs.dto.RefTypeAbsenceDto> getListeTypAbsenceCongeAnnuel();
 }

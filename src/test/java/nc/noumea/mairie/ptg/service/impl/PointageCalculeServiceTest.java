@@ -696,7 +696,7 @@ public class PointageCalculeServiceTest {
 				.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(idAgent,
 						dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(listConges);
-		Mockito.when(absWsConsumer.getTypeAbsence(demandeDto.getIdTypeDemande()))
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(demandeDto.getIdTypeDemande()))
 			.thenReturn(listTypeAbsence);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);

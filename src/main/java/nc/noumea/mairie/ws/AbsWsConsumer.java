@@ -37,6 +37,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	private static final String checkCongesAnnuelsUrl = "congeannuel/checkCongesAnnuels";
 	private static final String listeDemandesSIRHUrl = "demandes/listeDemandesSIRH";
 	private static final String getTypeAbsenceUrl = "filtres/getTypesSaisi";
+	private static final String getListeTypeAbsenceUrl = "typeAbsence/getListeTypeAbsence";
 
 	@Override
 	public void addRecuperationsToAgent(Integer idAgent, Date dateLundi, Integer minutes) { 
@@ -208,7 +209,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	}
 
 	@Override
-	public List<RefTypeSaisiDto> getTypeAbsence(Integer idRefTypeAbsence) {
+	public List<RefTypeSaisiDto> getTypeSaisiAbsence(Integer idRefTypeAbsence) {
 		
 		String url = String.format(sirhAbsWsBaseUrl + getTypeAbsenceUrl);
 		
@@ -246,6 +247,19 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 		ClientResponse response = createAndFireGetRequest(parameters, url);
 		
 		return readResponseAsList(DemandeDto.class, response, url);
+	}
+
+	@Override
+	public List<nc.noumea.mairie.abs.dto.RefTypeAbsenceDto> getListeTypAbsenceCongeAnnuel() {
+		
+		String url = String.format(sirhAbsWsBaseUrl + getListeTypeAbsenceUrl);
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idRefGroupeAbsence", "5"); // CONGES ANNUELS
+		
+		ClientResponse response = createAndFireGetRequest(parameters, url);
+		
+		return readResponseAsList(nc.noumea.mairie.abs.dto.RefTypeAbsenceDto.class, response, url);
 	}
 
 }
