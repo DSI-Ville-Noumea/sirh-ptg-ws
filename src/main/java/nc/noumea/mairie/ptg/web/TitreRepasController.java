@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -9,6 +10,7 @@ import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -74,5 +76,34 @@ public class TitreRepasController {
 				idAgentConnecte);
 		
 		return titreRepasService.enregistreTitreDemandeAgent(idAgentConnecte, titreRepasDemandeDto);
+	}
+	
+	/**
+	 * Retourne une liste de demandes de Titre Repas.
+	 * 
+	 * @param idAgentConnecte Integer
+	 * @param listIdsAgent List<Integer> liste d agents recherches
+	 * @param fromDate Date
+	 * @param toDate Date
+	 * @param etat Integer
+	 * @param commande Boolean
+	 * @param dateMonth Date
+	 * @return List<TitreRepasDemandeDto> liste de demandes de Titre Repas
+	 */
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, value = "/getListTitreRepasDemandeDto", produces = "application/json;charset=utf-8", consumes = "application/json")
+	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
+			@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
+			@RequestParam(required = true, value = "fromDate") @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
+			@RequestParam(required = true, value = "toDate") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
+			@RequestParam(required = false, value = "etat") Integer etat,
+			@RequestParam(required = false, value = "commande") Boolean commande,
+			@RequestParam(required = false, value = "dateMonth") @DateTimeFormat(pattern = "yyyyMMdd") Date  dateMonth,
+			@RequestBody List<Integer> listIdsAgent) {
+		
+		logger.debug("entered POST [titreRepas/enregistreTitreDemandeFromAgent] => enregistreTitreDemandeFromAgent with parameters idAgentConnecte = {}",
+				idAgentConnecte);
+		
+		return titreRepasService.getListTitreRepasDemandeDto(idAgentConnecte, listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
 	}
 }

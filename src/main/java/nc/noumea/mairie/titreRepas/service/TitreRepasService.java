@@ -349,9 +349,21 @@ public class TitreRepasService implements ITitreRepasService {
 	@Transactional(readOnly = true)
 	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
 			Integer idAgentConnecte, List<Integer> listIdsAgent, Date fromDate,
-			Date toDate, Integer etat, boolean commande, Date dateMonth) {
-		// TODO Auto-generated method stub
-		return null;
+			Date toDate, Integer etat, Boolean commande, Date dateMonth) {
+		
+		List<TitreRepasDemande> listTR = titreRepasRepository.getListTitreRepasDemande(listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
+		
+		List<TitreRepasDemandeDto> result = new ArrayList<TitreRepasDemandeDto>();
+		
+		if(null != listTR
+				&& !listTR.isEmpty()) {
+			for(TitreRepasDemande TR : listTR) {
+				TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR);
+				result.add(dto);
+			}
+		}
+		
+		return result;
 	}
 
 	@Override
