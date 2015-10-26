@@ -190,6 +190,54 @@ public class VentilationRepository implements IVentilationRepository {
 
 		return result;
 	}
+	
+
+
+	@Override
+	public List<Pointage> getListPointagesAbsenceAndHSupRejetesBetweenDatesVentilation(Integer idAgent, Date fromEtatDate,
+			Date toEtatDate, Date dateLundi) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT p.* ");
+		sb.append("FROM PTG_ETAT_POINTAGE ep ");
+		sb.append("INNER JOIN PTG_POINTAGE p ON ep.ID_POINTAGE = p.ID_POINTAGE ");
+		sb.append("INNER JOIN ( ");
+		sb.append("SELECT epmax.id_pointage, max(epmax.id_etat_pointage) AS maxIdEtatPointage ");
+		sb.append("FROM ptg_etat_pointage epmax ");
+		sb.append("INNER JOIN ptg_pointage ptg ON ptg.id_pointage = epmax.id_pointage ");
+		sb.append("WHERE ptg.id_agent = :idAgent ");
+		sb.append("GROUP BY epmax.id_pointage)  ");
+		sb.append("maxEtats ON maxEtats.maxIdEtatPointage = ep.id_etat_pointage AND maxEtats.id_pointage = ep.id_pointage ");
+		sb.append("WHERE p.ID_AGENT = :idAgent ");
+		sb.append("AND p.DATE_LUNDI = :dateLundi ");
+		sb.append("AND (p.ID_TYPE_POINTAGE = :typePointageHSUP OR p.ID_TYPE_POINTAGE = :typePointageABS) ");
+		sb.append("AND (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :rejete) ");
+		// bug #18186
+		sb.append("AND p.ID_POINTAGE not in (  ");
+			sb.append("select enfant.ID_POINTAGE_PARENT ");
+			sb.append("from PTG_POINTAGE enfant ");
+			sb.append("where enfant.ID_AGENT = :idAgent ");
+			sb.append("AND (enfant.ID_TYPE_POINTAGE = :typePointageHSUP OR enfant.ID_TYPE_POINTAGE = :typePointageABS) ");
+			sb.append("AND enfant.DATE_LUNDI = :dateLundi ");
+			sb.append("AND enfant.ID_POINTAGE_PARENT is not null ");
+		sb.append(") ");
+
+		sb.append("ORDER BY id_pointage DESC ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateLundi", dateLundi);
+		q.setParameter("fromEtatDate", fromEtatDate);
+		q.setParameter("toEtatDate", toEtatDate);
+		q.setParameter("typePointageHSUP", RefTypePointageEnum.H_SUP.getValue());
+		q.setParameter("typePointageABS", RefTypePointageEnum.ABSENCE.getValue());
+		q.setParameter("rejete", EtatPointageEnum.REJETE.getCodeEtat());
+
+		@SuppressWarnings("unchecked")
+		List<Pointage> result = q.getResultList();
+
+		return result;
+	}
 
 	@Override
 	public List<Pointage> getListPointagesPrimeByWeekForVentilation(Integer idAgent, Date fromEtatDate,
@@ -655,6 +703,21 @@ public class VentilationRepository implements IVentilationRepository {
 		q.setParameter("dateLundi", dateLundi);
 		q.setParameter("idLatestVentilHSup", latestVentilHsup.getIdVentilHSup());
 		q.setParameter("idVentilDate", latestVentilHsup.getVentilDate().getIdVentilDate());
+		q.setMaxResults(1);
+
+		List<VentilHsup> vas = q.getResultList();
+
+		return vas.size() != 0 ? vas.get(0) : null;
+	}
+
+	@Override
+	public VentilHsup getPriorOldVentilHSupAgentAndDate(Integer idAgent, Date dateLundi, VentilDate ventilDate) {
+
+		TypedQuery<VentilHsup> q = ptgEntityManager
+				.createNamedQuery("getPriorOldVentilHSupAgentAndDate", VentilHsup.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateLundi", dateLundi);
+		q.setParameter("idVentilDate", ventilDate.getIdVentilDate());
 		q.setMaxResults(1);
 
 		List<VentilHsup> vas = q.getResultList();

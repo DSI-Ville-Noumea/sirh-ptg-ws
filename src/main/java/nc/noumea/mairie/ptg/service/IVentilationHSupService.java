@@ -14,7 +14,8 @@ import org.joda.time.Interval;
 
 public interface IVentilationHSupService {
 
-	VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime, VentilDate ventilDate);
+	VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut, boolean has1150Prime, VentilDate ventilDate,
+			List<Pointage> pointagesJournalisesRejetes);
 	
 	VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi, List<Pointage> pointages, AgentStatutEnum statut, VentilDate ventilDate);
 	

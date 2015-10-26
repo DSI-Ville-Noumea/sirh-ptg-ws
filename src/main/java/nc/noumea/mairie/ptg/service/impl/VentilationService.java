@@ -322,13 +322,27 @@ public class VentilationService implements IVentilationService {
 		List<Pointage> listPointageRejetesVentilesOrderedByDateAsc = pointageService
 				.getPointagesVentilesAndRejetesForAgentByDateLundi(idAgent, ventilDate, dateLundi);
 		
+		// #19323 recuperer les pointages JOURNALISES d une ventilation precedente, 
+		// puis REJETES dans cette ventilation
+		// ils ne sont pas récupérés par la requête précedente// s il n y a donc pas d autres pointage sur cette semaine
+		// ils sont zappés
+		List<Pointage> filteredListPointageRejetesOrderedByDateAsc = null;
+		if((null == filteredAgentsPointageForPeriod || filteredAgentsPointageForPeriod.isEmpty())
+				&& (null == listPointageRejetesVentilesOrderedByDateAsc || listPointageRejetesVentilesOrderedByDateAsc.isEmpty())) {
+
+			List<Pointage> listPointageRejetesOrderedByDateAsc = ventilationRepository
+					.getListPointagesAbsenceAndHSupRejetesBetweenDatesVentilation(idAgent, fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
+			filteredListPointageRejetesOrderedByDateAsc = pointageService.filterOldPointagesAndEtatFromList(
+					listPointageRejetesOrderedByDateAsc, Arrays.asList(EtatPointageEnum.REJETE), null);
+		}
+		
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		
 		boolean has1150Prime = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
-				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime, ventilDate);
+				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime, ventilDate, filteredListPointageRejetesOrderedByDateAsc);
 		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod,
-				dateLundi, listPointageRejetesVentilesOrderedByDateAsc);
+				dateLundi, listPointageRejetesVentilesOrderedByDateAsc, filteredListPointageRejetesOrderedByDateAsc);
 
 		// ce code ne sert plus voir #13816
 		// on ne supprime pas pour autant le code, car ils sont de nouveau en renegociation avec les syndicats

@@ -217,7 +217,7 @@ public class VentilationServiceTest {
 		Mockito.when(
 				hSupV.processHSup(Mockito.eq(idAgent), Mockito.eq(carr), Mockito.eq(dateLundi),
 						Mockito.anyListOf(Pointage.class), Mockito.eq(AgentStatutEnum.CC), Mockito.eq(false),
-						Mockito.eq(ventilDate))).thenReturn(ventilHsup);
+						Mockito.eq(ventilDate), Mockito.anyListOf(Pointage.class))).thenReturn(ventilHsup);
 
 		Mockito.when(hSupV.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, plist, AgentStatutEnum.CC)).thenReturn(ventilHsup);
 
@@ -283,7 +283,7 @@ public class VentilationServiceTest {
 		Mockito.when(
 				hSupV.processHSup(Mockito.eq(idAgent), Mockito.eq(carr), Mockito.eq(dateLundi),
 						Mockito.anyListOf(Pointage.class), Mockito.eq(AgentStatutEnum.CC), Mockito.eq(true),
-						Mockito.eq(ventilDate))).thenReturn(ventilHsup);
+						Mockito.eq(ventilDate), Mockito.anyListOf(Pointage.class))).thenReturn(ventilHsup);
 
 		Mockito.when(hSupV.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, plist, AgentStatutEnum.CC)).thenReturn(ventilHsup);
 		
@@ -342,7 +342,8 @@ public class VentilationServiceTest {
 		IVentilationAbsenceService absV = Mockito.mock(IVentilationAbsenceService.class);
 		Mockito.when(
 				absV.processAbsenceAgent(Mockito.eq(idAgent), Mockito.anyListOf(Pointage.class),
-						Mockito.any(Date.class), Mockito.anyListOf(Pointage.class))).thenReturn(ventilAbs);
+						Mockito.any(Date.class), Mockito.anyListOf(Pointage.class), Mockito.anyListOf(Pointage.class)))
+				.thenReturn(ventilAbs);
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(Arrays.asList(1128));

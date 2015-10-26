@@ -60,7 +60,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
 
 		// When
-		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false, new VentilDate());
+		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false, new VentilDate(), null);
 
 		// Then
 		assertNull(result);
@@ -87,7 +87,7 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
 
 		// When
-		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false, ventilDate);
+		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false, ventilDate, null);
 
 		// Then
 		assertNull(result);
@@ -119,7 +119,65 @@ public class VentilationHSupServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
 
 		// When
-		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false, ventilDate);
+		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false, ventilDate, null);
+
+		// Then
+		assertNotNull(result);
+		assertEquals(result.getIdAgent().intValue(), 9008765);
+		assertEquals(result.getDateLundi(), dateLundi);
+		assertEquals(result.getEtat(), EtatPointageEnum.VENTILE);
+		assertEquals(0, result.getMHorsContrat());
+		assertEquals(0, result.getMAbsences());
+		assertEquals(0, result.getMAbsencesAS400());
+		assertEquals(0, result.getMSup());
+		assertEquals(0, result.getMRecuperees());
+		assertEquals(0, result.getMRappelService());
+		assertEquals(0, result.getMsNuit());
+		assertEquals(0, result.getMsdjf());
+		assertEquals(0, result.getMNormales());
+		assertEquals(0, result.getMSimple());
+		assertEquals(0, result.getMComposees());
+		assertEquals(0, result.getMsNuitRecup());
+		assertEquals(0, result.getMsdjfRecup());
+		assertEquals(0, result.getMNormalesRecup());
+		assertEquals(0, result.getMSimpleRecup());
+		assertEquals(0, result.getMComposeesRecup());
+	}
+
+	/**
+	 * dans le cas ou il y avait une ancienne ventilation sur un mois anterieur
+	 * avedc des pointages journalises rejetes
+	 */
+	@Test
+	public void processHSup_PointagesJournalisesRejetes_ReturnVentilHSupVide() {
+
+		// Given
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		Date dateLundi = new LocalDate(2013, 7, 22).toDate();
+
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setIdVentilDate(1);
+
+		List<VentilHsup> listOldVentilHSup = new ArrayList<VentilHsup>();
+
+		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(
+				ventilationRepository.getListOfOldVentilHSForAgentAndDateLundi(9008765, dateLundi,
+						ventilDate.getIdVentilDate())).thenReturn(listOldVentilHSup);
+
+		Pointage ptg = new Pointage();
+		ptg.setType(hSup);
+		List<Pointage> pointagesJournalisesRejetes = new ArrayList<Pointage>();
+		pointagesJournalisesRejetes.add(ptg);
+		
+		Mockito.when(ventilationRepository
+				.getPriorOldVentilHSupAgentAndDate(9008765, dateLundi, ventilDate)).thenReturn(new VentilHsup());
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
+
+		// When
+		VentilHsup result = service.processHSup(9008765, null, dateLundi, pointages, null, false, ventilDate, pointagesJournalisesRejetes);
 
 		// Then
 		assertNotNull(result);

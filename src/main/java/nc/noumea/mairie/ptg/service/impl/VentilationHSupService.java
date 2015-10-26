@@ -83,19 +83,20 @@ public class VentilationHSupService implements IVentilationHSupService {
 			Spcarr carr, Date dateLundi, List<Pointage> pointages,
 			boolean has1150Prime, VentilDate ventilDate) {
 		return processHSup(idAgent, carr, dateLundi, pointages,
-				AgentStatutEnum.CC, has1150Prime, ventilDate);
+				AgentStatutEnum.CC, has1150Prime, ventilDate, null);
 	}
 
 	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi,
 			List<Pointage> pointages, AgentStatutEnum statut,
 			VentilDate ventilDate) {
 		return processHSup(idAgent, carr, dateLundi, pointages, statut, false,
-				ventilDate);
+				ventilDate, null);
 	}
 
 	public VentilHsup processHSup(Integer idAgent, Spcarr carr, Date dateLundi,
 			List<Pointage> pointages, AgentStatutEnum statut,
-			boolean has1150Prime, VentilDate ventilDate) {
+			boolean has1150Prime, VentilDate ventilDate,
+			List<Pointage> pointagesJournalisesRejetes) {
 
 		// If there are no HSUPS pointages, there will be no VentilHSup.
 		if (!areThereHSupsPointages(pointages)) {
@@ -110,6 +111,22 @@ public class VentilationHSupService implements IVentilationHSupService {
 				result.setDateLundi(dateLundi);
 				result.setEtat(EtatPointageEnum.VENTILE);
 				return result;
+			}
+			// if there was one previous VentilHSup from a previous ventilation
+			// there will be one VentilHSup with 0 minutes to delete in SPPHRE
+			if(null != pointagesJournalisesRejetes
+					&& !pointagesJournalisesRejetes.isEmpty()
+					&& areThereHSupsPointages(pointagesJournalisesRejetes)) {
+				VentilHsup oldVentilHSupOtherVentilDate = ventilationRepository
+						.getPriorOldVentilHSupAgentAndDate(idAgent, dateLundi, ventilDate);
+
+				if (null != oldVentilHSupOtherVentilDate) {
+					VentilHsup result = new VentilHsup();
+					result.setIdAgent(idAgent);
+					result.setDateLundi(dateLundi);
+					result.setEtat(EtatPointageEnum.VENTILE);
+					return result;
+				}
 			}
 			return null;
 		}

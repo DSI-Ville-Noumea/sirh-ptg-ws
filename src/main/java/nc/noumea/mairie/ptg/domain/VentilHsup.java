@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -20,7 +21,10 @@ import javax.persistence.Version;
 
 @Entity
 @Table(name = "PTG_VENTIL_HSUP")
-@NamedQuery(name = "getPriorVentilHSupAgentAndDate", query = "select vh from VentilHsup vh where vh.idVentilHSup != :idLatestVentilHSup and vh.ventilDate.idVentilDate != :idVentilDate and vh.idAgent = :idAgent and vh.dateLundi = :dateLundi order by vh.idVentilHSup desc")
+@NamedQueries ({
+		@NamedQuery(name = "getPriorVentilHSupAgentAndDate", query = "select vh from VentilHsup vh where vh.idVentilHSup != :idLatestVentilHSup and vh.ventilDate.idVentilDate != :idVentilDate and vh.idAgent = :idAgent and vh.dateLundi = :dateLundi order by vh.idVentilHSup desc"),
+		@NamedQuery(name = "getPriorOldVentilHSupAgentAndDate", query = "select vh from VentilHsup vh where vh.ventilDate.idVentilDate != :idVentilDate and vh.idAgent = :idAgent and vh.dateLundi = :dateLundi order by vh.idVentilHSup desc")
+})
 public class VentilHsup {
 
 	@Id 

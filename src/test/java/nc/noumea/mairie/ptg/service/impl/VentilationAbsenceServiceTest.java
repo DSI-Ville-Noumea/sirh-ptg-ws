@@ -45,7 +45,7 @@ public class VentilationAbsenceServiceTest {
 		VentilationAbsenceService service = new VentilationAbsenceService();
 
 		// When
-		VentilAbsence result = service.processAbsenceAgent(9008765, pointages, dateDebutMois.toDate(), new ArrayList<Pointage>());
+		VentilAbsence result = service.processAbsenceAgent(9008765, pointages, dateDebutMois.toDate(), new ArrayList<Pointage>(), null);
 
 		// Then
 		assertNull(result);
@@ -90,7 +90,8 @@ public class VentilationAbsenceServiceTest {
 		VentilationAbsenceService service = new VentilationAbsenceService();
 
 		// When
-		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3), dateDebutMois.toDate(), new ArrayList<Pointage>());
+		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3), 
+				dateDebutMois.toDate(), new ArrayList<Pointage>(), null);
 
 		// Then
 		assertEquals(9008765, (int) result.getIdAgent());
@@ -143,7 +144,8 @@ public class VentilationAbsenceServiceTest {
 		VentilationAbsenceService service = new VentilationAbsenceService();
 
 		// When
-		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3), dateDebutMois.toDate(), new ArrayList<Pointage>());
+		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3), 
+				dateDebutMois.toDate(), new ArrayList<Pointage>(), null);
 
 		// Then
 		assertEquals(9008765, (int) result.getIdAgent());
@@ -222,7 +224,8 @@ public class VentilationAbsenceServiceTest {
 		VentilationAbsenceService service = new VentilationAbsenceService();
 
 		// When
-		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3, p4, p5, p6), dateDebutMois.toDate(), new ArrayList<Pointage>());
+		VentilAbsence result = service.processAbsenceAgent(9008765, Arrays.asList(p1, p2, p3, p4, p5, p6), 
+				dateDebutMois.toDate(), new ArrayList<Pointage>(), null);
 
 		// Then
 		assertEquals(9008765, (int) result.getIdAgent());
@@ -256,7 +259,7 @@ public class VentilationAbsenceServiceTest {
 		VentilationAbsenceService service = new VentilationAbsenceService();
 
 		// When
-		VentilAbsence result = service.processAbsenceAgent(9008765, new ArrayList<Pointage>(), dateDebutMois.toDate(), Arrays.asList(p1));
+		VentilAbsence result = service.processAbsenceAgent(9008765, new ArrayList<Pointage>(), dateDebutMois.toDate(), Arrays.asList(p1), null);
 
 		// Then
 		assertEquals(9008765, (int) result.getIdAgent());

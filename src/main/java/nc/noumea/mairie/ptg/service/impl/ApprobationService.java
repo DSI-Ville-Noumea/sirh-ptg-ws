@@ -459,7 +459,11 @@ public class ApprobationService implements IApprobationService {
 
 			VentilDate lastVentil = ventilRepository.getLatestVentilDate(
 					helperService.getTypeChainePaieFromStatut(spcarr.getStatutCarriere()), false);
-			if (targetEtat == EtatPointageEnum.APPROUVE && lastVentil != null)
+			if ((targetEtat == EtatPointageEnum.APPROUVE 
+					// #18224 #19322 on doit pouvoir rejeter un pointage journalise
+					|| (currentEtat != EtatPointageEnum.JOURNALISE
+						&& targetEtat == EtatPointageEnum.REJETE))
+				&& lastVentil != null)
 				etat.setDateEtat(lastVentil.getDateVentilation());
 			else
 				etat.setDateEtat(helperService.getCurrentDate());

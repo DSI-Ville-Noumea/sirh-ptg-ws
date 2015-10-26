@@ -19,14 +19,17 @@ import org.springframework.stereotype.Service;
 public class VentilationAbsenceService implements IVentilationAbsenceService {
 
 	@Override
-	public VentilAbsence processAbsenceAgent(Integer idAgent, List<Pointage> pointages, Date dateLundi, List<Pointage> pointagesVentilesRejetes) {
+	public VentilAbsence processAbsenceAgent(Integer idAgent, List<Pointage> pointages, Date dateLundi, 
+			List<Pointage> pointagesVentilesRejetes, List<Pointage> pointagesJournalisesRejetes) {
 
 		List<Pointage> absPointages = getAbsencePointages(pointages);
 		
 		List<Pointage> absPointagesVentilesRejetes = getAbsencePointages(pointagesVentilesRejetes);
 
 		// #16789 bug sur les absences ventilees puis rejetees
-		if (absPointages.size() == 0 && (null == absPointagesVentilesRejetes || absPointagesVentilesRejetes.size() == 0))
+		if (absPointages.size() == 0 
+				&& (null == absPointagesVentilesRejetes || absPointagesVentilesRejetes.size() == 0)
+				&& (null == pointagesJournalisesRejetes || pointagesJournalisesRejetes.isEmpty()))
 			return null;
 
 		VentilAbsence result = new VentilAbsence();

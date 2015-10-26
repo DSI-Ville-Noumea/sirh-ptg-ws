@@ -109,4 +109,10 @@ public interface IVentilationRepository {
 
 	List<Pointage> getListPointagesPrimeByWeekForVentilation(Integer idAgent,
 			Date fromEtatDate, Date toEtatDate, Date dateLundi);
+
+	List<Pointage> getListPointagesAbsenceAndHSupRejetesBetweenDatesVentilation(
+			Integer idAgent, Date fromEtatDate, Date toEtatDate, Date dateLundi);
+
+	VentilHsup getPriorOldVentilHSupAgentAndDate(Integer idAgent,
+			Date dateLundi, VentilDate ventilDate);
 }
