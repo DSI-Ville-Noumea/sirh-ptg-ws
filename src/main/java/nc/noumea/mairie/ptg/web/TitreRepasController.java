@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,12 @@ public class TitreRepasController {
 	
 	@Autowired
 	private ITitreRepasService titreRepasService;
+
+	@Autowired
+	private IAccessRightsService accessRightService;
+
+	@Autowired
+	private ISirhWSConsumer sirhWsConsumer;
 	
 	/**
 	 * Enregistre une liste de demande de Titre Repas depuis le Kiosque RH (operateur ou approbateur) ou SIRH.
@@ -103,6 +111,13 @@ public class TitreRepasController {
 		
 		logger.debug("entered POST [titreRepas/enregistreTitreDemandeFromAgent] => enregistreTitreDemandeFromAgent with parameters idAgentConnecte = {}",
 				idAgentConnecte);
+		
+		if ((null == listIdsAgent
+					|| 1 < listIdsAgent.size()
+					|| !listIdsAgent.contains(idAgentConnecte)) // => si ce n est pas l agent qui consulte ces demandes
+				&& !accessRightService.canUserAccessVisualisation(idAgentConnecte) // => si ce n est pas l opêrateur ou approbateur 
+				&& !sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte).getErrors().isEmpty()) // => si ce n est pas un utilisateur SIRH
+			throw new AccessForbiddenException(); // => on bloque
 		
 		return titreRepasService.getListTitreRepasDemandeDto(idAgentConnecte, listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
 	}

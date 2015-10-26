@@ -1,9 +1,12 @@
 package nc.noumea.mairie.titreRepas.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
+import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 
 public class TitreRepasDemandeDto implements Serializable {
 
@@ -19,7 +22,10 @@ public class TitreRepasDemandeDto implements Serializable {
 	private String commentaire;
 	private Integer idRefEtat;
 	
+	private List<EtatTitreRepasDemandeDto> listEtats;
+	
 	public TitreRepasDemandeDto() {
+		listEtats = new ArrayList<EtatTitreRepasDemandeDto>();
 	}
 	
 	public TitreRepasDemandeDto(TitreRepasDemande titreRepasDemande) {
@@ -33,6 +39,13 @@ public class TitreRepasDemandeDto implements Serializable {
 		if(null != titreRepasDemande.getLatestEtatTitreRepasDemande()
 				&& null != titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat()) {
 			this.idRefEtat = titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().getCodeEtat();
+		}
+		if(null != titreRepasDemande.getEtats()
+				&& !titreRepasDemande.getEtats().isEmpty()) {
+			for(TitreRepasEtatDemande etat : titreRepasDemande.getEtats()) {
+				EtatTitreRepasDemandeDto etatDto = new EtatTitreRepasDemandeDto(etat);
+				this.listEtats.add(etatDto);
+			}
 		}
 	}
 	
@@ -72,6 +85,13 @@ public class TitreRepasDemandeDto implements Serializable {
 	public void setIdRefEtat(Integer idRefEtat) {
 		this.idRefEtat = idRefEtat;
 	}
-	
+
+	public List<EtatTitreRepasDemandeDto> getListEtats() {
+		return listEtats;
+	}
+
+	public void setListEtats(List<EtatTitreRepasDemandeDto> listEtats) {
+		this.listEtats = listEtats;
+	}
 	
 }
