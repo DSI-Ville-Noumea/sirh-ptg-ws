@@ -28,6 +28,9 @@ public class TitreRepasController {
 	/**
 	 * Enregistre une liste de demande de Titre Repas depuis le Kiosque RH (operateur ou approbateur) ou SIRH.
 	 * 
+	 * Si dans TitreRepasDemandeDto, l attribut idTrDemande est renseigné, c'est une modification
+	 * sinon une création
+	 * 
 	 * @param idAgentConnecte Integer
 	 * @param isFromSIRH boolean
 	 * @param listTitreRepasDemandeDto List<TitreRepasDemandeDto>
@@ -53,13 +56,16 @@ public class TitreRepasController {
 	/**
 	 * Enregistre une demande de Titre Repas depuis le Kiosque RH de l'agent.
 	 * 
+	 * Si dans TitreRepasDemandeDto, l attribut idTrDemande est renseigné, c'est une modification
+	 * sinon une création
+	 * 
 	 * @param idAgentConnecte Integer
 	 * @param isFromSIRH boolean
 	 * @param  titreRepasDemandeDto TitreRepasDemandeDto
 	 * @return ReturnMessageDto
 	 */
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, value = "/enregistreListTitreDemande", produces = "application/json;charset=utf-8", consumes = "application/json")
+	@RequestMapping(method = RequestMethod.POST, value = "/enregistreTitreDemandeFromAgent", produces = "application/json;charset=utf-8", consumes = "application/json")
 	public ReturnMessageDto enregistreTitreDemandeFromAgent(
 			@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
 			@RequestBody(required = true) TitreRepasDemandeDto titreRepasDemandeDto) {
