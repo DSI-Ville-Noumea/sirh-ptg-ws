@@ -33,6 +33,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TitreRepasService implements ITitreRepasService {
@@ -62,6 +63,12 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String AUCUNE_BASE_CONGE = "La base congé n'est pas renseignée pour l'agent %s.";
 	public static final String PRIME_PANIER = "L'agent a le droit au prime panier et ne peut donc pas commander des Titres Repas.";
 	public static final String FILIERE_INCENDIE = "L'agent fait parti de la filière Incendie et ne peut donc pas commander des Titres Repas.";
+	public static final String TITRE_DEMANDE_DEJA_EXISTANT = "Une demande de Titre Repas existe déjà pour ce mois-ci pour l'agent %s.";
+	public static final String TITRE_DEMANDE_INEXISTANT = "La demande de Titre Repas n'existe pas.";
+	public static final String DTO_NULL = "Merci de saisir la demande de Titre Repas.";
+	public static final String MOIS_COURS_NON_SAISI = "Le mois en cours de la demande n'est pas saisi.";
+	public static final String AGENT_NON_SAISI = "L'ID agent n'est pas renseigné.";
+	public static final String ETAT_NON_SAISI = "L'état de la demande de Titre Repas n'est pas renseigné pour l'agent : %s.";
 	
 	public static final List<Integer> LIST_PRIMES_PANIER = Arrays.asList(7704, 7713);
 	public static final String CODE_FILIERE_INCENDIE = "I";
@@ -75,6 +82,7 @@ public class TitreRepasService implements ITitreRepasService {
 	 * @return ReturnMessageDto
 	 */
 	@Override
+	@Transactional("ptgTransactionManager")
 	public ReturnMessageDto enregistreListTitreDemandeFromKiosque(Integer idAgentConnecte,
 			List<TitreRepasDemandeDto> listTitreRepasDemandeDto) {
 		
@@ -127,6 +135,9 @@ public class TitreRepasService implements ITitreRepasService {
 			if(!response.getErrors().isEmpty()) {
 				result.getErrors().addAll(response.getErrors());
 			}
+			if(!response.getInfos().isEmpty()) {
+				result.getInfos().addAll(response.getInfos());
+			}
 		}
 		
 		return result;
@@ -139,6 +150,7 @@ public class TitreRepasService implements ITitreRepasService {
 	 * @return ReturnMessageDto
 	 */
 	@Override
+	@Transactional("ptgTransactionManager")
 	public ReturnMessageDto enregistreListTitreDemandeFromSIRH(Integer idAgentConnecte,
 			List<TitreRepasDemandeDto> listTitreRepasDemandeDto) {
 
@@ -186,9 +198,12 @@ public class TitreRepasService implements ITitreRepasService {
 			ReturnMessageDto response = enregistreTitreDemandeOneByOne(
 					idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent, 
 					listJourFerieMoisEnCours, affectation, true);
-			
+
 			if(!response.getErrors().isEmpty()) {
 				result.getInfos().addAll(response.getErrors());
+			}
+			if(!response.getInfos().isEmpty()) {
+				result.getInfos().addAll(response.getInfos());
 			}
 		}
 		
@@ -205,6 +220,7 @@ public class TitreRepasService implements ITitreRepasService {
 	 * @return ReturnMessageDto
 	 */
 	@Override
+	@Transactional("ptgTransactionManager")
 	public ReturnMessageDto enregistreTitreDemandeAgent(Integer idAgentConnecte, 
 			TitreRepasDemandeDto dto) {
 
@@ -275,6 +291,7 @@ public class TitreRepasService implements ITitreRepasService {
 		if(!result.getErrors().isEmpty())
 			return result;
 		
+		// check les RG
 		result = checkDroitATitreRepas(result, dto.getIdAgent(), dto.getDateMonth(), 
 				listAbsences, baseCongeAgent, listJoursFeries, affectation);
 		if(!result.getErrors().isEmpty() && !isSIRH)
@@ -288,7 +305,7 @@ public class TitreRepasService implements ITitreRepasService {
 			trDemande = titreRepasRepository.getTitreRepasDemandeById(dto.getIdTrDemande());
 			
 			if(null == trDemande) {
-				result.getErrors().add("La demande de Titre Repas n'existe pas.");
+				result.getErrors().add(TITRE_DEMANDE_INEXISTANT);
 				return result;
 			}
 		}else{
@@ -299,12 +316,12 @@ public class TitreRepasService implements ITitreRepasService {
 			
 			if(null != listTitreRepasDemande
 					&& !listTitreRepasDemande.isEmpty()) {
-				result.getErrors().add("Une demande de Titre Repas existe déjà pour ce mois-ci pour l'agent " + dto.getIdAgent() + ".");
+				result.getErrors().add(String.format(TITRE_DEMANDE_DEJA_EXISTANT, dto.getIdAgent()));
 				return result;
 			}
 		}
 		
-		if(null != trDemande) {
+		if(null == trDemande) {
 			trDemande = new TitreRepasDemande();
 			trDemande.setIdAgent(dto.getIdAgent());
 			trDemande.setDateMonth(dto.getDateMonth());
@@ -329,6 +346,7 @@ public class TitreRepasService implements ITitreRepasService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
 			Integer idAgentConnecte, List<Integer> listIdsAgent, Date fromDate,
 			Date toDate, Integer etat, boolean commande, Date dateMonth) {
@@ -337,12 +355,14 @@ public class TitreRepasService implements ITitreRepasService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public List<TitreRepasEtatPayeurDto> getListTitreRepasEtatPayeurDto() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
+	@Transactional("ptgTransactionManager")
 	public ReturnMessageDto updateEtatForListTitreRepasDemande(
 			Integer idAgentConnecte,
 			List<TitreRepasDemandeDto> listTitreRepasDemandeDto) {
@@ -420,18 +440,20 @@ public class TitreRepasService implements ITitreRepasService {
 			ReturnMessageDto rmd, TitreRepasDemandeDto dto){
 		
 		if(null == dto) {
-			rmd.getErrors().add("Merci de saisir la demande de Titre Repas.");
+			rmd.getErrors().add(DTO_NULL);
+			return rmd;
 		}
 		
 		if(null == dto.getDateMonth()){
-			rmd.getErrors().add("Le mois en cours de la demande n'est pas saisi.");
+			rmd.getErrors().add(MOIS_COURS_NON_SAISI);
 		}
 		
 		if(null == dto.getIdAgent()){
-			rmd.getErrors().add("L'ID agent n'est pas renseigné.");
+			rmd.getErrors().add(AGENT_NON_SAISI);
 		}
+		
 		if(null == dto.getIdRefEtat()){
-			rmd.getErrors().add("L'état de la demande de Titre Repas n'est pas renseigné pour l'agent : " + dto.getIdAgent() + ".");
+			rmd.getErrors().add(String.format(ETAT_NON_SAISI, dto.getIdAgent()));
 		}
 		
 		return rmd;
