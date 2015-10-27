@@ -102,12 +102,12 @@ public class TitreRepasController {
 	@RequestMapping(method = RequestMethod.POST, value = "/getListTitreRepasDemandeDto", produces = "application/json;charset=utf-8", consumes = "application/json")
 	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
 			@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
-			@RequestParam(required = true, value = "fromDate") @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
-			@RequestParam(required = true, value = "toDate") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
+			@RequestParam(required = false, value = "fromDate") @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
+			@RequestParam(required = false, value = "toDate") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
 			@RequestParam(required = false, value = "etat") Integer etat,
 			@RequestParam(required = false, value = "commande") Boolean commande,
 			@RequestParam(required = false, value = "dateMonth") @DateTimeFormat(pattern = "yyyyMMdd") Date  dateMonth,
-			@RequestBody List<Integer> listIdsAgent) {
+			@RequestBody(required = false) List<Integer> listIdsAgent) {
 		
 		logger.debug("entered POST [titreRepas/enregistreTitreDemandeFromAgent] => enregistreTitreDemandeFromAgent with parameters idAgentConnecte = {}",
 				idAgentConnecte);

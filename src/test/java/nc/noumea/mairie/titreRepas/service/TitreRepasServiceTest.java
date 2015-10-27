@@ -1639,4 +1639,35 @@ public class TitreRepasServiceTest {
 		assertEquals(result.getErrors().get(0), TitreRepasService.FILIERE_INCENDIE);
 		Mockito.verify(titreRepasRepository, Mockito.times(2)).persist(Mockito.isA(TitreRepasDemande.class));
 	}
+	
+	@Test
+	public void getListTitreRepasDemandeDto_badParametre() {
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		
+		boolean exception = false;
+		try {
+			service.getListTitreRepasDemandeDto(9005138, null, null, null, 1, true, null);
+		} catch (BadRequestException e) {
+			exception = true;
+		}
+		assertTrue(exception);
+		
+		exception = false;
+		try {
+			service.getListTitreRepasDemandeDto(9005138, null, null, null, null, null, new Date());
+		} catch (BadRequestException e) {
+			exception = true;
+		}
+		assertTrue(exception);
+		
+		exception = false;
+		try {
+			service.getListTitreRepasDemandeDto(9005138, Arrays.asList(9005138), null, null, null, null, new Date());
+		} catch (BadRequestException e) {
+			exception = true;
+		}
+		assertFalse(exception);
+	}
 }

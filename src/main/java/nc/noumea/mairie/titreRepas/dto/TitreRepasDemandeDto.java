@@ -13,7 +13,7 @@ public class TitreRepasDemandeDto implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1727622068229921626L;
 	
 	private Integer idTrDemande;
 	private Integer idAgent;

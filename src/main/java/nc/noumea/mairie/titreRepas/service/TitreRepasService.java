@@ -351,6 +351,19 @@ public class TitreRepasService implements ITitreRepasService {
 			Integer idAgentConnecte, List<Integer> listIdsAgent, Date fromDate,
 			Date toDate, Integer etat, Boolean commande, Date dateMonth) {
 		
+		if((null == listIdsAgent || listIdsAgent.isEmpty()) // provient du kiosque
+				&& null == etat // ou demandes a valider pour SIRH
+				&& null == commande) { // si rien de renseigne, on jette
+			throw new BadRequestException();
+		}
+		// au moins une date obligatoire
+		if(null == fromDate
+				&& null == toDate
+				&& null == dateMonth) {
+			throw new BadRequestException();
+		}
+		
+		
 		List<TitreRepasDemande> listTR = titreRepasRepository.getListTitreRepasDemande(listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
 		
 		List<TitreRepasDemandeDto> result = new ArrayList<TitreRepasDemandeDto>();

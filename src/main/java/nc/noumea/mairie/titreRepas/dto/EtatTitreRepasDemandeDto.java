@@ -10,7 +10,7 @@ public class EtatTitreRepasDemandeDto implements Serializable {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -9026012609607050164L;
 	
 	private Integer idTrEtatDemande;
     private Date dateMaj;
