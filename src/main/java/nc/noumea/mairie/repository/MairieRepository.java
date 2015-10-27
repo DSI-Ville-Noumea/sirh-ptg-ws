@@ -102,7 +102,7 @@ public class MairieRepository implements IMairieRepository {
 
 	@Override
 	public List<Spadmn> getListPAOfAgentBetween2Date(Integer noMatr, Date fromDate, Date toDate) {
-		
+
 		TypedQuery<Spadmn> qSpadmn = entityManager.createNamedQuery("getAgentListSpadmnBetweenTwoDate", Spadmn.class);
 		qSpadmn.setParameter("nomatr", noMatr);
 
@@ -114,18 +114,18 @@ public class MairieRepository implements IMairieRepository {
 
 		return qSpadmn.getResultList();
 	}
-	
+
 	@Override
 	public String getDerniereFiliereOfAgentOnPeriod(Integer noMatr, Date fromDate, Date toDate) {
-		
+
 		StringBuffer query = new StringBuffer();
-		query.append("select c.cdfili from mairie.spcarr a ");
-		query.append("inner join mairie.SPGRADN b on a.CDGRAD=b.CDGRAD "); 
-		query.append("inner join mairie.SPGENG c on b.CODGRG=c.CDGENG ");
+		query.append("select c.cdfili from spcarr a ");
+		query.append("inner join SPGRADN b on a.CDGRAD=b.CDGRAD ");
+		query.append("inner join SPGENG c on b.CODGRG=c.CDGENG ");
 		query.append("where a.nomatr = :nomatr and a.datdeb <= :toDate and (a.datfin >= :fromDate or a.datfin = 0) ");
 		query.append("order by a.datdeb desc");
-		
-		Query q = entityManager.createNativeQuery(query.toString(), String.class);
+
+		Query q = entityManager.createNativeQuery(query.toString());
 
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		int fromDateMairie = Integer.valueOf(sdf.format(fromDate));
@@ -134,10 +134,12 @@ public class MairieRepository implements IMairieRepository {
 		q.setParameter("toDate", toDateMairie);
 
 		q.setParameter("nomatr", noMatr);
-		
-		if(null != q.getResultList()
-				&& !q.getResultList().isEmpty()) {
-			return (String)q.getResultList().get(0);
+
+		@SuppressWarnings("unchecked")
+		List<Character> result = q.getResultList();
+
+		if (null != result && !result.isEmpty()) {
+			return  result.get(0).toString();
 		}
 		return null;
 	}
