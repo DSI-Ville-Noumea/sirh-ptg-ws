@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
@@ -99,4 +100,13 @@ public interface ITitreRepasService {
 	 * @return boolean
 	 */
 	boolean checkPrimePanierEtFiliereIncendie(Integer idAgent);
+	
+	/**
+	 * Retourne la liste des états possible pour une demande de Titre Repas.
+	 * 
+	 * @return List<RefEtatDto> 
+	 */
+	List<RefEtatDto> getListRefEtats();
+
+	ReturnMessageDto generateListTitreRepas(); 
 }

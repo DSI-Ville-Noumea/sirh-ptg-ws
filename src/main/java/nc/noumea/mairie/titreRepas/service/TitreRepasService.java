@@ -11,14 +11,18 @@ import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
+import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.ptg.service.impl.PointageDataConsistencyRules;
+import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
@@ -48,6 +52,9 @@ public class TitreRepasService implements ITitreRepasService {
 	private ITitreRepasRepository titreRepasRepository;
 	
 	@Autowired
+	private IPointageRepository pointageRepository;
+	
+	@Autowired
 	private IAbsWsConsumer absWsConsumer;
 
 	@Autowired
@@ -55,6 +62,9 @@ public class TitreRepasService implements ITitreRepasService {
 	
 	@Autowired
 	private IAccessRightsService accessRightsService;
+	
+	@Autowired
+	private IPaieWorkflowService paieWorkflowService;
 	
 	public static final String ERREUR_DROIT_AGENT = "Vous n'avez pas les droits de traiter cette demande de Titre Repas.";
 	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS = "Vous ne pouvez commander les Titres Repas qu'entre le 1 et 10 de chaque mois.";
@@ -76,6 +86,7 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String DEMANDE_NON_COMMANDE = "Vous ne pouvez pas approuvé une demande de Titre Repas non commandée.";
 	public static final String ERROR_ETAT_DEMANDE = "Vous ne pouvez pas %s une demande de Titre Repas à l'état %s.";
 	public static final String NOUVELLE_ETAT_INCORRECT = "Le nouvel état de la demande de Titre Repas est incorrect.";
+	public static final String PAIE_EN_COURS = "Génération impossible. Une paie est en cours sous l'AS400.";
 	
 	public static final List<Integer> LIST_PRIMES_PANIER = Arrays.asList(7704, 7713);
 	public static final String CODE_FILIERE_INCENDIE = "I";
@@ -891,6 +902,52 @@ public class TitreRepasService implements ITitreRepasService {
 						&& demande.getAgentWithServiceDto().getIdAgent().equals(idAgent)) {
 					result.add(demande);
 				}
+			}
+		}
+		
+		return result;
+	}
+
+	@Override
+	@Transactional("ptgTransactionManager")
+	public ReturnMessageDto generateListTitreRepas() {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		// 1. on verifie si une paye est en cours
+		if(paieWorkflowService.isCalculSalaireEnCours()) {
+			result.getErrors().add(PAIE_EN_COURS);
+			return result;
+		}
+		
+		// 2. generer le fichier d'état du payeur des TR
+		
+		
+		// 3. generer une charge dans l AS400
+		
+		// 4. passer les demandes a l etat JOURNALISE
+		
+		return result;
+	}
+
+	/**
+	 * Retourne la liste des états possible pour une demande de Titre Repas.
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<RefEtatDto> getListRefEtats() {
+		
+		List<RefEtatDto> result = new ArrayList<RefEtatDto>();
+		
+		List<RefEtat> refEtats = pointageRepository.findAllRefEtats();
+		
+		for (RefEtat etat : refEtats) {
+			if(etat.getIdRefEtat().equals(EtatPointageEnum.SAISI.getCodeEtat())
+					|| etat.getIdRefEtat().equals(EtatPointageEnum.APPROUVE.getCodeEtat())
+					|| etat.getIdRefEtat().equals(EtatPointageEnum.REJETE.getCodeEtat())
+					|| etat.getIdRefEtat().equals(EtatPointageEnum.JOURNALISE.getCodeEtat())) {
+						RefEtatDto dto = new RefEtatDto(etat);
+						result.add(dto);
 			}
 		}
 		

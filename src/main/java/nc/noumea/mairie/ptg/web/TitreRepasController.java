@@ -3,6 +3,7 @@ package nc.noumea.mairie.ptg.web;
 import java.util.Date;
 import java.util.List;
 
+import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
@@ -147,5 +148,19 @@ public class TitreRepasController {
 				idAgentConnecte, listTitreRepasDemandeDto.size());
 		
 		return titreRepasService.updateEtatForListTitreRepasDemande(idAgentConnecte, listTitreRepasDemandeDto);
+	}
+	
+	/**
+	 * Retourne la liste des états possible pour une demande de Titre Repas.
+	 * 
+	 * @return List<RefEtatDto>
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getEtats", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public List<RefEtatDto> getEtats() {
+
+		logger.debug("entered GET [filtres/getEtats] => getEtats");
+
+		return titreRepasService.getListRefEtats();
 	}
 }
