@@ -436,29 +436,29 @@ public class TitreRepasService implements ITitreRepasService {
 	 * 
 	 * Si oui, il n a pas le droit au Titre Repas.
 	 * 
-	 * @param rmd ReturnMessageDto
 	 * @param idAgent Integer
-	 * @param affectation AffectationDto
-	 * @param dateMonthEnCours Date
-	 * @return ReturnMessageDto
+	 * @return boolean
 	 */
 	@Override
-	public ReturnMessageDto checkPrimePanierEtFiliereIncendie(ReturnMessageDto rmd, Integer idAgent, 
-			AffectationDto affectation, Date dateMonthEnCours) {
+	public boolean checkPrimePanierEtFiliereIncendie(Integer idAgent) {
 		
-		Date dateMoisPrecedent = new DateTime(dateMonthEnCours).minusMonths(1).toDate();
+		Date dateMoisPrecedent = new DateTime(helperService.getCurrentDate()).minusMonths(1).toDate();
+
+		Date dateDebutMois = helperService.getDatePremierJourOfMonth(new Date());
+		Date dateFinMois = helperService.getDateDernierJourOfMonth(new Date());
+		List<AffectationDto> listAffectation = sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(
+				Arrays.asList(idAgent), dateDebutMois, dateFinMois);
+		AffectationDto affectation = getDernierAffectationByAgent(idAgent, listAffectation);
 		
 		if(checkPrimePanierSurAffectation(affectation, idAgent)) {
-			rmd.getErrors().add(PRIME_PANIER);
-			return rmd;
+			return true;
 		}
 		
 		if(checkAgentIsFiliereIncendie(idAgent, dateMoisPrecedent)) {
-			rmd.getErrors().add(FILIERE_INCENDIE);
-			return rmd;
+			return true;
 		}
 		
-		return rmd;
+		return false;
 	}
 	
 	protected ReturnMessageDto checkDataTitreRepasDemandeDto(

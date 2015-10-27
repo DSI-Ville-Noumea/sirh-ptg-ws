@@ -9,6 +9,7 @@ public class AccessRightsDto implements IJSONSerialize {
 	private boolean saisie;
 	private boolean visualisation;
 	private boolean approbation;
+	private boolean titreRepas;
 	
 	public boolean isGestionDroitsAcces() {
 		return gestionDroitsAcces;
@@ -39,6 +40,12 @@ public class AccessRightsDto implements IJSONSerialize {
 	}
 	public void setApprobation(boolean approbation) {
 		this.approbation = approbation;
+	}
+	public boolean isTitreRepas() {
+		return titreRepas;
+	}
+	public void setTitreRepas(boolean titreRepas) {
+		this.titreRepas = titreRepas;
 	}
 	@Override
 	public String serializeInJSON() {

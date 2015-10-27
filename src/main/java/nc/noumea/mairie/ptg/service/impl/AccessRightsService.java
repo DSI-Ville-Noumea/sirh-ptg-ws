@@ -21,6 +21,7 @@ import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
 import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
@@ -53,6 +54,9 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private SirhWSUtils sirhWSUtils;
+	
+	@Autowired
+	private ITitreRepasService titreRepasService;
 
 	@Override
 	public AccessRightsDto getAgentAccessRights(Integer idAgent) {
@@ -66,6 +70,7 @@ public class AccessRightsService implements IAccessRightsService {
 			result.setVisualisation(result.isVisualisation() || da.isApprobateur() || da.isOperateur());
 			result.setApprobation(result.isApprobation() || da.isApprobateur());
 			result.setGestionDroitsAcces(result.isGestionDroitsAcces() || (da.getIdAgent().equals(idAgent) && da.isApprobateur()));
+			result.setTitreRepas(!titreRepasService.checkPrimePanierEtFiliereIncendie(idAgent));
 		}
 
 		return result;

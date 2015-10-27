@@ -95,12 +95,8 @@ public interface ITitreRepasService {
 	 * 
 	 * Si oui, il n a pas le droit au Titre Repas.
 	 * 
-	 * @param rmd ReturnMessageDto
 	 * @param idAgent Integer
-	 * @param affectation AffectationDto
-	 * @param dateMonthEnCours Date
-	 * @return ReturnMessageDto
+	 * @return boolean
 	 */
-	ReturnMessageDto checkPrimePanierEtFiliereIncendie(ReturnMessageDto rmd,
-			Integer idAgent, AffectationDto affectation, Date dateMonthEnCours);
+	boolean checkPrimePanierEtFiliereIncendie(Integer idAgent);
 }

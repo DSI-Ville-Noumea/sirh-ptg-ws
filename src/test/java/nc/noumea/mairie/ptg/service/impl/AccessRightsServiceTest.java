@@ -24,6 +24,7 @@ import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
 import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
@@ -76,8 +77,12 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(droits);
 
+		ITitreRepasService titreRepasService = Mockito.mock(ITitreRepasService.class);
+		Mockito.when(titreRepasService.checkPrimePanierEtFiliereIncendie(idAgent)).thenReturn(false);
+		
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "titreRepasService", titreRepasService);
 
 		// When
 		AccessRightsDto result = service.getAgentAccessRights(idAgent);
@@ -88,6 +93,7 @@ public class AccessRightsServiceTest {
 		assertTrue(result.isVisualisation());
 		assertTrue(result.isApprobation());
 		assertTrue(result.isGestionDroitsAcces());
+		assertTrue(result.isTitreRepas());
 	}
 
 	@Test
@@ -107,8 +113,12 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(droits);
 
+		ITitreRepasService titreRepasService = Mockito.mock(ITitreRepasService.class);
+		Mockito.when(titreRepasService.checkPrimePanierEtFiliereIncendie(idAgent)).thenReturn(true);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "titreRepasService", titreRepasService);
 
 		// When
 		AccessRightsDto result = service.getAgentAccessRights(idAgent);
@@ -119,6 +129,7 @@ public class AccessRightsServiceTest {
 		assertTrue(result.isVisualisation());
 		assertTrue(result.isApprobation());
 		assertFalse(result.isGestionDroitsAcces());
+		assertFalse(result.isTitreRepas());
 	}
 
 	@Test
