@@ -117,6 +117,16 @@ public class VentilationService implements IVentilationService {
 			result.getErrors().add(msg);
 			return result;
 		}
+		
+		// #19381 bloquer la date de ventilation saisie dans le passé
+		if (givenVentilationDate.isAfterNow()) {
+			String msg = String
+					.format("La date de ventilation choisie doit être antérieure à aujourd'hui.",
+							givenVentilationDate.dayOfWeek().getAsText());
+			logger.error(msg);
+			result.getErrors().add(msg);
+			return result;
+		}
 
 		// Retrieving the current ventilation dates (from / to)
 		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(typeChainePaie, true);

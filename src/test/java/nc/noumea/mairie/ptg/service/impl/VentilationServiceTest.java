@@ -42,6 +42,7 @@ import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.LocalDate;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -1028,6 +1029,41 @@ public class VentilationServiceTest {
 		assertEquals(1, result.getErrors().size());
 		assertEquals(
 				"La date de ventilation choisie est un [samedi]. Impossible de ventiler les pointages à une date autre qu'un dimanche.",
+				result.getErrors().get(0));
+		assertEquals(0, result.getInfos().size());
+	}
+	
+	// #19381
+	@Test
+	public void startVentilation_VentilationDateIsInTheFutur_ReturnErrorMessage() {
+
+		// Given
+		final Date ventilationDate = new DateTime().withDayOfWeek(DateTimeConstants.SUNDAY).plusDays(7).toDate();
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		RefTypePointageEnum pointageType = RefTypePointageEnum.H_SUP;
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
+
+		IPaieWorkflowService pwServ = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(pwServ.canStartVentilation(TypeChainePaieEnum.SCV)).thenReturn(true);
+
+		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vR.canStartVentilation(TypeChainePaieEnum.SCV)).thenReturn(true);
+
+		VentilationService service = Mockito.spy(new VentilationService());
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", pwServ);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
+
+		// When
+		ReturnMessageDto result = service.startVentilation(9008765, new ArrayList<Integer>(), ventilationDate, statut,
+				pointageType);
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals(
+				"La date de ventilation choisie doit être antérieure à aujourd'hui.",
 				result.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 	}
