@@ -121,4 +121,31 @@ public class TitreRepasController {
 		
 		return titreRepasService.getListTitreRepasDemandeDto(idAgentConnecte, listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
 	}
+	
+	/**
+	 * Mets à jour l'état d'une liste de demande de Titre Repas depuis SIRH : 
+	 * APPROUVE ou REJETTE
+	 * 
+	 * TitreRepasDemandeDto : 
+	 * - idTrDemande : ID de la demande de TR
+	 * - commentaire : commentaire en cas de refus, voir approbation
+	 * - idRefEtat : le nouvel état de la demande : APPROUVE (1) ou REJETE (5) 
+	 * 
+	 * Le reste des champs n'est pas utilisé
+	 * 
+	 * @param idAgentConnecte Integer 
+	 * @param listTitreRepasDemandeDto List<TitreRepasDemandeDto>
+	 * @return ReturnMessageDto
+	 */
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, value = "/updateEtatForListTitreRepasDemande", produces = "application/json;charset=utf-8", consumes = "application/json")
+	public ReturnMessageDto updateEtatForListTitreRepasDemande(
+			@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
+			@RequestBody(required = true) List<TitreRepasDemandeDto> listTitreRepasDemandeDto) {
+		
+		logger.debug("entered POST [titreRepas/updateEtatForListTitreRepasDemande] => updateEtatForListTitreRepasDemande with parameters idAgentConnecte = {} and listTitreRepasDemandeDto.size = {}",
+				idAgentConnecte, listTitreRepasDemandeDto.size());
+		
+		return titreRepasService.updateEtatForListTitreRepasDemande(idAgentConnecte, listTitreRepasDemandeDto);
+	}
 }
