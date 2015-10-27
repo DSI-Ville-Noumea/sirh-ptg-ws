@@ -18,6 +18,7 @@ import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
+import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
@@ -1669,5 +1670,182 @@ public class TitreRepasServiceTest {
 			exception = true;
 		}
 		assertFalse(exception);
+	}
+	
+	@Test
+	public void updateEtatForTitreRepasDemande_check() {
+		
+		Integer idAgentConnecte = 9005138;
+		
+		TitreRepasDemandeDto dto = new TitreRepasDemandeDto();
+		dto.setDateMonth(new DateTime(2015,10,1,0,0,0).toDate());
+		dto.setCommande(true);
+		dto.setCommentaire("commentaire 1");
+		dto.setIdAgent(9005131);
+		dto.setIdRefEtat(EtatPointageEnum.SAISI.getCodeEtat());
+		
+		// test TitreRepasDemandeDto.IdTrDemande
+		ReturnMessageDto result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().get(0), TitreRepasService.AUCUN_ID_DEMANDE);
+		
+		// test ETAT envoyé
+		dto.setIdTrDemande(12);
+		result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().get(0), TitreRepasService.NOUVELLE_ETAT_INCORRECT);
+
+		dto.setIdRefEtat(EtatPointageEnum.APPROUVE.getCodeEtat());
+		
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasDemandeById(dto.getIdTrDemande())).thenReturn(null);
+		
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		
+		// test si demande existe en BDD
+		result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().get(0), TitreRepasService.AUCUNE_DEMANDE_TROUVEE);
+	}
+	
+	@Test
+	public void updateEtatForTitreRepasDemande_checkBis() {
+		
+		Integer idAgentConnecte = 9005138;
+		
+		TitreRepasDemandeDto dto = new TitreRepasDemandeDto();
+		dto.setDateMonth(new DateTime(2015,10,1,0,0,0).toDate());
+		dto.setCommande(false);
+		dto.setCommentaire("commentaire 1");
+		dto.setIdAgent(9005131);
+		dto.setIdRefEtat(EtatPointageEnum.APPROUVE.getCodeEtat());
+		dto.setIdTrDemande(12);
+		
+		TitreRepasDemande demandeTR = Mockito.spy(new TitreRepasDemande());
+		demandeTR.setDateMonth(new DateTime(2015,8,1,0,0,0).toDate());
+		demandeTR.setCommande(false);
+		
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasDemandeById(dto.getIdTrDemande())).thenReturn(demandeTR);
+		
+		Date dateDebutMois = new DateTime(2015,10,1,0,0,0).toDate();
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015,10,1,0,0,0).toDate());
+		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
+		
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		// test le mois de la demande si mois courant
+		ReturnMessageDto result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().get(0), TitreRepasService.DEMANDE_MOIS_EN_COURS_ERROR);
+		
+		// test si la commande de TR est à TRUE
+		demandeTR.setDateMonth(new DateTime(2015,10,1,0,0,0).toDate());
+		result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().get(0), TitreRepasService.DEMANDE_NON_COMMANDE);
+		
+		TitreRepasEtatDemande etatApprouve = new TitreRepasEtatDemande();
+		etatApprouve.setEtat(EtatPointageEnum.APPROUVE);
+		demandeTR.getEtats().add(etatApprouve);
+		demandeTR.setCommande(true);
+		
+		// test l ETAT de la demande de TR
+		result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().get(0), 
+				String.format(
+					TitreRepasService.ERROR_ETAT_DEMANDE, 
+					EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()).name(), 
+					etatApprouve.getEtat().name()));
+		
+		TitreRepasEtatDemande etatJournalise = new TitreRepasEtatDemande();
+		etatJournalise.setEtat(EtatPointageEnum.JOURNALISE);
+		demandeTR.getEtats().clear();
+		demandeTR.getEtats().add(etatJournalise);
+		
+		result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().get(0), 
+				String.format(
+					TitreRepasService.ERROR_ETAT_DEMANDE, 
+					EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()).name(), 
+					etatJournalise.getEtat().name()));
+		
+		dto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+		result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().get(0), 
+				String.format(
+					TitreRepasService.ERROR_ETAT_DEMANDE, 
+					EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()).name(), 
+					etatJournalise.getEtat().name()));
+
+		
+		TitreRepasEtatDemande etatRejete = new TitreRepasEtatDemande();
+		etatRejete.setEtat(EtatPointageEnum.REJETE);
+		demandeTR.getEtats().clear();
+		demandeTR.getEtats().add(etatRejete);
+		
+		result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().get(0), 
+				String.format(
+					TitreRepasService.ERROR_ETAT_DEMANDE, 
+					EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()).name(), 
+					etatRejete.getEtat().name()));
+	}
+	
+	@Test
+	public void updateEtatForTitreRepasDemande_ok() {
+		
+		Integer idAgentConnecte = 9005138;
+		
+		TitreRepasDemandeDto dto = new TitreRepasDemandeDto();
+		dto.setDateMonth(new DateTime(2015,10,1,0,0,0).toDate());
+		dto.setCommande(false);
+		dto.setCommentaire("commentaire 1");
+		dto.setIdAgent(9005131);
+		dto.setIdRefEtat(EtatPointageEnum.APPROUVE.getCodeEtat());
+		dto.setIdTrDemande(12);
+		
+		TitreRepasDemande demandeTR = Mockito.spy(new TitreRepasDemande());
+		demandeTR.setDateMonth(new DateTime(2015,8,1,0,0,0).toDate());
+		demandeTR.setCommande(true);
+		demandeTR.setDateMonth(new DateTime(2015,10,1,0,0,0).toDate());
+		
+		TitreRepasEtatDemande etatApprouve = new TitreRepasEtatDemande();
+		etatApprouve.setEtat(EtatPointageEnum.SAISI);
+		demandeTR.getEtats().add(etatApprouve);
+		demandeTR.setCommande(true);
+		
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasDemandeById(dto.getIdTrDemande())).thenReturn(demandeTR);
+		
+		Date dateDebutMois = new DateTime(2015,10,1,0,0,0).toDate();
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015,10,1,0,0,0).toDate());
+		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
+		
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		
+		// on approuve
+		ReturnMessageDto result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().size(), 0);
+		assertEquals(result.getInfos().get(0), TitreRepasService.ENREGISTREMENT_OK);
+		
+		assertEquals(demandeTR.getEtats().get(1).getEtat(), EtatPointageEnum.APPROUVE);
+		assertEquals(demandeTR.getEtats().get(1).getIdAgent(), idAgentConnecte);
+		assertEquals(demandeTR.getCommentaire(), dto.getCommentaire());
+		assertTrue(demandeTR.getEtats().get(1).getCommande());
+		
+		// on rejette
+		dto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+		dto.setCommentaire("commentaire 2");
+		
+		result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
+		assertEquals(result.getErrors().size(), 0);
+		assertEquals(result.getInfos().get(0), TitreRepasService.ENREGISTREMENT_OK);
+		
+		assertEquals(demandeTR.getEtats().get(2).getEtat(), EtatPointageEnum.REJETE);
+		assertEquals(demandeTR.getEtats().get(2).getIdAgent(), idAgentConnecte);
+		assertEquals(demandeTR.getCommentaire(), "commentaire 2");
+		assertTrue(demandeTR.getEtats().get(2).getCommande());
 	}
 }

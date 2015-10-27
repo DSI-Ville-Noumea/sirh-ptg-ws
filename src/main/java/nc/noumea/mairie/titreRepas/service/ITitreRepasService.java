@@ -64,7 +64,7 @@ public interface ITitreRepasService {
 	List<TitreRepasEtatPayeurDto> getListTitreRepasEtatPayeurDto();
 	
 	/**
-	 * Mets a jour l etat d une iste de demande de Titre Repas.
+	 * Mets a jour l etat d une liste de demande de Titre Repas.
 	 * Si on veut mettre à jour une seule demande, envoyer une seule demande dans la liste
 	 * 
 	 * @param idAgentConnecte Integer

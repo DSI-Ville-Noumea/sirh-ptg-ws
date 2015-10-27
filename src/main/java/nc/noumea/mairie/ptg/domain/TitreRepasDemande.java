@@ -50,7 +50,7 @@ public class TitreRepasDemande {
 	@Column(name = "COMMENTAIRE", columnDefinition="text")
 	private String commentaire;
 
-	@OneToMany(mappedBy = "titreRepasDemande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "titreRepasDemande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.PERSIST)
 	@OrderBy("idTrEtatDemande desc")
 	private List<TitreRepasEtatDemande> etats = new ArrayList<TitreRepasEtatDemande>();
 	
