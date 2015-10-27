@@ -206,8 +206,6 @@ public class TitreRepasService implements ITitreRepasService {
 					idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent, 
 					listJourFerieMoisEnCours, affectation, true);
 
-			ReturnMessageDto response = enregistreTitreDemandeOneByOne(idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent, listJourFerieMoisEnCours, affectation, true);
-
 			if (!response.getErrors().isEmpty()) {
 				result.getInfos().addAll(response.getErrors());
 			}
