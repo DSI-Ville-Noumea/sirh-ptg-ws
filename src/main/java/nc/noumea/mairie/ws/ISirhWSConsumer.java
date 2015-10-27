@@ -49,4 +49,6 @@ public interface ISirhWSConsumer {
 	List<JourDto> getListeJoursFeries(Date dateDebut, Date dateFin);
 
 	ReturnMessageDto isUtilisateurSIRH(Integer idAgent);
+
+	List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listIdsAgent);
 }

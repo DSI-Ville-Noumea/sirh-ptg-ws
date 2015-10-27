@@ -437,6 +437,82 @@ public class AccessRightsServiceTest {
 		assertEquals(2, result.size());
 	}
 
+	@Test
+	public void getAgentsToApproveOrInput_2Agents_ReturnListOf2_OldAffectation() {
+
+		// Given
+		Integer idAgent = 9007654;
+		Date dateJour = new Date();
+
+		List<AgentGeneriqueDto> listAgentGeneriqueDto = new ArrayList<AgentGeneriqueDto>();
+		AgentGeneriqueDto a1 = new AgentGeneriqueDto();
+		a1.setIdAgent(9005138);
+		AgentGeneriqueDto a2 = new AgentGeneriqueDto();
+		a2.setIdAgent(9005131);
+		AgentGeneriqueDto a3 = new AgentGeneriqueDto();
+		a3.setIdAgent(9005157);
+		listAgentGeneriqueDto.addAll(Arrays.asList(a1, a2, a3));
+
+		DroitsAgent da1 = new DroitsAgent();
+		da1.setIdAgent(9005138);
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9005131);
+		DroitsAgent da3 = new DroitsAgent();
+		da3.setIdAgent(9005138);
+		DroitsAgent da4 = new DroitsAgent();
+		da4.setIdAgent(9005131);
+		DroitsAgent da5 = new DroitsAgent();
+		da5.setIdAgent(9005157);
+
+		AgentWithServiceDto agDtoServ4 = new AgentWithServiceDto();
+		agDtoServ4.setIdAgent(9005157);
+		agDtoServ4.setIdServiceADS(13);
+		AgentWithServiceDto agDtoServ3 = new AgentWithServiceDto();
+		agDtoServ3.setIdAgent(9005157);
+		AgentWithServiceDto agDtoServ2 = new AgentWithServiceDto();
+		agDtoServ2.setIdAgent(9005131);
+		agDtoServ2.setIdServiceADS(13);
+		AgentWithServiceDto agDtoServ = new AgentWithServiceDto();
+		agDtoServ.setIdAgent(9005138);
+		agDtoServ.setIdServiceADS(13);
+
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDtoServ);
+		listAgentsServiceDto.add(agDtoServ2);
+		listAgentsServiceDto.add(agDtoServ3);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da1, da2, da3, da4, da5));
+		Mockito.when(arRepo.getDroitsAgent(agDtoServ4.getIdAgent())).thenReturn(da5);
+
+		ISirhWSConsumer mRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(mRepo.getListAgents(Arrays.asList(9005138, 9005131, 9005157))).thenReturn(listAgentGeneriqueDto);
+		Mockito.when(mRepo.getListAgentsWithService(Arrays.asList(9005138, 9005131, 9005157), dateJour)).thenReturn(Arrays.asList(agDtoServ, agDtoServ2, agDtoServ3));
+		Mockito.when(mRepo.getListAgentsWithServiceOldAffectation(Arrays.asList(9005157))).thenReturn(Arrays.asList(agDtoServ4));
+
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentGeneriqueDto, a1.getIdAgent())).thenReturn(a1);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentGeneriqueDto, a2.getIdAgent())).thenReturn(a2);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentGeneriqueDto(listAgentGeneriqueDto, a3.getIdAgent())).thenReturn(a3);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, a1.getIdAgent())).thenReturn(agDtoServ);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, a2.getIdAgent())).thenReturn(agDtoServ2);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, a3.getIdAgent())).thenReturn(agDtoServ3);
+
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", mRepo);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
+
+		// When
+		List<AgentDto> result = service.getAgentsToApproveOrInput(idAgent, 13, dateJour);
+
+		// Then
+		assertEquals(3, result.size());
+		assertEquals(9005138, result.get(0).getIdAgent().intValue());
+		assertEquals(9005131, result.get(1).getIdAgent().intValue());
+		assertEquals(9005157, result.get(2).getIdAgent().intValue());
+	}
+
 	// #15684 bug doublon d agents
 	@Test
 	public void getAgentsToApproveOrInput_AgentsDoublon() {

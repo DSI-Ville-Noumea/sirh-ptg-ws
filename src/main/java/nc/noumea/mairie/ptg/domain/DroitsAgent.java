@@ -95,4 +95,9 @@ public class DroitsAgent {
 	public DroitsAgent() {
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return idAgent.equals(((DroitsAgent) obj).getIdAgent());
+	}
+
 }

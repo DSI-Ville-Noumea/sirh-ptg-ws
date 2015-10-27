@@ -59,4 +59,9 @@ public class AgentWithServiceDto extends AgentDto implements IJSONSerialize, IJS
 	public void setSigleService(String sigleService) {
 		this.sigleService = sigleService;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return super.equals(obj);
+	}
 }

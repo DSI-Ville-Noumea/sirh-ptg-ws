@@ -131,4 +131,70 @@ public class FichesServiceTest {
 		assertEquals(ag.getIdAgent(), result.get(0).getIdAgent());
 		assertEquals(ag2.getIdAgent(), result.get(1).getIdAgent());
 	}
+
+
+	// #19250
+	// pour chaque agent présent dans les droits, si il n'a pas de
+	// service
+	// alors on cherche sa derniere affectation
+	@Test
+	public void listAgentsFichesToPrint_testDoublon_OldAffectation() {
+
+		// Given
+		Integer idAgent = 906543;
+		Date dateJour = new Date();
+
+		AgentGeneriqueDto ag = new AgentGeneriqueDto();
+		ag.setIdAgent(9005138);
+
+		AgentGeneriqueDto ag2 = new AgentGeneriqueDto();
+		ag2.setIdAgent(9005140);
+
+		DroitsAgent da = new DroitsAgent();
+		da.setIdAgent(9005138);
+
+		DroitsAgent da2 = new DroitsAgent();
+		da2.setIdAgent(9005140);
+
+		DroitsAgent da3 = new DroitsAgent();
+		da3.setIdAgent(9005138);
+		
+		AgentWithServiceDto agDtoServ2 = new AgentWithServiceDto();
+		agDtoServ2.setIdServiceADS(17);
+		agDtoServ2.setIdAgent(9005138);
+		
+		AgentWithServiceDto agDtoServ = new AgentWithServiceDto();
+		agDtoServ.setIdServiceADS(17);
+		agDtoServ.setIdAgent(9005140);
+
+		List<AgentWithServiceDto> listAgentsServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentsServiceDto.add(agDtoServ);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(Arrays.asList(da, da2, da3));
+
+		ISirhWSConsumer sirhRepo = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhRepo.getAgent(9005138)).thenReturn(ag);
+		Mockito.when(sirhRepo.getAgent(9005140)).thenReturn(ag2);
+		Mockito.when(sirhRepo.getListAgentsWithService(Arrays.asList(9005138,9005140),dateJour)).thenReturn(Arrays.asList(agDtoServ));
+		Mockito.when(sirhRepo.getListAgentsWithServiceOldAffectation(Arrays.asList(9005138))).thenReturn(Arrays.asList(agDtoServ2));
+
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da.getIdAgent())).thenReturn(agDtoServ);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da2.getIdAgent())).thenReturn(agDtoServ2);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, da3.getIdAgent())).thenReturn(null);
+
+		FichesService service = new FichesService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
+
+		// When
+		List<AgentDto> result = service.listAgentsFichesToPrint(idAgent, 17,dateJour);
+
+		// Then
+		assertEquals(2, result.size());
+		assertEquals(ag.getIdAgent(), result.get(1).getIdAgent());
+		assertEquals(ag2.getIdAgent(), result.get(0).getIdAgent());
+	}
 }

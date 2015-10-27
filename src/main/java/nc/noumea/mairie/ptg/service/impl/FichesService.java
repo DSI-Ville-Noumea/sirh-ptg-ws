@@ -54,6 +54,7 @@ public class FichesService implements IFichesService {
 					listAgentDtoAppro.add(da.getIdAgent());
 			}
 			List<AgentWithServiceDto> listAgentsApproServiceDto = sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, date);
+			List<Integer> listAgentSansAffectation = new ArrayList<Integer>();
 
 			for (DroitsAgent da : accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent)) {
 				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsApproServiceDto, da.getIdAgent());
@@ -67,6 +68,29 @@ public class FichesService implements IFichesService {
 
 					if (!result.contains(agDto))
 						result.add(agDto);
+				} else {
+					if (!listAgentSansAffectation.contains(da.getIdAgent()))
+					listAgentSansAffectation.add(da.getIdAgent());
+				}
+			}
+
+			// #19250
+			// pour chaque agent présent dans les droits, si il n'a pas de
+			// service
+			// alors on cherche sa derniere affectation
+			if (listAgentSansAffectation.size() > 0) {
+				List<AgentWithServiceDto> listAgentsSansAffectation = sirhWsConsumer.getListAgentsWithServiceOldAffectation(listAgentSansAffectation);
+				for (AgentWithServiceDto t : listAgentsSansAffectation) {
+					if (t != null && t.getIdServiceADS() != null && t.getIdServiceADS().toString().equals(idServiceAds.toString())) {
+						AgentGeneriqueDto ag = sirhWsConsumer.getAgent(t.getIdAgent());
+						AgentDto agDto = new AgentDto();
+						agDto.setIdAgent(t.getIdAgent());
+						agDto.setNom(ag.getDisplayNom());
+						agDto.setPrenom(ag.getDisplayPrenom());
+
+						if (!result.contains(agDto))
+							result.add(agDto);
+					}
 				}
 			}
 		}

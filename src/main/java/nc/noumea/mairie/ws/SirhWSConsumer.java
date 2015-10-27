@@ -35,6 +35,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhAgentDirectionUrl = "agents/direction";
 	private static final String sirhAgentServiceUrl = "services/agent";
 	private static final String sirhListAgentsWithServiceUrl = "services/listAgentsWithService";
+	private static final String sirhListAgentsWithServiceOldAffectationUrl = "services/listAgentsWithServiceOldAffectation";
 	private static final String sirhAgentUrl = "agents/getAgent";
 	private static final String sirhGetListAgentsUrl = "agents/getListAgents";
 	private static final String sirhHolidayUrl = "utils/isHoliday";
@@ -87,9 +88,8 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		String url = String.format(sirhWsBaseUrl + sirhListAgentsWithServiceUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
-		
-		String json = new JSONSerializer().exclude("*.class")
-				.deepSerialize(listAgentDto);
+
+		String json = new JSONSerializer().exclude("*.class").deepSerialize(listAgentDto);
 
 		if (date != null) {
 			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
@@ -178,19 +178,18 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 	@Override
 	public BaseHorairePointageDto getBaseHorairePointageAgent(Integer idAgent, Date dateDebut, Date dateFin) {
-		
+
 		List<BaseHorairePointageDto> list = getListBaseHorairePointageAgent(idAgent, dateDebut, dateFin);
-		
-		if(null != list
-				&& !list.isEmpty()) {
+
+		if (null != list && !list.isEmpty()) {
 			return list.get(0);
 		}
 		return null;
 	}
 
 	/**
-	 * Retourne la liste des bases horaires par rapport à la liste des affectations de l'agent 
-	 * triees par date de debut dans l ordre croissant
+	 * Retourne la liste des bases horaires par rapport à la liste des
+	 * affectations de l'agent triees par date de debut dans l ordre croissant
 	 */
 	@Override
 	public List<BaseHorairePointageDto> getListBaseHorairePointageAgent(Integer idAgent, Date dateDebut, Date dateFin) {
@@ -214,9 +213,8 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		String url = String.format(sirhWsBaseUrl + sirhGetListAgentsUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
-		
-		String json = new JSONSerializer().exclude("*.class")
-				.deepSerialize(listIdsAgent);
+
+		String json = new JSONSerializer().exclude("*.class").deepSerialize(listIdsAgent);
 
 		ClientResponse res = createAndFirePostRequest(parameters, url, json);
 
@@ -241,15 +239,13 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	}
 
 	@Override
-	public List<AffectationDto> getListAffectationDtoBetweenTwoDateAndForListAgent(
-			List<Integer> listIdsAgent, Date dateDebut, Date dateFin) {
+	public List<AffectationDto> getListAffectationDtoBetweenTwoDateAndForListAgent(List<Integer> listIdsAgent, Date dateDebut, Date dateFin) {
 
 		String url = String.format(sirhWsBaseUrl + sirhlisteAffectationDtosForListAgentByPeriodeUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
-		
-		String json = new JSONSerializer().exclude("*.class")
-				.deepSerialize(listIdsAgent);
+
+		String json = new JSONSerializer().exclude("*.class").deepSerialize(listIdsAgent);
 
 		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
 		parameters.put("dateDebut", sf.format(dateDebut));
@@ -294,5 +290,19 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		}
 
 		return result;
+	}
+
+	@Override
+	public List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listIdsAgent) {
+
+		String url = String.format(sirhWsBaseUrl + sirhListAgentsWithServiceOldAffectationUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+
+		String json = new JSONSerializer().exclude("*.class").deepSerialize(listIdsAgent);
+
+		ClientResponse res = createAndFirePostRequest(parameters, url, json);
+
+		return readResponseAsList(AgentWithServiceDto.class, res, url);
 	}
 }
