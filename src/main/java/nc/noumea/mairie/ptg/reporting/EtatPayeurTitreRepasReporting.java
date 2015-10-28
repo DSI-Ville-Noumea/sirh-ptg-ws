@@ -38,7 +38,6 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 	@Qualifier("sirhFileEtatPayeurPathWrite")
 	private String storagePathEcriture;
 
-	private SimpleDateFormat sdfddMMyyyy = new SimpleDateFormat("dd/MM/yyyy");
 	private SimpleDateFormat sdfMMMMyyyy = new SimpleDateFormat("MMMM yyyy");
 
 	public void downloadEtatPayeurTitreRepas(TitreRepasEtatPayeur etatPayeurTR, List<TitreRepasDemandeDto> listDemandeTR) throws DocumentException,
@@ -117,7 +116,7 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		listValuesByAgent.add(new CellVo(demandeTR.getAgent().getNomatr().toString(), 1, Element.ALIGN_CENTER));
 		listValuesByAgent.add(new CellVo(demandeTR.getAgent().getNom() + " " + demandeTR.getAgent().getPrenom()));
 		listValuesByAgent.add(new CellVo(demandeTR.getAgent().getSigleService()));
-		listValuesByAgent.add(new CellVo("Oui"));
+		listValuesByAgent.add(new CellVo(demandeTR.getCommande() ?  "Oui" : "Non"));
 		
 		writeLine(table, 3, listValuesByAgent);
 	}

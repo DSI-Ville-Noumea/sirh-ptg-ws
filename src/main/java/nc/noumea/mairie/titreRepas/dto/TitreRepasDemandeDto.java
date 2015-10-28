@@ -7,6 +7,7 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 
 public class TitreRepasDemandeDto implements Serializable {
 
@@ -22,13 +23,16 @@ public class TitreRepasDemandeDto implements Serializable {
 	private String commentaire;
 	private Integer idRefEtat;
 	
+	private AgentWithServiceDto agent;
+	private AgentWithServiceDto operateur;
+	
 	private List<EtatTitreRepasDemandeDto> listEtats;
 	
 	public TitreRepasDemandeDto() {
 		listEtats = new ArrayList<EtatTitreRepasDemandeDto>();
 	}
 	
-	public TitreRepasDemandeDto(TitreRepasDemande titreRepasDemande) {
+	public TitreRepasDemandeDto(TitreRepasDemande titreRepasDemande, AgentWithServiceDto pAgent) {
 		this();
 		this.idTrDemande = titreRepasDemande.getIdTrDemande();
 		this.idAgent = titreRepasDemande.getIdAgent();
@@ -39,7 +43,14 @@ public class TitreRepasDemandeDto implements Serializable {
 		if(null != titreRepasDemande.getLatestEtatTitreRepasDemande()
 				&& null != titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat()) {
 			this.idRefEtat = titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().getCodeEtat();
+			
+			this.operateur = new AgentWithServiceDto();
+			this.operateur.setIdAgent(titreRepasDemande.getLatestEtatTitreRepasDemande().getIdAgent());
 		}
+		
+		this.agent = new AgentWithServiceDto();
+		this.agent.setIdAgent(titreRepasDemande.getIdAgent());
+		
 		if(null != titreRepasDemande.getEtats()
 				&& !titreRepasDemande.getEtats().isEmpty()) {
 			for(TitreRepasEtatDemande etat : titreRepasDemande.getEtats()) {
@@ -54,12 +65,6 @@ public class TitreRepasDemandeDto implements Serializable {
 	}
 	public void setIdTrDemande(Integer idTrDemande) {
 		this.idTrDemande = idTrDemande;
-	}
-	public Integer getIdAgent() {
-		return idAgent;
-	}
-	public void setIdAgent(Integer idAgent) {
-		this.idAgent = idAgent;
 	}
 	public Date getDateMonth() {
 		return dateMonth;
@@ -92,6 +97,30 @@ public class TitreRepasDemandeDto implements Serializable {
 
 	public void setListEtats(List<EtatTitreRepasDemandeDto> listEtats) {
 		this.listEtats = listEtats;
+	}
+
+	public AgentWithServiceDto getAgent() {
+		return agent;
+	}
+
+	public void setAgent(AgentWithServiceDto agent) {
+		this.agent = agent;
+	}
+
+	public AgentWithServiceDto getOperateur() {
+		return operateur;
+	}
+
+	public void setOperateur(AgentWithServiceDto operateur) {
+		this.operateur = operateur;
+	}
+
+	public Integer getIdAgent() {
+		return idAgent;
+	}
+
+	public void setIdAgent(Integer idAgent) {
+		this.idAgent = idAgent;
 	}
 	
 }

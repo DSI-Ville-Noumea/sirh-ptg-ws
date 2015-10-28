@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
@@ -57,7 +58,7 @@ public interface ITitreRepasService {
 	List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
 			Integer idAgentConnecte, Date fromDate, Date toDate, Integer etat,
 			Boolean commande, Date dateMonth, Integer idServiceADS,
-			Integer idAgent); 
+			Integer idAgent) throws AccessForbiddenException; 
 	
 	/**
 	 * Retourne la liste des Etat Payeur de Titre Repas

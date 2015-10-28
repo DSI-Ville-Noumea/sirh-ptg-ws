@@ -29,7 +29,7 @@ public class TitreRepasDemandeDtoTest {
 		titreRepasDemande.setCommentaire("commentaire");
 		titreRepasDemande.getEtats().add(etat);
 		
-		TitreRepasDemandeDto dto = new TitreRepasDemandeDto(titreRepasDemande);
+		TitreRepasDemandeDto dto = new TitreRepasDemandeDto(titreRepasDemande, null);
 		
 		assertEquals(dto.getIdTrDemande(), titreRepasDemande.getIdTrDemande());
 		assertEquals(dto.getIdAgent(), titreRepasDemande.getIdAgent());

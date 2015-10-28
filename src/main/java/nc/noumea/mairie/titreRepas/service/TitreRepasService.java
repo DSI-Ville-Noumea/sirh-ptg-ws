@@ -32,6 +32,7 @@ import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
+import nc.noumea.mairie.titreRepas.dto.EtatTitreRepasDemandeDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurDto;
 import nc.noumea.mairie.titreRepas.repository.ITitreRepasRepository;
@@ -386,8 +387,9 @@ public class TitreRepasService implements ITitreRepasService {
 	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
 			Integer idAgentConnecte, Date fromDate,
 			Date toDate, Integer etat, Boolean commande, Date dateMonth, 
-			Integer idServiceADS, Integer idAgent) {
+			Integer idServiceADS, Integer idAgent) throws AccessForbiddenException {
 		
+		Date dateJour = new Date();
 		/////////// TEST de DROIT /////////////////
 		if ((null == idAgent
 				|| !idAgent.equals(idAgentConnecte)) // => si ce n est pas l agent qui consulte ces demandes
@@ -396,6 +398,7 @@ public class TitreRepasService implements ITitreRepasService {
 			throw new AccessForbiddenException(); // => on bloque
 		
 		/////////////////// on recupere la liste d agents ///////////////////////
+		List<AgentWithServiceDto> listAgentServiceDto = new ArrayList<AgentWithServiceDto>();
 		List<Integer> listIdsAgent = new ArrayList<Integer>();
 		List<DroitsAgent> listDroitsAgentTemp = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte);
 		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
@@ -409,10 +412,10 @@ public class TitreRepasService implements ITitreRepasService {
 				if (!listAgentDtoAppro.contains(da.getIdAgent()))
 					listAgentDtoAppro.add(da.getIdAgent());
 			}
-			List<AgentWithServiceDto> listAgentsApproServiceDto = sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, new Date());
+			listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, dateJour);
 
 			for (DroitsAgent da : listDroitsAgentTemp) {
-				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsApproServiceDto, da.getIdAgent());
+				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, da.getIdAgent());
 				if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceADS.toString())) {
 					listDroitsAgent.add(da);
 				}
@@ -433,15 +436,47 @@ public class TitreRepasService implements ITitreRepasService {
 			toDate  = helperService.getCurrentDate();
 			fromDate = new DateTime(helperService.getCurrentDate()).minusYears(1).toDate();
 		}
+		
 		//////////////////// on recupere les demandes //////////////////////
-		List<TitreRepasDemande> listTR = titreRepasRepository.getListTitreRepasDemande(listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
+		List<TitreRepasDemande> listTR = titreRepasRepository.getListTitreRepasDemande(
+				listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
 		
 		List<TitreRepasDemandeDto> result = new ArrayList<TitreRepasDemandeDto>();
 		
 		if(null != listTR
 				&& !listTR.isEmpty()) {
 			for(TitreRepasDemande TR : listTR) {
-				TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR);
+				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
+				TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);
+				
+				if(null != dto.getOperateur().getIdAgent()) {
+					AgentWithServiceDto operateurDto = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, dto.getOperateur().getIdAgent());
+					if(null == operateurDto) {
+						operateurDto = sirhWsConsumer.getAgentService(dto.getOperateur().getIdAgent(), dateJour);
+						if(null != operateurDto
+								&& !listAgentServiceDto.contains(operateurDto)) {
+							listAgentServiceDto.add(operateurDto);
+						}
+					}
+					dto.setOperateur(operateurDto);
+				}
+				
+				if(null != dto.getListEtats()
+						&& !dto.getListEtats().isEmpty()) {
+					for(EtatTitreRepasDemandeDto etatDto : dto.getListEtats()) {
+
+						AgentWithServiceDto operateurEtatDto = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, etatDto.getIdAgent());
+						if(null == operateurEtatDto) {
+							operateurEtatDto = sirhWsConsumer.getAgentService(etatDto.getIdAgent(), dateJour);
+							if(null != operateurEtatDto
+									&& !listAgentServiceDto.contains(operateurEtatDto)) {
+								listAgentServiceDto.add(operateurEtatDto);
+							}
+						}
+						etatDto.setOperateur(operateurEtatDto);
+					}
+				}
+				
 				result.add(dto);
 			}
 		}

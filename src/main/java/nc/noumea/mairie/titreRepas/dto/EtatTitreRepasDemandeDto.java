@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 
 public class EtatTitreRepasDemandeDto implements Serializable {
 
@@ -15,8 +16,9 @@ public class EtatTitreRepasDemandeDto implements Serializable {
 	private Integer idTrEtatDemande;
     private Date dateMaj;
 	private Integer etat;
-	Integer idAgent;
-	Boolean commande;
+	private Integer idAgent;
+	private Boolean commande;
+	private AgentWithServiceDto operateur;
 	
 	public EtatTitreRepasDemandeDto() {
 	}
@@ -28,6 +30,14 @@ public class EtatTitreRepasDemandeDto implements Serializable {
 		this.etat = etat.getEtat().getCodeEtat();
 		this.commande = etat.getCommande();
 		this.idAgent = etat.getIdAgent();
+	}
+	
+	public EtatTitreRepasDemandeDto(TitreRepasEtatDemande etat, AgentWithServiceDto agent) {
+		this(etat);
+		
+		if(null != agent) {
+			this.operateur = agent;
+		}
 	}
 
 	public Integer getIdTrEtatDemande() {
@@ -69,5 +79,12 @@ public class EtatTitreRepasDemandeDto implements Serializable {
 	public void setCommande(Boolean commande) {
 		this.commande = commande;
 	}
-	
+
+	public AgentWithServiceDto getOperateur() {
+		return operateur;
+	}
+
+	public void setOperateur(AgentWithServiceDto operateur) {
+		this.operateur = operateur;
+	}
 }
