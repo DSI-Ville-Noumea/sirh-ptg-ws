@@ -384,14 +384,6 @@ public class TitreRepasService implements ITitreRepasService {
 			Date toDate, Integer etat, Boolean commande, Date dateMonth, 
 			Integer idServiceADS, Integer idAgent) {
 		
-		
-		// au moins une date obligatoire
-		if(null == fromDate
-				&& null == toDate
-				&& null == dateMonth) {
-			throw new BadRequestException();
-		}
-		
 		List<Integer> listIdsAgent = new ArrayList<Integer>();
 		List<DroitsAgent> listDroitsAgentTemp = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte);
 		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();

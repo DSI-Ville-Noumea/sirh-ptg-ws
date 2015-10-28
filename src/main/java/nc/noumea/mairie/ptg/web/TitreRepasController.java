@@ -111,7 +111,7 @@ public class TitreRepasController {
 			@RequestParam(required = false, value = "idServiceADS") Integer idServiceADS,
 			@RequestParam(required = false, value = "idAgent") Integer idAgent) {
 		
-		logger.debug("entered POST [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {}",
+		logger.debug("entered GET [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {}",
 				idAgentConnecte, fromDate, toDate, idServiceADS, idAgent, etat, commande, dateMonth);
 		
 		if ((null == idAgent
