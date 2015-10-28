@@ -152,4 +152,17 @@ public class PaieWorkflowService implements IPaieWorkflowService {
 				return false;
 		}
 	}
+	
+	@Override
+	public boolean isCalculSalaireEnCours() {
+		
+		SpWFPaie stateSCV = paieWorkflowRepository.readCurrentState(TypeChainePaieEnum.SCV);
+		SpWFPaie stateSHC = paieWorkflowRepository.readCurrentState(TypeChainePaieEnum.SHC);
+		
+		if(SpWfEtatEnum.CALCUL_SALAIRE_EN_COURS.equals(stateSCV.getEtat().getCodeEtat())
+				|| SpWfEtatEnum.CALCUL_SALAIRE_EN_COURS.equals(stateSHC.getEtat().getCodeEtat())) {
+			return true;
+		}
+		return false;
+	}
 }

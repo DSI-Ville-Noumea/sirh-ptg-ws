@@ -23,4 +23,6 @@ public interface IPaieWorkflowService {
 	boolean canStartVentilation(TypeChainePaieEnum chainePaie);
 
 	boolean canChangeStateToVentilationStarted(SpWFEtat currentState);
+
+	boolean isCalculSalaireEnCours();
 }

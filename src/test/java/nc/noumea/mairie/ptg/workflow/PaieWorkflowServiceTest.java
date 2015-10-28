@@ -665,4 +665,38 @@ public class PaieWorkflowServiceTest {
 		// Then
 		assertFalse(service.canChangeStateToVentilationStarted(etat));
 	}
+	
+	@Test
+	public void isCalculSalaireEnCours() {
+		
+		SpWFEtat etatSCV = new SpWFEtat();
+		etatSCV.setCodeEtat(SpWfEtatEnum.CALCUL_SALAIRE_EN_COURS);
+		
+		SpWFPaie stateSCV = new SpWFPaie();
+		stateSCV.setEtat(etatSCV);
+
+		SpWFEtat etatSHC = new SpWFEtat();
+		etatSHC.setCodeEtat(SpWfEtatEnum.CALCUL_SALAIRE_TERMINE);
+		
+		SpWFPaie stateSHC = new SpWFPaie();
+		stateSHC.setEtat(etatSHC);
+		
+		IPaieWorkflowRepository wfR = Mockito.mock(IPaieWorkflowRepository.class);
+		Mockito.when(wfR.readCurrentState(TypeChainePaieEnum.SCV)).thenReturn(stateSCV);
+		Mockito.when(wfR.readCurrentState(TypeChainePaieEnum.SHC)).thenReturn(stateSHC);
+		
+		PaieWorkflowService service = new PaieWorkflowService();
+		ReflectionTestUtils.setField(service, "paieWorkflowRepository", wfR);
+		
+		assertTrue(service.isCalculSalaireEnCours());
+		
+		etatSHC.setCodeEtat(SpWfEtatEnum.CALCUL_SALAIRE_EN_COURS);
+		etatSCV.setCodeEtat(SpWfEtatEnum.CALCUL_SALAIRE_TERMINE);
+		
+		assertTrue(service.isCalculSalaireEnCours());
+		
+		etatSHC.setCodeEtat(SpWfEtatEnum.CALCUL_SALAIRE_TERMINE);
+		
+		assertFalse(service.isCalculSalaireEnCours());
+	}
 }
