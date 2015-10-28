@@ -26,6 +26,7 @@ import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.ptg.service.impl.PointageDataConsistencyRules;
+import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
@@ -79,6 +80,9 @@ public class TitreRepasService implements ITitreRepasService {
 	
 	@Autowired
 	private EtatPayeurTitreRepasReporting reportingService;
+
+	@Autowired
+	private IAccessRightsService accessRightService;
 	
 	public static final String ERREUR_DROIT_AGENT = "Vous n'avez pas les droits de traiter cette demande de Titre Repas.";
 	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS = "Vous ne pouvez commander les Titres Repas qu'entre le 1 et 10 de chaque mois.";
@@ -384,6 +388,14 @@ public class TitreRepasService implements ITitreRepasService {
 			Date toDate, Integer etat, Boolean commande, Date dateMonth, 
 			Integer idServiceADS, Integer idAgent) {
 		
+		/////////// TEST de DROIT /////////////////
+		if ((null == idAgent
+				|| !idAgent.equals(idAgentConnecte)) // => si ce n est pas l agent qui consulte ces demandes
+			&& !accessRightService.canUserAccessVisualisation(idAgentConnecte) // => si ce n est pas l opêrateur ou approbateur 
+			&& !sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte).getErrors().isEmpty()) // => si ce n est pas un utilisateur SIRH
+			throw new AccessForbiddenException(); // => on bloque
+		
+		/////////////////// on recupere la liste d agents ///////////////////////
 		List<Integer> listIdsAgent = new ArrayList<Integer>();
 		List<DroitsAgent> listDroitsAgentTemp = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte);
 		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
@@ -414,6 +426,14 @@ public class TitreRepasService implements ITitreRepasService {
 				listIdsAgent.add(da.getIdAgent());
 		}
 		
+		//////////////// on checke les DATES ////////////////////////
+		if(null == fromDate
+				&& null == toDate
+				&& null == dateMonth) {
+			toDate  = helperService.getCurrentDate();
+			fromDate = new DateTime(helperService.getCurrentDate()).minusYears(1).toDate();
+		}
+		//////////////////// on recupere les demandes //////////////////////
 		List<TitreRepasDemande> listTR = titreRepasRepository.getListTitreRepasDemande(listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
 		
 		List<TitreRepasDemandeDto> result = new ArrayList<TitreRepasDemandeDto>();
