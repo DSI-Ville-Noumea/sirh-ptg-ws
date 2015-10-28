@@ -5,6 +5,7 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
 
@@ -28,6 +29,9 @@ public class TitreRepasController {
 	@Autowired
 	private ITitreRepasService titreRepasService;
 	
+	@Autowired
+	private IAgentMatriculeConverterService agentMatriculeConverterService;
+	
 	/**
 	 * Enregistre une liste de demande de Titre Repas depuis le Kiosque RH (operateur ou approbateur) ou SIRH.
 	 * 
@@ -49,10 +53,12 @@ public class TitreRepasController {
 		logger.debug("entered POST [titreRepas/enregistreListTitreDemande] => enregistreListTitreDemande with parameters idAgentConnecte = {}, isFromSIRH = {} and listTitreRepasDemandeDto.size = {}",
 				idAgentConnecte, isFromSIRH, listTitreRepasDemandeDto.size());
 		
+		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
+		
 		if(isFromSIRH) {
-			return titreRepasService.enregistreListTitreDemandeFromSIRH(idAgentConnecte, listTitreRepasDemandeDto);
+			return titreRepasService.enregistreListTitreDemandeFromSIRH(convertedIdAgentConnecte, listTitreRepasDemandeDto);
 		}else{
-			return titreRepasService.enregistreListTitreDemandeFromKiosque(idAgentConnecte, listTitreRepasDemandeDto);
+			return titreRepasService.enregistreListTitreDemandeFromKiosque(convertedIdAgentConnecte, listTitreRepasDemandeDto);
 		}
 	}
 	
@@ -76,7 +82,9 @@ public class TitreRepasController {
 		logger.debug("entered POST [titreRepas/enregistreTitreDemandeFromAgent] => enregistreTitreDemandeFromAgent with parameters idAgentConnecte = {}",
 				idAgentConnecte);
 		
-		return titreRepasService.enregistreTitreDemandeAgent(idAgentConnecte, titreRepasDemandeDto);
+		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
+		
+		return titreRepasService.enregistreTitreDemandeAgent(convertedIdAgentConnecte, titreRepasDemandeDto);
 	}
 	
 	/**
@@ -105,8 +113,11 @@ public class TitreRepasController {
 		
 		logger.debug("entered GET [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {}",
 				idAgentConnecte, fromDate, toDate, idServiceADS, idAgent, etat, commande, dateMonth);
+		
+		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
+		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 	
-		return titreRepasService.getListTitreRepasDemandeDto(idAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS, idAgent);
+		return titreRepasService.getListTitreRepasDemandeDto(convertedIdAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS, convertedIdAgent);
 	}
 	
 	/**
@@ -133,7 +144,9 @@ public class TitreRepasController {
 		logger.debug("entered POST [titreRepas/updateEtatForListTitreRepasDemande] => updateEtatForListTitreRepasDemande with parameters idAgentConnecte = {} and listTitreRepasDemandeDto.size = {}",
 				idAgentConnecte, listTitreRepasDemandeDto.size());
 		
-		return titreRepasService.updateEtatForListTitreRepasDemande(idAgentConnecte, listTitreRepasDemandeDto);
+		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
+		
+		return titreRepasService.updateEtatForListTitreRepasDemande(convertedIdAgentConnecte, listTitreRepasDemandeDto);
 	}
 	
 	/**
