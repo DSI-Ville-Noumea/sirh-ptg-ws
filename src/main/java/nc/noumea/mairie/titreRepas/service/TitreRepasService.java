@@ -85,26 +85,26 @@ public class TitreRepasService implements ITitreRepasService {
 	@Autowired
 	private IAccessRightsService accessRightService;
 	
-	public static final String ERREUR_DROIT_AGENT = "Vous n'avez pas les droits de traiter cette demande de Titre Repas.";
-	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS = "Vous ne pouvez commander les Titres Repas qu'entre le 1 et 10 de chaque mois.";
-	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR = "Vous ne pouvez saisir des demandes de Titres Repas qu'entre le 1 du mois et l'édition du payeur.";
+	public static final String ERREUR_DROIT_AGENT = "Vous n'avez pas les droits pour traiter cette demande de titre repas.";
+	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS = "Vous ne pouvez commander les titres repas qu'entre le 1 et 10 de chaque mois.";
+	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR = "Vous ne pouvez saisir des demandes de titres repas qu'entre le 1 du mois et l'édition du payeur.";
 	public static final String AUCUNE_PA_ACTIVE_MOIS_PRECEDENT = "L'agent %s n'a pas travaillé le mois précédent.";
 	public static final String AUCUNE_BASE_CONGE = "La base congé n'est pas renseignée pour l'agent %s.";
-	public static final String PRIME_PANIER = "L'agent a le droit au prime panier et ne peut donc pas commander des Titres Repas.";
-	public static final String FILIERE_INCENDIE = "L'agent fait parti de la filière Incendie et ne peut donc pas commander des Titres Repas.";
-	public static final String TITRE_DEMANDE_DEJA_EXISTANT = "Une demande de Titre Repas existe déjà pour ce mois-ci pour l'agent %s.";
-	public static final String TITRE_DEMANDE_INEXISTANT = "La demande de Titre Repas n'existe pas.";
-	public static final String DTO_NULL = "Merci de saisir la demande de Titre Repas.";
+	public static final String PRIME_PANIER = "L'agent a le droit aux primes panier et ne peut donc pas commander des titres repas.";
+	public static final String FILIERE_INCENDIE = "L'agent fait parti de la filière incendie et ne peut donc pas commander de titres repas.";
+	public static final String TITRE_DEMANDE_DEJA_EXISTANT = "Une demande de titre repas existe déjà pour ce mois-ci pour l'agent %s.";
+	public static final String TITRE_DEMANDE_INEXISTANT = "La demande de titre repas n'existe pas.";
+	public static final String DTO_NULL = "Merci de saisir la demande de titre repas.";
 	public static final String MOIS_COURS_NON_SAISI = "Le mois en cours de la demande n'est pas saisi.";
 	public static final String AGENT_NON_SAISI = "L'ID agent n'est pas renseigné.";
-	public static final String ETAT_NON_SAISI = "L'état de la demande de Titre Repas n'est pas renseigné pour l'agent : %s.";
-	public static final String AUCUNE_DEMANDE = "Aucune demande de Titre Repas à approuver.";
-	public static final String AUCUN_ID_DEMANDE = "L'ID de la demande de Titre Repas n'est pas renseigné.";
-	public static final String AUCUNE_DEMANDE_TROUVEE = "La demande de Titre Repas n'existe pas.";
-	public static final String DEMANDE_MOIS_EN_COURS_ERROR = "La demande de Titre Repas n'existe pas.";
-	public static final String DEMANDE_NON_COMMANDE = "Vous ne pouvez pas approuvé une demande de Titre Repas non commandée.";
-	public static final String ERROR_ETAT_DEMANDE = "Vous ne pouvez pas %s une demande de Titre Repas à l'état %s.";
-	public static final String NOUVELLE_ETAT_INCORRECT = "Le nouvel état de la demande de Titre Repas est incorrect.";
+	public static final String ETAT_NON_SAISI = "L'état de la demande de titre repas n'est pas renseigné pour l'agent : %s.";
+	public static final String AUCUNE_DEMANDE = "Aucune demande de titre repas à approuver.";
+	public static final String AUCUN_ID_DEMANDE = "L'ID de la demande de titre repas n'est pas renseigné.";
+	public static final String AUCUNE_DEMANDE_TROUVEE = "La demande de titre repas n'existe pas.";
+	public static final String DEMANDE_MOIS_EN_COURS_ERROR = "La demande de titre repas n'existe pas.";
+	public static final String DEMANDE_NON_COMMANDE = "Vous ne pouvez pas approuvé une demande de titre repas non commandée.";
+	public static final String ERROR_ETAT_DEMANDE = "Vous ne pouvez pas %s une demande de titre repas à l'état %s.";
+	public static final String NOUVELLE_ETAT_INCORRECT = "Le nouvel état de la demande de titre repas est incorrect.";
 	public static final String PAIE_EN_COURS = "Génération impossible. Une paie est en cours sous l'AS400.";
 	
 	public static final List<Integer> LIST_PRIMES_PANIER = Arrays.asList(7704, 7713);
