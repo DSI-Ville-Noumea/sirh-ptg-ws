@@ -1,9 +1,7 @@
 package nc.noumea.mairie.titreRepas.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
@@ -22,47 +20,35 @@ public class TitreRepasDemandeDto implements Serializable {
 	private static final long serialVersionUID = -1727622068229921626L;
 
 	private Integer idTrDemande;
-	private Integer idAgent;
+	private AgentWithServiceDto agent;
+	private Integer idRefEtat;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
+	private Date dateSaisie;
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateMonth;
 	private Boolean commande;
 	private String commentaire;
-	private Integer idRefEtat;
-
-	private AgentWithServiceDto agent;
 	private AgentWithServiceDto operateur;
 
-	private List<EtatTitreRepasDemandeDto> listEtats;
-
 	public TitreRepasDemandeDto() {
-		listEtats = new ArrayList<EtatTitreRepasDemandeDto>();
+		super();
 	}
 
-	public TitreRepasDemandeDto(TitreRepasDemande titreRepasDemande, AgentWithServiceDto pAgent) {
+	public TitreRepasDemandeDto(TitreRepasDemande titreRepasDemande, AgentWithServiceDto agent) {
 		this();
 		this.idTrDemande = titreRepasDemande.getIdTrDemande();
-		this.idAgent = titreRepasDemande.getIdAgent();
+		this.agent = agent;
 		this.dateMonth = titreRepasDemande.getDateMonth();
 		this.commande = titreRepasDemande.getCommande();
 		this.commentaire = titreRepasDemande.getCommentaire();
+	}
 
-		if (null != titreRepasDemande.getLatestEtatTitreRepasDemande() && null != titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat()) {
-			this.idRefEtat = titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().getCodeEtat();
-
-			this.operateur = new AgentWithServiceDto();
-			this.operateur.setIdAgent(titreRepasDemande.getLatestEtatTitreRepasDemande().getIdAgent());
-		}
-
-		this.agent = new AgentWithServiceDto();
-		this.agent.setIdAgent(titreRepasDemande.getIdAgent());
-
-		if (null != titreRepasDemande.getEtats() && !titreRepasDemande.getEtats().isEmpty()) {
-			for (TitreRepasEtatDemande etat : titreRepasDemande.getEtats()) {
-				EtatTitreRepasDemandeDto etatDto = new EtatTitreRepasDemandeDto(etat);
-				this.listEtats.add(etatDto);
-			}
-		}
+	public void updateEtat(TitreRepasEtatDemande etat, AgentWithServiceDto ope) {
+		idRefEtat = etat.getEtat().getCodeEtat();
+		dateSaisie = etat.getDateMaj();
+		operateur = ope;
 	}
 
 	public Integer getIdTrDemande() {
@@ -105,14 +91,6 @@ public class TitreRepasDemandeDto implements Serializable {
 		this.idRefEtat = idRefEtat;
 	}
 
-	public List<EtatTitreRepasDemandeDto> getListEtats() {
-		return listEtats;
-	}
-
-	public void setListEtats(List<EtatTitreRepasDemandeDto> listEtats) {
-		this.listEtats = listEtats;
-	}
-
 	public AgentWithServiceDto getAgent() {
 		return agent;
 	}
@@ -127,14 +105,6 @@ public class TitreRepasDemandeDto implements Serializable {
 
 	public void setOperateur(AgentWithServiceDto operateur) {
 		this.operateur = operateur;
-	}
-
-	public Integer getIdAgent() {
-		return idAgent;
-	}
-
-	public void setIdAgent(Integer idAgent) {
-		this.idAgent = idAgent;
 	}
 
 }

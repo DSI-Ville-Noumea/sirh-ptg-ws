@@ -7,6 +7,7 @@ import java.util.Date;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 
 import org.junit.Test;
 
@@ -29,16 +30,14 @@ public class TitreRepasDemandeDtoTest {
 		titreRepasDemande.setCommentaire("commentaire");
 		titreRepasDemande.getEtats().add(etat);
 		
-		TitreRepasDemandeDto dto = new TitreRepasDemandeDto(titreRepasDemande, null);
+		AgentWithServiceDto ag = new AgentWithServiceDto();
+		ag.setIdAgent(9005138);
+		
+		TitreRepasDemandeDto dto = new TitreRepasDemandeDto(titreRepasDemande, ag);
 		
 		assertEquals(dto.getIdTrDemande(), titreRepasDemande.getIdTrDemande());
-		assertEquals(dto.getIdAgent(), titreRepasDemande.getIdAgent());
+		assertEquals(dto.getAgent().getIdAgent(), titreRepasDemande.getIdAgent());
 		assertEquals(dto.getCommande(), titreRepasDemande.getCommande());
 		assertEquals(dto.getCommentaire(), titreRepasDemande.getCommentaire());
-		assertEquals(dto.getListEtats().get(0).getIdTrEtatDemande(), etat.getIdTrEtatDemande());
-		assertEquals(dto.getListEtats().get(0).getIdAgent(), etat.getIdAgent());
-		assertEquals(dto.getListEtats().get(0).getEtat().intValue(), etat.getEtat().getCodeEtat());
-		assertEquals(dto.getListEtats().get(0).getDateMaj(), etat.getDateMaj());
-		assertEquals(dto.getListEtats().get(0).getCommande(), etat.getCommande());
 	}
 }
