@@ -3,8 +3,13 @@ package nc.noumea.mairie.titreRepas.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.JsonDateDeserializer;
+import nc.noumea.mairie.ptg.dto.JsonDateSerializer;
 
 public class EtatTitreRepasDemandeDto implements Serializable {
 
@@ -14,6 +19,8 @@ public class EtatTitreRepasDemandeDto implements Serializable {
 	private static final long serialVersionUID = -9026012609607050164L;
 	
 	private Integer idTrEtatDemande;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
     private Date dateMaj;
 	private Integer etat;
 	private Integer idAgent;
