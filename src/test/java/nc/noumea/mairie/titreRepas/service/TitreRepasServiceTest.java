@@ -17,12 +17,15 @@ import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.repository.IMairieRepository;
@@ -1847,5 +1850,30 @@ public class TitreRepasServiceTest {
 		assertEquals(demandeTR.getEtats().get(2).getIdAgent(), idAgentConnecte);
 		assertEquals(demandeTR.getCommentaire(), "commentaire 2");
 		assertTrue(demandeTR.getEtats().get(2).getCommande());
+	}
+	
+	@Test
+	public void getListRefEtats() {
+
+		List<RefEtat> listRefEtat = new ArrayList<RefEtat>();
+		for(int i=0; i<10; i++) {
+			RefEtat etat = new RefEtat();
+			etat.setIdRefEtat(EtatPointageEnum.getEtatPointageEnum(i).getCodeEtat());
+			etat.setLabel(EtatPointageEnum.getEtatPointageEnum(i).name());
+			listRefEtat.add(etat);
+		}
+		
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepository.findAllRefEtats()).thenReturn(listRefEtat);
+		
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+		
+		List<RefEtatDto> result = service.getListRefEtats();
+		
+		assertEquals(4, result.size());
+		assertEquals(result.get(0).getLibelle(), EtatPointageEnum.SAISI.name());
+		assertEquals(result.get(1).getLibelle(), EtatPointageEnum.APPROUVE.name());
+		assertEquals(result.get(2).getLibelle(), EtatPointageEnum.REJETE.name());
+		assertEquals(result.get(3).getLibelle(), EtatPointageEnum.JOURNALISE.name());
 	}
 }
