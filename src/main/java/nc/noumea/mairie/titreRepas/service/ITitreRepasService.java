@@ -111,5 +111,11 @@ public interface ITitreRepasService {
 	 */
 	List<RefEtatDto> getListRefEtats();
 
-	ReturnMessageDto generateListTitreRepas();
+	/**
+	 * Genere l etat du payeur des Titres Repas.
+	 * 
+	 * @param idAgentConnecte Integer
+	 * @return ReturnMessageDto
+	 */
+	ReturnMessageDto generateListTitreRepas(Integer idAgentConnecte);
 }

@@ -1,5 +1,8 @@
 package nc.noumea.mairie.titreRepas.service;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -11,6 +14,7 @@ import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
+import nc.noumea.mairie.ptg.domain.EtatPayeur;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
@@ -40,14 +44,20 @@ import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
 
+import org.jboss.logging.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lowagie.text.DocumentException;
+
 @Service
 public class TitreRepasService implements ITitreRepasService {
+	
+	private Logger logger = Logger.getLogger(TitreRepasService.class);
 
 	@Autowired
 	private HelperService helperService;
@@ -84,6 +94,9 @@ public class TitreRepasService implements ITitreRepasService {
 
 	@Autowired
 	private IAccessRightsService accessRightService;
+
+	private static SimpleDateFormat sfd = new SimpleDateFormat("YYYY-MM");
+	
 	
 	public static final String ERREUR_DROIT_AGENT = "Vous n'avez pas les droits pour traiter cette demande de titre repas.";
 	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS = "Vous ne pouvez commander les titres repas qu'entre le 1 et 10 de chaque mois.";
@@ -133,7 +146,7 @@ public class TitreRepasService implements ITitreRepasService {
 		
 		// saisie entre le 1 et le 10
 		// si au dela du 10 du mois, cela ne sert a rien de faire tous les appels ci-dessous
-		rmd = checkDateJourBetween1And10ofMonth(rmd);
+//		rmd = checkDateJourBetween1And10ofMonth(rmd);
 		if(!rmd.getErrors().isEmpty())
 			return rmd;
 		
@@ -271,9 +284,9 @@ public class TitreRepasService implements ITitreRepasService {
 		
 		// saisie entre le 1 et le 10
 		// si au dela du 10 du mois, cela ne sert a rien de faire tous les appels ci-dessous
-		rmd = checkDateJourBetween1And10ofMonth(rmd);
-		if(!rmd.getErrors().isEmpty())
-			return rmd;
+//		rmd = checkDateJourBetween1And10ofMonth(rmd);
+//		if(!rmd.getErrors().isEmpty())
+//			return rmd;
 		
 		/////////////////////////////////////////////////////////////////
 		///////// on recupere toutes les donnees qui nous interessent ///
@@ -997,7 +1010,7 @@ public class TitreRepasService implements ITitreRepasService {
 
 	@Override
 	@Transactional("ptgTransactionManager")
-	public ReturnMessageDto generateListTitreRepas() {
+	public ReturnMessageDto generateListTitreRepas(Integer idAgentConnecte) {
 		
 		ReturnMessageDto result = new ReturnMessageDto();
 		
@@ -1011,15 +1024,68 @@ public class TitreRepasService implements ITitreRepasService {
 		List<TitreRepasDemande> listDemandeTR = titreRepasRepository.getListTitreRepasDemande(
 				null, null, null, EtatPointageEnum.APPROUVE.getCodeEtat(), true, helperService.getDatePremierJourOfMonth(helperService.getCurrentDate()));
 		
+		List<Integer> listIdsAgent = new ArrayList<Integer>();
+		if(null != listDemandeTR) {
+			for(TitreRepasDemande demandeTR : listDemandeTR) {
+				if(!listIdsAgent.contains(demandeTR.getIdAgent()))
+					listIdsAgent.add(demandeTR.getIdAgent());
+			}
+		}
+		
+		Date dateJour = helperService.getCurrentDate();
+		
+		List<AgentWithServiceDto> listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listIdsAgent, dateJour);
+		
+		List<TitreRepasDemandeDto> listTitreRepasDemandeDto = new ArrayList<TitreRepasDemandeDto>();
+		for(TitreRepasDemande TR : listDemandeTR) {
+			AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
+			TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);
+			listTitreRepasDemandeDto.add(dto);
+		}
+		
 		// 3. on cree/recupere l état payeur de ce mois-ci
-		titreRepasRepository.getListTitreRepasEtatPayeur();
+		TitreRepasEtatPayeur etatPayeurTR = new TitreRepasEtatPayeur();
+		etatPayeurTR.setFichier(String.format("Etat-Payeur-Titre-Repas-%s.pdf", sfd.format(dateJour)));
+		etatPayeurTR.setLabel(String.format("%s", sfd.format(dateJour)));
+		etatPayeurTR.setDateEtatPayeur(new LocalDate(dateJour).withDayOfMonth(1).toDate());
+		etatPayeurTR.setIdAgent(idAgentConnecte);
+		etatPayeurTR.setDateEdition(dateJour);
 		
 		// 4. generer le fichier d'état du payeur des TR
-//		reportingService.downloadEtatPayeurTitreRepas(etatPayeurTR, listDemandeTR);
+		try {
+			reportingService.downloadEtatPayeurTitreRepas(etatPayeurTR, listTitreRepasDemandeDto);
+		} catch (MalformedURLException e) {
+			logger.debug(e.getMessage());
+			result.getErrors().add("Une erreur est survenue lors de la génération de l'état payeur des titres repas.");
+			return result;
+		} catch (DocumentException e) {
+			logger.debug(e.getMessage());
+			result.getErrors().add("Une erreur est survenue lors de la génération de l'état payeur des titres repas.");
+			return result;
+		} catch (IOException e) {
+			logger.debug(e.getMessage());
+			result.getErrors().add("Une erreur est survenue lors de la génération de l'état payeur des titres repas.");
+			return result;
+		}
 		
 		// 5. generer une charge dans l AS400
 		
 		// 6. passer les demandes a l etat JOURNALISE
+		if(null != listDemandeTR) {
+			for(TitreRepasDemande demandeTR : listDemandeTR) {
+				TitreRepasEtatDemande etat = new TitreRepasEtatDemande();
+				etat.setCommande(demandeTR.getCommande());
+				etat.setDateMaj(new Date());
+				etat.setEtat(EtatPointageEnum.JOURNALISE);
+				etat.setIdAgent(idAgentConnecte);
+				etat.setTitreRepasDemande(demandeTR);
+				
+				demandeTR.getEtats().add(etat);
+			}
+		}
+		
+		// 7. on enregistre
+		titreRepasRepository.persist(etatPayeurTR);
 		
 		return result;
 	}
