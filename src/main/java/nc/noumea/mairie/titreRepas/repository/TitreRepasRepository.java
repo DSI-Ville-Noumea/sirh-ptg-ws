@@ -18,6 +18,16 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 
 	@PersistenceContext(unitName = "ptgPersistenceUnit")
 	private EntityManager ptgEntityManager;
+
+	@Override
+	public void persist(TitreRepasEtatPayeur titreRepasDemande) {
+		ptgEntityManager.persist(titreRepasDemande);
+	}
+
+	@Override
+	public void persist(TitreRepasDemande titreRepasDemande) {
+		ptgEntityManager.persist(titreRepasDemande);
+	}
 	
 	@Override
 	public List<TitreRepasEtatPayeur> getListTitreRepasEtatPayeur() {
@@ -33,12 +43,6 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 			Integer idTitreRepasEtatPayeur) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public void persist(TitreRepasEtatPayeur titreRepasDemande) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -103,12 +107,6 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 		}
 
 		return query.getResultList();
-	}
-
-	@Override
-	public void persist(TitreRepasDemande titreRepasDemande) {
-		// TODO Auto-generated method stub
-
 	}
 
 }
