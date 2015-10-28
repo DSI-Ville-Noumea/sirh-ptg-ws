@@ -54,8 +54,10 @@ public interface ITitreRepasService {
 	 * @param dateMonth Date
 	 * @return List<TitreRepasDemandeDto>
 	 */
-	List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(Integer idAgentConnecte, List<Integer> listIdsAgent, Date fromDate, Date toDate,
-			Integer etat, Boolean commande, Date dateMonth);
+	List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
+			Integer idAgentConnecte, Date fromDate, Date toDate, Integer etat,
+			Boolean commande, Date dateMonth, Integer idServiceADS,
+			Integer idAgent); 
 	
 	/**
 	 * Retourne la liste des Etat Payeur de Titre Repas
@@ -108,5 +110,5 @@ public interface ITitreRepasService {
 	 */
 	List<RefEtatDto> getListRefEtats();
 
-	ReturnMessageDto generateListTitreRepas(); 
+	ReturnMessageDto generateListTitreRepas();
 }

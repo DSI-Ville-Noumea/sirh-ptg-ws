@@ -10,14 +10,18 @@ import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.reporting.EtatPayeurTitreRepasReporting;
+import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
@@ -32,6 +36,7 @@ import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurDto;
 import nc.noumea.mairie.titreRepas.repository.ITitreRepasRepository;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
+import nc.noumea.mairie.ws.SirhWSUtils;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
@@ -55,16 +60,25 @@ public class TitreRepasService implements ITitreRepasService {
 	private IPointageRepository pointageRepository;
 	
 	@Autowired
+	private IAccessRightsRepository accessRightsRepository;
+	
+	@Autowired
 	private IAbsWsConsumer absWsConsumer;
 
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
 	
 	@Autowired
+	private SirhWSUtils sirhWSUtils;
+	
+	@Autowired
 	private IAccessRightsService accessRightsService;
 	
 	@Autowired
 	private IPaieWorkflowService paieWorkflowService;
+	
+	@Autowired
+	private EtatPayeurTitreRepasReporting reportingService;
 	
 	public static final String ERREUR_DROIT_AGENT = "Vous n'avez pas les droits de traiter cette demande de Titre Repas.";
 	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS = "Vous ne pouvez commander les Titres Repas qu'entre le 1 et 10 de chaque mois.";
@@ -366,14 +380,11 @@ public class TitreRepasService implements ITitreRepasService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
-			Integer idAgentConnecte, List<Integer> listIdsAgent, Date fromDate,
-			Date toDate, Integer etat, Boolean commande, Date dateMonth) {
+			Integer idAgentConnecte, Date fromDate,
+			Date toDate, Integer etat, Boolean commande, Date dateMonth, 
+			Integer idServiceADS, Integer idAgent) {
 		
-		if((null == listIdsAgent || listIdsAgent.isEmpty()) // provient du kiosque
-				&& null == etat // ou demandes a valider pour SIRH
-				&& null == commande) { // si rien de renseigne, on jette
-			throw new BadRequestException();
-		}
+		
 		// au moins une date obligatoire
 		if(null == fromDate
 				&& null == toDate
@@ -381,6 +392,35 @@ public class TitreRepasService implements ITitreRepasService {
 			throw new BadRequestException();
 		}
 		
+		List<Integer> listIdsAgent = new ArrayList<Integer>();
+		List<DroitsAgent> listDroitsAgentTemp = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte);
+		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
+		if(null != idAgent) {
+			listIdsAgent.add(idAgent);
+		}else if (null != idServiceADS) {
+			// #18722 : pour chaque agent on va recuperer son
+			// service
+			List<Integer> listAgentDtoAppro = new ArrayList<Integer>();
+			for (DroitsAgent da : listDroitsAgentTemp) {
+				if (!listAgentDtoAppro.contains(da.getIdAgent()))
+					listAgentDtoAppro.add(da.getIdAgent());
+			}
+			List<AgentWithServiceDto> listAgentsApproServiceDto = sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, new Date());
+
+			for (DroitsAgent da : listDroitsAgentTemp) {
+				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsApproServiceDto, da.getIdAgent());
+				if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceADS.toString())) {
+					listDroitsAgent.add(da);
+				}
+			}
+		} else {
+			listDroitsAgent.addAll(listDroitsAgentTemp);
+		}
+		
+		for (DroitsAgent da : listDroitsAgent) {
+			if(!listIdsAgent.contains(da.getIdAgent()))
+				listIdsAgent.add(da.getIdAgent());
+		}
 		
 		List<TitreRepasDemande> listTR = titreRepasRepository.getListTitreRepasDemande(listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
 		
@@ -920,12 +960,19 @@ public class TitreRepasService implements ITitreRepasService {
 			return result;
 		}
 		
-		// 2. generer le fichier d'état du payeur des TR
+		// 2. on recupere la liste des demandes de Titre Repas de ce mois-ci
+		List<TitreRepasDemande> listDemandeTR = titreRepasRepository.getListTitreRepasDemande(
+				null, null, null, EtatPointageEnum.APPROUVE.getCodeEtat(), true, helperService.getDatePremierJourOfMonth(helperService.getCurrentDate()));
 		
+		// 3. on cree/recupere l état payeur de ce mois-ci
+		titreRepasRepository.getListTitreRepasEtatPayeur();
 		
-		// 3. generer une charge dans l AS400
+		// 4. generer le fichier d'état du payeur des TR
+//		reportingService.downloadEtatPayeurTitreRepas(etatPayeurTR, listDemandeTR);
 		
-		// 4. passer les demandes a l etat JOURNALISE
+		// 5. generer une charge dans l AS400
+		
+		// 6. passer les demandes a l etat JOURNALISE
 		
 		return result;
 	}

@@ -96,7 +96,7 @@ public class TitreRepasController {
 	 * @param toDate Date
 	 * @param etat Integer
 	 * @param commande Boolean
-	 * @param dateMonth Date
+	 * @param dateMonth Date 
 	 * @return List<TitreRepasDemandeDto> liste de demandes de Titre Repas
 	 */
 	@ResponseBody
@@ -108,19 +108,19 @@ public class TitreRepasController {
 			@RequestParam(required = false, value = "etat") Integer etat,
 			@RequestParam(required = false, value = "commande") Boolean commande,
 			@RequestParam(required = false, value = "dateMonth") @DateTimeFormat(pattern = "yyyyMMdd") Date  dateMonth,
-			@RequestBody(required = false) List<Integer> listIdsAgent) {
+			@RequestParam(required = false, value = "idServiceADS") Integer idServiceADS,
+			@RequestParam(required = false, value = "idAgent") Integer idAgent) {
 		
 		logger.debug("entered POST [titreRepas/enregistreTitreDemandeFromAgent] => enregistreTitreDemandeFromAgent with parameters idAgentConnecte = {}",
 				idAgentConnecte);
 		
-		if ((null == listIdsAgent
-					|| 1 < listIdsAgent.size()
-					|| !listIdsAgent.contains(idAgentConnecte)) // => si ce n est pas l agent qui consulte ces demandes
+		if ((null == idAgent
+					|| !idAgent.equals(idAgentConnecte)) // => si ce n est pas l agent qui consulte ces demandes
 				&& !accessRightService.canUserAccessVisualisation(idAgentConnecte) // => si ce n est pas l opêrateur ou approbateur 
 				&& !sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte).getErrors().isEmpty()) // => si ce n est pas un utilisateur SIRH
 			throw new AccessForbiddenException(); // => on bloque
 		
-		return titreRepasService.getListTitreRepasDemandeDto(idAgentConnecte, listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
+		return titreRepasService.getListTitreRepasDemandeDto(idAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS, idAgent);
 	}
 	
 	/**
