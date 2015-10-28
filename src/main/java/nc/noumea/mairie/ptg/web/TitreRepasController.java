@@ -100,7 +100,7 @@ public class TitreRepasController {
 	 * @return List<TitreRepasDemandeDto> liste de demandes de Titre Repas
 	 */
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.POST, value = "/getListTitreRepasDemandeDto", produces = "application/json;charset=utf-8", consumes = "application/json")
+	@RequestMapping(method = RequestMethod.GET, value = "/listTitreRepas", produces = "application/json;charset=utf-8", consumes = "application/json")
 	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
 			@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
 			@RequestParam(required = false, value = "fromDate") @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
@@ -111,8 +111,8 @@ public class TitreRepasController {
 			@RequestParam(required = false, value = "idServiceADS") Integer idServiceADS,
 			@RequestParam(required = false, value = "idAgent") Integer idAgent) {
 		
-		logger.debug("entered POST [titreRepas/enregistreTitreDemandeFromAgent] => enregistreTitreDemandeFromAgent with parameters idAgentConnecte = {}",
-				idAgentConnecte);
+		logger.debug("entered POST [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {}",
+				idAgentConnecte, fromDate, toDate, idServiceADS, idAgent, etat, commande, dateMonth);
 		
 		if ((null == idAgent
 					|| !idAgent.equals(idAgentConnecte)) // => si ce n est pas l agent qui consulte ces demandes
