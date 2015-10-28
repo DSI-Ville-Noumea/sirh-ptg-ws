@@ -1,8 +1,6 @@
 package nc.noumea.mairie.titreRepas.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +26,7 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
+import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
@@ -1844,5 +1843,37 @@ public class TitreRepasServiceTest {
 		assertEquals(result.get(1).getLibelle(), EtatPointageEnum.APPROUVE.name());
 		assertEquals(result.get(2).getLibelle(), EtatPointageEnum.REJETE.name());
 		assertEquals(result.get(3).getLibelle(), EtatPointageEnum.JOURNALISE.name());
+	}
+	
+	@Test 
+	public void getListTitreRepasDemandeDto_errorDroit() {
+		
+		Integer idAgentConnecte = 9005138;
+		Date fromDate = null;
+		Date toDate = null;
+		Integer etat = null;
+		Boolean commande = null;
+		Date dateMonth = null; 
+		Integer idServiceADS = null;
+		Integer idAgent = null;
+
+		IAccessRightsService accessRightService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(accessRightService.canUserAccessVisualisation(idAgentConnecte)).thenReturn(false);
+		
+		ReturnMessageDto rmdSIRH = new ReturnMessageDto();
+		rmdSIRH.getErrors().add("error");
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte)).thenReturn(rmdSIRH);
+		
+		ReflectionTestUtils.setField(service, "accessRightService", accessRightService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		
+		try {
+			service.getListTitreRepasDemandeDto(
+					idAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS, idAgent);
+		} catch(AccessForbiddenException e) {
+			return;
+		}
+		fail();
 	}
 }
