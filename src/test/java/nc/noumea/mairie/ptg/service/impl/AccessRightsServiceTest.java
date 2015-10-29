@@ -50,8 +50,12 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(droits);
 
+		ITitreRepasService titreRepasService = Mockito.mock(ITitreRepasService.class);
+		Mockito.when(titreRepasService.checkPrimePanierEtFiliereIncendie(idAgent)).thenReturn(false);
+
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "titreRepasService", titreRepasService);
 
 		// When
 		AccessRightsDto result = service.getAgentAccessRights(idAgent);
