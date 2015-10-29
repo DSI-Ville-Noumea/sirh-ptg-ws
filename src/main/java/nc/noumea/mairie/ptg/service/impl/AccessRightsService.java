@@ -70,9 +70,9 @@ public class AccessRightsService implements IAccessRightsService {
 			result.setVisualisation(result.isVisualisation() || da.isApprobateur() || da.isOperateur());
 			result.setApprobation(result.isApprobation() || da.isApprobateur());
 			result.setGestionDroitsAcces(result.isGestionDroitsAcces() || (da.getIdAgent().equals(idAgent) && da.isApprobateur()));
-			result.setTitreRepas(!titreRepasService.checkPrimePanierEtFiliereIncendie(idAgent));
 		}
 
+		result.setTitreRepas(!titreRepasService.checkPrimePanierEtFiliereIncendie(idAgent));
 		return result;
 	}
 
