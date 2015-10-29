@@ -77,7 +77,8 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 			sb.append("and et0.etat = :etat ");
 		}
 		if (null != commande) {
-			sb.append("and tr.commande <= :commande ");
+			sb.append("and et0 in ( select max(et) from TitreRepasEtatDemande et group by et.titreRepasDemande ) ");
+			sb.append("and et0.commande = :commande ");
 		}
 		if (null != dateMonth) {
 			sb.append("and tr.dateMonth = :dateMonth ");

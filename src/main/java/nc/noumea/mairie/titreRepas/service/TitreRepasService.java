@@ -145,9 +145,9 @@ public class TitreRepasService implements ITitreRepasService {
 		// saisie entre le 1 et le 10
 		// si au dela du 10 du mois, cela ne sert a rien de faire tous les
 		// appels ci-dessous
-		 rmd = checkDateJourBetween1And10ofMonth(rmd);
-		 if (!rmd.getErrors().isEmpty())
-		 return rmd;
+		rmd = checkDateJourBetween1And10ofMonth(rmd);
+		if (!rmd.getErrors().isEmpty())
+			return rmd;
 
 		// ///////////////////////////////////////////////////////////////
 		// /////// on recupere toutes les donnees qui nous interessent ///
@@ -319,7 +319,6 @@ public class TitreRepasService implements ITitreRepasService {
 			trDemande.setIdAgent(dto.getAgent().getIdAgent());
 			trDemande.setDateMonth(dto.getDateMonth());
 		}
-		trDemande.setCommande(dto.getCommande());
 
 		TitreRepasEtatDemande etat = new TitreRepasEtatDemande();
 		etat.setCommande(dto.getCommande());
@@ -327,6 +326,7 @@ public class TitreRepasService implements ITitreRepasService {
 		etat.setDateMaj(new Date());
 		etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
 		etat.setIdAgent(idAgentConnecte);
+		etat.setCommande(dto.getCommande());
 		etat.setTitreRepasDemande(trDemande);
 
 		trDemande.getEtats().add(etat);
@@ -511,7 +511,7 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		// on check l ETAT
-		if (null == titreRepasDemande.getCommande() || !titreRepasDemande.getCommande()) {
+		if (null == titreRepasDemande.getLatestEtatTitreRepasDemande().getCommande() || !titreRepasDemande.getLatestEtatTitreRepasDemande().getCommande()) {
 			rmd.getErrors().add(DEMANDE_NON_COMMANDE);
 			return rmd;
 		}
@@ -526,7 +526,7 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		TitreRepasEtatDemande etat = new TitreRepasEtatDemande();
-		etat.setCommande(titreRepasDemande.getCommande());
+		etat.setCommande(titreRepasDemande.getLatestEtatTitreRepasDemande().getCommande());
 		etat.setDateMaj(new Date());
 		etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
 		etat.setIdAgent(idAgentConnecte);

@@ -1730,7 +1730,9 @@ public class TitreRepasServiceTest {
 
 		TitreRepasDemande demandeTR = Mockito.spy(new TitreRepasDemande());
 		demandeTR.setDateMonth(new DateTime(2015, 8, 1, 0, 0, 0).toDate());
-		demandeTR.setCommande(false);
+		TitreRepasEtatDemande etat = new TitreRepasEtatDemande();
+		etat.setCommande(false);
+		demandeTR.getEtats().add(etat);
 
 		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
 		Mockito.when(titreRepasRepository.getTitreRepasDemandeById(dto.getIdTrDemande())).thenReturn(demandeTR);
@@ -1756,14 +1758,19 @@ public class TitreRepasServiceTest {
 		TitreRepasEtatDemande etatApprouve = new TitreRepasEtatDemande();
 		etatApprouve.setEtat(EtatPointageEnum.APPROUVE);
 		demandeTR.getEtats().add(etatApprouve);
-		demandeTR.setCommande(true);
+		TitreRepasEtatDemande etatRefuse = new TitreRepasEtatDemande();
+		etatRefuse.setCommande(true);
+		etatRefuse.setEtat(EtatPointageEnum.REFUSE);
+		demandeTR.getEtats().clear();
+		demandeTR.getEtats().add(etatRefuse);
 
 		// test l ETAT de la demande de TR
 		result = service.updateEtatForTitreRepasDemande(idAgentConnecte, dto);
-		assertEquals(result.getErrors().get(0), String.format(TitreRepasService.ERROR_ETAT_DEMANDE, EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()).name(), etatApprouve.getEtat().name()));
+		assertEquals(result.getErrors().get(0), String.format(TitreRepasService.ERROR_ETAT_DEMANDE, EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()).name(), etatRefuse.getEtat().name()));
 
 		TitreRepasEtatDemande etatJournalise = new TitreRepasEtatDemande();
 		etatJournalise.setEtat(EtatPointageEnum.JOURNALISE);
+		etatJournalise.setCommande(true);
 		demandeTR.getEtats().clear();
 		demandeTR.getEtats().add(etatJournalise);
 
@@ -1776,6 +1783,7 @@ public class TitreRepasServiceTest {
 
 		TitreRepasEtatDemande etatRejete = new TitreRepasEtatDemande();
 		etatRejete.setEtat(EtatPointageEnum.REJETE);
+		etatRejete.setCommande(true);
 		demandeTR.getEtats().clear();
 		demandeTR.getEtats().add(etatRejete);
 
@@ -1800,13 +1808,12 @@ public class TitreRepasServiceTest {
 
 		TitreRepasDemande demandeTR = Mockito.spy(new TitreRepasDemande());
 		demandeTR.setDateMonth(new DateTime(2015, 8, 1, 0, 0, 0).toDate());
-		demandeTR.setCommande(true);
-		demandeTR.setDateMonth(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 
-		TitreRepasEtatDemande etatApprouve = new TitreRepasEtatDemande();
-		etatApprouve.setEtat(EtatPointageEnum.SAISI);
-		demandeTR.getEtats().add(etatApprouve);
-		demandeTR.setCommande(true);
+		TitreRepasEtatDemande etatSaisi = new TitreRepasEtatDemande();
+		etatSaisi.setEtat(EtatPointageEnum.SAISI);
+		demandeTR.getEtats().add(etatSaisi);		
+		demandeTR.getLatestEtatTitreRepasDemande().setCommande(true);
+		demandeTR.setDateMonth(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 
 		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
 		Mockito.when(titreRepasRepository.getTitreRepasDemandeById(dto.getIdTrDemande())).thenReturn(demandeTR);

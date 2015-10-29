@@ -43,9 +43,6 @@ public class TitreRepasDemande {
 	@Temporal(TemporalType.DATE)
 	private Date dateMonth;
 
-	@Column(name = "COMMANDE")
-	private Boolean commande;
-
 	@OneToMany(mappedBy = "titreRepasDemande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.PERSIST)
 	@OrderBy("idTrEtatDemande desc")
 	private List<TitreRepasEtatDemande> etats = new ArrayList<TitreRepasEtatDemande>();
@@ -81,14 +78,6 @@ public class TitreRepasDemande {
 
 	public void setDateMonth(Date dateMonth) {
 		this.dateMonth = dateMonth;
-	}
-
-	public Boolean getCommande() {
-		return commande;
-	}
-
-	public void setCommande(Boolean commande) {
-		this.commande = commande;
 	}
 
 	public List<TitreRepasEtatDemande> getEtats() {
