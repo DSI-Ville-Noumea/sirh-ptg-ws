@@ -107,8 +107,8 @@ public class TitreRepasController {
 				"entered GET [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {}",
 				idAgentConnecte, fromDate, toDate, idServiceADS, idAgent, etat, commande, dateMonth);
 
-		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
-		int convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+		Integer convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
+		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
 		return titreRepasService.getListTitreRepasDemandeDto(convertedIdAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS, convertedIdAgent);
 	}
@@ -156,6 +156,12 @@ public class TitreRepasController {
 		return titreRepasService.getListRefEtats();
 	}
 
+	/**
+	 * Retourne l'historique des états d'une demande de Titre Repas.
+	 * 
+	 * @param idTrDemande Integer
+	 * @return List<TitreRepasDemandeDto>
+	 */
 	@ResponseBody
 	@RequestMapping(value = "/historique", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
@@ -164,5 +170,20 @@ public class TitreRepasController {
 		logger.debug("entered GET [titreRepas/historique] => getTitreRepasArchives with parameters idTrDemande = {}", idTrDemande);
 
 		return titreRepasService.getTitreRepasArchives(idTrDemande);
+	}
+
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/genereEtatPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ReturnMessageDto genereEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte) {
+
+		logger.debug("entered GET [titreRepas/historique] => getTitreRepasArchives with parameters idTrDemande = {}", idAgentConnecte);
+
+		return titreRepasService.genereEtatPayeur(idAgentConnecte);
 	}
 }

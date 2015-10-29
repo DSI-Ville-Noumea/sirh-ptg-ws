@@ -10,6 +10,7 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.reporting.vo.CellVo;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 
@@ -33,6 +34,9 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 
 	@Autowired
 	private IExportEtatPayeurService exportEtatPayeurService;
+	
+	@Autowired
+	private IAgentMatriculeConverterService agentMatriculeConverterService;
 
 	@Autowired
 	@Qualifier("sirhFileEtatPayeurPathWrite")
@@ -44,7 +48,7 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 			MalformedURLException, IOException {
 
 			// on crée le document
-			Document document = new Document(PageSize.A4.rotate());
+			Document document = new Document(PageSize.A4);
 			PdfWriter.getInstance(document, new FileOutputStream(Paths.get(storagePathEcriture, etatPayeurTR.getFichier())
 					.toString()));
 
@@ -88,7 +92,7 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 	
 	private void writeTableau(Document document, List<TitreRepasDemandeDto> listDemandeTR) throws DocumentException {
 		
-		PdfPTable table = writeTableau(document, new float[] { 2, 5, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 10, 3, 2 });
+		PdfPTable table = writeTableau(document, new float[] { 2, 5, 3, 3 });
 		table.setSpacingBefore(10);
 		table.setSpacingAfter(10);
 		
@@ -113,10 +117,10 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		List<CellVo> listValuesByAgent = new ArrayList<CellVo>();
 		
 		// on ecrit les donnees de l agent
-		listValuesByAgent.add(new CellVo(demandeTR.getAgent().getNomatr().toString(), 1, Element.ALIGN_CENTER));
+		listValuesByAgent.add(new CellVo(agentMatriculeConverterService.tryConvertIdAgentToNomatr(demandeTR.getAgent().getIdAgent()).toString(), 1, Element.ALIGN_CENTER));
 		listValuesByAgent.add(new CellVo(demandeTR.getAgent().getNom() + " " + demandeTR.getAgent().getPrenom()));
 		listValuesByAgent.add(new CellVo(demandeTR.getAgent().getSigleService()));
-		listValuesByAgent.add(new CellVo(demandeTR.getCommande() ?  "Oui" : "Non"));
+		listValuesByAgent.add(new CellVo(demandeTR.getCommande() ?  "Oui" : "Non", 1, Element.ALIGN_CENTER));
 		
 		writeLine(table, 3, listValuesByAgent);
 	}

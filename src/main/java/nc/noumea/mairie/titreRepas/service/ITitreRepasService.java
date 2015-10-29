@@ -115,7 +115,7 @@ public interface ITitreRepasService {
 	 *            Integer
 	 * @return ReturnMessageDto
 	 */
-	ReturnMessageDto generateListTitreRepas(Integer idAgentConnecte);
+	ReturnMessageDto genereEtatPayeur(Integer idAgentConnecte);
 
 	/**
 	 * Retourne l'historique d'une demande de titre repas

@@ -35,6 +35,7 @@ public class TitreRepasDemandeDto {
 		this.idTrDemande = titreRepasDemande.getIdTrDemande();
 		this.agent = agent;
 		this.dateMonth = titreRepasDemande.getDateMonth();
+		this.setCommande(titreRepasDemande.getCommande());
 	}
 
 	public void updateEtat(TitreRepasEtatDemande etat, AgentWithServiceDto ope) {

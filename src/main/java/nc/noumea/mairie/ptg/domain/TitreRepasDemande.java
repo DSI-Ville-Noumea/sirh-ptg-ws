@@ -42,6 +42,9 @@ public class TitreRepasDemande {
 	@Column(name = "DATE_MONTH", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date dateMonth;
+	
+	@Column(name = "COMMANDE")
+	private Boolean commande;
 
 	@OneToMany(mappedBy = "titreRepasDemande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.PERSIST)
 	@OrderBy("idTrEtatDemande desc")
@@ -95,4 +98,13 @@ public class TitreRepasDemande {
 	public void setVersion(Integer version) {
 		this.version = version;
 	}
+
+	public Boolean getCommande() {
+		return commande;
+	}
+
+	public void setCommande(Boolean commande) {
+		this.commande = commande;
+	}
+	
 }
