@@ -58,7 +58,7 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 			Integer etat, Boolean commande, Date dateMonth) {
 		
 		StringBuilder sb = new StringBuilder();
-		sb.append("select tr from TitreRepasDemande tr ");
+		sb.append("select distinct(tr) from TitreRepasDemande tr ");
 		sb.append("LEFT JOIN FETCH tr.etats et0 ");
 		sb.append("where 1=1 ");
 		

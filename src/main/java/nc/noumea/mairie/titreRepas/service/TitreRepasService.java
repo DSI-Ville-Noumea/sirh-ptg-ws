@@ -145,9 +145,9 @@ public class TitreRepasService implements ITitreRepasService {
 		// saisie entre le 1 et le 10
 		// si au dela du 10 du mois, cela ne sert a rien de faire tous les
 		// appels ci-dessous
-//		rmd = checkDateJourBetween1And10ofMonth(rmd);
-//		if (!rmd.getErrors().isEmpty())
-//			return rmd;
+		 rmd = checkDateJourBetween1And10ofMonth(rmd);
+		 if (!rmd.getErrors().isEmpty())
+		 return rmd;
 
 		// ///////////////////////////////////////////////////////////////
 		// /////// on recupere toutes les donnees qui nous interessent ///

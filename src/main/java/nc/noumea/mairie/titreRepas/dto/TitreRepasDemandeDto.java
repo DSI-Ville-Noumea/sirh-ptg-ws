@@ -35,7 +35,6 @@ public class TitreRepasDemandeDto {
 		this.idTrDemande = titreRepasDemande.getIdTrDemande();
 		this.agent = agent;
 		this.dateMonth = titreRepasDemande.getDateMonth();
-		this.commande = titreRepasDemande.getCommande();
 	}
 
 	public void updateEtat(TitreRepasEtatDemande etat, AgentWithServiceDto ope) {
@@ -43,6 +42,7 @@ public class TitreRepasDemandeDto {
 		dateSaisie = etat.getDateMaj();
 		operateur = ope;
 		commentaire = etat.getCommentaire();
+		commande = etat.getCommande();
 	}
 
 	public Integer getIdTrDemande() {
