@@ -3,7 +3,9 @@ package nc.noumea.mairie.titreRepas.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
@@ -143,9 +145,9 @@ public class TitreRepasService implements ITitreRepasService {
 		// saisie entre le 1 et le 10
 		// si au dela du 10 du mois, cela ne sert a rien de faire tous les
 		// appels ci-dessous
-		rmd = checkDateJourBetween1And10ofMonth(rmd);
-		if (!rmd.getErrors().isEmpty())
-			return rmd;
+//		rmd = checkDateJourBetween1And10ofMonth(rmd);
+//		if (!rmd.getErrors().isEmpty())
+//			return rmd;
 
 		// ///////////////////////////////////////////////////////////////
 		// /////// on recupere toutes les donnees qui nous interessent ///
@@ -318,10 +320,10 @@ public class TitreRepasService implements ITitreRepasService {
 			trDemande.setDateMonth(dto.getDateMonth());
 		}
 		trDemande.setCommande(dto.getCommande());
-		trDemande.setCommentaire(dto.getCommentaire());
 
 		TitreRepasEtatDemande etat = new TitreRepasEtatDemande();
 		etat.setCommande(dto.getCommande());
+		etat.setCommentaire(dto.getCommentaire());
 		etat.setDateMaj(new Date());
 		etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
 		etat.setIdAgent(idAgentConnecte);
@@ -398,22 +400,22 @@ public class TitreRepasService implements ITitreRepasService {
 		List<TitreRepasDemande> listTR = titreRepasRepository.getListTitreRepasDemande(listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
 
 		List<TitreRepasDemandeDto> result = new ArrayList<TitreRepasDemandeDto>();
+		// optimisation performances
+		Map<Integer, AgentWithServiceDto> mapAgentDto = new HashMap<Integer, AgentWithServiceDto>();
 
 		if (null != listTR && !listTR.isEmpty()) {
 			for (TitreRepasDemande TR : listTR) {
 				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
 				TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);
 
-				if (dto.getOperateur() != null && null != dto.getOperateur().getIdAgent()) {
-					AgentWithServiceDto operateurDto = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, dto.getOperateur().getIdAgent());
-					if (null == operateurDto) {
-						operateurDto = sirhWsConsumer.getAgentService(dto.getOperateur().getIdAgent(), dateJour);
-						if (null != operateurDto && !listAgentServiceDto.contains(operateurDto)) {
-							listAgentServiceDto.add(operateurDto);
-						}
-					}
-					dto.setOperateur(operateurDto);
+				AgentWithServiceDto opeDto = null;
+				if (mapAgentDto.containsKey(TR.getLatestEtatTitreRepasDemande().getIdAgent())) {
+					opeDto = mapAgentDto.get(TR.getLatestEtatTitreRepasDemande().getIdAgent());
+				} else {
+					opeDto = sirhWsConsumer.getAgentService(TR.getLatestEtatTitreRepasDemande().getIdAgent(), dateJour);
+					mapAgentDto.put(opeDto.getIdAgent(), opeDto);
 				}
+				dto.updateEtat(TR.getLatestEtatTitreRepasDemande(), opeDto);
 
 				result.add(dto);
 			}
@@ -528,9 +530,8 @@ public class TitreRepasService implements ITitreRepasService {
 		etat.setDateMaj(new Date());
 		etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
 		etat.setIdAgent(idAgentConnecte);
+		etat.setCommentaire(dto.getCommentaire());
 		etat.setTitreRepasDemande(titreRepasDemande);
-
-		titreRepasDemande.setCommentaire(dto.getCommentaire());
 
 		titreRepasDemande.getEtats().add(etat);
 
@@ -960,6 +961,43 @@ public class TitreRepasService implements ITitreRepasService {
 				RefEtatDto dto = new RefEtatDto(etat);
 				result.add(dto);
 			}
+		}
+
+		return result;
+	}
+
+	@Override
+	public List<TitreRepasDemandeDto> getTitreRepasArchives(Integer idTrDemande) {
+
+		List<TitreRepasDemandeDto> result = new ArrayList<TitreRepasDemandeDto>();
+		TitreRepasDemande titre = titreRepasRepository.getTitreRepasDemandeById(idTrDemande);
+
+		// optimisation performances
+		Map<Integer, AgentWithServiceDto> mapAgentDto = new HashMap<Integer, AgentWithServiceDto>();
+
+		for (TitreRepasEtatDemande etat : titre.getEtats()) {
+
+			AgentWithServiceDto agDto = null;
+			if (mapAgentDto.containsKey(titre.getIdAgent())) {
+				agDto = mapAgentDto.get(titre.getIdAgent());
+			} else {
+				agDto = sirhWsConsumer.getAgentService(titre.getIdAgent(), new Date());
+				mapAgentDto.put(titre.getIdAgent(), agDto);
+			}
+
+			TitreRepasDemandeDto dto = new TitreRepasDemandeDto(titre, agDto);
+
+			AgentWithServiceDto opeDto = null;
+			if (mapAgentDto.containsKey(etat.getIdAgent())) {
+				opeDto = mapAgentDto.get(etat.getIdAgent());
+			} else {
+				opeDto = sirhWsConsumer.getAgentService(etat.getIdAgent(), new Date());
+				mapAgentDto.put(etat.getIdAgent(), opeDto);
+			}
+
+			dto.updateEtat(etat, opeDto);
+			dto.setAgent(agDto);
+			result.add(dto);
 		}
 
 		return result;

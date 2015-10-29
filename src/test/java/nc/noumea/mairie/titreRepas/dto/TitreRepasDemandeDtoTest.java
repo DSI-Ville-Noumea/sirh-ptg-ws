@@ -22,22 +22,23 @@ public class TitreRepasDemandeDtoTest {
 		etat.setEtat(EtatPointageEnum.SAISI);
 		etat.setDateMaj(new Date());
 		etat.setCommande(false);
+		etat.setCommentaire("commentaire");
 		
 		TitreRepasDemande titreRepasDemande = new TitreRepasDemande();
 		titreRepasDemande.setIdTrDemande(10);
 		titreRepasDemande.setIdAgent(9005138);
 		titreRepasDemande.setCommande(true);
-		titreRepasDemande.setCommentaire("commentaire");
 		titreRepasDemande.getEtats().add(etat);
 		
 		AgentWithServiceDto ag = new AgentWithServiceDto();
 		ag.setIdAgent(9005138);
 		
 		TitreRepasDemandeDto dto = new TitreRepasDemandeDto(titreRepasDemande, ag);
+		dto.updateEtat(etat, ag);
 		
 		assertEquals(dto.getIdTrDemande(), titreRepasDemande.getIdTrDemande());
 		assertEquals(dto.getAgent().getIdAgent(), titreRepasDemande.getIdAgent());
 		assertEquals(dto.getCommande(), titreRepasDemande.getCommande());
-		assertEquals(dto.getCommentaire(), titreRepasDemande.getCommentaire());
+		assertEquals(dto.getCommentaire(), etat.getCommentaire());
 	}
 }

@@ -25,39 +25,35 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "PTG_TR_DEMANDE")
 @NamedQueries({
-	@NamedQuery(name = "getTitreRepasDemandeForAgentAndDateMonthByIdDesc", query = "select tr from TitreRepasDemande tr LEFT JOIN FETCH tr.etats where tr.idAgent = :idAgent and tr.dateMonth = :dateMonth order by tr.idTrDemande desc"),
-	@NamedQuery(name = "getListTitreRepasDemandeByAgentsAndDate", query = "select tr from TitreRepasDemande tr LEFT JOIN FETCH tr.etats where tr.idAgent in :idAgents and tr.dateMonth >= :fromDate and tr.dateMonth < :toDate order by tr.idTrDemande desc") 
-})
+		@NamedQuery(name = "getTitreRepasDemandeForAgentAndDateMonthByIdDesc", query = "select tr from TitreRepasDemande tr LEFT JOIN FETCH tr.etats where tr.idAgent = :idAgent and tr.dateMonth = :dateMonth order by tr.idTrDemande desc"),
+		@NamedQuery(name = "getListTitreRepasDemandeByAgentsAndDate", query = "select tr from TitreRepasDemande tr LEFT JOIN FETCH tr.etats where tr.idAgent in :idAgents and tr.dateMonth >= :fromDate and tr.dateMonth < :toDate order by tr.idTrDemande desc") })
 public class TitreRepasDemande {
 
-	@Id 
+	@Id
 	@Column(name = "ID_TR_DEMANDE")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer idTrDemande;
-	
+
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
-	
-    @NotNull
-    @Column(name = "DATE_MONTH", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date dateMonth;
+
+	@NotNull
+	@Column(name = "DATE_MONTH", nullable = false)
+	@Temporal(TemporalType.DATE)
+	private Date dateMonth;
 
 	@Column(name = "COMMANDE")
 	private Boolean commande;
-	
-	@Column(name = "COMMENTAIRE", columnDefinition="text")
-	private String commentaire;
 
 	@OneToMany(mappedBy = "titreRepasDemande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.PERSIST)
 	@OrderBy("idTrEtatDemande desc")
 	private List<TitreRepasEtatDemande> etats = new ArrayList<TitreRepasEtatDemande>();
-	
+
 	@Version
-    @Column(name = "version")
+	@Column(name = "version")
 	private Integer version;
-	
+
 	@Transient
 	public TitreRepasEtatDemande getLatestEtatTitreRepasDemande() {
 		return etats.iterator().next();
@@ -93,14 +89,6 @@ public class TitreRepasDemande {
 
 	public void setCommande(Boolean commande) {
 		this.commande = commande;
-	}
-
-	public String getCommentaire() {
-		return commentaire;
-	}
-
-	public void setCommentaire(String commentaire) {
-		this.commentaire = commentaire;
 	}
 
 	public List<TitreRepasEtatDemande> getEtats() {

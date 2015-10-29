@@ -111,8 +111,19 @@ public interface ITitreRepasService {
 	/**
 	 * Genere l etat du payeur des Titres Repas.
 	 * 
-	 * @param idAgentConnecte Integer
+	 * @param idAgentConnecte
+	 *            Integer
 	 * @return ReturnMessageDto
 	 */
 	ReturnMessageDto generateListTitreRepas(Integer idAgentConnecte);
+
+	/**
+	 * Retourne l'historique d'une demande de titre repas
+	 * 
+	 * @param idTrDemande
+	 *            Integer
+	 * 
+	 * @return List<TitreRepasDemandeDto>
+	 */
+	List<TitreRepasDemandeDto> getTitreRepasArchives(Integer idTrDemande);
 }

@@ -1,11 +1,14 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
 
@@ -14,11 +17,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import flexjson.JSONDeserializer;
 
 @Controller
 @RequestMapping("/titreRepas")
@@ -31,6 +37,9 @@ public class TitreRepasController {
 
 	@Autowired
 	private IAgentMatriculeConverterService agentMatriculeConverterService;
+
+	@Autowired
+	private IAccessRightsService accessRightService;
 
 	/**
 	 * Enregistre une liste de demande de Titre Repas depuis le Kiosque RH
@@ -50,7 +59,10 @@ public class TitreRepasController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, value = "/enregistreListTitreDemande", produces = "application/json;charset=utf-8", consumes = "application/json")
 	public ReturnMessageDto enregistreListTitreDemande(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
-			@RequestParam(required = true, value = "isFromSIRH") boolean isFromSIRH, @RequestBody(required = true) List<TitreRepasDemandeDto> listTitreRepasDemandeDto) {
+			@RequestParam(required = true, value = "isFromSIRH") boolean isFromSIRH, @RequestBody(required = true) String listTitreRepas) {
+
+		List<TitreRepasDemandeDto> listTitreRepasDemandeDto = new JSONDeserializer<List<TitreRepasDemandeDto>>().use(null, ArrayList.class).use(Date.class, new MSDateTransformer())
+				.use("values", TitreRepasDemandeDto.class).deserialize(listTitreRepas);
 
 		logger.debug("entered POST [titreRepas/enregistreListTitreDemande] => enregistreListTitreDemande with parameters idAgentConnecte = {}, isFromSIRH = {} and listTitreRepasDemandeDto.size = {}",
 				idAgentConnecte, isFromSIRH, listTitreRepasDemandeDto.size());
@@ -139,8 +151,18 @@ public class TitreRepasController {
 	@RequestMapping(value = "/getEtats", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	public List<RefEtatDto> getEtats() {
 
-		logger.debug("entered GET [filtres/getEtats] => getEtats");
+		logger.debug("entered GET [titreRepas/getEtats] => getEtats");
 
 		return titreRepasService.getListRefEtats();
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/historique", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public List<TitreRepasDemandeDto> getTitreRepasArchives(@RequestParam(required = true, value = "idTrDemande") Integer idTrDemande) {
+
+		logger.debug("entered GET [titreRepas/historique] => getTitreRepasArchives with parameters idTrDemande = {}", idTrDemande);
+
+		return titreRepasService.getTitreRepasArchives(idTrDemande);
 	}
 }

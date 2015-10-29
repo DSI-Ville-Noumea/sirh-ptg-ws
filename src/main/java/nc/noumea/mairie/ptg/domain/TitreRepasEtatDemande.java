@@ -40,6 +40,9 @@ public class TitreRepasEtatDemande {
 	@Enumerated(EnumType.ORDINAL)
 	private EtatPointageEnum etat;
 	
+	@Column(name = "COMMENTAIRE", columnDefinition="text")
+	private String commentaire;
+	
 	@NotNull
 	@Column(name = "ID_AGENT")
 	private Integer idAgent;
@@ -107,6 +110,14 @@ public class TitreRepasEtatDemande {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public String getCommentaire() {
+		return commentaire;
+	}
+
+	public void setCommentaire(String commentaire) {
+		this.commentaire = commentaire;
 	}
 	
 }

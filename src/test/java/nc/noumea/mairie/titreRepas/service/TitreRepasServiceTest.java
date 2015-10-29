@@ -1021,8 +1021,6 @@ public class TitreRepasServiceTest {
 		Mockito.when(accessRightsService.isUserOperateur(idAgentConnecte)).thenReturn(false);
 
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
-		
-		
 
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, Arrays.asList(dto));
 
@@ -1829,7 +1827,7 @@ public class TitreRepasServiceTest {
 
 		assertEquals(demandeTR.getEtats().get(1).getEtat(), EtatPointageEnum.APPROUVE);
 		assertEquals(demandeTR.getEtats().get(1).getIdAgent(), idAgentConnecte);
-		assertEquals(demandeTR.getCommentaire(), dto.getCommentaire());
+		assertEquals(demandeTR.getEtats().get(1).getCommentaire(), dto.getCommentaire());
 		assertTrue(demandeTR.getEtats().get(1).getCommande());
 
 		// on rejette
@@ -1842,7 +1840,7 @@ public class TitreRepasServiceTest {
 
 		assertEquals(demandeTR.getEtats().get(2).getEtat(), EtatPointageEnum.REJETE);
 		assertEquals(demandeTR.getEtats().get(2).getIdAgent(), idAgentConnecte);
-		assertEquals(demandeTR.getCommentaire(), "commentaire 2");
+		assertEquals(demandeTR.getEtats().get(2).getCommentaire(), "commentaire 2");
 		assertTrue(demandeTR.getEtats().get(2).getCommande());
 	}
 

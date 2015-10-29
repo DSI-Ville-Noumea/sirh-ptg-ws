@@ -1,6 +1,5 @@
 package nc.noumea.mairie.titreRepas.dto;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
@@ -12,12 +11,7 @@ import nc.noumea.mairie.ptg.dto.JsonDateSerializer;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-public class TitreRepasDemandeDto implements Serializable {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1727622068229921626L;
+public class TitreRepasDemandeDto {
 
 	private Integer idTrDemande;
 	private AgentWithServiceDto agent;
@@ -42,13 +36,13 @@ public class TitreRepasDemandeDto implements Serializable {
 		this.agent = agent;
 		this.dateMonth = titreRepasDemande.getDateMonth();
 		this.commande = titreRepasDemande.getCommande();
-		this.commentaire = titreRepasDemande.getCommentaire();
 	}
 
 	public void updateEtat(TitreRepasEtatDemande etat, AgentWithServiceDto ope) {
 		idRefEtat = etat.getEtat().getCodeEtat();
 		dateSaisie = etat.getDateMaj();
 		operateur = ope;
+		commentaire = etat.getCommentaire();
 	}
 
 	public Integer getIdTrDemande() {
@@ -105,6 +99,14 @@ public class TitreRepasDemandeDto implements Serializable {
 
 	public void setOperateur(AgentWithServiceDto operateur) {
 		this.operateur = operateur;
+	}
+
+	public Date getDateSaisie() {
+		return dateSaisie;
+	}
+
+	public void setDateSaisie(Date dateSaisie) {
+		this.dateSaisie = dateSaisie;
 	}
 
 }
