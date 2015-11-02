@@ -12,11 +12,9 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
 public interface IApprobationService {
 
-	List<ConsultPointageDto> getPointages(Integer idAgent, Date from, Date to, Integer idServiceAds, Integer agent,
-			Integer idRefEtat, Integer idRefType, String typeHS);
+	List<ConsultPointageDto> getPointages(Integer idAgent, Date from, Date to, Integer idServiceAds, Integer agent, Integer idRefEtat, Integer idRefType, String typeHS);
 
-	List<ConsultPointageDto> getPointagesSIRH(Date from, Date to, List<Integer> idAgents, Integer idRefEtat,
-			Integer idRefType, String typeHS);
+	List<ConsultPointageDto> getPointagesSIRH(Date from, Date to, List<Integer> idAgents, Integer idRefEtat, Integer idRefType, String typeHS, Date dateEtat);
 
 	List<ConsultPointageDto> getPointagesArchives(Integer idAgent, Integer idPointage);
 
@@ -28,6 +26,5 @@ public interface IApprobationService {
 
 	List<AgentDto> listerTousAgentsPointages();
 
-	void addRecuperationToAgent(EtatPointageEnum targetEtat,
-			Pointage ptg);
+	void addRecuperationToAgent(EtatPointageEnum targetEtat, Pointage ptg);
 }

@@ -49,8 +49,7 @@ public class PointageRepository implements IPointageRepository {
 	@Override
 	public List<RefPrime> getRefPrimesListForAgent(AgentStatutEnum statut) {
 
-		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getListPrimesWithStatusByIdDesc",
-				RefPrime.class);
+		TypedQuery<RefPrime> query = ptgEntityManager.createNamedQuery("getListPrimesWithStatusByIdDesc", RefPrime.class);
 		query.setParameter("statut", statut);
 		return query.getResultList();
 	}
@@ -76,8 +75,7 @@ public class PointageRepository implements IPointageRepository {
 	@Override
 	public List<Pointage> getPointagesForAgentAndDateOrderByIdDesc(int idAgent, Date dateLundi) {
 
-		TypedQuery<Pointage> query = ptgEntityManager.createNamedQuery("getPointageForAgentAndDateLundiByIdDesc",
-				Pointage.class);
+		TypedQuery<Pointage> query = ptgEntityManager.createNamedQuery("getPointageForAgentAndDateLundiByIdDesc", Pointage.class);
 		query.setParameter("idAgent", idAgent);
 		query.setParameter("dateLundi", dateLundi);
 
@@ -87,11 +85,9 @@ public class PointageRepository implements IPointageRepository {
 	@Override
 	public List<Pointage> getPointageArchives(Integer idPointage) {
 
-		Query q = ptgEntityManager
-				.createNativeQuery(
-						"WITH RECURSIVE pointagearchive AS ( (SELECT t1.* FROM PTG_POINTAGE t1 WHERE t1.ID_POINTAGE = :idPointage ) "
-								+ "UNION ALL ( SELECT t2.* FROM PTG_POINTAGE AS t2 JOIN pointagearchive AS t3 ON (t2.ID_POINTAGE = t3.ID_POINTAGE_PARENT) ) ) "
-								+ "SELECT * FROM pointagearchive order by ID_POINTAGE desc", Pointage.class);
+		Query q = ptgEntityManager.createNativeQuery("WITH RECURSIVE pointagearchive AS ( (SELECT t1.* FROM PTG_POINTAGE t1 WHERE t1.ID_POINTAGE = :idPointage ) "
+				+ "UNION ALL ( SELECT t2.* FROM PTG_POINTAGE AS t2 JOIN pointagearchive AS t3 ON (t2.ID_POINTAGE = t3.ID_POINTAGE_PARENT) ) ) "
+				+ "SELECT * FROM pointagearchive order by ID_POINTAGE desc", Pointage.class);
 		q.setParameter("idPointage", idPointage);
 
 		@SuppressWarnings("unchecked")
@@ -124,7 +120,6 @@ public class PointageRepository implements IPointageRepository {
 
 	@Override
 	public List<Pointage> getListPointages(List<Integer> idAgents, Date fromDate, Date toDate, Integer idRefType) {
-
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(ptg) from Pointage ptg ");
 		sb.append("LEFT JOIN FETCH ptg.etats ");
@@ -192,10 +187,8 @@ public class PointageRepository implements IPointageRepository {
 	@Override
 	public List<PointageCalcule> getPointagesCalculesVentilesForAgent(Integer idAgent, Integer idVentilDate) {
 
-		TypedQuery<PointageCalcule> query = ptgEntityManager
-				.createQuery(
-						"select p from PointageCalcule p where p.idAgent = :idAgent and p.lastVentilDate.idVentilDate = :idVentilDate and p.etat = :etat",
-						PointageCalcule.class);
+		TypedQuery<PointageCalcule> query = ptgEntityManager.createQuery(
+				"select p from PointageCalcule p where p.idAgent = :idAgent and p.lastVentilDate.idVentilDate = :idVentilDate and p.etat = :etat", PointageCalcule.class);
 		query.setParameter("idAgent", idAgent);
 		query.setParameter("idVentilDate", idVentilDate);
 		query.setParameter("etat", EtatPointageEnum.VENTILE);
@@ -295,9 +288,7 @@ public class PointageRepository implements IPointageRepository {
 		sb.append(" ) GROUP BY idAgent ");
 
 		@SuppressWarnings("unchecked")
-		List<Integer> result = ptgEntityManager.createNativeQuery(sb.toString())
-				.setParameter("SAISIE", EtatPointageEnum.SAISI.getCodeEtat()).setParameter("DATE_JOUR", new Date())
-				.getResultList();
+		List<Integer> result = ptgEntityManager.createNativeQuery(sb.toString()).setParameter("SAISIE", EtatPointageEnum.SAISI.getCodeEtat()).setParameter("DATE_JOUR", new Date()).getResultList();
 
 		return result;
 	}
@@ -348,13 +339,13 @@ public class PointageRepository implements IPointageRepository {
 
 		return query.getResultList();
 	}
-	
+
 	@Override
 	public PtgComment getCommentaireByText(String text) {
-		
+
 		TypedQuery<PtgComment> query = ptgEntityManager.createNamedQuery("getCommentaireByText", PtgComment.class);
 		query.setParameter("text", text);
-		
+
 		return !query.getResultList().isEmpty() ? query.getResultList().get(0) : null;
 	}
 }

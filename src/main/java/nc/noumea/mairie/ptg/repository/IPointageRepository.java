@@ -61,11 +61,9 @@ public interface IPointageRepository {
 
 	List<Pointage> getListPointagesVerification(Integer idAgent, Date fromDate, Date toDate, Integer idRefType);
 
-	List<Pointage> getPointagesVentilesForAgentByDateLundi(Integer idAgent,
-			Integer idVentilDate, Date dateLundi);
+	List<Pointage> getPointagesVentilesForAgentByDateLundi(Integer idAgent, Integer idVentilDate, Date dateLundi);
 
-	List<Pointage> getListPointages(Integer idAgent, Date dateDebut,
-			Integer idRefType, Integer idRefPrime);
+	List<Pointage> getListPointages(Integer idAgent, Date dateDebut, Integer idRefType, Integer idRefPrime);
 
 	PtgComment getCommentaireByText(String text);
 }
