@@ -43,6 +43,7 @@ public class TitreRepasDemandeDto {
 		dateSaisie = etat.getDateMaj();
 		operateur = ope;
 		commentaire = etat.getCommentaire();
+		this.setCommande(etat.getCommande());
 	}
 
 	public Integer getIdTrDemande() {
