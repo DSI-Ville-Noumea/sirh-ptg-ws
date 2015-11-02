@@ -158,9 +158,9 @@ public class TitreRepasService implements ITitreRepasService {
 		// saisie entre le 1 et le 10
 		// si au dela du 10 du mois, cela ne sert a rien de faire tous les
 		// appels ci-dessous
-		// rmd = checkDateJourBetween1And10ofMonth(rmd);
-		// if (!rmd.getErrors().isEmpty())
-		// return rmd;
+		rmd = checkDateJourBetween1And10ofMonth(rmd);
+		if (!rmd.getErrors().isEmpty())
+			return rmd;
 
 		// ///////////////////////////////////////////////////////////////
 		// /////// on recupere toutes les donnees qui nous interessent ///
@@ -373,10 +373,8 @@ public class TitreRepasService implements ITitreRepasService {
 		List<DroitsAgent> listDroitsAgentTemp = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte);
 		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
 		if (null != idAgent) {
-			if (idAgentConnecte.equals(idAgent)) {
-				AgentWithServiceDto ag = sirhWsConsumer.getAgentService(idAgent, new Date());
-				listAgentServiceDto.add(ag);
-			}
+			AgentWithServiceDto ag = sirhWsConsumer.getAgentService(idAgent, new Date());
+			listAgentServiceDto.add(ag);
 			listIdsAgent.add(idAgent);
 		} else if (null != idServiceADS) {
 			// #18722 : pour chaque agent on va recuperer son
