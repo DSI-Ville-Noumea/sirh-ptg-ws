@@ -257,7 +257,14 @@ public class TitreRepasService implements ITitreRepasService {
 			ReturnMessageDto response = enregistreTitreDemandeOneByOne(idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent, listJourFerieMoisEnCours, affectation, true);
 
 			if (!response.getErrors().isEmpty()) {
-				result.getInfos().addAll(response.getErrors());
+				for(String error : response.getErrors()) {
+					if(error.contains(String.format(TITRE_DEMANDE_DEJA_EXISTANT, dto.getAgent().getIdAgent()))
+							 || error.contains(TITRE_DEMANDE_INEXISTANT)) {
+						result.getErrors().add(error);
+					}else{
+						result.getInfos().add(error);
+					}
+				}
 			}
 			if (!response.getInfos().isEmpty()) {
 				result.getInfos().addAll(response.getInfos());
@@ -405,6 +412,11 @@ public class TitreRepasService implements ITitreRepasService {
 			for (DroitsAgent da : listDroitsAgent) {
 				if (!listIdsAgent.contains(da.getIdAgent()))
 					listIdsAgent.add(da.getIdAgent());
+			}
+		}else{
+			if(null != idAgent) {
+				listIdsAgent = new ArrayList<Integer>();
+				listIdsAgent.add(idAgent);
 			}
 		}
 
@@ -669,9 +681,8 @@ public class TitreRepasService implements ITitreRepasService {
 		if (null != listEtatPayeur && !listEtatPayeur.isEmpty()) {
 			TitreRepasEtatPayeur lastEtatPayeur = listEtatPayeur.get(0);
 
-			DateTime dateEtatPayeur = new DateTime(lastEtatPayeur.getDateEtatPayeur());
+			DateTime dateEtatPayeur = new DateTime(lastEtatPayeur.getDateEdition());
 			if (dateEtatPayeur.isBefore(dateJour) && dateEtatPayeur.getDayOfMonth() < dateJour.getDayOfMonth()) {
-
 				rmd.getErrors().add(DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR);
 			}
 		}
