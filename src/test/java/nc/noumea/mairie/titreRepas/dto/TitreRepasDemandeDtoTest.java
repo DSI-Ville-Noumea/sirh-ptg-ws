@@ -28,6 +28,7 @@ public class TitreRepasDemandeDtoTest {
 		titreRepasDemande.setIdTrDemande(10);
 		titreRepasDemande.setIdAgent(9005138);
 		titreRepasDemande.getEtats().add(etat);
+		titreRepasDemande.setCommande(false);
 
 		AgentWithServiceDto ag = new AgentWithServiceDto();
 		ag.setIdAgent(9005138);
