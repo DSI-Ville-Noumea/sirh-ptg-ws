@@ -340,6 +340,8 @@ public class TitreRepasService implements ITitreRepasService {
 			trDemande.setIdAgent(dto.getAgent().getIdAgent());
 			trDemande.setDateMonth(dto.getDateMonth());
 		}
+		
+		trDemande.setCommande(dto.getCommande());
 
 		TitreRepasEtatDemande etat = new TitreRepasEtatDemande();
 		etat.setCommande(dto.getCommande());
@@ -428,7 +430,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 		// ////////////////// on recupere les demandes //////////////////////
 		List<TitreRepasDemande> listTR = titreRepasRepository.getListTitreRepasDemande(listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
-		
+
+		List<TitreRepasDemandeDto> result = new ArrayList<TitreRepasDemandeDto>();
 		List<Integer> listAgentDtoAppro = new ArrayList<Integer>();
 		if(null == listTR 
 				|| !listTR.isEmpty()) {
@@ -441,10 +444,7 @@ public class TitreRepasService implements ITitreRepasService {
 				}
 			}
 			listAgentServiceDto.addAll(sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, dateJour));
-		}
 		
-		List<TitreRepasDemandeDto> result = new ArrayList<TitreRepasDemandeDto>();
-		if (null != listTR && !listTR.isEmpty()) {
 			for (TitreRepasDemande TR : listTR) {
 				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
 				TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);

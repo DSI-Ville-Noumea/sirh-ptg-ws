@@ -948,7 +948,7 @@ public class TitreRepasServiceTest {
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 24, 0, 0, 0).toDate());
 
 		TitreRepasEtatPayeur etatPayeur = new TitreRepasEtatPayeur();
-		etatPayeur.setDateEtatPayeur(new DateTime(2015, 10, 23, 0, 0, 0).toDate());
+		etatPayeur.setDateEdition(new DateTime(2015, 10, 23, 0, 0, 0).toDate());
 
 		List<TitreRepasEtatPayeur> listEtatPayeur = new ArrayList<TitreRepasEtatPayeur>();
 		listEtatPayeur.add(etatPayeur);
