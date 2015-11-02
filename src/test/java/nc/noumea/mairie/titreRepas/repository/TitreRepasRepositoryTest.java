@@ -40,6 +40,7 @@ public class TitreRepasRepositoryTest {
 		TitreRepasDemande demande = new TitreRepasDemande();
 		demande.setIdAgent(9005138);
 		demande.setDateMonth(dateMonth);
+		demande.setCommande(true);
 
 		TitreRepasEtatDemande etat = new TitreRepasEtatDemande();
 		etat.setCommande(true);
