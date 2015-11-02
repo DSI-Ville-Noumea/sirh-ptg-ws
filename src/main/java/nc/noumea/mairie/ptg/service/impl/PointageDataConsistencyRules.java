@@ -64,15 +64,12 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String ERROR_PRIME_QUANTITE_POINTAGE = "Pour la prime %s du %s, la quantité ne peut être supérieure à 24.";
 	public static final String ERROR_PRIME_EPANDAGE_QUANTITE = "Pour la prime %s du %s, la quantité ne peut être supérieure à 2.";
 
-	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61",
-			"62", "63", "64", "65", "66");
-
+	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-	
+
 	@Override
-	public ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
+	public ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
 
 		double nbHours = 0;
 
@@ -204,8 +201,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkSpabsenMaladie(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages) {
+	public ReturnMessageDto checkSpabsenMaladie(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		Date end = new DateTime(dateLundi).plusDays(7).toDate();
 
@@ -219,8 +215,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
+	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
 
 		// cas de la DPM #11622
 		EntiteDto service = sirhWsConsumer.getAgentDirection(idAgent, dateLundi);
@@ -228,16 +223,13 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
 				// tester si base Z
-				if (null != baseDto
-						&& baseDto.getCodeBaseHorairePointage().equals("00Z")) {
+				if (null != baseDto && baseDto.getCodeBaseHorairePointage().equals("00Z")) {
 					srm.getErrors().add(BASE_HOR_00Z_MSG);
 					return srm;
 				}
 				// cas de la DPM #11622
-				if ((null != service 
-						&& service.getSigle().toUpperCase().equals("DPM")) 
-					|| carr.getSpbarem().getIna() > 315) {
-					
+				if ((null != service && service.getSigle().toUpperCase().equals("DPM")) || carr.getSpbarem().getIna() > 315) {
+
 					ptg.setHeureSupRecuperee(true);
 					return srm;
 				}
@@ -248,13 +240,12 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages, AgentGeneriqueDto ag) {
+	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, AgentGeneriqueDto ag) {
 
-		if(null != pointages) {
-			for(Pointage ptg : pointages) {
+		if (null != pointages) {
+			for (Pointage ptg : pointages) {
 				Spadmn adm = mairieRepository.getAgentCurrentPosition(ag, ptg.getDateDebut());
-	
+
 				if (null == adm || !ACTIVITE_CODES.contains(adm.getCdpadm()))
 					srm.getErrors().add(String.format(INACTIVITE_MSG, sdf.format(ptg.getDateDebut())));
 			}
@@ -264,8 +255,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkPrime7650(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages) {
+	public ReturnMessageDto checkPrime7650(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7650))
@@ -274,10 +264,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
 			if (deb.getDayOfWeek() == DateTimeConstants.SATURDAY || deb.getDayOfWeek() == DateTimeConstants.SUNDAY)
-				srm.getErrors()
-						.add(String
-								.format("La prime 7650 du %s n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.",
-										deb.toString("dd/MM/yyyy")));
+				srm.getErrors().add(String.format("La prime 7650 du %s n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.", deb.toString("dd/MM/yyyy")));
 
 		}
 
@@ -285,8 +272,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkPrime7651(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages) {
+	public ReturnMessageDto checkPrime7651(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7651))
@@ -294,12 +280,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
-			if (deb.getDayOfWeek() != DateTimeConstants.SATURDAY && deb.getDayOfWeek() != DateTimeConstants.SUNDAY
-					&& !sirhWsConsumer.isHoliday(deb) && !sirhWsConsumer.isHoliday(deb.plusDays(1)))
-				srm.getErrors()
-						.add(String
-								.format("La prime 7651 du %s n'est pas valide. Elle ne peut être saisie qu'un samedi et dimanche, ou alors une veille et jour férié.",
-										deb.toString("dd/MM/yyyy")));
+			if (deb.getDayOfWeek() != DateTimeConstants.SATURDAY && deb.getDayOfWeek() != DateTimeConstants.SUNDAY && !sirhWsConsumer.isHoliday(deb) && !sirhWsConsumer.isHoliday(deb.plusDays(1)))
+				srm.getErrors().add(
+						String.format("La prime 7651 du %s n'est pas valide. Elle ne peut être saisie qu'un samedi et dimanche, ou alors une veille et jour férié.", deb.toString("dd/MM/yyyy")));
 
 		}
 
@@ -307,8 +290,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkPrime7652(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages) {
+	public ReturnMessageDto checkPrime7652(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7652))
@@ -317,10 +299,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
 			if (deb.getDayOfWeek() != DateTimeConstants.SUNDAY && !sirhWsConsumer.isHoliday(deb))
-				srm.getErrors()
-						.add(String
-								.format("La prime 7652 du %s n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.",
-										deb.toString("dd/MM/yyyy")));
+				srm.getErrors().add(String.format("La prime 7652 du %s n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.", deb.toString("dd/MM/yyyy")));
 
 		}
 
@@ -328,8 +307,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkPrime7704(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages) {
+	public ReturnMessageDto checkPrime7704(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7704))
@@ -338,9 +316,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
 			if (ptg.getQuantite() > 2)
-				srm.getErrors().add(
-						String.format("La prime 7704 du %s n'est pas valide. Sa quantité ne peut être supérieur à 2.",
-								deb.toString("dd/MM/yyyy")));
+				srm.getErrors().add(String.format("La prime 7704 du %s n'est pas valide. Sa quantité ne peut être supérieur à 2.", deb.toString("dd/MM/yyyy")));
 
 		}
 
@@ -390,8 +366,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	 *            The list of pointages to test the period against
 	 * @return The structure containing the INFO or ERROR messages
 	 */
-	protected ReturnMessageDto checkInterval(ReturnMessageDto srm, String message, Integer start, Integer codem1,
-			Integer end, Integer codem2, List<Pointage> pointages) {
+	protected ReturnMessageDto checkInterval(ReturnMessageDto srm, String message, Integer start, Integer codem1, Integer end, Integer codem2, List<Pointage> pointages) {
 
 		DateTime recupDateDeb = getDateDebut(start, codem1);
 		DateTime recupDateFin = getDateFin(end, codem2);
@@ -408,23 +383,26 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		for (Pointage ptg : pointages) {
 
-			DateTime ptgTimeStart = new DateTime(ptg.getDateDebut());
-			DateTime ptgTimeEnd = new DateTime(ptg.getDateFin() == null ? ptg.getDateDebut() : ptg.getDateFin());
+			// pour chaque pointage on verifie si en conge annuel
+			// si oui, on ajoute des erreurs
+			// #19468 attention on ne check pas les primes
+			if (!RefTypePointageEnum.PRIME.equals(ptg.getTypePointageEnum())) {
+				DateTime ptgTimeStart = new DateTime(ptg.getDateDebut());
+				DateTime ptgTimeEnd = new DateTime(ptg.getDateFin() == null ? ptg.getDateDebut() : ptg.getDateFin());
 
-			Interval pInterval = new Interval(ptgTimeStart, ptgTimeEnd);
+				Interval pInterval = new Interval(ptgTimeStart, ptgTimeEnd);
 
-			if (rInterval.overlaps(pInterval)) {
+				if (rInterval.overlaps(pInterval)) {
 
-				if (ptgTimeStart.dayOfYear().get() == dayOfYearDeb && partialDayDeb
-						|| ptgTimeStart.dayOfYear().get() == dayOfYearFin && partialDayFin
-						|| ptgTimeEnd.dayOfYear().get() == dayOfYearDeb && partialDayDeb
-						|| ptgTimeEnd.dayOfYear().get() == dayOfYearFin && partialDayFin) {
-					if (!srm.getInfos().contains(AVERT_MESSAGE_ABS)) {
-						srm.getInfos().add(AVERT_MESSAGE_ABS);
+					if (ptgTimeStart.dayOfYear().get() == dayOfYearDeb && partialDayDeb || ptgTimeStart.dayOfYear().get() == dayOfYearFin && partialDayFin
+							|| ptgTimeEnd.dayOfYear().get() == dayOfYearDeb && partialDayDeb || ptgTimeEnd.dayOfYear().get() == dayOfYearFin && partialDayFin) {
+						if (!srm.getInfos().contains(AVERT_MESSAGE_ABS)) {
+							srm.getInfos().add(AVERT_MESSAGE_ABS);
+						}
+					} else {
+						String msg = String.format(message, ptgTimeStart.toString("dd/MM/yyyy HH:mm"));
+						srm.getErrors().add(msg);
 					}
-				} else {
-					String msg = String.format(message, ptgTimeStart.toString("dd/MM/yyyy HH:mm"));
-					srm.getErrors().add(msg);
 				}
 			}
 		}
@@ -442,11 +420,11 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
-		
+
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		BaseHorairePointageDto baseDto = sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine);
 		// #19084
-		if(null == baseDto){
+		if (null == baseDto) {
 			srm.getErrors().add(PAS_AFFECTATION_MSG);
 		}
 
@@ -471,8 +449,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkPrime7704(srm, idAgent, dateLundi, pointages);
 	}
 
-	private ReturnMessageDto checkIntervalleDateDebDateFin(ReturnMessageDto srm, Integer idAgent,
-			List<Pointage> pointages) {
+	private ReturnMessageDto checkIntervalleDateDebDateFin(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
 
 		for (Pointage ptg : pointages) {
 			Calendar fin = null;
@@ -488,34 +465,24 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				srm.getErrors().add(String.format(ERROR_DATE_POINTAGE, sdf.format(ptg.getDateDebut())));
 			}
 			// on verif intervalle de 30 min minimum entre les 2 dates
-			if (null != ptg.getRefPrime() && ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES)
-					&& fin != null && (fin.getTimeInMillis() - debut.getTimeInMillis()) < 1800000) {
+			if (null != ptg.getRefPrime() && ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES) && fin != null && (fin.getTimeInMillis() - debut.getTimeInMillis()) < 1800000) {
 				srm.getErrors().add(String.format(ERROR_INTERVALLE_POINTAGE, sdf.format(ptg.getDateDebut())));
 			}
 			// pour les primes
 			if (ptg.getTypePointageEnum().equals(RefTypePointageEnum.PRIME)) {
 				// si 7715 alors saisie j+1 autorisée sinon non
-				if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES)
-						&& ptg.getRefPrime().getNoRubr() != 7715
+				if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES) && ptg.getRefPrime().getNoRubr() != 7715
 						&& debut.get(Calendar.DAY_OF_MONTH) != fin.get(Calendar.DAY_OF_MONTH)) {
-					srm.getErrors().add(
-							String.format(ERROR_PRIME_SAISIE_J1_POINTAGE, ptg.getRefPrime().getLibelle(),
-									sdf.format(ptg.getDateDebut())));
+					srm.getErrors().add(String.format(ERROR_PRIME_SAISIE_J1_POINTAGE, ptg.getRefPrime().getLibelle(), sdf.format(ptg.getDateDebut())));
 					// pour les primes de type NOMBRE_HEURE, la quantite ne doit
 					// pas depasser 24H
-				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES)
-						&& ptg.getQuantite() > 24 * 60) {
-					srm.getErrors().add(
-							String.format(ERROR_PRIME_QUANTITE_POINTAGE, ptg.getRefPrime().getLibelle(),
-									sdf.format(ptg.getDateDebut())));
+				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES) && ptg.getQuantite() > 24 * 60) {
+					srm.getErrors().add(String.format(ERROR_PRIME_QUANTITE_POINTAGE, ptg.getRefPrime().getLibelle(), sdf.format(ptg.getDateDebut())));
 					// PRIME FICTIVE D EPANDAGE pour le SIPRES
 					// ne peut pas depasser 2H
-				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES)
-						&& ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.PRIME_EPANDAGE_7716)
+				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES) && ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.PRIME_EPANDAGE_7716)
 						&& ptg.getQuantite() > 2 * 60) {
-					srm.getErrors().add(
-							String.format(ERROR_PRIME_EPANDAGE_QUANTITE, ptg.getRefPrime().getLibelle(),
-									sdf.format(ptg.getDateDebut())));
+					srm.getErrors().add(String.format(ERROR_PRIME_EPANDAGE_QUANTITE, ptg.getRefPrime().getLibelle(), sdf.format(ptg.getDateDebut())));
 				}
 
 			}
@@ -525,8 +492,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkHeureFinSaisieHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages, Spcarr carr) {
+	public ReturnMessageDto checkHeureFinSaisieHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, Spcarr carr) {
 
 		for (Pointage ptg : pointages) {
 			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
@@ -551,10 +517,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				calDateFinLimite.set(GregorianCalendar.MILLISECOND, 0);
 
 				if (ptg.getDateFin().after(calDateFinLimite.getTime())) {
-					srm.getErrors()
-							.add(String
-									.format("L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser %sh (limite des heures de nuit).",
-											new DateTime(ptg.getDateDebut()).toString("dd/MM/yyyy"), heureFinNuit));
+					srm.getErrors().add(
+							String.format("L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser %sh (limite des heures de nuit).",
+									new DateTime(ptg.getDateDebut()).toString("dd/MM/yyyy"), heureFinNuit));
 				}
 			}
 		}
@@ -581,8 +546,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
+	public ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
 
 		boolean tempsPartiel = carr.getSpbhor().getTaux().intValue() != 1;
 		if (tempsPartiel) {
@@ -603,13 +567,13 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				}
 			}
 
-			//  #18728
+			// #18728
 			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getBaseCalculee()));
 			// base calculee x 20% = HSup autorisees
-			int baseLegaleHsupMax =  (int) weekBase + new Double(weekBase * 0.2).intValue();
+			int baseLegaleHsupMax = (int) weekBase + new Double(weekBase * 0.2).intValue();
 			// mais si temps effectif de travail hebdomadaire > 39h
 			// alors on bloque a 39h
-			baseLegaleHsupMax = baseLegaleHsupMax > 39*60 ? 39*60 : baseLegaleHsupMax;
+			baseLegaleHsupMax = baseLegaleHsupMax > 39 * 60 ? 39 * 60 : baseLegaleHsupMax;
 
 			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > baseLegaleHsupMax) {
 				String nombre = helperService.formatMinutesToString(baseLegaleHsupMax - weekBase + minutesAbsWeek);
