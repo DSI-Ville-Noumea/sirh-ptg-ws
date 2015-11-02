@@ -57,7 +57,7 @@ import com.lowagie.text.DocumentException;
 
 @Service
 public class TitreRepasService implements ITitreRepasService {
-
+	
 	private Logger logger = LoggerFactory.getLogger(TitreRepasService.class);
 
 	@Autowired
@@ -122,9 +122,10 @@ public class TitreRepasService implements ITitreRepasService {
 
 	public static final String ENREGISTREMENT_OK = "La demande est bien enregistrée.";
 	public static final String GENERATION_ETAT_PAYEUR_OK = "L'état payeur des titres repas est bien généré.";
-
+	
 	public static final List<Integer> LIST_PRIMES_PANIER = Arrays.asList(7704, 7713);
 	public static final String CODE_FILIERE_INCENDIE = "I";
+
 
 	/**
 	 * Enregistre une liste de demande de Titre Repas depuis le Kiosque RH.
@@ -353,8 +354,10 @@ public class TitreRepasService implements ITitreRepasService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(Integer idAgentConnecte, Date fromDate, Date toDate, Integer etat, Boolean commande, Date dateMonth, Integer idServiceADS,
-			Integer idAgent) throws AccessForbiddenException {
+	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
+			Integer idAgentConnecte, Date fromDate, Date toDate, 
+			Integer etat, Boolean commande, Date dateMonth, Integer idServiceADS,
+			Integer idAgent, List<Integer> listIdsAgent, Boolean isFromSIRH) throws AccessForbiddenException {
 
 		Date dateJour = new Date();
 		// ///////// TEST de DROIT /////////////////
@@ -366,44 +369,43 @@ public class TitreRepasService implements ITitreRepasService {
 			// => si ce n est pas un utilisateur SIRH
 			throw new AccessForbiddenException(); // => on bloque
 
-		// ///////////////// on recupere la liste d agents
-		// ///////////////////////
+		// ///////////////// on recupere la liste d agents // ///////
 		List<AgentWithServiceDto> listAgentServiceDto = new ArrayList<AgentWithServiceDto>();
-		List<Integer> listIdsAgent = new ArrayList<Integer>();
-		List<DroitsAgent> listDroitsAgentTemp = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte);
-		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
-		if (null != idAgent) {
-			AgentWithServiceDto ag = sirhWsConsumer.getAgentService(idAgent, new Date());
-			listAgentServiceDto.add(ag);
-			listIdsAgent.add(idAgent);
-		} else if (null != idServiceADS) {
-			// #18722 : pour chaque agent on va recuperer son
-			// service
-			List<Integer> listAgentDtoAppro = new ArrayList<Integer>();
-			for (DroitsAgent da : listDroitsAgentTemp) {
-				if (!listAgentDtoAppro.contains(da.getIdAgent()))
-					listAgentDtoAppro.add(da.getIdAgent());
-			}
-			listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, dateJour);
-
-			for (DroitsAgent da : listDroitsAgentTemp) {
-				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, da.getIdAgent());
-				if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceADS.toString())) {
-					listDroitsAgent.add(da);
+		if(null == isFromSIRH 
+				|| !isFromSIRH) {
+			listIdsAgent = new ArrayList<Integer>();
+			List<DroitsAgent> listDroitsAgentTemp = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgentConnecte);
+			List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
+			if (null != idAgent) {
+				if (idAgentConnecte.equals(idAgent)) {
+					AgentWithServiceDto ag = sirhWsConsumer.getAgentService(idAgent, new Date());
+					listAgentServiceDto.add(ag);
 				}
+				listIdsAgent.add(idAgent);
+			} else if (null != idServiceADS) {
+				// #18722 : pour chaque agent on va recuperer son
+				// service
+				List<Integer> listAgentDtoAppro = new ArrayList<Integer>();
+				for (DroitsAgent da : listDroitsAgentTemp) {
+					if (!listAgentDtoAppro.contains(da.getIdAgent()))
+						listAgentDtoAppro.add(da.getIdAgent());
+				}
+				listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, dateJour);
+	
+				for (DroitsAgent da : listDroitsAgentTemp) {
+					AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, da.getIdAgent());
+					if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceADS.toString())) {
+						listDroitsAgent.add(da);
+					}
+				}
+			} else {
+				listDroitsAgent.addAll(listDroitsAgentTemp);
 			}
-		} else {
-			List<Integer> listTemp = new ArrayList<Integer>();
-			for (DroitsAgent da : listDroitsAgentTemp) {
-				listTemp.add(da.getIdAgent());
-			}
-			listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listTemp, dateJour);
-			listDroitsAgent.addAll(listDroitsAgentTemp);
-		}
 
-		for (DroitsAgent da : listDroitsAgent) {
-			if (!listIdsAgent.contains(da.getIdAgent()))
-				listIdsAgent.add(da.getIdAgent());
+			for (DroitsAgent da : listDroitsAgent) {
+				if (!listIdsAgent.contains(da.getIdAgent()))
+					listIdsAgent.add(da.getIdAgent());
+			}
 		}
 
 		// ////////////// on checke les DATES ////////////////////////
@@ -414,23 +416,28 @@ public class TitreRepasService implements ITitreRepasService {
 
 		// ////////////////// on recupere les demandes //////////////////////
 		List<TitreRepasDemande> listTR = titreRepasRepository.getListTitreRepasDemande(listIdsAgent, fromDate, toDate, etat, commande, dateMonth);
-
+		
+		List<Integer> listAgentDtoAppro = new ArrayList<Integer>();
+		if(null == listTR 
+				|| !listTR.isEmpty()) {
+			for(TitreRepasDemande tr : listTR) {
+				if(null == sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, tr.getIdAgent())) {
+					listAgentDtoAppro.add(tr.getIdAgent());
+				}
+				if(null == sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, tr.getLatestEtatTitreRepasDemande().getIdAgent())) {
+					listAgentDtoAppro.add(tr.getLatestEtatTitreRepasDemande().getIdAgent());
+				}
+			}
+			listAgentServiceDto.addAll(sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, dateJour));
+		}
+		
 		List<TitreRepasDemandeDto> result = new ArrayList<TitreRepasDemandeDto>();
-		// optimisation performances
-		Map<Integer, AgentWithServiceDto> mapAgentDto = new HashMap<Integer, AgentWithServiceDto>();
-
 		if (null != listTR && !listTR.isEmpty()) {
 			for (TitreRepasDemande TR : listTR) {
 				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
 				TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);
 
-				AgentWithServiceDto opeDto = null;
-				if (mapAgentDto.containsKey(TR.getLatestEtatTitreRepasDemande().getIdAgent())) {
-					opeDto = mapAgentDto.get(TR.getLatestEtatTitreRepasDemande().getIdAgent());
-				} else {
-					opeDto = sirhWsConsumer.getAgentService(TR.getLatestEtatTitreRepasDemande().getIdAgent(), dateJour);
-					mapAgentDto.put(opeDto.getIdAgent(), opeDto);
-				}
+				AgentWithServiceDto opeDto = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getLatestEtatTitreRepasDemande().getIdAgent());
 				dto.updateEtat(TR.getLatestEtatTitreRepasDemande(), opeDto);
 
 				result.add(dto);
@@ -935,43 +942,43 @@ public class TitreRepasService implements ITitreRepasService {
 	public ReturnMessageDto genereEtatPayeur(Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-
+		
 		// pre requis : verifie les droits
 		ReturnMessageDto messageSIRH = sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte);
 		if (!messageSIRH.getErrors().isEmpty()) {
 			result.getErrors().add(ERREUR_DROIT_AGENT);
 			return result;
 		}
-
+		
 		// 1. on verifie si une paye est en cours
-		if (paieWorkflowService.isCalculSalaireEnCours()) {
+		if(paieWorkflowService.isCalculSalaireEnCours()) {
 			result.getErrors().add(PAIE_EN_COURS);
 			return result;
 		}
-
+		
 		// 2. on recupere la liste des demandes de Titre Repas de ce mois-ci
-		List<TitreRepasDemande> listDemandeTR = titreRepasRepository.getListTitreRepasDemande(null, null, null, EtatPointageEnum.APPROUVE.getCodeEtat(), true,
-				helperService.getDatePremierJourOfMonth(helperService.getCurrentDate()));
-
+		List<TitreRepasDemande> listDemandeTR = titreRepasRepository.getListTitreRepasDemande(
+				null, null, null, EtatPointageEnum.APPROUVE.getCodeEtat(), true, helperService.getDatePremierJourOfMonth(helperService.getCurrentDate()));
+		
 		List<Integer> listIdsAgent = new ArrayList<Integer>();
-		if (null != listDemandeTR) {
-			for (TitreRepasDemande demandeTR : listDemandeTR) {
-				if (!listIdsAgent.contains(demandeTR.getIdAgent()))
+		if(null != listDemandeTR) {
+			for(TitreRepasDemande demandeTR : listDemandeTR) {
+				if(!listIdsAgent.contains(demandeTR.getIdAgent()))
 					listIdsAgent.add(demandeTR.getIdAgent());
 			}
 		}
-
+		
 		Date dateJour = helperService.getCurrentDate();
-
+		
 		List<AgentWithServiceDto> listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listIdsAgent, dateJour);
-
+		
 		List<TitreRepasDemandeDto> listTitreRepasDemandeDto = new ArrayList<TitreRepasDemandeDto>();
-		for (TitreRepasDemande TR : listDemandeTR) {
+		for(TitreRepasDemande TR : listDemandeTR) {
 			AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
 			TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);
 			listTitreRepasDemandeDto.add(dto);
 		}
-
+		
 		// 3. on cree/recupere l état payeur de ce mois-ci
 		TitreRepasEtatPayeur etatPayeurTR = new TitreRepasEtatPayeur();
 		etatPayeurTR.setFichier(String.format("Etat-Payeur-Titre-Repas-%s.pdf", sfd.format(dateJour)));
@@ -979,7 +986,7 @@ public class TitreRepasService implements ITitreRepasService {
 		etatPayeurTR.setDateEtatPayeur(new LocalDate(dateJour).withDayOfMonth(1).toDate());
 		etatPayeurTR.setIdAgent(idAgentConnecte);
 		etatPayeurTR.setDateEdition(dateJour);
-
+		
 		// 4. generer le fichier d'état du payeur des TR
 		try {
 			reportingService.downloadEtatPayeurTitreRepas(etatPayeurTR, listTitreRepasDemandeDto);
@@ -996,12 +1003,12 @@ public class TitreRepasService implements ITitreRepasService {
 			result.getErrors().add("Une erreur est survenue lors de la génération de l'état payeur des titres repas.");
 			return result;
 		}
-
+		
 		// 5. generer une charge dans l AS400
-
+		
 		// 6. passer les demandes a l etat JOURNALISE
-		if (null != listDemandeTR) {
-			for (TitreRepasDemande demandeTR : listDemandeTR) {
+		if(null != listDemandeTR) {
+			for(TitreRepasDemande demandeTR : listDemandeTR) {
 				TitreRepasEtatDemande etat = new TitreRepasEtatDemande();
 				etat.setCommande(demandeTR.getCommande());
 				etat.setDateMaj(new Date());

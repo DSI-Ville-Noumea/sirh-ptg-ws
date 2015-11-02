@@ -62,7 +62,8 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 		sb.append("LEFT JOIN FETCH tr.etats et0 ");
 		sb.append("where 1=1 ");
 		
-		if (null != listIdsAgent) {
+		if (null != listIdsAgent
+				&& !listIdsAgent.isEmpty()) {
 			sb.append("and tr.idAgent in :listIdsAgent ");
 		}
 
@@ -77,8 +78,7 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 			sb.append("and et0.etat = :etat ");
 		}
 		if (null != commande) {
-			sb.append("and et0 in ( select max(et) from TitreRepasEtatDemande et group by et.titreRepasDemande ) ");
-			sb.append("and et0.commande = :commande ");
+			sb.append("and tr.commande = :commande ");
 		}
 		if (null != dateMonth) {
 			sb.append("and tr.dateMonth = :dateMonth ");
@@ -88,7 +88,8 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 
 		TypedQuery<TitreRepasDemande> query = ptgEntityManager.createQuery(sb.toString(), TitreRepasDemande.class);
 		
-		if (null != listIdsAgent) {
+		if (null != listIdsAgent
+				&& !listIdsAgent.isEmpty()) {
 			query.setParameter("listIdsAgent", listIdsAgent);
 		}
 		if (null != fromDate) {

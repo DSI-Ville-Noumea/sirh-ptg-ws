@@ -96,21 +96,29 @@ public class TitreRepasController {
 	 * @return List<TitreRepasDemandeDto> liste de demandes de Titre Repas
 	 */
 	@ResponseBody
-	@RequestMapping(method = RequestMethod.GET, value = "/listTitreRepas", produces = "application/json;charset=utf-8", consumes = "application/json")
-	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
+	@RequestMapping(method = RequestMethod.GET, value = "/listTitreRepas", produces = "application/json;charset=utf-8")
+	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
+			@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
 			@RequestParam(required = false, value = "fromDate") @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
-			@RequestParam(required = false, value = "toDate") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, @RequestParam(required = false, value = "etat") Integer etat,
-			@RequestParam(required = false, value = "commande") Boolean commande, @RequestParam(required = false, value = "dateMonth") @DateTimeFormat(pattern = "yyyyMMdd") Date dateMonth,
-			@RequestParam(required = false, value = "idServiceADS") Integer idServiceADS, @RequestParam(required = false, value = "idAgent") Integer idAgent) {
+			@RequestParam(required = false, value = "toDate") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, 
+			@RequestParam(required = false, value = "etat") Integer etat,
+			@RequestParam(required = false, value = "commande") Boolean commande, 
+			@RequestParam(required = false, value = "dateMonth") @DateTimeFormat(pattern = "yyyyMMdd") Date dateMonth,
+			@RequestParam(required = false, value = "idServiceADS") Integer idServiceADS, 
+			@RequestParam(required = false, value = "idAgent") Integer idAgent,
+			@RequestParam(required = false, value = "listIdsAgent") List<Integer> listIdsAgent,
+			@RequestParam(required = false, value = "isFromSIRH") Boolean isFromSIRH) {
 
 		logger.debug(
-				"entered GET [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {}",
-				idAgentConnecte, fromDate, toDate, idServiceADS, idAgent, etat, commande, dateMonth);
+				"entered GET [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, "
+				+ "from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {} and isFromSIRH = {}",
+				idAgentConnecte, fromDate, toDate, idServiceADS, idAgent, etat, commande, dateMonth, isFromSIRH);
 
 		Integer convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
 		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		return titreRepasService.getListTitreRepasDemandeDto(convertedIdAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS, convertedIdAgent);
+		return titreRepasService.getListTitreRepasDemandeDto(convertedIdAgentConnecte, fromDate, toDate, etat, commande, 
+				dateMonth, idServiceADS, convertedIdAgent, listIdsAgent, isFromSIRH);
 	}
 
 	/**

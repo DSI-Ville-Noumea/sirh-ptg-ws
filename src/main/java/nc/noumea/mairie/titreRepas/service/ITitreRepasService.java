@@ -51,9 +51,14 @@ public interface ITitreRepasService {
 	 *            Boolean
 	 * @param dateMonth
 	 *            Date
+	 * @param listIdsAgent
+	 *            List<Integer>
 	 * @return List<TitreRepasDemandeDto>
 	 */
-	List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(Integer idAgentConnecte, Date fromDate, Date toDate, Integer etat, Boolean commande, Date dateMonth, Integer idServiceADS, Integer idAgent)
+	List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
+			Integer idAgentConnecte, Date fromDate, Date toDate, Integer etat,
+			Boolean commande, Date dateMonth, Integer idServiceADS,
+			Integer idAgent, List<Integer> listIdsAgent, Boolean isFromSIRH)
 			throws AccessForbiddenException;
 
 	/**
