@@ -1900,7 +1900,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 
 		try {
-			service.getListTitreRepasDemandeDto(idAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS, idAgent);
+			service.getListTitreRepasDemandeDto(idAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS, idAgent, null, false);
 		} catch (AccessForbiddenException e) {
 			return;
 		}
