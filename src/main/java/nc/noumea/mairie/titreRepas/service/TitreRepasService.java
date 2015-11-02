@@ -119,6 +119,7 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String ERROR_ETAT_DEMANDE = "Vous ne pouvez pas %s une demande de titre repas à l'état %s.";
 	public static final String NOUVELLE_ETAT_INCORRECT = "Le nouvel état de la demande de titre repas est incorrect.";
 	public static final String PAIE_EN_COURS = "Génération impossible. Une paie est en cours sous l'AS400.";
+	public static final String MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE = "Vous ne pouvez pas modifier une demande journalisée.";
 
 	public static final String ENREGISTREMENT_OK = "La demande est bien enregistrée.";
 	public static final String GENERATION_ETAT_PAYEUR_OK = "L'état payeur des titres repas est bien généré.";
@@ -322,6 +323,10 @@ public class TitreRepasService implements ITitreRepasService {
 
 			if (null == trDemande) {
 				result.getErrors().add(TITRE_DEMANDE_INEXISTANT);
+				return result;
+			}
+			if(EtatPointageEnum.JOURNALISE.equals(trDemande.getLatestEtatTitreRepasDemande().getEtat())) {
+				result.getErrors().add(MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE);
 				return result;
 			}
 		} else {
