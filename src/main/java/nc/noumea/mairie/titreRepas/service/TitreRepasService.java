@@ -461,9 +461,30 @@ public class TitreRepasService implements ITitreRepasService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<TitreRepasEtatPayeurDto> getListTitreRepasEtatPayeurDto() {
-		// TODO
-		return null;
+	public List<TitreRepasEtatPayeurDto> getListTitreRepasEtatPayeurDto(Integer idAgentConnecte) {
+		
+		// //// Verifie les droits ////////
+		ReturnMessageDto messageSIRH = sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte);
+		if (!messageSIRH.getErrors().isEmpty()) {
+			throw new AccessForbiddenException();
+		}
+		
+		List<TitreRepasEtatPayeurDto> result = new ArrayList<TitreRepasEtatPayeurDto>();
+		
+		List<TitreRepasEtatPayeur> listEtatPayeur = titreRepasRepository.getListTitreRepasEtatPayeur();
+		
+		if(null != listEtatPayeur) {
+			for(TitreRepasEtatPayeur etatPayeur : listEtatPayeur) {
+				TitreRepasEtatPayeurDto dto = new TitreRepasEtatPayeurDto(etatPayeur);
+				
+				AgentWithServiceDto agent = sirhWsConsumer.getAgentService(etatPayeur.getIdAgent(), new Date());
+				dto.setAgent(agent);
+				
+				result.add(dto);
+			}
+		}
+		
+		return result;
 	}
 
 	/**

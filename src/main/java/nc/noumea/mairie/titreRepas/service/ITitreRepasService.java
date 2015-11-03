@@ -64,9 +64,11 @@ public interface ITitreRepasService {
 	/**
 	 * Retourne la liste des Etat Payeur de Titre Repas
 	 * 
+	 * @param idAgentConnecte
+	 *            Integer
 	 * @return List<TitreRepasEtatPayeurDto>
 	 */
-	List<TitreRepasEtatPayeurDto> getListTitreRepasEtatPayeurDto();
+	List<TitreRepasEtatPayeurDto> getListTitreRepasEtatPayeurDto(Integer idAgentConnecte);
 
 	/**
 	 * Mets a jour l etat d une liste de demande de Titre Repas. Si on veut
@@ -132,5 +134,11 @@ public interface ITitreRepasService {
 	 */
 	List<TitreRepasDemandeDto> getTitreRepasArchives(Integer idTrDemande);
 
+	/**
+	 * Retourne la liste des mois où des demandes de titre repas ont été saisies
+	 * sur un maximum de 12 mois glissants
+	 * 
+	 * @return List<Date>
+	 */
 	List<Date> getListeMoisTitreRepasSaisie();
 }

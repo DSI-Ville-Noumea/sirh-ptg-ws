@@ -10,6 +10,7 @@ import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
+import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurDto;
 import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
 
 import org.slf4j.Logger;
@@ -206,5 +207,23 @@ public class TitreRepasController {
 
 		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(result);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
+	}
+	
+	/**
+	 * Retourne la liste des états payeur de Titre Repas.
+	 * 
+	 * @param idAgentConnecte
+	 *            Integer
+	 * @return List<TitreRepasDemandeDto> liste de demandes de Titre Repas
+	 */
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.GET, value = "/listTitreRepasEtatPayeur", produces = "application/json;charset=utf-8")
+	public List<TitreRepasEtatPayeurDto> getListTitreRepasEtatPayeurDto(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte) {
+
+		logger.debug("entered GET [titreRepas/listTitreRepasEtatPayeur] => getListTitreRepasEtatPayeurDto with parameters parameters idAgentConnecte = {}", idAgentConnecte);
+
+		Integer convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
+
+		return titreRepasService.getListTitreRepasEtatPayeurDto(convertedIdAgentConnecte);
 	}
 }
