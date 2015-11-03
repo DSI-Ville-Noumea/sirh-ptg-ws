@@ -1153,7 +1153,7 @@ public class TitreRepasServiceTest {
 		listTitreRepasDemande.add(new TitreRepasDemande());
 
 		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
-		Mockito.when(titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, dto.getIdRefEtat(), null, dto.getDateMonth())).thenReturn(
+		Mockito.when(titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, null, null, dto.getDateMonth())).thenReturn(
 				listTitreRepasDemande);
 
 		ReflectionTestUtils.setField(service, "helperService", helperService);

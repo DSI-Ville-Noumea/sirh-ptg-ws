@@ -330,7 +330,7 @@ public class TitreRepasService implements ITitreRepasService {
 			}
 		} else {
 			// on verifie qu une demande n existe pas
-			List<TitreRepasDemande> listTitreRepasDemande = titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, dto.getIdRefEtat(), null,
+			List<TitreRepasDemande> listTitreRepasDemande = titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, null, null,
 					dto.getDateMonth());
 
 			if (null != listTitreRepasDemande && !listTitreRepasDemande.isEmpty()) {
