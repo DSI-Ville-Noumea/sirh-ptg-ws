@@ -111,4 +111,16 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 		return query.getResultList();
 	}
 
+	@Override
+	public List<Date> getListeMoisTitreRepasSaisie() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(c.dateMonth) from TitreRepasDemande c ");
+		sb.append("order by c.dateMonth desc ");
+
+		TypedQuery<Date> query = ptgEntityManager.createQuery(sb.toString(), Date.class);
+
+		return query.getResultList();
+	}
+
 }

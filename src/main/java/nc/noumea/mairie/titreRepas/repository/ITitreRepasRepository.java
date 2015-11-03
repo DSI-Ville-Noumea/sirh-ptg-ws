@@ -19,5 +19,7 @@ public interface ITitreRepasRepository {
 	void persist(TitreRepasDemande titreRepasDemande);
 
 	TitreRepasDemande getTitreRepasDemandeById(Integer idTrDemande);
+
+	List<Date> getListeMoisTitreRepasSaisie();
 	
 }

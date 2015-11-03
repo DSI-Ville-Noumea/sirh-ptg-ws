@@ -1888,7 +1888,7 @@ public class TitreRepasServiceTest {
 
 		TitreRepasEtatDemande etatSaisi = new TitreRepasEtatDemande();
 		etatSaisi.setEtat(EtatPointageEnum.SAISI);
-		demandeTR.getEtats().add(etatSaisi);		
+		demandeTR.getEtats().add(etatSaisi);
 		demandeTR.getLatestEtatTitreRepasDemande().setCommande(true);
 		demandeTR.setDateMonth(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 
@@ -1982,5 +1982,38 @@ public class TitreRepasServiceTest {
 			return;
 		}
 		fail();
+	}
+
+	@Test
+	public void getListeMoisTitreRepasSaisie_PlusieursMois() {
+		List<Date> list = new ArrayList<Date>();
+		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
+		DateTime dateMonth2 = new DateTime(2014, 11, 1, 0, 0, 0);
+		list.add(dateMonth.toDate());
+		list.add(dateMonth2.toDate());
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getListeMoisTitreRepasSaisie()).thenReturn(list);
+
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+
+		List<Date> result = service.getListeMoisTitreRepasSaisie();
+
+		assertEquals(2, result.size());
+		assertEquals(dateMonth.toDate(), result.get(0));
+		assertEquals(dateMonth2.toDate(), result.get(1));
+	}
+
+	@Test
+	public void getListeMoisTitreRepasSaisie_ZeroMois() {
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getListeMoisTitreRepasSaisie()).thenReturn(new ArrayList<Date>());
+
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+
+		List<Date> result = service.getListeMoisTitreRepasSaisie();
+
+		assertEquals(0, result.size());
 	}
 }

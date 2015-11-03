@@ -16,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 
 @Controller
 @RequestMapping("/titreRepas")
@@ -97,28 +100,21 @@ public class TitreRepasController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "/listTitreRepas", produces = "application/json;charset=utf-8")
-	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
-			@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
+	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
 			@RequestParam(required = false, value = "fromDate") @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
-			@RequestParam(required = false, value = "toDate") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, 
-			@RequestParam(required = false, value = "etat") Integer etat,
-			@RequestParam(required = false, value = "commande") Boolean commande, 
-			@RequestParam(required = false, value = "dateMonth") @DateTimeFormat(pattern = "yyyyMMdd") Date dateMonth,
-			@RequestParam(required = false, value = "idServiceADS") Integer idServiceADS, 
-			@RequestParam(required = false, value = "idAgent") Integer idAgent,
-			@RequestParam(required = false, value = "listIdsAgent") List<Integer> listIdsAgent,
-			@RequestParam(required = false, value = "isFromSIRH") Boolean isFromSIRH) {
+			@RequestParam(required = false, value = "toDate") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, @RequestParam(required = false, value = "etat") Integer etat,
+			@RequestParam(required = false, value = "commande") Boolean commande, @RequestParam(required = false, value = "dateMonth") @DateTimeFormat(pattern = "yyyyMMdd") Date dateMonth,
+			@RequestParam(required = false, value = "idServiceADS") Integer idServiceADS, @RequestParam(required = false, value = "idAgent") Integer idAgent,
+			@RequestParam(required = false, value = "listIdsAgent") List<Integer> listIdsAgent, @RequestParam(required = false, value = "isFromSIRH") Boolean isFromSIRH) {
 
-		logger.debug(
-				"entered GET [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, "
-				+ "from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {} and isFromSIRH = {}",
-				idAgentConnecte, fromDate, toDate, idServiceADS, idAgent, etat, commande, dateMonth, isFromSIRH);
+		logger.debug("entered GET [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, "
+				+ "from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {} and isFromSIRH = {}", idAgentConnecte, fromDate, toDate, idServiceADS, idAgent,
+				etat, commande, dateMonth, isFromSIRH);
 
 		Integer convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
 		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		return titreRepasService.getListTitreRepasDemandeDto(convertedIdAgentConnecte, fromDate, toDate, etat, commande, 
-				dateMonth, idServiceADS, convertedIdAgent, listIdsAgent, isFromSIRH);
+		return titreRepasService.getListTitreRepasDemandeDto(convertedIdAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS, convertedIdAgent, listIdsAgent, isFromSIRH);
 	}
 
 	/**
@@ -167,7 +163,8 @@ public class TitreRepasController {
 	/**
 	 * Retourne l'historique des états d'une demande de Titre Repas.
 	 * 
-	 * @param idTrDemande Integer
+	 * @param idTrDemande
+	 *            Integer
 	 * @return List<TitreRepasDemandeDto>
 	 */
 	@ResponseBody
@@ -193,5 +190,21 @@ public class TitreRepasController {
 		logger.debug("entered GET [titreRepas/historique] => getTitreRepasArchives with parameters idTrDemande = {}", idAgentConnecte);
 
 		return titreRepasService.genereEtatPayeur(idAgentConnecte);
+	}
+
+	/**
+	 * Pour connaire sur les mois sur lesquels une demande de titre Repas est
+	 * saisie
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getListeMoisTitreRepasSaisie", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public ResponseEntity<String> getListeMoisTitreRepasSaisie() {
+
+		logger.debug("entered GET [titreRepas/getListeMoisTitreRepasSaisie] => getListeMoisTitreRepasSaisie ");
+
+		List<Date> result = titreRepasService.getListeMoisTitreRepasSaisie();
+
+		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(result);
+		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 }

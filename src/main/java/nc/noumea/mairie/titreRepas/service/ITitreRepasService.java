@@ -131,4 +131,6 @@ public interface ITitreRepasService {
 	 * @return List<TitreRepasDemandeDto>
 	 */
 	List<TitreRepasDemandeDto> getTitreRepasArchives(Integer idTrDemande);
+
+	List<Date> getListeMoisTitreRepasSaisie();
 }

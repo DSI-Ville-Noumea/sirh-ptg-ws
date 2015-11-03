@@ -106,4 +106,45 @@ public class TitreRepasRepositoryTest {
 		assertEquals(2, result.size());
 	}
 
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListeMoisTitreRepasSaisie_0Date() {
+
+		List<Date> result = repository.getListeMoisTitreRepasSaisie();
+
+		assertEquals(result.size(), 0);
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListeMoisTitreRepasSaisie_OK() {
+
+		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
+		DateTime dateMonth2 = new DateTime(2014, 11, 1, 0, 0, 0);
+
+		TitreRepasDemande d3 = new TitreRepasDemande();
+		d3.setDateMonth(dateMonth2.toDate());
+		ptgEntityManager.persist(d3);
+
+		TitreRepasDemande d2 = new TitreRepasDemande();
+		d2.setDateMonth(dateMonth.toDate());
+		ptgEntityManager.persist(d2);
+
+		TitreRepasDemande d = new TitreRepasDemande();
+		d.setDateMonth(dateMonth.toDate());
+		ptgEntityManager.persist(d);
+
+		List<Date> result = repository.getListeMoisTitreRepasSaisie();
+
+		assertEquals(result.size(), 2);
+		assertEquals(dateMonth.toDate(), result.get(0));
+		assertEquals(dateMonth2.toDate(), result.get(1));
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
 }
