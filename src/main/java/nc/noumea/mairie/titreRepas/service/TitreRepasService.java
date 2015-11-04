@@ -122,6 +122,7 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE = "Vous ne pouvez pas modifier une demande journalisée.";
 
 	public static final String ENREGISTREMENT_OK = "La demande est bien enregistrée.";
+	public static final String ENREGISTREMENT_PLURIEL_OK = "Les demandes sont bien enregistrées.";
 	public static final String GENERATION_ETAT_PAYEUR_OK = "L'état payeur des titres repas est bien généré.";
 
 	public static final List<Integer> LIST_PRIMES_PANIER = Arrays.asList(7704, 7713);
@@ -196,7 +197,14 @@ public class TitreRepasService implements ITitreRepasService {
 				result.getErrors().addAll(response.getErrors());
 			}
 			if (!response.getInfos().isEmpty()) {
-				result.getInfos().addAll(response.getInfos());
+				if(!result.getInfos().contains(response.getInfos().get(0))) {
+					result.getInfos().addAll(response.getInfos());
+				}else{
+					if(response.getInfos().get(0).equals(ENREGISTREMENT_OK)){
+						result.getInfos().clear();
+						result.getInfos().add(ENREGISTREMENT_PLURIEL_OK);
+					}
+				}
 			}
 		}
 
@@ -327,6 +335,14 @@ public class TitreRepasService implements ITitreRepasService {
 				result.getErrors().add(MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE);
 				return result;
 			}
+			
+			// si pas de changement, on ne fait rien
+			if(dto.getIdRefEtat().equals(trDemande.getLatestEtatTitreRepasDemande().getEtat().getCodeEtat())
+					&& dto.getCommande().equals(trDemande.getCommande())) {
+				result.getInfos().add(ENREGISTREMENT_OK);
+				return result;
+			}
+			
 		} else {
 			// on verifie qu une demande n existe pas
 			List<TitreRepasDemande> listTitreRepasDemande = titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, null, null, dto.getDateMonth());
