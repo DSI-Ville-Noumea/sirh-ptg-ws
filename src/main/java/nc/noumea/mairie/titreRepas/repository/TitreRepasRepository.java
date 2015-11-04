@@ -28,42 +28,35 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 	public void persist(TitreRepasDemande titreRepasDemande) {
 		ptgEntityManager.persist(titreRepasDemande);
 	}
-	
+
 	@Override
 	public List<TitreRepasEtatPayeur> getListTitreRepasEtatPayeur() {
-		
-		TypedQuery<TitreRepasEtatPayeur> query = ptgEntityManager
-				.createNamedQuery("getListEditionsTitreRepasEtatPayeur", 
-						TitreRepasEtatPayeur.class);
+
+		TypedQuery<TitreRepasEtatPayeur> query = ptgEntityManager.createNamedQuery("getListEditionsTitreRepasEtatPayeur", TitreRepasEtatPayeur.class);
 		return query.getResultList();
 	}
 
 	@Override
-	public TitreRepasEtatPayeur getTitreRepasEtatPayeurById(
-			Integer idTitreRepasEtatPayeur) {
+	public TitreRepasEtatPayeur getTitreRepasEtatPayeurById(Integer idTitreRepasEtatPayeur) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TitreRepasDemande getTitreRepasDemandeById(
-			Integer idTrDemande) {
-		
+	public TitreRepasDemande getTitreRepasDemandeById(Integer idTrDemande) {
+
 		return ptgEntityManager.find(TitreRepasDemande.class, idTrDemande);
 	}
 
 	@Override
-	public List<TitreRepasDemande> getListTitreRepasDemande(
-			List<Integer> listIdsAgent, Date fromDate, Date toDate,
-			Integer etat, Boolean commande, Date dateMonth) {
-		
+	public List<TitreRepasDemande> getListTitreRepasDemande(List<Integer> listIdsAgent, Date fromDate, Date toDate, Integer etat, Boolean commande, Date dateMonth) {
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(tr) from TitreRepasDemande tr ");
 		sb.append("LEFT JOIN FETCH tr.etats et0 ");
 		sb.append("where 1=1 ");
-		
-		if (null != listIdsAgent
-				&& !listIdsAgent.isEmpty()) {
+
+		if (null != listIdsAgent && !listIdsAgent.isEmpty()) {
 			sb.append("and tr.idAgent in :listIdsAgent ");
 		}
 
@@ -87,9 +80,8 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 		sb.append("order by tr.dateMonth desc, tr.idAgent asc ");
 
 		TypedQuery<TitreRepasDemande> query = ptgEntityManager.createQuery(sb.toString(), TitreRepasDemande.class);
-		
-		if (null != listIdsAgent
-				&& !listIdsAgent.isEmpty()) {
+
+		if (null != listIdsAgent && !listIdsAgent.isEmpty()) {
 			query.setParameter("listIdsAgent", listIdsAgent);
 		}
 		if (null != fromDate) {
@@ -121,6 +113,17 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 		TypedQuery<Date> query = ptgEntityManager.createQuery(sb.toString(), Date.class);
 
 		return query.getResultList();
+	}
+
+	@Override
+	public TitreRepasEtatPayeur getTitreRepasEtatPayeurByMonth(Date mois) {
+
+		TypedQuery<TitreRepasEtatPayeur> query = ptgEntityManager.createNamedQuery("getTitreRepasEtatPayeurByMonth", TitreRepasEtatPayeur.class);
+		query.setParameter("dateMonth", mois);
+
+		List<TitreRepasEtatPayeur> r = query.getResultList();
+
+		return r.size() == 0 ? null : r.get(0);
 	}
 
 }

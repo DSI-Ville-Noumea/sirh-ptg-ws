@@ -1153,8 +1153,7 @@ public class TitreRepasServiceTest {
 		listTitreRepasDemande.add(new TitreRepasDemande());
 
 		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
-		Mockito.when(titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, null, null, dto.getDateMonth())).thenReturn(
-				listTitreRepasDemande);
+		Mockito.when(titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, null, null, dto.getDateMonth())).thenReturn(listTitreRepasDemande);
 
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
@@ -1294,10 +1293,10 @@ public class TitreRepasServiceTest {
 
 		TitreRepasEtatDemande etatJournalise = new TitreRepasEtatDemande();
 		etatJournalise.setEtat(EtatPointageEnum.JOURNALISE);
-		
+
 		TitreRepasDemande tr = new TitreRepasDemande();
 		tr.getEtats().add(etatJournalise);
-		
+
 		List<TitreRepasDemande> listTitreRepasDemande = new ArrayList<TitreRepasDemande>();
 		listTitreRepasDemande.add(tr);
 
@@ -1373,7 +1372,7 @@ public class TitreRepasServiceTest {
 
 		TitreRepasEtatDemande etatJournalise = new TitreRepasEtatDemande();
 		etatJournalise.setEtat(EtatPointageEnum.SAISI);
-		
+
 		TitreRepasDemande tr = new TitreRepasDemande();
 		tr.getEtats().add(etatJournalise);
 
@@ -2015,5 +2014,49 @@ public class TitreRepasServiceTest {
 		List<Date> result = service.getListeMoisTitreRepasSaisie();
 
 		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void enregistreTitreDemandeOneByOne_checkEtat() {
+		AgentWithServiceDto agent = new AgentWithServiceDto();
+		agent.setIdAgent(9005138);
+		TitreRepasDemandeDto dto = new TitreRepasDemandeDto();
+		dto.setAgent(agent);
+		dto.setIdRefEtat(EtatPointageEnum.APPROUVE.getCodeEtat());
+
+		RefTypeSaisiCongeAnnuelDto base = new RefTypeSaisiCongeAnnuelDto();
+
+		Date fromDate = new DateTime(2015, 9, 1, 0, 0, 0).toDate();
+		Date toDate = new DateTime(2015, 9, 30, 0, 0, 0).toDate();
+		
+		AffectationDto aff = new AffectationDto();
+		aff.setIdAgent(agent.getIdAgent());
+
+		Spadmn paInactiveBis = new Spadmn();
+		paInactiveBis.setCdpadm("01");
+
+		List<Spadmn> listPA = new ArrayList<Spadmn>();
+		listPA.add(paInactiveBis);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getListeMoisTitreRepasSaisie()).thenReturn(new ArrayList<Date>());
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 11, 0, 0, 0).toDate());
+		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
+		Mockito.when(helperService.getDatePremierJourOfMonth(new DateTime(2015, 9, 1, 0, 0, 0).toDate())).thenReturn(fromDate);
+		Mockito.when(helperService.getDateDernierJourOfMonth(new DateTime(2015, 9, 1, 0, 0, 0).toDate())).thenReturn(toDate);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(5138, fromDate, toDate)).thenReturn(listPA);
+
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+
+		ReturnMessageDto result = service.enregistreTitreDemandeOneByOne(9005138, dto, new ArrayList<DemandeDto>(), base, new ArrayList<JourDto>(), aff, true);
+
+		assertEquals(0, result.getErrors().size());
 	}
 }

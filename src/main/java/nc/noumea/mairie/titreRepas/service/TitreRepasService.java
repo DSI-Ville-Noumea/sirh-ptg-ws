@@ -222,8 +222,8 @@ public class TitreRepasService implements ITitreRepasService {
 			return rmd;
 		}
 
-		// action possible entre le 1 du mois et la génération
-		rmd = checkDateJourBetween1OfMonthAndGeneration(rmd);
+		// action possible si pas de génération pour le mois en cours
+		rmd = checkNoGeneration(rmd);
 		if (!rmd.getErrors().isEmpty())
 			return rmd;
 
@@ -257,11 +257,10 @@ public class TitreRepasService implements ITitreRepasService {
 			ReturnMessageDto response = enregistreTitreDemandeOneByOne(idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent, listJourFerieMoisEnCours, affectation, true);
 
 			if (!response.getErrors().isEmpty()) {
-				for(String error : response.getErrors()) {
-					if(error.contains(String.format(TITRE_DEMANDE_DEJA_EXISTANT, dto.getAgent().getIdAgent()))
-							 || error.contains(TITRE_DEMANDE_INEXISTANT)) {
+				for (String error : response.getErrors()) {
+					if (error.contains(String.format(TITRE_DEMANDE_DEJA_EXISTANT, dto.getAgent().getIdAgent())) || error.contains(TITRE_DEMANDE_INEXISTANT)) {
 						result.getErrors().add(error);
-					}else{
+					} else {
 						result.getInfos().add(error);
 					}
 				}
@@ -324,14 +323,13 @@ public class TitreRepasService implements ITitreRepasService {
 				result.getErrors().add(TITRE_DEMANDE_INEXISTANT);
 				return result;
 			}
-			if(EtatPointageEnum.JOURNALISE.equals(trDemande.getLatestEtatTitreRepasDemande().getEtat())) {
+			if (EtatPointageEnum.JOURNALISE.equals(trDemande.getLatestEtatTitreRepasDemande().getEtat())) {
 				result.getErrors().add(MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE);
 				return result;
 			}
 		} else {
 			// on verifie qu une demande n existe pas
-			List<TitreRepasDemande> listTitreRepasDemande = titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, null, null,
-					dto.getDateMonth());
+			List<TitreRepasDemande> listTitreRepasDemande = titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, null, null, dto.getDateMonth());
 
 			if (null != listTitreRepasDemande && !listTitreRepasDemande.isEmpty()) {
 				result.getErrors().add(String.format(TITRE_DEMANDE_DEJA_EXISTANT, dto.getAgent().getIdAgent()));
@@ -344,14 +342,20 @@ public class TitreRepasService implements ITitreRepasService {
 			trDemande.setIdAgent(dto.getAgent().getIdAgent());
 			trDemande.setDateMonth(dto.getDateMonth());
 		}
-		
+
 		trDemande.setCommande(dto.getCommande());
 
 		TitreRepasEtatDemande etat = new TitreRepasEtatDemande();
 		etat.setCommande(dto.getCommande());
 		etat.setCommentaire(dto.getCommentaire());
 		etat.setDateMaj(new Date());
-		etat.setEtat(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()));
+		etat.setEtat(EtatPointageEnum.SAISI);
+		DateTime dateJour = new DateTime(helperService.getCurrentDate());
+		if (isSIRH && dateJour.getDayOfMonth() > 10) {
+			// on force l'état à "approuvé" si on est après le 10 du mois
+			etat.setEtat(EtatPointageEnum.APPROUVE);
+		}
+
 		etat.setIdAgent(idAgentConnecte);
 		etat.setCommande(dto.getCommande());
 		etat.setTitreRepasDemande(trDemande);
@@ -416,8 +420,8 @@ public class TitreRepasService implements ITitreRepasService {
 				if (!listIdsAgent.contains(da.getIdAgent()))
 					listIdsAgent.add(da.getIdAgent());
 			}
-		}else{
-			if(null != idAgent) {
+		} else {
+			if (null != idAgent) {
 				listIdsAgent = new ArrayList<Integer>();
 				listIdsAgent.add(idAgent);
 			}
@@ -444,7 +448,7 @@ public class TitreRepasService implements ITitreRepasService {
 				}
 			}
 			listAgentServiceDto.addAll(sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, dateJour));
-		
+
 			for (TitreRepasDemande TR : listTR) {
 				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
 				TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);
@@ -691,6 +695,15 @@ public class TitreRepasService implements ITitreRepasService {
 			rmd.getErrors().add(DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS);
 		}
 
+		return rmd;
+	}
+
+	private ReturnMessageDto checkNoGeneration(ReturnMessageDto rmd) {
+		DateTime dateJour = new DateTime(helperService.getCurrentDate());
+		TitreRepasEtatPayeur etatPourMois = titreRepasRepository.getTitreRepasEtatPayeurByMonth(new LocalDate(dateJour).withDayOfMonth(1).toDate());
+		if (etatPourMois != null) {
+			rmd.getErrors().add(DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR);
+		}
 		return rmd;
 	}
 
