@@ -934,13 +934,13 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 
-		rmd = service.checkDateJourBetween1OfMonthAndGeneration(rmd);
+		rmd = service.checkDateJourBetween11OfMonthAndGeneration(rmd);
 
 		assertEquals(0, rmd.getErrors().size());
 	}
 
 	@Test
-	public void checkDateJourBetween1OfMonthAndGeneration_ko() {
+	public void checkDateJourBetween11OfMonthAndGeneration_ko() {
 
 		ReturnMessageDto rmd = new ReturnMessageDto();
 
@@ -959,9 +959,28 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 
-		rmd = service.checkDateJourBetween1OfMonthAndGeneration(rmd);
+		rmd = service.checkDateJourBetween11OfMonthAndGeneration(rmd);
 
-		assertEquals(TitreRepasService.DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR, rmd.getErrors().get(0));
+		assertEquals(TitreRepasService.DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR, rmd.getErrors().get(0));
+	}
+
+	@Test
+	public void checkDateJourBetween11OfMonthAndGeneration_koBis() {
+
+		ReturnMessageDto rmd = new ReturnMessageDto();
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 24, 0, 0, 0).toDate());
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurByMonth(new DateTime(2015, 10, 01, 0, 0, 0).toDate())).thenReturn(new TitreRepasEtatPayeur());
+
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+
+		rmd = service.checkDateJourBetween11OfMonthAndGeneration(rmd);
+
+		assertEquals(TitreRepasService.DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR, rmd.getErrors().get(0));
 	}
 
 	@Test
@@ -2028,7 +2047,7 @@ public class TitreRepasServiceTest {
 
 		Date fromDate = new DateTime(2015, 9, 1, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2015, 9, 30, 0, 0, 0).toDate();
-		
+
 		AffectationDto aff = new AffectationDto();
 		aff.setIdAgent(agent.getIdAgent());
 

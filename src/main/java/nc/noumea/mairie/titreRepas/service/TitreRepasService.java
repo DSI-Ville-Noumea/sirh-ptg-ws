@@ -100,7 +100,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 	public static final String ERREUR_DROIT_AGENT = "Vous n'avez pas les droits pour traiter cette demande de titre repas.";
 	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS = "Vous ne pouvez commander les titres repas qu'entre le 1 et 10 de chaque mois.";
-	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR = "Vous ne pouvez saisir des demandes de titres repas qu'entre le 1 du mois et l'édition du payeur.";
+	public static final String EDITION_PAYEUR_DEJA_EDITEE = "Vous ne pouvez saisir des demandes de titres repas car l'édition du payeur a déjà été effectuée pour ce mois.";
+	public static final String DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR = "Vous ne pouvez approuver/refuser des titres repas qu'entre le 11 du mois et l'édition du payeur.";
 	public static final String AUCUNE_PA_ACTIVE_MOIS_PRECEDENT = "L'agent %s n'a pas travaillé le mois précédent.";
 	public static final String AUCUNE_BASE_CONGE = "La base congé n'est pas renseignée pour l'agent %s.";
 	public static final String PRIME_PANIER = "L'agent a le droit aux primes panier et ne peut donc pas commander des titres repas.";
@@ -528,8 +529,8 @@ public class TitreRepasService implements ITitreRepasService {
 			result.getErrors().add(ERREUR_DROIT_AGENT);
 			return result;
 		}
-
-		result = checkDateJourBetween1OfMonthAndGeneration(result);
+		
+		result = checkDateJourBetween11OfMonthAndGeneration(result);
 		if (!result.getErrors().isEmpty())
 			return result;
 
@@ -718,14 +719,22 @@ public class TitreRepasService implements ITitreRepasService {
 		DateTime dateJour = new DateTime(helperService.getCurrentDate());
 		TitreRepasEtatPayeur etatPourMois = titreRepasRepository.getTitreRepasEtatPayeurByMonth(new LocalDate(dateJour).withDayOfMonth(1).toDate());
 		if (etatPourMois != null) {
-			rmd.getErrors().add(DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR);
+			rmd.getErrors().add(EDITION_PAYEUR_DEJA_EDITEE);
 		}
 		return rmd;
 	}
 
-	protected ReturnMessageDto checkDateJourBetween1OfMonthAndGeneration(ReturnMessageDto rmd) {
+	protected ReturnMessageDto checkDateJourBetween11OfMonthAndGeneration(ReturnMessageDto rmd) {
 
 		DateTime dateJour = new DateTime(helperService.getCurrentDate());
+		
+
+		// action possible si pas de génération pour le mois en cours
+		TitreRepasEtatPayeur etatPourMois = titreRepasRepository.getTitreRepasEtatPayeurByMonth(new LocalDate(dateJour).withDayOfMonth(1).toDate());
+		if (etatPourMois != null) {
+			rmd.getErrors().add(DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR);
+			return rmd;
+		}
 
 		List<TitreRepasEtatPayeur> listEtatPayeur = titreRepasRepository.getListTitreRepasEtatPayeur();
 		if (null != listEtatPayeur && !listEtatPayeur.isEmpty()) {
@@ -733,7 +742,7 @@ public class TitreRepasService implements ITitreRepasService {
 
 			DateTime dateEtatPayeur = new DateTime(lastEtatPayeur.getDateEdition());
 			if (dateEtatPayeur.isBefore(dateJour) && dateEtatPayeur.getDayOfMonth() < dateJour.getDayOfMonth()) {
-				rmd.getErrors().add(DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_EDITION_PAYEUR);
+				rmd.getErrors().add(DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR);
 			}
 		}
 		return rmd;
