@@ -126,6 +126,7 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String DEMANDE_EN_COURS = "Génération impossible. Il reste des demandes à l'état 'saisie'.";
 	public static final String GENERATION_IMPOSSIBLE_AVANT_11 = "Génération impossible avant le 11 du mois.";
 	public static final String MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE = "Vous ne pouvez pas modifier une demande journalisée.";
+	public static final String MODIFICATION_IMPOSSIBLE_DEMANDE_AUTRE_SAISI_DEPUIS_KIOSQUE = "Vous ne pouvez pas modifier une demande approuvée, rejetée ou journalisée.";
 
 	public static final String ENREGISTREMENT_OK = "La demande est bien enregistrée.";
 	public static final String ENREGISTREMENT_PLURIEL_OK = "Les demandes sont bien enregistrées.";
@@ -342,6 +343,11 @@ public class TitreRepasService implements ITitreRepasService {
 			}
 			if (EtatPointageEnum.JOURNALISE.equals(trDemande.getLatestEtatTitreRepasDemande().getEtat())) {
 				result.getErrors().add(MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE);
+				return result;
+			}
+			if (!isSIRH
+					&& !EtatPointageEnum.SAISI.equals(trDemande.getLatestEtatTitreRepasDemande().getEtat())) {
+				result.getErrors().add(MODIFICATION_IMPOSSIBLE_DEMANDE_AUTRE_SAISI_DEPUIS_KIOSQUE);
 				return result;
 			}
 

@@ -1351,6 +1351,18 @@ public class TitreRepasServiceTest {
 		assertEquals(0, result.getInfos().size());
 		assertEquals(result.getErrors().get(0), TitreRepasService.MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE);
 		Mockito.verify(titreRepasRepository, Mockito.never()).persist(Mockito.isA(TitreRepasDemande.class));
+
+		TitreRepasEtatDemande etatREjete = new TitreRepasEtatDemande();
+		etatREjete.setEtat(EtatPointageEnum.REJETE);
+
+		tr.getEtats().clear();
+		tr.getEtats().add(etatREjete);
+		
+		result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, Arrays.asList(dto));
+
+		assertEquals(0, result.getInfos().size());
+		assertEquals(result.getErrors().get(0), TitreRepasService.MODIFICATION_IMPOSSIBLE_DEMANDE_AUTRE_SAISI_DEPUIS_KIOSQUE);
+		Mockito.verify(titreRepasRepository, Mockito.never()).persist(Mockito.isA(TitreRepasDemande.class));
 	}
 
 	@Test
