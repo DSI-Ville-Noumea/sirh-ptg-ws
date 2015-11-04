@@ -19,7 +19,8 @@ import javax.validation.constraints.NotNull;
 @Table(name = "PTG_TR_ETAT_PAYEUR")
 @NamedQueries({
 	@NamedQuery(name = "getListEditionsTitreRepasEtatPayeur", query = "select ep from TitreRepasEtatPayeur ep order by ep.dateEtatPayeur desc"),
-	@NamedQuery(name = "getTitreRepasEtatPayeurById", query = "select ep from TitreRepasEtatPayeur ep where ep.idTrEtatPayeur = :idEtatPayeur") 
+	@NamedQuery(name = "getTitreRepasEtatPayeurById", query = "select ep from TitreRepasEtatPayeur ep where ep.idTrEtatPayeur = :idEtatPayeur"),
+	@NamedQuery(name = "getTitreRepasEtatPayeurByMonth", query = "select ep from TitreRepasEtatPayeur ep where ep.dateEtatPayeur = :dateMonth") 
 })
 public class TitreRepasEtatPayeur {
 	
