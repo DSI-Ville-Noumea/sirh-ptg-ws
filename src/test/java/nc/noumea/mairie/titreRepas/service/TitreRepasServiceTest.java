@@ -26,10 +26,12 @@ import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.reporting.EtatPayeurTitreRepasReporting;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
+import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
@@ -1766,9 +1768,8 @@ public class TitreRepasServiceTest {
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, listDto);
 
 		assertEquals(1, result.getErrors().size());
-		assertEquals(2, result.getInfos().size());
-		assertEquals(result.getInfos().get(0), TitreRepasService.ENREGISTREMENT_OK);
-		assertEquals(result.getInfos().get(1), TitreRepasService.ENREGISTREMENT_OK);
+		assertEquals(1, result.getInfos().size());
+		assertEquals(result.getInfos().get(0), TitreRepasService.ENREGISTREMENT_PLURIEL_OK);
 		assertEquals(result.getErrors().get(0), TitreRepasService.FILIERE_INCENDIE);
 		Mockito.verify(titreRepasRepository, Mockito.times(2)).persist(Mockito.isA(TitreRepasDemande.class));
 	}
@@ -2078,5 +2079,130 @@ public class TitreRepasServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(titreRepasRepository, Mockito.times(1)).persist(Mockito.isA(TitreRepasDemande.class));
+	}
+
+	@Test
+	public void genereEtatPayeur_NoSIRHUser() {
+		Integer idAgent = 9005138;
+
+		ReturnMessageDto erreuUser = new ReturnMessageDto();
+		erreuUser.getErrors().add("bad user");
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(erreuUser);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), TitreRepasService.ERREUR_DROIT_AGENT);
+	}
+
+	@Test
+	public void genereEtatPayeur_PaieEnCours() {
+		Integer idAgent = 9005138;
+
+		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(true);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+
+		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), TitreRepasService.PAIE_EN_COURS);
+	}
+
+	@Test
+	public void genereEtatPayeur_Avant_11() {
+		Integer idAgent = 9005138;
+		Date currentDate = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+
+		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(false);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(currentDate);
+
+		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), TitreRepasService.GENERATION_IMPOSSIBLE_AVANT_11);
+	}
+
+	@Test
+	public void genereEtatPayeur_DemandeSaisieExistantes() {
+		Integer idAgent = 9005138;
+		Date currentDate = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date currentDate2 = new DateTime(2015, 10, 11, 0, 0, 0).toDate();
+
+		List<TitreRepasDemande> listDemandeTr = new ArrayList<TitreRepasDemande>();
+		listDemandeTr.add(new TitreRepasDemande());
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(currentDate2);
+		Mockito.when(helperService.getDatePremierJourOfMonth(currentDate2)).thenReturn(currentDate);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getListTitreRepasDemande(null, null, null, EtatPointageEnum.SAISI.getCodeEtat(), true, currentDate)).thenReturn(listDemandeTr);
+
+		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(false);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), TitreRepasService.DEMANDE_EN_COURS);
+	}
+
+	@Test
+	public void genereEtatPayeur_ok() {
+		Integer idAgent = 9005138;
+		Date currentDate = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date currentDate2 = new DateTime(2015, 10, 11, 0, 0, 0).toDate();
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(currentDate2);
+		Mockito.when(helperService.getDatePremierJourOfMonth(currentDate2)).thenReturn(currentDate);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getListTitreRepasDemande(null, null, null, EtatPointageEnum.SAISI.getCodeEtat(), true, currentDate)).thenReturn(new ArrayList<TitreRepasDemande>());
+
+		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(false);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+
+		EtatPayeurTitreRepasReporting reportingService = Mockito.mock(EtatPayeurTitreRepasReporting.class);
+
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "reportingService", reportingService);
+
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+
+		assertEquals(0, result.getErrors().size());
 	}
 }

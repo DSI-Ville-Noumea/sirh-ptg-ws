@@ -120,6 +120,8 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String ERROR_ETAT_DEMANDE = "Vous ne pouvez pas %s une demande de titre repas à l'état %s.";
 	public static final String NOUVELLE_ETAT_INCORRECT = "Le nouvel état de la demande de titre repas est incorrect.";
 	public static final String PAIE_EN_COURS = "Génération impossible. Une paie est en cours sous l'AS400.";
+	public static final String DEMANDE_EN_COURS = "Génération impossible. Il reste des demandes à l'état 'saisie'.";
+	public static final String GENERATION_IMPOSSIBLE_AVANT_11 = "Génération impossible avant le 11 du mois.";
 	public static final String MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE = "Vous ne pouvez pas modifier une demande journalisée.";
 
 	public static final String ENREGISTREMENT_OK = "La demande est bien enregistrée.";
@@ -198,10 +200,10 @@ public class TitreRepasService implements ITitreRepasService {
 				result.getErrors().addAll(response.getErrors());
 			}
 			if (!response.getInfos().isEmpty()) {
-				if(!result.getInfos().contains(response.getInfos().get(0))) {
+				if (!result.getInfos().contains(response.getInfos().get(0))) {
 					result.getInfos().addAll(response.getInfos());
-				}else{
-					if(response.getInfos().get(0).equals(ENREGISTREMENT_OK)){
+				} else {
+					if (response.getInfos().get(0).equals(ENREGISTREMENT_OK)) {
 						result.getInfos().clear();
 						result.getInfos().add(ENREGISTREMENT_PLURIEL_OK);
 					}
@@ -336,14 +338,13 @@ public class TitreRepasService implements ITitreRepasService {
 				result.getErrors().add(MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE);
 				return result;
 			}
-			
+
 			// si pas de changement, on ne fait rien
-			if(dto.getIdRefEtat().equals(trDemande.getLatestEtatTitreRepasDemande().getEtat().getCodeEtat())
-					&& dto.getCommande().equals(trDemande.getCommande())) {
+			if (dto.getIdRefEtat().equals(trDemande.getLatestEtatTitreRepasDemande().getEtat().getCodeEtat()) && dto.getCommande().equals(trDemande.getCommande())) {
 				result.getInfos().add(ENREGISTREMENT_OK);
 				return result;
 			}
-			
+
 		} else {
 			// on verifie qu une demande n existe pas
 			List<TitreRepasDemande> listTitreRepasDemande = titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, null, null, dto.getDateMonth());
@@ -483,28 +484,28 @@ public class TitreRepasService implements ITitreRepasService {
 	@Override
 	@Transactional(readOnly = true)
 	public List<TitreRepasEtatPayeurDto> getListTitreRepasEtatPayeurDto(Integer idAgentConnecte) {
-		
+
 		// //// Verifie les droits ////////
 		ReturnMessageDto messageSIRH = sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte);
 		if (!messageSIRH.getErrors().isEmpty()) {
 			throw new AccessForbiddenException();
 		}
-		
+
 		List<TitreRepasEtatPayeurDto> result = new ArrayList<TitreRepasEtatPayeurDto>();
-		
+
 		List<TitreRepasEtatPayeur> listEtatPayeur = titreRepasRepository.getListTitreRepasEtatPayeur();
-		
-		if(null != listEtatPayeur) {
-			for(TitreRepasEtatPayeur etatPayeur : listEtatPayeur) {
+
+		if (null != listEtatPayeur) {
+			for (TitreRepasEtatPayeur etatPayeur : listEtatPayeur) {
 				TitreRepasEtatPayeurDto dto = new TitreRepasEtatPayeurDto(etatPayeur);
-				
+
 				AgentWithServiceDto agent = sirhWsConsumer.getAgentService(etatPayeur.getIdAgent(), new Date());
 				dto.setAgent(agent);
-				
+
 				result.add(dto);
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -529,7 +530,7 @@ public class TitreRepasService implements ITitreRepasService {
 			result.getErrors().add(ERREUR_DROIT_AGENT);
 			return result;
 		}
-		
+
 		result = checkDateJourBetween11OfMonthAndGeneration(result);
 		if (!result.getErrors().isEmpty())
 			return result;
@@ -727,7 +728,6 @@ public class TitreRepasService implements ITitreRepasService {
 	protected ReturnMessageDto checkDateJourBetween11OfMonthAndGeneration(ReturnMessageDto rmd) {
 
 		DateTime dateJour = new DateTime(helperService.getCurrentDate());
-		
 
 		// action possible si pas de génération pour le mois en cours
 		TitreRepasEtatPayeur etatPourMois = titreRepasRepository.getTitreRepasEtatPayeurByMonth(new LocalDate(dateJour).withDayOfMonth(1).toDate());
@@ -1020,9 +1020,26 @@ public class TitreRepasService implements ITitreRepasService {
 			return result;
 		}
 
-		// 1. on verifie si une paye est en cours
+		// 1.VERIFICATIONS
+		// on verifie si une paye est en cours
 		if (paieWorkflowService.isCalculSalaireEnCours()) {
 			result.getErrors().add(PAIE_EN_COURS);
+			return result;
+		}
+
+		// on verifie qu'on est au moins le 11 du mois
+		DateTime dateJour = new DateTime(helperService.getCurrentDate());
+		if (dateJour.getDayOfMonth() < 11) {
+			result.getErrors().add(GENERATION_IMPOSSIBLE_AVANT_11);
+			return result;
+		}
+
+		// on verifie qu'il ne reste plus de demandes à l'état "Saisie" pour ce
+		// mois
+		List<TitreRepasDemande> listDemandeTRSaisi = titreRepasRepository.getListTitreRepasDemande(null, null, null, EtatPointageEnum.SAISI.getCodeEtat(), true,
+				helperService.getDatePremierJourOfMonth(helperService.getCurrentDate()));
+		if (listDemandeTRSaisi != null && listDemandeTRSaisi.size() > 0) {
+			result.getErrors().add(DEMANDE_EN_COURS);
 			return result;
 		}
 
@@ -1038,9 +1055,7 @@ public class TitreRepasService implements ITitreRepasService {
 			}
 		}
 
-		Date dateJour = helperService.getCurrentDate();
-
-		List<AgentWithServiceDto> listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listIdsAgent, dateJour);
+		List<AgentWithServiceDto> listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listIdsAgent, dateJour.toDate());
 
 		List<TitreRepasDemandeDto> listTitreRepasDemandeDto = new ArrayList<TitreRepasDemandeDto>();
 		for (TitreRepasDemande TR : listDemandeTR) {
@@ -1051,11 +1066,11 @@ public class TitreRepasService implements ITitreRepasService {
 
 		// 3. on cree/recupere l état payeur de ce mois-ci
 		TitreRepasEtatPayeur etatPayeurTR = new TitreRepasEtatPayeur();
-		etatPayeurTR.setFichier(String.format("Etat-Payeur-Titre-Repas-%s.pdf", sfd.format(dateJour)));
-		etatPayeurTR.setLabel(String.format("%s", sfd.format(dateJour)));
-		etatPayeurTR.setDateEtatPayeur(new LocalDate(dateJour).withDayOfMonth(1).toDate());
+		etatPayeurTR.setFichier(String.format("Etat-Payeur-Titre-Repas-%s.pdf", sfd.format(dateJour.toDate())));
+		etatPayeurTR.setLabel(String.format("%s", sfd.format(dateJour.toDate())));
+		etatPayeurTR.setDateEtatPayeur(new LocalDate(dateJour.toDate()).withDayOfMonth(1).toDate());
 		etatPayeurTR.setIdAgent(idAgentConnecte);
-		etatPayeurTR.setDateEdition(dateJour);
+		etatPayeurTR.setDateEdition(dateJour.toDate());
 
 		// 4. generer le fichier d'état du payeur des TR
 		try {
@@ -1075,6 +1090,10 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		// 5. generer une charge dans l AS400
+		// TODO
+
+		// 5. bis on genère le fichier pour le prestataire
+		// TODO
 
 		// 6. passer les demandes a l etat JOURNALISE
 		if (null != listDemandeTR) {
