@@ -2058,5 +2058,6 @@ public class TitreRepasServiceTest {
 		ReturnMessageDto result = service.enregistreTitreDemandeOneByOne(9005138, dto, new ArrayList<DemandeDto>(), base, new ArrayList<JourDto>(), aff, true);
 
 		assertEquals(0, result.getErrors().size());
+		Mockito.verify(titreRepasRepository, Mockito.times(1)).persist(Mockito.isA(TitreRepasDemande.class));
 	}
 }
