@@ -392,8 +392,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	protected EtatPayeur exportEtatPayeur(Integer idAgent, AgentStatutEnum statut, Date date) throws Exception {
 
 		EtatPayeur ep = new EtatPayeur();
-		ep.setFichier(String.format("%s-%s.pdf", sfd.format(date), statut));
-		ep.setLabel(String.format("%s-%s", sfd.format(date), statut));
+		// #19036 
+		ep.setFichier(String.format("%s-%s.pdf", sfd.format(helperService.getCurrentDate()), statut));
+		ep.setLabel(String.format("%s-%s", sfd.format(helperService.getCurrentDate()), statut));
 		ep.setDateEtatPayeur(new LocalDate(date).withDayOfMonth(1).toDate());
 		ep.setStatut(statut);
 		ep.setIdAgent(idAgent);

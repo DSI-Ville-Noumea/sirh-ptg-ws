@@ -864,8 +864,9 @@ public class ExportEtatPayeurServiceTest {
 		EtatPayeur result = service.exportEtatPayeur(idAgent, statut, date);
 
 		// Then
-		assertEquals("2013-02-F", result.getLabel());
-		assertEquals("2013-02-F.pdf", result.getFichier());
+		// #19036 
+		assertEquals("2013-09-F", result.getLabel());
+		assertEquals("2013-09-F.pdf", result.getFichier());
 		assertEquals(statut, result.getStatut());
 		assertEquals(new LocalDate(2013, 2, 1).toDate(), result.getDateEtatPayeur());
 		assertEquals(idAgent, result.getIdAgent());
