@@ -64,6 +64,9 @@ public class TitreRepasService implements ITitreRepasService {
 	private HelperService helperService;
 
 	@Autowired
+	private EnvironnementService environnementService;
+
+	@Autowired
 	private IMairieRepository mairieRepository;
 
 	@Autowired
@@ -160,12 +163,15 @@ public class TitreRepasService implements ITitreRepasService {
 			}
 		}
 
-		// saisie entre le 1 et le 10
-		// si au dela du 10 du mois, cela ne sert a rien de faire tous les
-		// appels ci-dessous
-		rmd = checkDateJourBetween1And10ofMonth(rmd);
-		if (!rmd.getErrors().isEmpty())
-			return rmd;
+		// #19522 : pour ne pas être bloqué en recette
+		if (environnementService.isProduction()) {
+			// saisie entre le 1 et le 10
+			// si au dela du 10 du mois, cela ne sert a rien de faire tous les
+			// appels ci-dessous
+			rmd = checkDateJourBetween1And10ofMonth(rmd);
+			if (!rmd.getErrors().isEmpty())
+				return rmd;
+		}
 
 		// ///////////////////////////////////////////////////////////////
 		// /////// on recupere toutes les donnees qui nous interessent ///

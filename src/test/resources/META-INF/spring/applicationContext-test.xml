@@ -105,5 +105,9 @@
 	<bean class="java.lang.String" id="sirhFileEtatPayeurPathWrite" />
 	
 	<bean class="java.lang.String" id="adsWsBaseUrl" />
+
+	<!-- Pour Type environnement (RECETTE ou PROD) -->
+	
+	<bean class="java.lang.String" id="typeEnvironnement" />
 	
 </beans>

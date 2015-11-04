@@ -112,5 +112,8 @@
 	<jee:jndi-lookup id="sirhFileEtatPayeurPathWrite" jndi-name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR_ECRITURE" expected-type="java.lang.String"/>
 	
 	<jee:jndi-lookup id="adsWsBaseUrl" jndi-name="ADS_WS_URL" expected-type="java.lang.String"/>
+
+	<!-- Pour Type environnement (RECETTE ou PROD) -->
+	<jee:jndi-lookup id="typeEnvironnement" jndi-name="TYPE_ENV" expected-type="java.lang.String" />
 	
 </beans>

@@ -1109,6 +1109,10 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		
+		EnvironnementService environnementService = Mockito.mock(EnvironnementService.class);
+		Mockito.when(environnementService.isProduction()).thenReturn(true);
+		ReflectionTestUtils.setField(service, "environnementService", environnementService);
 
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, Arrays.asList(dto));
 
@@ -1181,6 +1185,10 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		
+		EnvironnementService environnementService = Mockito.mock(EnvironnementService.class);
+		Mockito.when(environnementService.isProduction()).thenReturn(true);
+		ReflectionTestUtils.setField(service, "environnementService", environnementService);
 
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, Arrays.asList(dto));
 
@@ -1250,6 +1258,10 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		
+		EnvironnementService environnementService = Mockito.mock(EnvironnementService.class);
+		Mockito.when(environnementService.isProduction()).thenReturn(true);
+		ReflectionTestUtils.setField(service, "environnementService", environnementService);
 
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, Arrays.asList(dto));
 
@@ -1329,6 +1341,10 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		
+		EnvironnementService environnementService = Mockito.mock(EnvironnementService.class);
+		Mockito.when(environnementService.isProduction()).thenReturn(true);
+		ReflectionTestUtils.setField(service, "environnementService", environnementService);
 
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, Arrays.asList(dto));
 
@@ -1405,6 +1421,10 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		
+		EnvironnementService environnementService = Mockito.mock(EnvironnementService.class);
+		Mockito.when(environnementService.isProduction()).thenReturn(true);
+		ReflectionTestUtils.setField(service, "environnementService", environnementService);
 
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, Arrays.asList(dto));
 
@@ -1473,6 +1493,12 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		
+		EnvironnementService environnementService = Mockito.mock(EnvironnementService.class);
+		Mockito.when(environnementService.isProduction()).thenReturn(true);
+		ReflectionTestUtils.setField(service, "environnementService", environnementService);
+		
+		
 
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, Arrays.asList(dto));
 
@@ -1764,6 +1790,10 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+		
+		EnvironnementService environnementService = Mockito.mock(EnvironnementService.class);
+		Mockito.when(environnementService.isProduction()).thenReturn(true);
+		ReflectionTestUtils.setField(service, "environnementService", environnementService);
 
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, listDto);
 
