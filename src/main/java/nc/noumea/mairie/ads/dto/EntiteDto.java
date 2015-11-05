@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import nc.noumea.mairie.ptg.dto.JsonDateDeserializer;
 import nc.noumea.mairie.ptg.dto.JsonDateSerializer;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @XmlRootElement
 public class EntiteDto {

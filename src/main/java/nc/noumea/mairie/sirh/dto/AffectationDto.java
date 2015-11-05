@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
 import nc.noumea.mairie.ptg.dto.JsonDateDeserializer;
 import nc.noumea.mairie.ptg.dto.JsonDateSerializer;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class AffectationDto implements Serializable {
 
