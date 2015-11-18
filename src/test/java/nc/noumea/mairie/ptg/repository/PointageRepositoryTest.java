@@ -215,7 +215,9 @@ public class PointageRepositoryTest {
 		List<RefPrime> result = repository.getRefPrimesCalculees(listRubr, AgentStatutEnum.F);
 		List<RefPrime> noResult = repository.getRefPrimes(listRubr, AgentStatutEnum.F);
 
-		assertEquals(0, noResult.size());
+		// REBJO84 : attention j ai modifié la requete getRefPrimes
+		// car ajout en BDD d un boolean isAffichageKiosque
+		assertEquals(1, noResult.size());
 
 		assertEquals(1, result.size());
 		assertEquals(true, result.get(0).isCalculee());

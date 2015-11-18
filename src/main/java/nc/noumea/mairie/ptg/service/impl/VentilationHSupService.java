@@ -11,6 +11,7 @@ import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
@@ -1109,6 +1110,122 @@ public class VentilationHSupService implements IVentilationHSupService {
 					&& ptg.getRefPrime()
 							.getNoRubr()
 							.equals(VentilationPrimeService.PRIME_EPANDAGE_7716))
+				result.add(ptg);
+		}
+
+		return result;
+	}
+	
+	@Override
+	public VentilHsup processHSupFromPointageCalcule(Integer idAgent, Date dateLundi,
+			List<PointageCalcule> pointagesCalcules, VentilHsup ventilHSup) {
+		
+		if(null == pointagesCalcules
+				|| pointagesCalcules.isEmpty()) 
+			return ventilHSup;
+		
+		if(null == ventilHSup) {
+			ventilHSup = new VentilHsup();
+			ventilHSup.setIdAgent(idAgent);
+			ventilHSup.setDateLundi(dateLundi);
+			ventilHSup.setEtat(EtatPointageEnum.VENTILE);
+		}
+		
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		BaseHorairePointageDto baseDto = sirhWsConsumer
+				.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine);
+
+		// Compute the agent week hour base
+		int weekBase = (int) (helperService
+				.convertMairieNbHeuresFormatToMinutes(baseDto.getBaseCalculee()));
+		
+		List<PointageCalcule> listPointageCalculeHSup = getPointagesCalculesHSupForDay(pointagesCalcules);
+		
+		// le calcul des heures supp. et des absences, ayant deja été fait dans le calcul des pointages HSup.,
+		// on reprrend les resultats pour avoir le temps effectif de travail hebdomadaire "weekMinutes"
+		int weekMinutes = ventilHSup.getMHorsContrat() + weekBase - ventilHSup.getMAbsences();
+		for(PointageCalcule ptgCalc : listPointageCalculeHSup) {
+			weekMinutes += ptgCalc.getQuantite();
+			generateHSupWithPointageCalcule(ventilHSup, weekBase, weekMinutes, ptgCalc.getQuantite());
+		}
+		
+		return ventilHSup;
+	}
+	
+	/**
+	 * Genere les heures supp. a partir des pointages calcules typés HSup.
+	 * Pas d'heure de nuit ou DJF, car deja majoree dans le calcul des PointageCalcule
+	 * 
+	 * @param result VentilHsup
+	 * @param weekBase int en minutes
+	 * @param weekMinutes int en minutes
+	 * @param nbMinutesSup int en minutes
+	 */
+	private void generateHSupWithPointageCalcule(VentilHsup result, int weekBase,
+			int weekMinutes, int nbMinutesSup) {
+		
+		if (nbMinutesSup <= 0)
+			return;
+
+		result.setMHorsContrat(result.getMHorsContrat()
+				+ nbMinutesSup);
+		
+		int weekMinutesBeforeHSup = weekMinutes - nbMinutesSup;
+		
+		// If we're doing HS JOUR under the BASE_HEBDO_LEGAL = 39, count them as
+		// HS Normale (for people having weekBase != BASE_HEBDO_LEGALE)
+		if (weekMinutesBeforeHSup < BASE_HEBDO_LEGALE
+				&& (weekBase - result.getTotalAbsences())
+						+ result.getMNormales() < BASE_HEBDO_LEGALE) {
+	
+			int nbMinutesNormalesToAdd = 0;
+	
+			if ((nbMinutesSup + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE) {
+				nbMinutesNormalesToAdd = (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup);
+			} else if (nbMinutesSup
+					+ (weekBase - result.getTotalAbsences()) > BASE_HEBDO_LEGALE) {
+				nbMinutesNormalesToAdd = BASE_HEBDO_LEGALE
+						- (weekBase - result.getTotalAbsences());
+			} else {
+				nbMinutesNormalesToAdd = nbMinutesSup;
+			}
+	
+			result.setMNormales(result.getMNormales() + nbMinutesNormalesToAdd);
+			nbMinutesSup -= nbMinutesNormalesToAdd;
+	
+			if (nbMinutesSup == 0)
+				return;
+		}
+	
+		// If we're doing HS over the BASE_HEBDO_LEGAL = 39, and under
+		// NB_HS_SIMPLE, count them as HS_Simple
+		if (weekMinutes > BASE_HEBDO_LEGALE
+				&& result.getMSimple() < NB_HS_SIMPLE) {
+	
+			int nbMinutesSimplesToAdd = (nbMinutesSup + result.getMSimple()) > NB_HS_SIMPLE ? (NB_HS_SIMPLE - result
+					.getMSimple()) : nbMinutesSup;
+			result.setMSimple(result.getMSimple() + nbMinutesSimplesToAdd);
+			result.setMSup(result.getMSup() + nbMinutesSimplesToAdd);
+			nbMinutesSup -= nbMinutesSimplesToAdd;
+	
+			if (nbMinutesSup == 0)
+				return;
+		}
+	
+		// If we're doing HS over the BASE_HEBDO_LEGAL + NB_HS_SIMPLE = 42,
+		// count the next ones as HS Composees
+		if (weekMinutes >= BASE_HEBDO_LEGALE + NB_HS_SIMPLE) {
+			result.setMComposees(result.getMComposees() + nbMinutesSup);
+			result.setMSup(result.getMSup() + nbMinutesSup);
+		}
+	}
+
+	private List<PointageCalcule> getPointagesCalculesHSupForDay(List<PointageCalcule> pointagesCalc) {
+
+		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
+
+		for (PointageCalcule ptg : pointagesCalc) {
+			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP)
 				result.add(ptg);
 		}
 

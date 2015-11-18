@@ -736,4 +736,203 @@ public class PointageCalculeServiceTest {
 		assertEquals(new DateTime(dateLundi).plusDays(6).toDate(), result.get(4).getDateDebut());
 		assertEquals(3*60, result.get(4).getQuantite().intValue());
 	}
+	
+	/**
+	 * Renfort de garde complet tous les jours sans jour ferie/chome
+	 */
+	@Test
+	public void generatePointage7717_RenfortGarde_cas1() {
+
+		Integer idAgent = 9005138;
+		Date dateLundi = new DateTime(2015,11,16,0,0,0).toDate();
+		
+		RefPrime refPrime = new RefPrime();
+		refPrime.setNoRubr(VentilationPrimeService.PRIME_RENFORT_GARDE);
+		
+		Pointage primeLundi = new Pointage();
+		primeLundi.setDateDebut(new DateTime(2015,11,16,8,0,0).toDate());
+		primeLundi.setDateFin(new DateTime(2015,11,17,8,0,0).toDate());
+		primeLundi.setRefPrime(refPrime);
+		primeLundi.setDateLundi(dateLundi);
+		primeLundi.setType(prime);
+		
+		Pointage primeMardi = new Pointage();
+		primeMardi.setDateDebut(new DateTime(2015,11,17,8,0,0).toDate());
+		primeMardi.setDateFin(new DateTime(2015,11,18,8,0,0).toDate());
+		primeMardi.setRefPrime(refPrime);
+		primeMardi.setDateLundi(dateLundi);
+		primeMardi.setType(prime);
+		
+		Pointage primeMercredi = new Pointage();
+		primeMercredi.setDateDebut(new DateTime(2015,11,18,8,0,0).toDate());
+		primeMercredi.setDateFin(new DateTime(2015,11,19,8,0,0).toDate());
+		primeMercredi.setRefPrime(refPrime);
+		primeMercredi.setDateLundi(dateLundi);
+		primeMercredi.setType(prime);
+		
+		Pointage primeJeudi = new Pointage();
+		primeJeudi.setDateDebut(new DateTime(2015,11,19,8,0,0).toDate());
+		primeJeudi.setDateFin(new DateTime(2015,11,20,8,0,0).toDate());
+		primeJeudi.setRefPrime(refPrime);
+		primeJeudi.setDateLundi(dateLundi);
+		primeJeudi.setType(prime);
+		
+		Pointage primeVendredi = new Pointage();
+		primeVendredi.setDateDebut(new DateTime(2015,11,20,8,0,0).toDate());
+		primeVendredi.setDateFin(new DateTime(2015,11,21,8,0,0).toDate());
+		primeVendredi.setRefPrime(refPrime);
+		primeVendredi.setDateLundi(dateLundi);
+		primeVendredi.setType(prime);
+		
+		Pointage primeSamedi = new Pointage();
+		primeSamedi.setDateDebut(new DateTime(2015,11,21,8,0,0).toDate());
+		primeSamedi.setDateFin(new DateTime(2015,11,22,8,0,0).toDate());
+		primeSamedi.setRefPrime(refPrime);
+		primeSamedi.setDateLundi(dateLundi);
+		primeSamedi.setType(prime);
+		
+		Pointage primeDimanche = new Pointage();
+		primeDimanche.setDateDebut(new DateTime(2015,11,22,8,0,0).toDate());
+		primeDimanche.setDateFin(new DateTime(2015,11,23,8,0,0).toDate());
+		primeDimanche.setRefPrime(refPrime);
+		primeDimanche.setDateLundi(dateLundi);
+		primeDimanche.setType(prime);
+		
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		pointages.add(primeLundi);
+		pointages.add(primeMardi);
+		pointages.add(primeMercredi);
+		pointages.add(primeJeudi);
+		pointages.add(primeVendredi);
+		pointages.add(primeSamedi);
+		pointages.add(primeDimanche);
+		
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		
+		PointageCalculeService service = new PointageCalculeService();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+		
+		List<PointageCalcule> result = service.generatePointage7717_RenfortGarde(idAgent, dateLundi, pointages);
+		
+		assertEquals(result.size(), 7);
+		assertEquals(result.get(0).getDateDebut(), primeLundi.getDateDebut());
+		assertEquals(result.get(0).getQuantite().intValue(), 12*60);
+		assertEquals(result.get(1).getDateDebut(), primeMardi.getDateDebut());
+		assertEquals(result.get(1).getQuantite().intValue(), 12*60);
+		assertEquals(result.get(2).getDateDebut(), primeMercredi.getDateDebut());
+		assertEquals(result.get(2).getQuantite().intValue(), 12*60);
+		assertEquals(result.get(3).getDateDebut(), primeJeudi.getDateDebut());
+		assertEquals(result.get(3).getQuantite().intValue(), 12*60);
+		assertEquals(result.get(4).getDateDebut(), primeVendredi.getDateDebut());
+		assertEquals(result.get(4).getQuantite().intValue(), 12*60);
+		assertEquals(result.get(5).getDateDebut(), primeSamedi.getDateDebut());
+		assertEquals(result.get(5).getQuantite().intValue(), 14*60);
+		assertEquals(result.get(6).getDateDebut(), primeDimanche.getDateDebut());
+		assertEquals(result.get(6).getQuantite().intValue(), 16*60);
+	}
+	
+	/**
+	 * Renfort de garde :
+	 * - complet lundi, mardi, vendredi
+	 * - ferie mercredi
+	 * - 16h jeudi
+	 * - 12h samedi
+	 */
+	@Test
+	public void generatePointage7717_RenfortGarde_cas2() {
+
+		Integer idAgent = 9005138;
+		Date dateLundi = new DateTime(2015,11,16,0,0,0).toDate();
+		
+		RefPrime refPrime = new RefPrime();
+		refPrime.setNoRubr(VentilationPrimeService.PRIME_RENFORT_GARDE);
+		
+		Pointage primeLundi = new Pointage();
+		primeLundi.setDateDebut(new DateTime(2015,11,16,8,0,0).toDate());
+		primeLundi.setDateFin(new DateTime(2015,11,17,8,0,0).toDate());
+		primeLundi.setRefPrime(refPrime);
+		primeLundi.setDateLundi(dateLundi);
+		primeLundi.setType(prime);
+		
+		Pointage primeMardi = new Pointage();
+		primeMardi.setDateDebut(new DateTime(2015,11,17,8,0,0).toDate());
+		primeMardi.setDateFin(new DateTime(2015,11,18,8,0,0).toDate());
+		primeMardi.setRefPrime(refPrime);
+		primeMardi.setDateLundi(dateLundi);
+		primeMardi.setType(prime);
+		
+		Pointage primeMercredi = new Pointage();
+		primeMercredi.setDateDebut(new DateTime(2015,11,18,8,0,0).toDate());
+		primeMercredi.setDateFin(new DateTime(2015,11,19,8,0,0).toDate());
+		primeMercredi.setRefPrime(refPrime);
+		primeMercredi.setDateLundi(dateLundi);
+		primeMercredi.setType(prime);
+		
+		Pointage primeJeudi = new Pointage();
+		primeJeudi.setDateDebut(new DateTime(2015,11,19,8,0,0).toDate());
+		primeJeudi.setDateFin(new DateTime(2015,11,20,0,0,0).toDate());
+		primeJeudi.setRefPrime(refPrime);
+		primeJeudi.setDateLundi(dateLundi);
+		primeJeudi.setType(prime);
+		
+		Pointage primeVendredi = new Pointage();
+		primeVendredi.setDateDebut(new DateTime(2015,11,20,8,0,0).toDate());
+		primeVendredi.setDateFin(new DateTime(2015,11,21,8,0,0).toDate());
+		primeVendredi.setRefPrime(refPrime);
+		primeVendredi.setDateLundi(dateLundi);
+		primeVendredi.setType(prime);
+		
+		Pointage primeSamedi = new Pointage();
+		primeSamedi.setDateDebut(new DateTime(2015,11,21,8,0,0).toDate());
+		primeSamedi.setDateFin(new DateTime(2015,11,21,20,0,0).toDate());
+		primeSamedi.setRefPrime(refPrime);
+		primeSamedi.setDateLundi(dateLundi);
+		primeSamedi.setType(prime);
+		
+		Pointage primeDimanche = new Pointage();
+		primeDimanche.setDateDebut(new DateTime(2015,11,22,8,0,0).toDate());
+		primeDimanche.setDateFin(new DateTime(2015,11,23,8,0,0).toDate());
+		primeDimanche.setRefPrime(refPrime);
+		primeDimanche.setDateLundi(dateLundi);
+		primeDimanche.setType(prime);
+		
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		pointages.add(primeLundi);
+		pointages.add(primeMardi);
+		pointages.add(primeMercredi);
+		pointages.add(primeJeudi);
+		pointages.add(primeVendredi);
+		pointages.add(primeSamedi);
+		pointages.add(primeDimanche);
+		
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isHoliday(new DateTime(2015,11,18,8,0,0))).thenReturn(true);
+		
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		
+		PointageCalculeService service = new PointageCalculeService();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+		
+		List<PointageCalcule> result = service.generatePointage7717_RenfortGarde(idAgent, dateLundi, pointages);
+		
+		assertEquals(result.size(), 7);
+		assertEquals(result.get(0).getDateDebut(), primeLundi.getDateDebut());
+		assertEquals(result.get(0).getQuantite().intValue(), 12*60);
+		assertEquals(result.get(1).getDateDebut(), primeMardi.getDateDebut());
+		assertEquals(result.get(1).getQuantite().intValue(), 12*60);
+		assertEquals(result.get(2).getDateDebut(), primeMercredi.getDateDebut());
+		assertEquals(result.get(2).getQuantite().intValue(), 16*60);
+		assertEquals(result.get(3).getDateDebut(), primeJeudi.getDateDebut());
+		assertEquals(result.get(3).getQuantite().intValue(), new Double(16.0/24.0*12.0*60.0).intValue());
+		assertEquals(result.get(4).getDateDebut(), primeVendredi.getDateDebut());
+		assertEquals(result.get(4).getQuantite().intValue(), 12*60);
+		assertEquals(result.get(5).getDateDebut(), primeSamedi.getDateDebut());
+		assertEquals(result.get(5).getQuantite().intValue(), new Double(12.0/24.0*14.0*60.0).intValue());
+		assertEquals(result.get(6).getDateDebut(), primeDimanche.getDateDebut());
+		assertEquals(result.get(6).getQuantite().intValue(), 16*60);
+	}
+	
 }

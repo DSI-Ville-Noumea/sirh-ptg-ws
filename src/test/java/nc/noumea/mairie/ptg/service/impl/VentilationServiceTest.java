@@ -221,6 +221,9 @@ public class VentilationServiceTest {
 						Mockito.eq(ventilDate), Mockito.anyListOf(Pointage.class))).thenReturn(ventilHsup);
 
 		Mockito.when(hSupV.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, plist, AgentStatutEnum.CC)).thenReturn(ventilHsup);
+		
+		Mockito.when(hSupV.processHSupFromPointageCalcule(idAgent, dateLundi, new ArrayList<PointageCalcule>(), ventilHsup))
+			.thenReturn(ventilHsup);
 
 		IVentilationAbsenceService absV = Mockito.mock(IVentilationAbsenceService.class);
 
@@ -287,6 +290,9 @@ public class VentilationServiceTest {
 						Mockito.eq(ventilDate), Mockito.anyListOf(Pointage.class))).thenReturn(ventilHsup);
 
 		Mockito.when(hSupV.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, plist, AgentStatutEnum.CC)).thenReturn(ventilHsup);
+		
+		Mockito.when(hSupV.processHSupFromPointageCalcule(idAgent, dateLundi, new ArrayList<PointageCalcule>(), ventilHsup))
+			.thenReturn(ventilHsup);
 		
 		IVentilationAbsenceService absV = Mockito.mock(IVentilationAbsenceService.class);
 

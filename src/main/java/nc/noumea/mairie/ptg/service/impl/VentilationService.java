@@ -236,7 +236,16 @@ public class VentilationService implements IVentilationService {
 
 		List<Pointage> pointagesVentiles = new ArrayList<Pointage>();
 
-		// 4. Ventilation of H_SUP and ABS
+		// 4. Pointages generated (Primes)
+		for (Date dateLundi : getDistinctDateLundiFromListOfDates(pointagesToVentilateDates)) {
+			// 4.1 Remove previously calculated Pointages (Primes)
+			removePreviousCalculatedPointages(agent, dateLundi);
+
+			// 4.2 Calculate pointages for week
+			calculatePointages(agent, dateLundi, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+		}
+
+		// 5. Ventilation of H_SUP and ABS
 		if (pointageType == null || pointageType == RefTypePointageEnum.ABSENCE
 				|| pointageType == RefTypePointageEnum.H_SUP) {
 			for (Date dateLundi : getDistinctDateLundiFromListOfDates(pointagesToVentilateDates)) {
@@ -245,7 +254,7 @@ public class VentilationService implements IVentilationService {
 			}
 		}
 		
-		//5 bis 
+		// 6. 
 		// evolution #18234 generation des pointages TID pour les primes pointages TID affectées à l'affectation de l agent
 		for(Date dateLundi : helperService.getListDateLundiBetWeenTwoDate(fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation())) {
 			
@@ -261,16 +270,7 @@ public class VentilationService implements IVentilationService {
 			pointageCalculeService.generatePointageTID_7720_7721_7722(agentRH, agent, carr.getStatutCarriere(), dateLundi, filteredAgentsPointageForPeriod);
 		}
 
-		// 5. Pointages generated (Primes)
-		for (Date dateLundi : getDistinctDateLundiFromListOfDates(pointagesToVentilateDates)) {
-			// 5.1 Remove previously calculated Pointages (Primes)
-			removePreviousCalculatedPointages(agent, dateLundi);
-
-			// 5.2 Calculate pointages for week
-			calculatePointages(agent, dateLundi, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
-		}
-
-		// 6. Ventilation of PRIMES
+		// 7. Ventilation of PRIMES
 		if (pointageType == null || pointageType == RefTypePointageEnum.PRIME) {
 			for (Date dateDebutMois : getDistinctDateDebutMoisFromListOfDates(pointagesToVentilateDates)) {
 
@@ -279,7 +279,7 @@ public class VentilationService implements IVentilationService {
 			}
 		}
 
-		// 7. Mark pointages as etat VENTILE and add this VentilDate to their
+		// 8. Mark pointages as etat VENTILE and add this VentilDate to their
 		// list of ventilations
 		markPointagesAsVentile(pointagesVentiles, agentRH, toVentilDate);
 
@@ -319,6 +319,10 @@ public class VentilationService implements IVentilationService {
 
 		logger.debug("Ventilation of HSUPs and ABS pointages for date monday [{}]...", dateLundi);
 
+		////////////////////////////////////////////////
+		// 1. recupere les pointages 
+		////////////////////////////////////////////////
+		
 		// Retrieve all pointages for that period
 		List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesAbsenceAndHSupForVentilation(
 				idAgent, fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
@@ -348,9 +352,16 @@ public class VentilationService implements IVentilationService {
 		
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		
+		////////////////////////////////////////////////
+		// 2. calcul les HSup
+		////////////////////////////////////////////////
 		boolean has1150Prime = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
 				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime, ventilDate, filteredListPointageRejetesOrderedByDateAsc);
+		
+		////////////////////////////////////////////////
+		// 3. calcul les absences
+		////////////////////////////////////////////////
 		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod,
 				dateLundi, listPointageRejetesVentilesOrderedByDateAsc, filteredListPointageRejetesOrderedByDateAsc);
 
@@ -366,6 +377,18 @@ public class VentilationService implements IVentilationService {
 //		hSupsVentilees = ventilationHSupService.processHeuresSupEpandageForSIPRES(
 //				hSupsVentilees, idAgent, dateLundi, filteredAgentsPointagePrimeForPeriod, carr.getStatutCarriere());
 		
+		////////////////////////////////////////////////
+		// 4. calcul les HSup a partir des pointages calcules
+		////////////////////////////////////////////////
+		// #19718 calcul des heures sup sur les primes calculees RENFORT DE GARDE
+		List<PointageCalcule> agentsPointagesCalculesHSupForWeek = ventilationRepository
+				.getListPointagesCalculesHSupForVentilation(idAgent, dateLundi);
+		
+		hSupsVentilees = ventilationHSupService.processHSupFromPointageCalcule(idAgent, dateLundi, agentsPointagesCalculesHSupForWeek, hSupsVentilees);
+		
+		////////////////////////////////////////////////
+		// 5. on persist
+		////////////////////////////////////////////////
 		// persisting all the generated entities linking them to the current ventil date
 		if (hSupsVentilees != null) {
 			hSupsVentilees.setVentilDate(ventilDate);

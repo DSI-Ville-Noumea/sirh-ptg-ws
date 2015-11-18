@@ -414,6 +414,35 @@ public class VentilationRepository implements IVentilationRepository {
 
 		return result;
 	}
+	
+	@Override
+	public List<PointageCalcule> getListPointagesCalculesHSupForVentilation(Integer idAgent, Date dateLundi) {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("SELECT pc.* ");
+		sb.append("FROM PTG_POINTAGE_CALCULE pc ");
+		sb.append("WHERE pc.ID_AGENT = :idAgent ");
+		sb.append("AND pc.DATE_LUNDI = :dateLundi ");
+		sb.append("AND pc.ID_REF_TYPE_POINTAGE = :typeHSup ");
+		sb.append("AND pc.ID_POINTAGE_CALCULE in ( ");
+		
+		sb.append("SELECT max(pcmax.id_pointage_calcule) AS maxIdPointageCalcule ");
+		sb.append("FROM PTG_POINTAGE_CALCULE pcmax ");
+		sb.append("WHERE pcmax.ID_AGENT = :idAgent ");
+		sb.append("AND pc.DATE_LUNDI = :dateLundi ");
+		sb.append("AND pc.ID_REF_TYPE_POINTAGE = :typeHSup ");
+		sb.append("GROUP BY pcmax.DATE_DEBUT) ");
+
+		Query q = ptgEntityManager.createNativeQuery(sb.toString(), PointageCalcule.class);
+		q.setParameter("idAgent", idAgent);
+		q.setParameter("dateLundi", dateLundi);
+		q.setParameter("typeHSup", RefTypePointageEnum.H_SUP.getValue());
+
+		@SuppressWarnings("unchecked")
+		List<PointageCalcule> result = q.getResultList();
+
+		return result;
+	}
 
 	@Override
 	public VentilDate getLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid) {

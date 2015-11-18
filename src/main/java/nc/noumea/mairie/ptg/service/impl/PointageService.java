@@ -391,15 +391,15 @@ public class PointageService implements IPointageService {
 			}
 
 			if (oldPointagesToAvoid.contains(ptg.getIdPointage())) {
-				logger.debug("Not taking Pointage {} because not the latest.", ptg.getIdPointage());
+//				logger.debug("Not taking Pointage {} because not the latest.", ptg.getIdPointage());
 				continue;
 			}
 
 			if (etats == null || etats.contains(ptg.getLatestEtatPointage().getEtat())) {
 				resultList.add(ptg);
 			} else {
-				logger.debug("Not taking Pointage {} because not in the given Etat list : {}.", ptg.getIdPointage(),
-						etats);
+//				logger.debug("Not taking Pointage {} because not in the given Etat list : {}.", ptg.getIdPointage(),
+//						etats);
 			}
 		}
 

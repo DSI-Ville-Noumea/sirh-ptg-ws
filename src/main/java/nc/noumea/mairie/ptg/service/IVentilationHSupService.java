@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 
@@ -30,4 +31,7 @@ public interface IVentilationHSupService {
 	VentilHsup processHeuresSupEpandageForSIPRES(VentilHsup ventilHsup,
 			Integer idAgent, Date dateLundi, List<Pointage> pointages,
 			AgentStatutEnum statut);
+
+	VentilHsup processHSupFromPointageCalcule(Integer idAgent, Date dateLundi,
+			List<PointageCalcule> pointagesCalcules, VentilHsup ventilHSup);
 }

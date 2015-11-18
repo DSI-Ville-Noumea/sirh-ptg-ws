@@ -34,9 +34,13 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 	public final static int PRIME_TID_EXCEP_7724 = 7724;
 	public final static int PRIME_TID_EXCEP_7725 = 7725;
 	
+	public final static int PRIME_RENFORT_GARDE = 7717;
+	public final static int INDEMNITE_DE_ROULEMENT = 7715;
+	
 	// List of rubrique to not aggregate because used for calculating other Primes
 	// #13327 HSup SIPRES (épandage) : creation d une prime FICTIVE 7760
-	private static List<Integer> RUBRIQUES_SAISIES_NOT_TAKEN = Arrays.asList(7715, PRIME_EPANDAGE_7716);
+	private static List<Integer> RUBRIQUES_SAISIES_NOT_TAKEN = Arrays.asList(
+			INDEMNITE_DE_ROULEMENT, PRIME_EPANDAGE_7716, PRIME_RENFORT_GARDE);
 
 	@Autowired
 	private IPointageRepository pointageRepository;
@@ -101,6 +105,9 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 		Map<Integer, VentilPrime> primesByMonth = new HashMap<Integer, VentilPrime>();
 		
 		for (PointageCalcule ptg : pointages) {
+			
+			if(ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME)
+				continue;
 			
 			Integer idRefPrime = ptg.getRefPrime().getIdRefPrime();
 			

@@ -471,7 +471,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			// pour les primes
 			if (ptg.getTypePointageEnum().equals(RefTypePointageEnum.PRIME)) {
 				// si 7715 alors saisie j+1 autorisée sinon non
-				if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES) && ptg.getRefPrime().getNoRubr() != 7715
+				// #19718 si RENFORT DE GARDE 7717 autorisé egalement
+				if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES) 
+						&& ptg.getRefPrime().getNoRubr() != VentilationPrimeService.INDEMNITE_DE_ROULEMENT
+						&& ptg.getRefPrime().getNoRubr() != VentilationPrimeService.PRIME_RENFORT_GARDE
 						&& debut.get(Calendar.DAY_OF_MONTH) != fin.get(Calendar.DAY_OF_MONTH)) {
 					srm.getErrors().add(String.format(ERROR_PRIME_SAISIE_J1_POINTAGE, ptg.getRefPrime().getLibelle(), sdf.format(ptg.getDateDebut())));
 					// pour les primes de type NOMBRE_HEURE, la quantite ne doit

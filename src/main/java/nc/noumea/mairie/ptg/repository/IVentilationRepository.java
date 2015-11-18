@@ -115,4 +115,7 @@ public interface IVentilationRepository {
 
 	VentilHsup getPriorOldVentilHSupAgentAndDate(Integer idAgent,
 			Date dateLundi, VentilDate ventilDate);
+
+	List<PointageCalcule> getListPointagesCalculesHSupForVentilation(
+			Integer idAgent, Date dateLundi);
 }

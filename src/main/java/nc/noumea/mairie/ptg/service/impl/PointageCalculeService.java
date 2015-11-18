@@ -25,6 +25,7 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.Duration;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,7 +49,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 	@Autowired
 	private IAbsWsConsumer absWsConsumer;
 	
-	private static final String COMMENTAIRE_GENERATION_TID = "Prime TID générée lors de la ventilation"; 
+	private static final String COMMENTAIRE_GENERATION_TID = "Prime TID générée lors de la ventilation";
 
 	/**
 	 * Calculating a list of PointageCalcule for an agent over a week (from =
@@ -73,6 +74,9 @@ public class PointageCalculeService implements IPointageCalculeService {
 				case 7713:
 					pointagesCalcules.addAll(generatePointage7711_12_13(idAgent, dateLundi, prime, agentPointages));
 					break;
+				case VentilationPrimeService.PRIME_RENFORT_GARDE:
+					pointagesCalcules.addAll(generatePointage7717_RenfortGarde(idAgent, dateLundi, agentPointages));
+					break;
 			}
 		}
 
@@ -84,7 +88,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
 
-		for (Pointage ptg : getPointagesPrime(pointages, 7715)) {
+		for (Pointage ptg : getPointagesPrime(pointages, VentilationPrimeService.INDEMNITE_DE_ROULEMENT)) {
 
 			LocalDate datePointage = new DateTime(ptg.getDateDebut()).toLocalDate();
 			LocalDate datePointageJPlus1 = datePointage.plusDays(1); 
@@ -448,6 +452,87 @@ public class PointageCalculeService implements IPointageCalculeService {
 		}
 		
 		return result;
+	}
+	
+	/**
+	 * #19718 RENFORT De GARDE pour le DCIS
+	 * 
+	 * @param idAgent Integer
+	 * @param dateLundi Date
+	 * @param pointages List<Pointage> 
+	 * @return List<PointageCalcule>
+	 */
+	public List<PointageCalcule> generatePointage7717_RenfortGarde(Integer idAgent, Date dateLundi, 
+			List<Pointage> pointages) {
+		
+		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
+
+		for (Pointage ptg : getPointagesPrime(pointages, VentilationPrimeService.PRIME_RENFORT_GARDE)) {
+			
+			DateTime dateDebut = new DateTime(ptg.getDateDebut());
+			DateTime dateFin = new DateTime(ptg.getDateFin());
+			
+			Duration dureePrimeSaisie = new Duration(dateDebut, dateFin);
+			
+			Double ratioHSup = (double) (12.0/24.0);
+			
+			
+			// #19718 RG : RENFORT GARDE EQUIVALENCES
+			// Si renfort de 24H : Jour de semaine 12H Samedi : 14H Dimanche et jour férié et chômé : 16H
+			// Si renfort de mois de 24H : Jour de semaine H*12/24 Samedi : H*14/24 Dimanche et jour férié et chômé : H* 16/24
+			// H = Nombre d'heures effectuées.
+			
+			if(dateDebut.getDayOfWeek() == DateTimeConstants.SUNDAY
+					|| sirhWsConsumer.isHoliday(dateDebut)) {
+				ratioHSup = (double) (16.0/24.0);
+			}
+			if(dateDebut.getDayOfWeek() == DateTimeConstants.SATURDAY) {
+				ratioHSup = (double) (14.0/24.0);
+			}
+			
+			// calcul (reultat en minutes)
+			Integer quantite = new Double(dureePrimeSaisie.getStandardMinutes() * ratioHSup).intValue();
+			
+			if(null != quantite 
+					&& 0 < quantite) {
+				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, dateDebut.toDate());
+				existingPc = returnOrCreateNewPointageWithHSup(existingPc, ptg);
+				existingPc.addQuantite(quantite);
+	
+				if (!result.contains(existingPc))
+					result.add(existingPc);
+			}
+		}
+		
+		return result;
+	}
+
+	/**
+	 * This methods either returns the pointageCalcule if not null or create a
+	 * new one according to the pointage and the HSup generating it. This is
+	 * used by Pointage generators to create new Pointage calcules the same way
+	 * for all methods
+	 * 
+	 * @param pCalcule PointageCalcule
+	 * @param ptg Pointage
+	 * @param quantite Integer
+	 * @return PointageCalcule
+	 */
+	private PointageCalcule returnOrCreateNewPointageWithHSup(PointageCalcule pCalcule, Pointage ptg) {
+
+		if (pCalcule != null)
+			return pCalcule;
+
+		pCalcule = new PointageCalcule();
+		pCalcule.setIdAgent(ptg.getIdAgent());
+		pCalcule.setDateLundi(ptg.getDateLundi());
+		pCalcule.setDateDebut(ptg.getDateDebut());
+		pCalcule.setDateFin(ptg.getDateFin());
+		pCalcule.setEtat(EtatPointageEnum.VENTILE);
+		pCalcule.setRefPrime(null);
+		pCalcule.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.H_SUP.getValue()));
+
+		return pCalcule;
 	}
 
 }
