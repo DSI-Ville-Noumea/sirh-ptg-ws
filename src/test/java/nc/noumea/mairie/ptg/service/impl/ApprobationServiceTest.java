@@ -2074,6 +2074,107 @@ public class ApprobationServiceTest {
 
 		assertEquals(1, otherPointage.getEtats().size());
 	}
+	
+	@Test
+	public void reinitialisePointageHSupEtAbsEtPrime7717_AApprouveForVentilationSuiteRejetOuApprobation() {
+		
+		Integer idAgent = 9005138;
+		Date dateEtat = new Date();
+		
+		PointagesEtatChangeDto dto = new PointagesEtatChangeDto();
+		dto.setIdRefEtat(EtatPointageEnum.REJETE.getCodeEtat());
+		EtatPointageEnum currentEtat = EtatPointageEnum.VALIDE;
+		
+		RefTypePointage typePointagePrime = new RefTypePointage();
+		typePointagePrime.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		
+		RefTypePointage typePointageAbs = new RefTypePointage();
+		typePointageAbs.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
+
+		RefTypePointage typePointageHsup = new RefTypePointage();
+		typePointageHsup.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		RefPrime refPrime7700 = new RefPrime();
+		refPrime7700.setIdRefPrime(1);
+		refPrime7700.setNoRubr(7700);
+
+		RefPrime refPrime7717 = new RefPrime();
+		refPrime7717.setIdRefPrime(1);
+		refPrime7717.setNoRubr(7717);
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.JOURNALISE);
+		
+		Pointage ptg = new Pointage();
+		ptg.setIdPointage(10);
+		ptg.setIdAgent(9005138);
+		ptg.setDateLundi(new Date());
+		ptg.setType(typePointagePrime);
+		ptg.setRefPrime(refPrime7700);
+		ptg.getEtats().add(etat);
+		
+		
+		Pointage otherPointagePrime7717 = Mockito.spy(new Pointage());
+		otherPointagePrime7717.setIdPointage(1);
+		otherPointagePrime7717.setType(typePointagePrime);
+		otherPointagePrime7717.setRefPrime(refPrime7717);
+		otherPointagePrime7717.getEtats().add(etat);
+		
+		Pointage otherPointagePrimeNot7717 = Mockito.spy(new Pointage());
+		otherPointagePrimeNot7717.setIdPointage(2);
+		otherPointagePrimeNot7717.setType(typePointagePrime);
+		otherPointagePrimeNot7717.setRefPrime(refPrime7700);
+		otherPointagePrimeNot7717.getEtats().add(etat);
+		
+		Pointage otherPointageAbs = Mockito.spy(new Pointage());
+		otherPointageAbs.setIdPointage(3);
+		otherPointageAbs.setType(typePointageAbs);
+		otherPointageAbs.getEtats().add(etat);
+		
+		Pointage otherPointageHSup = Mockito.spy(new Pointage());
+		otherPointageHSup.setIdPointage(4);
+		otherPointageHSup.setType(typePointageHsup);
+		otherPointageHSup.getEtats().add(etat);
+
+		List<Pointage> listePointagesAgent = new ArrayList<Pointage>();
+		listePointagesAgent.add(otherPointagePrime7717);
+		listePointagesAgent.add(otherPointagePrimeNot7717);
+		listePointagesAgent.add(otherPointageAbs);
+		listePointagesAgent.add(otherPointageHSup);
+		listePointagesAgent.add(ptg);
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi())).thenReturn(listePointagesAgent);
+		
+		ApprobationService service = new ApprobationService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+		ReflectionTestUtils.setField(service, "helperService", hS);
+		
+		// la prime n est pas un Renfort de Garde 7717
+		service.reinitialisePointageHSupEtAbsEtPrime7717_AApprouveForVentilationSuiteRejetOuApprobation(idAgent, dto, currentEtat, ptg, dateEtat);
+		assertEquals(1, otherPointageAbs.getEtats().size());
+		assertEquals(1, otherPointageHSup.getEtats().size());
+		assertEquals(1, otherPointagePrime7717.getEtats().size());
+		assertEquals(1, otherPointagePrimeNot7717.getEtats().size());
+		assertEquals(1, ptg.getEtats().size());
+		
+
+		// la prime est un Renfort de Garde 7717
+		ptg.setRefPrime(refPrime7717);
+		service.reinitialisePointageHSupEtAbsEtPrime7717_AApprouveForVentilationSuiteRejetOuApprobation(idAgent, dto, currentEtat, ptg, dateEtat);
+		assertEquals(2, otherPointageAbs.getEtats().size());
+		assertEquals(EtatPointageEnum.APPROUVE, otherPointageAbs.getEtats().get(1).getEtat());
+		assertEquals(2, otherPointageHSup.getEtats().size());
+		assertEquals(EtatPointageEnum.APPROUVE, otherPointageHSup.getEtats().get(1).getEtat());
+		assertEquals(2, otherPointagePrime7717.getEtats().size());
+		assertEquals(EtatPointageEnum.APPROUVE, otherPointagePrime7717.getEtats().get(1).getEtat());
+		assertEquals(1, otherPointagePrimeNot7717.getEtats().size());
+		assertEquals(EtatPointageEnum.JOURNALISE, otherPointagePrimeNot7717.getEtats().get(0).getEtat());
+		// meme pointage
+		assertEquals(1, ptg.getEtats().size());
+	}
 
 	@Test
 	public void checkDroitApprobationByPointage() {

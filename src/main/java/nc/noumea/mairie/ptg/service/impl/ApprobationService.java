@@ -379,6 +379,9 @@ public class ApprobationService implements IApprobationService {
 			Date dateEtat = helperService.getCurrentDate();
 			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat.getEtat(), ptg, dateEtat);
 			reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat.getEtat(), ptg, dateEtat);
+			
+			// #19718 si rejet ou approbation de prime Renfort de Garde
+			reinitialisePointageHSupEtAbsEtPrime7717_AApprouveForVentilationSuiteRejetOuApprobation(idAgent, dto, currentEtat.getEtat(), ptg, dateEtat);
 		}
 
 		return result;
@@ -470,6 +473,9 @@ public class ApprobationService implements IApprobationService {
 			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat, ptg, dateEtat);
 			reinitialisePointageHSupEtAbsAApprouveForVentilationSuiteApprobation(idAgent, dto, currentEtat, ptg, dateEtat);
 			reinitialisePointagePrimeAApprouveForVentilationSuiteRejet(idAgent, dto, currentEtat, ptg, dateEtat);
+			
+			// #19718 si rejet ou approbation de prime Renfort de Garde
+			reinitialisePointageHSupEtAbsEtPrime7717_AApprouveForVentilationSuiteRejetOuApprobation(idAgent, dto, currentEtat, ptg, dateEtat);
 		}
 		return result;
 	}
@@ -560,6 +566,62 @@ public class ApprobationService implements IApprobationService {
 				for (Pointage pointage : listePointagesAgent) {
 					if (EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
 							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum()) || RefTypePointageEnum.ABSENCE.equals(pointage.getTypePointageEnum()))
+							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {
+
+						EtatPointage etat = new EtatPointage();
+						etat.setDateEtat(dateEtat);
+						etat.setDateMaj(helperService.getCurrentDate());
+						etat.setPointage(pointage);
+						etat.setIdAgent(idAgent);
+						etat.setEtat(EtatPointageEnum.APPROUVE);
+						pointage.getEtats().add(etat);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Uen prime Renfort de Garde est une prime calculée qui genere des HSup dans la ventilation.
+	 * 
+	 * Si on rejette un Renfort de Garde, il faut remettre a Approuve tous les pointages 
+	 * utils a la ventilation des Heures Sup. 
+	 * c-a-d Pointages HSup, Abs et Prime Renfort de Garde
+	 * 
+	 * Pour prise en compte dans la prochaine ventilation
+	 *  
+	 * @param idAgent Integer Agent connecte
+	 * @param dto PointagesEtatChangeDto DTO de mise a jour
+	 * @param currentEtat EtatPointageEnum Etat actuel du pointage
+	 * @param ptg Pointage concerne
+	 * @param dateEtat Date de l action
+	 */
+	protected void reinitialisePointageHSupEtAbsEtPrime7717_AApprouveForVentilationSuiteRejetOuApprobation(Integer idAgent, PointagesEtatChangeDto dto, EtatPointageEnum currentEtat, Pointage ptg, Date dateEtat) {
+		
+		// si le pointage est un Renfort de Garde
+		if ((RefTypePointageEnum.PRIME.equals(ptg.getTypePointageEnum()) 
+				&& null != ptg.getRefPrime()
+				&& ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.PRIME_RENFORT_GARDE))
+				// ET SOIT on a rejete ce pointage VALIDE ou JOURNALISE
+			&& (EtatPointageEnum.REJETE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()))
+						&& (EtatPointageEnum.VALIDE.equals(currentEtat) || EtatPointageEnum.JOURNALISE.equals(currentEtat)))
+					// SOIT on a APPROUVE ce pointage REJETE
+				|| (EtatPointageEnum.APPROUVE.equals(EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat())) 
+						&& EtatPointageEnum.REJETE.equals(currentEtat))
+			) {
+			// on reinitialise les autres pointages du meme agent pour la meme
+			// semaine
+			// a APPROUVE pour prise en compte dans la ventilation
+			List<Pointage> listePointagesAgent = pointageRepository.getPointagesForAgentAndDateOrderByIdDesc(ptg.getIdAgent(), ptg.getDateLundi());
+			if (null != listePointagesAgent && !listePointagesAgent.isEmpty()) {
+				for (Pointage pointage : listePointagesAgent) {
+					if ((EtatPointageEnum.VALIDE.equals(pointage.getLatestEtatPointage().getEtat())
+					|| EtatPointageEnum.JOURNALISE.equals(pointage.getLatestEtatPointage().getEtat()))
+							&& (RefTypePointageEnum.H_SUP.equals(pointage.getTypePointageEnum()) 
+									|| RefTypePointageEnum.ABSENCE.equals(pointage.getTypePointageEnum())
+									|| (RefTypePointageEnum.PRIME.equals(pointage.getTypePointageEnum())
+											&& pointage.getRefPrime().getNoRubr().equals(VentilationPrimeService.PRIME_RENFORT_GARDE))
+									)
 							&& !pointage.getIdPointage().equals(ptg.getIdPointage())) {
 
 						EtatPointage etat = new EtatPointage();
