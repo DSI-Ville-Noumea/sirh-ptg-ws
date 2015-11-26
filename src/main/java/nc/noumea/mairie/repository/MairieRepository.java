@@ -70,10 +70,9 @@ public class MairieRepository implements IMairieRepository {
 
 		List<Spcarr> result = qCarr.getResultList();
 
-		if (result.size() != 1)
-			return null;
-
-		return result.get(0);
+		// bug #19943 si 2 carrieres le meme jour 
+		// une finissant, une commencant
+		return null != result ? result.get(0) : null;
 	}
 
 	@Override

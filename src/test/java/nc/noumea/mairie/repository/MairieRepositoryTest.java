@@ -49,6 +49,37 @@ public class MairieRepositoryTest {
 		assertNotNull(result);
 	}
 	
+	// bug #19943 si 2 carrieres le meme jour 
+	// une finissant, une commencant
+	@Test
+	@Transactional("sirhTransactionManager")
+	public void getAgentCurrentCarriere_2carrieres() {
+		
+		SpcarrId id = new SpcarrId();
+		id.setDatdeb(20131201);
+		id.setNomatr(5138);
+		
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(1);
+		carr.setId(id);
+		carr.setDateFin(20141201);
+		sirhEntityManager.persist(carr);
+		
+		SpcarrId id2 = new SpcarrId();
+		id2.setDatdeb(20141201);
+		id2.setNomatr(5138);
+		
+		Spcarr carr2 = new Spcarr();
+		carr2.setCdcate(1);
+		carr2.setId(id2);
+		carr2.setDateFin(0);
+		sirhEntityManager.persist(carr2);
+		
+		Spcarr result = repository.getAgentCurrentCarriere(5138, new DateTime(2014,12,01,0,0,0).toDate());
+		
+		assertEquals(result.getDateFin().intValue(), 0);
+	}
+	
 	@Test
 	@Transactional("sirhTransactionManager")
 	public void getPAOfAgentBetween2Date_2PA() {
