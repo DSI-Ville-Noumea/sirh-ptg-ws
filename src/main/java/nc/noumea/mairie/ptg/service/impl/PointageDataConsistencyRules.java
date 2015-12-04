@@ -416,7 +416,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	 * they're consistent
 	 */
 	@Override
-	public void processDataConsistency(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	public void processDataConsistency(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, boolean isFromSIRH) {
 
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
@@ -441,7 +441,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		// FIN on check les types d'absences du projet SIRH-ABS-WS
 		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages, carr, baseDto);
 		checkAgentINAAndHSup(srm, idAgent, dateLundi, pointages, carr, baseDto);
-		checkAgentTempsPartielAndHSup(srm, idAgent, dateLundi, pointages, carr, baseDto);
+		checkAgentTempsPartielAndHSup(srm, idAgent, dateLundi, pointages, carr, baseDto, isFromSIRH);
 		checkAgentInactivity(srm, idAgent, dateLundi, pointages, ag);
 		checkPrime7650(srm, idAgent, dateLundi, pointages);
 		checkPrime7651(srm, idAgent, dateLundi, pointages);
@@ -549,7 +549,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
+	public ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, 
+			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto, boolean isFromSIRH) {
 
 		boolean tempsPartiel = carr.getSpbhor().getTaux().intValue() != 1;
 		if (tempsPartiel) {
@@ -581,7 +582,11 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > baseLegaleHsupMax) {
 				String nombre = helperService.formatMinutesToString(baseLegaleHsupMax - weekBase + minutesAbsWeek);
 				String msg = String.format(HS_TPS_PARTIEL_MSG, nombre);
-				srm.getErrors().add(msg);
+				if(isFromSIRH) {
+					srm.getInfos().add(msg);
+				}else{
+					srm.getErrors().add(msg);
+				}
 			}
 		}
 

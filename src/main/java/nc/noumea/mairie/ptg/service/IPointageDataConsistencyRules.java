@@ -13,7 +13,7 @@ import org.joda.time.DateTime;
 
 public interface IPointageDataConsistencyRules {
 
-	void processDataConsistency(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
+	void processDataConsistency(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, boolean isFromSIRH);
 
 	ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto);
@@ -34,7 +34,7 @@ public interface IPointageDataConsistencyRules {
 			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto);
 
 	ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
-			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto);
+			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto, boolean isFromSIRH);
 
 	ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, AgentGeneriqueDto ag);

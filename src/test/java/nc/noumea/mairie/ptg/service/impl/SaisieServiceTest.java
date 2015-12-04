@@ -523,7 +523,7 @@ public class SaisieServiceTest {
 		})
 				.when(dcMock)
 				.processDataConsistency(Mockito.any(ReturnMessageDto.class), Mockito.eq(agent.getIdAgent()),
-						Mockito.eq(lundi), Mockito.anyList());
+						Mockito.eq(lundi), Mockito.anyList(), Mockito.anyBoolean());
 
 		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());

@@ -220,7 +220,7 @@ public class SaisieService implements ISaisieService {
 		}
 
 		// calling data consistency
-		ptgDataCosistencyRules.processDataConsistency(result, idAgent, dateLundi, finalPointages);
+		ptgDataCosistencyRules.processDataConsistency(result, idAgent, dateLundi, finalPointages, true);
 
 		// If any blocking error, return the list of problems and do not save
 		if (result.getErrors().size() != 0)
@@ -668,7 +668,7 @@ public class SaisieService implements ISaisieService {
 		}
 
 		// calling data consistency
-		ptgDataCosistencyRules.processDataConsistency(result, idAgent, dateLundi, finalPointages);
+		ptgDataCosistencyRules.processDataConsistency(result, idAgent, dateLundi, finalPointages, false);
 
 		// If any blocking error, return the list of problems and do not save
 		if (result.getErrors().size() != 0)

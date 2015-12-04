@@ -75,10 +75,10 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.doReturn(rmd).when(service).checkPrime7651(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkPrime7652(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service)
-				.checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, base);
+				.checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, base, false);
 
 		// When
-		service.processDataConsistency(rmd, idAgent, dateLundi, pointages);
+		service.processDataConsistency(rmd, idAgent, dateLundi, pointages, false);
 
 		// Then
 		Mockito.verify(service, Mockito.times(1)).checkRecuperation(rmd, idAgent, pointages);
@@ -94,7 +94,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.verify(service, Mockito.times(1)).checkPrime7651(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7652(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages,
-				carr, base);
+				carr, base, false);
 	}
 	
 	@Test
@@ -133,10 +133,10 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.doReturn(rmd).when(service).checkPrime7651(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkPrime7652(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service)
-				.checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, null);
+				.checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, null, false);
 
 		// When
-		service.processDataConsistency(rmd, idAgent, dateLundi, pointages);
+		service.processDataConsistency(rmd, idAgent, dateLundi, pointages, false);
 
 		// Then
 		Mockito.verify(service, Mockito.times(1)).checkRecuperation(rmd, idAgent, pointages);
@@ -152,7 +152,7 @@ public class PointageDataConsistencyRulesTest {
 		Mockito.verify(service, Mockito.times(1)).checkPrime7651(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7652(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages,
-				carr, null);
+				carr, null, false);
 		
 		assertEquals(rmd.getErrors().get(0), "L'agent n'a pas d'affectation ou la base horaire de pointage n'y est pas renseignée."); 
 	}
@@ -1875,7 +1875,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car, bas);
+				Arrays.asList(p1), car, bas, false);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -1913,7 +1913,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car, bas);
+				Arrays.asList(p1), car, bas, false);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -1963,7 +1963,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car, bas);
+				Arrays.asList(p1), car, bas, false);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -2009,7 +2009,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1, p2), car, bas);
+				Arrays.asList(p1, p2), car, bas, false);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -2067,7 +2067,7 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1, p2), car, bas);
+				Arrays.asList(p1, p2), car, bas, false);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -2122,13 +2122,24 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car, bas);
+				Arrays.asList(p1), car, bas, false);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 d'heures supplémentaires.", result
 				.getErrors().get(0));
+		
+
+		// When
+		ReturnMessageDto resultFromSIRH = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas, true);
+
+		// Then
+		assertEquals(0, resultFromSIRH.getErrors().size());
+		assertEquals(1, resultFromSIRH.getInfos().size());
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 d'heures supplémentaires.", resultFromSIRH
+				.getInfos().get(0));
 	}
 
 	@Test
