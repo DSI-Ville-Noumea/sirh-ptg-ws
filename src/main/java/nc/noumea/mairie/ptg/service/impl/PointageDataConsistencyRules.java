@@ -582,6 +582,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > baseLegaleHsupMax) {
 				String nombre = helperService.formatMinutesToString(baseLegaleHsupMax - weekBase + minutesAbsWeek);
 				String msg = String.format(HS_TPS_PARTIEL_MSG, nombre);
+				// #20056
 				if(isFromSIRH) {
 					srm.getInfos().add(msg);
 				}else{
