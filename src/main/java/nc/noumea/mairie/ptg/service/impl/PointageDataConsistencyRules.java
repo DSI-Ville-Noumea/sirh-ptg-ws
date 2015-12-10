@@ -228,10 +228,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 					return srm;
 				}
 				// cas de la DPM #11622
-				if ((null != service && service.getSigle().toUpperCase().equals("DPM")) || carr.getSpbarem().getIna() > 315) {
-
+				// bug hsup #20374
+				if ((null != service && service.getSigle().toUpperCase().equals("DPM")) 
+						|| carr.getSpbarem().getIna() > 315) {
 					ptg.setHeureSupRecuperee(true);
-					return srm;
 				}
 			}
 		}

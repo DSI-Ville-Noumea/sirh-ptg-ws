@@ -987,6 +987,13 @@ public class PointageDataConsistencyRulesTest {
 		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 9h
 		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
 
+		// bug #20374
+		Pointage p2 = new Pointage();
+		p2.setType(new RefTypePointage());
+		p2.setDateDebut(new DateTime(2013, 05, 17, 18, 15, 0).toDate());
+		p2.setDateFin(new DateTime(2013, 05, 17, 19, 15, 0).toDate()); // 9h
+		p2.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
 		EntiteDto dtoService = new EntiteDto();
 		dtoService.setSigle("TITI");
 
@@ -998,12 +1005,13 @@ public class PointageDataConsistencyRulesTest {
 
 		// When
 		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
-				Arrays.asList(p1), car, bas);
+				Arrays.asList(p1, p2), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertEquals(p1.getHeureSupRecuperee(), true);
+		assertEquals(p2.getHeureSupRecuperee(), true);
 	}
 
 	@Test
