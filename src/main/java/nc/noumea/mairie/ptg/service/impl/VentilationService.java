@@ -225,6 +225,10 @@ public class VentilationService implements IVentilationService {
 		// 1. Retrieve agent current Spcarr
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(agent),
 				toVentilDate.getDateVentilation());
+		
+		if(null == carr) {
+			throw new NoCarriereException();
+		}
 
 		// 2. remove existing ventilations
 		removePreviousVentilations(toVentilDate, agent, pointageType);
@@ -350,6 +354,17 @@ public class VentilationService implements IVentilationService {
 					listPointageRejetesOrderedByDateAsc, Arrays.asList(EtatPointageEnum.REJETE), null);
 		}
 		
+		// bug #20405 si des Heures Sups sont a ventiler, 
+		// il faut les calculer avec les autres pointages meme journalises
+		// pour avoir un calcul coherent
+		List<Pointage> filteredAgentsPointageJournalisesForPeriod = pointageService.filterOldPointagesAndEtatFromList(
+				agentsPointageForPeriod, Arrays.asList(EtatPointageEnum.JOURNALISE), null);
+		// attention a ne pas retourner cette liste pour en pas repasser les pointages
+		// journalises a ventiles
+		List<Pointage> listAllAgentsPointageForPeriod = new ArrayList<Pointage>();
+		listAllAgentsPointageForPeriod.addAll(filteredAgentsPointageForPeriod);
+		listAllAgentsPointageForPeriod.addAll(filteredAgentsPointageJournalisesForPeriod);
+		
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		
 		////////////////////////////////////////////////
@@ -357,12 +372,12 @@ public class VentilationService implements IVentilationService {
 		////////////////////////////////////////////////
 		boolean has1150Prime = sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine).contains(1150);
 		VentilHsup hSupsVentilees = ventilationHSupService.processHSup(idAgent, carr, dateLundi,
-				filteredAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime, ventilDate, filteredListPointageRejetesOrderedByDateAsc);
+				listAllAgentsPointageForPeriod, carr.getStatutCarriere(), has1150Prime, ventilDate, filteredListPointageRejetesOrderedByDateAsc);
 		
 		////////////////////////////////////////////////
 		// 3. calcul les absences
 		////////////////////////////////////////////////
-		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, filteredAgentsPointageForPeriod,
+		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, listAllAgentsPointageForPeriod,
 				dateLundi, listPointageRejetesVentilesOrderedByDateAsc, filteredListPointageRejetesOrderedByDateAsc);
 
 		// ce code ne sert plus voir #13816
