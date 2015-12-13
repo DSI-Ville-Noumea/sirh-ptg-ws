@@ -362,8 +362,13 @@ public class VentilationService implements IVentilationService {
 		// attention a ne pas retourner cette liste pour en pas repasser les pointages
 		// journalises a ventiles
 		List<Pointage> listAllAgentsPointageForPeriod = new ArrayList<Pointage>();
-		listAllAgentsPointageForPeriod.addAll(filteredAgentsPointageForPeriod);
-		listAllAgentsPointageForPeriod.addAll(filteredAgentsPointageJournalisesForPeriod);
+		if(null != filteredAgentsPointageForPeriod 
+				&& !filteredAgentsPointageForPeriod.isEmpty())
+			listAllAgentsPointageForPeriod.addAll(filteredAgentsPointageForPeriod);
+		
+		if(null != filteredAgentsPointageJournalisesForPeriod 
+				&& !filteredAgentsPointageJournalisesForPeriod.isEmpty())
+			listAllAgentsPointageForPeriod.addAll(filteredAgentsPointageJournalisesForPeriod);
 		
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		

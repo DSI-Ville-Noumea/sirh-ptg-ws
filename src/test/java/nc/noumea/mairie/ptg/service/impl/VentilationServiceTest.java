@@ -181,7 +181,6 @@ public class VentilationServiceTest {
 		ventilDate.setDateVentilation(new LocalDate(2013, 7, 28).toDate());
 		Date dateLundi = new LocalDate().toDate();
 		Date fromEtatDate = new LocalDate().toDate();
-		Date toEtatDate = new LocalDate().toDate();
 
 		Pointage p1 = new Pointage();
 		p1.setType(hSup);
@@ -195,7 +194,7 @@ public class VentilationServiceTest {
 		List<Pointage> plist = Arrays.asList(p1);
 		IVentilationRepository ventilRepo = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(
-				ventilRepo.getListPointagesAbsenceAndHSupForVentilation(idAgent, fromEtatDate, toEtatDate, dateLundi))
+				ventilRepo.getListPointagesAbsenceAndHSupForVentilation(idAgent, fromEtatDate, ventilDate.getDateVentilation(), dateLundi))
 				.thenReturn(plist);
 		Mockito.when(
 				ventilRepo.getListPointagesPrimeByWeekForVentilation(idAgent, fromEtatDate, ventilDate.getDateVentilation(), dateLundi))
@@ -240,6 +239,87 @@ public class VentilationServiceTest {
 		// Then
 		Mockito.verify(ventilRepo, Mockito.times(1)).persistEntity(Mockito.isA(VentilHsup.class));
 		assertEquals(ventilDate, ventilHsup.getVentilDate());
+	}
+
+	// #20405 recuperer les pointages journalises pour le calcul de la ventilation
+	// mais sans les retourner dans le resultat 
+	@Test
+	public void processHSupAndAbsVentilationForWeekAndAgent_HSup_withPointageJournalise() {
+
+		// Given
+		Integer idAgent = 9008765;
+		VentilDate ventilDate = new VentilDate();
+		ventilDate.setDateVentilation(new LocalDate(2013, 7, 28).toDate());
+		Date dateLundi = new LocalDate().toDate();
+		Date fromEtatDate = new LocalDate().toDate();
+
+		Pointage p1 = new Pointage();
+		p1.setType(hSup);
+		p1.setDateLundi(new LocalDate(2013, 7, 1).toDate());
+		p1.setDateDebut(new LocalDate(2013, 7, 2).toDate());
+
+		Pointage p2 = new Pointage();
+		p2.setType(hSup);
+		p2.setDateLundi(new LocalDate(2013, 7, 1).toDate());
+		p2.setDateDebut(new LocalDate(2013, 7, 3).toDate());
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(7); // CC
+
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		
+		List<Pointage> plist = Arrays.asList(p1, p2);
+		IVentilationRepository ventilRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(
+				ventilRepo.getListPointagesAbsenceAndHSupForVentilation(idAgent, fromEtatDate, ventilDate.getDateVentilation(), dateLundi))
+				.thenReturn(plist);
+		Mockito.when(
+				ventilRepo.getListPointagesPrimeByWeekForVentilation(idAgent, fromEtatDate, ventilDate.getDateVentilation(), dateLundi))
+				.thenReturn(plist);
+
+		IPointageService pService = Mockito.mock(IPointageService.class);
+		Mockito.when(pService.filterOldPointagesAndEtatFromList(plist, Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE), null)).thenReturn(Arrays.asList(p1));
+		Mockito.when(pService.filterOldPointagesAndEtatFromList(plist, Arrays.asList(EtatPointageEnum.JOURNALISE), null)).thenReturn(Arrays.asList(p2));
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(Arrays.asList(1128, 1135));
+
+		VentilHsup ventilHsup = Mockito.spy(new VentilHsup());
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(ventilRepo).persistEntity(Mockito.isA(VentilHsup.class));
+
+		IVentilationHSupService hSupV = Mockito.mock(IVentilationHSupService.class);
+		Mockito.when(
+				hSupV.processHSup(Mockito.eq(idAgent), Mockito.eq(carr), Mockito.eq(dateLundi),
+						Mockito.anyListOf(Pointage.class), Mockito.eq(AgentStatutEnum.CC), Mockito.eq(false),
+						Mockito.eq(ventilDate), Mockito.anyListOf(Pointage.class))).thenReturn(ventilHsup);
+
+		Mockito.when(hSupV.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, plist, AgentStatutEnum.CC)).thenReturn(ventilHsup);
+		
+		Mockito.when(hSupV.processHSupFromPointageCalcule(idAgent, dateLundi, new ArrayList<PointageCalcule>(), ventilHsup))
+			.thenReturn(ventilHsup);
+
+		IVentilationAbsenceService absV = Mockito.mock(IVentilationAbsenceService.class);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilRepo);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "ventilationHSupService", hSupV);
+		ReflectionTestUtils.setField(service, "ventilationAbsenceService", absV);
+		ReflectionTestUtils.setField(service, "pointageService", pService);
+
+		// When
+		List<Pointage> result = service.processHSupAndAbsVentilationForWeekAndAgent(ventilDate, idAgent, carr, dateLundi, fromEtatDate);
+
+		// Then
+		Mockito.verify(ventilRepo, Mockito.times(1)).persistEntity(Mockito.isA(VentilHsup.class));
+		assertEquals(ventilDate, ventilHsup.getVentilDate());
+		assertEquals(1, result.size());
+		// #20405 ici on doit retrouver que le pointage a ventile et pas les pointages journalises
+		assertEquals(result.get(0).getDateDebut(), p1.getDateDebut());
 	}
 
 	@Test
