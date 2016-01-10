@@ -587,8 +587,15 @@ public class VentilationServiceTest {
 		Date from = new LocalDate(2013, 6, 30).toDate();
 		Date to = new LocalDate(2013, 7, 28).toDate();
 		Date dateLundi = new LocalDate(2013, 7, 1).toDate();
-
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		Pointage ptg = new Pointage();
+		ptg.getEtats().add(etat);
+		
 		List<Pointage> ptgList = new ArrayList<Pointage>();
+		ptgList.add(ptg);
 
 		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vRepo.getListPointagesForPrimesCalculees(idAgent, from, to, dateLundi)).thenReturn(ptgList);
@@ -630,6 +637,66 @@ public class VentilationServiceTest {
 				Mockito.eq(AgentStatutEnum.F), Mockito.eq(dateLundi), Mockito.eq(ptgList));
 
 		Mockito.verify(vRepo, Mockito.times(1)).persistEntity(Mockito.isA(PointageCalcule.class));
+	}
+
+	@Test
+	public void calculatePointages_AllPointagesAreJournalises() {
+
+		// Given
+		Integer idAgent = 9008765;
+		Date from = new LocalDate(2013, 6, 30).toDate();
+		Date to = new LocalDate(2013, 7, 28).toDate();
+		Date dateLundi = new LocalDate(2013, 7, 1).toDate();
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.JOURNALISE);
+		
+		Pointage ptg = new Pointage();
+		ptg.getEtats().add(etat);
+		
+		List<Pointage> ptgList = new ArrayList<Pointage>();
+		ptgList.add(ptg);
+
+		IVentilationRepository vRepo = Mockito.mock(IVentilationRepository.class);
+		Mockito.when(vRepo.getListPointagesForPrimesCalculees(idAgent, from, to, dateLundi)).thenReturn(ptgList);
+
+		PointageCalcule pc1 = Mockito.spy(new PointageCalcule());
+		Mockito.doAnswer(new Answer<Object>() {
+			public Object answer(InvocationOnMock invocation) {
+				return true;
+			}
+		}).when(vRepo).persistEntity(Mockito.isA(PointageCalcule.class));
+
+		IPointageCalculeService ptgCService = Mockito.mock(IPointageCalculeService.class);
+		Mockito.when(
+				ptgCService.calculatePointagesForAgentAndWeek(Mockito.eq(idAgent), Mockito.eq(AgentStatutEnum.F),
+						Mockito.eq(dateLundi), Mockito.eq(ptgList))).thenReturn(Arrays.asList(pc1));
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(20); // F
+		IMairieRepository mairieRepo = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepo.getAgentCurrentCarriere(Mockito.eq(8765), Mockito.eq(dateLundi))).thenReturn(carr);
+
+		HelperService hsMock = Mockito.mock(HelperService.class);
+		Mockito.when(hsMock.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
+		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
+		ReflectionTestUtils.setField(service, "pointageCalculeService", ptgCService);
+		ReflectionTestUtils.setField(service, "helperService", hsMock);
+
+		// When
+		service.calculatePointages(idAgent, dateLundi, from, to);
+
+		// Then
+		Mockito.verify(mairieRepo, Mockito.times(1)).getAgentCurrentCarriere(Mockito.eq(8765),
+				Mockito.eq(new LocalDate(2013, 7, 1).toDate()));
+
+		Mockito.verify(ptgCService, Mockito.never()).calculatePointagesForAgentAndWeek(Mockito.eq(idAgent),
+				Mockito.eq(AgentStatutEnum.F), Mockito.eq(dateLundi), Mockito.eq(ptgList));
+
+		Mockito.verify(vRepo, Mockito.never()).persistEntity(Mockito.isA(PointageCalcule.class));
 	}
 
 	@Test

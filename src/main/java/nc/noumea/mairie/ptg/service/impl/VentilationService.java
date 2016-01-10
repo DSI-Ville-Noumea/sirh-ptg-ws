@@ -543,12 +543,37 @@ public class VentilationService implements IVentilationService {
 				dateLundi);
 		List<Pointage> ptgs = ventilationRepository.getListPointagesForPrimesCalculees(idAgent, fromEtatDate,
 				toEtatDate, dateLundi);
+		
+		// bug #20993
+		// pour le calcul des pointages calcules
+		// nous avons besoin de recuperer tous les pointages APPROUVE, VENTILE, VALIDE, JOURNALISE
+		// car le calcul des primes ou heures sup prend tous les pointages de la semaine en compte
+		// neanmoins, s il n y a que des pointages JOURNALISE ou VALIDE, ca ne sert à rien de les 
+		// ressortir une nouvelle fois dans la ventilation 
+		if(isAllPointagesAreValideOrJournalise(ptgs))
+			return;
+		
 		result.addAll(pointageCalculeService.calculatePointagesForAgentAndWeek(idAgent, carr.getStatutCarriere(),
 				dateLundi, ptgs));
 
 		for (PointageCalcule ptgC : result) {
 			ventilationRepository.persistEntity(ptgC);
 		}
+	}
+	
+	private boolean isAllPointagesAreValideOrJournalise(List<Pointage> listPointages) {
+		
+		if(null != listPointages
+				&& !listPointages.isEmpty()) {
+			for(Pointage ptg : listPointages) {
+				if(!ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.VALIDE)
+						&& !ptg.getLatestEtatPointage().getEtat().equals(EtatPointageEnum.JOURNALISE)) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 
 	/**
