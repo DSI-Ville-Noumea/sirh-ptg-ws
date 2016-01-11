@@ -47,6 +47,7 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("GROUP BY epmax.id_pointage)  ");
 		sb.append("maxEtats ON maxEtats.maxIdEtatPointage = ep.id_etat_pointage AND maxEtats.id_pointage = ep.id_pointage ");
 		sb.append("WHERE p.ID_AGENT = :idAgent ");
+		// bug #20993
 //		sb.append("AND (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ");
 //		sb.append("OR ep.etat = :ventile OR ep.etat = :rejete) ");
 		sb.append("AND ( ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND (ep.etat = :approuve OR ep.etat = :rejete ) ");
