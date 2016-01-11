@@ -246,7 +246,7 @@ public class VentilationService implements IVentilationService {
 			removePreviousCalculatedPointages(agent, dateLundi);
 
 			// 4.2 Calculate pointages for week
-			calculatePointages(agent, dateLundi, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
+			calculatePointages(agent, dateLundi, fromVentilDate.getDateVentilation(), toVentilDate);
 		}
 
 		// 5. Ventilation of H_SUP and ABS
@@ -533,7 +533,7 @@ public class VentilationService implements IVentilationService {
 	 * @param toEtatDate
 	 * @param dateLundi
 	 */
-	protected void calculatePointages(Integer idAgent, Date dateLundi, Date fromEtatDate, Date toEtatDate) {
+	protected void calculatePointages(Integer idAgent, Date dateLundi, Date fromEtatDate, VentilDate ventilDate) {
 
 		logger.debug("Creation of calculated PRIME pointages for date monday [{}]...", dateLundi);
 
@@ -542,7 +542,7 @@ public class VentilationService implements IVentilationService {
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
 				dateLundi);
 		List<Pointage> ptgs = ventilationRepository.getListPointagesForPrimesCalculees(idAgent, fromEtatDate,
-				toEtatDate, dateLundi);
+				ventilDate.getDateVentilation(), dateLundi);
 		
 		// bug #20993
 		// pour le calcul des pointages calcules
@@ -557,6 +557,8 @@ public class VentilationService implements IVentilationService {
 				dateLundi, ptgs));
 
 		for (PointageCalcule ptgC : result) {
+			// bug #21060
+			ptgC.setLastVentilDate(ventilDate);
 			ventilationRepository.persistEntity(ptgC);
 		}
 	}
