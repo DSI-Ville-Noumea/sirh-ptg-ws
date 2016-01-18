@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/etatPointage")
 public class EtatPointageController {
 
-	private Logger logger = LoggerFactory.getLogger(VentilationController.class);
+	private Logger logger = LoggerFactory.getLogger(EtatPointageController.class);
 
 	@Autowired
 	private IEtatPointageService etatPointageService;

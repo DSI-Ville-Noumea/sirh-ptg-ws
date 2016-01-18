@@ -32,7 +32,7 @@ import flexjson.JSONSerializer;
 @RequestMapping("/exportPaie")
 public class ExportPaieController {
 
-	private Logger logger = LoggerFactory.getLogger(VentilationController.class);
+	private Logger logger = LoggerFactory.getLogger(ExportPaieController.class);
 
 	@Autowired
 	private IExportPaieService exportPaieService;
