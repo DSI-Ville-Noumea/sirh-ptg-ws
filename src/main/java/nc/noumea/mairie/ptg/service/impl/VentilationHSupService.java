@@ -365,9 +365,9 @@ public class VentilationHSupService implements IVentilationHSupService {
 				// Remove as many hours as needed to get exact number of HSUP
 				// If for example the weekMinutes is over the weekBase because
 				// of these hours
-				removeMinutesWhileUnderWeekBase(minutes,
-						weekBase - result.getTotalAbsences(), weekMinutes,
-						statut, dayBase);
+//				removeMinutesWhileUnderWeekBase(minutes,
+//						weekBase - result.getTotalAbsences(), weekMinutes,
+//						statut, dayBase);
 
 				// Then , depending on agent status, computer the HSup
 				// specifically
