@@ -305,6 +305,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 						- result.getMSup() - result.getMNormales()) <= 0 ? 0
 						: (weekMinutes - (weekBase - result.getTotalAbsences())
 								- result.getMSup() - result.getMNormales());
+				
 				generateHSupContractuels(result, weekBase, weekMinutes, dday,
 						nbMinutesSup);
 				break;
@@ -513,9 +514,9 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 			if ((nbMinutesSupJour + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE) {
 				nbMinutesNormalesToAdd = (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup);
-			} else if (nbMinutesSupJour
+			} else if (nbMinutesSupJour + result.getMNormales()
 					+ (weekBase - result.getTotalAbsences()) > BASE_HEBDO_LEGALE) {
-				nbMinutesNormalesToAdd = BASE_HEBDO_LEGALE
+				nbMinutesNormalesToAdd = BASE_HEBDO_LEGALE - result.getMNormales()
 						- (weekBase - result.getTotalAbsences());
 			} else {
 				nbMinutesNormalesToAdd = nbMinutesSupJour;
@@ -610,9 +611,9 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 			if ((nbMinutesSupJour + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE) {
 				nbMinutesNormalesToAdd = (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup);
-			} else if (nbMinutesSupJour
+			} else if (nbMinutesSupJour + result.getMNormales()
 					+ (weekBase - result.getTotalAbsences()) > BASE_HEBDO_LEGALE) {
-				nbMinutesNormalesToAdd = BASE_HEBDO_LEGALE
+				nbMinutesNormalesToAdd = BASE_HEBDO_LEGALE - result.getMNormales()
 						- (weekBase - result.getTotalAbsences());
 			} else {
 				nbMinutesNormalesToAdd = nbMinutesSupJour;
@@ -699,8 +700,8 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 			if ((nbMinutesSup + weekMinutesBeforeHSup) > BASE_HEBDO_LEGALE) {
 				nbMinutesComplementairesToAdd = (BASE_HEBDO_LEGALE - weekMinutesBeforeHSup);
-			} else if (nbMinutesSup + (weekBase - result.getTotalAbsences()) > BASE_HEBDO_LEGALE) {
-				nbMinutesComplementairesToAdd = BASE_HEBDO_LEGALE
+			} else if (nbMinutesSup + result.getMNormales() + (weekBase - result.getTotalAbsences()) > BASE_HEBDO_LEGALE) {
+				nbMinutesComplementairesToAdd = BASE_HEBDO_LEGALE - result.getMNormales()
 						- (weekBase - result.getTotalAbsences());
 			} else {
 				nbMinutesComplementairesToAdd = nbMinutesSup;

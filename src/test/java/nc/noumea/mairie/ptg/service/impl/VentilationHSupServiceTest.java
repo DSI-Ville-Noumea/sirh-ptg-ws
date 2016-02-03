@@ -6299,9 +6299,9 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsNuitRecup(), new Double(60*1.75).intValue());
 	}
 	
-	// bug # bug en PROD
+	// bug #28268 bug en PROD
 	@Test
-	public void processHeuresSup_Contractuel_bugHSup_miTemps_NoMatr4569() {
+	public void processHeuresSup_Contractuel_bugHSup_miTemps_NoMatr4569_semaine24() {
 		
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(4.0);
@@ -6404,9 +6404,9 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
 	}
 	
-	// bug # bug en PROD
+	// bug #28268 bug en PROD
 	@Test
-	public void processHeuresSup_Contractuel_bugHSup_miTemps_NoMatr4570() {
+	public void processHeuresSup_Contractuel_bugHSup_miTemps_NoMatr4570_semaine42() {
 		
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(4.0);
@@ -6484,6 +6484,350 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMComposees(), 0);
 		
 		assertEquals(ventilHsup.getMSup25(), 0);
+		assertEquals(ventilHsup.getMSup50(), 0);
+		assertEquals(ventilHsup.getMMai(), 0);
+		assertEquals(ventilHsup.getMsdjf(), 0);
+		assertEquals(ventilHsup.getMsNuit(), 0);
+
+		assertEquals(ventilHsup.getMNormalesRecup(), 0);
+		assertEquals(ventilHsup.getMSimpleRecup(), 0);
+		assertEquals(ventilHsup.getMComposeesRecup(), 0);
+
+		assertEquals(ventilHsup.getMSup25Recup(), 0);
+		assertEquals(ventilHsup.getMSup50Recup(), 0);
+		assertEquals(ventilHsup.getMMaiRecup(), 0);
+		assertEquals(ventilHsup.getMsdjfRecup(), 0);
+		assertEquals(ventilHsup.getMsNuitRecup(), 0);
+	}
+	
+	// bug #28286 bug en PROD
+	@Test
+	public void processHeuresSup_Contractuel_bugHSup_miTemps_NoMatr4569_semaine25() {
+		
+		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
+		spbase.setHeureLundi(4.0);
+		spbase.setHeureMardi(4.0);
+		spbase.setHeureMercredi(4.0);
+		spbase.setHeureJeudi(4.0);
+		spbase.setHeureVendredi(3.3);
+		spbase.setHeureSamedi(0.0);
+		spbase.setHeureDimanche(0.0);
+		spbase.setBaseCalculee(19.3);
+
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		
+		Date dateLundi = new DateTime(2015,6,15,0,0,0).toDate();
+		Integer idAgent = 9004569;
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage ptg = new Pointage();
+		ptg.setDateLundi(dateLundi);
+		ptg.setDateDebut(new DateTime(2015,6,15,11,0,0).toDate());
+		ptg.setDateFin(new DateTime(2015,6,15,16,0,0).toDate());
+		ptg.setHeureSupRecuperee(false);
+		ptg.setHeureSupRappelService(false);
+		ptg.setIdAgent(idAgent);
+		ptg.setType(type);
+		
+		Pointage ptg2 = new Pointage();
+		ptg2.setDateLundi(dateLundi);
+		ptg2.setDateDebut(new DateTime(2015,6,16,11,0,0).toDate());
+		ptg2.setDateFin(new DateTime(2015,6,16,16,0,0).toDate());
+		ptg2.setHeureSupRecuperee(false);
+		ptg2.setHeureSupRappelService(false);
+		ptg2.setIdAgent(idAgent);
+		ptg2.setType(type);
+		
+		Pointage ptg3 = new Pointage();
+		ptg3.setDateLundi(dateLundi);
+		ptg3.setDateDebut(new DateTime(2015,6,17,11,0,0).toDate());
+		ptg3.setDateFin(new DateTime(2015,6,17,16,0,0).toDate());
+		ptg3.setHeureSupRecuperee(false);
+		ptg3.setHeureSupRappelService(false);
+		ptg3.setIdAgent(idAgent);
+		ptg3.setType(type);
+		
+		Pointage ptg4 = new Pointage();
+		ptg4.setDateLundi(dateLundi);
+		ptg4.setDateDebut(new DateTime(2015,6,18,11,0,0).toDate());
+		ptg4.setDateFin(new DateTime(2015,6,18,16,0,0).toDate());
+		ptg4.setHeureSupRecuperee(false);
+		ptg4.setHeureSupRappelService(false);
+		ptg4.setIdAgent(idAgent);
+		ptg4.setType(type);
+		
+		Pointage ptg5 = new Pointage();
+		ptg5.setDateLundi(dateLundi);
+		ptg5.setDateDebut(new DateTime(2015,6,19,11,0,0).toDate());
+		ptg5.setDateFin(new DateTime(2015,6,19,16,0,0).toDate());
+		ptg5.setHeureSupRecuperee(false);
+		ptg5.setHeureSupRappelService(false);
+		ptg5.setIdAgent(idAgent);
+		ptg5.setType(type);
+		
+		VentilHsup ventilHsup = new VentilHsup();
+		
+		Spcarr spcarr = new Spcarr();
+
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4, ptg5));
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		
+		ventilHsup = service.processHSupContractuel(idAgent, spcarr, dateLundi, pointages, new VentilDate());
+
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*25).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60*5.5).intValue());
+		
+		assertEquals(ventilHsup.getMSimple(), 0);
+		assertEquals(ventilHsup.getMNormales(), new Double(60*19.5).intValue());
+		assertEquals(ventilHsup.getMComposees(), 0);
+		
+		assertEquals(ventilHsup.getMSup25(), new Double(60*5.5).intValue());
+		assertEquals(ventilHsup.getMSup50(), 0);
+		assertEquals(ventilHsup.getMMai(), 0);
+		assertEquals(ventilHsup.getMsdjf(), 0);
+		assertEquals(ventilHsup.getMsNuit(), 0);
+
+		assertEquals(ventilHsup.getMNormalesRecup(), 0);
+		assertEquals(ventilHsup.getMSimpleRecup(), 0);
+		assertEquals(ventilHsup.getMComposeesRecup(), 0);
+
+		assertEquals(ventilHsup.getMSup25Recup(), 0);
+		assertEquals(ventilHsup.getMSup50Recup(), 0);
+		assertEquals(ventilHsup.getMMaiRecup(), 0);
+		assertEquals(ventilHsup.getMsdjfRecup(), 0);
+		assertEquals(ventilHsup.getMsNuitRecup(), 0);
+	}
+	
+	// bug #28286 bug en PROD
+	// on fait le meme cas de test que ci-dessus mais pour les fonctionnaires
+	@Test
+	public void processHeuresSup_fonctionnaire_bugHSup_miTemps_NoMatr5364_semaine43() {
+		
+		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
+		spbase.setHeureLundi(4.0);
+		spbase.setHeureMardi(4.0);
+		spbase.setHeureMercredi(4.0);
+		spbase.setHeureJeudi(4.0);
+		spbase.setHeureVendredi(3.3);
+		spbase.setHeureSamedi(0.0);
+		spbase.setHeureDimanche(0.0);
+		spbase.setBaseCalculee(19.3);
+
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		
+		Date dateLundi = new DateTime(2015,10,19,0,0,0).toDate();
+		Integer idAgent = 9005364;
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage ptg = new Pointage();
+		ptg.setDateLundi(dateLundi);
+		ptg.setDateDebut(new DateTime(2015,10,19,11,0,0).toDate());
+		ptg.setDateFin(new DateTime(2015,10,19,16,0,0).toDate());
+		ptg.setHeureSupRecuperee(false);
+		ptg.setHeureSupRappelService(false);
+		ptg.setIdAgent(idAgent);
+		ptg.setType(type);
+		
+		Pointage ptg2 = new Pointage();
+		ptg2.setDateLundi(dateLundi);
+		ptg2.setDateDebut(new DateTime(2015,10,20,11,0,0).toDate());
+		ptg2.setDateFin(new DateTime(2015,10,20,16,0,0).toDate());
+		ptg2.setHeureSupRecuperee(false);
+		ptg2.setHeureSupRappelService(false);
+		ptg2.setIdAgent(idAgent);
+		ptg2.setType(type);
+		
+		Pointage ptg3 = new Pointage();
+		ptg3.setDateLundi(dateLundi);
+		ptg3.setDateDebut(new DateTime(2015,10,21,11,0,0).toDate());
+		ptg3.setDateFin(new DateTime(2015,10,21,16,0,0).toDate());
+		ptg3.setHeureSupRecuperee(false);
+		ptg3.setHeureSupRappelService(false);
+		ptg3.setIdAgent(idAgent);
+		ptg3.setType(type);
+		
+		Pointage ptg4 = new Pointage();
+		ptg4.setDateLundi(dateLundi);
+		ptg4.setDateDebut(new DateTime(2015,10,22,11,0,0).toDate());
+		ptg4.setDateFin(new DateTime(2015,10,22,16,0,0).toDate());
+		ptg4.setHeureSupRecuperee(false);
+		ptg4.setHeureSupRappelService(false);
+		ptg4.setIdAgent(idAgent);
+		ptg4.setType(type);
+		
+		Pointage ptg5 = new Pointage();
+		ptg5.setDateLundi(dateLundi);
+		ptg5.setDateDebut(new DateTime(2015,10,23,11,0,0).toDate());
+		ptg5.setDateFin(new DateTime(2015,10,23,16,0,0).toDate());
+		ptg5.setHeureSupRecuperee(false);
+		ptg5.setHeureSupRappelService(false);
+		ptg5.setIdAgent(idAgent);
+		ptg5.setType(type);
+		
+		VentilHsup ventilHsup = new VentilHsup();
+		
+		Spcarr spcarr = new Spcarr();
+
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4, ptg5));
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		
+		ventilHsup = service.processHSupFonctionnaire(idAgent, spcarr, dateLundi, pointages, new VentilDate());
+
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*25).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60*5.5).intValue());
+		
+		assertEquals(ventilHsup.getMNormales(), new Double(60*19.5).intValue());
+		assertEquals(ventilHsup.getMSimple(), new Double(60*3.0).intValue());
+		assertEquals(ventilHsup.getMComposees(), new Double(60*2.5).intValue());
+		
+		assertEquals(ventilHsup.getMSup25(), 0);
+		assertEquals(ventilHsup.getMSup50(), 0);
+		assertEquals(ventilHsup.getMMai(), 0);
+		assertEquals(ventilHsup.getMsdjf(), 0);
+		assertEquals(ventilHsup.getMsNuit(), 0);
+
+		assertEquals(ventilHsup.getMNormalesRecup(), 0);
+		assertEquals(ventilHsup.getMSimpleRecup(), 0);
+		assertEquals(ventilHsup.getMComposeesRecup(), 0);
+
+		assertEquals(ventilHsup.getMSup25Recup(), 0);
+		assertEquals(ventilHsup.getMSup50Recup(), 0);
+		assertEquals(ventilHsup.getMMaiRecup(), 0);
+		assertEquals(ventilHsup.getMsdjfRecup(), 0);
+		assertEquals(ventilHsup.getMsNuitRecup(), 0);
+	}
+	
+	// bug #28286 bug en PROD
+	// on fait le meme cas de test que ci-dessus mais pour les conventions collectives
+	@Test
+	public void processHeuresSup_convColl_bugHSup_miTemps_NoMatr5364_semaine43() {
+		
+		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
+		spbase.setHeureLundi(4.0);
+		spbase.setHeureMardi(4.0);
+		spbase.setHeureMercredi(4.0);
+		spbase.setHeureJeudi(4.0);
+		spbase.setHeureVendredi(3.3);
+		spbase.setHeureSamedi(0.0);
+		spbase.setHeureDimanche(0.0);
+		spbase.setBaseCalculee(19.3);
+
+		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		
+		Date dateLundi = new DateTime(2015,10,19,0,0,0).toDate();
+		Integer idAgent = 9005364;
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage ptg = new Pointage();
+		ptg.setDateLundi(dateLundi);
+		ptg.setDateDebut(new DateTime(2015,10,19,11,0,0).toDate());
+		ptg.setDateFin(new DateTime(2015,10,19,16,0,0).toDate());
+		ptg.setHeureSupRecuperee(false);
+		ptg.setHeureSupRappelService(false);
+		ptg.setIdAgent(idAgent);
+		ptg.setType(type);
+		
+		Pointage ptg2 = new Pointage();
+		ptg2.setDateLundi(dateLundi);
+		ptg2.setDateDebut(new DateTime(2015,10,20,11,0,0).toDate());
+		ptg2.setDateFin(new DateTime(2015,10,20,16,0,0).toDate());
+		ptg2.setHeureSupRecuperee(false);
+		ptg2.setHeureSupRappelService(false);
+		ptg2.setIdAgent(idAgent);
+		ptg2.setType(type);
+		
+		Pointage ptg3 = new Pointage();
+		ptg3.setDateLundi(dateLundi);
+		ptg3.setDateDebut(new DateTime(2015,10,21,11,0,0).toDate());
+		ptg3.setDateFin(new DateTime(2015,10,21,16,0,0).toDate());
+		ptg3.setHeureSupRecuperee(false);
+		ptg3.setHeureSupRappelService(false);
+		ptg3.setIdAgent(idAgent);
+		ptg3.setType(type);
+		
+		Pointage ptg4 = new Pointage();
+		ptg4.setDateLundi(dateLundi);
+		ptg4.setDateDebut(new DateTime(2015,10,22,11,0,0).toDate());
+		ptg4.setDateFin(new DateTime(2015,10,22,16,0,0).toDate());
+		ptg4.setHeureSupRecuperee(false);
+		ptg4.setHeureSupRappelService(false);
+		ptg4.setIdAgent(idAgent);
+		ptg4.setType(type);
+		
+		Pointage ptg5 = new Pointage();
+		ptg5.setDateLundi(dateLundi);
+		ptg5.setDateDebut(new DateTime(2015,10,23,11,0,0).toDate());
+		ptg5.setDateFin(new DateTime(2015,10,23,16,0,0).toDate());
+		ptg5.setHeureSupRecuperee(false);
+		ptg5.setHeureSupRappelService(false);
+		ptg5.setIdAgent(idAgent);
+		ptg5.setType(type);
+		
+		VentilHsup ventilHsup = new VentilHsup();
+		
+		Spcarr spcarr = new Spcarr();
+
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(1d);
+		spcarr.setSpbhor(spbhor);
+		
+		List<Pointage> pointages = new ArrayList<Pointage>();
+		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4, ptg5));
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		
+		VentilationHSupService service = new VentilationHSupService();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "helperService", new HelperService());
+		
+		ventilHsup = service.processHSupConventionCollective(idAgent, spcarr, dateLundi, pointages, false, new VentilDate());
+
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*25).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60*5.5).intValue());
+		
+		assertEquals(ventilHsup.getMNormales(), new Double(60*19.5).intValue());
+		assertEquals(ventilHsup.getMSimple(), 0);
+		assertEquals(ventilHsup.getMComposees(), 0);
+		
+		assertEquals(ventilHsup.getMSup25(), new Double(60*5.5).intValue());
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
 		assertEquals(ventilHsup.getMsdjf(), 0);
