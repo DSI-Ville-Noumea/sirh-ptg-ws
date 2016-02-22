@@ -578,9 +578,21 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			// mais si temps effectif de travail hebdomadaire > 39h
 			// alors on bloque a 39h
 			baseLegaleHsupMax = baseLegaleHsupMax > 39 * 60 ? 39 * 60 : baseLegaleHsupMax;
+			
+			// #28723 arrondir au 1/4 heure superieur le plus proche
+			if(baseLegaleHsupMax%15 != 0) {
+				baseLegaleHsupMax = baseLegaleHsupMax - (baseLegaleHsupMax%15) + 15;
+			}
 
 			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > baseLegaleHsupMax) {
-				String nombre = helperService.formatMinutesToString(baseLegaleHsupMax - weekBase + minutesAbsWeek);
+				
+				Double nombreMinutes = new Double(baseLegaleHsupMax - weekBase + minutesAbsWeek);
+				// #28723 arrondir au 1/4 heure superieur le plus proche
+				if(nombreMinutes%15 != 0) {
+					nombreMinutes = nombreMinutes - (nombreMinutes%15) + 15;
+				}
+				String nombre = helperService.formatMinutesToString(nombreMinutes.intValue());
+				
 				String msg = String.format(HS_TPS_PARTIEL_MSG, nombre);
 				// #20056
 				if(isFromSIRH) {

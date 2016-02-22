@@ -1980,6 +1980,104 @@ public class PointageDataConsistencyRulesTest {
 				.getErrors().get(0));
 	}
 
+	// #28723 arrondir au 1/4 heure superieur le plus proche
+	@Test
+	public void checkAgentTempsPartielAndHSup_KO_arrondiQuartHeureSuperieur() {
+
+		// Given
+		Integer idAgent = 9008765;
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
+		bas.setBaseCalculee(19.5);
+		bas.setBaseLegale(39.0);
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(0.5);
+		Spcarr car = new Spcarr();
+		car.setSpbhor(spbhor);
+
+		Pointage p1 = new Pointage();
+		p1.setType(new RefTypePointage());
+		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 17, 16, 15, 0).toDate()); // 33h
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseCalculee())).thenReturn(1170);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseLegale())).thenReturn(2340);
+
+		Mockito.doAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
+				int nbMinutesModulo = nombreMinutesHSupAutorisees % 60;
+				return new Integer(nombreMinutesHSupAutorisees/60).toString() + "h" + (0 < nbMinutesModulo ? nbMinutesModulo + "m" : "");
+			}
+		}).when(hS).formatMinutesToString(Mockito.anyInt());
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		// When
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas, false);
+
+		// Then
+		assertEquals(1, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4h d'heures supplémentaires.", result
+				.getErrors().get(0));
+	}
+
+	// #28723 arrondir au 1/4 heure superieur le plus proche
+	@Test
+	public void checkAgentTempsPartielAndHSup_OK_arrondiQuartHeureSuperieur() {
+
+		// Given
+		Integer idAgent = 9008765;
+		Date dateLundi = new DateTime(2013, 05, 13, 0, 0, 0).toDate();
+
+		BaseHorairePointageDto bas = new BaseHorairePointageDto();
+		bas.setCodeBaseHorairePointage("A");
+		bas.setBaseCalculee(19.5);
+		bas.setBaseLegale(39.0);
+		Spbhor spbhor = new Spbhor();
+		spbhor.setTaux(0.5);
+		Spcarr car = new Spcarr();
+		car.setSpbhor(spbhor);
+
+		Pointage p1 = new Pointage();
+		p1.setType(new RefTypePointage());
+		p1.setDateDebut(new DateTime(2013, 05, 17, 7, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2013, 05, 17, 11, 15, 0).toDate()); // 33h
+		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		HelperService hS = Mockito.mock(HelperService.class);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseCalculee())).thenReturn(1170);
+		Mockito.when(hS.convertMairieNbHeuresFormatToMinutes(bas.getBaseLegale())).thenReturn(2340);
+
+		Mockito.doAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
+				int nbMinutesModulo = nombreMinutesHSupAutorisees % 60;
+				return new Integer(nombreMinutesHSupAutorisees/60).toString() + "h" + (0 < nbMinutesModulo ? nbMinutesModulo + "m" : "");
+			}
+		}).when(hS).formatMinutesToString(Mockito.anyInt());
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+		ReflectionTestUtils.setField(service, "helperService", hS);
+
+		// When
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas, false);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+	}
+
 	@Test
 	public void checkAgentTempsPartielAndHSup_TempsPartiel_WithAbsence_OK() {
 
