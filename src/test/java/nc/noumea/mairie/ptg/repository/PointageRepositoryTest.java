@@ -888,6 +888,51 @@ public class PointageRepositoryTest {
 
 	@Test
 	@Transactional("ptgTransactionManager")
+	public void isPrimeSurPointageouPointageCalcule_PointageCalculeRefuse() {
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
+
+		RefPrime rp = new RefPrime();
+		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+		rp.setCalculee(false);
+		rp.setDescription(null);
+		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+		rp.setNoRubr(7711);
+		rp.setStatut(AgentStatutEnum.F);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 23).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+
+		PointageCalcule pc = new PointageCalcule();
+		pc.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+		pc.setDateFin(new LocalDate(2013, 7, 29).toDate());
+		pc.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		pc.setEtat(EtatPointageEnum.REFUSE); 
+		pc.setIdAgent(9005138);
+		pc.setLastVentilDate(vd);
+		pc.setQuantite(1);
+		pc.setRefPrime(rp);
+		pc.setType(rtp);
+		ptgEntityManager.persist(pc);
+
+		boolean result = repository.isPrimeSurPointageouPointageCalcule(new Integer(9005138), rp.getIdRefPrime());
+
+		assertFalse(result);
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
 	public void isPrimeSurPointageouPointageCalcule_Pointage() {
 
 		RefTypePointage rtp = new RefTypePointage();
@@ -912,6 +957,15 @@ public class PointageRepositoryTest {
 		ptgEntityManager.persist(vd);
 
 		Pointage p = new Pointage();
+		
+		EtatPointage etatDemande = new EtatPointage();
+		etatDemande.setPointage(p);
+		etatDemande.setDateEtat(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etatDemande.setDateMaj(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etatDemande.setIdAgent(9000003);
+		etatDemande.setEtat(EtatPointageEnum.APPROUVE);
+		ptgEntityManager.persist(etatDemande);
+		
 		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
 		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
 		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
@@ -919,11 +973,65 @@ public class PointageRepositoryTest {
 		p.setQuantite(1);
 		p.setRefPrime(rp);
 		p.setType(rtp);
+		p.getEtats().add(etatDemande);
 		ptgEntityManager.persist(p);
 
 		boolean result = repository.isPrimeSurPointageouPointageCalcule(new Integer(9005139), rp.getIdRefPrime());
 
 		assertTrue(result);
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void isPrimeSurPointageouPointageCalcule_PointageRefuse() {
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(1);
+		ptgEntityManager.persist(rtp);
+
+		RefPrime rp = new RefPrime();
+		rp.setAide("Saisir l'heure de début et l'heure de fin du roulement");
+		rp.setCalculee(false);
+		rp.setDescription(null);
+		rp.setLibelle("INDEMNITE HORAIRE TRAVAIL DE NUIT DPM");
+		rp.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
+		rp.setNoRubr(7711);
+		rp.setStatut(AgentStatutEnum.F);
+		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		ptgEntityManager.persist(rp);
+
+		VentilDate vd = new VentilDate();
+		vd.setDateVentilation(new LocalDate(2013, 7, 24).toDate());
+		vd.setPaye(true);
+		vd.setTypeChainePaie(TypeChainePaieEnum.SCV);
+		ptgEntityManager.persist(vd);
+
+		Pointage p = new Pointage();
+		
+		EtatPointage etatDemande = new EtatPointage();
+		etatDemande.setPointage(p);
+		etatDemande.setDateEtat(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etatDemande.setDateMaj(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		etatDemande.setIdAgent(9000003);
+		etatDemande.setEtat(EtatPointageEnum.REFUSE);
+		ptgEntityManager.persist(etatDemande);
+		
+		p.setDateDebut(new LocalDate(2013, 7, 22).toDate());
+		p.setDateFin(new LocalDate(2013, 7, 29).toDate());
+		p.setDateLundi(new LocalDate(2013, 7, 23).toDate());
+		p.setIdAgent(9005139);
+		p.setQuantite(1);
+		p.setRefPrime(rp);
+		p.setType(rtp);
+		p.getEtats().add(etatDemande);
+		ptgEntityManager.persist(p);
+
+		boolean result = repository.isPrimeSurPointageouPointageCalcule(new Integer(9005139), rp.getIdRefPrime());
+
+		assertFalse(result);
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();

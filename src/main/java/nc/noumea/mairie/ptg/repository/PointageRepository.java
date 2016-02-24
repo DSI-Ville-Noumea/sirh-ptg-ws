@@ -225,17 +225,31 @@ public class PointageRepository implements IPointageRepository {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT ptg.id_Pointage ");
 		sb.append("FROM PTG_POINTAGE ptg ");
+		sb.append("INNER JOIN ptg_etat_pointage ep on ptg.id_pointage = ep.id_pointage ");
 		sb.append("WHERE ptg.id_Ref_Prime=:idRefPrime ");
-		sb.append("AND ptg.id_Agent=:idAgent ");
+		sb.append("AND ptg.id_Agent = :idAgent ");
+		sb.append("AND ep.id_etat_pointage in ( ");
+		sb.append("		select max(id_etat_pointage) from ptg_etat_pointage ep2 ");
+		sb.append("		inner join PTG_POINTAGE ptg2 on ptg2.id_pointage = ep2.id_pointage  ");
+		sb.append("		WHERE ptg2.id_Ref_Prime = :idRefPrime ");
+		sb.append("		AND ptg2.id_Agent= :idAgent ");
+		sb.append("		group by ep2.id_pointage ");
+		sb.append("	) ");
+		sb.append("and ep.etat not in ( :rejete , :rejete_definitif , :refuse , :refuse_definitif ) ");
 		sb.append("union ");
 		sb.append("SELECT ptgCalc.id_Pointage_Calcule ");
 		sb.append("FROM PTG_POINTAGE_CALCULE ptgCalc ");
 		sb.append("WHERE ptgCalc.id_Ref_Prime=:idRefPrime ");
 		sb.append("AND ptgCalc.id_Agent=:idAgent ");
+		sb.append("AND ptgCalc.ETAT not in ( :rejete , :rejete_definitif , :refuse , :refuse_definitif ) ");
 
 		Query q = ptgEntityManager.createNativeQuery(sb.toString());
 		q.setParameter("idRefPrime", idRefPrime);
 		q.setParameter("idAgent", idAgent);
+		q.setParameter("rejete", EtatPointageEnum.REJETE.getCodeEtat());
+		q.setParameter("rejete_definitif", EtatPointageEnum.REJETE_DEFINITIVEMENT.getCodeEtat());
+		q.setParameter("refuse", EtatPointageEnum.REFUSE.getCodeEtat());
+		q.setParameter("refuse_definitif", EtatPointageEnum.REFUSE_DEFINITIVEMENT.getCodeEtat());
 
 		@SuppressWarnings("unchecked")
 		List<Integer> result = q.getResultList();
