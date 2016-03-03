@@ -182,7 +182,7 @@ public class PrimesEtatPayeurDtoTest {
 		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
 		vpNew.getRefPrime().setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
 		HelperService hS = Mockito.mock(HelperService.class);		
-		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(172)).thenReturn(3.0);
+		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(172)).thenReturn(2.52);
 		Mockito.when(hS.formatMinutesToString(180)).thenReturn("3H");
 
 		VentilPrime vpOld = new VentilPrime();
