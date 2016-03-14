@@ -260,6 +260,7 @@ public class VentilationService implements IVentilationService {
 		
 		// 6. 
 		// evolution #18234 generation des pointages TID pour les primes pointages TID affectées à l'affectation de l agent
+		List<Date> listDatesPointagesTID = new ArrayList<Date>();
 		for(Date dateLundi : helperService.getListDateLundiBetWeenTwoDate(fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation())) {
 			
 			// Retrieve all pointages for that period
@@ -271,11 +272,18 @@ public class VentilationService implements IVentilationService {
 			List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(
 					agentsPointageForPeriod, Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE), null);
 			
-			pointageCalculeService.generatePointageTID_7720_7721_7722(agentRH, agent, carr.getStatutCarriere(), dateLundi, filteredAgentsPointageForPeriod);
+			List<Pointage> listPointagesTID = pointageCalculeService.generatePointageTID_7720_7721_7722(agentRH, agent, carr.getStatutCarriere(), dateLundi, filteredAgentsPointageForPeriod);
+			// bug #29292 prendre en compte les TIDs
+			if(null != listPointagesTID) {
+				for(Pointage pointageTID : listPointagesTID) {
+					listDatesPointagesTID.add(pointageTID.getDateDebut());
+				}
+			}
 		}
 
 		// 7. Ventilation of PRIMES
 		if (pointageType == null || pointageType == RefTypePointageEnum.PRIME) {
+			pointagesToVentilateDates.addAll(listDatesPointagesTID);
 			for (Date dateDebutMois : getDistinctDateDebutMoisFromListOfDates(pointagesToVentilateDates)) {
 
 				pointagesVentiles.addAll(processPrimesVentilationForMonthAndAgent(toVentilDate, agent, dateDebutMois,
