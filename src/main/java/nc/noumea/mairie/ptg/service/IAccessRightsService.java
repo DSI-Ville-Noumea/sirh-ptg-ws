@@ -56,4 +56,7 @@ public interface IAccessRightsService {
 
 	boolean isUserOperateur(Integer idAgent);
 
+	ReturnMessageDto dupliqueDroitsApprobateur(Integer idAgentSource,
+			Integer idAgentDest);
+
 }

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import nc.noumea.mairie.ptg.dto.AccessRightsDto;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
@@ -13,6 +15,7 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +44,9 @@ public class AccessRightsController {
 
 	@Autowired
 	private IAgentMatriculeConverterService converterService;
+	
+	@Autowired
+	private ISirhWSConsumer sirhWsConsumer;
 
 	@ResponseBody
 	@RequestMapping(value = "listeDroitsAgent", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
@@ -290,5 +296,32 @@ public class AccessRightsController {
 			return new ResponseEntity<String>(HttpStatus.OK);
 		else
 			return new ResponseEntity<String>(HttpStatus.CONFLICT);
+	}
+	
+	/**
+	 * duplique un approbateur vers un nouvel approbateur --> UTILE à SIRH
+	 */
+	@ResponseBody
+	@RequestMapping(value = "dupliqueDroitsApprobateur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
+	public ReturnMessageDto dupliqueDroitsApprobateur(@RequestParam("idAgentConnecte") Integer idAgentConnecte,
+			@RequestParam("idAgentSource") Integer idAgentSource, @RequestParam("idAgentDest") Integer idAgentDest, HttpServletResponse response) {
+
+		logger.debug("entered POST [droits/dupliqueDroitsApprobateur] => dupliqueDroitsApprobateur with parameter idAgentConnecte = {} and idAgentSource = {} and idAgentDest = {}", 
+				idAgentConnecte, idAgentSource, idAgentDest);
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		// on verifie que l agent ait les droits
+		int convertedIdAgentConnecte = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
+		result = sirhWsConsumer.isUtilisateurSIRH(convertedIdAgentConnecte);
+		if (!result.getErrors().isEmpty())
+			throw new AccessForbiddenException();
+
+		int convertedIdAgentSource = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentSource);
+		int convertedIdAgentDest = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentDest);
+
+		result = accessRightService.dupliqueDroitsApprobateur(convertedIdAgentSource, convertedIdAgentDest);
+
+		return result;
 	}
 }

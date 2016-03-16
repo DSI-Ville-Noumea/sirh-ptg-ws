@@ -338,8 +338,47 @@ public class AccessRightsService implements IAccessRightsService {
 			// this will also delete all the agents its operateurs were filling
 			// in for
 			for (DroitsAgent agentSaisiToDelete : d.getAgents()) {
-				agentSaisiToDelete.getDroits().clear();
-				accessRightsRepository.removeEntity(agentSaisiToDelete);
+				// #29466 suite a une evol sur les transfert de droit (duplication)
+				// un agent peut avoir plusieurs approbateurs
+				// donc ne pas supprimer a tous les coups
+				boolean isOtherApprobateur = false;
+				for(Droit droitOtherRole : agentSaisiToDelete.getDroits()) {
+					if(!droitOtherRole.getIdDroit().equals(d.getIdDroit())
+							&& droitOtherRole.isApprobateur()) {
+						isOtherApprobateur = true;
+						break;
+					}
+				}
+				if(!isOtherApprobateur) {
+					agentSaisiToDelete.getDroits().clear();
+					accessRightsRepository.removeEntity(agentSaisiToDelete);
+				}else{
+					agentSaisiToDelete.getDroits().remove(d);
+					accessRightsRepository.persisEntity(agentSaisiToDelete);
+				}
+			}
+			
+			for (Droit operateur : d.getOperateurs()) {
+				for (DroitsAgent agentSaisiToDelete : operateur.getAgents()) {
+					// #29466 suite a une evol sur les transfert de droit (duplication)
+					// un agent peut avoir plusieurs approbateurs
+					// donc ne pas supprimer a tous les coups
+					boolean isOtherApprobateur = false;
+					for(Droit droitOtherRole : agentSaisiToDelete.getDroits()) {
+						if(!droitOtherRole.getIdDroit().equals(d.getIdDroit())
+								&& droitOtherRole.isApprobateur()) {
+							isOtherApprobateur = true;
+							break;
+						}
+					}
+					if(!isOtherApprobateur) {
+						agentSaisiToDelete.getDroits().clear();
+						accessRightsRepository.removeEntity(agentSaisiToDelete);
+					}else{
+						agentSaisiToDelete.getDroits().remove(operateur);
+						accessRightsRepository.persisEntity(agentSaisiToDelete);
+					}
+				}
 			}
 			// Then we delete the approbateur
 			accessRightsRepository.removeEntity(d);
@@ -760,5 +799,80 @@ public class AccessRightsService implements IAccessRightsService {
 			}
 		}
 		return res;
+	}
+	
+	@Override
+	@Transactional(value = "ptgTransactionManager")
+	public ReturnMessageDto dupliqueDroitsApprobateur(Integer idAgentSource, Integer idAgentDest) {
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+
+		if(null == idAgentSource
+				|| null == idAgentDest
+				|| idAgentSource.equals(idAgentDest)) {
+			logger.debug("L'agent dupliqué ou à dupliquer n'est pas correcte.");
+			result.getErrors().add("L'agent dupliqué ou à dupliquer n'est pas correcte.");
+			return result;
+		}
+		
+		// on recupere les droits de l approbateur d origine
+		Droit droitApproSource = accessRightsRepository.getApprobateurFetchOperateurs(idAgentSource);
+		
+		if(null == droitApproSource) {
+			logger.debug("L'agent " + idAgentSource + " n'est pas approbateur.");
+			result.getErrors().add("L'agent " + idAgentSource + " n'est pas approbateur.");
+			return result;
+		}
+		
+		// on check si le nouvel approbateur n est pas deja approbateur
+		Droit droitApproDest = accessRightsRepository.getApprobateurFetchOperateurs(idAgentDest);
+		
+		if(null != droitApproDest) {
+			logger.debug("L'agent " + idAgentDest + " est déjà approbateur.");
+			result.getErrors().add("L'agent " + idAgentDest + " est déjà approbateur.");
+			return result;
+		}
+		
+		// on duplique
+		droitApproDest = new Droit();
+		
+		droitApproDest.setApprobateur(true);
+		droitApproDest.setDateModification(new Date());
+		droitApproDest.setIdAgent(idAgentDest);
+		droitApproDest.setIdAgentDelegataire(droitApproSource.getIdAgentDelegataire());
+		droitApproDest.setOperateur(false);
+		
+		if(null != droitApproSource.getAgents()) {
+			for(DroitsAgent droitAgents : droitApproSource.getAgents()) {
+				if(!droitAgents.getIdAgent().equals(idAgentDest)) {
+					droitAgents.setDateModification(helperService.getCurrentDate());
+					
+					if(!droitApproDest.getAgents().contains(droitAgents))
+						droitApproDest.getAgents().add(droitAgents);
+				}
+			}
+		}
+		
+		if(null != droitApproSource.getOperateurs()) {
+			for(Droit droitOperateur : droitApproSource.getOperateurs()) {
+				
+				Droit newDroitOperateur = new Droit();
+				newDroitOperateur.setIdAgent(droitOperateur.getIdAgent());
+				newDroitOperateur.setOperateur(true);
+				newDroitOperateur.setDroitApprobateur(droitApproDest);
+				newDroitOperateur.setDateModification(helperService.getCurrentDate());
+				newDroitOperateur.getAgents().addAll(droitOperateur.getAgents());
+				
+				if(!droitApproDest.getOperateurs().contains(newDroitOperateur))
+					droitApproDest.getOperateurs().add(newDroitOperateur);
+			}
+		}
+		
+		accessRightsRepository.persisEntity(droitApproDest);
+		
+		logger.debug("Nouvel approbateur " + idAgentDest + " bien créé.");
+		result.getInfos().add("Nouvel approbateur " + idAgentDest + " bien créé.");
+		
+		return result;
 	}
 }
