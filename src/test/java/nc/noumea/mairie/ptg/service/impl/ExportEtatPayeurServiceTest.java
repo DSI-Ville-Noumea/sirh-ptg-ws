@@ -127,6 +127,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.when(hS.getMairieMatrFromIdAgent(9006767)).thenReturn(6767);
 		Mockito.when(hS.formatMinutesToString(60)).thenReturn("60m");
 		Mockito.when(hS.formatMinutesToString(30)).thenReturn("30m");
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013,9,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
@@ -185,6 +186,7 @@ public class ExportEtatPayeurServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013,9,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
@@ -241,6 +243,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
 		Mockito.when(hS.formatMinutesToString(-30)).thenReturn("- 30m");
 		Mockito.when(hS.formatMinutesToString(30)).thenReturn("30m");
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013,9,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
@@ -327,6 +330,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.when(hS.getMairieMatrFromIdAgent(9003315)).thenReturn(3315);
 		Mockito.when(hS.formatMinutesToString(-30)).thenReturn("- 30m");
 		Mockito.when(hS.formatMinutesToString(30)).thenReturn("30m");
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2015,7,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
@@ -391,6 +395,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.when(hS.getMairieMatrFromIdAgent(9006767)).thenReturn(6767);
 		Mockito.when(hS.formatMinutesToString(60)).thenReturn("60m");
 		Mockito.when(hS.formatMinutesToString(30)).thenReturn("30m");
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013,9,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
@@ -448,6 +453,7 @@ public class ExportEtatPayeurServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013,9,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
@@ -505,6 +511,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
 		Mockito.when(hS.formatMinutesToString(-30)).thenReturn("- 30m");
 		Mockito.when(hS.formatMinutesToString(30)).thenReturn("30m");
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013,9,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
@@ -571,6 +578,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
 		Mockito.when(hS.getMairieMatrFromIdAgent(9006767)).thenReturn(6767);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013,9,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
@@ -628,6 +636,7 @@ public class ExportEtatPayeurServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013,9,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
@@ -686,6 +695,7 @@ public class ExportEtatPayeurServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2016,3,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);
@@ -714,7 +724,7 @@ public class ExportEtatPayeurServiceTest {
 
 		// Then
 		assertEquals("SCV", result.getChainePaie());
-		assertEquals("septembre 2013", result.getPeriode());
+		assertEquals("mars 2016", result.getPeriode());
 		assertEquals("F", result.getStatut());
 
 		assertEquals(1, result.getAgents().size());
@@ -754,6 +764,7 @@ public class ExportEtatPayeurServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
+		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013,9,8,0,0,0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SCV, false)).thenReturn(toVentilDate);

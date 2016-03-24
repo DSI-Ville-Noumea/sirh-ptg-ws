@@ -520,7 +520,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			return new EtatPayeurDto();
 		}
 
-		EtatPayeurDto result = new EtatPayeurDto(chainePaie, statut, toVentilDate.getDateVentilation(),
+		// evol #29821 sur la date du titre dans le PDF
+		EtatPayeurDto result = new EtatPayeurDto(chainePaie, statut, helperService.getCurrentDate(),
 				toVentilDate.getDateVentilation());
 
 		VentilDate fromVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, true);
