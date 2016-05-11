@@ -40,7 +40,6 @@ import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
-import nc.noumea.mairie.ws.IBirtEtatsPayeurWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.LocalDate;
@@ -74,9 +73,6 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
-
-	@Autowired
-	private IBirtEtatsPayeurWsConsumer birtEtatsPayeurWsConsumer;
 
 	@Autowired
 	private EtatPayeurReporting etatPayeurReport;

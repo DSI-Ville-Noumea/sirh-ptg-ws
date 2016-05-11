@@ -93,10 +93,6 @@
 	
 	<bean class="java.lang.String" id="sirhWsBaseUrl" />
 	
-	<bean class="java.lang.String" id="reportServerPath" />
-	
-	<bean class="java.lang.String" id="reportingBaseUrl" />
-	
 	<bean class="java.lang.String" id="sirhFileEtatPayeurPath" />
 	
 	<bean class="java.lang.String" id="sirhAbsWsBaseUrl" />

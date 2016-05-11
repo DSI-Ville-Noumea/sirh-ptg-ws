@@ -9,7 +9,6 @@ import nc.noumea.mairie.ptg.reporting.FichePointageHebdoReporting;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IFichesService;
-import nc.noumea.mairie.ptg.service.IReportingService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +43,6 @@ public class EditionController {
 
 	@Autowired
 	private IFichesService ficheService;
-
-	@Autowired
-	private IReportingService reportingService;
 
 	@Autowired
 	@Qualifier("FichePointageHebdoReporting")
