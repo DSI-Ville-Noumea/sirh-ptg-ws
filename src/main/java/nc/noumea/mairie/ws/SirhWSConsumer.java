@@ -13,6 +13,7 @@ import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
+import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -46,6 +47,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhlistAgentsWithPrimeTIDOnAffectationUrl = "pointages/listAgentsWithPrimeTIDOnAffectation";
 	private static final String sirhlisteAffectationDtosForListAgentByPeriodeUrl = "pointages/listeAffectationDtosForListAgentByPeriode";
 	private static final String isUtilisateurSIRHServiceUrl = "utilisateur/isUtilisateurSIRH";
+	private static final String sirhBaseCongeUrl = "absences/baseHoraire";
 
 	@Override
 	public EntiteDto getAgentDirection(Integer idAgent, Date date) {
@@ -304,5 +306,20 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFirePostRequest(parameters, url, json);
 
 		return readResponseAsList(AgentWithServiceDto.class, res, url);
+	}
+
+	@Override
+	public RefTypeSaisiCongeAnnuelDto getBaseHoraireAbsence(Integer idAgent, Date date) {
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+
+		String url = String.format(sirhWsBaseUrl + sirhBaseCongeUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		parameters.put("date", sf.format(date));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(RefTypeSaisiCongeAnnuelDto.class, res, url);
 	}
 }

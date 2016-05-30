@@ -10,6 +10,7 @@ import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
+import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -51,4 +52,6 @@ public interface ISirhWSConsumer {
 	ReturnMessageDto isUtilisateurSIRH(Integer idAgent);
 
 	List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listIdsAgent);
+
+	RefTypeSaisiCongeAnnuelDto getBaseHoraireAbsence(Integer idAgent, Date date);
 }

@@ -26,6 +26,15 @@ public interface IAccessRightsService {
 
 	ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto);
 
+	/**
+	 * Retrieves the agent an approbator is set to Approve or an Operator is set
+	 * to Input. This service also filters by service
+	 *
+	 * @param idAgent Integer Operateur ou approbateur
+	 * @param idServiceAds Integer Filtre sur le service
+	 * @param date Date Date de recherche pour le service
+	 * @return List<AgentDto> La liste des agents
+	 */
 	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds, Date date);
 
 	List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent, Date date);
