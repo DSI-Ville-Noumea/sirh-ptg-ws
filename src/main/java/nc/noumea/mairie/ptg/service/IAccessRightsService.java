@@ -33,11 +33,12 @@ public interface IAccessRightsService {
 	 * @param idAgent Integer Operateur ou approbateur
 	 * @param idServiceAds Integer Filtre sur le service
 	 * @param date Date Date de recherche pour le service
+	 * @param withPrimeDpm boolean Filtre les agents avec la prime Indemnité forfaitaire travail DPM
 	 * @return List<AgentDto> La liste des agents
 	 */
-	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds, Date date);
+	List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds, Date date, boolean withPrimeDpm);
 
-	List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent, Date date);
+	List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent, Date date, boolean withPrimeDpm);
 
 	void setAgentsToApprove(Integer idAgent, List<AgentDto> agents);
 

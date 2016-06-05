@@ -14,6 +14,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +24,7 @@ import javax.validation.constraints.NotNull;
 @Table(name = "PTG_DPM_INDEM_ANNEE")
 @NamedQueries({
 	@NamedQuery(name = "getDpmIndemAnneeByAnnee", query = "select d from DpmIndemAnnee d where d.annee = :annee "),
+	@NamedQuery(name = "getListDpmIndemAnneeOuverte", query = "select d from DpmIndemAnnee d where d.dateDebut <= :dateJour and d.dateFin >= :dateJour order by d.annee "),
 	@NamedQuery(name = "getListDpmIndemAnneeOrderByAnneeDesc", query = "select d from DpmIndemAnnee d order by d.annee desc ")
 })
 public class DpmIndemAnnee {
@@ -37,10 +40,12 @@ public class DpmIndemAnnee {
 
 	@NotNull
 	@Column(name = "DATE_DEBUT")
+	@Temporal(TemporalType.DATE)
 	private Date dateDebut;
 
 	@NotNull
 	@Column(name = "DATE_FIN")
+	@Temporal(TemporalType.DATE)
 	private Date dateFin;
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "dpmIndemAnnee")

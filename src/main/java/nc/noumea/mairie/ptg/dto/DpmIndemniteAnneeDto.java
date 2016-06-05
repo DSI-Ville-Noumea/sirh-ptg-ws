@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import nc.noumea.mairie.ptg.domain.DpmIndemAnnee;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 
@@ -17,7 +20,11 @@ public class DpmIndemniteAnneeDto implements Serializable {
 
 	private Integer idDpmIndemAnnee;
 	private Integer annee;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateDebut;
+	@JsonSerialize(using = JsonDateSerializer.class)
+	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateFin;
 	private List<DpmIndemniteChoixAgentDto> listDpmIndemniteChoixAgentDto;
 	

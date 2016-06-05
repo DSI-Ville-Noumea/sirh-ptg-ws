@@ -1,13 +1,12 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.domain.DpmIndemAnnee;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DpmIndemniteAnneeDto;
 import nc.noumea.mairie.ptg.dto.DpmIndemniteChoixAgentDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -15,11 +14,11 @@ import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IDpmService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
-import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,14 +35,14 @@ public class DpmService implements IDpmService {
 	protected final static String NON_TROUVE = "Enregistrement non trouvé.";
 	protected final static String MODIFICATION_OK = "Enregistré.";
 	protected final static String HORS_PERIODE = "La période est fermée. Vous ne pouvez plus choisir.";
-	protected final static String INTERDIT = "Vous n'avez pas le droit à l'Indemnité forfaitaire travail DPM.";
+	protected final static String INTERDIT = "Pas de droit pour l'Indemnité forfaitaire travail DPM.";
 	protected final static String CHOIX_OBLIGATOIRE = "Veuillez choisir Indemnité ou Récupération.";
 	protected final static String AGENT_INTERDIT = "L'agent %s le droit à l'Indemnité forfaitaire travail DPM.";
 	protected final static String AGENT_CHOIX_OBLIGATOIRE = "Veuillez choisir Indemnité ou Récupération pour l'agent %S.";
 	protected final static String CHAMPS_NON_REMPLIE = "Veuillez remplir tous les champs obligatoires.";
 	
 	//TODO
-	public final static Integer RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DPM = 7799;
+	public final static Integer RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DPM = 7718;
 
 	@Autowired
 	private IAccessRightsService accessRightsService;
@@ -65,9 +64,7 @@ public class DpmService implements IDpmService {
 	
 	@Override
 	@Transactional(value = "ptgTransactionManager")
-	public ReturnMessageDto saveIndemniteChoixAgent(Integer idAgentConnecte, DpmIndemniteChoixAgentDto dto) {
-		
-		ReturnMessageDto result = new ReturnMessageDto();
+	public ReturnMessageDto saveIndemniteChoixAgentForKiosque(Integer idAgentConnecte, DpmIndemniteChoixAgentDto dto) {
 		
 		// gestion des droits
 		if(null == idAgentConnecte
@@ -75,6 +72,26 @@ public class DpmService implements IDpmService {
 				|| !idAgentConnecte.equals(dto.getIdAgent())) {
 			throw new AccessForbiddenException();
 		}
+		
+		return saveIndemniteChoixAgent(idAgentConnecte, dto);
+	}
+	
+	@Override
+	@Transactional(value = "ptgTransactionManager")
+	public ReturnMessageDto saveIndemniteChoixAgentForSIRH(Integer idAgentConnecte, DpmIndemniteChoixAgentDto dto) {
+		
+		// gestion des droits
+		if(null == idAgentConnecte
+				|| !sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte).getErrors().isEmpty()) {
+			throw new AccessForbiddenException();
+		}
+		
+		return saveIndemniteChoixAgent(idAgentConnecte, dto);
+	}
+	
+	private ReturnMessageDto saveIndemniteChoixAgent(Integer idAgentConnecte, DpmIndemniteChoixAgentDto dto) {
+
+		ReturnMessageDto result = new ReturnMessageDto();
 		
 		// ouverture du choix : periode
 		if(null == dto.getDpmIndemniteAnnee()
@@ -93,6 +110,7 @@ public class DpmService implements IDpmService {
 				|| (!dto.isChoixIndemnite() && !dto.isChoixRecuperation())) {
 			logger.debug(String.format(CHOIX_OBLIGATOIRE, dto.getIdAgent()));
 			result.getErrors().add(String.format(CHOIX_OBLIGATOIRE, dto.getIdAgent()));
+			return result;
 		}
 		
 		// si oui, on enregistre le choix
@@ -103,12 +121,12 @@ public class DpmService implements IDpmService {
 			choixAgent = new DpmIndemChoixAgent();
 			choixAgent.setDpmIndemAnnee(dpmRepository.getDpmIndemAnneeByAnnee(dto.getDpmIndemniteAnnee().getAnnee()));
 			choixAgent.setIdAgent(dto.getIdAgent());
-			choixAgent.setIdAgentCreation(idAgentConnecte);
 		}
 		
 		choixAgent.setDateMaj(helperService.getCurrentDate());
 		choixAgent.setChoixIndemnite(dto.isChoixIndemnite());
 		choixAgent.setChoixRecuperation(dto.isChoixRecuperation());
+		choixAgent.setIdAgentCreation(idAgentConnecte);
 		
 		dpmRepository.persisEntity(choixAgent);
 		
@@ -177,7 +195,8 @@ public class DpmService implements IDpmService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<DpmIndemniteChoixAgentDto> getListDpmIndemniteChoixAgent(Integer idAgentConnecte, Integer annee) {
+	public List<DpmIndemniteChoixAgentDto> getListDpmIndemniteChoixAgent(Integer idAgentConnecte, Integer annee, 
+			Integer idServiceAds, Integer idAgentFiltre) {
 		
 		if(null == idAgentConnecte
 				|| !sirhWSUtils.isAgentDPM(idAgentConnecte)) {
@@ -188,28 +207,95 @@ public class DpmService implements IDpmService {
 		// on cherche le role de l agent
 		if(accessRightsService.isUserOperateur(idAgentConnecte)) {
 			// si operateur, on recupere les agents qui lui sont affectes
-			List<AgentDto> listAgents = accessRightsService.getAgentsToApproveOrInput(idAgentConnecte, null, null);
+			List<AgentDto> listAgents = accessRightsService.getAgentsToApproveOrInput(idAgentConnecte, idServiceAds, null, true);
 			
 			if(null != listAgents
 					&& !listAgents.isEmpty()) {
 				for(AgentDto agent : listAgents) {
-					if(!listIdsAgent.contains(agent.getIdAgent()))
-						listIdsAgent.add(agent.getIdAgent());
+					if(!listIdsAgent.contains(agent.getIdAgent())){
+						if(null == idAgentFiltre 
+								|| agent.getIdAgent().equals(idAgentFiltre)) {
+							listIdsAgent.add(agent.getIdAgent());
+						}
+					}
 				}
 			}
 		}else{
-			listIdsAgent.add(idAgentConnecte);
+			throw new AccessForbiddenException();
 		}
 		
-		List<DpmIndemChoixAgent> listDpmIndemChoixAgent = dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee);
+		return getListDpmIndemniteChoixAgentDto(listIdsAgent, annee, null, null);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<DpmIndemniteChoixAgentDto> getListDpmIndemniteChoixAgentforSIRH(Integer idAgentConnecte, Integer annee, 
+			Boolean isChoixIndemnite, Boolean isChoixRecuperation, List<Integer> listIdsAgent) {
 		
+		if(null == idAgentConnecte
+				|| !sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte).getErrors().isEmpty()) {
+			throw new AccessForbiddenException();
+		}
+		
+		return getListDpmIndemniteChoixAgentDto(listIdsAgent, annee, isChoixIndemnite, isChoixRecuperation);
+	}
+	
+	private List<DpmIndemniteChoixAgentDto> getListDpmIndemniteChoixAgentDto(List<Integer> listIdsAgent, Integer annee, Boolean isChoixIndemnite, Boolean isChoixRecuperation) {
+
 		List<DpmIndemniteChoixAgentDto> result = new ArrayList<DpmIndemniteChoixAgentDto>();
+	
+		List<DpmIndemChoixAgent> listDpmIndemChoixAgent = dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee, isChoixIndemnite, isChoixRecuperation);
+		
+		if(null != listDpmIndemChoixAgent
+				&& !listDpmIndemChoixAgent.isEmpty()) {
+			// on recupere les id agent des operateurs
+			for(DpmIndemChoixAgent choixAgent : listDpmIndemChoixAgent) {
+				if(null != listIdsAgent
+						&& !listIdsAgent.contains(choixAgent.getIdAgent())) {
+					listIdsAgent.add(choixAgent.getIdAgent());
+				}
+				if(null != listIdsAgent
+						&& !listIdsAgent.contains(choixAgent.getIdAgentCreation())) {
+					listIdsAgent.add(choixAgent.getIdAgentCreation());
+				}
+			}
+			// ///////////////// on recupere la liste d agents // ///////
+			List<AgentWithServiceDto> listAgentServiceDto = sirhWSConsumer.getListAgentsWithService(listIdsAgent, null);
+			
+			for(DpmIndemChoixAgent choixAgent : listDpmIndemChoixAgent) {
+				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, choixAgent.getIdAgent());
+				AgentWithServiceDto operateurDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, choixAgent.getIdAgentCreation());
+				DpmIndemniteChoixAgentDto dto = new DpmIndemniteChoixAgentDto(choixAgent, agDtoServ, operateurDtoServ);
+				result.add(dto);
+			}
+		}
+		
+		return result;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public DpmIndemniteChoixAgentDto getIndemniteChoixAgent(Integer idAgentConnecte, Integer annee) {
+		
+		if(null == idAgentConnecte
+				|| !sirhWSUtils.isAgentDPM(idAgentConnecte)) {
+			throw new AccessForbiddenException();
+		}
+		
+		List<Integer> listIdsAgent = new ArrayList<Integer>();
+		listIdsAgent.add(idAgentConnecte);
+		
+		List<DpmIndemChoixAgent> listDpmIndemChoixAgent = dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee, null, null);
+		
+		DpmIndemniteChoixAgentDto result = new DpmIndemniteChoixAgentDto();
+		result.setIdAgent(idAgentConnecte);
+		result.setDpmIndemniteAnnee(new DpmIndemniteAnneeDto(dpmRepository.getDpmIndemAnneeByAnnee(annee), false));
 		
 		if(null != listDpmIndemChoixAgent
 				&& !listDpmIndemChoixAgent.isEmpty()) {
 			for(DpmIndemChoixAgent choixAgent : listDpmIndemChoixAgent) {
 				DpmIndemniteChoixAgentDto dto = new DpmIndemniteChoixAgentDto(choixAgent);
-				result.add(dto);
+				result = dto;
 			}
 		}
 		
@@ -235,9 +321,9 @@ public class DpmService implements IDpmService {
 	public boolean isDroitAgentToIndemniteForfaitaireDPM(Integer idAgent) {
 		
 		// ne doit pas etre organise en cycle pour ses conges
-		if(isAgentCycleConge(idAgent)) {
-			return false;
-		}
+//		if(isAgentCycleConge(idAgent)) {
+//			return false;
+//		}
 		
 		// doit avoir la prime Indemnité forfaitaire travail DPM sur son affectation courante
 		if(!isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent)) {
@@ -245,6 +331,38 @@ public class DpmService implements IDpmService {
 		}
 		
 		return true;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<DpmIndemniteAnneeDto> getListDpmIndemAnneeOuverte() {
+		
+		List<DpmIndemAnnee> listDpmIndemAnnee = dpmRepository.getListDpmIndemAnneeOuverte();
+		
+		List<DpmIndemniteAnneeDto> result = new ArrayList<DpmIndemniteAnneeDto>();
+		
+		if(null != listDpmIndemAnnee
+				&& !listDpmIndemAnnee.isEmpty()) {
+			for(DpmIndemAnnee choixAnnee : listDpmIndemAnnee) {
+				DpmIndemniteAnneeDto dto = new DpmIndemniteAnneeDto(choixAnnee, true);
+				result.add(dto);
+			}
+		}
+		
+		return result;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public DpmIndemniteAnneeDto getDpmIndemAnneeEnCours() {
+		
+		DpmIndemAnnee dpmIndemAnnee = dpmRepository.getDpmIndemAnneeByAnnee(new DateTime().getYear());
+		
+		if(null != dpmIndemAnnee) {
+			return new DpmIndemniteAnneeDto(dpmIndemAnnee, false);
+		}
+		
+		return null;
 	}
 	
 	@Override
@@ -324,27 +442,27 @@ public class DpmService implements IDpmService {
 		return result;
 	}
 	
-	protected boolean isAgentCycleConge(Integer idAgent) {
-
-		List<RefTypeAbsenceDto> listTypeAbsence = absWsConsumer.getListeTypAbsenceCongeAnnuel();
-		
-		RefTypeSaisiCongeAnnuelDto baseConge = sirhWSConsumer.getBaseHoraireAbsence(idAgent, new Date());
-
-		if (null != listTypeAbsence
-				&& null != baseConge) {
-			for (RefTypeAbsenceDto typeAbsence : listTypeAbsence) {
-				if(null != typeAbsence.getTypeSaisiCongeAnnuelDto()
-						&& typeAbsence.getTypeSaisiCongeAnnuelDto().getIdRefTypeSaisiCongeAnnuel().equals(baseConge.getIdRefTypeSaisiCongeAnnuel())) {
-					if(null != typeAbsence.getTypeSaisiCongeAnnuelDto().getQuotaMultiple()
-							&& 0 < typeAbsence.getTypeSaisiCongeAnnuelDto().getQuotaMultiple()) {
-						return true;
-					}
-					break;
-				}
-			}
-		}
-		return false;
-	}
+//	protected boolean isAgentCycleConge(Integer idAgent) {
+//
+//		List<RefTypeAbsenceDto> listTypeAbsence = absWsConsumer.getListeTypAbsenceCongeAnnuel();
+//		
+//		RefTypeSaisiCongeAnnuelDto baseConge = sirhWSConsumer.getBaseHoraireAbsence(idAgent, new Date());
+//
+//		if (null != listTypeAbsence
+//				&& null != baseConge) {
+//			for (RefTypeAbsenceDto typeAbsence : listTypeAbsence) {
+//				if(null != typeAbsence.getTypeSaisiCongeAnnuelDto()
+//						&& typeAbsence.getTypeSaisiCongeAnnuelDto().getIdRefTypeSaisiCongeAnnuel().equals(baseConge.getIdRefTypeSaisiCongeAnnuel())) {
+//					if(null != typeAbsence.getTypeSaisiCongeAnnuelDto().getQuotaMultiple()
+//							&& 0 < typeAbsence.getTypeSaisiCongeAnnuelDto().getQuotaMultiple()) {
+//						return true;
+//					}
+//					break;
+//				}
+//			}
+//		}
+//		return false;
+//	}
 	
 	protected boolean isAgentWithIndemniteForfaitaireTravailDPMInAffectation(Integer idAgent) {
 		

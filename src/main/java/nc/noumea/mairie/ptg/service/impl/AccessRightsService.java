@@ -3,7 +3,9 @@ package nc.noumea.mairie.ptg.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ads.dto.StatutEntiteEnum;
@@ -18,6 +20,7 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.ptg.service.IDpmService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
@@ -57,6 +60,9 @@ public class AccessRightsService implements IAccessRightsService {
 	
 	@Autowired
 	private ITitreRepasService titreRepasService;
+	
+	@Autowired
+	private IDpmService dpmService;
 
 	@Override
 	public AccessRightsDto getAgentAccessRights(Integer idAgent) {
@@ -73,6 +79,30 @@ public class AccessRightsService implements IAccessRightsService {
 		}
 
 		result.setTitreRepas(!titreRepasService.checkPrimePanierEtFiliereIncendie(idAgent));
+		result.setPrimeDpm(dpmService.isDroitAgentToIndemniteForfaitaireDPM(idAgent));
+		
+		//  #30544 concerne la Indemnité forfaitaire travail DPM
+		result.setSaisiePrimesDpmOperateur(false);
+		// si operateur on recupere les agents affectes 
+		if(accessRightsRepository.isUserOperator(idAgent)) {
+			List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent);
+			
+			Set<Integer> listIdsAgent = new HashSet<Integer>();
+			if(null != listDroitsAgent
+					&& !listDroitsAgent.isEmpty()) {
+				for(DroitsAgent da : listDroitsAgent) {
+					listIdsAgent.add(da.getIdAgent());
+				}
+				
+				// puis on recherche ceux qui ont la prime sur leur affectation active
+				List<AgentWithServiceDto> listAgentWithServiceDto = sirhWSConsumer.getListeAgentWithIndemniteForfaitTravailDPM(listIdsAgent);
+				if(null != listAgentWithServiceDto
+						&& !listAgentWithServiceDto.isEmpty()) {
+					result.setSaisiePrimesDpmOperateur(true);
+				}
+			}
+		}
+		
 		return result;
 	}
 
@@ -393,7 +423,7 @@ public class AccessRightsService implements IAccessRightsService {
 	 * to Input. This service also filters by service
 	 */
 	@Override
-	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds, Date date) {
+	public List<AgentDto> getAgentsToApproveOrInput(Integer idAgent, Integer idServiceAds, Date date, boolean withPrimeDpm) {
 
 		List<AgentDto> resultAg = new ArrayList<AgentDto>();
 
@@ -450,6 +480,21 @@ public class AccessRightsService implements IAccessRightsService {
 		for (DroitsAgent da : listeFinale) {
 			if (!listIdsAgent.contains(da.getIdAgent()))
 				listIdsAgent.add(da.getIdAgent());
+		}
+		
+		// #30544 filtre pour les agents ayant la prime Indemnité forfaitaire travail DPM
+		// utile au kiosque RH pour la saisie
+		if(withPrimeDpm) {
+			List<AgentWithServiceDto> listAgentWithPrimeDpm = sirhWSConsumer.getListeAgentWithIndemniteForfaitTravailDPM(new HashSet<Integer>(listIdsAgent));
+			
+			if(null != listAgentWithPrimeDpm) {
+				listIdsAgent = null;
+				listIdsAgent = new ArrayList<Integer>();
+				for (AgentWithServiceDto agent : listAgentWithPrimeDpm) {
+					if (!listIdsAgent.contains(agent.getIdAgent()))
+						listIdsAgent.add(agent.getIdAgent());
+				}
+			}
 		}
 
 		List<AgentGeneriqueDto> listAgentsExistants = sirhWSConsumer.getListAgents(listIdsAgent);
@@ -675,7 +720,7 @@ public class AccessRightsService implements IAccessRightsService {
 	 * build the filters (by service)
 	 */
 	@Override
-	public List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent, Date date) {
+	public List<EntiteDto> getAgentsServicesToApproveOrInput(Integer idAgent, Date date, boolean withPrimeDpm) {
 
 		List<EntiteDto> result = new ArrayList<EntiteDto>();
 
@@ -685,7 +730,7 @@ public class AccessRightsService implements IAccessRightsService {
 		EntiteDto root = adsWsConsumer.getWholeTree();
 
 		List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent);
-
+		
 		// #18722 : pour chaque agent on va recuperer son
 		// service
 		List<Integer> listAgentDtoAppro = new ArrayList<Integer>();
@@ -693,6 +738,22 @@ public class AccessRightsService implements IAccessRightsService {
 			if (!listAgentDtoAppro.contains(da.getIdAgent()))
 				listAgentDtoAppro.add(da.getIdAgent());
 		}
+		
+		// #30544 filtre pour les agents ayant la prime Indemnité forfaitaire travail DPM
+		// utile au kiosque RH pour la saisie
+		if(withPrimeDpm) {
+			List<AgentWithServiceDto> listAgentWithPrimeDpm = sirhWSConsumer.getListeAgentWithIndemniteForfaitTravailDPM(new HashSet<Integer>(listAgentDtoAppro));
+			
+			if(null != listAgentWithPrimeDpm) {
+				listAgentDtoAppro = null;
+				listAgentDtoAppro = new ArrayList<Integer>();
+				for (AgentWithServiceDto agent : listAgentWithPrimeDpm) {
+					if (!listAgentDtoAppro.contains(agent.getIdAgent()))
+						listAgentDtoAppro.add(agent.getIdAgent());
+				}
+			}
+		}
+		
 		List<AgentWithServiceDto> listAgentsApproServiceDto = sirhWSConsumer.getListAgentsWithService(listAgentDtoAppro, date);
 
 		// #19250

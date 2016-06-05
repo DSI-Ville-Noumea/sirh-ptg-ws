@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -37,8 +38,8 @@ public class DpmRepositoryTest {
 		
 		DpmIndemAnnee  dpmAnnee = new DpmIndemAnnee();
 		dpmAnnee.setAnnee(new DateTime().getYear());
-		dpmAnnee.setDateDebut(new DateTime(2016,4,1,0,0,0).toDate());
-		dpmAnnee.setDateFin(new DateTime(2016,4,30,0,0,0).toDate());
+		dpmAnnee.setDateDebut(new DateTime().minusMonths(3).toDate());
+		dpmAnnee.setDateFin(new DateTime().plusMonths(3).toDate());
 		ptgEntityManager.persist(dpmAnnee);
 		
 		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
@@ -56,22 +57,31 @@ public class DpmRepositoryTest {
 	public void getListDpmIndemChoixAgent() {
 		
 		// teste l annee
-		assertEquals(0, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005138), new DateTime().getYear()-1).size());
-
+		assertEquals(0, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005138), new DateTime().getYear()-1, null, null).size());
+		
 		// teste l agent
-		assertEquals(0, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005140), new DateTime().getYear()).size());
+		assertEquals(0, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005140), new DateTime().getYear(), null, null).size());
+
+		// teste le boolean choixrecuperation
+		assertEquals(1, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005138), new DateTime().getYear(), null, false).size());
+		assertEquals(0, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005138), new DateTime().getYear(), null, true).size());
+
+		// teste le boolean choixrecuperation
+		assertEquals(1, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005138), new DateTime().getYear(), true, null).size());
+		assertEquals(0, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005138), new DateTime().getYear(), false, null).size());
 		
 		// ok
-		assertEquals(1, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005138), new DateTime().getYear()).size());
+		assertEquals(1, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005138), new DateTime().getYear(), null, null).size());
 	}
 
 	@Test
 	@Transactional("ptgTransactionManager")
-	public void getDpmIndemAnneeCourant() {
+	public void getListDpmIndemAnneeOuverte() {
 		// ok
-		DpmIndemAnnee result = dpmRepository.getDpmIndemAnneeCourant();
+		List<DpmIndemAnnee> result = dpmRepository.getListDpmIndemAnneeOuverte();
 		
-		assertEquals(result.getAnnee().intValue(), new DateTime().getYear());
+		assertEquals(result.size(), 1);
+		assertEquals(result.get(0).getAnnee().intValue(), new DateTime().getYear());
 	}
 	
 	@Test

@@ -32,7 +32,7 @@ public class DpmIndemChoixAgent {
 	private Integer idDpmIndemChoixAgent;
 	
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	@JoinColumn(columnDefinition = "idDpmIndemAnnee")
+	@JoinColumn(name = "ID_DPM_INDEM_ANNEE", referencedColumnName = "ID_DPM_INDEM_ANNEE")
 	private DpmIndemAnnee dpmIndemAnnee;
 	
 	@NotNull

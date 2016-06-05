@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
@@ -48,6 +49,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String sirhlisteAffectationDtosForListAgentByPeriodeUrl = "pointages/listeAffectationDtosForListAgentByPeriode";
 	private static final String isUtilisateurSIRHServiceUrl = "utilisateur/isUtilisateurSIRH";
 	private static final String sirhBaseCongeUrl = "absences/baseHoraire";
+	private static final String sirhListeAgentWithIndemniteForfaitTravailDPMUrl = "agents/listeAgentWithIndemniteForfaitTravailDPM";
 
 	@Override
 	public EntiteDto getAgentDirection(Integer idAgent, Date date) {
@@ -321,5 +323,19 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponse(RefTypeSaisiCongeAnnuelDto.class, res, url);
+	}
+
+	@Override
+	public List<AgentWithServiceDto> getListeAgentWithIndemniteForfaitTravailDPM(Set<Integer> listIdsAgent) {
+		
+		String url = String.format(sirhWsBaseUrl + sirhListeAgentWithIndemniteForfaitTravailDPMUrl);
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+
+		String json = new JSONSerializer().exclude("*.class").deepSerialize(listIdsAgent);
+
+		ClientResponse res = createAndFirePostRequest(parameters, url, json);
+
+		return readResponseAsList(AgentWithServiceDto.class, res, url);
 	}
 }

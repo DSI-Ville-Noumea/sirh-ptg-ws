@@ -83,7 +83,24 @@ public class FiltreController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<EntiteDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent, new Date());
+		List<EntiteDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent, new Date(), false);
+
+		if (services.size() == 0)
+			throw new NoContentException();
+
+		return services;
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/servicesWithPrimeDpm", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public List<EntiteDto> getServicesWithPrimeDpm(@RequestParam("idAgent") Integer idAgent) {
+
+		logger.debug("entered GET [filtres/servicesWithPrimeDpm] => getServicesWithPrimeDpm with parameter idAgent = {}", idAgent);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		List<EntiteDto> services = accessRightsService.getAgentsServicesToApproveOrInput(convertedIdAgent, new Date(), true);
 
 		if (services.size() == 0)
 			throw new NoContentException();
@@ -100,7 +117,26 @@ public class FiltreController {
 
 		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, idServiceADS, new Date());
+		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, idServiceADS, new Date(), false);
+
+		if (services.size() == 0)
+			throw new NoContentException();
+
+		String json = new JSONSerializer().exclude("*.class").serialize(services);
+
+		return new ResponseEntity<String>(json, HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/agentsWithPrimeDpm", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> getAgentsWithPrimeDpm(@RequestParam("idAgent") Integer idAgent, @RequestParam(value = "idServiceADS", required = false) Integer idServiceADS) {
+
+		logger.debug("entered GET [filtres/agents] => getAgents with parameter idAgent = {} and idServiceADS = {}", idAgent, idServiceADS);
+
+		int convertedIdAgent = converterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
+
+		List<AgentDto> services = accessRightsService.getAgentsToApproveOrInput(convertedIdAgent, idServiceADS, new Date(), true);
 
 		if (services.size() == 0)
 			throw new NoContentException();

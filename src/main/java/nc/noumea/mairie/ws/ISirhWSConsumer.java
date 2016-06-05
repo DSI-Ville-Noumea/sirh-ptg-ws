@@ -2,6 +2,7 @@ package nc.noumea.mairie.ws;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
@@ -54,4 +55,14 @@ public interface ISirhWSConsumer {
 	List<AgentWithServiceDto> getListAgentsWithServiceOldAffectation(List<Integer> listIdsAgent);
 
 	RefTypeSaisiCongeAnnuelDto getBaseHoraireAbsence(Integer idAgent, Date date);
+
+	/**
+	 * Retourne la liste des agents ayant la prime pointage Indemnité forfaitaire travail DPM
+	 * sur leur affectation active. Filtre également avec les agents passés en parametre.
+	 * #30544
+	 * 
+	 * @param Set<Integer> Liste des agents pour filtre
+	 * @return List<AgentWithServiceDto> La liste des agents avec la prime Indemnité forfaitaire travail DPM 
+	 */
+	List<AgentWithServiceDto> getListeAgentWithIndemniteForfaitTravailDPM(Set<Integer> listIdsAgent);
 }

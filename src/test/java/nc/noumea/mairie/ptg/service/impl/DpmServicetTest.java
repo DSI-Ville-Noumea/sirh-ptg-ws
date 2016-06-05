@@ -1,15 +1,12 @@
 package nc.noumea.mairie.ptg.service.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.domain.DpmIndemAnnee;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.dto.AgentDto;
@@ -19,7 +16,6 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
-import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
@@ -100,94 +96,94 @@ public class DpmServicetTest {
 		assertTrue(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent));
 	}
 	
-	@Test
-	public void isAgentCycleConge_returnNull() {
-		
-		Integer idAgent = 9005138;
-		
-		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto();
-		typeSaisiCongeAnnuelDto.setQuotaMultiple(null);
-		RefTypeAbsenceDto typeDto = new RefTypeAbsenceDto();
-		typeDto.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto);
-		
-		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto2 = new RefTypeSaisiCongeAnnuelDto();
-		typeSaisiCongeAnnuelDto2.setQuotaMultiple(3);
-		RefTypeAbsenceDto typeDto2 = new RefTypeAbsenceDto();
-		typeDto2.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto2);
-		
-		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
-		listTypeAbsence.add(typeDto);
-		listTypeAbsence.add(typeDto2);
-		
-		Mockito.when(absWsConsumer.getListeTypAbsenceCongeAnnuel()).thenReturn(listTypeAbsence);
-		
-		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(null);
-		
-		assertFalse(service.isAgentCycleConge(idAgent));
-	}
-	
-	@Test
-	public void isAgentCycleConge_false() {
-		
-		Integer idAgent = 9005138;
-		
-		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto();
-		typeSaisiCongeAnnuelDto.setQuotaMultiple(null);
-		typeSaisiCongeAnnuelDto.setIdRefTypeSaisiCongeAnnuel(1);
-		RefTypeAbsenceDto typeDto = new RefTypeAbsenceDto();
-		typeDto.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto);
-		
-		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto2 = new RefTypeSaisiCongeAnnuelDto();
-		typeSaisiCongeAnnuelDto2.setQuotaMultiple(3);
-		typeSaisiCongeAnnuelDto2.setIdRefTypeSaisiCongeAnnuel(2);
-		RefTypeAbsenceDto typeDto2 = new RefTypeAbsenceDto();
-		typeDto2.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto2);
-		
-		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
-		listTypeAbsence.add(typeDto);
-		listTypeAbsence.add(typeDto2);
-		
-		Mockito.when(absWsConsumer.getListeTypAbsenceCongeAnnuel()).thenReturn(listTypeAbsence);
-		
-		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDtoAgent = new RefTypeSaisiCongeAnnuelDto();
-		typeSaisiCongeAnnuelDtoAgent.setIdRefTypeSaisiCongeAnnuel(3);
-		
-		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(typeSaisiCongeAnnuelDtoAgent);
-		
-		assertFalse(service.isAgentCycleConge(idAgent));
-		
-		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(typeSaisiCongeAnnuelDto);
-		
-		assertFalse(service.isAgentCycleConge(idAgent));
-	}
-	
-	@Test
-	public void isAgentCycleConge_true() {
-		
-		Integer idAgent = 9005138;
-		
-		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto();
-		typeSaisiCongeAnnuelDto.setQuotaMultiple(null);
-		typeSaisiCongeAnnuelDto.setIdRefTypeSaisiCongeAnnuel(1);
-		RefTypeAbsenceDto typeDto = new RefTypeAbsenceDto();
-		typeDto.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto);
-		
-		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto2 = new RefTypeSaisiCongeAnnuelDto();
-		typeSaisiCongeAnnuelDto2.setQuotaMultiple(3);
-		typeSaisiCongeAnnuelDto2.setIdRefTypeSaisiCongeAnnuel(2);
-		RefTypeAbsenceDto typeDto2 = new RefTypeAbsenceDto();
-		typeDto2.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto2);
-		
-		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
-		listTypeAbsence.add(typeDto);
-		listTypeAbsence.add(typeDto2);
-		
-		Mockito.when(absWsConsumer.getListeTypAbsenceCongeAnnuel()).thenReturn(listTypeAbsence);
-		
-		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(typeSaisiCongeAnnuelDto2);
-		
-		assertTrue(service.isAgentCycleConge(idAgent));
-	}
+//	@Test
+//	public void isAgentCycleConge_returnNull() {
+//		
+//		Integer idAgent = 9005138;
+//		
+//		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto();
+//		typeSaisiCongeAnnuelDto.setQuotaMultiple(null);
+//		RefTypeAbsenceDto typeDto = new RefTypeAbsenceDto();
+//		typeDto.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto);
+//		
+//		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto2 = new RefTypeSaisiCongeAnnuelDto();
+//		typeSaisiCongeAnnuelDto2.setQuotaMultiple(3);
+//		RefTypeAbsenceDto typeDto2 = new RefTypeAbsenceDto();
+//		typeDto2.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto2);
+//		
+//		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
+//		listTypeAbsence.add(typeDto);
+//		listTypeAbsence.add(typeDto2);
+//		
+//		Mockito.when(absWsConsumer.getListeTypAbsenceCongeAnnuel()).thenReturn(listTypeAbsence);
+//		
+//		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(null);
+//		
+//		assertFalse(service.isAgentCycleConge(idAgent));
+//	}
+//	
+//	@Test
+//	public void isAgentCycleConge_false() {
+//		
+//		Integer idAgent = 9005138;
+//		
+//		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto();
+//		typeSaisiCongeAnnuelDto.setQuotaMultiple(null);
+//		typeSaisiCongeAnnuelDto.setIdRefTypeSaisiCongeAnnuel(1);
+//		RefTypeAbsenceDto typeDto = new RefTypeAbsenceDto();
+//		typeDto.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto);
+//		
+//		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto2 = new RefTypeSaisiCongeAnnuelDto();
+//		typeSaisiCongeAnnuelDto2.setQuotaMultiple(3);
+//		typeSaisiCongeAnnuelDto2.setIdRefTypeSaisiCongeAnnuel(2);
+//		RefTypeAbsenceDto typeDto2 = new RefTypeAbsenceDto();
+//		typeDto2.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto2);
+//		
+//		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
+//		listTypeAbsence.add(typeDto);
+//		listTypeAbsence.add(typeDto2);
+//		
+//		Mockito.when(absWsConsumer.getListeTypAbsenceCongeAnnuel()).thenReturn(listTypeAbsence);
+//		
+//		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDtoAgent = new RefTypeSaisiCongeAnnuelDto();
+//		typeSaisiCongeAnnuelDtoAgent.setIdRefTypeSaisiCongeAnnuel(3);
+//		
+//		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(typeSaisiCongeAnnuelDtoAgent);
+//		
+//		assertFalse(service.isAgentCycleConge(idAgent));
+//		
+//		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(typeSaisiCongeAnnuelDto);
+//		
+//		assertFalse(service.isAgentCycleConge(idAgent));
+//	}
+//	
+//	@Test
+//	public void isAgentCycleConge_true() {
+//		
+//		Integer idAgent = 9005138;
+//		
+//		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto();
+//		typeSaisiCongeAnnuelDto.setQuotaMultiple(null);
+//		typeSaisiCongeAnnuelDto.setIdRefTypeSaisiCongeAnnuel(1);
+//		RefTypeAbsenceDto typeDto = new RefTypeAbsenceDto();
+//		typeDto.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto);
+//		
+//		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto2 = new RefTypeSaisiCongeAnnuelDto();
+//		typeSaisiCongeAnnuelDto2.setQuotaMultiple(3);
+//		typeSaisiCongeAnnuelDto2.setIdRefTypeSaisiCongeAnnuel(2);
+//		RefTypeAbsenceDto typeDto2 = new RefTypeAbsenceDto();
+//		typeDto2.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto2);
+//		
+//		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
+//		listTypeAbsence.add(typeDto);
+//		listTypeAbsence.add(typeDto2);
+//		
+//		Mockito.when(absWsConsumer.getListeTypAbsenceCongeAnnuel()).thenReturn(listTypeAbsence);
+//		
+//		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(typeSaisiCongeAnnuelDto2);
+//		
+//		assertTrue(service.isAgentCycleConge(idAgent));
+//	}
 	
 	@Test(expected = AccessForbiddenException.class)
 	public void saveDpmIndemAnnee_AccessForbiddenException() {
@@ -353,10 +349,31 @@ public class DpmServicetTest {
 	}
 	
 	@Test
+	public void getListDpmIndemAnneeOuverte_null() {
+		
+		Mockito.when(dpmRepository.getListDpmIndemAnneeOuverte()).thenReturn(null);
+		
+		assertEquals(0, service.getListDpmIndemAnneeOuverte().size());
+	}
+	
+	@Test
+	public void getListDpmIndemAnneeOuverte_2results() {
+		
+		DpmIndemAnnee dpmAnnee = new DpmIndemAnnee();
+		DpmIndemAnnee dpmAnnee2 = new DpmIndemAnnee();
+		List<DpmIndemAnnee> listDpmIndemAnnee = new ArrayList<DpmIndemAnnee>();
+		listDpmIndemAnnee.add(dpmAnnee);
+		listDpmIndemAnnee.add(dpmAnnee2);
+		Mockito.when(dpmRepository.getListDpmIndemAnneeOuverte()).thenReturn(listDpmIndemAnnee);
+		
+		assertEquals(2, service.getListDpmIndemAnneeOuverte().size());
+	}
+	
+	@Test
 	public void isDroitAgentToIndemniteForfaitaireDPM_false() {
 		Integer idAgent = 9005138;
 		
-		isAgentCycleConge_true();
+//		isAgentCycleConge_true();
 		
 		assertFalse(service.isDroitAgentToIndemniteForfaitaireDPM(idAgent));
 	}
@@ -365,7 +382,7 @@ public class DpmServicetTest {
 	public void isDroitAgentToIndemniteForfaitaireDPM_false_bis() {
 		Integer idAgent = 9005138;
 		
-		isAgentCycleConge_false();
+//		isAgentCycleConge_false();
 		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_false();
 		
 		assertFalse(service.isDroitAgentToIndemniteForfaitaireDPM(idAgent));
@@ -375,7 +392,7 @@ public class DpmServicetTest {
 	public void isDroitAgentToIndemniteForfaitaireDPM_true() {
 		Integer idAgent = 9005138;
 		
-		isAgentCycleConge_false();
+//		isAgentCycleConge_false();
 		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true();
 		
 		assertTrue(service.isDroitAgentToIndemniteForfaitaireDPM(idAgent));
@@ -427,7 +444,7 @@ public class DpmServicetTest {
 		Integer idAgentConnecte = null;
 		Integer annee = 2016;
 		
-		service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee);
+		service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee, null, null);
 	}
 	
 	@Test(expected = AccessForbiddenException.class)
@@ -438,10 +455,10 @@ public class DpmServicetTest {
 		
 		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(false);
 		
-		service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee);
+		service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee, null, null);
 	}
 	
-	@Test
+	@Test(expected = AccessForbiddenException.class)
 	public void getListDpmIndemniteChoixAgent_agent_returnNull() {
 		
 		Integer idAgentConnecte = 9005138;
@@ -451,19 +468,29 @@ public class DpmServicetTest {
 		Mockito.when(accessRightsService.isUserOperateur(idAgentConnecte)).thenReturn(false);
 		
 		List<Integer> listIdsAgent = Arrays.asList(idAgentConnecte);
-		Mockito.when(dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee)).thenReturn(null);
+		Mockito.when(dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee, null, null)).thenReturn(null);
 		
-		assertEquals(0, service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee).size());
+		service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee, null, null);
+	}
+
+	@Test(expected = AccessForbiddenException.class)
+	public void getIndemniteChoixAgent_AccessForbiddenException() {
+		
+		Integer idAgentConnecte = 9005138;
+		Integer annee = 2016;
+		
+		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(false);
+		
+		assertNotNull(service.getIndemniteChoixAgent(idAgentConnecte, annee));
 	}
 	
 	@Test
-	public void getListDpmIndemniteChoixAgent_agent_return2results() {
+	public void getIndemniteChoixAgent_return2results() {
 		
 		Integer idAgentConnecte = 9005138;
 		Integer annee = 2016;
 		
 		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(true);
-		Mockito.when(accessRightsService.isUserOperateur(idAgentConnecte)).thenReturn(false);
 		
 		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
 		DpmIndemChoixAgent choixAgent2 = new DpmIndemChoixAgent();
@@ -472,9 +499,10 @@ public class DpmServicetTest {
 		listDpmChoixAgent.add(choixAgent2);
 		
 		List<Integer> listIdsAgent = Arrays.asList(idAgentConnecte);
-		Mockito.when(dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee)).thenReturn(listDpmChoixAgent);
+		Mockito.when(dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee, null, null)).thenReturn(listDpmChoixAgent);
+		Mockito.when(dpmRepository.getDpmIndemAnneeByAnnee(annee)).thenReturn(new DpmIndemAnnee());
 		
-		assertEquals(2, service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee).size());
+		assertNotNull(service.getIndemniteChoixAgent(idAgentConnecte, annee));
 	}
 	
 	@Test
@@ -494,7 +522,7 @@ public class DpmServicetTest {
 		listAgents.add(agent1);
 		listAgents.add(agent2);
 		
-		Mockito.when(accessRightsService.getAgentsToApproveOrInput(idAgentConnecte, null, null)).thenReturn(listAgents);
+		Mockito.when(accessRightsService.getAgentsToApproveOrInput(idAgentConnecte, null, null, true)).thenReturn(listAgents);
 		
 		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
 		DpmIndemChoixAgent choixAgent2 = new DpmIndemChoixAgent();
@@ -503,9 +531,38 @@ public class DpmServicetTest {
 		listDpmChoixAgent.add(choixAgent2);
 		
 		List<Integer> listIdsAgent = Arrays.asList(agent1.getIdAgent(), agent2.getIdAgent());
-		Mockito.when(dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee)).thenReturn(listDpmChoixAgent);
+		Mockito.when(dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee, null, null)).thenReturn(listDpmChoixAgent);
 		
-		assertEquals(2, service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee).size());
+		assertEquals(2, service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee, null, null).size());
+	}
+	
+	@Test
+	public void getListDpmIndemniteChoixAgent_operateur_return1result_filtreAgent() {
+		
+		Integer idAgentConnecte = 9005138;
+		Integer annee = 2016;
+		
+		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(true);
+		Mockito.when(accessRightsService.isUserOperateur(idAgentConnecte)).thenReturn(true);
+		
+		AgentDto agent1 = new AgentDto();
+		agent1.setIdAgent(9005131);
+		AgentDto agent2 = new AgentDto();
+		agent2.setIdAgent(9005141);
+		List<AgentDto> listAgents = new ArrayList<AgentDto>();
+		listAgents.add(agent1);
+		listAgents.add(agent2);
+		
+		Mockito.when(accessRightsService.getAgentsToApproveOrInput(idAgentConnecte, null, null, true)).thenReturn(listAgents);
+		
+		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
+		List<DpmIndemChoixAgent> listDpmChoixAgent= new ArrayList<DpmIndemChoixAgent>();
+		listDpmChoixAgent.add(choixAgent);
+		
+		List<Integer> listIdsAgent = Arrays.asList(agent2.getIdAgent());
+		Mockito.when(dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee, null, null)).thenReturn(listDpmChoixAgent);
+		
+		assertEquals(1, service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee, null, agent2.getIdAgent()).size());
 	}
 	
 	@Test
@@ -554,23 +611,23 @@ public class DpmServicetTest {
 		assertEquals(DpmService.HORS_PERIODE, result.getErrors().get(0));
 	}
 	
-	private void isAgentCycleConge_false(Integer idAgent) {
-		
-		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto();
-		typeSaisiCongeAnnuelDto.setQuotaMultiple(null);
-		typeSaisiCongeAnnuelDto.setIdRefTypeSaisiCongeAnnuel(1);
-		RefTypeAbsenceDto typeDto = new RefTypeAbsenceDto();
-		typeDto.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto);
-		
-		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
-		listTypeAbsence.add(typeDto);
-		
-		Mockito.when(absWsConsumer.getListeTypAbsenceCongeAnnuel()).thenReturn(listTypeAbsence);
-		
-		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(typeSaisiCongeAnnuelDto);
-		
-		assertFalse(service.isAgentCycleConge(idAgent));
-	}
+//	private void isAgentCycleConge_false(Integer idAgent) {
+//		
+//		RefTypeSaisiCongeAnnuelDto typeSaisiCongeAnnuelDto = new RefTypeSaisiCongeAnnuelDto();
+//		typeSaisiCongeAnnuelDto.setQuotaMultiple(null);
+//		typeSaisiCongeAnnuelDto.setIdRefTypeSaisiCongeAnnuel(1);
+//		RefTypeAbsenceDto typeDto = new RefTypeAbsenceDto();
+//		typeDto.setTypeSaisiCongeAnnuelDto(typeSaisiCongeAnnuelDto);
+//		
+//		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
+//		listTypeAbsence.add(typeDto);
+//		
+//		Mockito.when(absWsConsumer.getListeTypAbsenceCongeAnnuel()).thenReturn(listTypeAbsence);
+//		
+//		Mockito.when(sirhWSConsumer.getBaseHoraireAbsence(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(typeSaisiCongeAnnuelDto);
+//		
+//		assertFalse(service.isAgentCycleConge(idAgent));
+//	}
 	
 	private void isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(Integer idAgent, Date dateJour) {
 		
@@ -613,7 +670,7 @@ public class DpmServicetTest {
 		dtoAGENT_CHOIX_OBLIGATOIRE.setIdAgent(9001999);
 		
 		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(dtoAGENT_CHOIX_OBLIGATOIRE.getIdAgent(), dateJour);
-		isAgentCycleConge_false(dtoAGENT_CHOIX_OBLIGATOIRE.getIdAgent());
+//		isAgentCycleConge_false(dtoAGENT_CHOIX_OBLIGATOIRE.getIdAgent());
 
 		// cas n°3 : on met a jour
 		DpmIndemniteChoixAgentDto dtoUpdate = new DpmIndemniteChoixAgentDto();
@@ -621,7 +678,7 @@ public class DpmServicetTest {
 		dtoUpdate.setChoixIndemnite(true);
 		
 		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(dtoUpdate.getIdAgent(), dateJour);
-		isAgentCycleConge_false(dtoUpdate.getIdAgent());
+//		isAgentCycleConge_false(dtoUpdate.getIdAgent());
 
 		// cas n°4 : on cree
 		DpmIndemniteChoixAgentDto dtoCreate = new DpmIndemniteChoixAgentDto();
@@ -629,7 +686,7 @@ public class DpmServicetTest {
 		dtoCreate.setChoixRecuperation(true);
 		
 		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(dtoCreate.getIdAgent(), dateJour);
-		isAgentCycleConge_false(dtoCreate.getIdAgent());
+//		isAgentCycleConge_false(dtoCreate.getIdAgent());
 		
 		List<DpmIndemniteChoixAgentDto> listDto = new ArrayList<DpmIndemniteChoixAgentDto>();
 		listDto.add(dtoAGENT_INTERDIT);
@@ -672,7 +729,7 @@ public class DpmServicetTest {
 		
 		isPeriodeChoixOuverte_false();
 		
-		service.saveIndemniteChoixAgent(idAgentConnecte, dto);
+		service.saveIndemniteChoixAgentForKiosque(idAgentConnecte, dto);
 	}
 	
 	@Test
@@ -689,8 +746,9 @@ public class DpmServicetTest {
 		
 		isPeriodeChoixOuverte_false();
 		
-		ReturnMessageDto result = service.saveIndemniteChoixAgent(idAgentConnecte, dto);
+		ReturnMessageDto result = service.saveIndemniteChoixAgentForKiosque(idAgentConnecte, dto);
 
+		assertEquals(0, result.getInfos().size());
 		assertEquals(1, result.getErrors().size());
 		assertEquals(DpmService.HORS_PERIODE, result.getErrors().get(0));
 	}
@@ -709,8 +767,9 @@ public class DpmServicetTest {
 		
 		isPeriodeChoixOuverte_true();
 		
-		ReturnMessageDto result = service.saveIndemniteChoixAgent(idAgentConnecte, dto);
+		ReturnMessageDto result = service.saveIndemniteChoixAgentForKiosque(idAgentConnecte, dto);
 
+		assertEquals(0, result.getInfos().size());
 		assertEquals(1, result.getErrors().size());
 		assertEquals(DpmService.INTERDIT, result.getErrors().get(0));
 	}
@@ -731,8 +790,9 @@ public class DpmServicetTest {
 		isPeriodeChoixOuverte_true();
 		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(idAgentConnecte, dateJour);
 		
-		ReturnMessageDto result = service.saveIndemniteChoixAgent(idAgentConnecte, dto);
+		ReturnMessageDto result = service.saveIndemniteChoixAgentForKiosque(idAgentConnecte, dto);
 
+		assertEquals(0, result.getInfos().size());
 		assertEquals(1, result.getErrors().size());
 		assertEquals(DpmService.CHOIX_OBLIGATOIRE, result.getErrors().get(0));
 	}
@@ -756,7 +816,7 @@ public class DpmServicetTest {
 		
 		Mockito.when(dpmRepository.getDpmIndemChoixAgentByAgentAndAnnee(dto.getIdAgent(), dto.getDpmIndemniteAnnee().getAnnee())).thenReturn(null);
 		
-		ReturnMessageDto result = service.saveIndemniteChoixAgent(idAgentConnecte, dto);
+		ReturnMessageDto result = service.saveIndemniteChoixAgentForKiosque(idAgentConnecte, dto);
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(DpmService.MODIFICATION_OK, result.getInfos().get(0));
@@ -786,7 +846,7 @@ public class DpmServicetTest {
 		
 		Mockito.when(dpmRepository.getDpmIndemChoixAgentByAgentAndAnnee(dto.getIdAgent(), dto.getDpmIndemniteAnnee().getAnnee())).thenReturn(choixAgent);
 		
-		ReturnMessageDto result = service.saveIndemniteChoixAgent(idAgentConnecte, dto);
+		ReturnMessageDto result = service.saveIndemniteChoixAgentForKiosque(idAgentConnecte, dto);
 
 		assertEquals(0, result.getErrors().size());
 		assertEquals(DpmService.MODIFICATION_OK, result.getInfos().get(0));
@@ -795,5 +855,23 @@ public class DpmServicetTest {
 		assertTrue(choixAgent.isChoixIndemnite());
 		
 		Mockito.verify(dpmRepository, Mockito.times(1)).persisEntity(Mockito.any(DpmIndemChoixAgent.class));
+	}
+	
+	@Test
+	public void getDpmIndemAnneeEnCours_null() {
+		
+		DpmIndemAnnee dpmIndemAnnee = null;
+		Mockito.when(dpmRepository.getDpmIndemAnneeByAnnee(new DateTime().getYear())).thenReturn(dpmIndemAnnee);
+		
+		assertNull(service.getDpmIndemAnneeEnCours());
+	}
+	
+	@Test
+	public void getDpmIndemAnneeEnCours_ok() {
+		
+		DpmIndemAnnee dpmIndemAnnee = new DpmIndemAnnee();
+		Mockito.when(dpmRepository.getDpmIndemAnneeByAnnee(new DateTime().getYear())).thenReturn(dpmIndemAnnee);
+		
+		assertNotNull(service.getDpmIndemAnneeEnCours());
 	}
 }

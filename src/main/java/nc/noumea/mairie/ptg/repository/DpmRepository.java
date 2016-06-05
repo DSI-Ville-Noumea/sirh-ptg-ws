@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -11,7 +12,6 @@ import javax.persistence.TypedQuery;
 import nc.noumea.mairie.ptg.domain.DpmIndemAnnee;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -36,34 +36,54 @@ public class DpmRepository implements IDpmRepository {
 	}
 
 	@Override
-	public List<DpmIndemChoixAgent> getListDpmIndemChoixAgent(List<Integer> listIdsAgent, Integer annee) {
+	public List<DpmIndemChoixAgent> getListDpmIndemChoixAgent(List<Integer> listIdsAgent, Integer annee, Boolean isChoixIndemnite, Boolean isChoixRecuperation) {
 		
-		logger.debug("getListDpmIndemChoixAgent with parameter listIdsAgent = {} and annee = {}", listIdsAgent, annee);
+		logger.debug("getListDpmIndemChoixAgent with parameter listIdsAgent = {} and annee = {} and isChoixIndemnite = {} and isChoixRecuperation = {}", 
+				listIdsAgent, annee, isChoixIndemnite, isChoixRecuperation);
 		
-		TypedQuery<DpmIndemChoixAgent> query = ptgEntityManager.createNamedQuery("getListDpmIndemChoixAgentByListIdsAgentAndAnnee", DpmIndemChoixAgent.class);
+		StringBuffer request = new StringBuffer();
+		request.append("select d from DpmIndemChoixAgent d where 1=1 ");
 		
-		query.setParameter("annee", annee);
-		query.setParameter("listIdsAgent", listIdsAgent);
+		if(null != annee)
+			request.append(" and d.dpmIndemAnnee.annee = :annee ");
+		
+		if(null != listIdsAgent)
+			request.append(" and d.idAgent in :listIdsAgent ");
+		
+		if(null != isChoixIndemnite)
+			request.append(" and d.isChoixIndemnite is :isChoixIndemnite");
+		
+		if(null != isChoixRecuperation)
+			request.append(" and d.isChoixRecuperation is :isChoixRecuperation");
+		
+		
+		TypedQuery<DpmIndemChoixAgent> query = ptgEntityManager.createQuery(request.toString(), DpmIndemChoixAgent.class);
+		
+		if(null != annee) 
+			query.setParameter("annee", annee);
+		
+		if(null != listIdsAgent) 
+			query.setParameter("listIdsAgent", listIdsAgent);
+
+		if(null != isChoixIndemnite) 
+			query.setParameter("isChoixIndemnite", isChoixIndemnite);
+		
+		if(null != isChoixRecuperation) 
+			query.setParameter("isChoixRecuperation", isChoixRecuperation);
 		
 		return query.getResultList();
 	}
 
 	@Override
-	public DpmIndemAnnee getDpmIndemAnneeCourant() {
+	public List<DpmIndemAnnee> getListDpmIndemAnneeOuverte() {
 		
-		logger.debug("getDpmIndemAnneeCourant without parameter");
+		logger.debug("getListDpmIndemAnneeOuverte without parameter");
 		
-		TypedQuery<DpmIndemAnnee> query = ptgEntityManager.createNamedQuery("getDpmIndemAnneeByAnnee", DpmIndemAnnee.class);
+		TypedQuery<DpmIndemAnnee> query = ptgEntityManager.createNamedQuery("getListDpmIndemAnneeOuverte", DpmIndemAnnee.class);
 
-		query.setParameter("annee", new DateTime().getYear());
+		query.setParameter("dateJour", new Date());
 		
-		try {
-			return query.getSingleResult();
-		} catch(NoResultException | NonUniqueResultException e) {
-			logger.error(e.getMessage());
-		}
-		
-		return null;
+		return query.getResultList();
 	}
 
 	@Override
