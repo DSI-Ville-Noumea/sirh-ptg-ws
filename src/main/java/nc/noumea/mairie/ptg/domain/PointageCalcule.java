@@ -52,8 +52,8 @@ public class PointageCalcule {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateFin;
 
-	@Column(name = "QUANTITE")
-	private Integer quantite;
+	@Column(name = "QUANTITE", columnDefinition = "numeric")
+	private Double quantite;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_REF_PRIME", referencedColumnName = "ID_REF_PRIME")
@@ -72,8 +72,8 @@ public class PointageCalcule {
 		return RefTypePointageEnum.getRefTypePointageEnum(type.getIdRefTypePointage());
 	}
 	
-	public void addQuantite(Integer qte) {
-		this.quantite = this.quantite == null ? 0 : this.quantite;
+	public void addQuantite(Double qte) {
+		this.quantite = this.quantite == null ? 0.0 : this.quantite;
 		this.quantite += qte;
 	}
 
@@ -133,11 +133,11 @@ public class PointageCalcule {
 		this.dateFin = dateFin;
 	}
 
-	public Integer getQuantite() {
+	public Double getQuantite() {
 		return quantite;
 	}
 
-	public void setQuantite(Integer quantite) {
+	public void setQuantite(Double quantite) {
 		this.quantite = quantite;
 	}
 

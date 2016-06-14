@@ -711,7 +711,7 @@ public class PointageRepositoryTest {
 		pc.setEtat(EtatPointageEnum.VENTILE);
 		pc.setIdAgent(9005138);
 		pc.setLastVentilDate(vd);
-		pc.setQuantite(1);
+		pc.setQuantite(1.0);
 		pc.setRefPrime(rp);
 		pc.setType(rtp);
 		ptgEntityManager.persist(pc);
@@ -720,7 +720,7 @@ public class PointageRepositoryTest {
 				vd.getIdVentilDate());
 
 		assertEquals(1, result.size());
-		assertEquals(new Integer(1), result.get(0).getQuantite());
+		assertEquals(new Double(1), result.get(0).getQuantite());
 		assertEquals(new LocalDate(2013, 7, 22).toDate(), result.get(0).getDateDebut());
 		assertEquals(new LocalDate(2013, 7, 29).toDate(), result.get(0).getDateFin());
 	}
@@ -757,7 +757,7 @@ public class PointageRepositoryTest {
 		pc.setEtat(EtatPointageEnum.VALIDE);
 		pc.setIdAgent(9005138);
 		pc.setLastVentilDate(vd);
-		pc.setQuantite(1);
+		pc.setQuantite(1.0);
 		pc.setRefPrime(rp);
 		pc.setType(rtp);
 		ptgEntityManager.persist(pc);
@@ -873,7 +873,7 @@ public class PointageRepositoryTest {
 		pc.setEtat(EtatPointageEnum.APPROUVE);
 		pc.setIdAgent(9005138);
 		pc.setLastVentilDate(vd);
-		pc.setQuantite(1);
+		pc.setQuantite(1.0);
 		pc.setRefPrime(rp);
 		pc.setType(rtp);
 		ptgEntityManager.persist(pc);
@@ -918,7 +918,7 @@ public class PointageRepositoryTest {
 		pc.setEtat(EtatPointageEnum.REFUSE); 
 		pc.setIdAgent(9005138);
 		pc.setLastVentilDate(vd);
-		pc.setQuantite(1);
+		pc.setQuantite(1.0);
 		pc.setRefPrime(rp);
 		pc.setType(rtp);
 		ptgEntityManager.persist(pc);

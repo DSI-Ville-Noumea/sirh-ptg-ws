@@ -32,6 +32,7 @@ import nc.noumea.mairie.ptg.dto.PrimeDtoKiosque;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
+import nc.noumea.mairie.ptg.service.IDpmService;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.ISaisieService;
@@ -58,6 +59,9 @@ public class SaisieService implements ISaisieService {
 
 	@Autowired
 	private IPointageService pointageService;
+
+	@Autowired
+	private IDpmService dpmService;
 
 	@Autowired
 	private IAbsWsConsumer absWsConsumer;
@@ -874,6 +878,16 @@ public class SaisieService implements ISaisieService {
 							&& EtatPointageEnum.APPROUVE.equals(ptg.getLatestEtatPointageWithPointageNotPersist().getEtat())) {
 						// calcul du nombre de minutes
 						Integer nombreMinutes = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
+						
+						// #30544 Indemnité forfaitaire travail DPM
+						int nombreMinutesMajoreesFromPrimeDPM = dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg);
+						
+						if(0 < nombreMinutesMajoreesFromPrimeDPM) {
+							nombreMinutes += nombreMinutesMajoreesFromPrimeDPM;
+						}else if (null != ptg.getHeureSupRappelService()
+								&& ptg.getHeureSupRappelService()) {
+							nombreMinutes += nombreMinutes;
+						}
 						
 						absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, 
 								ptg.getIdPointage() , null);

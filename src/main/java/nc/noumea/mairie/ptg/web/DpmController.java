@@ -281,4 +281,29 @@ public class DpmController {
 		return dpmService.isPeriodeChoixOuverte(annee);
 	}
 
+	/**
+	 * Supprime le choix d un agent, uniquement si la campagne est ouverte et
+	 * par un utilisateur DRH
+	 * 
+	 * Droit : uniquement SIRH
+	 * 
+	 * @param idAgentConnecte
+	 *            Integer
+	 * @param dto
+	 *            DpmIndemniteChoixAgentDto
+	 * @return ReturnMessageDto
+	 */
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.GET, value = "/deleteIndemniteChoixAgent", produces = "application/json;charset=utf-8")
+	public ReturnMessageDto deleteIndemniteChoixAgent(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
+			@RequestParam(required = true, value = "idDpmIndemChoixAgent") Integer idDpmIndemChoixAgent) {
+
+		logger.debug("entered POST [dpm/deleteIndemniteChoixAgent] => deleteIndemniteChoixAgent with parameters idAgentConnecte = {} and idDpmIndemChoixAgent = {}",
+				idAgentConnecte, idDpmIndemChoixAgent);
+
+		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
+
+		return dpmService.deleteIndemniteChoixAgentForKiosque(convertedIdAgentConnecte, idDpmIndemChoixAgent);
+	}
+
 }

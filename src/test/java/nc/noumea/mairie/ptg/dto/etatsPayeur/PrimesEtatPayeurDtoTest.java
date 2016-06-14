@@ -20,7 +20,7 @@ public class PrimesEtatPayeurDtoTest {
 		VentilPrime vp = new VentilPrime();
 		vp.setIdAgent(9008767);
 		vp.setDateDebutMois(new LocalDate(2013, 10, 1).toDate());
-		vp.setQuantite(12);
+		vp.setQuantite(12.0);
 		vp.setRefPrime(new RefPrime());
 		vp.getRefPrime().setLibelle("prime");
 		vp.getRefPrime().setTypeSaisie(TypeSaisieEnum.CASE_A_COCHER);
@@ -30,7 +30,7 @@ public class PrimesEtatPayeurDtoTest {
 
 		// Then
 		assertEquals("prime", result.getType());
-		assertEquals("12", result.getQuantite());
+		assertEquals("12.0", result.getQuantite());
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class PrimesEtatPayeurDtoTest {
 		VentilPrime vp = new VentilPrime();
 		vp.setIdAgent(9008767);
 		vp.setDateDebutMois(new LocalDate(2013, 10, 1).toDate());
-		vp.setQuantite(12);
+		vp.setQuantite(12.0);
 		vp.setRefPrime(new RefPrime());
 		vp.getRefPrime().setLibelle("prime");
 		vp.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
@@ -50,7 +50,7 @@ public class PrimesEtatPayeurDtoTest {
 
 		// Then
 		assertEquals("prime", result.getType());
-		assertEquals("12", result.getQuantite());
+		assertEquals("12.0", result.getQuantite());
 	}
 
 	@Test
@@ -60,7 +60,7 @@ public class PrimesEtatPayeurDtoTest {
 		VentilPrime vp = new VentilPrime();
 		vp.setIdAgent(9008767);
 		vp.setDateDebutMois(new LocalDate(2013, 10, 1).toDate());
-		vp.setQuantite(60);
+		vp.setQuantite(60.0);
 		vp.setRefPrime(new RefPrime());
 		vp.getRefPrime().setLibelle("prime");
 		vp.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
@@ -82,7 +82,7 @@ public class PrimesEtatPayeurDtoTest {
 		VentilPrime vp = new VentilPrime();
 		vp.setIdAgent(9008767);
 		vp.setDateDebutMois(new LocalDate(2013, 10, 1).toDate());
-		vp.setQuantite(75);
+		vp.setQuantite(75.0);
 		vp.setRefPrime(new RefPrime());
 		vp.getRefPrime().setLibelle("prime");
 		vp.getRefPrime().setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
@@ -104,20 +104,20 @@ public class PrimesEtatPayeurDtoTest {
 		VentilPrime vpNew = new VentilPrime();
 		vpNew.setIdAgent(9008767);
 		vpNew.setDateDebutMois(new LocalDate(2013, 10, 1).toDate());
-		vpNew.setQuantite(12);
+		vpNew.setQuantite(12.0);
 		vpNew.setRefPrime(new RefPrime());
 		vpNew.getRefPrime().setLibelle("prime");
 		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 
 		VentilPrime vpOld = new VentilPrime();
-		vpOld.setQuantite(10);
+		vpOld.setQuantite(10.0);
 
 		// When
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vpNew, vpOld, null);
 
 		// Then
 		assertEquals("prime", result.getType());
-		assertEquals("2", result.getQuantite());
+		assertEquals("2.0", result.getQuantite());
 	}
 
 	@Test
@@ -127,20 +127,20 @@ public class PrimesEtatPayeurDtoTest {
 		VentilPrime vpNew = new VentilPrime();
 		vpNew.setIdAgent(9008767);
 		vpNew.setDateDebutMois(new LocalDate(2013, 10, 1).toDate());
-		vpNew.setQuantite(12);
+		vpNew.setQuantite(12.0);
 		vpNew.setRefPrime(new RefPrime());
 		vpNew.getRefPrime().setLibelle("prime");
 		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 
 		VentilPrime vpOld = new VentilPrime();
-		vpOld.setQuantite(14);
+		vpOld.setQuantite(14.0);
 
 		// When
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vpNew, vpOld, null);
 
 		// Then
 		assertEquals("prime", result.getType());
-		assertEquals("-2", result.getQuantite());
+		assertEquals("-2.0", result.getQuantite());
 	}
 
 	@Test
@@ -150,7 +150,7 @@ public class PrimesEtatPayeurDtoTest {
 		VentilPrime vpNew = new VentilPrime();
 		vpNew.setIdAgent(9008767);
 		vpNew.setDateDebutMois(new LocalDate(2013, 10, 1).toDate());
-		vpNew.setQuantite(60);
+		vpNew.setQuantite(60.0);
 		vpNew.setRefPrime(new RefPrime());
 		vpNew.getRefPrime().setLibelle("prime");
 		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
@@ -158,7 +158,7 @@ public class PrimesEtatPayeurDtoTest {
 		Mockito.when(hS.formatMinutesToString(15)).thenReturn("15m");
 
 		VentilPrime vpOld = new VentilPrime();
-		vpOld.setQuantite(45);
+		vpOld.setQuantite(45.0);
 
 		// When
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vpNew, vpOld, hS);
@@ -176,7 +176,7 @@ public class PrimesEtatPayeurDtoTest {
 		VentilPrime vpNew = new VentilPrime();
 		vpNew.setIdAgent(9008767);
 		vpNew.setDateDebutMois(new LocalDate(2013, 10, 1).toDate());
-		vpNew.setQuantite(172);
+		vpNew.setQuantite(172.0);
 		vpNew.setRefPrime(new RefPrime());
 		vpNew.getRefPrime().setLibelle("prime");
 		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
@@ -186,7 +186,7 @@ public class PrimesEtatPayeurDtoTest {
 		Mockito.when(hS.formatMinutesToString(180)).thenReturn("3H");
 
 		VentilPrime vpOld = new VentilPrime();
-		vpOld.setQuantite(0);
+		vpOld.setQuantite(0.0);
 
 		// When
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vpNew, vpOld, hS);
@@ -203,7 +203,7 @@ public class PrimesEtatPayeurDtoTest {
 		VentilPrime vpNew = new VentilPrime();
 		vpNew.setIdAgent(9008767);
 		vpNew.setDateDebutMois(new LocalDate(2013, 10, 1).toDate());
-		vpNew.setQuantite(60);
+		vpNew.setQuantite(60.0);
 		vpNew.setRefPrime(new RefPrime());
 		vpNew.getRefPrime().setLibelle("prime");
 		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
@@ -211,7 +211,7 @@ public class PrimesEtatPayeurDtoTest {
 		Mockito.when(hS.formatMinutesToString(-15)).thenReturn("- 15m");
 
 		VentilPrime vpOld = new VentilPrime();
-		vpOld.setQuantite(75);
+		vpOld.setQuantite(75.0);
 
 		// When
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vpNew, vpOld, hS);

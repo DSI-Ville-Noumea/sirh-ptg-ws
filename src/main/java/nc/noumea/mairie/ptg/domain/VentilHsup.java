@@ -105,6 +105,9 @@ public class VentilHsup {
     @Column(name = "M_RAPPEL_SERVICE")
     private int mRappelService;
     
+    @Column(name = "M_PRIME_FORFAIT_DPM")
+    private int mPrimeForfaitDpm;
+    
     @Column(name = "ETAT")
     @Enumerated(EnumType.ORDINAL)
     private EtatPointageEnum etat;
@@ -345,4 +348,14 @@ public class VentilHsup {
 	public void setMRappelService(int mRappelService) {
 		this.mRappelService = mRappelService;
 	}
+
+	public int getMPrimeForfaitDpm() {
+		return mPrimeForfaitDpm;	
+	}
+
+	public void setMPrimeForfaitDpm(int mPrimeForfaitDpm) {
+		this.mPrimeForfaitDpm = mPrimeForfaitDpm;
+	}
+	
+	
 }

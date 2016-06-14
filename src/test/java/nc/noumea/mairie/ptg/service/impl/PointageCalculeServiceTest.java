@@ -12,13 +12,16 @@ import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
+import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.service.IDpmService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
@@ -26,6 +29,7 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -81,7 +85,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7711, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7, 9).toDate(), result.get(0).getDateDebut());
-		assertEquals(180, (int) result.get(0).getQuantite());
+		assertEquals(180, result.get(0).getQuantite().intValue());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -121,7 +125,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7711, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7, 9).toDate(), result.get(0).getDateDebut());
-		assertEquals(8*60, (int) result.get(0).getQuantite());
+		assertEquals(8*60, (int) result.get(0).getQuantite().intValue());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -161,7 +165,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7711, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7, 9).toDate(), result.get(0).getDateDebut());
-		assertEquals(585, (int) result.get(0).getQuantite());
+		assertEquals(585, (int) result.get(0).getQuantite().intValue());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -203,7 +207,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7711, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2015, 4, 30).toDate(), result.get(0).getDateDebut());
-		assertEquals(480, (int) result.get(0).getQuantite());
+		assertEquals(480, (int) result.get(0).getQuantite().intValue());
 		assertEquals(9005605, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -289,7 +293,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7712, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7, 14).toDate(), result.get(0).getDateDebut());
-		assertEquals(240, (int) result.get(0).getQuantite());
+		assertEquals(240, (int) result.get(0).getQuantite().intValue());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -333,7 +337,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7712, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7, 13).toDate(), result.get(0).getDateDebut());
-		assertEquals(240, (int) result.get(0).getQuantite());
+		assertEquals(240, (int) result.get(0).getQuantite().intValue());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -373,7 +377,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7713, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7, 9).toDate(), result.get(0).getDateDebut());
-		assertEquals(1, (int) result.get(0).getQuantite());
+		assertEquals(1, (int) result.get(0).getQuantite().intValue());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -413,7 +417,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7713, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7, 9).toDate(), result.get(0).getDateDebut());
-		assertEquals(1, (int) result.get(0).getQuantite());
+		assertEquals(1, (int) result.get(0).getQuantite().intValue());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -453,7 +457,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7713, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7, 9).toDate(), result.get(0).getDateDebut());
-		assertEquals(1, (int) result.get(0).getQuantite());
+		assertEquals(1, (int) result.get(0).getQuantite().intValue());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -509,7 +513,7 @@ public class PointageCalculeServiceTest {
 		assertEquals(rp7713, result.get(0).getRefPrime());
 		assertEquals(dateLundi, result.get(0).getDateLundi());
 		assertEquals(new LocalDate(2013, 7, 9).toDate(), result.get(0).getDateDebut());
-		assertEquals(2, (int) result.get(0).getQuantite());
+		assertEquals(2, (int) result.get(0).getQuantite().intValue());
 		assertEquals(9008767, (int) result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
 		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
@@ -933,6 +937,259 @@ public class PointageCalculeServiceTest {
 		assertEquals(result.get(5).getQuantite().intValue(), new Double(12.0/24.0*14.0*60.0).intValue());
 		assertEquals(result.get(6).getDateDebut(), primeDimanche.getDateDebut());
 		assertEquals(result.get(6).getQuantite().intValue(), 16*60);
+	}
+	
+	@Test
+	public void generatePointage7718_19_IndemniteForfaitaireTravailDPM() {
+		
+		Integer idAgent = 9005138;
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		Date dateLundi = new DateTime(2016,6,6,0,0,0).toDate(); 
+		List<Pointage> agentPointages = new ArrayList<Pointage>();
+		
+		RefPrime refPrime = new RefPrime();
+		refPrime.setNoRubr(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM);
+		
+		Pointage ptgLundi = new Pointage();
+		ptgLundi.setDateDebut(new DateTime(2016,6,6,8,0,0).toDate());
+		ptgLundi.setDateFin(new DateTime(2016,6,6,15,0,0).toDate());
+		ptgLundi.setDateLundi(dateLundi);
+		ptgLundi.setType(hSup);
+
+		Pointage ptgSamedi = new Pointage();
+		ptgSamedi.setDateDebut(new DateTime(2016,6,11,8,0,0).toDate());
+		ptgSamedi.setDateFin(new DateTime(2016,6,11,13,0,0).toDate());
+		ptgSamedi.setDateLundi(dateLundi);
+		ptgSamedi.setType(hSup);
+
+		Pointage ptgDimanche = new Pointage();
+		ptgDimanche.setDateDebut(new DateTime(2016,6,12,8,0,0).toDate());
+		ptgDimanche.setDateFin(new DateTime(2016,6,12,18,0,0).toDate());
+		ptgDimanche.setDateLundi(dateLundi);
+		ptgDimanche.setType(hSup);
+
+		Pointage ptgJourFerie = new Pointage();
+		ptgJourFerie.setDateDebut(new DateTime(2016,6,10,8,0,0).toDate());
+		ptgJourFerie.setDateFin(new DateTime(2016,6,10,12,0,0).toDate());
+		ptgJourFerie.setDateLundi(dateLundi);
+		ptgJourFerie.setType(hSup);
+
+		Pointage ptgJourFerieMoins4h = new Pointage();
+		ptgJourFerieMoins4h.setDateDebut(new DateTime(2016,6,9,8,0,0).toDate());
+		ptgJourFerieMoins4h.setDateFin(new DateTime(2016,6,9,11,45,0).toDate());
+		ptgJourFerieMoins4h.setDateLundi(dateLundi);
+		ptgJourFerieMoins4h.setType(hSup);
+		
+		agentPointages.add(ptgLundi);
+		agentPointages.add(ptgSamedi);
+		agentPointages.add(ptgDimanche);
+		agentPointages.add(ptgJourFerie);
+		agentPointages.add(ptgJourFerieMoins4h);
+
+		List<Integer> norubrs = new ArrayList<Integer>();
+		norubrs.add(7718);
+		norubrs.add(7719);
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isHoliday(new DateTime(2015,11,18,8,0,0))).thenReturn(true);
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(norubrs);
+
+		RefPrime refPrime7718_samedi = new RefPrime();
+		refPrime7718_samedi.setNoRubr(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM);
+		
+		RefPrime refPrime7719_DJF = new RefPrime();
+		refPrime7719_DJF.setNoRubr(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM);
+		
+		List<RefPrime> refPrimes = new ArrayList<RefPrime>();
+		refPrimes.add(refPrime7718_samedi);
+		refPrimes.add(refPrime7719_DJF);
+		
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepository.getRefPrimesCalculees(norubrs, statut)).thenReturn(refPrimes);
+		
+		IDpmService dpmService = Mockito.mock(IDpmService.class);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, new DateTime(2016,6,6,0,0,0).toLocalDate())).thenReturn(false);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, new DateTime(2016,6,11,0,0,0).toLocalDate())).thenReturn(true);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, new DateTime(2016,6,12,0,0,0).toLocalDate())).thenReturn(true);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, new DateTime(2016,6,9,0,0,0).toLocalDate())).thenReturn(true);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, new DateTime(2016,6,10,0,0,0).toLocalDate())).thenReturn(true);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptgLundi, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(7*60);
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptgSamedi, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(5*60);
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptgDimanche, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(10*60);
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptgJourFerie, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(4*60);
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptgJourFerieMoins4h, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(new Double(3.75*60).intValue());
+		
+		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
+		choixAgent.setChoixRecuperation(false);
+		choixAgent.setChoixIndemnite(true);
+		
+		IDpmRepository dpmRepository = Mockito.mock(IDpmRepository.class);
+		Mockito.when(dpmRepository.getDpmIndemChoixAgent(idAgent, new DateTime(ptgLundi.getDateDebut()).getYear())).thenReturn(choixAgent);
+		
+		Mockito.when(sirhWsConsumer.isJourFerie(new DateTime(dateLundi))).thenReturn(false);
+		Mockito.when(sirhWsConsumer.isJourFerie(new DateTime(dateLundi).plusDays(3))).thenReturn(true);
+		Mockito.when(sirhWsConsumer.isJourFerie(new DateTime(dateLundi).plusDays(4))).thenReturn(true);
+		Mockito.when(sirhWsConsumer.isJourFerie(new DateTime(dateLundi).plusDays(5))).thenReturn(false);
+		Mockito.when(sirhWsConsumer.isJourFerie(new DateTime(dateLundi).plusDays(6))).thenReturn(false);
+		
+		PointageCalculeService service = new PointageCalculeService();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+		ReflectionTestUtils.setField(service, "dpmService", dpmService);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "dpmRepository", dpmRepository);
+		
+		List<PointageCalcule> result = service.calculatePointagesForAgentAndWeek(idAgent, statut, dateLundi, agentPointages);
+
+		assertEquals(result.size(), 3);
+		// prime samedi
+		assertEquals(result.get(0).getQuantite(), new Double(1.25));
+		assertEquals(result.get(0).getRefPrime(), refPrime7718_samedi);
+		// prime jour ferie
+		assertEquals(result.get(1).getQuantite(), new Double(1.0));
+		assertEquals(result.get(1).getRefPrime(), refPrime7719_DJF);
+		// prime dimanche
+		assertEquals(result.get(2).getQuantite(), new Double(2.5));
+		assertEquals(result.get(2).getRefPrime(), refPrime7719_DJF);
+	}
+	
+	@Test
+	public void generatePointage7718_19_IndemniteForfaitaireTravailDPM_choixAgentRecup() {
+		
+		Integer idAgent = 9005138;
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		Date dateLundi = new DateTime(2016,6,6,0,0,0).toDate(); 
+		List<Pointage> agentPointages = new ArrayList<Pointage>();
+		
+		RefPrime refPrime = new RefPrime();
+		refPrime.setNoRubr(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM);
+		
+		Pointage ptgLundi = new Pointage();
+		ptgLundi.setDateDebut(new DateTime(2016,6,6,8,0,0).toDate());
+		ptgLundi.setDateFin(new DateTime(2016,6,6,15,0,0).toDate());
+		ptgLundi.setDateLundi(dateLundi);
+		ptgLundi.setType(hSup);
+
+		Pointage ptgSamedi = new Pointage();
+		ptgSamedi.setDateDebut(new DateTime(2016,6,11,8,0,0).toDate());
+		ptgSamedi.setDateFin(new DateTime(2016,6,11,13,0,0).toDate());
+		ptgSamedi.setDateLundi(dateLundi);
+		ptgSamedi.setType(hSup);
+
+		Pointage ptgDimanche = new Pointage();
+		ptgDimanche.setDateDebut(new DateTime(2016,6,12,8,0,0).toDate());
+		ptgDimanche.setDateFin(new DateTime(2016,6,12,18,0,0).toDate());
+		ptgDimanche.setDateLundi(dateLundi);
+		ptgDimanche.setType(hSup);
+
+		Pointage ptgJourFerie = new Pointage();
+		ptgJourFerie.setDateDebut(new DateTime(2016,6,10,8,0,0).toDate());
+		ptgJourFerie.setDateFin(new DateTime(2016,6,10,12,0,0).toDate());
+		ptgJourFerie.setDateLundi(dateLundi);
+		ptgJourFerie.setType(hSup);
+
+		Pointage ptgJourFerieMoins4h = new Pointage();
+		ptgJourFerieMoins4h.setDateDebut(new DateTime(2016,6,9,8,0,0).toDate());
+		ptgJourFerieMoins4h.setDateFin(new DateTime(2016,6,9,11,45,0).toDate());
+		ptgJourFerieMoins4h.setDateLundi(dateLundi);
+		ptgJourFerieMoins4h.setType(hSup);
+		
+		agentPointages.add(ptgLundi);
+		agentPointages.add(ptgSamedi);
+		agentPointages.add(ptgDimanche);
+		agentPointages.add(ptgJourFerie);
+		agentPointages.add(ptgJourFerieMoins4h);
+
+		List<Integer> norubrs = new ArrayList<Integer>();
+		norubrs.add(7718);
+		norubrs.add(7719);
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isHoliday(new DateTime(2015,11,18,8,0,0))).thenReturn(true);
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(norubrs);
+
+		RefPrime refPrime7718_samedi = new RefPrime();
+		refPrime7718_samedi.setNoRubr(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM);
+		
+		RefPrime refPrime7719_DJF = new RefPrime();
+		refPrime7719_DJF.setNoRubr(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM);
+		
+		List<RefPrime> refPrimes = new ArrayList<RefPrime>();
+		refPrimes.add(refPrime7718_samedi);
+		refPrimes.add(refPrime7719_DJF);
+		
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepository.getRefPrimesCalculees(norubrs, statut)).thenReturn(refPrimes);
+		
+		IDpmService dpmService = Mockito.mock(IDpmService.class);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, new DateTime(2016,6,6,0,0,0).toLocalDate())).thenReturn(false);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, new DateTime(2016,6,11,0,0,0).toLocalDate())).thenReturn(true);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, new DateTime(2016,6,12,0,0,0).toLocalDate())).thenReturn(true);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, new DateTime(2016,6,9,0,0,0).toLocalDate())).thenReturn(true);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, new DateTime(2016,6,10,0,0,0).toLocalDate())).thenReturn(true);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptgLundi, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(7*60);
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptgSamedi, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(5*60);
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptgDimanche, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(10*60);
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptgJourFerie, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(4*60);
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptgJourFerieMoins4h, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(new Double(3.75*60).intValue());
+		
+		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
+		choixAgent.setChoixRecuperation(true);
+		choixAgent.setChoixIndemnite(false);
+		
+		IDpmRepository dpmRepository = Mockito.mock(IDpmRepository.class);
+		Mockito.when(dpmRepository.getDpmIndemChoixAgent(idAgent, new DateTime(ptgLundi.getDateDebut()).getYear())).thenReturn(choixAgent);
+		
+		Mockito.when(sirhWsConsumer.isJourFerie(new DateTime(dateLundi))).thenReturn(false);
+		Mockito.when(sirhWsConsumer.isJourFerie(new DateTime(dateLundi).plusDays(3))).thenReturn(true);
+		Mockito.when(sirhWsConsumer.isJourFerie(new DateTime(dateLundi).plusDays(4))).thenReturn(true);
+		Mockito.when(sirhWsConsumer.isJourFerie(new DateTime(dateLundi).plusDays(5))).thenReturn(false);
+		Mockito.when(sirhWsConsumer.isJourFerie(new DateTime(dateLundi).plusDays(6))).thenReturn(false);
+		
+		PointageCalculeService service = new PointageCalculeService();
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+		ReflectionTestUtils.setField(service, "dpmService", dpmService);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "dpmRepository", dpmRepository);
+		
+		List<PointageCalcule> result = service.calculatePointagesForAgentAndWeek(idAgent, statut, dateLundi, agentPointages);
+
+		assertEquals(result.size(), 0);
 	}
 	
 }

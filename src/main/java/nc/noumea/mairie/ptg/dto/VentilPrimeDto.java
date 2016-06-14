@@ -36,7 +36,7 @@ public class VentilPrimeDto extends VentilDto {
 				return String.format("%s", hibObj.getQuantite());
 			case NB_HEURES:
 			case PERIODE_HEURES:
-				return helper.formatMinutesToString(hibObj.getQuantite());
+				return helper.formatMinutesToString(hibObj.getQuantite().intValue());
 		}
 		
 		return null;

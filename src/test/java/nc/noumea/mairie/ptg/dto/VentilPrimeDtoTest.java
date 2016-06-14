@@ -24,7 +24,7 @@ public class VentilPrimeDtoTest {
         ref.setIdRefPrime(libRef);
         ref.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
         int idAgent = 9005138;
-        int qte = 100;
+        double qte = 100.0;
         // Given
         VentilPrime vp = new VentilPrime();
         vp.setRefPrime(ref);
@@ -44,7 +44,7 @@ public class VentilPrimeDtoTest {
         assertEquals(true, result.getDateDebutMois() != null);
         assertEquals(libRef, result.getIdRefPrime());
         assertEquals(idVentil, result.getIdVentilPrime());
-        assertEquals("100", result.getQuantite());
+        assertEquals("100.0", result.getQuantite());
         assertEquals(EtatPointageEnum.SAISI, EtatPointageEnum.getEtatPointageEnum(result.getEtat()));
     }
     
@@ -57,7 +57,7 @@ public class VentilPrimeDtoTest {
         ref.setIdRefPrime(libRef);
         ref.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
         int idAgent = 9005138;
-        int qte = 150;
+        Double qte = 150.0;
         // Given
         VentilPrime vp = new VentilPrime();
         vp.setRefPrime(ref);
@@ -68,7 +68,7 @@ public class VentilPrimeDtoTest {
         vp.setIdAgent(idAgent);
 
         HelperService hS = Mockito.mock(HelperService.class);
-        Mockito.when(hS.formatMinutesToString(qte)).thenReturn("2h30m");
+        Mockito.when(hS.formatMinutesToString(qte.intValue())).thenReturn("2h30m");
         
         // When
         VentilPrimeDto result = new VentilPrimeDto(vp, hS);
@@ -91,7 +91,7 @@ public class VentilPrimeDtoTest {
         ref.setIdRefPrime(libRef);
         ref.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
         int idAgent = 9005138;
-        int qte = 45;
+        Double qte = 45.0;
         // Given
         VentilPrime vp = new VentilPrime();
         vp.setRefPrime(ref);
@@ -102,7 +102,7 @@ public class VentilPrimeDtoTest {
         vp.setIdAgent(idAgent);
 
         HelperService hS = Mockito.mock(HelperService.class);
-        Mockito.when(hS.formatMinutesToString(qte)).thenReturn("45m");
+        Mockito.when(hS.formatMinutesToString(qte.intValue())).thenReturn("45m");
         
         // When
         VentilPrimeDto result = new VentilPrimeDto(vp, hS);

@@ -40,7 +40,7 @@ public class DpmRepositoryTest {
 		dpmAnnee.setAnnee(new DateTime().getYear());
 		dpmAnnee.setDateDebut(new DateTime().minusMonths(3).toDate());
 		dpmAnnee.setDateFin(new DateTime().plusMonths(3).toDate());
-		ptgEntityManager.persist(dpmAnnee);
+		dpmRepository.persistEntity(dpmAnnee);
 		
 		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
 		choixAgent.setIdAgent(9005138);
@@ -49,7 +49,7 @@ public class DpmRepositoryTest {
 		choixAgent.setDateMaj(new Date());
 		choixAgent.setChoixRecuperation(false);
 		choixAgent.setChoixIndemnite(true);
-		ptgEntityManager.persist(choixAgent);
+		dpmRepository.persistEntity(choixAgent);
 	}
 	
 	@Test
@@ -72,6 +72,23 @@ public class DpmRepositoryTest {
 		
 		// ok
 		assertEquals(1, dpmRepository.getListDpmIndemChoixAgent(Arrays.asList(9005138), new DateTime().getYear(), null, null).size());
+
+		// ok
+		assertEquals(1, dpmRepository.getListDpmIndemChoixAgent(null, null, null, null).size());
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getDpmIndemChoixAgent() {
+		
+		// teste l annee
+		assertNull(dpmRepository.getDpmIndemChoixAgent(9005138, new DateTime().getYear()-1));
+		
+		// teste l agent
+		assertNull(dpmRepository.getDpmIndemChoixAgent(9005140, new DateTime().getYear()));
+		
+		// ok
+		assertNotNull(dpmRepository.getDpmIndemChoixAgent(9005138, new DateTime().getYear()));
 	}
 
 	@Test

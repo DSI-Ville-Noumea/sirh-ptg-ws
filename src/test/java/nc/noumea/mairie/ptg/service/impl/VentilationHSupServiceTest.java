@@ -7048,7 +7048,7 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(39.0);
 		
 		PointageCalcule ptg1 = new PointageCalcule();
-		ptg1.setQuantite(2*60);
+		ptg1.setQuantite(new Double(2*60));
 		ptg1.setType(hSup);
 		
 		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>(); 
@@ -7096,7 +7096,7 @@ public class VentilationHSupServiceTest {
 		
 		ventilHsup = null;
 		PointageCalcule ptg2 = new PointageCalcule();
-		ptg2.setQuantite(3*60);
+		ptg2.setQuantite(new Double(3*60));
 		ptg2.setType(hSup);
 		
 		pointagesCalcules.add(ptg2);
@@ -7138,7 +7138,7 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(25.0);
 		
 		PointageCalcule ptg1 = new PointageCalcule();
-		ptg1.setQuantite(12*60);
+		ptg1.setQuantite(new Double(12*60));
 		ptg1.setType(hSup);
 		
 		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>(); 
@@ -7185,7 +7185,7 @@ public class VentilationHSupServiceTest {
 		
 		ventilHsup = null;
 		PointageCalcule ptg2 = new PointageCalcule();
-		ptg2.setQuantite(12*60);
+		ptg2.setQuantite(new Double(12*60));
 		ptg2.setType(hSup);
 		
 		pointagesCalcules.add(ptg2);
@@ -7232,7 +7232,7 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(35.0);
 		
 		PointageCalcule ptg1 = new PointageCalcule();
-		ptg1.setQuantite(12*60);
+		ptg1.setQuantite(new Double(12*60));
 		ptg1.setType(hSup);
 		
 		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>(); 
@@ -7285,7 +7285,7 @@ public class VentilationHSupServiceTest {
 		ventilHsup.setMSimple(0);
 		
 		PointageCalcule ptg2 = new PointageCalcule();
-		ptg2.setQuantite(12*60);
+		ptg2.setQuantite(new Double(12*60));
 		ptg2.setType(hSup);
 		
 		pointagesCalcules.add(ptg2);

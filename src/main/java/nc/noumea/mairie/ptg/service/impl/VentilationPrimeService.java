@@ -36,6 +36,9 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 	
 	public final static int PRIME_RENFORT_GARDE = 7717;
 	public final static int INDEMNITE_DE_ROULEMENT = 7715;
+	//TODO
+	public final static int RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM = 7718;
+	public final static int RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM = 7719;
 	
 	// List of rubrique to not aggregate because used for calculating other Primes
 	// #13327 HSup SIPRES (épandage) : creation d une prime FICTIVE 7760
@@ -93,7 +96,8 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 				primesByMonth.put(idRefPrime, vp);
 			}
 			
-			primesByMonth.get(idRefPrime).addQuantite(getQuantiteFromPointage(ptg));
+			Integer quantite = getQuantiteFromPointage(ptg);
+			primesByMonth.get(idRefPrime).addQuantite(null != quantite ? quantite.doubleValue() : 0.0);
 		}
 		
 		return new ArrayList<VentilPrime>(primesByMonth.values());

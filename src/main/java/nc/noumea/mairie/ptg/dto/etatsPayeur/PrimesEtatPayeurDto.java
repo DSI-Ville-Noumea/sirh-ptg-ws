@@ -30,22 +30,22 @@ public class PrimesEtatPayeurDto {
 		switch (vpNew.getRefPrime().getTypeSaisie()) {
 			case NB_INDEMNITES:
 			case CASE_A_COCHER:
-				this.quantite = new Integer(vpNew.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0)).toString();
+				this.quantite = new Double(vpNew.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0)).toString();
 				break;
 			case NB_HEURES:
 				// #15317 on arrondi à l'unité supérieure
 				if (vpNew.getRefPrime().getMairiePrimeTableEnum() == MairiePrimeTableEnum.SPPRIM) {
-					Integer qte = vpNew.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0);
-					double quantiteArrondie = hS.convertMinutesToMairieNbHeuresFormat(qte);
+					Double qte = vpNew.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0);
+					double quantiteArrondie = hS.convertMinutesToMairieNbHeuresFormat(qte.intValue());
 					this.quantite = hS.formatMinutesToString(((int) Math.ceil(quantiteArrondie))*60);
 				} else {
-					this.quantite = hS.formatMinutesToString(vpNew.getQuantite()
-							- (vpOld != null ? vpOld.getQuantite() : 0));
+					this.quantite = hS.formatMinutesToString(vpNew.getQuantite().intValue()
+							- (vpOld != null ? vpOld.getQuantite().intValue() : 0));
 				}
 				break;
 			case PERIODE_HEURES:
-				this.quantite = hS.formatMinutesToString(vpNew.getQuantite()
-						- (vpOld != null ? vpOld.getQuantite() : 0));
+				this.quantite = hS.formatMinutesToString(vpNew.getQuantite().intValue()
+						- (vpOld != null ? vpOld.getQuantite().intValue() : 0));
 				break;
 		}
 	}

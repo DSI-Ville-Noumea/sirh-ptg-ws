@@ -298,7 +298,7 @@ public class ExportPaiePrimeServiceTest {
 		PointageCalcule p2 = new PointageCalcule();
 		p2.setRefPrime(rp);
 		p2.setType(pri);
-		p2.setQuantite(2);
+		p2.setQuantite(2.0);
 		p2.setIdAgent(9009898);
 		p2.setDateDebut(new DateTime(2013, 8, 9, 19, 5, 23).toDate());
 		
@@ -337,7 +337,7 @@ public class ExportPaiePrimeServiceTest {
 		PointageCalcule p2 = new PointageCalcule();
 		p2.setRefPrime(rp);
 		p2.setType(pri);
-		p2.setQuantite(135);
+		p2.setQuantite(135.0);
 		p2.setIdAgent(9009898);
 		p2.setDateDebut(new DateTime(2013, 8, 9, 19, 5, 23).toDate());
 		
@@ -378,7 +378,7 @@ public class ExportPaiePrimeServiceTest {
 		PointageCalcule p2 = new PointageCalcule();
 		p2.setRefPrime(rp);
 		p2.setType(pri);
-		p2.setQuantite(200);
+		p2.setQuantite(200.0);
 		p2.setIdAgent(9009898);
 		p2.setDateDebut(new DateTime(2013, 8, 9, 19, 5, 23).toDate());
 		
@@ -418,7 +418,7 @@ public class ExportPaiePrimeServiceTest {
 		PointageCalcule p2 = new PointageCalcule();
 		p2.setRefPrime(rp);
 		p2.setType(pri);
-		p2.setQuantite(2);
+		p2.setQuantite(2.0);
 		p2.setIdAgent(9009898);
 		p2.setDateDebut(new DateTime(2013, 8, 9, 19, 5, 23).toDate());
 		
@@ -428,7 +428,7 @@ public class ExportPaiePrimeServiceTest {
 		PointageCalcule p3 = new PointageCalcule();
 		p3.setRefPrime(rp2);
 		p3.setType(pri);
-		p3.setQuantite(4);
+		p3.setQuantite(4.0);
 		
 		List<PointageCalcule> pointagesOrderedByDateAsc = Arrays.asList(p2, p3);
 		
@@ -469,7 +469,7 @@ public class ExportPaiePrimeServiceTest {
 		PointageCalcule p2 = new PointageCalcule();
 			p2.setRefPrime(rp);
 			p2.setType(pri);
-			p2.setQuantite(0);
+			p2.setQuantite(0.0);
 			p2.setIdAgent(9009898);
 			p2.setDateDebut(new DateTime(2013, 8, 9, 19, 5, 23).toDate());
 		
@@ -479,7 +479,7 @@ public class ExportPaiePrimeServiceTest {
 		PointageCalcule p3 = new PointageCalcule();
 			p3.setRefPrime(rp2);
 			p3.setType(pri);
-			p3.setQuantite(4);
+			p3.setQuantite(4.0);
 		
 		List<PointageCalcule> pointagesOrderedByDateAsc = Arrays.asList(p2, p3);
 		
@@ -521,7 +521,7 @@ public class ExportPaiePrimeServiceTest {
 		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		VentilPrime vp = new VentilPrime();
 		vp.setRefPrime(rp);
-		vp.setQuantite(2);
+		vp.setQuantite(2.0);
 		vp.setIdAgent(9009898);
 		vp.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 		
@@ -530,7 +530,7 @@ public class ExportPaiePrimeServiceTest {
 		rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
 		VentilPrime vp2 = new VentilPrime();
 		vp2.setRefPrime(rp2);
-		vp2.setQuantite(2);
+		vp2.setQuantite(2.0);
 		vp2.setIdAgent(9009898);
 		vp2.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 		
@@ -570,7 +570,7 @@ public class ExportPaiePrimeServiceTest {
 		rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		VentilPrime vp = new VentilPrime();
 		vp.setRefPrime(rp);
-		vp.setQuantite(2);
+		vp.setQuantite(2.0);
 		vp.setIdAgent(9009898);
 		vp.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 		
@@ -579,7 +579,7 @@ public class ExportPaiePrimeServiceTest {
 		rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
 		VentilPrime vp2 = new VentilPrime();
 		vp2.setRefPrime(rp2);
-		vp2.setQuantite(2);
+		vp2.setQuantite(2.0);
 		vp2.setIdAgent(9009898);
 		vp2.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 
@@ -623,7 +623,7 @@ public class ExportPaiePrimeServiceTest {
 			rp.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		VentilPrime vp = new VentilPrime();
 			vp.setRefPrime(rp);
-			vp.setQuantite(0);
+			vp.setQuantite(0.0);
 			vp.setIdAgent(9009898);
 			vp.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 		
@@ -632,7 +632,7 @@ public class ExportPaiePrimeServiceTest {
 			rp2.setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPPRM);
 		VentilPrime vp2 = new VentilPrime();
 			vp2.setRefPrime(rp2);
-			vp2.setQuantite(2);
+			vp2.setQuantite(2.0);
 			vp2.setIdAgent(9009898);
 			vp2.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 
@@ -677,7 +677,7 @@ public class ExportPaiePrimeServiceTest {
 		rp.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
 		VentilPrime vp = new VentilPrime();
 		vp.setRefPrime(rp);
-		vp.setQuantite(92);
+		vp.setQuantite(92.0);
 		vp.setIdAgent(9009898);
 		vp.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 
@@ -718,7 +718,7 @@ public class ExportPaiePrimeServiceTest {
 		rp.setTypeSaisie(TypeSaisieEnum.NB_HEURES);
 		VentilPrime vp = new VentilPrime();
 		vp.setRefPrime(rp);
-		vp.setQuantite(75);
+		vp.setQuantite(75.0);
 		vp.setIdAgent(9009898);
 		vp.setDateDebutMois(new LocalDate(2013, 8, 1).toDate());
 

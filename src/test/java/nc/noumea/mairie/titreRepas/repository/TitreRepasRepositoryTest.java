@@ -1,7 +1,8 @@
 package nc.noumea.mairie.titreRepas.repository;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -12,8 +13,10 @@ import javax.persistence.PersistenceContext;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
+import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +55,15 @@ public class TitreRepasRepositoryTest {
 
 		demande.getEtats().add(etat);
 
-		ptgEntityManager.persist(demande);
+		repository.persist(demande);
 		ptgEntityManager.persist(etat);
 
 		List<TitreRepasDemande> result = repository.getListTitreRepasDemande(Arrays.asList(9005138), null, null, EtatPointageEnum.SAISI.getCodeEtat(), null, dateMonth);
 		assertEquals(1, result.size());
 
 		result = repository.getListTitreRepasDemande(null, new DateTime().minusMonths(1).toDate(), new DateTime().plusMonths(1).toDate(), null, null, null);
+		assertEquals(1, result.size());
+		result = repository.getListTitreRepasDemande(new ArrayList<Integer>(), new DateTime().minusMonths(1).toDate(), new DateTime().plusMonths(1).toDate(), null, null, null);
 		assertEquals(1, result.size());
 
 		result = repository.getListTitreRepasDemande(null, new DateTime().minusMonths(1).toDate(), new DateTime().plusMonths(1).toDate(), null, true, null);
@@ -98,7 +103,7 @@ public class TitreRepasRepositoryTest {
 
 		demande2.getEtats().add(etat2);
 
-		ptgEntityManager.persist(demande2);
+		repository.persist(demande2);
 		ptgEntityManager.persist(etat2);
 
 		// 2 results
@@ -145,6 +150,64 @@ public class TitreRepasRepositoryTest {
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getTitreRepasDemandeById() {
+
+		DateTime dateMonth = new DateTime(2014, 12, 1, 0, 0, 0);
+		
+		TitreRepasDemande d = new TitreRepasDemande();
+		d.setDateMonth(dateMonth.toDate());
+		repository.persist(d);
+		
+		TitreRepasDemande result = repository.getTitreRepasDemandeById(d.getIdTrDemande());
+
+		assertEquals(result, d);
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListTitreRepasEtatPayeur() {
+		
+		TitreRepasEtatPayeur titreRepasEtatPayeur = new TitreRepasEtatPayeur();
+		titreRepasEtatPayeur.setIdTrEtatPayeur(1);
+		titreRepasEtatPayeur.setDateEtatPayeur(new Date());
+		titreRepasEtatPayeur.setIdAgent(9005154);
+		titreRepasEtatPayeur.setDateEdition(new Date());
+		titreRepasEtatPayeur.setLabel("label");
+		titreRepasEtatPayeur.setFichier("fichier");
+		ptgEntityManager.persist(titreRepasEtatPayeur);
+		
+		List<TitreRepasEtatPayeur> result = repository.getListTitreRepasEtatPayeur();
+		
+		assertEquals(1, result.size());
+	}
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getTitreRepasEtatPayeurByMonth() {
+		
+		TitreRepasEtatPayeur titreRepasEtatPayeur = new TitreRepasEtatPayeur();
+		titreRepasEtatPayeur.setIdTrEtatPayeur(1);
+		titreRepasEtatPayeur.setDateEtatPayeur(new LocalDate(new Date()).withDayOfMonth(1).toDate());
+		titreRepasEtatPayeur.setIdAgent(9005154);
+		titreRepasEtatPayeur.setDateEdition(new Date());
+		titreRepasEtatPayeur.setLabel("label");
+		titreRepasEtatPayeur.setFichier("fichier");
+		ptgEntityManager.persist(titreRepasEtatPayeur);
+		
+		TitreRepasEtatPayeur result = repository.getTitreRepasEtatPayeurByMonth(new LocalDate(new Date()).withDayOfMonth(1).toDate());
+		
+		assertEquals(titreRepasEtatPayeur, result);
+		
+		result = repository.getTitreRepasEtatPayeurByMonth(new LocalDate(new Date()).plusMonths(1).withDayOfMonth(1).toDate());
+		
+		assertNull(result);
 	}
 
 }

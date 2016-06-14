@@ -167,11 +167,11 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 	@Override
 	public boolean isJourFerie(DateTime deb) {
+		
 		String url = String.format(sirhWsBaseUrl + sirhJourFerieUrl);
-		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
-
+		
 		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("date", sf.format(deb.toDate()));
+		parameters.put("date", deb.toString("yyyyMMdd"));
 
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 		if (res.getStatus() == HttpStatus.OK.value()) {

@@ -85,7 +85,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 
 			// Fetch or create Sppprm
 			Sppprm prm = findOrCreateSppprmRecord(modifiedOrAddedSppprm, ptgC.getIdAgent(), ptgC.getDateDebut(), ptgC
-					.getRefPrime().getNoRubr(), ptgC.getQuantite());
+					.getRefPrime().getNoRubr(), null != ptgC.getQuantite() ? ptgC.getQuantite().intValue() : 0);
 
 			if (prm == null)
 				continue;
@@ -93,7 +93,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 			switch (ptgC.getRefPrime().getTypeSaisie()) {
 				case NB_HEURES:
 				case PERIODE_HEURES:
-					prm.setNbPrime(helperService.convertMinutesToMairieNbHeuresFormat(ptgC.getQuantite()));
+					prm.setNbPrime(helperService.convertMinutesToMairieNbHeuresFormat(null != ptgC.getQuantite() ? ptgC.getQuantite().intValue() : 0));
 					break;
 				case CASE_A_COCHER:
 				case NB_INDEMNITES:
@@ -158,7 +158,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 
 			// Fetch or create Spprim
 			Spprim pri = findOrCreateSpprimmRecord(ventilPrime.getIdAgent(), ventilPrime.getDateDebutMois(),
-					ventilPrime.getRefPrime().getNoRubr(), ventilPrime.getQuantite());
+					ventilPrime.getRefPrime().getNoRubr(), null != ventilPrime.getQuantite() ? ventilPrime.getQuantite().intValue() : 0);
 
 			if (pri == null)
 				continue;
@@ -166,7 +166,7 @@ public class ExportPaiePrimeService implements IExportPaiePrimeService {
 			// Fill in the number of Primes for the month
 			double qte = 0;
 			if (ventilPrime.getRefPrime().getTypeSaisie() == TypeSaisieEnum.NB_HEURES)
-				qte = helperService.convertMinutesToMairieNbHeuresFormat(ventilPrime.getQuantite());
+				qte = helperService.convertMinutesToMairieNbHeuresFormat(null != ventilPrime.getQuantite() ? ventilPrime.getQuantite().intValue() : 0);
 			else
 				qte = ventilPrime.getQuantite();
 

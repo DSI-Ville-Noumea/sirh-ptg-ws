@@ -1,6 +1,10 @@
 package nc.noumea.mairie.ptg.service.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +13,11 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.DpmIndemAnnee;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
+import nc.noumea.mairie.ptg.domain.EtatPointage;
+import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
+import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointage;
+import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.DpmIndemniteAnneeDto;
 import nc.noumea.mairie.ptg.dto.DpmIndemniteChoixAgentDto;
@@ -21,6 +30,8 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -65,7 +76,7 @@ public class DpmServicetTest {
 		
 		Mockito.when(sirhWSConsumer.getPrimePointagesByAgent(idAgent, dateJour, dateJour)).thenReturn(null);
 		
-		assertFalse(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent));
+		assertFalse(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent, null));
 	}
 	
 	@Test
@@ -79,21 +90,35 @@ public class DpmServicetTest {
 		List<Integer> listNoRubr = Arrays.asList(1011);
 		Mockito.when(sirhWSConsumer.getPrimePointagesByAgent(idAgent, dateJour, dateJour)).thenReturn(listNoRubr);
 		
-		assertFalse(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent));
+		assertFalse(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent, null));
 	}
 	
 	@Test
-	public void isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true() {
+	public void isAgentWithIndemniteForfaitaireTravailSamediDPMInAffectation_true() {
 		
 		Integer idAgent = 9005138;
 		Date dateJour = new Date(); 
 		
 		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
 		
-		List<Integer> listNoRubr = Arrays.asList(DpmService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DPM);
+		List<Integer> listNoRubr = Arrays.asList(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM);
 		Mockito.when(sirhWSConsumer.getPrimePointagesByAgent(idAgent, dateJour, dateJour)).thenReturn(listNoRubr);
 		
-		assertTrue(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent));
+		assertTrue(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent, null));
+	}
+	
+	@Test
+	public void isAgentWithIndemniteForfaitaireTravailDJFDPMInAffectation_true() {
+		
+		Integer idAgent = 9005138;
+		Date dateJour = new Date(); 
+		
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
+		
+		List<Integer> listNoRubr = Arrays.asList(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM);
+		Mockito.when(sirhWSConsumer.getPrimePointagesByAgent(idAgent, dateJour, dateJour)).thenReturn(listNoRubr);
+		
+		assertTrue(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent, null));
 	}
 	
 //	@Test
@@ -289,7 +314,7 @@ public class DpmServicetTest {
 		assertEquals(result.getInfos().size(), 1);
 		assertEquals(result.getInfos().get(0), DpmService.MODIFICATION_OK);
 		
-		Mockito.verify(dpmRepository, Mockito.times(1)).persisEntity(dpmAnnee);
+		Mockito.verify(dpmRepository, Mockito.times(1)).persistEntity(dpmAnnee);
 		assertEquals(dpmAnnee.getDateDebut(), dto.getDateDebut());
 		assertEquals(dpmAnnee.getDateFin(), dto.getDateFin());
 	}
@@ -393,7 +418,7 @@ public class DpmServicetTest {
 		Integer idAgent = 9005138;
 		
 //		isAgentCycleConge_false();
-		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true();
+		isAgentWithIndemniteForfaitaireTravailSamediDPMInAffectation_true();
 		
 		assertTrue(service.isDroitAgentToIndemniteForfaitaireDPM(idAgent));
 	}
@@ -493,13 +518,8 @@ public class DpmServicetTest {
 		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(true);
 		
 		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
-		DpmIndemChoixAgent choixAgent2 = new DpmIndemChoixAgent();
-		List<DpmIndemChoixAgent> listDpmChoixAgent= new ArrayList<DpmIndemChoixAgent>();
-		listDpmChoixAgent.add(choixAgent);
-		listDpmChoixAgent.add(choixAgent2);
 		
-		List<Integer> listIdsAgent = Arrays.asList(idAgentConnecte);
-		Mockito.when(dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee, null, null)).thenReturn(listDpmChoixAgent);
+		Mockito.when(dpmRepository.getDpmIndemChoixAgent(idAgentConnecte, annee)).thenReturn(choixAgent);
 		Mockito.when(dpmRepository.getDpmIndemAnneeByAnnee(annee)).thenReturn(new DpmIndemAnnee());
 		
 		assertNotNull(service.getIndemniteChoixAgent(idAgentConnecte, annee));
@@ -602,7 +622,7 @@ public class DpmServicetTest {
 		Integer annee = 2016;
 		List<DpmIndemniteChoixAgentDto> listDto = new ArrayList<DpmIndemniteChoixAgentDto>();
 			
-			isPeriodeChoixOuverte_true();
+		isPeriodeChoixOuverte_true();
 
 		Mockito.when(accessRightsService.isUserOperateur(idAgentConnecte)).thenReturn(false);
 		
@@ -633,10 +653,10 @@ public class DpmServicetTest {
 		
 		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
 		
-		List<Integer> listNoRubr = Arrays.asList(DpmService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DPM);
+		List<Integer> listNoRubr = Arrays.asList(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM);
 		Mockito.when(sirhWSConsumer.getPrimePointagesByAgent(idAgent, dateJour, dateJour)).thenReturn(listNoRubr);
 		
-		assertTrue(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent));
+		assertTrue(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent, null));
 	}
 	
 	public void isPeriodeChoixOuverte_true(Date dateJour) {
@@ -712,11 +732,11 @@ public class DpmServicetTest {
 		assertEquals(String.format(DpmService.AGENT_CHOIX_OBLIGATOIRE, dtoAGENT_CHOIX_OBLIGATOIRE.getIdAgent()), result.getErrors().get(1));
 		assertEquals(DpmService.MODIFICATION_OK, result.getInfos().get(0));
 		
-		Mockito.verify(dpmRepository, Mockito.times(2)).persisEntity(Mockito.any(DpmIndemChoixAgent.class));
+		Mockito.verify(dpmRepository, Mockito.times(2)).persistEntity(Mockito.any(DpmIndemChoixAgent.class));
 	}
 	
 	@Test(expected = AccessForbiddenException.class)
-	public void saveIndemniteChoixAgent_AccessForbiddenException() {
+	public void saveIndemniteChoixAgentForKiosque_AccessForbiddenException() {
 		
 		Integer idAgentConnecte = null;
 		
@@ -732,8 +752,30 @@ public class DpmServicetTest {
 		service.saveIndemniteChoixAgentForKiosque(idAgentConnecte, dto);
 	}
 	
+	@Test(expected = AccessForbiddenException.class)
+	public void saveIndemniteChoixAgentForSIRH_AccessForbiddenException() {
+		
+		Integer idAgentConnecte = 9005138;
+		
+		DpmIndemniteAnneeDto dpmIndemniteAnnee = new DpmIndemniteAnneeDto();
+		dpmIndemniteAnnee.setAnnee(2016);
+		
+		DpmIndemniteChoixAgentDto dto = new DpmIndemniteChoixAgentDto();
+		dto.setDpmIndemniteAnnee(dpmIndemniteAnnee);
+		dto.setIdAgent(idAgentConnecte);
+		
+		isPeriodeChoixOuverte_false();
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		rmd.getErrors().add("error");
+		
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte)).thenReturn(rmd);
+		
+		service.saveIndemniteChoixAgentForSIRH(idAgentConnecte, dto);
+	}
+	
 	@Test
-	public void saveIndemniteChoixAgent_HorsPeriode() {
+	public void saveIndemniteChoixAgentForKiosque_HorsPeriode() {
 		
 		Integer idAgentConnecte = 9005138;
 		
@@ -754,7 +796,7 @@ public class DpmServicetTest {
 	}
 	
 	@Test
-	public void saveIndemniteChoixAgent_interdit() {
+	public void saveIndemniteChoixAgentForKiosque_interdit() {
 		
 		Integer idAgentConnecte = 9005138;
 		
@@ -821,7 +863,7 @@ public class DpmServicetTest {
 		assertEquals(0, result.getErrors().size());
 		assertEquals(DpmService.MODIFICATION_OK, result.getInfos().get(0));
 		
-		Mockito.verify(dpmRepository, Mockito.times(1)).persisEntity(Mockito.any(DpmIndemChoixAgent.class));
+		Mockito.verify(dpmRepository, Mockito.times(1)).persistEntity(Mockito.any(DpmIndemChoixAgent.class));
 	}
 	
 	@Test
@@ -854,7 +896,7 @@ public class DpmServicetTest {
 		assertFalse(choixAgent.isChoixRecuperation());
 		assertTrue(choixAgent.isChoixIndemnite());
 		
-		Mockito.verify(dpmRepository, Mockito.times(1)).persisEntity(Mockito.any(DpmIndemChoixAgent.class));
+		Mockito.verify(dpmRepository, Mockito.times(1)).persistEntity(Mockito.any(DpmIndemChoixAgent.class));
 	}
 	
 	@Test
@@ -873,5 +915,313 @@ public class DpmServicetTest {
 		Mockito.when(dpmRepository.getDpmIndemAnneeByAnnee(new DateTime().getYear())).thenReturn(dpmIndemAnnee);
 		
 		assertNotNull(service.getDpmIndemAnneeEnCours());
+	}
+	
+	@Test(expected = AccessForbiddenException.class)
+	public void getListDpmIndemniteChoixAgentforSIRH_AccessForbiddenException() {
+		
+		Integer idAgentConnecte = 9005138;
+		Integer annee = 2016; 
+		Boolean isChoixIndemnite = true;
+		Boolean isChoixRecuperation = true;
+		List<Integer> listIdsAgent = new ArrayList<Integer>();
+		
+		DpmIndemniteAnneeDto dpmIndemniteAnnee = new DpmIndemniteAnneeDto();
+		dpmIndemniteAnnee.setAnnee(2016);
+		
+		DpmIndemniteChoixAgentDto dto = new DpmIndemniteChoixAgentDto();
+		dto.setDpmIndemniteAnnee(dpmIndemniteAnnee);
+		dto.setIdAgent(idAgentConnecte);
+		
+		isPeriodeChoixOuverte_false();
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		rmd.getErrors().add("error");
+		
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte)).thenReturn(rmd);
+		
+		service.getListDpmIndemniteChoixAgentforSIRH(idAgentConnecte, annee, isChoixIndemnite, isChoixRecuperation, listIdsAgent);
+	}
+	
+	@Test(expected = AccessForbiddenException.class)
+	public void deleteIndemniteChoixAgentForKiosque_AccessForbiddenException() {
+		
+		Integer idAgentConnecte = 9005138;
+		Integer idDpmIndemChoixAgent = 1;
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		rmd.getErrors().add("error");
+		
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte)).thenReturn(rmd);
+		
+		service.deleteIndemniteChoixAgentForKiosque(idAgentConnecte, idDpmIndemChoixAgent);
+	}
+	
+	@Test
+	public void deleteIndemniteChoixAgentForKiosque_NON_TROUVE() {
+		
+		Integer idAgentConnecte = 9005138;
+		Integer idDpmIndemChoixAgent = 1;
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte)).thenReturn(rmd);
+		
+		Mockito.when(dpmRepository.getEntity(DpmIndemChoixAgent.class, idDpmIndemChoixAgent)).thenReturn(null);
+		
+		ReturnMessageDto result = service.deleteIndemniteChoixAgentForKiosque(idAgentConnecte, idDpmIndemChoixAgent);
+		
+		assertEquals(result.getInfos().size(), 0);
+		assertEquals(result.getErrors().get(0), DpmService.NON_TROUVE);
+	}
+	
+	@Test
+	public void deleteIndemniteChoixAgentForKiosque_HORS_PERIODE() {
+		
+		Integer idAgentConnecte = 9005138;
+		Integer idDpmIndemChoixAgent = 1;
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte)).thenReturn(rmd);
+		
+		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
+		choixAgent.setDpmIndemAnnee(new DpmIndemAnnee());
+		
+		Mockito.when(dpmRepository.getEntity(DpmIndemChoixAgent.class, idDpmIndemChoixAgent)).thenReturn(choixAgent);
+		
+		ReturnMessageDto result = service.deleteIndemniteChoixAgentForKiosque(idAgentConnecte, idDpmIndemChoixAgent);
+		
+		isPeriodeChoixOuverte_false();
+		
+		assertEquals(result.getInfos().size(), 0);
+		assertEquals(result.getErrors().get(0), DpmService.HORS_PERIODE);
+	}
+	
+	@Test
+	public void deleteIndemniteChoixAgentForKiosque_ok() {
+		
+		Integer idAgentConnecte = 9005138;
+		Integer idDpmIndemChoixAgent = 1;
+		Date dateJour = new Date();
+		
+		ReturnMessageDto rmd = new ReturnMessageDto();
+		Mockito.when(sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte)).thenReturn(rmd);
+		
+		isPeriodeChoixOuverte_true(dateJour);
+		
+		DpmIndemAnnee dpmIndemAnnee = new DpmIndemAnnee();
+		dpmIndemAnnee.setAnnee(2016);
+		DpmIndemChoixAgent choixAgent = Mockito.spy(new DpmIndemChoixAgent());
+		choixAgent.setDpmIndemAnnee(dpmIndemAnnee);
+		
+		Mockito.when(dpmRepository.getEntity(DpmIndemChoixAgent.class, idDpmIndemChoixAgent)).thenReturn(choixAgent);
+		
+		ReturnMessageDto result = service.deleteIndemniteChoixAgentForKiosque(idAgentConnecte, idDpmIndemChoixAgent);
+		
+		
+		assertEquals(result.getInfos().get(0), DpmService.SUPPRESSION_OK);
+		assertEquals(result.getErrors().size(), 0);
+		Mockito.verify(dpmRepository, Mockito.times(1)).removeEntity(choixAgent);
+	}
+	
+	@Test
+	public void isDroitAgentToIndemniteForfaitaireDPMForOneDay_false_vendredi() {
+		
+		Integer idAgent = 9005138;
+		Date dateJour = new Date();
+		LocalDate date = new LocalDate(2016,6,10);
+		
+		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(idAgent, dateJour);
+		
+		assertFalse(service.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, date));
+	}
+	
+	@Test
+	public void isDroitAgentToIndemniteForfaitaireDPMForOneDay_true() {
+		
+		Integer idAgent = 9005138;
+		// vendredi
+		LocalDate date = new LocalDate(2016,6,10);
+		
+		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(idAgent, date.toDate());
+		
+		Mockito.when(sirhWSConsumer.isJourFerie(date.toDateTime(new LocalTime(0)))).thenReturn(true);
+		
+		assertTrue(service.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, date));
+		
+		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(idAgent, date.plusDays(1).toDate());
+		
+		assertTrue(service.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, date.plusDays(1)));
+		
+		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(idAgent, date.plusDays(2).toDate());
+		
+		assertTrue(service.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, date.plusDays(2)));
+	}
+	
+	private void isDroitAgentToIndemniteForfaitaireDPMForOneDay_true(Pointage ptg) {
+		
+		Integer idAgent = 9005138;
+		// vendredi
+		LocalDate date = new DateTime(ptg.getDateDebut()).toLocalDate();
+		
+		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(idAgent, date.toDate());
+		
+		Mockito.when(sirhWSConsumer.isJourFerie(date.toDateTime(new LocalTime(0)))).thenReturn(true);
+		
+		assertTrue(service.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, date));
+	}
+	
+	@Test
+	public void calculNombreMinutesRecupereesMajoreesToAgentForOnePointage_noRight() {
+		
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new DateTime(2015, 8, 7, 8, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 8, 7, 10, 0, 0).toDate());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
+		
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptg, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(239);
+		
+		isDroitAgentToIndemniteForfaitaireDPMForOneDay_false_vendredi();
+		
+		assertEquals(0, service.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg));
+	}
+	
+	@Test
+	public void calculNombreMinutesRecupereesMajoreesToAgentForOnePointage_moins4h() {
+		
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new DateTime(2015, 8, 7, 8, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 8, 7, 10, 0, 0).toDate());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
+		
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptg, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(239);
+		
+		isDroitAgentToIndemniteForfaitaireDPMForOneDay_true(ptg);
+		
+		assertEquals(0, service.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg));
+	}
+	
+	@Test
+	public void calculNombreMinutesRecupereesMajoreesToAgentForOnePointage_aucunChoixAgent() {
+		
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new DateTime(2015, 8, 7, 8, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 8, 7, 10, 0, 0).toDate());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
+		
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptg, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(240);
+		
+		isDroitAgentToIndemniteForfaitaireDPMForOneDay_true(ptg);
+
+		Mockito.when(dpmRepository.getDpmIndemChoixAgent(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).getYear())).thenReturn(null);
+		
+		assertEquals(0, service.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg));
+	}
+	
+	@Test
+	public void calculNombreMinutesRecupereesMajoreesToAgentForOnePointage_ChoixAgentIndemnite() {
+		
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new DateTime(2015, 8, 7, 8, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 8, 7, 10, 0, 0).toDate());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
+		
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptg, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(240);
+		
+		isDroitAgentToIndemniteForfaitaireDPMForOneDay_true(ptg);
+
+		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
+		choixAgent.setChoixIndemnite(true);
+		Mockito.when(dpmRepository.getDpmIndemChoixAgent(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).getYear())).thenReturn(choixAgent);
+		
+		assertEquals(0, service.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg));
+	}
+	
+	@Test
+	public void calculNombreMinutesRecupereesMajoreesToAgentForOnePointage_ChoixAgentRecup() {
+		
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new DateTime(2015, 8, 7, 8, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 8, 7, 10, 0, 0).toDate());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
+		
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptg, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(240);
+		
+		isDroitAgentToIndemniteForfaitaireDPMForOneDay_true(ptg);
+
+		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
+		choixAgent.setChoixRecuperation(true);
+		Mockito.when(dpmRepository.getDpmIndemChoixAgent(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).getYear())).thenReturn(choixAgent);
+		
+		assertEquals(240, service.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg));
 	}
 }

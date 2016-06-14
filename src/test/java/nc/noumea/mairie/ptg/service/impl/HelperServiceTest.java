@@ -13,11 +13,13 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.sirh.dto.JourDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.junit.Test;
 
 public class HelperServiceTest {
@@ -456,5 +458,78 @@ public class HelperServiceTest {
 		
 		HelperService service = new HelperService();
 		assertFalse(service.isJourHoliday(listJoursFeries, dateJour));
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void calculMinutesPointageInInterval_IllegalArgumentException_ptgDateFin(){
+		
+		Pointage ptg = new Pointage();
+		ptg.setDateDebut(new Date());
+		
+		HelperService service = new HelperService();
+		service.calculMinutesPointageInInterval(ptg, new LocalTime(), new LocalTime());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void calculMinutesPointageInInterval_IllegalArgumentException_ptgDateDebut(){
+		
+		Pointage ptg = new Pointage();
+		ptg.setDateFin(new Date());
+		
+		HelperService service = new HelperService();
+		service.calculMinutesPointageInInterval(ptg, new LocalTime(), new LocalTime());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void calculMinutesPointageInInterval_IllegalArgumentException_HeureDebut(){
+		
+		Pointage ptg = new Pointage();
+		ptg.setDateDebut(new Date());
+		ptg.setDateFin(new Date());
+		
+		HelperService service = new HelperService();
+		service.calculMinutesPointageInInterval(ptg, null, new LocalTime());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void calculMinutesPointageInInterval_IllegalArgumentException_HeureFin(){
+		
+		Pointage ptg = new Pointage();
+		ptg.setDateDebut(new Date());
+		ptg.setDateFin(new Date());
+		
+		HelperService service = new HelperService();
+		service.calculMinutesPointageInInterval(ptg, new LocalTime(), null);
+	}
+	
+	@Test
+	public void calculMinutesPointageInInterval_ok(){
+		
+		Pointage ptg = new Pointage();
+		ptg.setDateDebut(new DateTime(2016,6,8,3,0,0).toDate());
+		ptg.setDateFin(new DateTime(2016,6,8,8,0,0).toDate());
+		
+		HelperService service = new HelperService();
+		assertEquals(3*60, service.calculMinutesPointageInInterval(ptg, new LocalTime(5,0,0), new LocalTime(21,0,0)));
+
+		ptg.setDateDebut(new DateTime(2016,6,8,5,0,0).toDate());
+		ptg.setDateFin(new DateTime(2016,6,8,21,0,0).toDate());
+		
+		assertEquals((21-5)*60, service.calculMinutesPointageInInterval(ptg, new LocalTime(5,0,0), new LocalTime(21,0,0)));
+
+		ptg.setDateDebut(new DateTime(2016,6,8,18,0,0).toDate());
+		ptg.setDateFin(new DateTime(2016,6,8,23,0,0).toDate());
+		
+		assertEquals((3)*60, service.calculMinutesPointageInInterval(ptg, new LocalTime(5,0,0), new LocalTime(21,0,0)));
+
+		ptg.setDateDebut(new DateTime(2016,6,8,0,0,0).toDate());
+		ptg.setDateFin(new DateTime(2016,6,8,23,0,0).toDate());
+		
+		assertEquals(16*60, service.calculMinutesPointageInInterval(ptg, new LocalTime(5,0,0), new LocalTime(21,0,0)));
+
+		ptg.setDateDebut(new DateTime(2016,6,8,18,0,0).toDate());
+		ptg.setDateFin(new DateTime(2016,6,9,3,0,0).toDate());
+		
+		assertEquals(3*60, service.calculMinutesPointageInInterval(ptg, new LocalTime(5,0,0), new LocalTime(21,0,0)));
 	}
 }

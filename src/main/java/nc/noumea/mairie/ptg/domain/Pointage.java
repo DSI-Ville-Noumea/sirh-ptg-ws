@@ -86,6 +86,10 @@ public class Pointage {
 	@Type(type = "boolean")
 	private Boolean heureSupRappelService;
 
+	@Column(name = "IS_PRIME_FORFAIT_DPM_RECUP")
+	@Type(type = "boolean")
+	private Boolean primeForfaitDpmRecup;
+
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
 	private RefTypeAbsence refTypeAbsence;
@@ -279,6 +283,14 @@ public class Pointage {
 
 	public void setMotifHsup(MotifHeureSup motifHsup) {
 		this.motifHsup = motifHsup;
+	}
+
+	public Boolean getPrimeForfaitDpmRecup() {
+		return primeForfaitDpmRecup;
+	}
+
+	public void setPrimeForfaitDpmRecup(Boolean primeForfaitDpmRecup) {
+		this.primeForfaitDpmRecup = primeForfaitDpmRecup;
 	}
 
 }

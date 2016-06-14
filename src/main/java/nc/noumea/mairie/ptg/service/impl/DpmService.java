@@ -1,10 +1,12 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.DpmIndemAnnee;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
+import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.dto.AgentDto;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.DpmIndemniteAnneeDto;
@@ -19,6 +21,9 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +45,8 @@ public class DpmService implements IDpmService {
 	protected final static String AGENT_INTERDIT = "L'agent %s le droit à l'Indemnité forfaitaire travail DPM.";
 	protected final static String AGENT_CHOIX_OBLIGATOIRE = "Veuillez choisir Indemnité ou Récupération pour l'agent %S.";
 	protected final static String CHAMPS_NON_REMPLIE = "Veuillez remplir tous les champs obligatoires.";
+	protected final static String SUPPRESSION_OK = "Supprimé.";
 	
-	//TODO
-	public final static Integer RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DPM = 7718;
 
 	@Autowired
 	private IAccessRightsService accessRightsService;
@@ -128,7 +132,7 @@ public class DpmService implements IDpmService {
 		choixAgent.setChoixRecuperation(dto.isChoixRecuperation());
 		choixAgent.setIdAgentCreation(idAgentConnecte);
 		
-		dpmRepository.persisEntity(choixAgent);
+		dpmRepository.persistEntity(choixAgent);
 		
 		result.getInfos().add(MODIFICATION_OK);
 		
@@ -185,7 +189,7 @@ public class DpmService implements IDpmService {
 			choixAgent.setChoixIndemnite(dto.isChoixIndemnite());
 			choixAgent.setChoixRecuperation(dto.isChoixRecuperation());
 			
-			dpmRepository.persisEntity(choixAgent);
+			dpmRepository.persistEntity(choixAgent);
 		}
 		
 		result.getInfos().add(MODIFICATION_OK);
@@ -282,22 +286,10 @@ public class DpmService implements IDpmService {
 			throw new AccessForbiddenException();
 		}
 		
-		List<Integer> listIdsAgent = new ArrayList<Integer>();
-		listIdsAgent.add(idAgentConnecte);
+		DpmIndemChoixAgent dpmIndemChoixAgent = dpmRepository.getDpmIndemChoixAgent(idAgentConnecte, annee);
 		
-		List<DpmIndemChoixAgent> listDpmIndemChoixAgent = dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee, null, null);
-		
-		DpmIndemniteChoixAgentDto result = new DpmIndemniteChoixAgentDto();
-		result.setIdAgent(idAgentConnecte);
+		DpmIndemniteChoixAgentDto result = new DpmIndemniteChoixAgentDto(dpmIndemChoixAgent);
 		result.setDpmIndemniteAnnee(new DpmIndemniteAnneeDto(dpmRepository.getDpmIndemAnneeByAnnee(annee), false));
-		
-		if(null != listDpmIndemChoixAgent
-				&& !listDpmIndemChoixAgent.isEmpty()) {
-			for(DpmIndemChoixAgent choixAgent : listDpmIndemChoixAgent) {
-				DpmIndemniteChoixAgentDto dto = new DpmIndemniteChoixAgentDto(choixAgent);
-				result = dto;
-			}
-		}
 		
 		return result;
 	}
@@ -326,7 +318,7 @@ public class DpmService implements IDpmService {
 //		}
 		
 		// doit avoir la prime Indemnité forfaitaire travail DPM sur son affectation courante
-		if(!isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent)) {
+		if(!isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent, null)) {
 			return false;
 		}
 		
@@ -435,7 +427,7 @@ public class DpmService implements IDpmService {
 		dpmAnnee.setDateDebut(dto.getDateDebut());
 		dpmAnnee.setDateFin(dto.getDateFin());
 		
-		dpmRepository.persisEntity(dpmAnnee);
+		dpmRepository.persistEntity(dpmAnnee);
 		
 		result.getInfos().add(MODIFICATION_OK);
 		
@@ -464,19 +456,111 @@ public class DpmService implements IDpmService {
 //		return false;
 //	}
 	
-	protected boolean isAgentWithIndemniteForfaitaireTravailDPMInAffectation(Integer idAgent) {
+	protected boolean isAgentWithIndemniteForfaitaireTravailDPMInAffectation(Integer idAgent, Date date) {
 		
-		List<Integer> listNoRubr = sirhWSConsumer.getPrimePointagesByAgent(idAgent, helperService.getCurrentDate(), helperService.getCurrentDate());
+		if(null == date) {
+			date = helperService.getCurrentDate();
+		}
+		
+		List<Integer> listNoRubr = sirhWSConsumer.getPrimePointagesByAgent(idAgent, date, date);
 
 		if(null != listNoRubr) {
 			for(Integer noRubr : listNoRubr) {
-				if(RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DPM.equals(noRubr)) {
+				if(noRubr.equals(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM)
+						|| noRubr.equals(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM)) {
 					return true;
 				}
 			}
 		}
 		
 		return false;
+	}
+	
+	@Override
+	@Transactional(value = "ptgTransactionManager")
+	public ReturnMessageDto deleteIndemniteChoixAgentForKiosque(Integer idAgentConnecte, Integer idDpmIndemChoixAgent) {
+		
+		// gestion des droits
+		if(null == idAgentConnecte
+				|| !sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte).getErrors().isEmpty()) {
+			throw new AccessForbiddenException();
+		}
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		// si oui, on enregistre le choix
+		// on recherche si un choix existe deja pour cette annee
+		DpmIndemChoixAgent choixAgent = dpmRepository.getEntity(DpmIndemChoixAgent.class, idDpmIndemChoixAgent);
+		
+		if(null == choixAgent) {
+			logger.debug(NON_TROUVE);
+			result.getErrors().add(NON_TROUVE);
+			return result;
+		}
+		
+		if(!isPeriodeChoixOuverte(choixAgent.getDpmIndemAnnee().getAnnee())) {
+			logger.debug(HORS_PERIODE);
+			result.getErrors().add(HORS_PERIODE);
+			return result;
+		}
+		
+		dpmRepository.removeEntity(choixAgent);
+		
+		result.getInfos().add(SUPPRESSION_OK);
+		
+		return result;
+	}
+	
+	@Override
+	public boolean isDroitAgentToIndemniteForfaitaireDPMForOneDay(Integer idAgent, LocalDate date) {
+		
+		// la prime est applicable les samedi, dimanche et jours feries
+		if(DateTimeConstants.SATURDAY != date.getDayOfWeek()
+				&& DateTimeConstants.SUNDAY != date.getDayOfWeek()
+				&& !sirhWSConsumer.isJourFerie(date.toDateTime(new LocalTime(0)))) {
+			return false;
+		}
+		
+		// doit avoir la prime Indemnité forfaitaire travail DPM sur son affectation courante
+		if(!isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent, date.toDate())) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public int calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(Pointage ptg) {
+		
+		int result = 0;
+		
+		if(!isDroitAgentToIndemniteForfaitaireDPMForOneDay(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).toLocalDate()))
+			return result;
+		
+		// l interval de la deliberation pour la prime est de 5h a 21h
+		int dayTotalMinutes = helperService.calculMinutesPointageInInterval(ptg, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0));
+		
+		if(dayTotalMinutes < PointageCalculeService.SEUIL_MINI_PRIME_DPM)
+			return result;
+		
+		DpmIndemChoixAgent choixAgent = dpmRepository.getDpmIndemChoixAgent(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).getYear());
+		
+		if(null == choixAgent) {
+			logger.error(String.format("Aucun choix de l agent %d pour la prime DPM => aucune prime DPM calcule", ptg.getIdAgent()));
+			return result;
+		}
+		if(choixAgent.isChoixIndemnite()) {
+			logger.debug(String.format("Choix de l agent %d pour la prime DPM : indemnite => aucune prime DPM calcule", ptg.getIdAgent()));
+			return result;
+		}
+		
+		if(choixAgent.isChoixRecuperation()) {
+			result = dayTotalMinutes;
+		}
+		
+		return result;
 	}
 
 }

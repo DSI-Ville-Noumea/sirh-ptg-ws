@@ -1147,7 +1147,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		int weekMinutes = ventilHSup.getMHorsContrat() + weekBase - ventilHSup.getMAbsences();
 		for(PointageCalcule ptgCalc : listPointageCalculeHSup) {
 			weekMinutes += ptgCalc.getQuantite();
-			generateHSupWithPointageCalcule(ventilHSup, weekBase, weekMinutes, ptgCalc.getQuantite());
+			generateHSupWithPointageCalcule(ventilHSup, weekBase, weekMinutes, null != ptgCalc.getQuantite() ? ptgCalc.getQuantite().intValue() : 0);
 		}
 		
 		return ventilHSup;

@@ -1006,7 +1006,7 @@ public class VentilationRepositoryTest {
 		pc.setEtat(EtatPointageEnum.APPROUVE);
 		pc.setIdAgent(9005138);
 		pc.setLastVentilDate(vd);
-		pc.setQuantite(1);
+		pc.setQuantite(1.0);
 		pc.setRefPrime(rp);
 		pc.setType(rtp);
 		ptgEntityManager.persist(pc);
@@ -1018,7 +1018,7 @@ public class VentilationRepositoryTest {
 		pc2.setEtat(EtatPointageEnum.REJETE_DEFINITIVEMENT);
 		pc2.setIdAgent(9005139);
 		pc2.setLastVentilDate(vd);
-		pc2.setQuantite(2);
+		pc2.setQuantite(2.0);
 		pc2.setRefPrime(rp);
 		pc2.setType(rtp);
 		ptgEntityManager.persist(pc2);
@@ -1030,7 +1030,7 @@ public class VentilationRepositoryTest {
 		pc3.setEtat(EtatPointageEnum.EN_ATTENTE);
 		pc3.setIdAgent(9005138);
 		pc3.setLastVentilDate(vd);
-		pc3.setQuantite(3);
+		pc3.setQuantite(3.0);
 		pc3.setRefPrime(rp);
 		pc3.setType(rtp);
 		ptgEntityManager.persist(pc3);
@@ -1042,7 +1042,7 @@ public class VentilationRepositoryTest {
 		pc4.setEtat(EtatPointageEnum.REFUSE_DEFINITIVEMENT);
 		pc4.setIdAgent(9005138);
 		pc4.setLastVentilDate(vd);
-		pc4.setQuantite(4);
+		pc4.setQuantite(4.0);
 		pc4.setRefPrime(rp);
 		pc4.setType(rtp);
 		ptgEntityManager.persist(pc4);
@@ -1052,7 +1052,7 @@ public class VentilationRepositoryTest {
 
 		assertEquals(1, result.size());
 		assertEquals(EtatPointageEnum.APPROUVE, result.get(0).getEtat());
-		assertEquals(new Integer(1), result.get(0).getQuantite());
+		assertEquals(new Double(1), result.get(0).getQuantite());
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
@@ -1104,7 +1104,7 @@ public class VentilationRepositoryTest {
 		pc.setEtat(EtatPointageEnum.VALIDE);
 		pc.setIdAgent(9004377);
 		pc.setLastVentilDate(vd);
-		pc.setQuantite(240);
+		pc.setQuantite(240.0);
 		pc.setRefPrime(rp);
 		pc.setType(rtp);
 		ptgEntityManager.persist(pc);
@@ -1116,7 +1116,7 @@ public class VentilationRepositoryTest {
 		pc2.setEtat(EtatPointageEnum.VALIDE);
 		pc2.setIdAgent(9004377);
 		pc2.setLastVentilDate(vd);
-		pc2.setQuantite(240);
+		pc2.setQuantite(240.0);
 		pc2.setRefPrime(rp);
 		pc2.setType(rtp);
 		ptgEntityManager.persist(pc2);
@@ -1128,7 +1128,7 @@ public class VentilationRepositoryTest {
 		pc3.setEtat(EtatPointageEnum.VALIDE);
 		pc3.setIdAgent(9004377);
 		pc3.setLastVentilDate(vd);
-		pc3.setQuantite(240);
+		pc3.setQuantite(240.0);
 		pc3.setRefPrime(rp);
 		pc3.setType(rtp);
 		ptgEntityManager.persist(pc3);
@@ -1140,7 +1140,7 @@ public class VentilationRepositoryTest {
 		pc4.setEtat(EtatPointageEnum.VALIDE);
 		pc4.setIdAgent(9004377);
 		pc4.setLastVentilDate(vd);
-		pc4.setQuantite(240);
+		pc4.setQuantite(240.0);
 		pc4.setRefPrime(rp);
 		pc4.setType(rtp);
 		ptgEntityManager.persist(pc4);
@@ -1152,7 +1152,7 @@ public class VentilationRepositoryTest {
 		pc5.setEtat(EtatPointageEnum.VALIDE);
 		pc5.setIdAgent(9004377);
 		pc5.setLastVentilDate(vd);
-		pc5.setQuantite(1);
+		pc5.setQuantite(1.0);
 		pc5.setRefPrime(rpPanier);
 		pc5.setType(rtp);
 		ptgEntityManager.persist(pc5);
@@ -1164,7 +1164,7 @@ public class VentilationRepositoryTest {
 		pc6.setEtat(EtatPointageEnum.VALIDE);
 		pc6.setIdAgent(9004377);
 		pc6.setLastVentilDate(vd);
-		pc6.setQuantite(1);
+		pc6.setQuantite(1.0);
 		pc6.setRefPrime(rpPanier);
 		pc6.setType(rtp);
 		ptgEntityManager.persist(pc6);
@@ -1176,7 +1176,7 @@ public class VentilationRepositoryTest {
 		pc7.setEtat(EtatPointageEnum.VALIDE);
 		pc7.setIdAgent(9004377);
 		pc7.setLastVentilDate(vd);
-		pc7.setQuantite(1);
+		pc7.setQuantite(1.0);
 		pc7.setRefPrime(rpPanier);
 		pc7.setType(rtp);
 		ptgEntityManager.persist(pc7);
@@ -1188,7 +1188,7 @@ public class VentilationRepositoryTest {
 		pc8.setEtat(EtatPointageEnum.VALIDE);
 		pc8.setIdAgent(9004377);
 		pc8.setLastVentilDate(vd);
-		pc8.setQuantite(240);
+		pc8.setQuantite(240.0);
 		pc8.setRefPrime(rp);
 		pc8.setType(rtp);
 		ptgEntityManager.persist(pc8);
@@ -1240,7 +1240,7 @@ public class VentilationRepositoryTest {
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp.setEtat(EtatPointageEnum.VENTILE);
 		vp.setIdAgent(9005138);
-		vp.setQuantite(1);
+		vp.setQuantite(1.0);
 		vp.setVentilDate(vd);
 		ptgEntityManager.persist(vp);
 
@@ -1310,7 +1310,7 @@ public class VentilationRepositoryTest {
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp.setEtat(EtatPointageEnum.VALIDE);
 		vp.setIdAgent(9005138);
-		vp.setQuantite(1);
+		vp.setQuantite(1.0);
 		vp.setVentilDate(vd);
 		ptgEntityManager.persist(vp);
 
@@ -1338,7 +1338,7 @@ public class VentilationRepositoryTest {
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp2.setEtat(EtatPointageEnum.VENTILE);
 		vp2.setIdAgent(9005138);
-		vp2.setQuantite(1);
+		vp2.setQuantite(1.0);
 		vp2.setVentilDate(vd);
 		ptgEntityManager.persist(vp2);
 
@@ -1462,7 +1462,7 @@ public class VentilationRepositoryTest {
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp.setEtat(EtatPointageEnum.VENTILE);
 		vp.setIdAgent(9005138);
-		vp.setQuantite(3);
+		vp.setQuantite(3.0);
 		vp.setVentilDate(vd);
 		ptgEntityManager.persist(vp);
 
@@ -1470,7 +1470,7 @@ public class VentilationRepositoryTest {
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp2.setEtat(EtatPointageEnum.VENTILE);
 		vp2.setIdAgent(9005139);
-		vp2.setQuantite(1);
+		vp2.setQuantite(1.0);
 		vp2.setVentilDate(vd);
 		ptgEntityManager.persist(vp2);
 
@@ -1478,7 +1478,7 @@ public class VentilationRepositoryTest {
 		vp3.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp3.setEtat(EtatPointageEnum.VALIDE);
 		vp3.setIdAgent(9005139);
-		vp3.setQuantite(1);
+		vp3.setQuantite(1.0);
 		vp3.setVentilDate(vd);
 		ptgEntityManager.persist(vp3);
 
@@ -1486,7 +1486,7 @@ public class VentilationRepositoryTest {
 		vp4.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp4.setEtat(EtatPointageEnum.VENTILE);
 		vp4.setIdAgent(9009999);
-		vp4.setQuantite(1);
+		vp4.setQuantite(1.0);
 		vp4.setVentilDate(vd);
 		ptgEntityManager.persist(vp4);
 
@@ -1494,7 +1494,7 @@ public class VentilationRepositoryTest {
 		vpBadQuantite.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vpBadQuantite.setEtat(EtatPointageEnum.VENTILE);
 		vpBadQuantite.setIdAgent(9005139);
-		vpBadQuantite.setQuantite(0);
+		vpBadQuantite.setQuantite(0.0);
 		vpBadQuantite.setVentilDate(vd);
 		ptgEntityManager.persist(vpBadQuantite);
 
@@ -1507,11 +1507,11 @@ public class VentilationRepositoryTest {
 		assertEquals(2, result.size());
 		assertEquals(new Integer(9005138), result.get(0).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
-		assertEquals(new Integer(3), result.get(0).getQuantite());
+		assertEquals(new Double(3), result.get(0).getQuantite());
 
 		assertEquals(new Integer(9005139), result.get(1).getIdAgent());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
-		assertEquals(new Integer(1), result.get(1).getQuantite());
+		assertEquals(new Double(1), result.get(1).getQuantite());
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
@@ -1767,7 +1767,7 @@ public class VentilationRepositoryTest {
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp.setEtat(EtatPointageEnum.VENTILE);
 		vp.setIdAgent(9005138);
-		vp.setQuantite(3);
+		vp.setQuantite(3.0);
 		vp.setVentilDate(vd);
 		vp.setRefPrime(rp);
 		ptgEntityManager.persist(vp);
@@ -1776,7 +1776,7 @@ public class VentilationRepositoryTest {
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp2.setEtat(EtatPointageEnum.VENTILE);
 		vp2.setIdAgent(9005138);
-		vp2.setQuantite(1);
+		vp2.setQuantite(1.0);
 		vp2.setVentilDate(vd);
 		vp2.setRefPrime(rp);
 		ptgEntityManager.persist(vp2);
@@ -1785,7 +1785,7 @@ public class VentilationRepositoryTest {
 		vp3.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp3.setEtat(EtatPointageEnum.VENTILE);
 		vp3.setIdAgent(9005138);
-		vp3.setQuantite(10);
+		vp3.setQuantite(10.0);
 		vp3.setVentilDate(vd2);
 		vp3.setRefPrime(rp);
 		ptgEntityManager.persist(vp3);
@@ -1794,7 +1794,7 @@ public class VentilationRepositoryTest {
 		vp4.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp4.setEtat(EtatPointageEnum.VALIDE);
 		vp4.setIdAgent(9005138);
-		vp4.setQuantite(1);
+		vp4.setQuantite(1.0);
 		vp4.setVentilDate(vd);
 		vp4.setRefPrime(rp);
 		ptgEntityManager.persist(vp4);
@@ -1803,7 +1803,7 @@ public class VentilationRepositoryTest {
 		vp5.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp5.setEtat(EtatPointageEnum.VENTILE);
 		vp5.setIdAgent(9009999);
-		vp5.setQuantite(1);
+		vp5.setQuantite(1.0);
 		vp5.setVentilDate(vd);
 		vp5.setRefPrime(rp);
 		ptgEntityManager.persist(vp5);
@@ -1813,10 +1813,10 @@ public class VentilationRepositoryTest {
 
 		assertEquals(2, result.size());
 		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
-		assertEquals(new Integer(3), result.get(0).getQuantite());
+		assertEquals(new Double(3), result.get(0).getQuantite());
 
 		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
-		assertEquals(new Integer(1), result.get(1).getQuantite());
+		assertEquals(new Double(1), result.get(1).getQuantite());
 
 		ptgEntityManager.flush();
 		ptgEntityManager.clear();
@@ -2073,7 +2073,7 @@ public class VentilationRepositoryTest {
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp.setEtat(EtatPointageEnum.APPROUVE);
 		vp.setIdAgent(9005138);
-		vp.setQuantite(3);
+		vp.setQuantite(3.0);
 		vp.setVentilDate(vd);
 		vp.setRefPrime(refPrime);
 		ptgEntityManager.persist(vp);
@@ -2082,7 +2082,7 @@ public class VentilationRepositoryTest {
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp2.setEtat(EtatPointageEnum.EN_ATTENTE);
 		vp2.setIdAgent(9005138);
-		vp2.setQuantite(3);
+		vp2.setQuantite(3.0);
 		vp2.setVentilDate(vd);
 		vp2.setRefPrime(refPrime);
 		ptgEntityManager.persist(vp2);
@@ -2117,7 +2117,7 @@ public class VentilationRepositoryTest {
 		vp.setDatePrime(new LocalDate(2013, 7, 23).toDate());
 		vp.setEtat(EtatPointageEnum.VALIDE);
 		vp.setIdAgent(9005138);
-		vp.setQuantite(3);
+		vp.setQuantite(3.0);
 		vp.setVentilDate(vd);
 		vp.setRefPrime(refPrime);
 		ptgEntityManager.persist(vp);
@@ -2134,7 +2134,7 @@ public class VentilationRepositoryTest {
 		vp2.setDatePrime(new LocalDate(2013, 7, 16).toDate());
 		vp2.setEtat(EtatPointageEnum.VALIDE);
 		vp2.setIdAgent(9005138);
-		vp2.setQuantite(3);
+		vp2.setQuantite(3.0);
 		vp2.setVentilDate(vd2);
 		vp2.setRefPrime(refPrime);
 		ptgEntityManager.persist(vp2);
@@ -2145,7 +2145,7 @@ public class VentilationRepositoryTest {
 		assertEquals(new LocalDate(2013, 7, 1).toDate(), result.getDateDebutMois());
 		assertEquals(new LocalDate(2013, 7, 23).toDate(), result.getDatePrime());
 		assertEquals(EtatPointageEnum.VALIDE, result.getEtat());
-		assertEquals(new Integer(3), result.getQuantite());
+		assertEquals(new Double(3), result.getQuantite());
 
 		VentilPrime noResult = repository.getPriorVentilPrimeForAgentAndDate(new Integer(9005137), new LocalDate(2013,
 				7, 1).toDate(), vp2);
@@ -2440,7 +2440,7 @@ public class VentilationRepositoryTest {
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp.setEtat(EtatPointageEnum.VENTILE);
 		vp.setIdAgent(9001111);
-		vp.setQuantite(3);
+		vp.setQuantite(3.0);
 		vp.setVentilDate(vd);
 		ptgEntityManager.persist(vp);
 
@@ -2448,7 +2448,7 @@ public class VentilationRepositoryTest {
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp2.setEtat(EtatPointageEnum.VENTILE);
 		vp2.setIdAgent(9005138);
-		vp2.setQuantite(3);
+		vp2.setQuantite(3.0);
 		vp2.setVentilDate(vd);
 		ptgEntityManager.persist(vp2);
 
@@ -2456,7 +2456,7 @@ public class VentilationRepositoryTest {
 		vp3.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp3.setEtat(EtatPointageEnum.VALIDE);
 		vp3.setIdAgent(9005138);
-		vp3.setQuantite(3);
+		vp3.setQuantite(3.0);
 		vp3.setVentilDate(vd);
 		ptgEntityManager.persist(vp3);
 
@@ -2485,7 +2485,7 @@ public class VentilationRepositoryTest {
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp.setEtat(EtatPointageEnum.VENTILE);
 		vp.setIdAgent(9001111);
-		vp.setQuantite(3);
+		vp.setQuantite(3.0);
 		vp.setVentilDate(vd);
 		ptgEntityManager.persist(vp);
 
@@ -2493,7 +2493,7 @@ public class VentilationRepositoryTest {
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp2.setEtat(EtatPointageEnum.VENTILE);
 		vp2.setIdAgent(9005138);
-		vp2.setQuantite(3);
+		vp2.setQuantite(3.0);
 		vp2.setVentilDate(vd);
 		ptgEntityManager.persist(vp2);
 
@@ -2501,7 +2501,7 @@ public class VentilationRepositoryTest {
 		vp3.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp3.setEtat(EtatPointageEnum.VALIDE);
 		vp3.setIdAgent(9005138);
-		vp3.setQuantite(3);
+		vp3.setQuantite(3.0);
 		vp3.setVentilDate(vd);
 		ptgEntityManager.persist(vp3);
 
@@ -2902,7 +2902,7 @@ public class VentilationRepositoryTest {
 		vp.setDateDebutMois(new LocalDate(2015, 2, 1).toDate());
 		vp.setEtat(EtatPointageEnum.VALIDE);
 		vp.setIdAgent(9001111);
-		vp.setQuantite(3);
+		vp.setQuantite(3.0);
 		vp.setVentilDate(vd);
 		vp.setDatePrime(new LocalDate(2015, 2, 26).toDate());
 		vp.setRefPrime(refPrime);
@@ -2912,7 +2912,7 @@ public class VentilationRepositoryTest {
 		vp2.setDateDebutMois(new LocalDate(2015, 2, 1).toDate());
 		vp2.setEtat(EtatPointageEnum.VALIDE);
 		vp2.setIdAgent(9004378);
-		vp2.setQuantite(240);
+		vp2.setQuantite(240.0);
 		vp2.setVentilDate(vd);
 		vp2.setDatePrime(new LocalDate(2015, 2, 26).toDate());
 		vp2.setRefPrime(refPrime);
@@ -2922,7 +2922,7 @@ public class VentilationRepositoryTest {
 		vp3.setDateDebutMois(new LocalDate(2015, 2, 1).toDate());
 		vp3.setEtat(EtatPointageEnum.VALIDE);
 		vp3.setIdAgent(9004378);
-		vp3.setQuantite(1);
+		vp3.setQuantite(1.0);
 		vp3.setVentilDate(vd);
 		vp3.setDatePrime(new LocalDate(2015, 2, 26).toDate());
 		vp3.setRefPrime(refPrime6);
@@ -2956,7 +2956,7 @@ public class VentilationRepositoryTest {
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp.setEtat(EtatPointageEnum.VALIDE);
 		vp.setIdAgent(9001111);
-		vp.setQuantite(3);
+		vp.setQuantite(3.0);
 		vp.setVentilDate(vd);
 		ptgEntityManager.persist(vp);
 
@@ -2964,7 +2964,7 @@ public class VentilationRepositoryTest {
 		vp2.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp2.setEtat(EtatPointageEnum.VENTILE);
 		vp2.setIdAgent(9005138);
-		vp2.setQuantite(3);
+		vp2.setQuantite(3.0);
 		vp2.setVentilDate(vd);
 		ptgEntityManager.persist(vp2);
 
@@ -2972,7 +2972,7 @@ public class VentilationRepositoryTest {
 		vp3.setDateDebutMois(new LocalDate(2013, 7, 18).toDate());
 		vp3.setEtat(EtatPointageEnum.VALIDE);
 		vp3.setIdAgent(9005138);
-		vp3.setQuantite(3);
+		vp3.setQuantite(3.0);
 		vp3.setVentilDate(vd);
 		ptgEntityManager.persist(vp3);
 
@@ -3400,7 +3400,7 @@ public class VentilationRepositoryTest {
 		vp.setDateDebutMois(new LocalDate(2013, 7, 23).toDate());
 		vp.setEtat(EtatPointageEnum.VALIDE);
 		vp.setIdAgent(1);
-		vp.setQuantite(3);
+		vp.setQuantite(3.0);
 		vp.setVentilDate(vd);
 		ptgEntityManager.persist(vp);
 
@@ -3408,7 +3408,7 @@ public class VentilationRepositoryTest {
 		vp3.setDateDebutMois(new LocalDate(2013, 7, 18).toDate());
 		vp3.setEtat(EtatPointageEnum.VALIDE);
 		vp3.setIdAgent(8);
-		vp3.setQuantite(3);
+		vp3.setQuantite(3.0);
 		vp3.setVentilDate(vd);
 		ptgEntityManager.persist(vp3);
 		

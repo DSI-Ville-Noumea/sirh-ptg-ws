@@ -26,13 +26,18 @@ public class DpmRepository implements IDpmRepository {
 	private EntityManager ptgEntityManager;
 	
 	@Override
-	public void persisEntity(Object obj) {
+	public void persistEntity(Object obj) {
 		ptgEntityManager.persist(obj);
 	}
 
 	@Override
 	public <T> T getEntity(Class<T> Tclass, Object Id) {
 		return ptgEntityManager.find(Tclass, Id);
+	}
+	
+	@Override
+	public void removeEntity(Object obj) {
+		ptgEntityManager.remove(obj);
 	}
 
 	@Override
@@ -72,6 +77,31 @@ public class DpmRepository implements IDpmRepository {
 			query.setParameter("isChoixRecuperation", isChoixRecuperation);
 		
 		return query.getResultList();
+	}
+
+
+	@Override
+	public DpmIndemChoixAgent getDpmIndemChoixAgent(Integer idAgent, Integer annee) {
+		
+		logger.debug("getDpmIndemChoixAgent with parameter listIdsAgent = {} and annee = {}", 
+				idAgent, annee);
+		
+		StringBuffer request = new StringBuffer();
+		request.append("select d from DpmIndemChoixAgent d where ");
+		request.append(" d.dpmIndemAnnee.annee = :annee ");
+		request.append(" and d.idAgent = :idAgent ");
+		
+		TypedQuery<DpmIndemChoixAgent> query = ptgEntityManager.createQuery(request.toString(), DpmIndemChoixAgent.class);
+		
+		query.setParameter("annee", annee);
+		query.setParameter("idAgent", idAgent);
+		
+		try {
+			return query.getSingleResult();
+		} catch(NoResultException | NonUniqueResultException | EmptyResultDataAccessException e) {
+			logger.error(e.getMessage());
+			return null;
+		}
 	}
 
 	@Override

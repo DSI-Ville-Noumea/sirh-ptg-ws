@@ -536,14 +536,14 @@ public class ExportEtatPayeurServiceTest {
 		vp1.setIdAgent(9008989);
 		vp1.setRefPrime(new RefPrime());
 		vp1.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		vp1.setQuantite(12);
+		vp1.setQuantite(12.0);
 
 		VentilPrime vp2 = new VentilPrime();
 		vp2.setDateDebutMois(new LocalDate(2013, 9, 2).toDate());
 		vp2.setIdAgent(9006767);
 		vp2.setRefPrime(new RefPrime());
 		vp2.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
-		vp2.setQuantite(24);
+		vp2.setQuantite(24.0);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getTypeChainePaieFromStatut(statut)).thenReturn(TypeChainePaieEnum.SCV);
@@ -643,7 +643,7 @@ public class ExportEtatPayeurServiceTest {
 
 		VentilPrime vp1 = new VentilPrime();
 		vp1.setDateDebutMois(new LocalDate(2013, 8, 26).toDate());
-		vp1.setQuantite(23);
+		vp1.setQuantite(23.0);
 		vp1.setIdAgent(9008989);
 		vp1.setRefPrime(new RefPrime());
 		vp1.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
@@ -651,7 +651,7 @@ public class ExportEtatPayeurServiceTest {
 
 		VentilPrime vpOld = new VentilPrime();
 		vpOld.setDateDebutMois(new LocalDate(2013, 8, 26).toDate());
-		vpOld.setQuantite(32);
+		vpOld.setQuantite(32.0);
 		vpOld.setRefPrime(new RefPrime());
 		vpOld.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		vpOld.setIdAgent(9008989);
@@ -689,7 +689,7 @@ public class ExportEtatPayeurServiceTest {
 
 		assertEquals(1, result.getAgents().size());
 		assertEquals("libelle", result.getAgents().get(0).getPrimes().get(0).getType());
-		assertEquals("-9", result.getAgents().get(0).getPrimes().get(0).getQuantite());
+		assertEquals("-9.0", result.getAgents().get(0).getPrimes().get(0).getQuantite());
 
 		Mockito.verify(service, Mockito.times(1)).fillAgentsData(Mockito.any(AbstractItemEtatPayeurDto.class), Mockito.any(Integer.class));
 	}
@@ -707,7 +707,7 @@ public class ExportEtatPayeurServiceTest {
 
 		VentilPrime vp1 = new VentilPrime();
 		vp1.setDateDebutMois(new LocalDate(2013, 8, 26).toDate());
-		vp1.setQuantite(23);
+		vp1.setQuantite(23.0);
 		vp1.setIdAgent(9008989);
 		vp1.setRefPrime(new RefPrime());
 		vp1.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
@@ -715,7 +715,7 @@ public class ExportEtatPayeurServiceTest {
 
 		VentilPrime vpOld = new VentilPrime();
 		vpOld.setDateDebutMois(new LocalDate(2013, 8, 26).toDate());
-		vpOld.setQuantite(23);
+		vpOld.setQuantite(23.0);
 		vpOld.setRefPrime(new RefPrime());
 		vpOld.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
 		vpOld.setIdAgent(9008989);

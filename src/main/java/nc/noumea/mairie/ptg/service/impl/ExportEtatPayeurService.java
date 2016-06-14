@@ -182,7 +182,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			// #18592 supprimer les lignes a 0
 			if(null != vp
 					&& null != vp.getQuantite()) {
-				int qte = vp.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0);
+				double qte = vp.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0);
 			
 				if(0 != qte) {
 					PrimesEtatPayeurDto dtoPrime = new PrimesEtatPayeurDto(vp, vpOld, helperService);

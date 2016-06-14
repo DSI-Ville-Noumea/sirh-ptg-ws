@@ -26,6 +26,7 @@ import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IApprobationService;
+import nc.noumea.mairie.ptg.service.IDpmService;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.repository.IMairieRepository;
@@ -55,6 +56,9 @@ public class ApprobationService implements IApprobationService {
 
 	@Autowired
 	private IPointageService pointageService;
+
+	@Autowired
+	private IDpmService dpmService;
 
 	@Autowired
 	private IVentilationRepository ventilRepository;
@@ -659,7 +663,14 @@ public class ApprobationService implements IApprobationService {
 
 			// calcul du nombre de minutes
 			Integer nombreMinutes = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
-			if (ptg.getHeureSupRappelService()) {
+			
+			// #30544 Indemnité forfaitaire travail DPM
+			int nombreMinutesMajoreesFromPrimeDPM = dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg);
+			
+			if(0 < nombreMinutesMajoreesFromPrimeDPM) {
+				nombreMinutes += nombreMinutesMajoreesFromPrimeDPM;
+			}else if (null != ptg.getHeureSupRappelService()
+					&& ptg.getHeureSupRappelService()) {
 				nombreMinutes += nombreMinutes;
 			}
 

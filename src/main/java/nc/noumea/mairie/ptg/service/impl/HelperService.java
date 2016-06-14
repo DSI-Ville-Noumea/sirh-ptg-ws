@@ -9,11 +9,14 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.sirh.dto.JourDto;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -218,5 +221,50 @@ public class HelperService {
 			}
 		}
 		return false;
+	}
+	
+	/**
+	 * Calcul le nombre de minutes d un pointage avec date de debut et de fin
+	 * compris dans l interval defini par les parametres date de debut et date de fin
+	 * 
+	 * @param ptg Pointage (date de debut et date de fin obligatoire)
+	 * @param heureDebut Heure de debut de l interval
+	 * @param heureFin Heure de fin de l interval
+	 * @return Integer Le nombre de minutes
+	 */
+	public int calculMinutesPointageInInterval(Pointage ptg, LocalTime heureDebut, LocalTime heureFin) {
+		
+		if(null == ptg
+			|| null == ptg.getDateDebut()
+			|| null == ptg.getDateFin()
+			|| null == heureDebut
+			|| null == heureFin) {
+			throw new IllegalArgumentException("Date de debut et de fin du pointage non renseignees.");
+		}
+		
+		int result = 0;
+		
+		LocalDate datePointage = new DateTime(ptg.getDateDebut()).toLocalDate();
+		
+		// l interval de la deliberation pour la prime est de 5h a 21h
+		Interval pointageInterval = new Interval(
+				new DateTime(
+					datePointage.getYear(),
+					datePointage.getMonthOfYear(), datePointage.getDayOfMonth(), 
+					heureDebut.getHourOfDay(), 0, 0), 
+				new DateTime(
+					datePointage.getYear(), datePointage.getMonthOfYear(), 
+					datePointage.getDayOfMonth(), 
+					heureFin.getHourOfDay(), 0, 0));
+		
+		Interval inputInterval = new Interval(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin()));
+		
+		// on compare l interval du pointage et du celui de la deliberation
+		Interval overlap = pointageInterval.overlap(inputInterval);
+		
+		// on additionne les minutes
+		result += overlap == null ? 0 : overlap.toDuration().getStandardMinutes();
+		
+		return result;
 	}
 }

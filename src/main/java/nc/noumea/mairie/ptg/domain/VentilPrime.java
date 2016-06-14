@@ -43,8 +43,8 @@ public class VentilPrime {
     @Enumerated(EnumType.ORDINAL)
     private EtatPointageEnum etat;
     
-    @Column(name = "QUANTITE")
-    private Integer quantite;
+    @Column(name = "QUANTITE", columnDefinition = "numeric")
+    private Double quantite;
     
     @ManyToOne(optional = false)
     @JoinColumn(name = "ID_VENTIL_DATE", referencedColumnName = "ID_VENTIL_DATE")
@@ -59,9 +59,9 @@ public class VentilPrime {
 	private Integer version;
     
     @Transient
-    public void addQuantite(Integer quantite) {
+    public void addQuantite(Double quantite) {
         if (this.quantite == null) {
-            this.quantite = 0;
+            this.quantite = 0.0;
         }
         this.quantite += quantite;
     }
@@ -110,11 +110,11 @@ public class VentilPrime {
 		this.etat = etat;
 	}
 
-	public Integer getQuantite() {
+	public Double getQuantite() {
 		return quantite;
 	}
 
-	public void setQuantite(Integer quantite) {
+	public void setQuantite(Double quantite) {
 		this.quantite = quantite;
 	}
 

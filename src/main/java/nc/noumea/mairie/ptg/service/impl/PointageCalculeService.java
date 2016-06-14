@@ -8,6 +8,7 @@ import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
+import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
@@ -16,7 +17,9 @@ import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.ptg.service.IDpmService;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
@@ -28,11 +31,21 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.Duration;
 import org.joda.time.Interval;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PointageCalculeService implements IPointageCalculeService {
+	
+	private Logger logger = LoggerFactory.getLogger(PointageCalculeService.class);
+	
+	public static int HEURE_JOUR_DEBUT_PRIME_DPM = 5;
+	public static int HEURE_JOUR_FIN_PRIME_DPM = 21;
+	// pour la prime DPM : 4h minimum
+	public static int SEUIL_MINI_PRIME_DPM = 4*60;
 
 	@Autowired
 	private IPointageRepository pointageRepository;
@@ -45,6 +58,12 @@ public class PointageCalculeService implements IPointageCalculeService {
 
 	@Autowired
 	private HelperService helperService;
+
+	@Autowired
+	private IDpmService dpmService;
+
+	@Autowired
+	private IDpmRepository dpmRepository;
 	
 	@Autowired
 	private IAbsWsConsumer absWsConsumer;
@@ -76,6 +95,10 @@ public class PointageCalculeService implements IPointageCalculeService {
 					break;
 				case VentilationPrimeService.PRIME_RENFORT_GARDE:
 					pointagesCalcules.addAll(generatePointage7717_RenfortGarde(idAgent, dateLundi, agentPointages));
+					break;
+				case VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM:
+				case VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM:
+					pointagesCalcules.addAll(generatePointage7718_19_IndemniteForfaitaireTravailDPM(idAgent, dateLundi, agentPointages, prime));
 					break;
 			}
 		}
@@ -112,7 +135,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 							.isHoliday(datePointage))) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
 				existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
-				existingPc.addQuantite((int) totalMinutes);
+				existingPc.addQuantite((double) totalMinutes);
 
 				if (!result.contains(existingPc))
 					result.add(existingPc);
@@ -123,10 +146,10 @@ public class PointageCalculeService implements IPointageCalculeService {
 			if (prime.getNoRubr().equals(7711)) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, datePointage.toDate());
 				existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
-				existingPc.addQuantite((int) (firstNightMinutes + secondNightMinutes));
+				existingPc.addQuantite((double) (firstNightMinutes + secondNightMinutes));
 
 				if (!result.contains(existingPc)
-						&& !existingPc.getQuantite().equals(0))
+						&& !existingPc.getQuantite().equals(new Double(0)))
 					result.add(existingPc);
 
 				continue;
@@ -141,7 +164,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 					existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
 
 					if (existingPc.getQuantite() == null || existingPc.getQuantite() < 2)
-						existingPc.addQuantite(1);
+						existingPc.addQuantite(1.0);
 
 					if (!result.contains(existingPc))
 						result.add(existingPc);
@@ -497,7 +520,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 					&& 0 < quantite) {
 				PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, dateDebut.toDate());
 				existingPc = returnOrCreateNewPointageWithHSup(existingPc, ptg);
-				existingPc.addQuantite(quantite);
+				existingPc.addQuantite((double)quantite);
 	
 				if (!result.contains(existingPc))
 					result.add(existingPc);
@@ -533,6 +556,84 @@ public class PointageCalculeService implements IPointageCalculeService {
 		pCalcule.setType(pointageRepository.getEntity(RefTypePointage.class, RefTypePointageEnum.H_SUP.getValue()));
 
 		return pCalcule;
+	}
+	
+	/**
+	 * #30544 Indemnité forfaitaire travail DPM
+	 * 
+	 * @param idAgent Integer
+	 * @param dateLundi Date
+	 * @param pointages List<Pointage> 
+	 * @return List<PointageCalcule>
+	 */
+	public List<PointageCalcule> generatePointage7718_19_IndemniteForfaitaireTravailDPM(Integer idAgent, Date dateLundi, 
+			List<Pointage> pointages, RefPrime prime) {
+		
+		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
+
+		for (int i = 0; i < 7; i++) {
+			
+			DateTime dday = new DateTime(dateLundi).plusDays(i);
+			
+			// la prime est que pour les samedi, dimanche et jours feries
+			if(!dpmService.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, dday.toLocalDate())) {
+				continue;
+			}
+			
+			// on additionne toutes les heures supp. de la journee entre 5h et 21h
+			for (Pointage ptg : getPointagesHSupForDay(pointages, dday)) {
+				
+				// l interval de la deliberation pour la prime est de 5h a 21h
+				int dayTotalMinutes = helperService.calculMinutesPointageInInterval(ptg, 
+						new LocalTime(HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+						new LocalTime(HEURE_JOUR_FIN_PRIME_DPM,0,0));
+				
+				// si superieur a 4h
+				if(dayTotalMinutes >= SEUIL_MINI_PRIME_DPM) {
+					// si samedi, on cree la prime 7718
+					if(prime.getNoRubr().equals(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM)
+							&& DateTimeConstants.SATURDAY != dday.getDayOfWeek()) {
+						continue;
+					}
+					// si DJF on cree la prime 7719
+					if(prime.getNoRubr().equals(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM)
+							&& DateTimeConstants.SUNDAY != dday.getDayOfWeek()
+							&& !sirhWsConsumer.isJourFerie(dday)) { 
+						continue;
+					}
+					
+					DpmIndemChoixAgent choixAgent = dpmRepository.getDpmIndemChoixAgent(idAgent, new DateTime(ptg.getDateDebut()).getYear());
+					
+					if(null == choixAgent) {
+						logger.error(String.format("Aucun choix de l agent %d pour la prime DPM => aucune prime DPM calcule", idAgent));
+						continue;
+					}
+					if(choixAgent.isChoixRecuperation()) {
+						logger.debug(String.format("Choix de l agent %d pour la prime DPM : recuperation => aucune prime DPM calcule", idAgent));
+						continue;
+					}
+					
+					if(choixAgent.isChoixIndemnite()) {
+						PointageCalcule existingPc = getPointageCalculeOfSamePrime(result, dday.toDate());
+						existingPc = returnOrCreateNewPointageWithPrime(existingPc, ptg, prime);
+						
+						// Au-delà de 4 Heures : calcul au prorata (¼ de prime par heure supplémentaire pleine)
+						// calcul nombre heure pleine
+						Integer nombreHeuresPleines = new Integer(dayTotalMinutes / 60); 
+						Double quantitePrime = nombreHeuresPleines * 0.25;
+						
+						existingPc.addQuantite(quantitePrime);
+		
+						if (!result.contains(existingPc))
+							result.add(existingPc);
+						
+						logger.debug(String.format("Prime DPM calcule pour l agent %s.", idAgent));
+					}
+				}
+			}
+		}
+
+		return result;
 	}
 
 }

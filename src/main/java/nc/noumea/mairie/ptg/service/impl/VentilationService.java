@@ -473,7 +473,7 @@ public class VentilationService implements IVentilationService {
 					ventilPrime.setIdAgent(idAgent);
 					ventilPrime.setDateDebutMois(dateDebutMois);
 					ventilPrime.setEtat(EtatPointageEnum.VENTILE);
-					ventilPrime.setQuantite(0);
+					ventilPrime.setQuantite(0.0);
 					ventilPrime.setRefPrime(primeOld.getRefPrime());
 					primesVentilees.add(ventilPrime);
 					refPrime.add(primeOld.getIdRefPrime());

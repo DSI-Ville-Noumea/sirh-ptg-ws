@@ -43,6 +43,7 @@ import nc.noumea.mairie.ptg.dto.PrimeDtoKiosque;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
+import nc.noumea.mairie.ptg.service.IDpmService;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IPointageService;
 import nc.noumea.mairie.ptg.service.NotAMondayException;
@@ -591,7 +592,7 @@ public class SaisieServiceTest {
 
 		SaisieService service = Mockito.spy(new SaisieService());
 		Mockito.doNothing().when(service)
-				.deletePointages(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(List.class));
+				.deletePointages(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyListOf(Pointage.class));
 
 		ReflectionTestUtils.setField(service, "helperService", hS);
 		ReflectionTestUtils.setField(service, "pointageService", pService);
@@ -603,7 +604,7 @@ public class SaisieServiceTest {
 
 		// Then
 		Mockito.verify(service, Mockito.times(1)).deletePointages(Mockito.isA(ReturnMessageDto.class),
-				Mockito.anyInt(), Mockito.isA(List.class));
+				Mockito.anyInt(), Mockito.anyListOf(Pointage.class));
 	}
 
 	@Test
@@ -2307,9 +2308,8 @@ public class SaisieServiceTest {
 		List<Pointage> list = new ArrayList<Pointage>();
 		list.add(existingPointageApprouve);
 
-		Mockito.doAnswer(new Answer() {
-			public Object answer(InvocationOnMock invocation) {
-				Object[] args = invocation.getArguments();
+		Mockito.doAnswer(new Answer<List<Pointage>>() {
+			public List<Pointage> answer(InvocationOnMock invocation) {
 				List<Pointage> list = new ArrayList<Pointage>();
 
 				RefPrime refPrime = new RefPrime();
@@ -2494,6 +2494,7 @@ public class SaisieServiceTest {
 		listPointage.add(pointage);
 		
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		IDpmService dpmService = Mockito.mock(IDpmService.class);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(pointage.getDateDebut(), pointage.getDateFin())).thenReturn(60);
@@ -2501,11 +2502,97 @@ public class SaisieServiceTest {
 		SaisieService service = new SaisieService();
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "dpmService", dpmService);
 		
 		service.majCompteurRecuperationProvisoire(listPointage);
 		
 		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(
 				pointage.getIdAgent(), pointage.getDateDebut(), 60, pointage.getIdPointage(), null);
+	}
+	
+	@Test 
+	public void majCompteurRecuperationProvisoire_pointageApprouve_PrimeDpm_majCompteur() {
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage pointage = new Pointage();
+		pointage.setIdAgent(9005138);
+		pointage.setDateLundi(new DateTime(2015, 6, 22, 0, 0, 0).toDate());
+		pointage.setDateDebut(new DateTime(2015, 6, 26, 15, 0, 0).toDate());
+		pointage.setDateFin(new DateTime(2015, 6, 26, 16, 0, 0).toDate());
+		pointage.setIdPointage(1);
+		pointage.setType(type);
+		pointage.setHeureSupRecuperee(true);
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		pointage.getEtats().add(etat);
+		
+		List<Pointage> listPointage = new ArrayList<Pointage>();
+		listPointage.add(pointage);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		IDpmService dpmService = Mockito.mock(IDpmService.class);
+		Mockito.when(dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(pointage)).thenReturn(60);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(pointage.getDateDebut(), pointage.getDateFin())).thenReturn(60);
+		
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "dpmService", dpmService);
+		
+		service.majCompteurRecuperationProvisoire(listPointage);
+		
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(
+				pointage.getIdAgent(), pointage.getDateDebut(), 120, pointage.getIdPointage(), null);
+	}
+	
+	@Test 
+	public void majCompteurRecuperationProvisoire_pointageApprouve_PrimeDpm_Et_RappelService_majCompteur() {
+		
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+		
+		Pointage pointage = new Pointage();
+		pointage.setIdAgent(9005138);
+		pointage.setDateLundi(new DateTime(2015, 6, 22, 0, 0, 0).toDate());
+		pointage.setDateDebut(new DateTime(2015, 6, 26, 15, 0, 0).toDate());
+		pointage.setDateFin(new DateTime(2015, 6, 26, 16, 0, 0).toDate());
+		pointage.setIdPointage(1);
+		pointage.setType(type);
+		pointage.setHeureSupRecuperee(true);
+		pointage.setHeureSupRappelService(true);
+		
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.APPROUVE);
+		
+		pointage.getEtats().add(etat);
+		
+		List<Pointage> listPointage = new ArrayList<Pointage>();
+		listPointage.add(pointage);
+		
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		
+		IDpmService dpmService = Mockito.mock(IDpmService.class);
+		Mockito.when(dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(pointage)).thenReturn(60);
+		
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(pointage.getDateDebut(), pointage.getDateFin())).thenReturn(60);
+		
+		SaisieService service = new SaisieService();
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "dpmService", dpmService);
+		
+		service.majCompteurRecuperationProvisoire(listPointage);
+		
+		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(
+				pointage.getIdAgent(), pointage.getDateDebut(), 120, pointage.getIdPointage(), null);
 	}
 
 	@Test 
@@ -2542,6 +2629,7 @@ public class SaisieServiceTest {
 		listPointage.add(pointage);
 		
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		IDpmService dpmService = Mockito.mock(IDpmService.class);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(pointage.getDateDebut(), pointage.getDateFin())).thenReturn(60);
@@ -2549,6 +2637,7 @@ public class SaisieServiceTest {
 		SaisieService service = new SaisieService();
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "dpmService", dpmService);
 		
 		service.majCompteurRecuperationProvisoire(listPointage);
 		
@@ -2593,6 +2682,7 @@ public class SaisieServiceTest {
 		listPointage.add(pointage);
 		
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		IDpmService dpmService = Mockito.mock(IDpmService.class);
 		
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(pointage.getDateDebut(), pointage.getDateFin())).thenReturn(60);
@@ -2600,6 +2690,7 @@ public class SaisieServiceTest {
 		SaisieService service = new SaisieService();
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "dpmService", dpmService);
 		
 		service.majCompteurRecuperationProvisoire(listPointage);
 		

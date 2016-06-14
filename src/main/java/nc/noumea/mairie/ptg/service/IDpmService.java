@@ -2,6 +2,9 @@ package nc.noumea.mairie.ptg.service;
 
 import java.util.List;
 
+import org.joda.time.LocalDate;
+
+import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.dto.DpmIndemniteAnneeDto;
 import nc.noumea.mairie.ptg.dto.DpmIndemniteChoixAgentDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -124,4 +127,35 @@ public interface IDpmService {
 	 * @return ReturnMessageDto
 	 */
 	ReturnMessageDto saveIndemniteChoixAgentForSIRH(Integer idAgentConnecte, DpmIndemniteChoixAgentDto dto);
+
+	/**
+	 * Supprime le choix d un agent, uniquement si la campagne est ouverte et
+	 * par un utilisateur DRH
+	 * 
+	 * @param idAgentConnecte Integer
+	 * @param idDpmIndemChoixAgent Integer ID du choix
+	 * @return ReturnMessageDto
+	 */
+	ReturnMessageDto deleteIndemniteChoixAgentForKiosque(Integer idAgentConnecte, Integer idDpmIndemChoixAgent);
+
+	/**
+	 * Returne vrai si l agent a le droit a la prime DPM
+	 * un jour donne :
+	 *  - doit avoir la prime Indemnité forfaitaire travail DPM (celle du samedi ou DJF)
+	 *  - doit etre un samedi, dimanche ou jour ferie
+	 * 
+	 * @param idAgent Integer
+	 * @param date LocalDate
+	 * @return boolean TRUE ou FALSE
+	 */
+	boolean isDroitAgentToIndemniteForfaitaireDPMForOneDay(Integer idAgent, LocalDate date);
+
+	/**
+	 * Calcul la majoration des heures supp a recuperer si l agent a la prime forfaitaire DPM.
+	 * Attention ne doit pas se cumuler avec les rappels en service .
+	 * 
+	 * @param ptg Pointage
+	 * @return int nombre de minutes a rajouter au recup 
+	 */
+	int calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(Pointage ptg);
 }
