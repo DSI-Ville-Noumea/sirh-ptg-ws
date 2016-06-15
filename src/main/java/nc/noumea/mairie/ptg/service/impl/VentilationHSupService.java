@@ -427,12 +427,12 @@ public class VentilationHSupService implements IVentilationHSupService {
 		case F:
 			totalAmountOfHSRecuperees = result.getMComposeesRecup()
 				+ result.getMNormalesRecup() + result.getMsdjfRecup()
-				+ result.getMSimpleRecup() + result.getMsNuitRecup();
+				+ result.getMSimpleRecup() + result.getMsNuitRecup() + result.getMMaiRecup();
 			break;
 		case C:
 			totalAmountOfHSRecuperees = result.getMNormalesRecup()
 				+ result.getMSup25Recup() + result.getMSup50Recup()
-				+ result.getMsdjfRecup() + result.getMsNuitRecup();
+				+ result.getMsdjfRecup() + result.getMsNuitRecup() + result.getMMaiRecup();
 			break;
 		case CC:
 			// on ne prend en compte ici que les heures SUPPLEMENTAIRES
