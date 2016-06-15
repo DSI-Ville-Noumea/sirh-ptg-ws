@@ -912,6 +912,73 @@ public class VentilationRepositoryTest {
 		ptgEntityManager.clear();
 	}
 
+	// bug PROD #31382
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListPointagesPrimeForVentilation_bug31382() {
+
+		RefTypePointage rtp = new RefTypePointage();
+		rtp.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		ptgEntityManager.persist(rtp);
+
+		RefTypeAbsence refTypeAbs = new RefTypeAbsence();
+		refTypeAbs.setIdRefTypeAbsence(1);
+		ptgEntityManager.persist(refTypeAbs);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9008765);
+		ptg.setDateLundi(new LocalDate(2013, 7, 20).toDate());
+		ptg.setDateDebut(new DateTime(2013, 7, 22, 8, 0, 0).toDate());
+		ptg.setRefTypeAbsence(refTypeAbs);
+		ptg.setType(rtp);
+		ptgEntityManager.persist(ptg);
+
+		EtatPointage ep = new EtatPointage();
+		ep.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+		ep.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+		ep.setEtat(EtatPointageEnum.APPROUVE);
+		ep.setIdAgent(9008765);
+		ep.setPointage(ptg);
+		ptgEntityManager.persist(ep);
+
+		EtatPointage ep3 = new EtatPointage();
+		ep3.setDateEtat(new LocalDate(2013, 7, 25).toDate());
+		ep3.setDateMaj(new LocalDate(2013, 7, 22).toDate());
+		ep3.setEtat(EtatPointageEnum.APPROUVE);
+		ep3.setIdAgent(9008765);
+		ep3.setPointage(ptg);
+		ptgEntityManager.persist(ep3);
+
+		// pointage de juillet mais un an avant
+		Pointage ptg2 = new Pointage();
+		ptg2.setIdAgent(9008765);
+		ptg2.setDateLundi(new LocalDate(2012, 7, 20).toDate());
+		ptg2.setDateDebut(new DateTime(2012, 7, 22, 8, 0, 0).toDate());
+		ptg2.setRefTypeAbsence(refTypeAbs);
+		ptg2.setType(rtp);
+		ptgEntityManager.persist(ptg2);
+
+		EtatPointage ep2 = new EtatPointage();
+		ep2.setDateEtat(new LocalDate(2012, 7, 25).toDate());
+		ep2.setDateMaj(new LocalDate(2012, 7, 22).toDate());
+		ep2.setEtat(EtatPointageEnum.JOURNALISE);
+		ep2.setIdAgent(9008765);
+		ep2.setPointage(ptg2);
+		ptgEntityManager.persist(ep2);
+
+		List<Pointage> result = repository.getListPointagesPrimeForVentilation(9008765,
+				new LocalDate(2013, 7, 24).toDate(), new LocalDate(2013, 7, 26).toDate(),
+				new LocalDate(2013, 7, 20).toDate());
+
+		assertEquals(1, result.size());
+		assertEquals(new DateTime(2013, 7, 22, 8, 0, 0).toDate(), result.get(0).getDateDebut());
+		assertEquals(1, (int) result.get(0).getRefTypeAbsence().getIdRefTypeAbsence());
+		assertEquals(RefTypePointageEnum.PRIME, result.get(0).getTypePointageEnum());
+
+		ptgEntityManager.flush();
+		ptgEntityManager.clear();
+	}
+
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void getListPointagesForPrimesCalculees() {

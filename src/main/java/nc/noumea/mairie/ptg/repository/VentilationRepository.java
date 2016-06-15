@@ -297,6 +297,7 @@ public class VentilationRepository implements IVentilationRepository {
 		sb.append("maxEtats ON maxEtats.maxIdEtatPointage = ep.id_etat_pointage AND maxEtats.id_pointage = ep.id_pointage ");
 		sb.append("WHERE p.ID_AGENT = :idAgent ");
 		sb.append("AND extract(MONTH FROM p.DATE_DEBUT) = :month ");
+		sb.append("AND extract(YEAR FROM p.DATE_DEBUT) = :year ");
 		sb.append("AND (p.ID_TYPE_POINTAGE = :typePointagePRIME) ");
 		sb.append("AND (ep.date_etat BETWEEN :fromEtatDate AND :toEtatDate AND ep.etat = :approuve ");
 		sb.append("OR ep.etat IN (:ventile, :valide, :journalise)) ");
@@ -305,6 +306,8 @@ public class VentilationRepository implements IVentilationRepository {
 		Query q = ptgEntityManager.createNativeQuery(sb.toString(), Pointage.class);
 		q.setParameter("idAgent", idAgent);
 		q.setParameter("month", new LocalDate(dateDebutMois).monthOfYear().get());
+		// bug #31382
+		q.setParameter("year", new LocalDate(dateDebutMois).getYear());
 		q.setParameter("fromEtatDate", fromEtatDate);
 		q.setParameter("toEtatDate", toEtatDate);
 		q.setParameter("approuve", EtatPointageEnum.APPROUVE.getCodeEtat());
