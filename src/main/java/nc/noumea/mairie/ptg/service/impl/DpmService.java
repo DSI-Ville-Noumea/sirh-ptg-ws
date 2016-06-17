@@ -203,7 +203,8 @@ public class DpmService implements IDpmService {
 			Integer idServiceAds, Integer idAgentFiltre) {
 		
 		if(null == idAgentConnecte
-				|| !sirhWSUtils.isAgentDPM(idAgentConnecte)) {
+				//|| !sirhWSUtils.isAgentDPM(idAgentConnecte)
+				) {
 			throw new AccessForbiddenException();
 		}
 		
@@ -371,6 +372,18 @@ public class DpmService implements IDpmService {
 			}
 		}
 		
+		// on regarde si il existe un enregistrement pour l annee suivante
+		// si non => on cree
+		DpmIndemAnnee dpmAnneeProchaine = dpmRepository.getDpmIndemAnneeByAnnee(new DateTime().getYear()+1);
+		if(null == dpmAnneeProchaine) {
+			dpmAnneeProchaine = new DpmIndemAnnee();
+			dpmAnneeProchaine.setAnnee(new DateTime().getYear()+1);
+			dpmAnneeProchaine.setDateDebut(new DateTime().plusYears(1).withMonthOfYear(DateTimeConstants.DECEMBER).withDayOfMonth(1).withMillisOfDay(0).toDate());
+			dpmAnneeProchaine.setDateFin(new DateTime().plusYears(1).withMonthOfYear(DateTimeConstants.DECEMBER).withDayOfMonth(15).withMillisOfDay(0).toDate());
+			
+			dpmRepository.persistEntity(dpmAnneeProchaine);
+		}
+		
 		List<DpmIndemAnnee> listDpmIndemAnnee = dpmRepository.getListDpmIndemAnnee();
 		
 		List<DpmIndemniteAnneeDto> result = new ArrayList<DpmIndemniteAnneeDto>();
@@ -514,19 +527,37 @@ public class DpmService implements IDpmService {
 	@Override
 	public boolean isDroitAgentToIndemniteForfaitaireDPMForOneDay(Integer idAgent, LocalDate date) {
 		
+		boolean isJourFerie = false;
 		// la prime est applicable les samedi, dimanche et jours feries
 		if(DateTimeConstants.SATURDAY != date.getDayOfWeek()
-				&& DateTimeConstants.SUNDAY != date.getDayOfWeek()
-				&& !sirhWSConsumer.isJourFerie(date.toDateTime(new LocalTime(0)))) {
-			return false;
+				&& DateTimeConstants.SUNDAY != date.getDayOfWeek()){
+			
+			isJourFerie = sirhWSConsumer.isJourFerie(date.toDateTime(new LocalTime(0)));
+			
+			if(!isJourFerie)
+				return false;
 		}
 		
 		// doit avoir la prime Indemnité forfaitaire travail DPM sur son affectation courante
-		if(!isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent, date.toDate())) {
-			return false;
+		List<Integer> listNoRubr = sirhWSConsumer.getPrimePointagesByAgent(idAgent, date.toDate(), date.toDate());
+
+		if(null != listNoRubr) {
+			for(Integer noRubr : listNoRubr) {
+
+				// si prime DJF et on est dimanche ou JF => ok
+				if(noRubr.equals(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM)
+						&& (DateTimeConstants.SUNDAY == date.getDayOfWeek() || isJourFerie) ) {
+					return true;
+				}
+				// si prime samedi et on est samedi => ok
+				if(noRubr.equals(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM)
+						&& DateTimeConstants.SATURDAY == date.getDayOfWeek()) {
+					return true;
+				}
+			}
 		}
 		
-		return true;
+		return false;
 	}
 	
 	@Override

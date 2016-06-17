@@ -653,7 +653,8 @@ public class DpmServicetTest {
 		
 		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
 		
-		List<Integer> listNoRubr = Arrays.asList(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM);
+		List<Integer> listNoRubr = Arrays.asList(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM,
+				VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM);
 		Mockito.when(sirhWSConsumer.getPrimePointagesByAgent(idAgent, dateJour, dateJour)).thenReturn(listNoRubr);
 		
 		assertTrue(service.isAgentWithIndemniteForfaitaireTravailDPMInAffectation(idAgent, null));
@@ -1066,6 +1067,10 @@ public class DpmServicetTest {
 		isAgentWithIndemniteForfaitaireTravailDPMInAffectation_true(idAgent, date.toDate());
 		
 		Mockito.when(sirhWSConsumer.isJourFerie(date.toDateTime(new LocalTime(0)))).thenReturn(true);
+		
+		List<Integer> listNoRubr = Arrays.asList(VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM, 
+				VentilationPrimeService.RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM);
+		Mockito.when(sirhWSConsumer.getPrimePointagesByAgent(idAgent, date.toDate(), date.toDate())).thenReturn(listNoRubr);
 		
 		assertTrue(service.isDroitAgentToIndemniteForfaitaireDPMForOneDay(idAgent, date));
 	}
