@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class VentilationPrimeService implements IVentilationPrimeService {
 
-	public static Integer PRIME_EPANDAGE_7716 = 7716;
+	public final static Integer PRIME_EPANDAGE_7716 = 7716;
 
 	public final static int PRIME_TID_7720 = 7720;
 	public final static int PRIME_TID_7721 = 7721;
@@ -42,8 +42,9 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 	
 	// List of rubrique to not aggregate because used for calculating other Primes
 	// #13327 HSup SIPRES (épandage) : creation d une prime FICTIVE 7760
-	private static List<Integer> RUBRIQUES_SAISIES_NOT_TAKEN = Arrays.asList(
-			INDEMNITE_DE_ROULEMENT, PRIME_EPANDAGE_7716, PRIME_RENFORT_GARDE);
+	private final static List<Integer> RUBRIQUES_SAISIES_NOT_TAKEN = Arrays.asList(
+			INDEMNITE_DE_ROULEMENT, PRIME_EPANDAGE_7716, PRIME_RENFORT_GARDE,
+			RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM, RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM);
 
 	@Autowired
 	private IPointageRepository pointageRepository;

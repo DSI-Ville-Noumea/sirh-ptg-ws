@@ -22,14 +22,15 @@ public class VentilationAbsenceService implements IVentilationAbsenceService {
 	public VentilAbsence processAbsenceAgent(Integer idAgent, List<Pointage> pointages, Date dateLundi, 
 			List<Pointage> pointagesVentilesRejetes, List<Pointage> pointagesJournalisesRejetes) {
 
+		// on filtre pour avoir que les pointages absences
 		List<Pointage> absPointages = getAbsencePointages(pointages);
-		
 		List<Pointage> absPointagesVentilesRejetes = getAbsencePointages(pointagesVentilesRejetes);
+		List<Pointage> absPointagesJournalisesRejetes = getAbsencePointages(pointagesJournalisesRejetes);
 
 		// #16789 bug sur les absences ventilees puis rejetees
 		if (absPointages.size() == 0 
 				&& (null == absPointagesVentilesRejetes || absPointagesVentilesRejetes.size() == 0)
-				&& (null == pointagesJournalisesRejetes || pointagesJournalisesRejetes.isEmpty()))
+				&& (null == absPointagesJournalisesRejetes || absPointagesJournalisesRejetes.isEmpty()))
 			return null;
 
 		VentilAbsence result = new VentilAbsence();
@@ -111,9 +112,11 @@ public class VentilationAbsenceService implements IVentilationAbsenceService {
 
 		List<Pointage> result = new ArrayList<Pointage>();
 
-		for (Pointage ptg : pointages) {
-			if (ptg.getTypePointageEnum() == RefTypePointageEnum.ABSENCE)
-				result.add(ptg);
+		if(null != pointages) {
+			for (Pointage ptg : pointages) {
+				if (ptg.getTypePointageEnum() == RefTypePointageEnum.ABSENCE)
+					result.add(ptg);
+			}
 		}
 
 		return result;

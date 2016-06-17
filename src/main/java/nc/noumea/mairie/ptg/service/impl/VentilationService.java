@@ -100,7 +100,7 @@ public class VentilationService implements IVentilationService {
 		if (!paieWorkflowService.canStartVentilation(typeChainePaie)
 				|| !ventilationRepository.canStartVentilation(typeChainePaie)) {
 			String msg = String
-					.format("Ventiation for statut [%s] may not be started. An existing one is currently processing...",
+					.format("Ventilation for statut [%s] may not be started. An existing one is currently processing...",
 							statut);
 			logger.error(msg);
 			result.getErrors().add(msg);
@@ -217,13 +217,13 @@ public class VentilationService implements IVentilationService {
 
 		RefTypePointageEnum pointageType = task.getRefTypePointage() == null ? null : RefTypePointageEnum
 				.getRefTypePointageEnum(task.getRefTypePointage().getIdRefTypePointage());
-		Integer agent = task.getIdAgent();
-		Integer agentRH = task.getIdAgentCreation();
+		Integer idAgent = task.getIdAgent();
+		Integer idAgentRH = task.getIdAgentCreation();
 		VentilDate fromVentilDate = task.getVentilDateFrom();
 		VentilDate toVentilDate = task.getVentilDateTo();
 
 		// 1. Retrieve agent current Spcarr
-		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(agent),
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
 				toVentilDate.getDateVentilation());
 		
 		if(null == carr) {
@@ -231,29 +231,27 @@ public class VentilationService implements IVentilationService {
 		}
 
 		// 2. remove existing ventilations
-		removePreviousVentilations(toVentilDate, agent, pointageType);
+		removePreviousVentilations(toVentilDate, idAgent, pointageType);
 		
 
 		// 3. select all distinct dates of pointages needing ventilation
-		List<Date> pointagesToVentilateDates = ventilationRepository.getDistinctDatesOfPointages(agent,
+		List<Date> pointagesToVentilateDates = ventilationRepository.getDistinctDatesOfPointages(idAgent,
 				fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation());
 
 		List<Pointage> pointagesVentiles = new ArrayList<Pointage>();
 
 		// 4. Pointages generated (Primes)
 		for (Date dateLundi : getDistinctDateLundiFromListOfDates(pointagesToVentilateDates)) {
-			// 4.1 Remove previously calculated Pointages (Primes)
-			removePreviousCalculatedPointages(agent, dateLundi);
-
+			// evolution faite suite #31372
 			// 4.2 Calculate pointages for week
-			calculatePointages(agent, dateLundi, fromVentilDate.getDateVentilation(), toVentilDate);
+			calculatePointages(idAgent, dateLundi, fromVentilDate.getDateVentilation(), toVentilDate);
 		}
 
 		// 5. Ventilation of H_SUP and ABS
 		if (pointageType == null || pointageType == RefTypePointageEnum.ABSENCE
 				|| pointageType == RefTypePointageEnum.H_SUP) {
 			for (Date dateLundi : getDistinctDateLundiFromListOfDates(pointagesToVentilateDates)) {
-				pointagesVentiles.addAll(processHSupAndAbsVentilationForWeekAndAgent(toVentilDate, agent, carr,
+				pointagesVentiles.addAll(processHSupAndAbsVentilationForWeekAndAgent(toVentilDate, idAgent, carr,
 						dateLundi, fromVentilDate.getDateVentilation()));
 			}
 		}
@@ -265,14 +263,14 @@ public class VentilationService implements IVentilationService {
 			
 			// Retrieve all pointages for that period
 			List<Pointage> agentsPointageForPeriod = ventilationRepository.getListPointagesAbsenceAndHSupForVentilation(
-					agent, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), dateLundi);
+					idAgent, fromVentilDate.getDateVentilation(), toVentilDate.getDateVentilation(), dateLundi);
 
 			// Then filter them (if they have parent pointages to be excluded for
 			// ex.)
 			List<Pointage> filteredAgentsPointageForPeriod = pointageService.filterOldPointagesAndEtatFromList(
 					agentsPointageForPeriod, Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE), null);
 			
-			List<Pointage> listPointagesTID = pointageCalculeService.generatePointageTID_7720_7721_7722(agentRH, agent, carr.getStatutCarriere(), dateLundi, filteredAgentsPointageForPeriod);
+			List<Pointage> listPointagesTID = pointageCalculeService.generatePointageTID_7720_7721_7722(idAgentRH, idAgent, carr.getStatutCarriere(), dateLundi, filteredAgentsPointageForPeriod);
 			// bug #29292 prendre en compte les TIDs
 			if(null != listPointagesTID) {
 				for(Pointage pointageTID : listPointagesTID) {
@@ -286,14 +284,14 @@ public class VentilationService implements IVentilationService {
 			pointagesToVentilateDates.addAll(listDatesPointagesTID);
 			for (Date dateDebutMois : getDistinctDateDebutMoisFromListOfDates(pointagesToVentilateDates)) {
 
-				pointagesVentiles.addAll(processPrimesVentilationForMonthAndAgent(toVentilDate, agent, dateDebutMois,
+				pointagesVentiles.addAll(processPrimesVentilationForMonthAndAgent(toVentilDate, idAgent, dateDebutMois,
 						fromVentilDate.getDateVentilation(), carr.getStatutCarriere()));
 			}
 		}
 
 		// 8. Mark pointages as etat VENTILE and add this VentilDate to their
 		// list of ventilations
-		markPointagesAsVentile(pointagesVentiles, agentRH, toVentilDate);
+		markPointagesAsVentile(pointagesVentiles, idAgentRH, toVentilDate);
 
 		logger.info("Ventilation of idVentilTask [{}] done.", idVentilTask);
 	}
@@ -353,8 +351,7 @@ public class VentilationService implements IVentilationService {
 		// ils ne sont pas récupérés par la requête précedente// s il n y a donc pas d autres pointage sur cette semaine
 		// ils sont zappés
 		List<Pointage> filteredListPointageRejetesOrderedByDateAsc = null;
-		if((null == filteredAgentsPointageForPeriod || filteredAgentsPointageForPeriod.isEmpty())
-				&& (null == listPointageRejetesVentilesOrderedByDateAsc || listPointageRejetesVentilesOrderedByDateAsc.isEmpty())) {
+		if((null == filteredAgentsPointageForPeriod || filteredAgentsPointageForPeriod.isEmpty())) {
 
 			List<Pointage> listPointageRejetesOrderedByDateAsc = ventilationRepository
 					.getListPointagesAbsenceAndHSupRejetesBetweenDatesVentilation(idAgent, fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
@@ -367,7 +364,7 @@ public class VentilationService implements IVentilationService {
 		// pour avoir un calcul coherent
 		List<Pointage> filteredAgentsPointageJournalisesForPeriod = pointageService.filterOldPointagesAndEtatFromList(
 				agentsPointageForPeriod, Arrays.asList(EtatPointageEnum.JOURNALISE), null);
-		// attention a ne pas retourner cette liste pour en pas repasser les pointages
+		// attention a ne pas retourner cette liste pour ne pas repasser les pointages
 		// journalises a ventiles
 		List<Pointage> listAllAgentsPointageForPeriod = new ArrayList<Pointage>();
 		if(null != filteredAgentsPointageForPeriod 
@@ -545,11 +542,10 @@ public class VentilationService implements IVentilationService {
 
 		logger.debug("Creation of calculated PRIME pointages for date monday [{}]...", dateLundi);
 
+		// on cherche tous les pointages APPROUVE et REJETE avec date de saisie entre les 2 dates de ventilation
+		// ainsi que tous les VALIDE, VENTILE, JOURNALISE
 		List<PointageCalcule> result = new ArrayList<PointageCalcule>();
-
-		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
-				dateLundi);
-		List<Pointage> ptgs = ventilationRepository.getListPointagesForPrimesCalculees(idAgent, fromEtatDate,
+		List<Pointage> listePointages = ventilationRepository.getListPointagesForPrimesCalculees(idAgent, fromEtatDate,
 				ventilDate.getDateVentilation(), dateLundi);
 		
 		// bug #20993
@@ -558,11 +554,27 @@ public class VentilationService implements IVentilationService {
 		// car le calcul des primes ou heures sup prend tous les pointages de la semaine en compte
 		// neanmoins, s il n y a que des pointages JOURNALISE ou VALIDE, ca ne sert à rien de les 
 		// ressortir une nouvelle fois dans la ventilation 
-		if(isAllPointagesAreValideOrJournalise(ptgs))
+		if(isAllPointagesAreValideOrJournalise(listePointages))
 			return;
 		
+		// evolution faite suite #31372
+		// SINON
+		// 4.1 Remove previously calculated Pointages (Primes)
+		removePreviousCalculatedPointages(idAgent, dateLundi);
+		
+		// puis on filtre la liste de pointage : on retire les REJETE
+		// on garde que les APPROUVE, VALIDE, VENTILE et JOURNALISE
+		List<Pointage> filteredListePointages = pointageService.filterOldPointagesAndEtatFromList(
+				listePointages, 
+				Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE,
+						EtatPointageEnum.VALIDE, EtatPointageEnum.JOURNALISE), 
+				null);
+
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
+				dateLundi);
+		
 		result.addAll(pointageCalculeService.calculatePointagesForAgentAndWeek(idAgent, carr.getStatutCarriere(),
-				dateLundi, ptgs));
+				dateLundi, filteredListePointages));
 
 		for (PointageCalcule ptgC : result) {
 			// bug #21060
@@ -646,10 +658,10 @@ public class VentilationService implements IVentilationService {
 				&& ventilationRepository.canStartVentilation(chainePaie));
 
 		if (result.isCanStartVentilation())
-			logger.debug("Ventiation for chainePaie [{}] may be started. None currently processing...", chainePaie);
+			logger.debug("Ventilation for chainePaie [{}] may be started. None currently processing...", chainePaie);
 		else
 			logger.debug(
-					"Ventiation for chainePaie [{}] may not be started. An existing one is currently processing...",
+					"Ventilation for chainePaie [{}] may not be started. An existing one is currently processing...",
 					chainePaie);
 
 		return result;

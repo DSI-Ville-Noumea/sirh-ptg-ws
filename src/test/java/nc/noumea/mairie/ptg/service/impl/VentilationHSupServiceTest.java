@@ -6846,7 +6846,7 @@ public class VentilationHSupServiceTest {
 	
 	// bug #31224 bug en PROD
 	@Test
-	public void processHeuresSup_fonctionnaire_bugHSup_pleinTemps_NoMatr3368_semaine18() {
+	public void processHeuresSup_fonctionnaire_bugHSup_pleinTemps_NoMatr3368_semaine18_1erMai() {
 		
 		// base pointage 39B - 39h DPM
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();

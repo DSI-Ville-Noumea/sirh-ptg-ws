@@ -621,11 +621,23 @@ public class VentilationServiceTest {
 		HelperService hsMock = Mockito.mock(HelperService.class);
 		Mockito.when(hsMock.getMairieMatrFromIdAgent(9008765)).thenReturn(8765);
 
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepository.removePointageCalculesForDateAgent(9008765, dateLundi)).thenReturn(1);
+		
+		IPointageService pointageService = Mockito.mock(IPointageService.class);
+		Mockito.when(pointageService.filterOldPointagesAndEtatFromList(
+				ptgList, 
+				Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE,
+						EtatPointageEnum.VALIDE, EtatPointageEnum.JOURNALISE), 
+				null)).thenReturn(ptgList);
+		
 		VentilationService service = new VentilationService();
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepo);
 		ReflectionTestUtils.setField(service, "ventilationRepository", vRepo);
 		ReflectionTestUtils.setField(service, "pointageCalculeService", ptgCService);
 		ReflectionTestUtils.setField(service, "helperService", hsMock);
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+		ReflectionTestUtils.setField(service, "pointageService", pointageService);
 
 		// When
 		service.calculatePointages(idAgent, dateLundi, from, to);
@@ -638,6 +650,7 @@ public class VentilationServiceTest {
 				Mockito.eq(AgentStatutEnum.F), Mockito.eq(dateLundi), Mockito.eq(ptgList));
 
 		Mockito.verify(vRepo, Mockito.times(1)).persistEntity(Mockito.isA(PointageCalcule.class));
+		Mockito.verify(pointageRepository, Mockito.times(1)).removePointageCalculesForDateAgent(9008765, dateLundi);
 	}
 
 	@Test
@@ -692,8 +705,8 @@ public class VentilationServiceTest {
 		service.calculatePointages(idAgent, dateLundi, from, to);
 
 		// Then
-		Mockito.verify(mairieRepo, Mockito.times(1)).getAgentCurrentCarriere(Mockito.eq(8765),
-				Mockito.eq(new LocalDate(2013, 7, 1).toDate()));
+//		Mockito.verify(mairieRepo, Mockito.times(1)).getAgentCurrentCarriere(Mockito.eq(8765),
+//				Mockito.eq(new LocalDate(2013, 7, 1).toDate()));
 
 		Mockito.verify(ptgCService, Mockito.never()).calculatePointagesForAgentAndWeek(Mockito.eq(idAgent),
 				Mockito.eq(AgentStatutEnum.F), Mockito.eq(dateLundi), Mockito.eq(ptgList));
@@ -1247,7 +1260,7 @@ public class VentilationServiceTest {
 
 		// Then
 		assertEquals(1, result.getErrors().size());
-		assertEquals("Ventiation for statut [F] may not be started. An existing one is currently processing...", result
+		assertEquals("Ventilation for statut [F] may not be started. An existing one is currently processing...", result
 				.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 	}
@@ -1306,7 +1319,7 @@ public class VentilationServiceTest {
 				.processHSupAndAbsVentilationForWeekAndAgent(toVentilDate, 9005432, carr, datesLundi.get(0),
 						fromVentilDate.getDateVentilation());
 
-		Mockito.doNothing().when(service).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
+//		Mockito.doNothing().when(service).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
 		Mockito.doNothing()
 				.when(service)
 				.calculatePointages(9005432, datesLundi.get(0), fromVentilDate.getDateVentilation(),
@@ -1327,7 +1340,8 @@ public class VentilationServiceTest {
 		Mockito.verify(service, Mockito.times(1)).getDistinctDateDebutMoisFromListOfDates(pointagesDates);
 		Mockito.verify(service, Mockito.times(1)).processHSupAndAbsVentilationForWeekAndAgent(toVentilDate, 9005432,
 				carr, datesLundi.get(0), fromVentilDate.getDateVentilation());
-		Mockito.verify(service, Mockito.times(1)).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
+		// evolution faite suite #31372
+//		Mockito.verify(service, Mockito.times(1)).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
 		Mockito.verify(service, Mockito.times(1)).calculatePointages(9005432, datesLundi.get(0),
 				fromVentilDate.getDateVentilation(), toVentilDate);
 		Mockito.verify(service, Mockito.times(1)).processPrimesVentilationForMonthAndAgent(toVentilDate, 9005432,
@@ -1382,7 +1396,8 @@ public class VentilationServiceTest {
 
 		IPointageService pointageService = Mockito.mock(IPointageService.class);
 		IPointageCalculeService pointageCalculeService = Mockito.mock(IPointageCalculeService.class);
-		Mockito.when(pointageCalculeService.generatePointageTID_7720_7721_7722(Mockito.anyInt(), Mockito.anyInt(), Mockito.any(AgentStatutEnum.class), Mockito.any(Date.class), Mockito.any(List.class)))
+		Mockito.when(pointageCalculeService.generatePointageTID_7720_7721_7722(
+				Mockito.anyInt(), Mockito.anyInt(), Mockito.any(AgentStatutEnum.class), Mockito.any(Date.class), Mockito.anyListOf(Pointage.class)))
 			.thenReturn(listPtgTID);
 		
 		VentilationService service = Mockito.spy(new VentilationService());
@@ -1407,7 +1422,7 @@ public class VentilationServiceTest {
 				.processHSupAndAbsVentilationForWeekAndAgent(toVentilDate, 9005432, carr, datesLundi.get(0),
 						fromVentilDate.getDateVentilation());
 
-		Mockito.doNothing().when(service).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
+//		Mockito.doNothing().when(service).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
 		Mockito.doNothing()
 				.when(service)
 				.calculatePointages(9005432, datesLundi.get(0), fromVentilDate.getDateVentilation(),
@@ -1428,7 +1443,8 @@ public class VentilationServiceTest {
 		Mockito.verify(service, Mockito.times(1)).getDistinctDateDebutMoisFromListOfDates(pointagesDates);
 		Mockito.verify(service, Mockito.times(1)).processHSupAndAbsVentilationForWeekAndAgent(toVentilDate, 9005432,
 				carr, datesLundi.get(0), fromVentilDate.getDateVentilation());
-		Mockito.verify(service, Mockito.times(1)).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
+		// evolution faite suite #31372
+//		Mockito.verify(service, Mockito.times(1)).removePreviousCalculatedPointages(9005432, datesLundi.get(0));
 		Mockito.verify(service, Mockito.times(1)).calculatePointages(9005432, datesLundi.get(0),
 				fromVentilDate.getDateVentilation(), toVentilDate);
 		Mockito.verify(service, Mockito.times(1)).processPrimesVentilationForMonthAndAgent(toVentilDate, 9005432,

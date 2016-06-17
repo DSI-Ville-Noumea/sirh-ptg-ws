@@ -470,6 +470,7 @@ public class PointageRepositoryTest {
 		assertEquals(0, repository.removePointageCalculesForDateAgent(9009999, new LocalDate(2013, 7, 23).toDate()));
 	}
 
+	// evolution faite suite #31372
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void removePointageCalculesForDateAgent_badEtat() {
@@ -487,7 +488,7 @@ public class PointageRepositoryTest {
 		p.setEtat(EtatPointageEnum.VALIDE);
 		ptgEntityManager.persist(p);
 
-		assertEquals(0, repository.removePointageCalculesForDateAgent(9005138, new LocalDate(2013, 7, 23).toDate()));
+		assertEquals(1, repository.removePointageCalculesForDateAgent(9005138, new LocalDate(2013, 7, 23).toDate()));
 	}
 
 	@Test

@@ -3109,7 +3109,7 @@ public class VentilationRepositoryTest {
 		List<VentilPrime> result = repository.getListOfOldVentilPrimeForAgentAndDateDebutMois(9005138, dateDebutMois,
 				vd.getIdVentilDate());
 
-		assertEquals(1, result.size());
+		assertEquals(3, result.size());
 		assertEquals(dateDebutMois, result.get(0).getDateDebutMois());
 		assertEquals(EtatPointageEnum.VALIDE, result.get(0).getEtat());
 		assertEquals(9005138, result.get(0).getIdAgent().intValue());
@@ -3267,6 +3267,23 @@ public class VentilationRepositoryTest {
 		ep.setIdAgent(9008761);
 		ep.setPointage(ptg);
 		ptgEntityManager.persist(ep);
+
+		Pointage ptg2 = new Pointage();
+		ptg2.setIdAgent(9008761);
+		ptg2.setDateLundi(new LocalDate(2012, 7, 20).toDate());
+		ptg2.setDateDebut(new DateTime(2012, 7, 22, 8, 0, 0).toDate());
+		ptg2.setRefTypeAbsence(null);
+		ptg2.setType(rtpPrime);
+		ptg2.setRefPrime(refPrime);
+		ptgEntityManager.persist(ptg2);
+
+		EtatPointage ep2 = new EtatPointage();
+		ep2.setDateEtat(new LocalDate(2012, 7, 25).toDate());
+		ep2.setDateMaj(new LocalDate(2012, 7, 22).toDate());
+		ep2.setEtat(EtatPointageEnum.VALIDE);
+		ep2.setIdAgent(9008761);
+		ep2.setPointage(ptg2);
+		ptgEntityManager.persist(ep2);
 
 		List<Pointage> result = repository.getListPointagesPrimeValideByMoisAndRefPrime(9008761, new DateTime(2013, 7,
 				1, 8, 0, 0).toDate(), refPrime.getIdRefPrime());

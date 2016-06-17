@@ -402,9 +402,11 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 	protected boolean areThereHSupsPointages(List<Pointage> pointages) {
 
-		for (Pointage ptg : pointages) {
-			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP)
-				return true;
+		if(null != pointages) {
+			for (Pointage ptg : pointages) {
+				if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP)
+					return true;
+			}
 		}
 
 		return false;
@@ -1143,7 +1145,7 @@ public class VentilationHSupService implements IVentilationHSupService {
 		List<PointageCalcule> listPointageCalculeHSup = getPointagesCalculesHSupForDay(pointagesCalcules);
 		
 		// le calcul des heures supp. et des absences, ayant deja été fait dans le calcul des pointages HSup.,
-		// on reprrend les resultats pour avoir le temps effectif de travail hebdomadaire "weekMinutes"
+		// on reprend les resultats pour avoir le temps effectif de travail hebdomadaire "weekMinutes"
 		int weekMinutes = ventilHSup.getMHorsContrat() + weekBase - ventilHSup.getMAbsences();
 		for(PointageCalcule ptgCalc : listPointageCalculeHSup) {
 			weekMinutes += ptgCalc.getQuantite();
