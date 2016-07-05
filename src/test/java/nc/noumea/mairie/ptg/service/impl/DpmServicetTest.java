@@ -477,9 +477,7 @@ public class DpmServicetTest {
 		
 		Integer idAgentConnecte = 9005138;
 		Integer annee = 2016;
-		
-		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(false);
-		
+				
 		service.getListDpmIndemniteChoixAgent(idAgentConnecte, annee, null, null);
 	}
 	
@@ -489,7 +487,6 @@ public class DpmServicetTest {
 		Integer idAgentConnecte = 9005138;
 		Integer annee = 2016;
 		
-		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(true);
 		Mockito.when(accessRightsService.isUserOperateur(idAgentConnecte)).thenReturn(false);
 		
 		List<Integer> listIdsAgent = Arrays.asList(idAgentConnecte);
@@ -501,10 +498,9 @@ public class DpmServicetTest {
 	@Test(expected = AccessForbiddenException.class)
 	public void getIndemniteChoixAgent_AccessForbiddenException() {
 		
-		Integer idAgentConnecte = 9005138;
+		Integer idAgentConnecte = null;
 		Integer annee = 2016;
 		
-		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(false);
 		
 		assertNotNull(service.getIndemniteChoixAgent(idAgentConnecte, annee));
 	}
@@ -515,7 +511,6 @@ public class DpmServicetTest {
 		Integer idAgentConnecte = 9005138;
 		Integer annee = 2016;
 		
-		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(true);
 		
 		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
 		
@@ -531,7 +526,6 @@ public class DpmServicetTest {
 		Integer idAgentConnecte = 9005138;
 		Integer annee = 2016;
 		
-		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(true);
 		Mockito.when(accessRightsService.isUserOperateur(idAgentConnecte)).thenReturn(true);
 		
 		AgentDto agent1 = new AgentDto();
@@ -562,7 +556,6 @@ public class DpmServicetTest {
 		Integer idAgentConnecte = 9005138;
 		Integer annee = 2016;
 		
-		Mockito.when(sirhWSUtils.isAgentDPM(idAgentConnecte)).thenReturn(true);
 		Mockito.when(accessRightsService.isUserOperateur(idAgentConnecte)).thenReturn(true);
 		
 		AgentDto agent1 = new AgentDto();

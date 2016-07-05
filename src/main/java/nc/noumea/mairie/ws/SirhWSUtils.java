@@ -40,13 +40,4 @@ public class SirhWSUtils {
 		return null;
 	}
 	
-	public boolean isAgentDPM(Integer idAgent) {
-		// prend la date du jour par defaut dans SirhWs
-		EntiteDto service = sirhWsConsumer.getAgentDirection(idAgent, null);
-		if (null != service && service.getSigle().toUpperCase().equals("DPM")) {
-			return true;
-		}
-		return false;
-	}
-	
 }

@@ -282,8 +282,7 @@ public class DpmService implements IDpmService {
 	@Transactional(readOnly = true)
 	public DpmIndemniteChoixAgentDto getIndemniteChoixAgent(Integer idAgentConnecte, Integer annee) {
 		
-		if(null == idAgentConnecte
-				|| !sirhWSUtils.isAgentDPM(idAgentConnecte)) {
+		if(null == idAgentConnecte){
 			throw new AccessForbiddenException();
 		}
 		
