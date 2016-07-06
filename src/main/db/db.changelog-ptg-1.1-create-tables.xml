@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="rayni84" id="dc139720-62de-11e3-949a-0800200c9a66-1">
+        <createSequence sequenceName="PTG_S_RC_TASK"/>
+        
+        <createTable tableName="PTG_RC_TASK">
+            <column name="ID_RC_TASK" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT_CREATION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_CREATION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_VENTIL_DATE" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_CALCUL" type="TIMESTAMP"/>
+            <column name="TASK_STATUS" type="VARCHAR2(255)"/>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="ID_RC_TASK" constraintName="PK_PTG_RC_TASK" tableName="PTG_RC_TASK"/>
+        <addDefaultValue columnName="ID_RC_TASK" tableName="PTG_RC_TASK" defaultValueSequenceNext="PTG_S_RC_TASK" />
+        
+        <addForeignKeyConstraint 
+            constraintName="FK_PTG_RC_TASK_VENTIL_DATE"
+            baseColumnNames="ID_VENTIL_DATE" baseTableName="PTG_RC_TASK" 
+            referencedColumnNames="ID_VENTIL_DATE" referencedTableName="PTG_VENTIL_DATE"/>
+
+    </changeSet>
+
+    <changeSet author="rayni84" id="dc139720-62de-11e3-949a-0800200c9a66-2">
+        <createSequence sequenceName="PTG_S_RC_HISTO"/>
+        
+        <createTable tableName="PTG_RC_HISTO">
+            <column name="ID_RC_HISTO" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_LUNDI" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="M_SUP" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="M_BASE_HORAIRE" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="ID_RC_HISTO" constraintName="PK_PTG_RC_HISTO" tableName="PTG_RC_HISTO"/>
+        <addDefaultValue columnName="ID_RC_HISTO" tableName="PTG_RC_HISTO" defaultValueSequenceNext="PTG_S_RC_HISTO" />
+        
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="dc139720-62de-11e3-949a-0800200c9a66-3">
+		<modifyDataType 
+            columnName="LIBELLE_SERVICE"
+            newDataType="VARCHAR(60)"
+            tableName="PTG_DROITS_AGENT"/>
+    </changeSet>
+</databaseChangeLog>

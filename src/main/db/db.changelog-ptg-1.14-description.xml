@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+	
+	<changeSet author="nicno85" id="16b39770-3d1a-11e4-916c-0800200c9a66-1">
+		        <sql>COMMENT on table PTG_COMMENT IS 'Commentaires des pointages';</sql>
+
+                <sql>COMMENT on table PTG_DROIT IS 'Droits des approbateurs, operateurs, delegataire';</sql>
+
+                <sql>COMMENT on table PTG_DROIT_DROITS_AGENT IS 'Relation entre les agents de PTG_DROITS_AGENT et les approbateurs/operateurs de PTG_DROIT';</sql>
+
+                <sql>COMMENT on table PTG_DROITS_AGENT IS 'Agents affectes aux approbateurs/operateurs';</sql>
+
+                <sql>COMMENT on table PTG_ETAT_PAYEUR IS 'Liste des etats du payeur';</sql>
+
+                <sql>COMMENT on table PTG_ETAT_POINTAGE IS 'Liste des etats d''un pointage';</sql>
+
+                <sql>COMMENT on table PTG_EXPORT_ETATS_PAYEUR_TASK IS 'Table utile à SIRH-JOBS pour lancer l''action des exports des etats du payeur';</sql>
+
+                <sql>COMMENT on table PTG_EXPORT_PAIE_TASK IS 'Table utile à SIRH-JOBS pour lancer l''action du derversement de la ventilation dans les tables AS400 de paie';</sql>
+
+                <sql>COMMENT on table PTG_POINTAGE IS 'Liste des pointages par agent';</sql>
+
+                <sql>COMMENT on table PTG_POINTAGE_CALCULE IS 'Liste des pointages qui sont calcules lors de la ventilation pour la prime 7715(Indemnite de roulement)';</sql>
+
+                <sql>COMMENT on table PTG_POINTAGE_VENTIL_DATE IS 'Relation entre les pointages de PTG_POINTAGE et les dates de ventilation de PTG_VENTIL_DATE';</sql>
+
+                <sql>COMMENT on table PTG_RC_HISTO IS 'Historique des repos compensateurs';</sql>
+
+                <sql>COMMENT on table PTG_RC_TASK IS 'Table utile à SIRH-JOBS pour lancer l''action de calcul des repos compensateurs';</sql>
+
+                <sql>COMMENT on table PTG_REF_ETAT IS 'Reference des etats d''un pointage';</sql>
+
+                <sql>COMMENT on table PTG_REF_PRIME IS 'Reference des primes de pointages';</sql>
+
+                <sql>COMMENT on table PTG_REF_TYPE_ABSENCE IS 'Reference des types d''absences';</sql>
+
+                <sql>COMMENT on table PTG_REF_TYPE_POINTAGE IS 'Refrence des types de pointages';</sql>
+
+                <sql>COMMENT on table PTG_VENTIL_ABSENCE IS 'Lsite des ventilations des pointages de type absence';</sql>
+
+                <sql>COMMENT on table PTG_VENTIL_DATE IS 'Dates de ventilation par type de population (SHC ou SCV)';</sql>
+
+                <sql>COMMENT on table PTG_VENTIL_HSUP IS 'Lsite des ventilations des pointages de type heures supplementaires';</sql>
+
+                <sql>COMMENT on table PTG_VENTIL_PRIME IS 'Lsite des ventilations des pointages de type primes';</sql>
+
+                <sql>COMMENT on table PTG_VENTIL_TASK IS 'Table utile à SIRH-JOBS pour lancer l''action de ventilation';</sql>
+
+	</changeSet>
+	
+</databaseChangeLog>

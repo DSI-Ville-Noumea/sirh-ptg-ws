@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+   
+    <changeSet id="load-data-ptg_comment" author="rebjo84">
+        <loadData tableName="PTG_COMMENT" file="csv/ptg_comment.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_ref_type_absence" author="rebjo84">
+        <loadData tableName="PTG_REF_TYPE_ABSENCE" file="csv/ptg_ref_type_absence.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_ref_type_pointage" author="rebjo84">
+        <loadData tableName="PTG_REF_TYPE_POINTAGE" file="csv/ptg_ref_type_pointage.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_ref_prime" author="rebjo84">
+        <loadData tableName="PTG_REF_PRIME" file="csv/ptg_ref_prime.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_ref_etat" author="rebjo84">
+        <loadData tableName="PTG_REF_ETAT" file="csv/ptg_ref_etat.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_pointage" author="rebjo84">
+        <loadData tableName="PTG_POINTAGE" file="csv/ptg_pointage.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_ventil_date" author="rebjo84">
+        <loadData tableName="PTG_VENTIL_DATE" file="csv/ptg_ventil_date.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_ventil_absence" author="rebjo84">
+        <loadData tableName="PTG_VENTIL_ABSENCE" file="csv/ptg_ventil_absence.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_ventil_hsup" author="rebjo84">
+        <loadData tableName="PTG_VENTIL_HSUP" file="csv/ptg_ventil_hsup.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_ventil_prime" author="rebjo84">
+        <loadData tableName="PTG_VENTIL_PRIME" file="csv/ptg_ventil_prime.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_ventil_task" author="rebjo84">
+        <loadData tableName="PTG_VENTIL_TASK" file="csv/ptg_ventil_task.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_rc_task" author="rebjo84">
+        <loadData tableName="PTG_RC_TASK" file="csv/ptg_rc_task.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_rc_histo" author="rebjo84">
+        <loadData tableName="PTG_RC_HISTO" file="csv/ptg_rc_histo.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_pointage_ventil_date" author="rebjo84">
+        <loadData tableName="PTG_POINTAGE_VENTIL_DATE" file="csv/ptg_pointage_ventil_date.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_pointage_calcule" author="rebjo84">
+        <loadData tableName="PTG_POINTAGE_CALCULE" file="csv/ptg_pointage_calcule.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_export_paie_task" author="rebjo84">
+        <loadData tableName="PTG_EXPORT_PAIE_TASK" file="csv/ptg_export_paie_task.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_export_etats_payeur_task" author="rebjo84">
+        <loadData tableName="PTG_EXPORT_ETATS_PAYEUR_TASK" file="csv/ptg_export_etats_payeur_task.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_etat_pointage" author="rebjo84">
+        <loadData tableName="PTG_ETAT_POINTAGE" file="csv/ptg_etat_pointage.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_etat_payeur" author="rebjo84">
+        <loadData tableName="PTG_ETAT_PAYEUR" file="csv/ptg_etat_payeur.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_droit" author="rebjo84">
+        <loadData tableName="PTG_DROIT" file="csv/ptg_droit.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_droits_agent" author="rebjo84">
+        <loadData tableName="PTG_DROITS_AGENT" file="csv/ptg_droits_agent.csv" separator="," />
+    </changeSet>
+	
+	<changeSet id="load-data-ptg_droit_droits_agent" author="rebjo84">
+        <loadData tableName="PTG_DROIT_DROITS_AGENT" file="csv/ptg_droit_droits_agent.csv" separator="," />
+    </changeSet>
+	
+</databaseChangeLog>

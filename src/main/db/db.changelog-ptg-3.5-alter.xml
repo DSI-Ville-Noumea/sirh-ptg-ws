@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	
+	<changeSet author="rebjo84" id="9f47ac70-186b-11e5-b939-0a8ed03c9a66-1">
+		<addColumn tableName="PTG_REF_PRIME">
+		    <column name="IS_AFFICHAGE_KIOSQUE" type="BOOL" afterColumn="STATUT" defaultValue="TRUE">
+		        <constraints nullable="false"/>
+		    </column>
+		</addColumn>
+	</changeSet>
+	
+</databaseChangeLog>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.0"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	
+	
+	<persistence-unit name="ptgPersistenceUnit" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>nc.noumea.mairie.ptg.domain.RefTypePointage</class>
+        <class>nc.noumea.mairie.ptg.domain.Pointage</class>
+        <class>nc.noumea.mairie.ptg.domain.PointageCalcule</class>
+        <class>nc.noumea.mairie.ptg.domain.EtatPointage</class>
+        <class>nc.noumea.mairie.ptg.domain.Droit</class>
+        <class>nc.noumea.mairie.ptg.domain.DroitsAgent</class>
+        <class>nc.noumea.mairie.ptg.domain.RefPrime</class>
+        <class>nc.noumea.mairie.ptg.domain.PtgComment</class>
+        <class>nc.noumea.mairie.ptg.domain.RefEtat</class>
+        <class>nc.noumea.mairie.ptg.domain.VentilDate</class>
+        <class>nc.noumea.mairie.ptg.domain.VentilHsup</class>
+        <class>nc.noumea.mairie.ptg.domain.VentilPrime</class>
+        <class>nc.noumea.mairie.ptg.domain.VentilAbsence</class>
+        <class>nc.noumea.mairie.ptg.domain.VentilTask</class>
+        <class>nc.noumea.mairie.ptg.domain.ExportPaieTask</class>
+        <class>nc.noumea.mairie.ptg.domain.EtatPayeur</class>
+        <class>nc.noumea.mairie.ptg.domain.ExportEtatsPayeurTask</class>
+        <class>nc.noumea.mairie.ptg.domain.ReposCompTask</class>
+        <class>nc.noumea.mairie.ptg.domain.ReposCompHisto</class>
+        <class>nc.noumea.mairie.ptg.domain.RefTypeAbsence</class>
+        <class>nc.noumea.mairie.ptg.domain.MotifHeureSup</class>
+        <class>nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur</class>
+        <class>nc.noumea.mairie.ptg.domain.TitreRepasDemande</class>
+        <class>nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande</class>
+      	<exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>
+            <!-- value="create" to build a new database on each run; value="update" to modify an existing database; value="create-drop" means the same as "create" but also drops tables when Hibernate closes; value="validate" makes no changes to the database -->
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
+            <property name="hibernate.connection.charSet" value="UTF-8"/>
+<!-- 			<property name="hibernate.show_sql" value="true" /> -->
+        </properties>
+    </persistence-unit>
+	
+	<persistence-unit name="sirhPersistenceUnit" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <class>nc.noumea.mairie.domain.Sprubr</class>
+        <class>nc.noumea.mairie.domain.Spcarr</class>
+        <class>nc.noumea.mairie.domain.Spabsen</class>
+        <class>nc.noumea.mairie.domain.Spbhor</class>
+        <class>nc.noumea.mairie.domain.Spbarem</class>
+        <class>nc.noumea.mairie.domain.Spadmn</class>
+        <class>nc.noumea.mairie.domain.Sppact</class>
+        <class>nc.noumea.mairie.domain.Spacti</class>
+        <class>nc.noumea.mairie.domain.Spphre</class>
+        <class>nc.noumea.mairie.domain.Sppprm</class>
+        <class>nc.noumea.mairie.domain.Spprim</class>
+        <class>nc.noumea.mairie.domain.Spmatr</class>
+        <class>nc.noumea.mairie.domain.SpWFEtat</class>
+        <class>nc.noumea.mairie.domain.SpWFPaie</class>
+      	<exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.DB2400Dialect"/>
+            <!-- value="create" to build a new database on each run; value="update" to modify an existing database; value="create-drop" means the same as "create" but also drops tables when Hibernate closes; value="validate" makes no changes to the database -->
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.ejb.naming_strategy" value="org.hibernate.cfg.ImprovedNamingStrategy"/>
+            <property name="hibernate.connection.charSet" value="UTF-8"/>
+<!--             <property name="hibernate.show_sql" value="true" /> -->
+        </properties>
+    </persistence-unit>
+    
+</persistence>

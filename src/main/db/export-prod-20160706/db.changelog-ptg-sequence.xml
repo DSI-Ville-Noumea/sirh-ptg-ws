@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+    
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-1">
+		<sql><![CDATA[select setval('PTG_S_COMMENT', (select max(Id_COMMENT)+1 from PTG_COMMENT)) ; ]]></sql>
+   	</changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-2">
+		<sql><![CDATA[select setval('PTG_S_DROIT', (select max(Id_DROIT)+1 from PTG_DROIT)) ; ]]></sql>
+  	</changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-3">
+		<sql><![CDATA[select setval('PTG_S_DROITS_AGENT', (select max(Id_DROITS_AGENT)+1 from PTG_DROITS_AGENT)) ; ]]></sql>
+	</changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-4">
+		<sql><![CDATA[select setval('PTG_S_ETAT_PAYEUR', (select max(Id_ETAT_PAYEUR)+1 from PTG_ETAT_PAYEUR)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-5">
+		<sql><![CDATA[select setval('PTG_S_ETAT_POINTAGE', (select max(Id_ETAT_POINTAGE)+1 from PTG_ETAT_POINTAGE)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-6">
+		<sql><![CDATA[select setval('PTG_S_EXPORT_ETATS_PAYEUR_TASK', (select max(Id_EXPORT_ETATS_PAYEUR_TASK)+1 from PTG_EXPORT_ETATS_PAYEUR_TASK)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-7">
+		<sql><![CDATA[select setval('PTG_S_EXPORT_PAIE_TASK', (select max(Id_EXPORT_PAIE_TASK)+1 from PTG_EXPORT_PAIE_TASK)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-8">
+		<sql><![CDATA[select setval('PTG_S_POINTAGE', (select max(Id_POINTAGE)+1 from PTG_POINTAGE)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-9">
+		<sql><![CDATA[select setval('PTG_S_POINTAGE_CALCULE', (select max(Id_POINTAGE_CALCULE)+1 from PTG_POINTAGE_CALCULE)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-11">
+		<sql><![CDATA[select setval('PTG_S_RC_HISTO', (select max(Id_RC_HISTO)+1 from PTG_RC_HISTO)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-12">
+		<sql><![CDATA[select setval('PTG_S_RC_TASK', (select max(Id_RC_TASK)+1 from PTG_RC_TASK)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-13">
+		<sql><![CDATA[select setval('PTG_S_REF_PRIME', (select max(Id_REF_PRIME)+1 from PTG_REF_PRIME)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-14">
+		<sql><![CDATA[select setval('PTG_S_VENTIL_ABSENCE', (select max(Id_VENTIL_ABSENCE)+1 from PTG_VENTIL_ABSENCE)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-15">
+		<sql><![CDATA[select setval('PTG_S_VENTIL_DATE', (select max(Id_VENTIL_DATE)+1 from PTG_VENTIL_DATE)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-16">
+		<sql><![CDATA[select setval('PTG_S_VENTIL_HSUP', (select max(Id_VENTIL_HSUP)+1 from PTG_VENTIL_HSUP)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-17">
+		<sql><![CDATA[select setval('PTG_S_VENTIL_PRIME', (select max(Id_VENTIL_PRIME)+1 from PTG_VENTIL_PRIME)) ; ]]></sql>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-18">
+		<sql><![CDATA[select setval('PTG_S_VENTIL_TASK', (select max(Id_VENTIL_TASK)+1 from PTG_VENTIL_TASK)) ; ]]></sql>
+    </changeSet>
+	
+	
+</databaseChangeLog>

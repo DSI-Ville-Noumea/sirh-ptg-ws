@@ -1,0 +1,1140 @@
+            ------
+            SIRH-PTG-WS API WS doc
+            ------
+
+
+
+SIRH-PTG-WS API pour SIRH
+
+* Droits
+
+** Gestion des approbateurs de pointages
+
+ <<URL>> : /droits/approbateurs
+ 
+ <<Accepted Methods>> : GET, POST
+ 
+ <<Parameters>>
+
+  -
+
+ <<Content>> (required only for POST) : La liste des agents (seulement la propriété "idAgent" est nécessaire) approbateurs.
+ 
++-------------------------+
+[
+   {
+       "idAgent": 9005138
+   },
+   {
+       "idAgent": 9002990
+   }
+]
++-------------------------+
+
+ <<Response>> : <<GET>> : la liste complète des agents approbateurs. <<POST>> : la liste des agents en erreur lors de la sauvegarde de la liste donnée.
+
++-------------------------+
+[
+   {
+       "codeService": "DCCA",
+       "idAgent": 9005138,
+       "nom": "CHARVET",
+       "prenom": "TATIANA",
+       "service": "DSI Service Etudes et Développement",
+       "statut": null
+   },
+   {
+       "codeService": "DCCA",
+       "idAgent": 9002990,
+       "nom": "DEPLANQUE",
+       "prenom": "RICHARD",
+       "service": "DSI Service Etudes et Développement",
+       "statut": null
+   }
+]
++-------------------------+
+
+* Visualisation
+
+** Visualiser les pointages en liste
+
+ <<URL>> : /visualisation/pointagesSIRH
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<from>> : Pour sélectionner les pointages après une date
+  
+  * <<to>> : Pour sélectionner les pointages jusqu'à une date
+  
+  * <<idAgents>> (optional) : La liste des ID_AGENT (900xxxx) pour lesquels sélectionner les pointages (sous la forme d'une chaine en CSV)
+  
+  * <<etat>> (optional) : L'état id des pointages à sélectionner
+  
+  * <<type>> (optional) : Le type id des pointages à sélectionner. ABS (1), H_SUP (2) ou PRIME (3)
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+
++-------------------------+
+[
+   {
+       "agent":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       },
+       "commentaire": "",
+       "date": "/Date(1368450000000+1100)/",
+       "dateSaisie": "/Date(1368746640000+1100)/",
+       "debut": "/Date(1368450000000+1100)/",
+       "fin": null,
+       "idPointage": 13,
+       "idRefEtat": 0,
+       "motif": "",
+       "quantite": "1",
+       "typePointage": "Prime",
+       "operateur":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       }
+   },
+   {
+       "agent":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       },
+       "commentaire": "",
+       "date": "/Date(1368622800000+1100)/",
+       "dateSaisie": "/Date(1371100316000+1100)/",
+       "debut": "/Date(1368622800000+1100)/",
+       "fin": "/Date(1368622800000+1100)/",
+       "idPointage": 12,
+       "idRefEtat": 2,
+       "motif": "",
+       "quantite": "0m",
+       "typePointage": "Absence",
+       "operateur":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       }
+   }
+]
++-------------------------+
+
+
+
+** Modifier les états d'une liste de pointages 
+
+ <<URL>> : /visualisation/changerEtatsSIRH
+ 
+ <<Accepted Methods>> : POST
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : L'ID_AGENT (900xxxx) qui fait l'opération.
+ 
+ <<Content>>
+  
++-------------------------+ 
+[
+    {
+        "idPointage" : 9877,
+        "idRefEtat" : 3 // (REFUSE 2 / APPROUVE 1 / EN_ATTENTE 8)
+    },
+    ...
+]
++-------------------------+
+ 
+ <<Response>>
+
++-------------------------+
+HTTP Status code OK : 200
++-------------------------+
+
+
+
+** Visualiser l'historique d'un pointage 
+
+ <<URL>> : /visualisation/historiqueSIRH
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ * <<idPointage>> : Identifiant du pointage.
+ 
+ <<Content>>
+  
+-
+ 
+ <<Response>>
+
++-------------------------+
+[
+    {
+		"idPointage" : 98765,
+		"agent" :
+		{
+			"nom" : "Dupont",
+			"prenom" : "Michel",
+			"idAgent" : 9008765,
+		},
+		"type" : "H. Supp", // (texte libre)
+		"date" : "/Date()/",
+		"debut" : "/Date()/",
+		"fin" : "/Date()/",
+		"quantite" : "3h30", // (texte libre: "3h30", "3", "1")
+		"motif" : "blabla",
+		"commentaire" : "le commentaire",
+		"etat" : "SAISI", // (SAISI/…)
+		"dateSaisie" : "/Date()/",
+       "operateur":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       }
+	},
+	…
+]
++-------------------------+
+
+
+
+* Recuperer tous les idAgent qui ont un pointage 
+
+ <<URL>> : /visualisation/listeAgentsPointagesForSIRH
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  
+ <<Content>>
+  
+-
+ 
+ <<Response>>
+
++-------------------------+
+[
+       {
+           "idAgent": 9005138,
+           "nom": null,
+           "prenom": null
+       },
+       {
+           "idAgent": 9005472,
+           "nom": null,
+           "prenom": null
+       },
+       {
+           "idAgent": 9004037,
+           "nom": null,
+           "prenom": null
+       }
+ ]
++-------------------------+
+
+
+
+
+* Ventilation
+
+** Connaitre la ventilation en cours pour un type chaine
+
+ <<URL>> : /ventilation/getVentilationEnCours
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut des agents dont les pointages sont à ventiler. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Content si ventilation en cours
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
++-------------------------+
+{
+    "dateVentil": "/Date(1378040340000+1100)/",
+    "paie": false,
+     "typeChaine": "SHC"
+}
++-------------------------+
+
+  * Content si pas de ventilation en cours
+
++-------------------------+
+ HTTP Status code NO_CONTENT : 204
++-------------------------+
+
+** Vérifier la possibilité de lancer une ventilation
+
+ <<URL>> : /ventilation/canStartVentilation
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut des agents dont les pointages sont à ventiler. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Status :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "canStartVentilation": true
+}
++-------------------------+
+
+
+** Lancer une ventilation (lancer le traitement asynchrone)
+
+ <<ATTENTION : pour que cela fonctionne, il faut qu'il y ait deja une ventilation de payée pour chaque type de chaine de paie.>>
+ Note: Cet appel de web service n'effectue pas le traitement de ventilation. Il programme la tâche en BDD et c'est un Job (SIRH-JOBS) qui l'effectuera (via un appel au WS ci-dessous ventilation/processTask).
+
+ <<URL>> : /ventilation/start
+ 
+ <<Accepted Methods>> : POST
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : L'Id de l'agent lancant la ventilation (matricule au format 900xxxx)
+  
+  * <<date>> : La date de ventilation (un dimanche obligatoirement)
+  
+  * <<typePointage>> (optional) : Le type id des pointages à ventiler. ABS (1), H_SUP (2) ou PRIME (3)
+
+  * <<statut>> : Le statut des agents à ventiler. 'F', 'C' or 'CC'
+
+ <<Content>> (optional) : La liste des ID_AGENT à ventiler. Si cette liste est vide, tous les agents ayant le statut donné en paramètre seront ventilés.
+ 
++-------------------------+
+[ 9008765, 9009876, 9004323 ]
++-------------------------+
+ 
+ ou (liste vide)
+
++-------------------------+
+[ ]
++-------------------------+
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si une erreur fonctionnelle car la ventilation n'a pas pu être lancée :
+
++-------------------------+
+ HTTP Status code CONFLICT : 409
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "erreurs" :
+    [
+        "erreur 1",
+        "erreur 2"
+    ],
+    "infos" : 
+    [
+        "Agent 9008765",
+        "Agent 9008769"
+    ]
+}
++-------------------------+
+
+
+** Exécuter une tâche de ventilation (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS de ventilation.>>
+ Note: Cet appel de web service vise à effectuer une tâche de ventilation. Une tâche de ventilation est le processus de ventilation des pointages d'un agent pour une période, un type de pointage et une date donnés.
+
+ <<URL>> : /ventilation/processTask
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idVentilTask>> : L'Id de la tâche de ventilation (préalablement créée via un appel à /ventilation/start)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si la tâche de ventilation est introuvable :
+
++-------------------------+
+ HTTP Status code NOT_FOUND : 404
++-------------------------+
+
+
+** Visualiser les ventilations
+
+ <<URL>> : /ventilation/show
+ 
+ <<Accepted Methods>> : POST
+ 
+ <<Parameters>>
+
+  * <<idDateVentil>> : L'id de date de ventilation. Entier.
+  
+  * <<csvIdAgents>> : Liste d' id d'agents séparés par des virgules pour lesquels on souhaite visualiser les pointages ventilés. Matricules au format 900xxxx
+  
+  * <<typePointage>> : Le type des pointages à ventiler. Entier. ABS (1), H_SUP (2) ou PRIME (3)
+  
+  <<Content>> : La liste des ID_AGENT à visualiser.
+ 
++-------------------------+
+[ 9008765, 9009876, 9004323 ]
++-------------------------+
+ 
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content 
+  
+** Si  typePointage = 1 (ABSENCE)
+
++-------------------------+
+{
+    date_lundi: "/Date(1368968400000+1100)/"
+    etat: 4
+    id_agent: 9003903
+    id_ventil_absence: 61
+    minutes_concertees: 120
+    minutes_non_concertees: 90
+    minutes_immediate: 90
+}
++-------------------------+
+
+** Si  typePointage = 2 (HEURE SUP)
+
++-------------------------+
+{
+    date_lundi: "/Date(1368968400000+1100)/"
+    etat: 4
+    id_agent: 9003903
+    id_ventil_hsup: 41
+    m_1_mai: 0
+    m_1_mai_r: 0
+    m_complementaires: 15
+    m_complementaires_r: 0
+    m_composees: 0
+    m_composees_r: 0
+    m_djf: 0
+    m_djf_25: 0
+    m_djf_25_r: 0
+    m_djf_50: 0
+    m_djf_50_r: 0
+    m_djf_r: 0
+    m_hors_contrat: 360
+    m_normales: 0
+    m_normales_r: 0
+    m_nuit: 90
+    m_nuit_r: 0
+    m_recuperees: 0
+    m_simples: 0
+    m_simples_r: 0
+    m_sup: 150
+    m_sup_25: 135
+    m_sup_25_r: 0
+    m_sup_50: 0
+    m_sup_50_r: 0
+    mabs: 210
+}
++-------------------------+
+
+** Si  typePointage = 3 (PRIME)
+
++-------------------------+
+{
+    date_debut_mois: "/Date(1367326800000+1100)/"
+    etat: 4
+    id_agent: 9003903
+    id_ref_prime: 289
+    id_ventil_prime: 41
+    quantite: "5" // ou "2h30" ou "45m"
+}
++-------------------------+
+
+  * Si liste vide :
+
++-------------------------+
+ HTTP Status code NO-CONTENT : 204
++-------------------------+
+
+
+** Visualiser les détails d'une ventilation
+
+ <<URL>> : /ventilation/showHistory
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<mois>> : mois concerné (02,12...) Entier.
+  
+  * <<annee>> : année concernée (20143,2014...) Entier.
+  
+  * <<typePointage>> : Le type des pointages. Entier. ABS (1), H_SUP (2) ou PRIME (3)
+  
+  * <<idAgent>> : Id de l'agent concerné. Entier.
+  
+  <<Content>> : 
+ 
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content 
+
++-------------------------+
+[
+	{
+		"date":"/Date(1391346000000+1100)/",
+		"dateLundi":"/Date(1391346000000+1100)/",
+		"etat":4,
+		"idAgent":9003997,
+		"idVentil":13,
+		"minutesConcertees":0,
+		"minutesImmediates":0,
+		"minutesNonConcertees":660
+	},...
+]
++-------------------------+
+
+  * Si liste vide :
+
++-------------------------+
+ HTTP Status code NO-CONTENT : 204
++-------------------------+
+
+
+* Déversement dans la paie (Exportation dans la paie)
+
+** Récupérer l'état du workflow
+
+ <<URL>> : /exportPaie/etat
+ 
+ <<Accepted Methods>> : GET
+
+  <<Parameters>>
+
+  * <<statut>> : Le statut d'agent pour lequel demander l'état du workflow (F, C, CC).
+  
+
+ <<Response>>
+
+   * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content
+
++-------------------------+
+{
+    "codeChaine": "SHC",
+    "dateMaj": "/Date(1368450000000+1100)/",
+    "etat": {
+        "codeEtat": 1,
+        "libelleEtat": "Ecriture pointages en cours"
+    },
+    "periodePaie": 0
+}
++-------------------------+
+
+
+** Différents états possibles du workflow
+
+*--*----*
+|<<CODE>>|<<LIBELLE>>|
+*--*----*
+|0 |Pret|
+*--*----*
+|1 |Ecriture pointages en cours|
+*--*----*
+|2 |Ecriture pointages terminée|
+*--*----*
+|3 |Calcul salaire en cours|
+*--*----*
+|4 |Calcul salaire terminé|
+*--*----*
+|5 |Journal en cours|
+*--*----*
+|6 |Journal terminé|
+*--*----*
+|7 |Etat payeur en cours|
+*--*----*
+|8 |Etat payeur terminé|
+*--*----*
+
+
+** Liste des erreurs de la ventilation en cours dans PTG_VENTIL_TASK
+
+ <<URL>> : /ventilation/getErreursVentilation 
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut des agents dont les pointages sont à exporter dans la paie. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Status :
+
++-------------------------+
+ HTTP Status code OK : 200
+ HTTP Status code NO_CONTENT : 204
++-------------------------+
+
+  * Content 
+
++-------------------------+
+[
+   {
+	   "dateCreation": "/Date(1389929766705+1100)/",
+	   "idAgent": 9003463,
+	   "taskStatus": "ERREUR TEST",
+	   "typeChainePaie": "SCV"
+   },
+   ...
+]
++-------------------------+
+
+
+** Vérifier la possibilité de lancer une exportation
+
+ <<URL>> : /exportPaie/canStartExportPaie 
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut des agents dont les pointages sont à exporter dans la paie. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Status :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "canStartAction": true
+}
++-------------------------+
+
+
+** Lancer une exportation (lancer le traitement asynchrone)
+
+ Note: Cet appel de web service n'effectue pas le traitement d'exportation. Il programme la tâche en BDD et c'est un Job (SIRH-JOBS) qui l'effectuera.
+ 
+ <<URL>> : /exportPaie/start
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : L'Id de l'agent lancant l'exportation (matricule au format 900xxxx)
+  
+  * <<statut>> : Le statut des agents dont les pointages sont à exporter : 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si une erreur fonctionnelle car l'export n'a pu être lancé :
+
++-------------------------+
+ HTTP Status code CONFLICT : 409
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "erreurs" :
+    [
+        "erreur 1",
+        "erreur 2"
+    ],
+    "infos" : 
+    [
+        "Agent 9008765",
+        "Agent 9008778"
+    ]
+}
++-------------------------+
+
+
+** Exécuter une tâche d'export dans la Paie (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS d'export Paie.>>
+ Note: Cet appel de web service vise à effectuer une tâche d'export Paie. Une tâche d'export Paie est le processus de copie des pointages d'un agent pour une période donnée dans la Paie.
+
+ <<URL>> : /exportPaie/processTask
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idExportPaieTask>> : L'Id de la tâche d'export (préalablement créée via un appel à /exportPaie/start)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si la tâche d'export est introuvable :
+
++-------------------------+
+ HTTP Status code NOT_FOUND : 404
++-------------------------+
+
+
+** Mettre à jour l'état du workflow après déversement dans la paie (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé uniquement par le Job SIRH-JOBS d'export Paie.>>
+ Note: Cet appel de web service vise à terminé la phase d'exportation dans la paie pour une chaine de paie donnée. Il consiste à mettre à jour le workflow de paie à l'état "Déversement terminé".
+
+ <<URL>> : /exportPaie/stop
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<typeChainePaie>> : Le type de chaine paie pour laquelle faire la mise à jour (SCV, SHC)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si la mise à jour du workflow est impossible :
+
++-------------------------+
+ HTTP Status code CONFLICT : 409
++-------------------------+
+
+
+* Prime
+
+** Récuperer la liste des primes existantes. 
+
+ <<URL>> : /primes/getListePrime
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ -
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+ 
++-------------------------+
+[
+    {
+        "calculee": false,
+        "description": "Prime forfaitaire mensuelle de 3000F",
+        "idRefPrime": 271,
+        "libelle": "PRIME DE PERMANENCE",
+        "numRubrique": 7120,
+        "statut": "F",
+        "aide": "le texte de l'aide",
+        "typeSaisie": "CASE_A_COCHER"
+    },
+    {
+        "calculee": false,
+        "description": "Prime forfaitaire journalière de 3000F",
+        "idRefPrime": 275,
+        "libelle": "INDEMNITE D'ASTREINTE",
+        "numRubrique": 7121,
+        "statut": "C",
+        "aide": "le texte de l'aide",
+        "typeSaisie": "CASE_A_COCHER"
+    },
+    {
+        "calculee": false,
+        "description": "Prime forfaitaire journalière de 3000F",
+        "idRefPrime": 279,
+        "libelle": "INDEMNITE DE PERMANENCE CFM",
+        "numRubrique": 7123,
+        "statut": "CC",
+        "aide": "le texte de l'aide",
+        "typeSaisie": "CASE_A_COCHER"
+    },
+	...
+]
++-------------------------+
+ 
+ 
+ 
+** Récuperer la liste des primes d'un agent en fonction de son statut. 
+
+ <<URL>> : /primes/getListePrimeWithStatus
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut de l'agent.  'F', 'C' ou 'CC'
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+ 
++-------------------------+
+[
+    {
+        "calculee": false,
+        "description": "Prime forfaitaire journalière de 3000F",
+        "idRefPrime": 276,
+        "libelle": "INDEMNITE D'ASTREINTE",
+        "numRubrique": 7121,
+        "statut": "CC",
+        "aide": "le texte de l'aide",
+        "typeSaisie": "CASE_A_COCHER"
+    },
+    {
+        "calculee": false,
+        "description": "Prime forfaitaire journalière de 3000F",
+        "idRefPrime": 279,
+        "libelle": "INDEMNITE DE PERMANENCE CFM",
+        "numRubrique": 7123,
+        "statut": "CC",
+        "aide": "le texte de l'aide",
+        "typeSaisie": "CASE_A_COCHER"
+    },
+	...
+]
++-------------------------+
+  
+ 
+** Récuperer le détail d'une prime. 
+
+ <<URL>> : /primes/getPrime
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<noRubr>> : le numero de la prime
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+ 
++-------------------------+
+    {
+       "calculee": false,
+       "description": "Prime forfaitaire de 15000F/autopsie",
+       "idRefPrime": 295,
+       "libelle": "INDEMNITE PARTICIPATION AUTOPSIES TARIF II",
+       "numRubrique": 7710,
+       "statut": "F",
+       "aide": "le texte de l'aide",
+       "typeSaisie": "NB_INDEMNITES"
+    }
++-------------------------+
+
+
+
+** Savoir si une prime a déjà été pointée. 
+
+ <<URL>> : /primes/isPrimeUtilisee
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<noRubr>> : le numero de la prime
+
+  * <<idAgent>> : le numero de l'agent concerné
+
+ <<Content>> 
+ 
+ -
+ 
+ <<Response>>
+ 
+  * 200 si utilisée
+  
+  * 204 si pas utilisée
+
+
+* Etats du Payeur
+
+** Vérifier la possibilité de lancer une edition des etats du payeur
+
+ <<URL>> : /etatsPayeur/canStartExportEtatsPayeur 
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<statut>> : Le statut des agents dont les états du payeur sont à éditer. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Status :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "canStartAction": true
+}
++-------------------------+
+
+
+** Lancer une exportation des états du payeur (lancer le traitement asynchrone)
+
+ Note: Cet appel de web service n'effectue pas le traitement d'édition des états. Il programme la tâche en BDD et c'est un Job (SIRH-JOBS) qui l'effectuera (via un appel au WS ci-dessous etatsPayeur/startExportTask).
+
+ <<URL>> : /etatsPayeur/start
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : L'Id de l'agent lancant l'export (matricule au format 900xxxx)
+
+  * <<statut>> : Le statut des agents à ventiler. 'F', 'C' or 'CC'
+
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si une erreur fonctionnelle car l'export n'a pas pu être lancée :
+
++-------------------------+
+ HTTP Status code CONFLICT : 409
++-------------------------+
+
+  * Content 
+
++-------------------------+
+{
+    "erreurs" :
+    [
+        "erreur 1",
+        "erreur 2"
+    ],
+    "infos" : 
+    [
+        "Agent 9008765",
+        "Agent 9008769"
+    ]
+}
++-------------------------+
+
+
+** Exécuter une tâche d'export des états payeur (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS d'export des états du payeur.>>
+ Note: Cet appel de web service vise à effectuer une tâche d'export des états.
+
+ <<URL>> : /etatsPayeur/startExportTask
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idExportEtatsPayeurTask>> : L'Id de la tâche d'export (préalablement créée via un appel à /etatsPayeur/start)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+
+** Terminer une tâche d'export des états payeur (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS d'export des états du payeur.>>
+ Note: Cet appel de web service vise à terminer la deuxième phase d'une tâche d'export des états.
+
+ <<URL>> : /etatsPayeur/finishExportTask
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idExportEtatsPayeurTask>> : L'Id de la tâche d'export (préalablement créée via un appel à /etatsPayeur/start)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+
+** Mettre à jour l'état du workflow après export des états du payeur (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé uniquement par le Job SIRH-JOBS d'export des états du payeur.>>
+ Note: Cet appel de web service vise à terminé la phase d'exportation des états du payeur pour une chaine de paie donnée. Il consiste à mettre à jour le workflow de paie à l'état "Export état payeurs terminé".
+
+ <<URL>> : /etatsPayeur/stop
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<typeChainePaie>> : Le type de chaine paie pour laquelle faire la mise à jour (SCV, SHC)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+  * Si la mise à jour du workflow est impossible :
+
++-------------------------+
+ HTTP Status code CONFLICT : 409
++-------------------------+
+
+* Calcul des repos compensateurs
+
+** Exécuter une tâche de calcul et exportation des repos compensateurs des agents (appelé par SIRH-JOBS)
+
+ <<ATTENTION : Ce webservice est voué à être appelé par le Job SIRH-JOBS de calcul des repos compensateurs.>>
+ Note: Cet appel de web service vise à effectuer une tâche de calcul et export des repos compensateurs d'un agent.
+
+ <<URL>> : /reposcomp/startReposCompTask
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idReposCompTask>> : L'Id de la tâche de calcul (préalablement créée via l'export des états du payeur)
+
+ <<Response>>
+
+  * Si aucune erreur :
+
++-------------------------+
+ HTTP Status code OK : 200
++-------------------------+
+
+
+** Liste les types disponibles pour le filtre
+
+ <<URL>> : /filtres/getTypesAbsence
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ -
+ 
+ []
+ 
+ <<Content>>
+  
++-------------------------+
+[
+	{
+		"idRefTypeAbsence": 1,
+		"libelle": "Concertée"
+	},
+	{
+		"idRefTypeAbsence": 2,
+		"libelle": "Non concertée"
+	},
+	{
+		"idRefTypeAbsence": 3,
+		"libelle": "Immédiate"
+	}
+]
++-------------------------+

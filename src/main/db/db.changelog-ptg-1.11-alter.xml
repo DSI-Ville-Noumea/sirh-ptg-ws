@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+	
+	<changeSet author="rebjo84" id="b3287f0-b85c-11e3-a5e2-11abc123c9a66-1">
+		<dropColumn 
+            columnName="M_DJF_25" 
+            tableName="PTG_VENTIL_HSUP" />
+		<dropColumn 
+            columnName="M_DJF_50" 
+            tableName="PTG_VENTIL_HSUP" />
+		<dropColumn 
+            columnName="M_DJF_25_R" 
+            tableName="PTG_VENTIL_HSUP" />
+		<dropColumn 
+            columnName="M_DJF_50_R" 
+            tableName="PTG_VENTIL_HSUP" />
+	</changeSet>
+	
+</databaseChangeLog>

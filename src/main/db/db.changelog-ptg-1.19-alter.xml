@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+	
+	<changeSet author="nicno85" id="76f4d000-96b5-11e4-b4a9-0800200c9a66-1">
+		<addColumn tableName="PTG_VENTIL_PRIME">
+            <column name="DATE_PRIME" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+		</addColumn>
+	</changeSet>
+	
+	<changeSet author="nicno85" id="76f4d000-96b5-11e4-b4a9-0800200c9a66-2">
+        <dropColumn tableName="PTG_ETAT_PAYEUR" columnName="ID_TYPE_POINTAGE" />
+    </changeSet>
+	
+</databaseChangeLog>

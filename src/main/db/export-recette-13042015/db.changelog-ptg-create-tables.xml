@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <changeSet author="rebjo84 (generated)" id="1406235744921-1">
+        <createTable tableName="ptg_comment">
+            <column name="id_comment" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_comment"/>
+            </column>
+            <column name="text" type="TEXT"/>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-2">
+        <createTable tableName="ptg_droit">
+            <column name="id_droit" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_droit"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_modification" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_approbateur" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_operateur" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_agent_delegataire" type="INT4"/>
+            <column name="id_droit_approbateur" type="INT4"/>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-3">
+        <createTable tableName="ptg_droit_droits_agent">
+            <column name="id_droit" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_droits_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-4">
+        <createTable tableName="ptg_droits_agent">
+            <column name="id_droits_agent" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_droits_agent"/>
+            </column>
+            <column name="id_agent" type="INT4"/>
+            <column name="code_service" type="VARCHAR(10)"/>
+            <column name="libelle_service" type="VARCHAR(60)"/>
+            <column name="date_modification" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-5">
+        <createTable tableName="ptg_etat_payeur">
+            <column name="id_etat_payeur" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_etat_payeur"/>
+            </column>
+            <column name="statut" type="VARCHAR(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_type_pointage" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_etat_payeur" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="fichier" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_edition" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-6">
+        <createTable tableName="ptg_etat_pointage">
+            <column name="id_etat_pointage" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_etat_pointage"/>
+            </column>
+            <column name="id_pointage" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_etat" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_maj" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="etat" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-7">
+        <createTable tableName="ptg_export_etats_payeur_task">
+            <column name="id_export_etats_payeur_task" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_export_etats_task"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_creation" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_export" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="type_chaine_paie" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_ventil_date" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="task_status" type="VARCHAR(255)"/>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-8">
+        <createTable tableName="ptg_export_paie_task">
+            <column name="id_export_paie_task" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_export_paie_task"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_agent_creation" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_creation" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type_chaine_paie" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_ventil_date" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_export" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="task_status" type="VARCHAR(255)"/>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-9">
+        <createTable tableName="ptg_pointage">
+            <column name="id_pointage" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_pointage"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_type_pointage" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_lundi" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_debut" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_fin" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="quantite" type="INT4"/>
+            <column name="id_pointage_parent" type="INT4"/>
+            <column name="id_ref_prime" type="INT4"/>
+            <column name="is_hsup_recuperee" type="BOOL"/>
+            <column name="id_comment_motif" type="INT4"/>
+            <column name="id_comment_commentaire" type="INT4"/>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_ref_type_absence" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-10">
+        <createTable tableName="ptg_pointage_calcule">
+            <column name="id_pointage_calcule" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_pointage_calcule"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_lundi" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_debut" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_fin" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="quantite" type="INT4"/>
+            <column name="id_ref_type_pointage" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_ref_prime" type="INT4"/>
+            <column name="etat" type="INT4"/>
+            <column name="id_ventil_date" type="INT4"/>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-11">
+        <createTable tableName="ptg_pointage_ventil_date">
+            <column name="id_pointage" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_ventil_date" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-12">
+        <createTable tableName="ptg_rc_histo">
+            <column name="id_rc_histo" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_rc_histo"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_lundi" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="m_sup" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="m_base_horaire" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-13">
+        <createTable tableName="ptg_rc_task">
+            <column name="id_rc_task" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_rc_task"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_agent_creation" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_creation" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_ventil_date" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_calcul" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="task_status" type="VARCHAR(255)"/>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-14">
+        <createTable tableName="ptg_ref_etat">
+            <column name="id_ref_etat" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="VARCHAR(25)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-15">
+        <createTable tableName="ptg_ref_prime">
+            <column name="id_ref_prime" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_ref_prime"/>
+            </column>
+            <column name="norubr" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="libelle" type="VARCHAR(50)"/>
+            <column name="description" type="VARCHAR(300)"/>
+            <column name="type_saisie" type="INT4"/>
+            <column name="aide" type="VARCHAR(300)"/>
+            <column name="mairie_prime" type="VARCHAR(6)"/>
+            <column name="is_calculee" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="statut" type="VARCHAR(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-16">
+        <createTable tableName="ptg_ref_type_absence">
+            <column name="id_ref_type_absence" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="VARCHAR(25)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-17">
+        <createTable tableName="ptg_ref_type_pointage">
+            <column name="id_ref_type_pointage" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="label" type="VARCHAR(25)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-18">
+        <createTable tableName="ptg_ventil_absence">
+            <column name="id_ventil_absence" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_ventil_absence"/>
+            </column>
+            <column name="id_ventil_date" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_lundi" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="etat" type="INT4"/>
+            <column name="minutes_concertee" type="INT4"/>
+            <column name="minutes_non_concertee" type="INT4"/>
+            <column name="version" type="INT4"/>
+            <column name="minutes_immediat" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-19">
+        <createTable tableName="ptg_ventil_date">
+            <column name="id_ventil_date" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_ventil_date"/>
+            </column>
+            <column name="date_ventil" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="is_paye" type="BOOL">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type_chaine_paie" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-20">
+        <createTable tableName="ptg_ventil_hsup">
+            <column name="id_ventil_hsup" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_ventil_hsup"/>
+            </column>
+            <column name="id_ventil_date" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_lundi" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="m_abs" type="INT4"/>
+            <column name="m_hors_contrat" type="INT4"/>
+            <column name="m_sup" type="INT4"/>
+            <column name="m_sup_25" type="INT4"/>
+            <column name="m_sup_50" type="INT4"/>
+            <column name="m_djf" type="INT4"/>
+            <column name="m_djf_25" type="INT4"/>
+            <column name="m_djf_50" type="INT4"/>
+            <column name="m_1_mai" type="INT4"/>
+            <column name="m_nuit" type="INT4"/>
+            <column name="m_normales" type="INT4"/>
+            <column name="m_complementaires" type="INT4"/>
+            <column name="m_simples" type="INT4"/>
+            <column name="m_composees" type="INT4"/>
+            <column name="m_recuperees" type="INT4"/>
+            <column name="m_sup_25_r" type="INT4"/>
+            <column name="m_sup_50_r" type="INT4"/>
+            <column name="m_djf_r" type="INT4"/>
+            <column name="m_djf_25_r" type="INT4"/>
+            <column name="m_djf_50_r" type="INT4"/>
+            <column name="m_1_mai_r" type="INT4"/>
+            <column name="m_nuit_r" type="INT4"/>
+            <column name="m_normales_r" type="INT4"/>
+            <column name="m_complementaires_r" type="INT4"/>
+            <column name="m_simples_r" type="INT4"/>
+            <column name="m_composees_r" type="INT4"/>
+            <column name="etat" type="INT4"/>
+            <column name="version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-21">
+        <createTable tableName="ptg_ventil_prime">
+            <column name="id_ventil_prime" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_ventil_prime"/>
+            </column>
+            <column name="id_ventil_date" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_debut_mois" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_ref_prime" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="quantite" type="INT4"/>
+            <column name="etat" type="INT4"/>
+            <column name="version" type="INT4"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-22">
+        <createTable tableName="ptg_ventil_task">
+            <column name="id_ventil_task" type="INT4">
+                <constraints primaryKey="true" primaryKeyName="pk_ptg_ventil_task"/>
+            </column>
+            <column name="id_agent" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_agent_creation" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_creation" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="type_chaine_paie" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_type_pointage" type="INT4"/>
+            <column name="id_ventil_date_from" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id_ventil_date_to" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="date_ventilation" type="TIMESTAMP WITH TIME ZONE"/>
+            <column name="task_status" type="VARCHAR(255)"/>
+            <column name="version" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-23">
+        <addPrimaryKey columnNames="id_droit, id_droits_agent" constraintName="pk_droit_droits_agent" tableName="ptg_droit_droits_agent"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-24">
+        <addPrimaryKey columnNames="id_pointage, id_ventil_date" constraintName="pk_ptg_pointage_ventil_date" tableName="ptg_pointage_ventil_date"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-25">
+        <addPrimaryKey columnNames="id_ref_etat" constraintName="pk_ptg_ref_etat" tableName="ptg_ref_etat"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-26">
+        <addPrimaryKey columnNames="id_ref_type_absence" constraintName="pk_ptg_ref_type_absence" tableName="ptg_ref_type_absence"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-27">
+        <addPrimaryKey columnNames="id_ref_type_pointage" constraintName="pk_ptg_ref_type_pointage" tableName="ptg_ref_type_pointage"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-28">
+        <addForeignKeyConstraint baseColumnNames="id_droit" baseTableName="ptg_droit_droits_agent" constraintName="fk_ptg_droit_droits_agent_droit" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_droit" referencedTableName="ptg_droit"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-29">
+        <addForeignKeyConstraint baseColumnNames="id_droits_agent" baseTableName="ptg_droit_droits_agent" constraintName="fk_ptg_droit_droits_agent_droits_agent" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_droits_agent" referencedTableName="ptg_droits_agent"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-30">
+        <addForeignKeyConstraint baseColumnNames="id_type_pointage" baseTableName="ptg_etat_payeur" constraintName="fk_ptg_etat_payeur_type_pointage" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_type_pointage" referencedTableName="ptg_ref_type_pointage"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-31">
+        <addForeignKeyConstraint baseColumnNames="id_pointage" baseTableName="ptg_etat_pointage" constraintName="fk_ptg_etat_pointage_pointage" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_pointage" referencedTableName="ptg_pointage"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-32">
+        <addForeignKeyConstraint baseColumnNames="etat" baseTableName="ptg_etat_pointage" constraintName="fk_ptg_etat_pointage_ref_etat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_etat" referencedTableName="ptg_ref_etat"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-33">
+        <addForeignKeyConstraint baseColumnNames="id_ventil_date" baseTableName="ptg_export_etats_payeur_task" constraintName="fk_ptg_export_etats_payeur_task_ventil_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ventil_date" referencedTableName="ptg_ventil_date"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-34">
+        <addForeignKeyConstraint baseColumnNames="id_ventil_date" baseTableName="ptg_export_paie_task" constraintName="fk_ptg_export_paie_task_ventil_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ventil_date" referencedTableName="ptg_ventil_date"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-35">
+        <addForeignKeyConstraint baseColumnNames="etat" baseTableName="ptg_pointage_calcule" constraintName="fk_ptg_pointage_calcule_ref_etat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_etat" referencedTableName="ptg_ref_etat"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-36">
+        <addForeignKeyConstraint baseColumnNames="id_ref_prime" baseTableName="ptg_pointage_calcule" constraintName="fk_ptg_pointage_calcule_ref_prime" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_prime" referencedTableName="ptg_ref_prime"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-37">
+        <addForeignKeyConstraint baseColumnNames="id_ref_type_pointage" baseTableName="ptg_pointage_calcule" constraintName="fk_ptg_pointage_calcule_ref_type_pointage" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_type_pointage" referencedTableName="ptg_ref_type_pointage"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-38">
+        <addForeignKeyConstraint baseColumnNames="id_ventil_date" baseTableName="ptg_pointage_calcule" constraintName="fk_ptg_pointage_calcule_ventil_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ventil_date" referencedTableName="ptg_ventil_date"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-39">
+        <addForeignKeyConstraint baseColumnNames="id_comment_commentaire" baseTableName="ptg_pointage" constraintName="fk_ptg_pointage_comment_commentaire" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_comment" referencedTableName="ptg_comment"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-40">
+        <addForeignKeyConstraint baseColumnNames="id_comment_motif" baseTableName="ptg_pointage" constraintName="fk_ptg_pointage_comment_motif" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_comment" referencedTableName="ptg_comment"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-41">
+        <addForeignKeyConstraint baseColumnNames="id_pointage_parent" baseTableName="ptg_pointage" constraintName="fk_ptg_pointage_pointage_parent" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_pointage" referencedTableName="ptg_pointage"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-42">
+        <addForeignKeyConstraint baseColumnNames="id_ref_prime" baseTableName="ptg_pointage" constraintName="fk_ptg_pointage_ref_prime" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_prime" referencedTableName="ptg_ref_prime"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-43">
+        <addForeignKeyConstraint baseColumnNames="id_ref_type_absence" baseTableName="ptg_pointage" constraintName="fk_ptg_pointage_ref_type_absence" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_type_absence" referencedTableName="ptg_ref_type_absence"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-44">
+        <addForeignKeyConstraint baseColumnNames="id_type_pointage" baseTableName="ptg_pointage" constraintName="fk_ptg_pointage_ref_type_pointage" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_type_pointage" referencedTableName="ptg_ref_type_pointage"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-45">
+        <addForeignKeyConstraint baseColumnNames="id_pointage" baseTableName="ptg_pointage_ventil_date" constraintName="fk_ptg_pointage_ventil_date_pointage" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_pointage" referencedTableName="ptg_pointage"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-46">
+        <addForeignKeyConstraint baseColumnNames="id_ventil_date" baseTableName="ptg_pointage_ventil_date" constraintName="fk_ptg_pointage_ventil_date_ventil_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ventil_date" referencedTableName="ptg_ventil_date"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-47">
+        <addForeignKeyConstraint baseColumnNames="id_ventil_date" baseTableName="ptg_rc_task" constraintName="fk_ptg_rc_task_ventil_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ventil_date" referencedTableName="ptg_ventil_date"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-48">
+        <addForeignKeyConstraint baseColumnNames="etat" baseTableName="ptg_ventil_absence" constraintName="fk_ptg_ventil_abs_ref_etat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_etat" referencedTableName="ptg_ref_etat"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-49">
+        <addForeignKeyConstraint baseColumnNames="id_ventil_date" baseTableName="ptg_ventil_absence" constraintName="fk_ptg_ventil_abs_ventil_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ventil_date" referencedTableName="ptg_ventil_date"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-50">
+        <addForeignKeyConstraint baseColumnNames="etat" baseTableName="ptg_ventil_hsup" constraintName="fk_ptg_ventil_hsup_ref_etat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_etat" referencedTableName="ptg_ref_etat"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-51">
+        <addForeignKeyConstraint baseColumnNames="id_ventil_date" baseTableName="ptg_ventil_hsup" constraintName="fk_ptg_ventil_hsup_ventil_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ventil_date" referencedTableName="ptg_ventil_date"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-52">
+        <addForeignKeyConstraint baseColumnNames="etat" baseTableName="ptg_ventil_prime" constraintName="fk_ptg_ventil_prime_abs_ref_etat" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_etat" referencedTableName="ptg_ref_etat"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-53">
+        <addForeignKeyConstraint baseColumnNames="id_ref_prime" baseTableName="ptg_ventil_prime" constraintName="fk_ptg_ventil_prime_ref_prime" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_prime" referencedTableName="ptg_ref_prime"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-54">
+        <addForeignKeyConstraint baseColumnNames="id_ventil_date" baseTableName="ptg_ventil_prime" constraintName="fk_ptg_ventil_prime_ventil_date" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ventil_date" referencedTableName="ptg_ventil_date"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-55">
+        <addForeignKeyConstraint baseColumnNames="id_type_pointage" baseTableName="ptg_ventil_task" constraintName="fk_ptg_ventil_task_ref_type_pointage" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ref_type_pointage" referencedTableName="ptg_ref_type_pointage"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-56">
+        <addForeignKeyConstraint baseColumnNames="id_ventil_date_from" baseTableName="ptg_ventil_task" constraintName="fk_ptg_ventil_task_ventil_date_from" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ventil_date" referencedTableName="ptg_ventil_date"/>
+    </changeSet>
+    <changeSet author="rebjo84 (generated)" id="1406235744921-57">
+        <addForeignKeyConstraint baseColumnNames="id_ventil_date_to" baseTableName="ptg_ventil_task" constraintName="fk_ptg_ventil_task_ventil_date_to" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id_ventil_date" referencedTableName="ptg_ventil_date"/>
+    </changeSet>
+</databaseChangeLog>

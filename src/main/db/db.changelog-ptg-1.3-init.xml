@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="rebjo84" id="37e461f4-34aa-45e7-9ec2-c111812b3e6f-1">
+        <insert tableName="PTG_REF_TYPE_ABSENCE"><column name="ID_REF_TYPE_ABSENCE" value="1"/><column name="LABEL" value="Concertée"/></insert>
+        <insert tableName="PTG_REF_TYPE_ABSENCE"><column name="ID_REF_TYPE_ABSENCE" value="2"/><column name="LABEL" value="Non concertée"/></insert>
+        <insert tableName="PTG_REF_TYPE_ABSENCE"><column name="ID_REF_TYPE_ABSENCE" value="3"/><column name="LABEL" value="Immédiate"/></insert>
+    </changeSet>
+	
+	<changeSet author="nicno85" id="37e461f4-34aa-45e7-9ec2-c111812b3e6f-2">
+        <update tableName="PTG_REF_TYPE_ABSENCE"><column name="LABEL" value="Abs. concertée"/><where>ID_REF_TYPE_ABSENCE=1</where></update>
+        <update tableName="PTG_REF_TYPE_ABSENCE"><column name="LABEL" value="Abs. non concertée"/><where>ID_REF_TYPE_ABSENCE=2</where></update>
+        <update tableName="PTG_REF_TYPE_ABSENCE"><column name="LABEL" value="Abs. immédiate"/><where>ID_REF_TYPE_ABSENCE=3</where></update>
+    </changeSet>
+    
+</databaseChangeLog>

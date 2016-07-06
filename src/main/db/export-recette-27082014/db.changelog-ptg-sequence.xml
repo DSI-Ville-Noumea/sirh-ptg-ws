@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+    
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-1">
+        <createSequence sequenceName="PTG_S_COMMENT" startValue="287"/>
+        <addDefaultValue tableName="PTG_COMMENT" columnName="ID_COMMENT" defaultValueSequenceNext="PTG_S_COMMENT" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-2">
+        <createSequence sequenceName="PTG_S_DROIT" startValue="50"/>
+        <addDefaultValue tableName="PTG_DROIT" columnName="ID_DROIT" defaultValueSequenceNext="PTG_S_DROIT" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-3">
+        <createSequence sequenceName="PTG_S_DROITS_AGENT" startValue="147"/>
+        <addDefaultValue tableName="PTG_DROITS_AGENT" columnName="ID_DROITS_AGENT" defaultValueSequenceNext="PTG_S_DROITS_AGENT" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-4">
+        <createSequence sequenceName="PTG_S_ETAT_PAYEUR" startValue="1"/>
+        <addDefaultValue tableName="PTG_ETAT_PAYEUR" columnName="ID_ETAT_PAYEUR" defaultValueSequenceNext="PTG_S_ETAT_PAYEUR" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-5">
+        <createSequence sequenceName="PTG_S_ETAT_POINTAGE" startValue="926"/>
+        <addDefaultValue tableName="PTG_ETAT_POINTAGE" columnName="ID_ETAT_POINTAGE" defaultValueSequenceNext="PTG_S_ETAT_POINTAGE" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-6">
+        <createSequence sequenceName="PTG_S_EXPORT_ETATS_PAYEUR_TASK" startValue="1"/>
+        <addDefaultValue tableName="PTG_EXPORT_ETATS_PAYEUR_TASK" columnName="ID_EXPORT_ETATS_PAYEUR_TASK" defaultValueSequenceNext="PTG_S_EXPORT_ETATS_PAYEUR_TASK" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-7">
+        <createSequence sequenceName="PTG_S_EXPORT_PAIE_TASK" startValue="1"/>
+        <addDefaultValue tableName="PTG_EXPORT_PAIE_TASK" columnName="ID_EXPORT_PAIE_TASK" defaultValueSequenceNext="PTG_S_EXPORT_PAIE_TASK" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-8">
+        <createSequence sequenceName="PTG_S_POINTAGE" startValue="312"/>
+        <addDefaultValue tableName="PTG_POINTAGE" columnName="ID_POINTAGE" defaultValueSequenceNext="PTG_S_POINTAGE" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-9">
+        <createSequence sequenceName="PTG_S_POINTAGE_CALCULE" startValue="55"/>
+        <addDefaultValue tableName="PTG_POINTAGE_CALCULE" columnName="ID_POINTAGE_CALCULE" defaultValueSequenceNext="PTG_S_POINTAGE_CALCULE" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-11">
+        <createSequence sequenceName="PTG_S_RC_HISTO" startValue="1"/>
+        <addDefaultValue tableName="PTG_RC_HISTO" columnName="ID_RC_HISTO" defaultValueSequenceNext="PTG_S_RC_HISTO" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-12">
+        <createSequence sequenceName="PTG_S_RC_TASK" startValue="1"/>
+        <addDefaultValue tableName="PTG_RC_TASK" columnName="ID_RC_TASK" defaultValueSequenceNext="PTG_S_RC_TASK" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-13">
+        <createSequence sequenceName="PTG_S_REF_PRIME" startValue="53"/>
+        <addDefaultValue tableName="PTG_REF_PRIME" columnName="ID_REF_PRIME" defaultValueSequenceNext="PTG_S_REF_PRIME" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-14">
+        <createSequence sequenceName="PTG_S_VENTIL_ABSENCE" startValue="1"/>
+        <addDefaultValue tableName="PTG_VENTIL_ABSENCE" columnName="ID_VENTIL_ABSENCE" defaultValueSequenceNext="PTG_S_VENTIL_ABSENCE" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-15">
+        <createSequence sequenceName="PTG_S_VENTIL_DATE" startValue="5"/>
+        <addDefaultValue tableName="PTG_VENTIL_DATE" columnName="ID_VENTIL_DATE" defaultValueSequenceNext="PTG_S_VENTIL_DATE" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-16">
+        <createSequence sequenceName="PTG_S_VENTIL_HSUP" startValue="138"/>
+        <addDefaultValue tableName="PTG_VENTIL_HSUP" columnName="ID_VENTIL_HSUP" defaultValueSequenceNext="PTG_S_VENTIL_HSUP" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-17">
+        <createSequence sequenceName="PTG_S_VENTIL_PRIME" startValue="112"/>
+        <addDefaultValue tableName="PTG_VENTIL_PRIME" columnName="ID_VENTIL_PRIME" defaultValueSequenceNext="PTG_S_VENTIL_PRIME" />
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="59edc0d0-e061-11e3-8b68-0812340c9a66-18">
+        <createSequence sequenceName="PTG_S_VENTIL_TASK" startValue="198"/>
+        <addDefaultValue tableName="PTG_VENTIL_TASK" columnName="ID_VENTIL_TASK" defaultValueSequenceNext="PTG_S_VENTIL_TASK" />
+    </changeSet>
+	
+	
+</databaseChangeLog>

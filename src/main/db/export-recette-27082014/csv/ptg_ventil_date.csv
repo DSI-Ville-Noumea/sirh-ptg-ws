@@ -1,0 +1,5 @@
+"id_ventil_date","date_ventil","is_paye","type_chaine_paie","version"
+"1","2013-08-04T11:00:00.000","true","SHC","0"
+"2","2013-08-04T11:00:00.000","true","SCV","0"
+"3","2014-08-03T23:59:00.000","false","SCV","0"
+"4","2014-08-03T23:59:00.000","false","SHC","0"

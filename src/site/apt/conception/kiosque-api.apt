@@ -1,0 +1,727 @@
+            ------
+            SIRH-PTG-WS API WS doc
+            ------
+
+
+
+SIRH-PTG-WS API pour le Kiosque SIRH (Sharepoint module des pointages)
+
+* Format des paramètres et types
+
+ * <<Les dates dans les réponses JSON>> sont au format « Microsoft », à savoir  /Date(X)/ où X représente le nombre de millisecondes depuis 01/01/1970 dans la forme suivante :  0000000000000+1100 (ou les 13 premiers chiffres sont les millisecondes et les 5 derniers caractères représentent la TimeZone).
+
+
+ * <<Les dates dans les paramètres>> de requête http sont au format suivant: YYYYMMdd soit: 20130504 pour le 4 avril 2013.
+
+
+ * Les requêtes vers ces Web Services doivent s’effectuer avec les bons paramètres ou un code erreur 400 sera retourné (s’il en manque ou s’ils sont mal nommés).
+
+
+ * Les requêtes devront également porter la propriété du Header <<"Content-Type">> égale à <<"application/json">> lorsqu’en mode POST avec un contenu JSON dans la requête.
+
+
+ * Les valeurs véhiculées dans le code JSON pourront être égales à NULL si elles ne correspondent pas à des champs obligatoires. Le code JSON correspondant est le suivante :  ’maVariable’ :null
+
+
+* Droits
+
+** Liste les droits d’un utilisateur
+
+ <<URL>> : /droits/listeDroitsAgent
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant au module de pointage via le Kiosque
+
+ []
+
+ <<Content>>
+
++-------------------------+
+{
+	"gestionDroitsAcces" : true,
+	"fiches" : true,
+	"saisie" : true,
+    "visualisation" : true,
+    "approbation" : true,
+}
++-------------------------+
+
+
+** Liste des agents approuvés par l'approbateur
+
+ <<URL>> : /droits/agentsApprouves
+ 
+ <<Accepted Methods>> : GET, POST
+ 
+ <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant au module de pointage via le Kiosque
+
+ []
+
+ <<Content>>
+
++-------------------------+
+[
+	{
+		"nom" : "dupont2",
+		"prenom" : "michel",
+		"idAgent" : 9004568
+	},
+	{
+		"nom" : "dupont3",
+		"prenom" : "michel",
+		"idAgent" : 9004569
+	}
+]
++-------------------------+
+
+
+** Liste des agents approbateurs et du délégataire
+
+ <<URL>> : /droits/delegataireOperateurs
+ 
+ <<Accepted Methods>> : GET, POST
+ 
+ <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la gestion des droits (l'approbateur)
+ 
+ []
+
+ <<Content>>
+
++-------------------------+
+{
+	"delegataire" :
+	{
+		"nom" : "dupont",
+		"prenom" : "michel",
+		"idAgent" : 9004567
+	},
+	"saisisseurs" :
+	[
+		{
+			"nom" : "dupont2",
+			"prenom" : "michel",
+			"idAgent" : 9004568	
+		},
+		{
+			"nom" : "dupont3",
+			"prenom" : "michel",
+			"idAgent" : 9004569
+		}
+	]
+}
++-------------------------+
+
+
+** Liste des agents saisis par l'opérateur d'un approbateur
+
+ <<URL>> : /droits/agentsSaisis
+ 
+ <<Accepted Methods>> : GET, POST
+ 
+ <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la gestion des droits (l'approbateur)
+ 
+ * <<idOperateur>> : identifiant de l’agent opérateur
+ 
+ []
+
+ <<Content>>
+
++-------------------------+
+[
+	{
+		"nom" : "dupont2",
+		"prenom" : "michel",
+		"idAgent" : 9004568
+	},
+	{
+		"nom" : "dupont3",
+		"prenom" : "michel",
+		"idAgent" : 9004569
+	}
+]
++-------------------------+
+
+
+** Liste des agents hiérarchiquement en dessous de l'approbateur
+
+ <<URL>> : SIRH_WS_URL_SERVEUR/agents/agentsSubordonnes
+ 
+ <<NB>> : ce webservice est disponible sur SIRH-WS
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+ 
+ * <<idAgent>> : identifiant de l’agent accédant à la gestion des droits (l'approbateur)
+ 
+ * <<nom>> : paramètre de recherche parmi les agents subordonnés. <<Paramètre optionnel>> : sans lui le service retournera la liste complète. Ce paramètre sera utilisé de la manière suivante : AGENT.NOM commence par {nom}
+
+ []
+
+ <<Content>>
+
++-------------------------+
+[
+	{
+		"nom" : "dupont2",
+		"prenom" : "michel",
+		"idAgent" : 9004568
+	},
+	{
+		"nom" : "dupont3",
+		"prenom" : "michel",
+		"idAgent" : 9004569
+	}
+]
++-------------------------+
+
+
+** Liste les utilisateurs à sélectionner pour affecter un délégataire ou un opérateur
+
+ <<URL>> : SIRH_WS_URL_SERVEUR/agents/listeAgentsMairie
+ 
+ <<NB>> : ce webservice est disponible sur SIRH-WS
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+ 
+ * <<nom>> : paramètre de recherche parmi les agents mairie. <<Paramètre optionnel>> : sans lui le service retournera la liste complète. Ce paramètre sera utilisé de la manière suivante : AGENT.NOM commence par {nom}
+ 
+ * <<codeService>> : paramètre de recherche parmi les agents mairie. <<Paramètre optionnel>> : sans lui le service retournera la liste complète. Ce paramètre sera utilisé de la manière suivante : AGENT.CODE_SERVICE = {codeService}
+ 
+ []
+
+ <<Content>>
+
++-------------------------+
+[
+	{
+		"nom" : "dupont",
+		"prenom" : "michel",
+		"idAgent" : 9004568
+	},
+	{
+		"nom" : "dupont",
+		"prenom" : "michel",
+		"idAgent" : 9004568
+	}
+]
++-------------------------+
+
+* Edition des fiches
+
+** Liste les fiches de pointage que l’utilisateur peut éditer (imprimer)
+
+ <<URL>> : /edition/listeFiches
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : identifiant de l’agent accédant à l’édition des fiches
+  
+  * <<codeService>> : filtre sur le service (code service) (optionnel)
+  
+  * <<agent>> : filtre sur le matricule agent (optionnel)
+
+ []
+
+ <<Content>>
+
++-------------------------+
+[
+	{
+		"nom" : "dupont2",
+		"prenom" : "michel",
+		"idAgent" : 9004568
+	},
+	{
+		"nom" : "dupont3",
+		"prenom" : "michel",
+		"idAgent" : 9004569
+	}
+]
++-------------------------+
+
+
+** Téléchargement de la fiche de pointage d'un agent
+
+ <<URL>> : /edition/downloadFichesPointage
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : identifiant de l’agent accédant à l’édition des fiches
+  
+  * <<date>> : date d'un jour de la semaine pour laquelle générer la fiche de pointage (le lundi par convention)
+
+  * <<csvIdAgents>> : liste des ids des agents dont on souhaite imprimer la fiche de pointage (séparés par des virgules)
+
+ []
+
+ <<Content>> : <<File Download>> with header : <<application/pdf>>.
+
+
+* Saisie Hebdomadaire
+
+** Consultation et modification des pointages pour un agent, une année et une semaine donnéée
+
+ <<URL>> : /saisie/fiche
+ 
+ <<Accepted Methods>> : GET, POST
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : identifiant de l’agent accédant à la modification de la fiche
+
+  * <<date>> : date d'un jour de la semaine pour laquelle modifier la fiche de pointage (le lundi de la semaine)
+
+  * <<agent>> : matricule de l'agent concerné
+
+ []
+
+ <<Content>>
+
+ * <<typeSaisie>> : Enumération fixée à
+
+  * <<CASE_A_COCHER>> : une case à cocher pour sépcifier si oui ou non (1 ou 0 dans quantité)
+
+  * <<NB_HEURES>> : un champ texte pour entier positif représentant le nombre de minutes (à mettre dans quantité)
+
+  * <<NB_INDEMNITES>> : un champ texte pour entier positif (à mettre dans quantité)
+
+  * <<PERIODE_HEURES>> : deux dates permettant de saisir l'heure de début et de fin (à mettre dans heureDebut et heureFin)
+
+  []
+  
++-------------------------+
+{
+	"dateLundi" : "/Date()/", // date du lundi de la semaine saisie
+	"agent" :
+	{
+		"nom" : "Dupont",
+		"prenom" : "Michel",
+		"idAgent" : 9007865,
+		"service" : " Direction des Systèmes d'Information",
+		"codeService" : "DCAA",
+		"statut" : "F"	
+	},
+	"saisies" : // tableau de saisies par jour de la semaine (7 éléments)
+	[
+		{
+			"date" : "/Date()/",
+			"primes" : 
+			[
+				{
+					"idPointage" : 987,
+					"titre" : "Autopsie 1",
+					"typeSaisie" : "NB_HEURES" (TYPE1/TYPE2…)
+					"quantite" : 1, // (0, 1, nb de minutes ou nb d'indemnités selon le type, si nécessaire)
+					"heureDebut" : "/Date()/", // (si nécessaire)
+					"heureFin" : "/Date()/",// (si nécessaire)
+					"motif" : "blabla",
+					"commentaire" : "reblabla",
+					"idRefEtat" : 0, // (SAISI = 0/ APPROUVE = 1…)
+					"numRubrique" : 7051, // num SIRH de la prime
+					"idRefPrime" : 9876 // id de la prime
+				}
+			],
+		"heuresSup" : 
+			[
+				{
+					"idPointage" : 988,
+					"heureDebut" : "/Date()/",
+					"heureFin" : "/Date()/",
+					"recuperee" : true // true, false, null
+					"motif" : "le motif",
+					"commentaire" : "un commentaire",
+					"idRefEtat" : 0, // (SAISI = 0/ APPROUVE = 1…)
+				}
+			],
+		"absences" : 
+			[
+				{
+					"idPointage" : 989,
+					"heureDebut" : "/Date()/",
+					"heureFin" : "/Date()/",
+					"idRefTypeAbsence" : 1 // null sinon
+					"motif" : "le motif",
+					"commentaire" : "un commentaire",
+					"idRefEtat" : 0, // (SAISI = 0/ APPROUVE = 1…)
+				}
+			]
+		},
+		…
+	]
+}
++-------------------------+
+
+  []
+  
+  []
+
+ <<WS POST Return message>> : Dans le cas d'un POST
+  
+ * Si la sauvegarde s'est effectuée sans erreur : Code <<HTTP 200>>
+ 
+ * Si la sauvegarde n'a pu être faite pour raison fonctionnelle: Code <<HTTP 409>> (les raisons de cette erreur sont les messages d'erreurs du contenu JSON ci-dessous.
+ 
+ * En plus de ces codes, un contenu JSON sera transmis.
+ 
++-------------------------+
+{
+	"erreurs" : 
+	[
+		"erreur 1",
+		"erreur 2"
+	],
+	"infos" : 
+	[
+		"info 1",
+		"info 2"
+	]
+} 
++-------------------------+
+ 
+  
+* Visualisation
+
+** Visualiser les pointages en liste
+
+ <<URL>> : /visualisation/pointages
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : identifiant de l’agent accédant à la visualisation des pointages
+
+  * <<from>> : date de début (uniquement pour le GET)
+
+  * <<to>> : date de fin (uniquement pour le GET) 
+
+  * <<codeService>> : code service (uniquement pour le GET) (optionnel) 
+
+  * <<etat>> : états des pointages à récupérer (uniquement pour le GET) (optionnel)
+
+  * <<type>> : type de pointage (prime/heure sup/absence) (uniquement pour le GET) (optionnel)
+
+  * <<agent>> : matricule de l'agent pointé (uniquement pour le GET) (optionnel)
+
+ <<Content>> 
+ 
++-------------------------+
+[
+	{
+		"agent":
+		{
+		   "idAgent": 9003623,
+		   "nom": "SARIMAN",
+		   "prenom": "STEPHANIE"
+		},
+		"commentaire": "",
+		"date": "/Date(1374818400000+1100)/",
+		"dateSaisie": "/Date(1375241304000+1100)/",
+		"debut": "/Date(1374818400000+1100)/",
+		"fin": "/Date(1374822000000+1100)/",
+		"idPointage": 270,
+		"idRefEtat": 5,
+		"motif": "",
+		"quantite": "1h",
+		"typePointage": "Absence",
+       "operateur":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       }
+	},	
+	…
+]
++-------------------------+
+
+
+** Visualiser l'historique d'un pointage 
+
+ <<URL>> : /visualisation/historique
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ * <<idAgent>> : identifiant de l’agent accédant à la visualisation des fiches
+
+ * <<idPointage>> : id du pointage dont on souhaite l'historique
+ 
+ []
+ 
+ <<Content>> : Triés par dateSaisie desc.
+  
++-------------------------+
+[
+	{
+		"agent":
+		{
+		   "idAgent": 9005138,
+		   "nom": "CHARVET",
+		   "prenom": "TATIANA"
+		},
+		"commentaire": "",
+		"date": "/Date(1374778800000+1100)/",
+		"dateSaisie": "/Date(1375241303000+1100)/",
+		"debut": "/Date(1374778800000+1100)/",
+		"fin": "/Date(1374782400000+1100)/",
+		"idPointage": 258,
+		"idRefEtat": 5,
+		"motif": "gvfdsw",
+		"quantite": "1h",
+		"typePointage": "Heure Supplémentaire",
+       "operateur":
+       {
+           "idAgent": 9005123,
+           "nom": "HARRAUD",
+           "prenom": "YOANN"
+       }
+	},
+	…
+]
++-------------------------+
+
+
+** Approbation/Refus/Mise en attente des pointages.
+
+ <<URL>> : /visualisation/changerEtats
+ 
+ <<Accepted Methods>> : POST
+ 
+ <<Parameters>>
+
+  * <<idAgent>> : L'ID_AGENT (900xxxx) qui fait l'opération.
+ 
+ <<Content>>
+  
++-------------------------+ 
+[
+	{
+		"idPointage" : 9877,
+		"idRefEtat" : 3 // (REFUSE 2 / APPROUVE 1 / EN_ATTENTE 8)
+	},
+	…
+]
++-------------------------+
+ 
+ <<WS POST Return message>>
+  
+ * Si la sauvegarde s'est effectuée sans erreur : Code <<HTTP 200>>
+ 
+ * Si la sauvegarde n'a pu être faite pour raison fonctionnelle: Code <<HTTP 409>> (les raisons de cette erreur sont les messages d'erreurs du contenu JSON ci-dessous.
+ 
+ * En plus de ces codes, un contenu JSON sera transmis.
+ 
++-------------------------+
+{
+	"erreurs" : 
+	[
+		"erreur 1",
+		"erreur 2"
+	],
+	"infos" : 
+	[
+		"info 1",
+		"info 2"
+	]
+} 
++-------------------------+
+
+
+* Listes de sélections
+
+** Liste les services disponibles pour le filtre
+
+ <<URL>> : /filtres/services
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ * <<idAgent>> : identifiant de l’agent depuis lequel trouver les sous services
+ 
+ []
+ 
+ <<Content>>
+  
++-------------------------+
+[
+	{
+      	"service" : "Direction des Systèmes d'Information",
+		"codeService" : "DCAA
+      },
+	{
+      	"service" : "DSI Cellule Planification et Méthodes ",
+		"codeService" : " DCAC
+      },
+	…
+]
++-------------------------+
+
+
+** Liste les agents disponibles pour le filtre
+
+ <<URL>> : /filtres/agents
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ * <<idAgent>> : identifiant de l’agent depuis lequel trouver les agents
+ 
+ * <<codeService>> : service restreignant la liste (code service) (optionnel)
+ 
+ []
+ 
+ <<Content>>
+  
++-------------------------+
+[
+	{
+		"nom" : "Dupont",
+		"prenom" : "Michel",
+		"idAgent" : 9007865
+},
+	…	
+]
++-------------------------+
+
+
+** Liste les états disponibles pour le filtre
+
+ <<URL>> : /filtres/getEtats
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ -
+ 
+ []
+ 
+ <<Content>>
+  
++-------------------------+
+[
+	{
+		"idRefEtat": 0,
+		"libelle": "Saisi"
+    },
+	{
+		"idRefEtat": 1,
+		"libelle": "Approuvé"
+	},
+	…	
+]
++-------------------------+
+
+
+** Liste les types disponibles pour le filtre
+
+ <<URL>> : /filtres/getTypes
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ -
+ 
+ []
+ 
+ <<Content>>
+  
++-------------------------+
+[
+	{
+		"idRefTypePointage": 1,
+		"libelle": "Absence"
+	},
+	{
+		"idRefTypePointage": 2,
+		"libelle": "Heure Supplémentaire"
+	},
+	{
+		"idRefTypePointage": 3,
+		"libelle": "Prime"
+	}
+]
++-------------------------+
+
+
+** Liste les types disponibles pour le filtre
+
+ <<URL>> : /filtres/getTypesAbsence
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ -
+ 
+ []
+ 
+ <<Content>>
+  
++-------------------------+
+[
+	{
+		"idRefTypeAbsence": 1,
+		"libelle": "Concertée"
+	},
+	{
+		"idRefTypeAbsence": 2,
+		"libelle": "Non concertée"
+	},
+	{
+		"idRefTypeAbsence": 3,
+		"libelle": "Immédiate"
+	}
+]
++-------------------------+
+
+
+* Primes
+
+** Détail d'un type de prime
+
+ <<URL>> : /primes/detail
+ 
+ <<Accepted Methods>> : GET
+ 
+ <<Parameters>>
+
+ * <<idRefPrime>> : l'id de la RefPrime (de la prime)
+ 
+ []
+ 
+ <<Content>>
+  
++-------------------------+
+    {
+       "calculee": false,
+       "description": "Prime forfaitaire de 15000F/autopsie",
+       "idRefPrime": 295,
+       "libelle": "INDEMNITE PARTICIPATION AUTOPSIES TARIF II",
+       "numRubrique": 7710,
+       "statut": "F",
+       "aide": "le texte de l'aide à la saisie",
+       "typeSaisie": "NB_INDEMNITES"
+    }
++-------------------------+

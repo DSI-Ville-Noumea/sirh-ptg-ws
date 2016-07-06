@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Licensed to the Apache Software Foundation (ASF) under one or more contributor 
+	license agreements. See the NOTICE file distributed with this work for additional 
+	information regarding copyright ownership. The ASF licenses this file to 
+	You under the Apache License, Version 2.0 (the "License"); you may not use 
+	this file except in compliance with the License. You may obtain a copy of 
+	the License at http://www.apache.org/licenses/LICENSE-2.0 Unless required 
+	by applicable law or agreed to in writing, software distributed under the 
+	License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS 
+	OF ANY KIND, either express or implied. See the License for the specific 
+	language governing permissions and limitations under the License. -->
+<!-- The contents of this file will be loaded for each web application -->
+<Context reloadable="true" cookies="true">
+		
+		
+	<!--  -->
+	<!-- DATASOURCES -->
+	<!--  -->	
+	<Resource name="jdbc/PTG_WS_DS1" auth="Container" type="javax.sql.DataSource"
+		maxActive="100" maxIdle="30" minIdle="0" validationQuery="select 1"
+		maxWait="10000" initialSize="1" username="ptg_adm" password="***REMOVED***"
+		driverClassName="org.postgresql.Driver" url="jdbc:postgresql://localhost:5432/sirh"
+		poolPreparedStatements="true" />
+
+	<Resource name="jdbc/PTG_WS_DS2" auth="Container" type="javax.sql.DataSource"
+		factory="org.apache.tomcat.dbcp.dbcp.BasicDataSourceFactory"
+		testWhileIdle="true" testOnBorrow="true" testOnReturn="false"
+		validationQuery="select 1 from sysdummy1" validationInterval="30000"
+		timeBetweenEvictionRunsMillis="30000" maxActive="300" maxIdle="30"
+		maxWait="30000" initialSize="10" removeAbandonedTimeout="500"
+		removeAbandoned="true" logAbandoned="true" minEvictableIdleTimeMillis="30000"
+		jmxEnabled="true" username="opensirh" password="***REMOVED***"
+		driverClassName="com.ibm.as400.access.AS400JDBCDriver" url="jdbc:as400://robinnw;naming=system;libraries=MAIRIE,SYSIBM;" />
+
+	<!-- -->
+	<!-- WS DE ADS -->
+	<!-- -->
+	<Environment name="ADS_WS_URL" type="java.lang.String"
+		description="ADS WS endpoint url" value="http://svi-tomcat0:8077/"
+		override="false" />
+	
+	<!--  -->
+	<!-- WS SIRH -->
+	<!--  -->	
+	<Environment name="SIRH_WS_URL" type="java.lang.String" description="SIRH WS endpoint url" 
+		value="http://svi-tomcat0:8085/sirhws/" override="false" />
+		
+	<!--  -->
+	<!-- WS ABS -->
+	<!--  -->	
+	<Environment name="SIRH_ABS_WS_URL" type="java.lang.String" description="SIRH WS endpoint url" 
+		value="http://svi-tomcat0:8085/sirh-abs-ws/" override="false" />
+		
+	<!--  -->
+	<!-- Parametre pour savoir avant quelle date la saisie des pointages est interdite(correspond à la date de MEP finale) -->
+	<!--  -->	
+	<Environment name="SIRH_ABS_DATE_BLOCAGE_POINTAGE" type="java.lang.String" description="Parametre pour savoir avant quelle date la saisie des pointages est interdite(correspond à la date de MEP finale)" 
+		value="27/04/2015" override="false" />
+		
+	<!--  -->
+	<!-- BIRT -->
+	<!--  -->	
+	<Environment name="REPORTING_SERVER_SIRH_PTG_REPORT_PATH" type="java.lang.String" description="SIRH reports path on Birt"
+		value="report/sirh-ptg-reports/" override="false" />
+
+	<Environment name="REPORTING_BASE_URL" type="java.lang.String" description="BIRT report viewer base URL for SIRH reporting"
+		value="http://svi-tomcat0:8085/birt/" override="false" />
+		
+	<!--  -->
+	<!-- Parametres pour la gestion des documents -->
+	<!--  -->	
+	<Environment name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR" type="java.lang.String" description="SIRH Etat Payeur File Path" 
+		value="file://///cristal/drh$/DRH/SIRH-document/DEV/Document_Associe/Pointages" override="false" />
+		<!-- <param-value>file:///mnt/sirh-document/Document_Associe/Pointages</param-value> --> 
+		
+	<Environment name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR_ECRITURE" type="java.lang.String" description="SIRH Etat Payeur File Path for write" 
+		value="//cristal/drh$/DRH/SIRH-document/DEV/Document_Associe/Pointages" override="false" />
+		<!-- <param-value>/mnt/sirh-document/Document_Associe/Pointages</param-value> --> 
+				
+
+	<!-- Paramètre pour différencier QUAL et PROD -->
+	<Environment name="TYPE_ENV" type="java.lang.String"
+		description="Type d'environnement (RECETTE ou PROD)" value="RECETTE"
+		override="false" />
+		 		
+</Context>

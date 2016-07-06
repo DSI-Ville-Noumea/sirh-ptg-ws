@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <!-- Create tables  -->
+    <include file="db.changelog-ptg-1.0-create-tables.xml" relativeToChangelogFile="true" />
+    
+    <!-- initial insert of reference data -->
+    <include file="db.changelog-ptg-1.0-init.xml" relativeToChangelogFile="true" />
+    
+    <include file="db.changelog-ptg-1.1-create-tables.xml" relativeToChangelogFile="true" />
+	
+	<include file="db.changelog-ptg-1.3-create-tables.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.3-init.xml" relativeToChangelogFile="true" />
+	
+	<include file="db.changelog-ptg-1.4-create-tables.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.4-init.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.11-alter.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.12-alter.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.14-description.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.15-alter.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.15-update.xml" relativeToChangelogFile="true" />
+	
+	<include file="db.changelog-ptg-1.19-create-tables.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.19-alter.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.21-alter.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.21-insert.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.23-insert.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.26-alter.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-1.28-update.xml" relativeToChangelogFile="true" />
+
+    <include file="db.changelog-ptg-2.2-alter.xml" relativeToChangelogFile="true" />
+
+    <!-- DROITS : suppression des infos de l'entité -->
+    <include file="db.changelog-ptg-3.5-dropColumns.xml"/>
+
+    <include file="db.changelog-ptg-3.5-alter.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-3.5-update.xml" relativeToChangelogFile="true" />
+	
+    <include file="db.changelog-ptg-3.5-insert.xml" relativeToChangelogFile="true" />
+
+    <!-- TITRE REPAS -->    
+    <include file="db.changelog-ptg-3.7-create-tables.xml" relativeToChangelogFile="true" />
+    <include file="db.changelog-ptg-3.7-alter.xml" relativeToChangelogFile="true" />
+    
+    <!-- Renfort de Garde -->
+    <include file="db.changelog-ptg-3.9-insert.xml" relativeToChangelogFile="true" />
+    <include file="db.changelog-ptg-3.9-update.xml" relativeToChangelogFile="true" />
+
+</databaseChangeLog>

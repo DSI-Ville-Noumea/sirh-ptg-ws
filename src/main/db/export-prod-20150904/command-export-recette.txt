@@ -1,0 +1,1 @@
+liquibase --driver=org.postgresql.Driver --diffTypes=data --url="jdbc:postgresql://svq-pg0.site-mairie.noumea.nc:5432/sirh" --username=ptg_read --password=s8oxdmer --defaultSchemaName=ptg_adm --dataOutputDirectory=csv generateChangeLog 

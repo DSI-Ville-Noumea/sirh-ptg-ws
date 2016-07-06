@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+	
+	<changeSet author="rebjo84" id="76f4dba0-96b5-19e4-b4a9-0800200c9a66-1">
+		<addColumn tableName="PTG_VENTIL_ABSENCE">
+		    <column name="NOMBRE_ABSENCE_INFERIEUR_1" type="INT4" defaultValue="0" />
+		    <column name="NOMBRE_ABSENCE_ENTRE_1_ET_4" type="INT4" defaultValue="0" />
+		    <column name="NOMBRE_ABSENCE_SUPERIEUR_4" type="INT4" defaultValue="0" />
+		</addColumn>
+	</changeSet>
+	
+</databaseChangeLog>

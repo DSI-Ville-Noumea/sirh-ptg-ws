@@ -1,0 +1,9 @@
+# pdc liquidbase properties file
+driver=$driver
+url=$url
+username=$username
+password=$password
+changeLogFile=$changeLogFile
+defaultSchemaName=$defaultSchemaName
+logLevel=$logLevel
+logFile=$logFile

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+	
+	 <changeSet author="rebjo84" id="abc461f4-34aa-45a7-9ec2-cd2c878b3e6f-1">
+		
+        <insert tableName="PTG_REF_PRIME">
+			<column name="NORUBR" value="7723"/>
+			<column name="LIBELLE" value="INDEMNITE EXCEPTIONNELLE TVX INSAL. DANG. 100%"/>
+			<column name="DESCRIPTION" value=""/>
+			<column name="TYPE_SAISIE" value="1"/>
+			<column name="IS_CALCULEE" value="0"/>
+			<column name="STATUT" value="F"/>
+			<column name="MAIRIE_PRIME" value="SPPRIM"/>
+			<column name="AIDE" value="Saisir le nombre d'heures effectuées par jour" />
+			<column name="VERSION" value="0"/>
+			<column name="IS_AFFICHAGE_KIOSQUE" value="1"/>
+		</insert>
+        <insert tableName="PTG_REF_PRIME">
+			<column name="NORUBR" value="7723"/>
+			<column name="LIBELLE" value="INDEMNITE EXCEPTIONNELLE TVX INSAL. DANG. 100%"/>
+			<column name="DESCRIPTION" value=""/>
+			<column name="TYPE_SAISIE" value="1"/>
+			<column name="IS_CALCULEE" value="0"/>
+			<column name="STATUT" value="C"/>
+			<column name="MAIRIE_PRIME" value="SPPRIM"/>
+			<column name="AIDE" value="Saisir le nombre d'heures effectuées par jour" />
+			<column name="VERSION" value="0"/>
+			<column name="IS_AFFICHAGE_KIOSQUE" value="1"/>
+		</insert>
+		<insert tableName="PTG_REF_PRIME">
+			<column name="NORUBR" value="7723"/>
+			<column name="LIBELLE" value="INDEMNITE EXCEPTIONNELLE TVX INSAL. DANG. 100%"/>
+			<column name="DESCRIPTION" value=""/>
+			<column name="TYPE_SAISIE" value="1"/>
+			<column name="IS_CALCULEE" value="0"/>
+			<column name="STATUT" value="CC"/>
+			<column name="MAIRIE_PRIME" value="SPPRIM"/>
+			<column name="AIDE" value="Saisir le nombre d'heures effectuées par jour" />
+			<column name="VERSION" value="0"/>
+			<column name="IS_AFFICHAGE_KIOSQUE" value="1"/>
+		</insert>
+
+		<insert tableName="PTG_REF_PRIME">
+			<column name="NORUBR" value="7724"/>
+			<column name="LIBELLE" value="INDEMNITE EXCEPTIONNELLE TVX INSAL. DANG. 50%"/>
+			<column name="DESCRIPTION" value=""/>
+			<column name="TYPE_SAISIE" value="1"/>
+			<column name="IS_CALCULEE" value="0"/>
+			<column name="STATUT" value="F"/>
+			<column name="MAIRIE_PRIME" value="SPPRIM"/>
+			<column name="AIDE" value="Saisir le nombre d'heures effectuées par jour" />
+			<column name="VERSION" value="0"/>
+			<column name="IS_AFFICHAGE_KIOSQUE" value="1"/>
+		</insert>
+        <insert tableName="PTG_REF_PRIME">
+			<column name="NORUBR" value="7724"/>
+			<column name="LIBELLE" value="INDEMNITE EXCEPTIONNELLE TVX INSAL. DANG. 50%"/>
+			<column name="DESCRIPTION" value=""/>
+			<column name="TYPE_SAISIE" value="1"/>
+			<column name="IS_CALCULEE" value="0"/>
+			<column name="STATUT" value="C"/>
+			<column name="MAIRIE_PRIME" value="SPPRIM"/>
+			<column name="AIDE" value="Saisir le nombre d'heures effectuées par jour" />
+			<column name="VERSION" value="0"/>
+			<column name="IS_AFFICHAGE_KIOSQUE" value="1"/>
+		</insert>
+		<insert tableName="PTG_REF_PRIME">
+			<column name="NORUBR" value="7724"/>
+			<column name="LIBELLE" value="INDEMNITE EXCEPTIONNELLE TVX INSAL. DANG. 50%"/>
+			<column name="DESCRIPTION" value=""/>
+			<column name="TYPE_SAISIE" value="1"/>
+			<column name="IS_CALCULEE" value="0"/>
+			<column name="STATUT" value="CC"/>
+			<column name="MAIRIE_PRIME" value="SPPRIM"/>
+			<column name="AIDE" value="Saisir le nombre d'heures effectuées par jour" />
+			<column name="VERSION" value="0"/>
+			<column name="IS_AFFICHAGE_KIOSQUE" value="1"/>
+		</insert>
+
+		<insert tableName="PTG_REF_PRIME">
+			<column name="NORUBR" value="7725"/>
+			<column name="LIBELLE" value="INDEMNITE EXCEPTIONNELLE TVX INSAL. DANG. 25%"/>
+			<column name="DESCRIPTION" value=""/>
+			<column name="TYPE_SAISIE" value="1"/>
+			<column name="IS_CALCULEE" value="0"/>
+			<column name="STATUT" value="F"/>
+			<column name="MAIRIE_PRIME" value="SPPRIM"/>
+			<column name="AIDE" value="Saisir le nombre d'heures effectuées par jour" />
+			<column name="VERSION" value="0"/>
+			<column name="IS_AFFICHAGE_KIOSQUE" value="1"/>
+		</insert>
+        <insert tableName="PTG_REF_PRIME">
+			<column name="NORUBR" value="7725"/>
+			<column name="LIBELLE" value="INDEMNITE EXCEPTIONNELLE TVX INSAL. DANG. 25%"/>
+			<column name="DESCRIPTION" value=""/>
+			<column name="TYPE_SAISIE" value="1"/>
+			<column name="IS_CALCULEE" value="0"/>
+			<column name="STATUT" value="C"/>
+			<column name="MAIRIE_PRIME" value="SPPRIM"/>
+			<column name="AIDE" value="Saisir le nombre d'heures effectuées par jour" />
+			<column name="VERSION" value="0"/>
+			<column name="IS_AFFICHAGE_KIOSQUE" value="1"/>
+		</insert>
+		<insert tableName="PTG_REF_PRIME">
+			<column name="NORUBR" value="7725"/>
+			<column name="LIBELLE" value="INDEMNITE EXCEPTIONNELLE TVX INSAL. DANG. 25%"/>
+			<column name="DESCRIPTION" value=""/>
+			<column name="TYPE_SAISIE" value="1"/>
+			<column name="IS_CALCULEE" value="0"/>
+			<column name="STATUT" value="CC"/>
+			<column name="MAIRIE_PRIME" value="SPPRIM"/>
+			<column name="AIDE" value="Saisir le nombre d'heures effectuées par jour" />
+			<column name="VERSION" value="0"/>
+			<column name="IS_AFFICHAGE_KIOSQUE" value="1"/>
+		</insert>
+
+    </changeSet>
+	
+</databaseChangeLog>

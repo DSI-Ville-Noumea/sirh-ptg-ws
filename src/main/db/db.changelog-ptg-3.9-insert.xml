@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	
+	 <changeSet author="rebjo84" id="abc461f4-34ac-45a5-9ec2-cd1c878b3e6f-1">
+		
+        <insert tableName="PTG_REF_PRIME">
+			<column name="NORUBR" value="7717"/>
+			<column name="LIBELLE" value="RENFORT DE GARDE"/>
+			<column name="DESCRIPTION" value=""/>
+			<column name="TYPE_SAISIE" value="3"/>
+			<column name="IS_CALCULEE" value="1"/>
+			<column name="STATUT" value="F"/>
+			<column name="MAIRIE_PRIME" value="SPPRIM"/>
+			<column name="AIDE" value="Saisir l'heure de début et l'heure de fin du renfort de garde" />
+			<column name="VERSION" value="0"/>
+			<column name="IS_AFFICHAGE_KIOSQUE" value="1"/>
+		</insert>
+    </changeSet>
+	
+</databaseChangeLog>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+	
+	<changeSet author="rebjo84" id="76fabc00-96b5-11e4-b4a9-0800200c9a66-1">
+		<sql><![CDATA[UPDATE PTG_VENTIL_HSUP a SET M_NORMALES = 
+		( select b.m_complementaires from PTG_VENTIL_HSUP b WHERE b.m_complementaires <> 0 and a.id_ventil_hsup=b.id_ventil_hsup) 
+		WHERE a.M_NORMALES = 0 and a.m_complementaires <> 0 ; ]]></sql>
+		<sql><![CDATA[UPDATE PTG_VENTIL_HSUP a SET m_normales_r = 
+		( select b.m_complementaires_r from PTG_VENTIL_HSUP b WHERE b.m_complementaires_r <> 0 and a.id_ventil_hsup=b.id_ventil_hsup) 
+		WHERE a.m_normales_r = 0 and a.m_complementaires_r <> 0 ; ]]></sql>
+	</changeSet>
+	
+	<changeSet author="rebjo84" id="76fabc00-96b5-11e4-b4a9-0800200c9a66-2">
+		<dropColumn tableName="PTG_VENTIL_HSUP"
+            columnName="M_COMPLEMENTAIRES" />
+		<dropColumn tableName="PTG_VENTIL_HSUP"
+            columnName="M_COMPLEMENTAIRES_R" />
+	</changeSet>
+	
+</databaseChangeLog>

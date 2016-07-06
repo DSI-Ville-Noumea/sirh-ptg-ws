@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.2.xsd">
+
+    	<!-- Drop Sequences  -->
+    	<changeSet author="nicno85" id="6d68b520-e3b2-11e4-b571-0800200c9a66-1">
+ 		<dropSequence sequenceName="ptg_s_droit"/>        
+ 		<dropSequence sequenceName="ptg_s_droits_agent"/>               
+   	</changeSet>
+	
+	<!-- Insert Data  -->   
+	<changeSet author="nicno85" id="6d68b520-e3b2-11e4-b571-0800200c9a66-2">
+        	<loadData tableName="PTG_DROIT" file="ptg_droit.csv" separator="," />
+        	<loadData tableName="PTG_DROITS_AGENT" file="ptg_droits_agent.csv" separator="," />
+        	<loadData tableName="PTG_DROIT_DROITS_AGENT" file="ptg_droit_droits_agent.csv" separator="," />
+   	 </changeSet>
+	
+	<!-- Create Sequences  -->
+    	<changeSet author="nicno85" id="6d68b520-e3b2-11e4-b571-0800200c9a66-3">
+        	<createSequence sequenceName="PTG_S_DROIT"/>
+		<sql><![CDATA[select setval('PTG_S_DROIT', (select max(Id_DROIT)+1 from PTG_DROIT)) ; ]]></sql>
+        	<addDefaultValue tableName="PTG_DROIT" columnName="ID_DROIT" defaultValueSequenceNext="PTG_S_DROIT" /> 
+        	<createSequence sequenceName="PTG_S_DROITS_AGENT"/>
+		<sql><![CDATA[select setval('PTG_S_DROITS_AGENT', (select max(Id_DROITS_AGENT)+1 from PTG_DROITS_AGENT)) ; ]]></sql>
+        	<addDefaultValue tableName="PTG_DROITS_AGENT" columnName="ID_DROITS_AGENT" defaultValueSequenceNext="PTG_S_DROITS_AGENT" />	      
+   	</changeSet>
+	
+</databaseChangeLog>

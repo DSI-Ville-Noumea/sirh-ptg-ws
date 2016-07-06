@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet author="rebjo84" id="dc141720-62de-11e3-949a-0800200c9a66-1">
+        <createTable tableName="PTG_REF_TYPE_ABSENCE">
+            <column name="ID_REF_TYPE_ABSENCE" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LABEL" type="NVARCHAR2(25)"/>
+        </createTable>
+        
+        <addPrimaryKey columnNames="ID_REF_TYPE_ABSENCE" constraintName="PK_PTG_REF_TYPE_ABSENCE" tableName="PTG_REF_TYPE_ABSENCE" />
+        
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="dc141720-62de-11e3-949a-0800200c9a66-2">
+        <addColumn tableName="PTG_POINTAGE">
+			<column name="ID_REF_TYPE_ABSENCE" type="INT4" afterColumn="IS_ABS_CONCERTEE" />
+		</addColumn>
+		
+		<addForeignKeyConstraint 
+            constraintName="FK_PTG_POINTAGE_REF_TYPE_ABSENCE"
+            baseColumnNames="ID_REF_TYPE_ABSENCE" baseTableName="PTG_POINTAGE" 
+            referencedColumnNames="ID_REF_TYPE_ABSENCE" referencedTableName="PTG_REF_TYPE_ABSENCE"/>
+    </changeSet>
+	
+	<changeSet author="rebjo84" id="dc141720-62de-11e3-949a-0800200c9a66-3">
+        <addColumn tableName="PTG_VENTIL_ABSENCE">
+			<column name="MINUTES_IMMEDIAT" type="INT4" afterColumn="MINUTES_NON_CONCERTEE" />
+		</addColumn>
+    </changeSet>
+	
+</databaseChangeLog>

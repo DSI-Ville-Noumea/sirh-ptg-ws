@@ -1,0 +1,1292 @@
+DEBUG 08/01/15 14:08: liquibase: Connected to ptg_adm@jdbc:postgresql://localhost:5432/sirh
+DEBUG 08/01/15 14:08: liquibase: Setting auto commit to false from true
+DEBUG 08/01/15 14:08: liquibase: Computed checksum for 1420686523491 as d4e0892e8f9e6e6ab43405f40d6f8192
+DEBUG 08/01/15 14:08: liquibase: Executing QUERY database command: select count(*) from ptg_adm.databasechangeloglock
+DEBUG 08/01/15 14:08: liquibase: Executing QUERY database command: SELECT LOCKED FROM ptg_adm.databasechangeloglock WHERE ID=1
+DEBUG 08/01/15 14:08: liquibase: Lock Database
+DEBUG 08/01/15 14:08: liquibase: Executing UPDATE database command: UPDATE ptg_adm.databasechangeloglock SET LOCKED = TRUE, LOCKEDBY = 'MI2309 (169.254.55.168)', LOCKGRANTED = '2015-01-08 14:08:43.533' WHERE ID = 1 AND LOCKED = FALSE
+INFO 08/01/15 14:08: liquibase: Successfully acquired change log lock
+DEBUG 08/01/15 14:08: liquibase: Executing QUERY database command: SELECT MD5SUM FROM ptg_adm.databasechangelog WHERE MD5SUM IS NOT NULL
+INFO 08/01/15 14:08: liquibase: Reading from ptg_adm.databasechangelog
+DEBUG 08/01/15 14:08: liquibase: Executing QUERY database command: SELECT FILENAME,AUTHOR,ID,MD5SUM,DATEEXECUTED,ORDEREXECUTED,EXECTYPE,DESCRIPTION,COMMENTS,TAG,LIQUIBASE FROM ptg_adm.databasechangelog ORDER BY DATEEXECUTED ASC, ORDEREXECUTED ASC
+DEBUG 08/01/15 14:08: liquibase: Executing QUERY database command: select count(*) from ptg_adm.databasechangeloglock
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-1::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_comment"
+            ]
+            name="id_comment"
+            type="INT4"
+        ],
+        [
+            name="text"
+            type="TEXT"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="version"
+            type="INT4"
+        ]
+    ]
+    tableName="ptg_comment"
+] as d6a58413b14441e1da75b897ae10334d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-1::rebjo84 (generated): Computed checksum for 7:d6a58413b14441e1da75b897ae10334d: as 36ab724965b2cda65a87efe1d9d19335
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-2::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_droit"
+            ]
+            name="id_droit"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="date_modification"
+            type="TIMESTAMP WITH TIME ZONE"
+     ... [truncated in log] as 64aab924b6685c25303f4d618be0a38f
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-2::rebjo84 (generated): Computed checksum for 7:64aab924b6685c25303f4d618be0a38f: as b4c3957a638e6f9c36d6b6f843923074
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-3::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                nullable="false"
+            ]
+            name="id_droit"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_droits_agent"
+            type="INT4"
+        ]
+    ]
+    tableName="ptg_droit_droits_agent"
+] as 6ca278f50912b3bea7218c6791290112
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-3::rebjo84 (generated): Computed checksum for 7:6ca278f50912b3bea7218c6791290112: as d0b0d074d84957c74cffaee56eb9b174
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-4::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_droits_agent"
+            ]
+            name="id_droits_agent"
+            type="INT4"
+        ],
+        [
+            name="id_agent"
+            type="INT4"
+        ],
+        [
+            name="code_service"
+            type="VARCHAR(10)"
+        ],
+        [
+            name="libelle_service"
+            type="VARCHAR(60)"
+        ],
+        [
+            [
+         ... [truncated in log] as b773272e2d27d34e62b1f61a14ccfe7d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-4::rebjo84 (generated): Computed checksum for 7:b773272e2d27d34e62b1f61a14ccfe7d: as fd680e73d67ba6959aac11e897fd8d13
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-5::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_etat_payeur"
+            ]
+            name="id_etat_payeur"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="statut"
+            type="VARCHAR(2)"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_type_pointage"
+            type="INT4"
+        ],... [truncated in log] as 417fe7e9efa27252bdfc12fea562055a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-5::rebjo84 (generated): Computed checksum for 7:417fe7e9efa27252bdfc12fea562055a: as edda0a829154c87dbd947880b328bb5a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-6::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_etat_pointage"
+            ]
+            name="id_etat_pointage"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_pointage"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="date_etat"
+            type="TIMESTAMP WITH TIME ... [truncated in log] as 9e8b9107a56c71fdab41db44dee8e6ae
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-6::rebjo84 (generated): Computed checksum for 7:9e8b9107a56c71fdab41db44dee8e6ae: as 6e038a1087f7ebe085657f02646f3667
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-7::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_export_etats_task"
+            ]
+            name="id_export_etats_payeur_task"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="date_creation"
+            type="TIME... [truncated in log] as 39c8388fa8f2c6b956faf7fad6933252
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-7::rebjo84 (generated): Computed checksum for 7:39c8388fa8f2c6b956faf7fad6933252: as a41f4e7d6896d5148f0dc6c1b3501a29
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-8::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_export_paie_task"
+            ]
+            name="id_export_paie_task"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent_creation"
+            type="INT4"
+   ... [truncated in log] as 75ba3608775249a61aee8bb6e735737e
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-8::rebjo84 (generated): Computed checksum for 7:75ba3608775249a61aee8bb6e735737e: as 22115a72b611c2b984fec83d0be82f63
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-9::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_pointage"
+            ]
+            name="id_pointage"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_type_pointage"
+            type="INT4"
+        ],
+        [... [truncated in log] as b393650613507417dce48c6dc2fd663a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-9::rebjo84 (generated): Computed checksum for 7:b393650613507417dce48c6dc2fd663a: as 97243e42936c4077fd99f255b57ac436
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-10::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_pointage_calcule"
+            ]
+            name="id_pointage_calcule"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="date_lundi"
+            type="TIMESTAMP WITH T... [truncated in log] as 3dbc28beae361739c921bd04178e1171
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-10::rebjo84 (generated): Computed checksum for 7:3dbc28beae361739c921bd04178e1171: as 6331d4668a49be3a40de6418bc9c0055
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-11::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                nullable="false"
+            ]
+            name="id_pointage"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_ventil_date"
+            type="INT4"
+        ]
+    ]
+    tableName="ptg_pointage_ventil_date"
+] as 1c1bb87d0b735ebb6f1b0bffd712e9a1
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-11::rebjo84 (generated): Computed checksum for 7:1c1bb87d0b735ebb6f1b0bffd712e9a1: as e8ac52dbd343f2eb8f7b2927fa32258f
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-12::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_rc_histo"
+            ]
+            name="id_rc_histo"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="date_lundi"
+            type="TIMESTAMP WITH TIME ZONE"
+      ... [truncated in log] as acbddf6be4cf89c8c0283ceb449ee3fb
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-12::rebjo84 (generated): Computed checksum for 7:acbddf6be4cf89c8c0283ceb449ee3fb: as 99406701aa50fe055e7ea6e2292e6844
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-13::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_rc_task"
+            ]
+            name="id_rc_task"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent_creation"
+            type="INT4"
+        ],
+        [
+... [truncated in log] as c6ac5ecd7ca631ea7374a000272334fe
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-13::rebjo84 (generated): Computed checksum for 7:c6ac5ecd7ca631ea7374a000272334fe: as 10f4183f0da61bea14b5687cca7d002d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-14::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                nullable="false"
+            ]
+            name="id_ref_etat"
+            type="INT4"
+        ],
+        [
+            name="label"
+            type="VARCHAR(25)"
+        ]
+    ]
+    tableName="ptg_ref_etat"
+] as 3cf59fcaa80f33b141b0e7f1e2cabcd4
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-14::rebjo84 (generated): Computed checksum for 7:3cf59fcaa80f33b141b0e7f1e2cabcd4: as 569b7d13ce8ffb3cbe22f4ad1ab5d2dd
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-15::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_ref_prime"
+            ]
+            name="id_ref_prime"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="norubr"
+            type="INT4"
+        ],
+        [
+            name="libelle"
+            type="VARCHAR(50)"
+        ],
+        [
+            name="description"
+            type="VARCHAR(300)"... [truncated in log] as eaae122a956dc0c71c780b57570ea4b8
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-15::rebjo84 (generated): Computed checksum for 7:eaae122a956dc0c71c780b57570ea4b8: as 14ec8e33f82002ee0177858dcafc5901
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-16::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                nullable="false"
+            ]
+            name="id_ref_type_absence"
+            type="INT4"
+        ],
+        [
+            name="label"
+            type="VARCHAR(25)"
+        ]
+    ]
+    tableName="ptg_ref_type_absence"
+] as 5b144d70b278f3833dc79c1699bd1d9a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-16::rebjo84 (generated): Computed checksum for 7:5b144d70b278f3833dc79c1699bd1d9a: as b3a0fd4208e60c3bf484a97263c5608d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-17::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                nullable="false"
+            ]
+            name="id_ref_type_pointage"
+            type="INT4"
+        ],
+        [
+            name="label"
+            type="VARCHAR(25)"
+        ]
+    ]
+    tableName="ptg_ref_type_pointage"
+] as c8a056cc4f420b630e602bd4e6893298
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-17::rebjo84 (generated): Computed checksum for 7:c8a056cc4f420b630e602bd4e6893298: as 8a87b73d1817046c1e575d7196193bae
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-18::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_ventil_absence"
+            ]
+            name="id_ventil_absence"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_ventil_date"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],... [truncated in log] as de07fc242f81b3231443c6ec0eaa8f69
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-18::rebjo84 (generated): Computed checksum for 7:de07fc242f81b3231443c6ec0eaa8f69: as 8c23310a0d8a1742689c16468fc22b06
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-19::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_ventil_date"
+            ]
+            name="id_ventil_date"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="date_ventil"
+            type="TIMESTAMP WITH TIME ZONE"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="is_paye"
+            type="BOOL"
+... [truncated in log] as 2186bde9c907c4f11892f6629e39f4e1
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-19::rebjo84 (generated): Computed checksum for 7:2186bde9c907c4f11892f6629e39f4e1: as 6265da6b3c8920a382df93f26eda7acd
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-20::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_ventil_hsup"
+            ]
+            name="id_ventil_hsup"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_ventil_date"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],
+     ... [truncated in log] as 40be2a4979769721b00b476f6a5715c3
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-20::rebjo84 (generated): Computed checksum for 7:40be2a4979769721b00b476f6a5715c3: as 4d6e3c4855cde9eba8fa154166ac5a97
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-21::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_ventil_prime"
+            ]
+            name="id_ventil_prime"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_ventil_date"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],
+   ... [truncated in log] as 4973cf04e9ddbbf1859dffca72e8d85d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-21::rebjo84 (generated): Computed checksum for 7:4973cf04e9ddbbf1859dffca72e8d85d: as cb93be527be85aa031bf95c6b9dc375d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-22::rebjo84 (generated): Computed checksum for createTable:[
+    columns=[
+        [
+            [
+                primaryKey="true"
+                primaryKeyName="pk_ptg_ventil_task"
+            ]
+            name="id_ventil_task"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent"
+            type="INT4"
+        ],
+        [
+            [
+                nullable="false"
+            ]
+            name="id_agent_creation"
+            type="INT4"
+        ],
+  ... [truncated in log] as e33d4464c6cb53e4f62044af48e8d1fd
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-22::rebjo84 (generated): Computed checksum for 7:e33d4464c6cb53e4f62044af48e8d1fd: as 36b96b4c0a9dfd2c03cc8af4a4eab0b2
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-23::rebjo84 (generated): Computed checksum for addPrimaryKey:[
+    columnNames="id_droit, id_droits_agent"
+    constraintName="pk_droit_droits_agent"
+    tableName="ptg_droit_droits_agent"
+] as 03ba2784d4c1aa4a8e6daeaca897df6c
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-23::rebjo84 (generated): Computed checksum for 7:03ba2784d4c1aa4a8e6daeaca897df6c: as f529b291b24de150a9dee39609ea60c0
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-24::rebjo84 (generated): Computed checksum for addPrimaryKey:[
+    columnNames="id_pointage, id_ventil_date"
+    constraintName="pk_ptg_pointage_ventil_date"
+    tableName="ptg_pointage_ventil_date"
+] as 7ae02f4138769714ccacf365a1b4e85a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-24::rebjo84 (generated): Computed checksum for 7:7ae02f4138769714ccacf365a1b4e85a: as a0fb85a6307e16c6c2d408f62da2c8ae
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-25::rebjo84 (generated): Computed checksum for addPrimaryKey:[
+    columnNames="id_ref_etat"
+    constraintName="pk_ptg_ref_etat"
+    tableName="ptg_ref_etat"
+] as 34b29fbbd20ada64fa8d38dedbd2cfd3
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-25::rebjo84 (generated): Computed checksum for 7:34b29fbbd20ada64fa8d38dedbd2cfd3: as a86989e9497fb83358ef20c0832a2d71
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-26::rebjo84 (generated): Computed checksum for addPrimaryKey:[
+    columnNames="id_ref_type_absence"
+    constraintName="pk_ptg_ref_type_absence"
+    tableName="ptg_ref_type_absence"
+] as 52ad935983b64bc7337be20a56916f6c
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-26::rebjo84 (generated): Computed checksum for 7:52ad935983b64bc7337be20a56916f6c: as 61bb6418dd6de757b6f8b06624067e48
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-27::rebjo84 (generated): Computed checksum for addPrimaryKey:[
+    columnNames="id_ref_type_pointage"
+    constraintName="pk_ptg_ref_type_pointage"
+    tableName="ptg_ref_type_pointage"
+] as 2adccc2c767e57eeba175a72b666ccd7
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-27::rebjo84 (generated): Computed checksum for 7:2adccc2c767e57eeba175a72b666ccd7: as 12c55e616183acdac6fb49ebde262ded
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-28::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_droit"
+    baseTableName="ptg_droit_droits_agent"
+    constraintName="fk_ptg_droit_droits_agent_droit"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_droit"
+    referencedTableName="ptg_droit"
+] as cd0b0cbe216b34a7e10e1b6073640374
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-28::rebjo84 (generated): Computed checksum for 7:cd0b0cbe216b34a7e10e1b6073640374: as 3c3afa840021aafd1222aa5ca9e29f4d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-29::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_droits_agent"
+    baseTableName="ptg_droit_droits_agent"
+    constraintName="fk_ptg_droit_droits_agent_droits_agent"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_droits_agent"
+    referencedTableName="ptg_droits_agent"
+] as 8d4ade07c33625b14eedfdce398a1a21
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-29::rebjo84 (generated): Computed checksum for 7:8d4ade07c33625b14eedfdce398a1a21: as 3fc4fa27c0eb0f26775638f65d35cf82
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-30::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_type_pointage"
+    baseTableName="ptg_etat_payeur"
+    constraintName="fk_ptg_etat_payeur_type_pointage"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_type_pointage"
+    referencedTableName="ptg_ref_type_pointage"
+] as ab80228892d07d0841a3c411f2e7218d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-30::rebjo84 (generated): Computed checksum for 7:ab80228892d07d0841a3c411f2e7218d: as 259390952d4c29232c156aed14cfc849
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-31::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_pointage"
+    baseTableName="ptg_etat_pointage"
+    constraintName="fk_ptg_etat_pointage_pointage"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_pointage"
+    referencedTableName="ptg_pointage"
+] as b98c9c5863202ecbf8505e63c6d57cd8
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-31::rebjo84 (generated): Computed checksum for 7:b98c9c5863202ecbf8505e63c6d57cd8: as 1ad71c8c181c76d2c915ee6df21b213b
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-32::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="etat"
+    baseTableName="ptg_etat_pointage"
+    constraintName="fk_ptg_etat_pointage_ref_etat"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_etat"
+    referencedTableName="ptg_ref_etat"
+] as 0c9cb10786eb72699423cb6c242662e5
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-32::rebjo84 (generated): Computed checksum for 7:0c9cb10786eb72699423cb6c242662e5: as 524b398476d36de584596e094cd63540
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-33::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ventil_date"
+    baseTableName="ptg_export_etats_payeur_task"
+    constraintName="fk_ptg_export_etats_payeur_task_ventil_date"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ventil_date"
+    referencedTableName="ptg_ventil_date"
+] as 977f713ad9ff459010de139fb65ee74b
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-33::rebjo84 (generated): Computed checksum for 7:977f713ad9ff459010de139fb65ee74b: as 555add90601f653119b0e09d00fc497d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-34::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ventil_date"
+    baseTableName="ptg_export_paie_task"
+    constraintName="fk_ptg_export_paie_task_ventil_date"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ventil_date"
+    referencedTableName="ptg_ventil_date"
+] as fbe2ed9988fcf1185d4866bbc8712858
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-34::rebjo84 (generated): Computed checksum for 7:fbe2ed9988fcf1185d4866bbc8712858: as 7d248577ca08bbe275cf2be3de3e02f2
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-35::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="etat"
+    baseTableName="ptg_pointage_calcule"
+    constraintName="fk_ptg_pointage_calcule_ref_etat"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_etat"
+    referencedTableName="ptg_ref_etat"
+] as b62593b3ab762540c21206f415e4f9ea
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-35::rebjo84 (generated): Computed checksum for 7:b62593b3ab762540c21206f415e4f9ea: as 0b05a09dd0c7486ea2f86bbb635ae105
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-36::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ref_prime"
+    baseTableName="ptg_pointage_calcule"
+    constraintName="fk_ptg_pointage_calcule_ref_prime"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_prime"
+    referencedTableName="ptg_ref_prime"
+] as 33bc8129a012dd7d910df0a1426c11b0
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-36::rebjo84 (generated): Computed checksum for 7:33bc8129a012dd7d910df0a1426c11b0: as 3de3dbcb2b6af4df069f5718a68dc58c
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-37::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ref_type_pointage"
+    baseTableName="ptg_pointage_calcule"
+    constraintName="fk_ptg_pointage_calcule_ref_type_pointage"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_type_pointage"
+    referencedTableName="ptg_ref_type_pointage"
+] as 0ab6488624fd2e8c632bc24acf445cc8
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-37::rebjo84 (generated): Computed checksum for 7:0ab6488624fd2e8c632bc24acf445cc8: as 8164eb75ff9ec8c284dd9db09a264afa
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-38::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ventil_date"
+    baseTableName="ptg_pointage_calcule"
+    constraintName="fk_ptg_pointage_calcule_ventil_date"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ventil_date"
+    referencedTableName="ptg_ventil_date"
+] as 7d5be1d95d5880712e0c0b4cf5c723eb
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-38::rebjo84 (generated): Computed checksum for 7:7d5be1d95d5880712e0c0b4cf5c723eb: as fdffd1f071fb4f32f201b77888f402c1
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-39::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_comment_commentaire"
+    baseTableName="ptg_pointage"
+    constraintName="fk_ptg_pointage_comment_commentaire"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_comment"
+    referencedTableName="ptg_comment"
+] as 0800cec48ab3d2db25b742b5d6e70d0f
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-39::rebjo84 (generated): Computed checksum for 7:0800cec48ab3d2db25b742b5d6e70d0f: as 46456c133b86098fd7cbe48b2e937727
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-40::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_comment_motif"
+    baseTableName="ptg_pointage"
+    constraintName="fk_ptg_pointage_comment_motif"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_comment"
+    referencedTableName="ptg_comment"
+] as d6b1ec1def51f66d76c1b836dce38381
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-40::rebjo84 (generated): Computed checksum for 7:d6b1ec1def51f66d76c1b836dce38381: as 40dca6d73ae95b6d8a631c91fd9c11db
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-41::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_pointage_parent"
+    baseTableName="ptg_pointage"
+    constraintName="fk_ptg_pointage_pointage_parent"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_pointage"
+    referencedTableName="ptg_pointage"
+] as f53256a590d8f2d3398d519575a74c30
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-41::rebjo84 (generated): Computed checksum for 7:f53256a590d8f2d3398d519575a74c30: as ce815fb716deadbad4ebeedc3dbd8a05
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-42::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ref_prime"
+    baseTableName="ptg_pointage"
+    constraintName="fk_ptg_pointage_ref_prime"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_prime"
+    referencedTableName="ptg_ref_prime"
+] as 80fc87186323cdd1a03157b56857dca7
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-42::rebjo84 (generated): Computed checksum for 7:80fc87186323cdd1a03157b56857dca7: as 5b14b36f6e69494b01718bf207b17847
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-43::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ref_type_absence"
+    baseTableName="ptg_pointage"
+    constraintName="fk_ptg_pointage_ref_type_absence"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_type_absence"
+    referencedTableName="ptg_ref_type_absence"
+] as ac8a8d081c416915d25a05968caaebc4
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-43::rebjo84 (generated): Computed checksum for 7:ac8a8d081c416915d25a05968caaebc4: as d55a01873123f769a05cb47acf4d4a15
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-44::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_type_pointage"
+    baseTableName="ptg_pointage"
+    constraintName="fk_ptg_pointage_ref_type_pointage"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_type_pointage"
+    referencedTableName="ptg_ref_type_pointage"
+] as 7f8f594c6f29432c48da477c91b3792d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-44::rebjo84 (generated): Computed checksum for 7:7f8f594c6f29432c48da477c91b3792d: as 9ee32e532df09b523514c4abc7b1dc3d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-45::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_pointage"
+    baseTableName="ptg_pointage_ventil_date"
+    constraintName="fk_ptg_pointage_ventil_date_pointage"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_pointage"
+    referencedTableName="ptg_pointage"
+] as fda79bac4e83ed5c19ecbe67417d15e2
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-45::rebjo84 (generated): Computed checksum for 7:fda79bac4e83ed5c19ecbe67417d15e2: as 964291918fdaa4ff187533563eea88bd
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-46::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ventil_date"
+    baseTableName="ptg_pointage_ventil_date"
+    constraintName="fk_ptg_pointage_ventil_date_ventil_date"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ventil_date"
+    referencedTableName="ptg_ventil_date"
+] as 78d943a7571bfe03834130e3b8336fea
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-46::rebjo84 (generated): Computed checksum for 7:78d943a7571bfe03834130e3b8336fea: as 4bacdb292aa9f266ebe682c77c97c6b0
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-47::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ventil_date"
+    baseTableName="ptg_rc_task"
+    constraintName="fk_ptg_rc_task_ventil_date"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ventil_date"
+    referencedTableName="ptg_ventil_date"
+] as bf685f42c7bdc681ed80e789e2af4c3b
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-47::rebjo84 (generated): Computed checksum for 7:bf685f42c7bdc681ed80e789e2af4c3b: as 2fc44892a0c1bdf5953bc9e23bf12454
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-48::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="etat"
+    baseTableName="ptg_ventil_absence"
+    constraintName="fk_ptg_ventil_abs_ref_etat"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_etat"
+    referencedTableName="ptg_ref_etat"
+] as 70bde54e1e4345fe066cc3997db430dd
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-48::rebjo84 (generated): Computed checksum for 7:70bde54e1e4345fe066cc3997db430dd: as 4ad6de99f004e2e826d9450f935ed0e4
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-49::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ventil_date"
+    baseTableName="ptg_ventil_absence"
+    constraintName="fk_ptg_ventil_abs_ventil_date"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ventil_date"
+    referencedTableName="ptg_ventil_date"
+] as 436243e13c00a0d909e83e69bafa3fbd
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-49::rebjo84 (generated): Computed checksum for 7:436243e13c00a0d909e83e69bafa3fbd: as ea07f590ed3df6813c4f6e532d0bc8f3
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-50::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="etat"
+    baseTableName="ptg_ventil_hsup"
+    constraintName="fk_ptg_ventil_hsup_ref_etat"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_etat"
+    referencedTableName="ptg_ref_etat"
+] as 1043466fb3ed403c975a070893337dd9
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-50::rebjo84 (generated): Computed checksum for 7:1043466fb3ed403c975a070893337dd9: as c14a7a6b01b319f9f089ef840315bde6
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-51::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ventil_date"
+    baseTableName="ptg_ventil_hsup"
+    constraintName="fk_ptg_ventil_hsup_ventil_date"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ventil_date"
+    referencedTableName="ptg_ventil_date"
+] as 8db01d59d968cdae1f3a21e6149ce83e
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-51::rebjo84 (generated): Computed checksum for 7:8db01d59d968cdae1f3a21e6149ce83e: as 7bcaf29e156a5801e0240bc4d993de65
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-52::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="etat"
+    baseTableName="ptg_ventil_prime"
+    constraintName="fk_ptg_ventil_prime_abs_ref_etat"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_etat"
+    referencedTableName="ptg_ref_etat"
+] as 5e63f962e468b1b3461f3ed1d207c080
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-52::rebjo84 (generated): Computed checksum for 7:5e63f962e468b1b3461f3ed1d207c080: as d910ab1958b2cad2d0e5f743a2eb1f6b
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-53::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ref_prime"
+    baseTableName="ptg_ventil_prime"
+    constraintName="fk_ptg_ventil_prime_ref_prime"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_prime"
+    referencedTableName="ptg_ref_prime"
+] as 141b8ef059269259c561c5373581f629
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-53::rebjo84 (generated): Computed checksum for 7:141b8ef059269259c561c5373581f629: as a18a46377b51dc1415cb75425b68b37d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-54::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ventil_date"
+    baseTableName="ptg_ventil_prime"
+    constraintName="fk_ptg_ventil_prime_ventil_date"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ventil_date"
+    referencedTableName="ptg_ventil_date"
+] as 534ed6e4fae46c8d39a6f68d104c6d3a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-54::rebjo84 (generated): Computed checksum for 7:534ed6e4fae46c8d39a6f68d104c6d3a: as b5afae7447e0003e9aa4e754216eb823
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-55::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_type_pointage"
+    baseTableName="ptg_ventil_task"
+    constraintName="fk_ptg_ventil_task_ref_type_pointage"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ref_type_pointage"
+    referencedTableName="ptg_ref_type_pointage"
+] as f98b321b17c94a55115ac41534560219
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-55::rebjo84 (generated): Computed checksum for 7:f98b321b17c94a55115ac41534560219: as 150bc2164e904fc6c5fac50907de97a6
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-56::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ventil_date_from"
+    baseTableName="ptg_ventil_task"
+    constraintName="fk_ptg_ventil_task_ventil_date_from"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ventil_date"
+    referencedTableName="ptg_ventil_date"
+] as 80bddbbc2f3fa2c967db2a98848a912e
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-56::rebjo84 (generated): Computed checksum for 7:80bddbbc2f3fa2c967db2a98848a912e: as f08423ad3316642934487d67cde0e162
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-57::rebjo84 (generated): Computed checksum for addForeignKeyConstraint:[
+    baseColumnNames="id_ventil_date_to"
+    baseTableName="ptg_ventil_task"
+    constraintName="fk_ptg_ventil_task_ventil_date_to"
+    deferrable="false"
+    initiallyDeferred="false"
+    onDelete="NO ACTION"
+    onUpdate="NO ACTION"
+    referencedColumnNames="id_ventil_date"
+    referencedTableName="ptg_ventil_date"
+] as 50ddf73be723930c0d1495c642fabc16
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-create-tables.xml::1406235744921-57::rebjo84 (generated): Computed checksum for 7:50ddf73be723930c0d1495c642fabc16: as b4ca3ba50646f57d0dc6e83706bdcd05
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.11-alter.xml::b3287f0-b85c-11e3-a5e2-11abc123c9a66-1::rebjo84: Computed checksum for dropColumn:[
+    columnName="M_DJF_25"
+    tableName="PTG_VENTIL_HSUP"
+] as ebe29dc32aef3451cd0bd13906321a10
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.11-alter.xml::b3287f0-b85c-11e3-a5e2-11abc123c9a66-1::rebjo84: Computed checksum for dropColumn:[
+    columnName="M_DJF_50"
+    tableName="PTG_VENTIL_HSUP"
+] as 86643e93e6f0de6c06b8b052ef4296ac
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.11-alter.xml::b3287f0-b85c-11e3-a5e2-11abc123c9a66-1::rebjo84: Computed checksum for dropColumn:[
+    columnName="M_DJF_25_R"
+    tableName="PTG_VENTIL_HSUP"
+] as 11533201a7344b4444f52664c3c67949
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.11-alter.xml::b3287f0-b85c-11e3-a5e2-11abc123c9a66-1::rebjo84: Computed checksum for dropColumn:[
+    columnName="M_DJF_50_R"
+    tableName="PTG_VENTIL_HSUP"
+] as 81dfc26a6460ad803afc3a94949d9e53
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.11-alter.xml::b3287f0-b85c-11e3-a5e2-11abc123c9a66-1::rebjo84: Computed checksum for 7:ebe29dc32aef3451cd0bd13906321a10:7:86643e93e6f0de6c06b8b052ef4296ac:7:11533201a7344b4444f52664c3c67949:7:81dfc26a6460ad803afc3a94949d9e53: as 5464cb6c43d1a8271b377fb198969dd1
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.12-alter.xml::b684f0-b85c-11e3-a5e2-11abc123c9a66-1::rebjo84: Computed checksum for addColumn:[
+    columns=[
+        [
+            [
+                nullable="true"
+            ]
+            afterColumn="M_ABS"
+            name="M_ABS_AS400"
+            type="INT4"
+        ]
+    ]
+    tableName="PTG_VENTIL_HSUP"
+] as c114b1d3179dd42e41708880555769da
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.12-alter.xml::b684f0-b85c-11e3-a5e2-11abc123c9a66-1::rebjo84: Computed checksum for 7:c114b1d3179dd42e41708880555769da: as 250d3142cf44d59a1961fa722efe73ff
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as a75927cb073143f38e00ea5748670d0f
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as a5ba5bd89d28ac4a1886ac1da95f3fa9
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as 3fa51cbc37dc26309c54b082f08fee50
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as a1be01a0bad0df3aced59bf6df9e3cb1
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as e4b5d7152c67fb79388f9e04708a65ef
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as ea2eb7bf8a6a95e63f265618ee03c1d2
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as 3bd62b1397d7a81af300efd2e46eddc3
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as 57eb9a615b8b69dde2cfba940ddfb050
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as c65d1a52372a864ae13f24ce2a2c7d59
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as 0c94382f67946f1d244f02251e958890
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as b2fddef17a214a333ee565249cfa7eff
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as b762cb3ec01575423fb20e5071ed8b1d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as e96afba8117e2cb4c280816f6114e3a3
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as c09346184eab6ec18a28df20054ca46a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as 6d2313f0f811c567c812a250370242f1
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as 0540a4aa489032f3f03601445ecaccd9
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as 8a8e06f12a9ae4ddf11a1a6ce72c1a5d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as 154e732e8b8319f3f31a2116bea22ace
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as e1242bf91f9fb41751dc9abab31422ba
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as 624f2cd0977870a0456210711ad783f1
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as cff3966b662d0630724a7a8b736112dd
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for inputStream as 2b0abcb22725ddfd41d7a67d29001b01
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.14-description.xml::16b39770-3d1a-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for 7:a75927cb073143f38e00ea5748670d0f:7:a5ba5bd89d28ac4a1886ac1da95f3fa9:7:3fa51cbc37dc26309c54b082f08fee50:7:a1be01a0bad0df3aced59bf6df9e3cb1:7:e4b5d7152c67fb79388f9e04708a65ef:7:ea2eb7bf8a6a95e63f265618ee03c1d2:7:3bd62b1397d7a81af300efd2e46eddc3:7:57eb9a615b8b69dde2cfba940ddfb050:7:c65d1a52372a864ae13f24ce2a2c7d59:7:0c94382f67946f1d244f02251e958890:7:b2fddef17a214a333ee565249cfa7eff:7:b762cb3ec01575423fb20e5071ed8b1d:7:e96afba8117e2cb4c280816f6114e3a3:7:c09346184eab6ec18a28df20054ca46a:7:6d2313f0... [truncated in log] as 2b22abd74da6d1b8b5a2bca81e83cec5
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_comment::rebjo84: Computed checksum for inputStream as fb7ffab9031c682f3bb26b38461de67d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_comment::rebjo84: Computed checksum for PTG_COMMENT:7:fb7ffab9031c682f3bb26b38461de67d as 4ca9d1ac7750a886859e59ed6f91c688
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_comment::rebjo84: Computed checksum for 7:4ca9d1ac7750a886859e59ed6f91c688: as 70b320707e7bce958e124769537f657f
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_type_absence::rebjo84: Computed checksum for inputStream as 5a54df9d92c1fe0f323696e5b97d3fba
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_type_absence::rebjo84: Computed checksum for PTG_REF_TYPE_ABSENCE:7:5a54df9d92c1fe0f323696e5b97d3fba as 4a5e215e55c17bc3e292de292e7d0f98
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_type_absence::rebjo84: Computed checksum for 7:4a5e215e55c17bc3e292de292e7d0f98: as 5171eaf9e4d513679ce887f15ec017db
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_type_pointage::rebjo84: Computed checksum for inputStream as 0e90718b6222b1085013cc4826e82763
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_type_pointage::rebjo84: Computed checksum for PTG_REF_TYPE_POINTAGE:7:0e90718b6222b1085013cc4826e82763 as 3e4ab75e10b9b597ad9f3e5ec9ba5ecb
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_type_pointage::rebjo84: Computed checksum for 7:3e4ab75e10b9b597ad9f3e5ec9ba5ecb: as 58ad7725ad11e7f97514d4e7675840e6
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_prime::rebjo84: Computed checksum for inputStream as 25feb9e3f34e5edf2ef2febe7d0be766
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_prime::rebjo84: Computed checksum for PTG_REF_PRIME:7:25feb9e3f34e5edf2ef2febe7d0be766 as 4da2d33190d068d4d7a58c8d01bd289c
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_prime::rebjo84: Computed checksum for 7:4da2d33190d068d4d7a58c8d01bd289c: as 456c4f9a66ade7ae33e2a40d4b927530
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_etat::rebjo84: Computed checksum for inputStream as 2a9788d6d46c1dd5a3f484d0bf3f50d7
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_etat::rebjo84: Computed checksum for PTG_REF_ETAT:7:2a9788d6d46c1dd5a3f484d0bf3f50d7 as 39681e25683dbb0cf0b066af8cad41e5
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ref_etat::rebjo84: Computed checksum for 7:39681e25683dbb0cf0b066af8cad41e5: as c640d2d7f1b9a19c778a610530df6a92
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_pointage::rebjo84: Computed checksum for inputStream as 8ec162cacacf5a16561b8ae8450fea6f
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_pointage::rebjo84: Computed checksum for PTG_POINTAGE:7:8ec162cacacf5a16561b8ae8450fea6f as 0d6d435c45aac2b4695c17a074b76294
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_pointage::rebjo84: Computed checksum for 7:0d6d435c45aac2b4695c17a074b76294: as 0453f815bb288950cf14a66901c35417
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_date::rebjo84: Computed checksum for inputStream as 3a7c91b39690c0b47aa530790c3bb5cb
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_date::rebjo84: Computed checksum for PTG_VENTIL_DATE:7:3a7c91b39690c0b47aa530790c3bb5cb as b8f1bbff0e9f4a6edade23dc8f632d33
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_date::rebjo84: Computed checksum for 7:b8f1bbff0e9f4a6edade23dc8f632d33: as 79a18547360c09f017fde000ef3eb801
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_absence::rebjo84: Computed checksum for inputStream as 0df3f0d3cc054f3f04cdeec466cb9535
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_absence::rebjo84: Computed checksum for PTG_VENTIL_ABSENCE:7:0df3f0d3cc054f3f04cdeec466cb9535 as a6f79ea58d3ae71e83ae07bb25204c0e
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_absence::rebjo84: Computed checksum for 7:a6f79ea58d3ae71e83ae07bb25204c0e: as 9e6f9d9c03d09a92853b04351385ebd9
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_hsup::rebjo84: Computed checksum for inputStream as 194906d4f3cb4d24c026b3ddd2a28105
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_hsup::rebjo84: Computed checksum for PTG_VENTIL_HSUP:7:194906d4f3cb4d24c026b3ddd2a28105 as fbb24c0bb570930fe9c046bb5ff957ec
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_hsup::rebjo84: Computed checksum for 7:fbb24c0bb570930fe9c046bb5ff957ec: as 08639a628f07aab637a67b3d5239c56b
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_prime::rebjo84: Computed checksum for inputStream as fccfca5c9fb8951ecafcf69d1a8bed41
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_prime::rebjo84: Computed checksum for PTG_VENTIL_PRIME:7:fccfca5c9fb8951ecafcf69d1a8bed41 as 4d39a446746e208eee3c2e373ce34da7
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_prime::rebjo84: Computed checksum for 7:4d39a446746e208eee3c2e373ce34da7: as 0a9ada71dda60e3221c5c08aebb62c1f
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_task::rebjo84: Computed checksum for inputStream as dedeea0841057068e3a586d0f1de0452
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_task::rebjo84: Computed checksum for PTG_VENTIL_TASK:7:dedeea0841057068e3a586d0f1de0452 as 218ca19f62e35f00c63aa4e427c1d391
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_ventil_task::rebjo84: Computed checksum for 7:218ca19f62e35f00c63aa4e427c1d391: as 561535a0d5f46e39d6c76b198f64790d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_rc_task::rebjo84: Computed checksum for inputStream as c34a1119cca15215613b1cdf9872921f
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_rc_task::rebjo84: Computed checksum for PTG_RC_TASK:7:c34a1119cca15215613b1cdf9872921f as b8d767d3fbebde440595c3f024d63fe4
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_rc_task::rebjo84: Computed checksum for 7:b8d767d3fbebde440595c3f024d63fe4: as 0a97ab58e9ae9e3f74dad833d156b389
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_rc_histo::rebjo84: Computed checksum for inputStream as 05e25a079b2e29f56aae182210b2712c
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_rc_histo::rebjo84: Computed checksum for PTG_RC_HISTO:7:05e25a079b2e29f56aae182210b2712c as e8716cca7b1d334d50b4a63fbbad1bed
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_rc_histo::rebjo84: Computed checksum for 7:e8716cca7b1d334d50b4a63fbbad1bed: as ad500eae14200dd96d33607216921523
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_pointage_ventil_date::rebjo84: Computed checksum for inputStream as 9da267ca0016fcb98800628c1a9cef9b
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_pointage_ventil_date::rebjo84: Computed checksum for PTG_POINTAGE_VENTIL_DATE:7:9da267ca0016fcb98800628c1a9cef9b as b995b772f69728c000d6e46788670ac0
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_pointage_ventil_date::rebjo84: Computed checksum for 7:b995b772f69728c000d6e46788670ac0: as 3bb92916845de67481f047697b87de40
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_pointage_calcule::rebjo84: Computed checksum for inputStream as 16cf63da057b1a1d1638588c61143c61
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_pointage_calcule::rebjo84: Computed checksum for PTG_POINTAGE_CALCULE:7:16cf63da057b1a1d1638588c61143c61 as 35c5c0c3aad74fff4c65fa2a373cc312
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_pointage_calcule::rebjo84: Computed checksum for 7:35c5c0c3aad74fff4c65fa2a373cc312: as 4fcf0e187cb5a7026bda1fa70a0dbac2
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_export_paie_task::rebjo84: Computed checksum for inputStream as 680590e51ed51cfee00ccf4c6682cc2e
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_export_paie_task::rebjo84: Computed checksum for PTG_EXPORT_PAIE_TASK:7:680590e51ed51cfee00ccf4c6682cc2e as a0aa35933599360b8d5a9b2f3558ed4e
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_export_paie_task::rebjo84: Computed checksum for 7:a0aa35933599360b8d5a9b2f3558ed4e: as 32c9cb7bd7247427eebc79a1771d7bae
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_export_etats_payeur_task::rebjo84: Computed checksum for inputStream as b1e92f8cd85d693b2aa09ad089b06065
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_export_etats_payeur_task::rebjo84: Computed checksum for PTG_EXPORT_ETATS_PAYEUR_TASK:7:b1e92f8cd85d693b2aa09ad089b06065 as 6d4c6b2ee2adc9236beff5f3ea3a4b65
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_export_etats_payeur_task::rebjo84: Computed checksum for 7:6d4c6b2ee2adc9236beff5f3ea3a4b65: as 1ffe9dccc9ac0249b12008573bdb260b
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_etat_pointage::rebjo84: Computed checksum for inputStream as 17d912433de50685d9b8ec645283c715
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_etat_pointage::rebjo84: Computed checksum for PTG_ETAT_POINTAGE:7:17d912433de50685d9b8ec645283c715 as ca49043a1c1efe5642184dee6a438c76
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_etat_pointage::rebjo84: Computed checksum for 7:ca49043a1c1efe5642184dee6a438c76: as 74cd85f6104ef1675449cbed56e1e935
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_etat_payeur::rebjo84: Computed checksum for inputStream as 4c4751ace4370763ad9ca5ee68bde830
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_etat_payeur::rebjo84: Computed checksum for PTG_ETAT_PAYEUR:7:4c4751ace4370763ad9ca5ee68bde830 as 28a7f57e7e4fa46e8ed85e4505099b99
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_etat_payeur::rebjo84: Computed checksum for 7:28a7f57e7e4fa46e8ed85e4505099b99: as a4b74a533398f63cc4f273620bfd937e
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_droit::rebjo84: Computed checksum for inputStream as 972dd11907eff8636c2b290e510d1535
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_droit::rebjo84: Computed checksum for PTG_DROIT:7:972dd11907eff8636c2b290e510d1535 as 66e39e06d655c6f4866b6415fdf74309
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_droit::rebjo84: Computed checksum for 7:66e39e06d655c6f4866b6415fdf74309: as 670b0478650258c32e37ab7dd74fff41
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_droits_agent::rebjo84: Computed checksum for inputStream as cf9b86d19755d4aa7188592088a64370
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_droits_agent::rebjo84: Computed checksum for PTG_DROITS_AGENT:7:cf9b86d19755d4aa7188592088a64370 as 24b55e1ee105691d2401b34994bef3e6
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_droits_agent::rebjo84: Computed checksum for 7:24b55e1ee105691d2401b34994bef3e6: as 113632bb1dae6e8d451c00b55eb33a95
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_droit_droits_agent::rebjo84: Computed checksum for inputStream as 77a5a4a6ac4752710ebd26684a0fd12a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_droit_droits_agent::rebjo84: Computed checksum for PTG_DROIT_DROITS_AGENT:7:77a5a4a6ac4752710ebd26684a0fd12a as 21b5696ffbf6d788e94e5c7c112b94ba
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-insert-data.xml::load-data-ptg_droit_droits_agent::rebjo84: Computed checksum for 7:21b5696ffbf6d788e94e5c7c112b94ba: as a6fff3d4de8ff913175c5dba908041ae
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-1::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_COMMENT"
+    startValue="287"
+] as eb0145e0cbea6d56f174901349367776
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-1::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_COMMENT"
+    defaultValueSequenceNext="PTG_S_COMMENT"
+    tableName="PTG_COMMENT"
+] as b9c6667e2b985b9d2b72a32620f88554
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-1::rebjo84: Computed checksum for 7:eb0145e0cbea6d56f174901349367776:7:b9c6667e2b985b9d2b72a32620f88554: as 768b3e3a26a6c135445c7a03fac8a6d6
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-2::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_DROIT"
+    startValue="50"
+] as 6cea6d16eda1ba58a7ad39418b7145a5
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-2::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_DROIT"
+    defaultValueSequenceNext="PTG_S_DROIT"
+    tableName="PTG_DROIT"
+] as c636288bb9a971b0fdcb9921122b6b71
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-2::rebjo84: Computed checksum for 7:6cea6d16eda1ba58a7ad39418b7145a5:7:c636288bb9a971b0fdcb9921122b6b71: as d74c43c7f6effad0f1280d3a47619432
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-3::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_DROITS_AGENT"
+    startValue="147"
+] as 1ebc1cd423439510e2b116d7b234cdc7
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-3::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_DROITS_AGENT"
+    defaultValueSequenceNext="PTG_S_DROITS_AGENT"
+    tableName="PTG_DROITS_AGENT"
+] as 1f98bc1a27a2e5af53df0a3b481e299b
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-3::rebjo84: Computed checksum for 7:1ebc1cd423439510e2b116d7b234cdc7:7:1f98bc1a27a2e5af53df0a3b481e299b: as b79dc3d28311e07ed992d0b9860339e1
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-4::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_ETAT_PAYEUR"
+    startValue="1"
+] as aabff68a45666a41d4812160e26d7f76
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-4::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_ETAT_PAYEUR"
+    defaultValueSequenceNext="PTG_S_ETAT_PAYEUR"
+    tableName="PTG_ETAT_PAYEUR"
+] as 6df7c8355f6e44512933daeaa4a4d8d4
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-4::rebjo84: Computed checksum for 7:aabff68a45666a41d4812160e26d7f76:7:6df7c8355f6e44512933daeaa4a4d8d4: as 8ce75b360c05f89e7a7235e932f3804a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-5::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_ETAT_POINTAGE"
+    startValue="926"
+] as 915c2f27f66d19536d3fbf148f0cf9ff
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-5::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_ETAT_POINTAGE"
+    defaultValueSequenceNext="PTG_S_ETAT_POINTAGE"
+    tableName="PTG_ETAT_POINTAGE"
+] as 6728b28831eda3d07d6c65b5872b372c
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-5::rebjo84: Computed checksum for 7:915c2f27f66d19536d3fbf148f0cf9ff:7:6728b28831eda3d07d6c65b5872b372c: as 667419239c8197255448089fb6a9c0c7
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-6::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_EXPORT_ETATS_PAYEUR_TASK"
+    startValue="1"
+] as e449c01248d9a20a7031c4bae062d568
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-6::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_EXPORT_ETATS_PAYEUR_TASK"
+    defaultValueSequenceNext="PTG_S_EXPORT_ETATS_PAYEUR_TASK"
+    tableName="PTG_EXPORT_ETATS_PAYEUR_TASK"
+] as d3276bfa934b741d1b21caa135d5b01c
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-6::rebjo84: Computed checksum for 7:e449c01248d9a20a7031c4bae062d568:7:d3276bfa934b741d1b21caa135d5b01c: as d5a565c94fc9ae86f52ccac4ce7bca71
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-7::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_EXPORT_PAIE_TASK"
+    startValue="1"
+] as f4c2f714ce6b88ac970050a67c101dbc
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-7::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_EXPORT_PAIE_TASK"
+    defaultValueSequenceNext="PTG_S_EXPORT_PAIE_TASK"
+    tableName="PTG_EXPORT_PAIE_TASK"
+] as 8df4605d91d765211dd41f40cfe7dfba
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-7::rebjo84: Computed checksum for 7:f4c2f714ce6b88ac970050a67c101dbc:7:8df4605d91d765211dd41f40cfe7dfba: as 22b27f27d2f7ba8d1f7d9c194a129a13
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-8::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_POINTAGE"
+    startValue="312"
+] as 99b6229eddc87a190fe5bd1f0c77b33e
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-8::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_POINTAGE"
+    defaultValueSequenceNext="PTG_S_POINTAGE"
+    tableName="PTG_POINTAGE"
+] as 03ef1b42a7e2ce530de7cff964c6475a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-8::rebjo84: Computed checksum for 7:99b6229eddc87a190fe5bd1f0c77b33e:7:03ef1b42a7e2ce530de7cff964c6475a: as 797bdf03e798f20f6931f8c26f1b15e1
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-9::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_POINTAGE_CALCULE"
+    startValue="55"
+] as be4259f0cd92cc7501ac777ced6b5615
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-9::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_POINTAGE_CALCULE"
+    defaultValueSequenceNext="PTG_S_POINTAGE_CALCULE"
+    tableName="PTG_POINTAGE_CALCULE"
+] as 24b020ebcc3b74dda3a5e85fb4ae1965
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-9::rebjo84: Computed checksum for 7:be4259f0cd92cc7501ac777ced6b5615:7:24b020ebcc3b74dda3a5e85fb4ae1965: as b0e27ecf9dfea4df4fa42d74f6da5d82
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-11::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_RC_HISTO"
+    startValue="1"
+] as 8537ecc51c278256a4c17393469e760a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-11::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_RC_HISTO"
+    defaultValueSequenceNext="PTG_S_RC_HISTO"
+    tableName="PTG_RC_HISTO"
+] as b70bc7cc8f37b2afe102e60e8b9f295e
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-11::rebjo84: Computed checksum for 7:8537ecc51c278256a4c17393469e760a:7:b70bc7cc8f37b2afe102e60e8b9f295e: as 6dde21b08cb8abdc939aefa33707e2a6
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-12::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_RC_TASK"
+    startValue="1"
+] as 29ce3d3439ce199ccf8b6816c3ea8983
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-12::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_RC_TASK"
+    defaultValueSequenceNext="PTG_S_RC_TASK"
+    tableName="PTG_RC_TASK"
+] as 2627f7790cf644d3116598ae1a0731dc
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-12::rebjo84: Computed checksum for 7:29ce3d3439ce199ccf8b6816c3ea8983:7:2627f7790cf644d3116598ae1a0731dc: as 611c81daeea317169ebde9a2240d6721
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-13::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_REF_PRIME"
+    startValue="53"
+] as 709d6207921c1fe666da82bae7e96c2c
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-13::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_REF_PRIME"
+    defaultValueSequenceNext="PTG_S_REF_PRIME"
+    tableName="PTG_REF_PRIME"
+] as 6f09e454105e92c92a22c7476137237e
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-13::rebjo84: Computed checksum for 7:709d6207921c1fe666da82bae7e96c2c:7:6f09e454105e92c92a22c7476137237e: as b7195f7159c387d2f21d86aa4168be20
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-14::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_VENTIL_ABSENCE"
+    startValue="1"
+] as b3cf7580545f8c85be6d8c750dceb749
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-14::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_VENTIL_ABSENCE"
+    defaultValueSequenceNext="PTG_S_VENTIL_ABSENCE"
+    tableName="PTG_VENTIL_ABSENCE"
+] as 17397182a21e13dacf70655944e7f1c8
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-14::rebjo84: Computed checksum for 7:b3cf7580545f8c85be6d8c750dceb749:7:17397182a21e13dacf70655944e7f1c8: as 5be41ca11668897e3aa41e74f98dddcb
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-15::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_VENTIL_DATE"
+    startValue="5"
+] as 71f24d5800f44954950c786cca02e9cf
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-15::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_VENTIL_DATE"
+    defaultValueSequenceNext="PTG_S_VENTIL_DATE"
+    tableName="PTG_VENTIL_DATE"
+] as bc3d86d4a1dae82f3299964554711a5a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-15::rebjo84: Computed checksum for 7:71f24d5800f44954950c786cca02e9cf:7:bc3d86d4a1dae82f3299964554711a5a: as c59a8629c14a34140a3059b86c589ed9
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-16::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_VENTIL_HSUP"
+    startValue="138"
+] as c8cde6482325d91aa0ad48200af3c734
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-16::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_VENTIL_HSUP"
+    defaultValueSequenceNext="PTG_S_VENTIL_HSUP"
+    tableName="PTG_VENTIL_HSUP"
+] as 94a4bbbd02069bfbf94a15e981c8c1ba
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-16::rebjo84: Computed checksum for 7:c8cde6482325d91aa0ad48200af3c734:7:94a4bbbd02069bfbf94a15e981c8c1ba: as 0160b886bd4818da34f469a7be1a5b9d
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-17::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_VENTIL_PRIME"
+    startValue="112"
+] as 89d7e91436276bda7363134d15c539a3
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-17::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_VENTIL_PRIME"
+    defaultValueSequenceNext="PTG_S_VENTIL_PRIME"
+    tableName="PTG_VENTIL_PRIME"
+] as 1206f81c07421d60503ab1c25e240758
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-17::rebjo84: Computed checksum for 7:89d7e91436276bda7363134d15c539a3:7:1206f81c07421d60503ab1c25e240758: as 706bfbdccad25253093c734cef33829b
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-18::rebjo84: Computed checksum for createSequence:[
+    sequenceName="PTG_S_VENTIL_TASK"
+    startValue="198"
+] as 6cabf28510f7ee7edf90e3622dd817f4
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-18::rebjo84: Computed checksum for addDefaultValue:[
+    columnName="ID_VENTIL_TASK"
+    defaultValueSequenceNext="PTG_S_VENTIL_TASK"
+    tableName="PTG_VENTIL_TASK"
+] as 77e2871306a6d1521331db4a7042eab6
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-sequence.xml::59edc0d0-e061-11e3-8b68-0812340c9a66-18::rebjo84: Computed checksum for 7:6cabf28510f7ee7edf90e3622dd817f4:7:77e2871306a6d1521331db4a7042eab6: as c7c4c0b681265b79767e345ae415e878
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.15-alter.xml::85818110-5419-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for addColumn:[
+    columns=[
+        [
+            [
+                nullable="true"
+            ]
+            afterColumn="IS_HSUP_RECUPEREE"
+            name="IS_HSUP_RAPPEL_SERVICE"
+            type="BOOL"
+        ]
+    ]
+    tableName="PTG_POINTAGE"
+] as b2357ec625164db8d2c551c5acbd8678
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.15-alter.xml::85818110-5419-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for 7:b2357ec625164db8d2c551c5acbd8678: as 3ef75e3c1507c4816063922a20b0861a
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.15-alter.xml::85818110-5419-11e4-916c-0800200c9a66-2::rebjo84: Computed checksum for addColumn:[
+    columns=[
+        [
+            name="M_RAPPEL_SERVICE"
+            type="INT4"
+        ]
+    ]
+    tableName="PTG_VENTIL_HSUP"
+] as af81ad872f1223f1d1dec15afde293c0
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.15-alter.xml::85818110-5419-11e4-916c-0800200c9a66-2::rebjo84: Computed checksum for 7:af81ad872f1223f1d1dec15afde293c0: as e3e58ed9be52d66b5eb063e4f5731251
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.15-update.xml::e3347920-5419-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for update:[
+    columns=[
+        [
+            name="IS_HSUP_RAPPEL_SERVICE"
+            value="false"
+        ]
+    ]
+    tableName="PTG_POINTAGE"
+    where="ID_TYPE_POINTAGE=2"
+] as b48dc6afe3ce093dbb4f619f5c94cbfa
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.15-update.xml::e3347920-5419-11e4-916c-0800200c9a66-1::nicno85: Computed checksum for 7:b48dc6afe3ce093dbb4f619f5c94cbfa: as ba89466c1d4be7289ac74813324ddd4c
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.15-update.xml::e3347920-5419-11e4-916c-0800200c9a66-2::rebjo84: Computed checksum for update:[
+    columns=[
+        [
+            name="M_RAPPEL_SERVICE"
+            value="0"
+        ]
+    ]
+    tableName="PTG_VENTIL_HSUP"
+] as ef0597125e349a5b0c84d44f620dd354
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: ../db.changelog-ptg-1.15-update.xml::e3347920-5419-11e4-916c-0800200c9a66-2::rebjo84: Computed checksum for 7:ef0597125e349a5b0c84d44f620dd354: as 5de7e719c8dfd2bd9a15239671d33b82
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-1::nicno85: Computed checksum for addColumn:[
+    columns=[
+        [
+            [
+                nullable="true"
+            ]
+            name="DATE_PRIME"
+            type="TIMESTAMP"
+        ]
+    ]
+    tableName="PTG_VENTIL_PRIME"
+] as a1a5af6baac9f3106fe0277ae2626308
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-1::nicno85: Computed checksum for 7:a1a5af6baac9f3106fe0277ae2626308: as 96abf20a6520181cb01302b1ba2ae1b7
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Running Changeset:db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Changeset db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Reading ChangeSet: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Executing Statement: liquibase.statement.core.DropColumnStatement
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Executing EXECUTE database command: ALTER TABLE ptg_adm.PTG_ETAT_PAYEUR DROP COLUMN ID_TYPE_POINTAGE
+INFO 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Column PTG_ETAT_PAYEUR.ID_TYPE_POINTAGE dropped
+INFO 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: ChangeSet db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85 ran successfully in 3ms
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Executing QUERY database command: SELECT MAX(ORDEREXECUTED) FROM ptg_adm.databasechangelog
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Computed checksum for dropColumn:[
+    columnName="ID_TYPE_POINTAGE"
+    tableName="PTG_ETAT_PAYEUR"
+] as 6def9518e15e48737c1e154aa4fbd9d0
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Computed checksum for 7:6def9518e15e48737c1e154aa4fbd9d0: as 5a635d80baaaee47325d14fea576ff87
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Executing EXECUTE database command: INSERT INTO ptg_adm.databasechangelog (ID, AUTHOR, FILENAME, DATEEXECUTED, ORDEREXECUTED, MD5SUM, DESCRIPTION, COMMENTS, EXECTYPE, LIQUIBASE) VALUES ('76f4d000-96b5-11e4-b4a9-0800200c9a66-2', 'nicno85', 'db.changelog-ptg-1.19-alter.xml', NOW(), 105, '7:5a635d80baaaee47325d14fea576ff87', 'dropColumn', '', 'EXECUTED', '3.2.0')
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Computed checksum for dropColumn:[
+    columnName="ID_TYPE_POINTAGE"
+    tableName="PTG_ETAT_PAYEUR"
+] as 6def9518e15e48737c1e154aa4fbd9d0
+DEBUG 08/01/15 14:08: liquibase: db.changelog.xml: db.changelog-ptg-1.19-alter.xml::76f4d000-96b5-11e4-b4a9-0800200c9a66-2::nicno85: Computed checksum for 7:6def9518e15e48737c1e154aa4fbd9d0: as 5a635d80baaaee47325d14fea576ff87
+DEBUG 08/01/15 14:08: liquibase: Release Database Lock
+DEBUG 08/01/15 14:08: liquibase: Executing UPDATE database command: UPDATE ptg_adm.databasechangeloglock SET LOCKED = FALSE, LOCKEDBY = NULL, LOCKGRANTED = NULL WHERE ID = 1
+INFO 08/01/15 14:08: liquibase: Successfully released change log lock

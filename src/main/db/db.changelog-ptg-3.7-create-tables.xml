@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet author="rebjo84" id="b2a5a1b5-e475-4b12-a4d8-6a8bc678aa49-1">
+        <createSequence sequenceName="PTG_S_TR_DEMANDE"/>
+        
+        <createTable tableName="PTG_TR_DEMANDE">
+            <column name="ID_TR_DEMANDE" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_MONTH" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMMANDE" type="BOOL">
+                <constraints nullable="true"/>
+            </column>
+            <column name="COMMENTAIRE" type="NVARCHAR2(300)" />
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="ID_TR_DEMANDE" constraintName="PK_PTG_TR_DEMANDE" tableName="PTG_TR_DEMANDE"/>
+        <addDefaultValue columnName="ID_TR_DEMANDE" tableName="PTG_TR_DEMANDE" defaultValueSequenceNext="PTG_S_TR_DEMANDE" />
+
+    </changeSet>
+
+    <changeSet author="rebjo84" id="b2a5a1b5-e475-4b12-a4d8-6a8bc678aa49-2">
+        <createSequence sequenceName="PTG_S_TR_ETAT_DEMANDE"/>
+        
+        <createTable tableName="PTG_TR_ETAT_DEMANDE">
+            <column name="ID_TR_ETAT_DEMANDE" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_TR_DEMANDE" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_MAJ" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMMANDE" type="BOOL">
+                <constraints nullable="true"/>
+            </column>
+            <column name="ETAT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="ID_TR_ETAT_DEMANDE" constraintName="PK_PTG_TR_ETAT_DEMANDE" tableName="PTG_TR_ETAT_DEMANDE"/>
+        <addDefaultValue columnName="ID_TR_ETAT_DEMANDE" tableName="PTG_TR_ETAT_DEMANDE" defaultValueSequenceNext="PTG_S_TR_ETAT_DEMANDE" />
+        
+        <addForeignKeyConstraint 
+            constraintName="FK_PTG_TR_ETAT_DEMANDE_PTG_TR_DEMANDE"
+            baseColumnNames="ID_TR_DEMANDE" baseTableName="PTG_TR_ETAT_DEMANDE" 
+            referencedColumnNames="ID_TR_DEMANDE" referencedTableName="PTG_TR_DEMANDE"/>
+
+    </changeSet>
+
+    <changeSet author="rebjo84" id="b2a5a1b5-e475-4b12-a4d8-6a8bc678aa49-3">
+        <createSequence sequenceName="PTG_S_TR_ETAT_PAYEUR"/>
+    
+        <createTable tableName="PTG_TR_ETAT_PAYEUR">
+            <column name="ID_TR_ETAT_PAYEUR" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_ETAT_PAYEUR" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LABEL" type="VARCHAR2(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FICHIER" type="VARCHAR2(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ID_AGENT" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="DATE_EDITION" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="ID_TR_ETAT_PAYEUR" constraintName="PK_PTG_TR_ETAT_PAYEUR" tableName="PTG_TR_ETAT_PAYEUR"/>
+        <addDefaultValue columnName="ID_TR_ETAT_PAYEUR" tableName="PTG_TR_ETAT_PAYEUR" defaultValueSequenceNext="PTG_S_TR_ETAT_PAYEUR" />
+
+    </changeSet>
+
+</databaseChangeLog>

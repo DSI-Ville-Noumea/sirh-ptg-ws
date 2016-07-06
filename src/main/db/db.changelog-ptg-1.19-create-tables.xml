@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+	<changeSet author="nicno85" id="be362ab0-8182-11e4-b4a9-0800200c9a66-1">
+        <createSequence sequenceName="PTG_S_MOTIF_HSUP"/>
+        
+        <createTable tableName="PTG_MOTIF_HSUP">
+            <column name="ID_MOTIF_HSUP" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+            <column name="TEXT" type="CLOB"/>
+            <column name="VERSION" type="INT4">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        
+        <addPrimaryKey columnNames="ID_MOTIF_HSUP" constraintName="PK_PTG_MOTIF_HSUP" tableName="PTG_MOTIF_HSUP"/>
+        <addDefaultValue columnName="ID_MOTIF_HSUP" tableName="PTG_MOTIF_HSUP" defaultValueSequenceNext="PTG_S_MOTIF_HSUP" />
+    </changeSet>
+	
+	
+    <changeSet author="nicno85" id="be362ab0-8182-11e4-b4a9-0800200c9a66-2">
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="MANIFESTATIONS SPORTIVES"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="MANIFESTATIONS CULTURELLES ET FESTIVES"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="GRANDS EVENEMENTS"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="ELECTIONS"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="CHAUFFEUR DU MAIRE"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="VISITES ET CEREMONIES OFFICIELLES"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="INTEMPERIE - CYCLONE - INONDATION"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="INTERVENTION RESEAU VOIRIE"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="INTERVENTION RESEAU EAU ET ASSAINISSEMENT"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="INTERVENTION PROPRETE/ESPACES VERTS"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="INTERVENTION INFORMATIQUE"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="INTERVENTION EDIFICES COMMUNAUX"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="PREVENTION RISQUE SANITAIRE"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="EPIDEMIE"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="RENFORT DE GARDE"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="RAPPEL EN SERVICE"/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="AUTOPSIES "/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="INHUMATIONS "/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="REMPLACEMENT TITULAIRE "/><column name="VERSION" value="0"/></insert>
+        <insert tableName="PTG_MOTIF_HSUP"><column name="TEXT" value="SURCROIT D'ACTIVITE "/><column name="VERSION" value="0"/></insert>
+    </changeSet>
+	
+	<changeSet author="nicno85" id="be362ab0-8182-11e4-b4a9-0800200c9a66-3">
+		<addColumn tableName="PTG_POINTAGE">
+			<column name="ID_MOTIF_HSUP" type="INT4" >
+				<constraints nullable="true"/>
+            </column>
+		</addColumn>
+        
+        <addForeignKeyConstraint 
+            constraintName="FK_PTG_POINTAGE_PTG_MOTIF_HSUP"
+            baseColumnNames="ID_MOTIF_HSUP" baseTableName="PTG_POINTAGE" 
+            referencedColumnNames="ID_MOTIF_HSUP" referencedTableName="PTG_MOTIF_HSUP"/>
+	</changeSet>
+	
+</databaseChangeLog>

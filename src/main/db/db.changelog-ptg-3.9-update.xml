@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+	
+	<changeSet author="rebjo84" id="e33479250-5428-11e4-956c-08af8cc9a66-1">
+		<update tableName="PTG_REF_PRIME">
+			<column name="IS_AFFICHAGE_KIOSQUE" value="false"/>
+			<where>NORUBR in (7711, 7712, 7713)</where>
+		</update>
+	</changeSet>
+	
+</databaseChangeLog>
