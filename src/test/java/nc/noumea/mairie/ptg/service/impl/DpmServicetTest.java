@@ -1222,4 +1222,144 @@ public class DpmServicetTest {
 		
 		assertEquals(240, service.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg));
 	}
+	
+	// le pointage est un vendredi
+	@Test
+	public void calculNombreMinutesRecupereesMajoreesToAgentForOnePointage_RappelService_pasDroitPrimeDpm() {
+		
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new DateTime(2015, 8, 5, 8, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 8, 5, 10, 0, 0).toDate());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
+		
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin()))
+			.thenReturn(240);
+		
+		isDroitAgentToIndemniteForfaitaireDPMForOneDay_false_vendredi();
+
+		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
+		choixAgent.setChoixRecuperation(true);
+		Mockito.when(dpmRepository.getDpmIndemChoixAgent(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).getYear())).thenReturn(choixAgent);
+		
+		assertEquals(240, service.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg));
+	}
+	
+	@Test
+	public void calculNombreMinutesRecupereesMajoreesToAgentForOnePointage_RappelService_moins4h() {
+		
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new DateTime(2015, 8, 5, 8, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 8, 5, 10, 0, 0).toDate());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
+		
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptg, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(120);
+		
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin()))
+			.thenReturn(120);
+		
+		isDroitAgentToIndemniteForfaitaireDPMForOneDay_true(ptg);
+
+		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
+		choixAgent.setChoixRecuperation(true);
+		Mockito.when(dpmRepository.getDpmIndemChoixAgent(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).getYear())).thenReturn(choixAgent);
+		
+		assertEquals(120, service.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg));
+	}
+	
+	@Test
+	public void calculNombreMinutesRecupereesMajoreesToAgentForOnePointage_RappelService_pluss4h_choixRecup() {
+		
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new DateTime(2015, 8, 5, 8, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 8, 5, 12, 0, 0).toDate());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
+		
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptg, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(240);
+		
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin()))
+			.thenReturn(240);
+		
+		isDroitAgentToIndemniteForfaitaireDPMForOneDay_true(ptg);
+
+		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
+		choixAgent.setChoixRecuperation(true);
+		Mockito.when(dpmRepository.getDpmIndemChoixAgent(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).getYear())).thenReturn(choixAgent);
+		
+		assertEquals(240, service.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg));
+	}
+	
+	@Test
+	public void calculNombreMinutesRecupereesMajoreesToAgentForOnePointage_RappelService_pluss4h_choixPrime() {
+		
+		RefTypePointage typePointage = new RefTypePointage();
+		typePointage.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
+
+		EtatPointage etat = new EtatPointage();
+		etat.setEtat(EtatPointageEnum.SAISI);
+
+		Pointage ptg = new Pointage();
+		ptg.setIdAgent(9005138);
+		ptg.setIdPointage(1);
+		ptg.setDateDebut(new DateTime(2015, 8, 5, 8, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 8, 5, 12, 0, 0).toDate());
+		ptg.getEtats().add(etat);
+		ptg.setType(typePointage);
+		ptg.setHeureSupRecuperee(true);
+		ptg.setHeureSupRappelService(true);
+		
+		Mockito.when(helperService.calculMinutesPointageInInterval(ptg, 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
+				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0)))
+			.thenReturn(240);
+		
+		Mockito.when(helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin()))
+			.thenReturn(240);
+		
+		isDroitAgentToIndemniteForfaitaireDPMForOneDay_true(ptg);
+
+		DpmIndemChoixAgent choixAgent = new DpmIndemChoixAgent();
+		choixAgent.setChoixRecuperation(false);
+		Mockito.when(dpmRepository.getDpmIndemChoixAgent(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).getYear())).thenReturn(choixAgent);
+		
+		assertEquals(0, service.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg));
+	}
 }

@@ -152,7 +152,8 @@ public interface IDpmService {
 
 	/**
 	 * Calcul la majoration des heures supp a recuperer si l agent a la prime forfaitaire DPM.
-	 * Attention ne doit pas se cumuler avec les rappels en service .
+	 * Si la prime forfaitaire DPM ne s applique pas,
+	 * on applique le Rappel en Service si coche
 	 * 
 	 * @param ptg Pointage
 	 * @return int nombre de minutes a rajouter au recup 

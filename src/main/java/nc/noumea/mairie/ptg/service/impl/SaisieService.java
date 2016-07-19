@@ -884,9 +884,6 @@ public class SaisieService implements ISaisieService {
 						
 						if(0 < nombreMinutesMajoreesFromPrimeDPM) {
 							nombreMinutes += nombreMinutesMajoreesFromPrimeDPM;
-						}else if (null != ptg.getHeureSupRappelService()
-								&& ptg.getHeureSupRappelService()) {
-							nombreMinutes += nombreMinutes;
 						}
 						
 						absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, 

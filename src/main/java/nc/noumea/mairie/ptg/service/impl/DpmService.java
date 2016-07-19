@@ -564,16 +564,34 @@ public class DpmService implements IDpmService {
 		
 		int result = 0;
 		
-		if(!isDroitAgentToIndemniteForfaitaireDPMForOneDay(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).toLocalDate()))
+		if(!isDroitAgentToIndemniteForfaitaireDPMForOneDay(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).toLocalDate())) {
+			
+			// si pas le droit a la prime
+			// on applique le rappel de service
+			if (null != ptg.getHeureSupRappelService()
+					&& ptg.getHeureSupRappelService()) {
+				result = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
+			}
+			
 			return result;
+		}
 		
 		// l interval de la deliberation pour la prime est de 5h a 21h
 		int dayTotalMinutes = helperService.calculMinutesPointageInInterval(ptg, 
 				new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM,0,0), 
 				new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM,0,0));
 		
-		if(dayTotalMinutes < PointageCalculeService.SEUIL_MINI_PRIME_DPM)
-			return result;
+		if(dayTotalMinutes < PointageCalculeService.SEUIL_MINI_PRIME_DPM) {
+
+			// si pas le droit a la prime
+			// on applique le rappel de service
+			if (null != ptg.getHeureSupRappelService()
+					&& ptg.getHeureSupRappelService()) {
+				result = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
+			}
+			
+			return result;	
+		}
 		
 		DpmIndemChoixAgent choixAgent = dpmRepository.getDpmIndemChoixAgent(ptg.getIdAgent(), new DateTime(ptg.getDateDebut()).getYear());
 		

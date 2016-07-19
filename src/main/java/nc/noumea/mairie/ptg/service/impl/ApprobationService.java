@@ -669,9 +669,6 @@ public class ApprobationService implements IApprobationService {
 			
 			if(0 < nombreMinutesMajoreesFromPrimeDPM) {
 				nombreMinutes += nombreMinutesMajoreesFromPrimeDPM;
-			}else if (null != ptg.getHeureSupRappelService()
-					&& ptg.getHeureSupRappelService()) {
-				nombreMinutes += nombreMinutes;
 			}
 
 			EtatPointageEnum currentEtat = ptg.getLatestEtatPointage().getEtat();

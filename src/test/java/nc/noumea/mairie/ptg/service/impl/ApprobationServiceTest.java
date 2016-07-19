@@ -2583,6 +2583,9 @@ public class ApprobationServiceTest {
 		Mockito.verify(absWsConsumer, Mockito.never()).addRecuperationsToCompteurAgentForOnePointage(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt());
 	}
 
+	/**
+	 * le calcul de rappel en service est deplace dans dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage()
+	 */
 	@Test
 	public void addRecuperationProvisoireToAgent_isHSupRappelService() {
 
@@ -2609,6 +2612,7 @@ public class ApprobationServiceTest {
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		IDpmService dpmService = Mockito.mock(IDpmService.class);
+		Mockito.when(dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg)).thenReturn(120);
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -2619,7 +2623,10 @@ public class ApprobationServiceTest {
 
 		Mockito.verify(absWsConsumer, Mockito.times(1)).addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), 240, ptg.getIdPointage(), null);
 	}
-
+	
+	/**
+	 * le calcul de rappel en service est deplace dans dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage()
+	 */
 	@Test
 	public void addRecuperationProvisoireToAgent_isHSupRappelService_PrimeDPM() {
 
