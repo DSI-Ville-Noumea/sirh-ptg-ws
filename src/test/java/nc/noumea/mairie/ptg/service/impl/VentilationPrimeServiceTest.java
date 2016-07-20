@@ -270,22 +270,30 @@ public class VentilationPrimeServiceTest {
 		
 		// Then
 		assertEquals(3, result.size());
-		assertEquals(9, (int) result.get(0).getQuantite().intValue());
-		assertEquals(9007865, (int) result.get(0).getIdAgent());
-		assertEquals(dateDebutMois, result.get(0).getDateDebutMois());
-		assertEquals(refPrimeTID7722, result.get(0).getRefPrime());
-		assertEquals(EtatPointageEnum.VENTILE, result.get(0).getEtat());
+		
+		for(VentilPrime ventilPrime : result) {
+			if(ventilPrime.getRefPrime().equals(refPrimeTID7722)) {
+				assertEquals(9, (int) ventilPrime.getQuantite().intValue());
+				assertEquals(9007865, (int) ventilPrime.getIdAgent());
+				assertEquals(dateDebutMois, ventilPrime.getDateDebutMois());
+				assertEquals(refPrimeTID7722, ventilPrime.getRefPrime());
+				assertEquals(EtatPointageEnum.VENTILE, ventilPrime.getEtat());
+			}
+			if(ventilPrime.getRefPrime().equals(refPrimeTID7720)) {
+				assertEquals(5, (int) ventilPrime.getQuantite().intValue());
+				assertEquals(9007865, (int) ventilPrime.getIdAgent());
+				assertEquals(dateDebutMois, ventilPrime.getDateDebutMois());
+				assertEquals(refPrimeTID7720, ventilPrime.getRefPrime());
+				assertEquals(EtatPointageEnum.VENTILE, ventilPrime.getEtat());
+			}
+			if(ventilPrime.getRefPrime().equals(refPrimeTID7721)) {
+				assertEquals(7, (int) ventilPrime.getQuantite().intValue());
+				assertEquals(9007865, (int) ventilPrime.getIdAgent());
+				assertEquals(dateDebutMois, ventilPrime.getDateDebutMois());
+				assertEquals(refPrimeTID7721, ventilPrime.getRefPrime());
+				assertEquals(EtatPointageEnum.VENTILE, ventilPrime.getEtat());
+			}
+		}
 
-		assertEquals(5, (int) result.get(1).getQuantite().intValue());
-		assertEquals(9007865, (int) result.get(1).getIdAgent());
-		assertEquals(dateDebutMois, result.get(1).getDateDebutMois());
-		assertEquals(refPrimeTID7720, result.get(1).getRefPrime());
-		assertEquals(EtatPointageEnum.VENTILE, result.get(1).getEtat());
-
-		assertEquals(7, (int) result.get(2).getQuantite().intValue());
-		assertEquals(9007865, (int) result.get(2).getIdAgent());
-		assertEquals(dateDebutMois, result.get(2).getDateDebutMois());
-		assertEquals(refPrimeTID7721, result.get(2).getRefPrime());
-		assertEquals(EtatPointageEnum.VENTILE, result.get(2).getEtat());
 	}
 }
