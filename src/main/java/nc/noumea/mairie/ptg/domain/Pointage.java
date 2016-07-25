@@ -29,9 +29,13 @@ import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 @Entity
 @Table(name = "PTG_POINTAGE")
+@Audited
 @NamedQueries({
 		@NamedQuery(name = "getPointageForAgentAndDateLundiByIdDesc", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire where ptg.idAgent = :idAgent and ptg.dateLundi = :dateLundi order by ptg.idPointage desc"),
 		@NamedQuery(name = "getListPointageByAgentsAndDate", query = "select ptg from Pointage ptg LEFT JOIN FETCH ptg.motif LEFT JOIN FETCH ptg.commentaire LEFT JOIN FETCH ptg.refPrime JOIN FETCH ptg.type where ptg.idAgent in :idAgents and ptg.dateDebut >= :fromDate and ptg.dateDebut < :toDate order by ptg.idPointage desc"),
@@ -49,10 +53,13 @@ public class Pointage {
 
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_TYPE_POINTAGE")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private RefTypePointage type;
 
 	@OneToMany(mappedBy = "pointage", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
 	@OrderBy("idEtatPointage desc")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	@NotAudited
 	private List<EtatPointage> etats = new ArrayList<EtatPointage>();
 
 	@Column(name = "DATE_LUNDI")
@@ -76,6 +83,7 @@ public class Pointage {
 
 	@ManyToOne
 	@JoinColumn(name = "ID_REF_PRIME", referencedColumnName = "ID_REF_PRIME")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private RefPrime refPrime;
 
 	@Column(name = "IS_HSUP_RECUPEREE")
@@ -92,23 +100,29 @@ public class Pointage {
 
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ID_REF_TYPE_ABSENCE")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private RefTypeAbsence refTypeAbsence;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(name = "ID_COMMENT_MOTIF")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private PtgComment motif;
 
 	@OneToOne(fetch = FetchType.EAGER, optional = true, orphanRemoval = false)
 	@JoinColumn(name = "ID_MOTIF_HSUP")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private MotifHeureSup motifHsup;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, optional = true)
 	@JoinColumn(name = "ID_COMMENT_COMMENTAIRE")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
 	private PtgComment commentaire;
 
 	@ManyToMany
 	@JoinTable(name = "PTG_POINTAGE_VENTIL_DATE", joinColumns = @JoinColumn(name = "ID_POINTAGE"), inverseJoinColumns = @JoinColumn(name = "ID_VENTIL_DATE"))
 	@OrderBy("idVentilDate desc")
+	@Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+	@NotAudited
 	private List<VentilDate> ventilations = new ArrayList<VentilDate>();
 
 	@Version
