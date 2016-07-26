@@ -430,6 +430,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 			etatPtg.setIdAgent(idAgentRH);
 			
 			ptg.setIdAgent(idAgent);
+			ptg.setIdAgentModification(idAgentRH);
 			ptg.setDateDebut(dday.toDate());
 			ptg.setDateLundi(dateLundi);
 			ptg.getEtats().add(etatPtg);

@@ -241,6 +241,7 @@ public class PointageService implements IPointageService {
 		ptg = new Pointage();
 		ptg.setPointageParent(parentPointage);
 		ptg.setIdAgent(idAgent);
+		ptg.setIdAgentModification(idAgentCreator);
 		ptg.setDateLundi(dateLundi);
 
 		addEtatPointage(ptg, EtatPointageEnum.SAISI, idAgentCreator, dateEtat);

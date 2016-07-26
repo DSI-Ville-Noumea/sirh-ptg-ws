@@ -125,6 +125,9 @@ public class Pointage {
 	@NotAudited
 	private List<VentilDate> ventilations = new ArrayList<VentilDate>();
 
+	@Column(name = "ID_AGENT_MODIFICATION")
+	private Integer idAgentModification;
+
 	@Version
 	@Column(name = "version")
 	private Integer version;
@@ -305,6 +308,14 @@ public class Pointage {
 
 	public void setPrimeForfaitDpmRecup(Boolean primeForfaitDpmRecup) {
 		this.primeForfaitDpmRecup = primeForfaitDpmRecup;
+	}
+
+	public Integer getIdAgentModification() {
+		return idAgentModification;
+	}
+
+	public void setIdAgentModification(Integer idAgentModification) {
+		this.idAgentModification = idAgentModification;
 	}
 
 }
