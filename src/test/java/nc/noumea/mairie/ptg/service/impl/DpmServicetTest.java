@@ -11,6 +11,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import nc.noumea.mairie.ptg.domain.DpmIndemAnnee;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
@@ -25,17 +33,8 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
-import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.joda.time.LocalTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class DpmServicetTest {
 	
@@ -44,7 +43,6 @@ public class DpmServicetTest {
 	private IAccessRightsService accessRightsService;
 	private SirhWSUtils sirhWSUtils;
 	private ISirhWSConsumer sirhWSConsumer;
-	private IAbsWsConsumer absWsConsumer;
 	private IDpmRepository dpmRepository;
 	private HelperService helperService; 
 	
@@ -54,14 +52,12 @@ public class DpmServicetTest {
 		accessRightsService = Mockito.mock(IAccessRightsService.class);
 		sirhWSUtils = Mockito.mock(SirhWSUtils.class);
 		sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 		dpmRepository = Mockito.mock(IDpmRepository.class);
 		helperService = Mockito.mock(HelperService.class);
 		
 		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
 		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "dpmRepository", dpmRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 	}
