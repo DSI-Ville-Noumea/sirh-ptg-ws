@@ -4,6 +4,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+import org.joda.time.Minutes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
@@ -16,18 +22,11 @@ import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
-import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.DateTime;
-import org.joda.time.Interval;
-import org.joda.time.Minutes;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class VentilationHSupService implements IVentilationHSupService {
@@ -55,9 +54,6 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 	@Autowired
 	private IMairieRepository mairieRepository;
-
-	@Autowired
-	private IPointageDataConsistencyRules ptgDataCosistencyRules;
 
 	@Autowired
 	private IVentilationRepository ventilationRepository;

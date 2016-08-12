@@ -4,25 +4,29 @@ import java.util.Date;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+import nc.noumea.mairie.alfresco.cmis.AlfrescoCMISService;
+
 @XmlRootElement
 public class ListEtatsPayeurDto {
 
-	private Integer idEtatPayeur;
-	private String statut;
-	private Date dateEtatPayeur;
-	private String label;
-	private String fichier;
-	private Integer idAgent;
-	private Date dateEdition;
-	private String displayNom;
-	private String displayPrenom;
+	private Integer	idEtatPayeur;
+	private String	statut;
+	private Date	dateEtatPayeur;
+	private String	label;
+	private String	fichier;
+	private Integer	idAgent;
+	private Date	dateEdition;
+	private String	displayNom;
+	private String	displayPrenom;
+
+	private String	urlAlfresco;
 
 	public ListEtatsPayeurDto() {
 
 	}
 
-	public ListEtatsPayeurDto(Integer idEtatPayeur, String statut, Date dateEtatPayeur, String label, String fichier,
-			Integer idAgent, Date dateEdition, String displayNom, String displayPrenom) {
+	public ListEtatsPayeurDto(Integer idEtatPayeur, String statut, Date dateEtatPayeur, String label, String fichier, Integer idAgent,
+			Date dateEdition, String displayNom, String displayPrenom, String nodeRefAlfresco) {
 		this.idEtatPayeur = idEtatPayeur;
 		this.statut = statut;
 		this.dateEtatPayeur = dateEtatPayeur;
@@ -32,6 +36,9 @@ public class ListEtatsPayeurDto {
 		this.dateEdition = dateEdition;
 		this.displayNom = displayNom;
 		this.displayPrenom = displayPrenom;
+		if (null != nodeRefAlfresco && !"".equals(nodeRefAlfresco)) {
+			this.urlAlfresco = AlfrescoCMISService.getUrlOfDocument(nodeRefAlfresco);
+		}
 	}
 
 	public Integer getIdEtatPayeur() {
@@ -104,6 +111,14 @@ public class ListEtatsPayeurDto {
 
 	public void setDisplayPrenom(String displayPrenom) {
 		this.displayPrenom = displayPrenom;
+	}
+
+	public String getUrlAlfresco() {
+		return urlAlfresco;
+	}
+
+	public void setUrlAlfresco(String urlAlfresco) {
+		this.urlAlfresco = urlAlfresco;
 	}
 
 }

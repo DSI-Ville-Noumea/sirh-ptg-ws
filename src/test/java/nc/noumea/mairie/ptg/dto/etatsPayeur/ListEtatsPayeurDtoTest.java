@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 
@@ -14,7 +15,7 @@ public class ListEtatsPayeurDtoTest {
 		Date date = new Date();
 
 		ListEtatsPayeurDto dto = new ListEtatsPayeurDto(new Integer(1), "C", date, "test label", "test.pdf", 1234,
-				date, "nom", "prenom");
+				date, "nom", "prenom", "nodeRefAlfresco");
 
 		assertEquals(new Integer(1), dto.getIdEtatPayeur());
 		assertEquals("C", dto.getStatut());
@@ -25,5 +26,6 @@ public class ListEtatsPayeurDtoTest {
 		assertEquals(date, dto.getDateEdition());
 		assertEquals("nom", dto.getDisplayNom());
 		assertEquals("prenom", dto.getDisplayPrenom());
+		assertTrue(dto.getUrlAlfresco().contains("alfresco/service/api/node/nodeRefAlfresco"));
 	}
 }

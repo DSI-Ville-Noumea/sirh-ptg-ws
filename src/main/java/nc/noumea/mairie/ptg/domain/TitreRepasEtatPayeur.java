@@ -47,6 +47,9 @@ public class TitreRepasEtatPayeur {
 	@Column(name = "FICHIER", columnDefinition = "NVARCHAR2")
 	private String fichier;
 
+	@Column(name = "NODE_REF_ALFRESCO")
+	private String nodeRefAlfresco;
+
 	@Version
 	@Column(name = "version")
 	private Integer version;
@@ -106,5 +109,13 @@ public class TitreRepasEtatPayeur {
 
 	public void setVersion(Integer version) {
 		this.version = version;
+	}
+
+	public String getNodeRefAlfresco() {
+		return nodeRefAlfresco;
+	}
+
+	public void setNodeRefAlfresco(String nodeRefAlfresco) {
+		this.nodeRefAlfresco = nodeRefAlfresco;
 	}
 }

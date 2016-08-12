@@ -2,15 +2,11 @@ package nc.noumea.mairie.ptg.reporting;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import nc.noumea.mairie.ptg.reporting.vo.CellVo;
-
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +26,8 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPageEventHelper;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfStamper;
+
+import nc.noumea.mairie.ptg.reporting.vo.CellVo;
 
 public abstract class AbstractReporting extends PdfPageEventHelper {
 
@@ -155,11 +153,13 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 		return pdfWordCell;
 	}
 
-	protected void genereNumeroPageA3Paysage(String chemin) throws FileNotFoundException, DocumentException,
+
+
+	protected ByteArrayOutputStream genereNumeroPageA3Paysage(ByteArrayOutputStream baosOrigin) throws FileNotFoundException, DocumentException,
 			IOException {
 
 		// Create a reader
-		PdfReader reader = new PdfReader(chemin);
+		PdfReader reader = new PdfReader(baosOrigin.toByteArray());
 		// Create a stamper
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		PdfStamper stamper = new PdfStamper(reader, baos);
@@ -171,11 +171,10 @@ public abstract class AbstractReporting extends PdfPageEventHelper {
 		// Close the stamper
 		stamper.close();
 		reader.close();
-		FileOutputStream fileoutputstream = new FileOutputStream(chemin);
-		IOUtils.write(baos.toByteArray(), fileoutputstream);
-		fileoutputstream.close();
 
+		return baos;
 	}
+
 
 	private PdfPTable getHeaderTableA3Paysage(int x, int y) {
 		PdfPTable table = new PdfPTable(1);

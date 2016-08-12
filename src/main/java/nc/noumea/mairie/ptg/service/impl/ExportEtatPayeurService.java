@@ -6,6 +6,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
@@ -30,7 +36,6 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurVo;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
 import nc.noumea.mairie.ptg.reporting.EtatPayeurReporting;
-import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.ExportEtatsPayeurServiceException;
@@ -41,12 +46,6 @@ import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ExportEtatPayeurService implements IExportEtatPayeurService {
@@ -67,9 +66,6 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 	@Autowired
 	private IMairieRepository mairieRepository;
-
-	@Autowired
-	private IAccessRightsRepository accessRightRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;

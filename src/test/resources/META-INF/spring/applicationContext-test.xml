@@ -93,18 +93,21 @@
 	
 	<bean class="java.lang.String" id="sirhWsBaseUrl" />
 	
-	<bean class="java.lang.String" id="sirhFileEtatPayeurPath" />
-	
 	<bean class="java.lang.String" id="sirhAbsWsBaseUrl" />
 	
 	<bean class="java.lang.String" id="sirhAbsDateBlocagePointage" />
-	
-	<bean class="java.lang.String" id="sirhFileEtatPayeurPathWrite" />
 	
 	<bean class="java.lang.String" id="adsWsBaseUrl" />
 
 	<!-- Pour Type environnement (RECETTE ou PROD) -->
 	
 	<bean class="java.lang.String" id="typeEnvironnement" />
+
+	<!-- ALFRESCO -->
+	<bean class="java.lang.String" id="alfrescoUrl" />
+
+	<bean class="java.lang.String" id="alfrescoLogin" />
+	
+	<bean class="java.lang.String" id="alfrescoPassword" />
 	
 </beans>

@@ -4,15 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.ptg.dto.RefEtatDto;
-import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.service.IAccessRightsService;
-import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
-import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
-import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurDto;
-import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +20,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import nc.noumea.mairie.ptg.dto.RefEtatDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
+import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
+import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurDto;
+import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
 
 @Controller
 @RequestMapping("/titreRepas")
@@ -41,9 +39,6 @@ public class TitreRepasController {
 
 	@Autowired
 	private IAgentMatriculeConverterService agentMatriculeConverterService;
-
-	@Autowired
-	private IAccessRightsService accessRightService;
 
 	/**
 	 * Enregistre une liste de demande de Titre Repas depuis le Kiosque RH

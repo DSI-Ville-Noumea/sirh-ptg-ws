@@ -1,21 +1,13 @@
 package nc.noumea.mairie.ptg.reporting;
 
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
-import nc.noumea.mairie.ptg.reporting.vo.CellVo;
-import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
-import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import com.lowagie.text.Document;
@@ -29,43 +21,52 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
 
+import nc.noumea.mairie.alfresco.cmis.IAlfrescoCMISService;
+import nc.noumea.mairie.ptg.TypeEtatPayeurPointageEnum;
+import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
+import nc.noumea.mairie.ptg.reporting.vo.CellVo;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
+
 @Service
 public class EtatPayeurTitreRepasReporting extends AbstractReporting {
-
-	@Autowired
-	private IExportEtatPayeurService exportEtatPayeurService;
 	
 	@Autowired
 	private IAgentMatriculeConverterService agentMatriculeConverterService;
 
 	@Autowired
-	@Qualifier("sirhFileEtatPayeurPathWrite")
-	private String storagePathEcriture;
+	private IAlfrescoCMISService alfrescoCMISService;
+	
+	private static final String DESCRIPTION_ETAT_PAYEUR_TITRE_REPAS = "Etat Payeur des Titres Repas du ";
 
 	private SimpleDateFormat sdfMMMMyyyy = new SimpleDateFormat("MMMM yyyy");
 
 	public void downloadEtatPayeurTitreRepas(TitreRepasEtatPayeur etatPayeurTR, List<TitreRepasDemandeDto> listDemandeTR) throws DocumentException,
 			MalformedURLException, IOException {
 
-			// on crée le document
-			Document document = new Document(PageSize.A4);
-			PdfWriter.getInstance(document, new FileOutputStream(Paths.get(storagePathEcriture, etatPayeurTR.getFichier())
-					.toString()));
+		// on crée le document
+		Document document = new Document(PageSize.A4);
+		
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PdfWriter.getInstance(document, baos);
 
-			// on genere les metadata
-			addMetaData(document, getTitreDocument(etatPayeurTR), etatPayeurTR.getIdAgent());
+		// on genere les metadata
+		addMetaData(document, getTitreDocument(etatPayeurTR), etatPayeurTR.getIdAgent());
 
-			// on ouvre le document
-			document.open();
+		// on ouvre le document
+		document.open();
 
-			// on ecrit dans le document
-			writeDocument(document, etatPayeurTR, listDemandeTR);
+		// on ecrit dans le document
+		writeDocument(document, etatPayeurTR, listDemandeTR);
 
-			// on ferme le document
-			document.close();
-			
-			// on génere les numeros de page
-			genereNumeroPageA3Paysage(Paths.get(storagePathEcriture, etatPayeurTR.getFichier()).toString());
+		// on ferme le document
+		document.close();
+		
+		// on génere les numeros de page
+		baos = genereNumeroPageA3Paysage(baos);
+		
+		alfrescoCMISService.uploadDocument(etatPayeurTR.getIdAgent(), baos.toByteArray(), etatPayeurTR.getFichier(), 
+				DESCRIPTION_ETAT_PAYEUR_TITRE_REPAS + etatPayeurTR.getDateEtatPayeur(), TypeEtatPayeurPointageEnum.TYPE_ETAT_PAYEUR_TITRE_REPAS);
 	}
 
 	private void writeDocument(Document document, 

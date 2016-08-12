@@ -7,6 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ads.dto.StatutEntiteEnum;
 import nc.noumea.mairie.ptg.domain.Droit;
@@ -19,7 +25,6 @@ import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
-import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IDpmService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
@@ -28,12 +33,6 @@ import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
 import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AccessRightsService implements IAccessRightsService {
@@ -51,9 +50,6 @@ public class AccessRightsService implements IAccessRightsService {
 
 	@Autowired
 	private IAdsWSConsumer adsWsConsumer;
-
-	@Autowired
-	private IAgentMatriculeConverterService matriculeConvertor;
 
 	@Autowired
 	private SirhWSUtils sirhWSUtils;

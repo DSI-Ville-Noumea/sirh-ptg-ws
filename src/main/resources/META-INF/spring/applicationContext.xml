@@ -99,14 +99,8 @@
 	<jee:jndi-lookup id="sirhAbsWsBaseUrl" jndi-name="SIRH_ABS_WS_URL"
 		expected-type="java.lang.String" />
 
-	<jee:jndi-lookup id="sirhFileEtatPayeurPath" jndi-name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR"
-		expected-type="java.lang.String" />
-
 	<jee:jndi-lookup id="sirhAbsDateBlocagePointage"
 		jndi-name="SIRH_ABS_DATE_BLOCAGE_POINTAGE" expected-type="java.lang.String" />
-
-	<jee:jndi-lookup id="sirhFileEtatPayeurPathWrite"
-		jndi-name="PTG_SIRH_PATH_FICHIER_ETAT_PAYEUR_ECRITURE" expected-type="java.lang.String" />
 
 	<jee:jndi-lookup id="adsWsBaseUrl" jndi-name="ADS_WS_URL"
 		expected-type="java.lang.String" />
@@ -114,5 +108,16 @@
 	<!-- Pour Type environnement (RECETTE ou PROD) -->
 	<jee:jndi-lookup id="typeEnvironnement" jndi-name="TYPE_ENV"
 		expected-type="java.lang.String" />
+
+	<!-- ALFRESCO -->
+	<jee:jndi-lookup id="alfrescoUrl" jndi-name="ALFRESCO_URL"
+		expected-type="java.lang.String" />
+
+	<jee:jndi-lookup id="alfrescoLogin" jndi-name="ALFRESCO_LOGIN"
+		expected-type="java.lang.String" />
+
+	<jee:jndi-lookup id="alfrescoPassword" jndi-name="ALFRESCO_PASSWORD"
+		expected-type="java.lang.String" />
+	<!-- FIN ALFRESCO -->
 
 </beans>

@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.domain.Spacti;
 import nc.noumea.mairie.domain.Sppact;
 import nc.noumea.mairie.domain.SppactId;
@@ -11,14 +16,8 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IExportPaieRepository;
-import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IExportPaieAbsenceService;
 import nc.noumea.mairie.repository.IMairieRepository;
-
-import org.joda.time.DateTime;
-import org.joda.time.Period;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
@@ -31,9 +30,6 @@ public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
 
 	@Autowired
 	private HelperService helperService;
-	
-	@Autowired
-	private IPointageRepository pointageRepository;
 
 	@Override
 	public List<Sppact> exportAbsencesToPaie(List<Pointage> pointagesOrderedByDateAsc) {

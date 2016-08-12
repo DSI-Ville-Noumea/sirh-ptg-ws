@@ -2,18 +2,6 @@ package nc.noumea.mairie.ptg.web;
 
 import java.util.Date;
 
-import nc.noumea.mairie.domain.AgentStatutEnum;
-import nc.noumea.mairie.domain.SpWFPaie;
-import nc.noumea.mairie.domain.TypeChainePaieEnum;
-import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
-import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.ptg.repository.IPaieWorkflowRepository;
-import nc.noumea.mairie.ptg.service.IExportPaieService;
-import nc.noumea.mairie.ptg.service.impl.HelperService;
-import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
-import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
-import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,33 +15,38 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import flexjson.JSONSerializer;
+import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.SpWFPaie;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
+import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.service.IExportPaieService;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
+import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
+import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
+import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 
 @Controller
 @RequestMapping("/exportPaie")
 public class ExportPaieController {
 
-	private Logger logger = LoggerFactory.getLogger(ExportPaieController.class);
+	private Logger					logger	= LoggerFactory.getLogger(ExportPaieController.class);
 
 	@Autowired
-	private IExportPaieService exportPaieService;
+	private IExportPaieService		exportPaieService;
 
 	@Autowired
-	private IPaieWorkflowService paieWorkflowService;
+	private IPaieWorkflowService	paieWorkflowService;
 
 	@Autowired
-	private HelperService helperService;
-
-	@Autowired
-	private IPaieWorkflowRepository paieWorkflowRepository;
+	private HelperService			helperService;
 
 	@ResponseBody
 	@RequestMapping(value = "/start", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
 	@Transactional(value = "chainedTransactionManager")
-	public ResponseEntity<String> startExportPaie(@RequestParam("idAgent") Integer idAgent,
-			@RequestParam("statut") String statut) {
+	public ResponseEntity<String> startExportPaie(@RequestParam("idAgent") Integer idAgent, @RequestParam("statut") String statut) {
 
-		logger.debug("entered GET [exportPaie/start] => startExportPaie with parameters idAgent = {}, statut = {}",
-				idAgent, statut);
+		logger.debug("entered GET [exportPaie/start] => startExportPaie with parameters idAgent = {}, statut = {}", idAgent, statut);
 
 		ReturnMessageDto result = exportPaieService.startExportToPaie(idAgent, AgentStatutEnum.valueOf(statut));
 
@@ -72,11 +65,9 @@ public class ExportPaieController {
 
 		logger.debug("entered GET [exportPaie/etat] => getExportPaieEtat with parameter statut = {}", statut);
 
-		SpWFPaie etat = paieWorkflowService.getCurrentState(helperService.getTypeChainePaieFromStatut(AgentStatutEnum
-				.valueOf(statut)));
+		SpWFPaie etat = paieWorkflowService.getCurrentState(helperService.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
 
-		String resultJson = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class)
-				.serialize(etat);
+		String resultJson = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).serialize(etat);
 
 		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
 	}
@@ -86,11 +77,10 @@ public class ExportPaieController {
 	@Transactional(readOnly = true)
 	public ResponseEntity<String> canStartExportPaie(@RequestParam("statut") String statut) {
 
-		logger.debug("entered GET [exportPaie/canStartExportPaie] => canStartExportPaie with parameter statut = {}",
-				statut);
+		logger.debug("entered GET [exportPaie/canStartExportPaie] => canStartExportPaie with parameter statut = {}", statut);
 
-		CanStartWorkflowPaieActionDto result = exportPaieService.canStartExportPaieAction(helperService
-				.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
+		CanStartWorkflowPaieActionDto result = exportPaieService
+				.canStartExportPaieAction(helperService.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
 
 		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
 
@@ -104,8 +94,8 @@ public class ExportPaieController {
 
 		logger.debug("entered GET [exportPaie/isExportPaie] => isExportPaie with parameter statut = {}", statut);
 
-		CanStartWorkflowPaieActionDto result = exportPaieService.isExportPaieRunning(helperService
-				.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
+		CanStartWorkflowPaieActionDto result = exportPaieService
+				.isExportPaieRunning(helperService.getTypeChainePaieFromStatut(AgentStatutEnum.valueOf(statut)));
 
 		String resultJson = new JSONSerializer().exclude("*.class").serialize(result);
 
@@ -117,8 +107,7 @@ public class ExportPaieController {
 	@Transactional(value = "chainedTransactionManager")
 	public ResponseEntity<String> processTask(@RequestParam("idExportPaieTask") Integer idExportPaieTask) {
 
-		logger.debug("entered GET [exportPaie/processTask] => processTask with parameters idExportPaieTask = {}",
-				idExportPaieTask);
+		logger.debug("entered GET [exportPaie/processTask] => processTask with parameters idExportPaieTask = {}", idExportPaieTask);
 
 		if (exportPaieService.findExportPaieTask(idExportPaieTask) == null)
 			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
@@ -133,19 +122,19 @@ public class ExportPaieController {
 	@Transactional(value = "chainedTransactionManager")
 	public ResponseEntity<String> stopExportPaie(@RequestParam("typeChainePaie") String typeChainePaie) {
 
-		logger.debug("entered GET [exportPaie/stop] => stopExportPaie with parameters typeChainePaie = {}",
-				typeChainePaie);
+		logger.debug("entered GET [exportPaie/stop] => stopExportPaie with parameters typeChainePaie = {}", typeChainePaie);
 
 		try {
 			exportPaieService.stopExportToPaie(TypeChainePaieEnum.valueOf(typeChainePaie));
 		} catch (WorkflowInvalidStateException e) {
 			return new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 		}
-//		try{
-//		logger.debug("LockMode : " + paieWorkflowRepository.getLockModeSpWFPaie());
-//		}catch(Exception e){
-//			logger.debug("Erreur : paieWorkflowRepository BAD"+e.getMessage());
-//		}
+		// try{
+		// logger.debug("LockMode : " +
+		// paieWorkflowRepository.getLockModeSpWFPaie());
+		// }catch(Exception e){
+		// logger.debug("Erreur : paieWorkflowRepository BAD"+e.getMessage());
+		// }
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 }

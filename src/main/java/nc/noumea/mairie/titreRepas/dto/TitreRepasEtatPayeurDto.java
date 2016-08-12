@@ -3,6 +3,7 @@ package nc.noumea.mairie.titreRepas.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import nc.noumea.mairie.alfresco.cmis.AlfrescoCMISService;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.JsonDateDeserializer;
@@ -30,6 +31,8 @@ public class TitreRepasEtatPayeurDto implements Serializable {
 	private String fichier;
 	private AgentWithServiceDto agent;
 	
+	private String urlAlfresco;
+	
 	public TitreRepasEtatPayeurDto(){
 	}
 	
@@ -41,6 +44,8 @@ public class TitreRepasEtatPayeurDto implements Serializable {
 		this.dateEdition = titreRepasEtatPayeur.getDateEdition();
 		this.label = titreRepasEtatPayeur.getLabel();
 		this.fichier = titreRepasEtatPayeur.getFichier();
+		
+		this.urlAlfresco = AlfrescoCMISService.getUrlOfDocument(titreRepasEtatPayeur.getNodeRefAlfresco());
 	}
 	
 	public Integer getIdTrEtatPayeur() {
@@ -86,6 +91,14 @@ public class TitreRepasEtatPayeurDto implements Serializable {
 
 	public void setAgent(AgentWithServiceDto agent) {
 		this.agent = agent;
+	}
+
+	public String getUrlAlfresco() {
+		return urlAlfresco;
+	}
+
+	public void setUrlAlfresco(String urlAlfresco) {
+		this.urlAlfresco = urlAlfresco;
 	}
 	
 }
