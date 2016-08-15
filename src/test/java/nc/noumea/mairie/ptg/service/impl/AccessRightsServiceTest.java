@@ -313,10 +313,6 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentsApprobateurs()).thenReturn(listeDroits);
 
-		IAgentMatriculeConverterService matriculeConvertor = Mockito.mock(IAgentMatriculeConverterService.class);
-		Mockito.when(matriculeConvertor.tryConvertIdAgentToNomatr(9005138)).thenReturn(5138);
-		Mockito.when(matriculeConvertor.tryConvertIdAgentToNomatr(9003041)).thenReturn(3041);
-
 		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
 		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, agDto1.getIdAgent())).thenReturn(agDto1);
 		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentsServiceDto, agDto2.getIdAgent())).thenReturn(agDto2);
@@ -325,7 +321,6 @@ public class AccessRightsServiceTest {
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", wsMock);
 		ReflectionTestUtils.setField(service, "helperService", hS);
-		ReflectionTestUtils.setField(service, "matriculeConvertor", matriculeConvertor);
 		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 
 		// When
@@ -1201,12 +1196,8 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(null);
 
-		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
-		Mockito.when(matrService.tryConvertIdAgentToNomatr(9009999)).thenReturn(9999);
-
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
-		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		// When
 		DelegatorAndOperatorsDto result = service.getDelegatorAndOperators(idAgent);
@@ -1326,13 +1317,9 @@ public class AccessRightsServiceTest {
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(9009999)).thenReturn(ag);
 
-		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
-		Mockito.when(matrService.tryConvertIdAgentToNomatr(9009999)).thenReturn(9999);
-
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sRepo);
-		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
 		dto.setDelegataire(new AgentDto());
@@ -1366,16 +1353,12 @@ public class AccessRightsServiceTest {
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(9009999)).thenReturn(ag);
 
-		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
-		Mockito.when(matrService.tryConvertIdAgentToNomatr(9009999)).thenReturn(9999);
-
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(currentDate);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sRepo);
-		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
@@ -1852,13 +1835,9 @@ public class AccessRightsServiceTest {
 		ISirhWSConsumer sRepo = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sRepo.getAgent(9009999)).thenReturn(ag);
 
-		IAgentMatriculeConverterService matrService = Mockito.mock(IAgentMatriculeConverterService.class);
-		Mockito.when(matrService.tryConvertIdAgentToNomatr(9009999)).thenReturn(9999);
-
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
 		ReflectionTestUtils.setField(service, "sirhWSConsumer", sRepo);
-		ReflectionTestUtils.setField(service, "matriculeConvertor", matrService);
 
 		DelegatorAndOperatorsDto dto = new DelegatorAndOperatorsDto();
 		dto.setDelegataire(new AgentDto());
