@@ -20,6 +20,7 @@ import org.apache.chemistry.opencmis.commons.data.ContentStream;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisConnectionException;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisContentAlreadyExistsException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,7 +152,14 @@ public class AlfrescoCMISService implements IAlfrescoCMISService {
 		Session session = createSession.getSession(alfrescoUrl, alfrescoLogin, alfrescoPassword);
 		
 		String path = CmisUtils.getPathPointage(typeEtatPayeur);
-		CmisObject object = session.getObject(cmisService.getIdObjectCmis(path + titreFile, session));
+		CmisObject object = null;
+		
+		try {
+			object = session.getObject(cmisService.getIdObjectCmis(path + titreFile, session));
+		} catch(CmisObjectNotFoundException e) {
+			logger.error(e.getMessage());
+			return null;
+		}
 		
 		if(null == object) 
 			return null;
