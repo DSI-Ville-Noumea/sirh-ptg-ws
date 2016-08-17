@@ -11,6 +11,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.mock.staticmock.MockStaticEntityMethods;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
@@ -21,7 +29,6 @@ import nc.noumea.mairie.ptg.dto.ApprobateurDto;
 import nc.noumea.mairie.ptg.dto.DelegatorAndOperatorsDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
-import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IDpmService;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
@@ -29,14 +36,6 @@ import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
 import nc.noumea.mairie.ws.IAdsWSConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
-
-import org.joda.time.DateTime;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.mock.staticmock.MockStaticEntityMethods;
-import org.springframework.test.util.ReflectionTestUtils;
 
 @MockStaticEntityMethods
 public class AccessRightsServiceTest {
@@ -1194,7 +1193,7 @@ public class AccessRightsServiceTest {
 		Integer idAgent = 9008765;
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(null);
+		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(null);;
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
