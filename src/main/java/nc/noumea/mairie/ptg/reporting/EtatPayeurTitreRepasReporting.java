@@ -65,8 +65,10 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		// on génere les numeros de page
 		baos = genereNumeroPageA3Paysage(baos);
 		
-		alfrescoCMISService.uploadDocument(etatPayeurTR.getIdAgent(), baos.toByteArray(), etatPayeurTR.getFichier(), 
+		String node = alfrescoCMISService.uploadDocument(etatPayeurTR.getIdAgent(), baos.toByteArray(), etatPayeurTR.getFichier(), 
 				DESCRIPTION_ETAT_PAYEUR_TITRE_REPAS + etatPayeurTR.getDateEtatPayeur(), TypeEtatPayeurPointageEnum.TYPE_ETAT_PAYEUR_TITRE_REPAS);
+
+		etatPayeurTR.setNodeRefAlfresco(node);
 	}
 
 	private void writeDocument(Document document, 
