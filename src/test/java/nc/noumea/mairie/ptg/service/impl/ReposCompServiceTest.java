@@ -6,6 +6,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.LocalDate;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.ReposCompHisto;
 import nc.noumea.mairie.ptg.domain.ReposCompTask;
@@ -18,14 +26,6 @@ import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.LocalDate;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ReposCompServiceTest {
 
@@ -46,8 +46,7 @@ public class ReposCompServiceTest {
 		service.processReposCompTask(15);
 
 		// Then
-		Mockito.verify(vR, Mockito.never()).getListVentilHSupForAgentAndVentilDateOrderByDateAsc(Mockito.anyInt(),
-				Mockito.anyInt());
+		Mockito.verify(vR, Mockito.never()).getListVentilHSupForAgentAndVentilDateOrderByDateAsc(Mockito.anyInt(), Mockito.anyInt());
 	}
 
 	@Test
@@ -65,8 +64,7 @@ public class ReposCompServiceTest {
 
 		List<VentilHsup> hSs = new ArrayList<VentilHsup>();
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(t.getIdAgent(), vd.getIdVentilDate()))
-				.thenReturn(hSs);
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(t.getIdAgent(), vd.getIdVentilDate())).thenReturn(hSs);
 
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
@@ -101,8 +99,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(t.getIdAgent(), vd.getIdVentilDate()))
-				.thenReturn(hSs);
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAsc(t.getIdAgent(), vd.getIdVentilDate())).thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013, 1, 1).toDate());
@@ -145,8 +142,7 @@ public class ReposCompServiceTest {
 
 		// Then
 		Mockito.verify(pR, Mockito.never()).persisEntity(Mockito.isA(ReposCompHisto.class));
-		Mockito.verify(absWs, Mockito.never()).addReposCompToAgent(Mockito.anyInt(), Mockito.any(Date.class),
-				Mockito.anyInt());
+		Mockito.verify(absWs, Mockito.never()).addReposCompToAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.anyInt());
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -171,8 +167,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate()))
-				.thenReturn(hSs);
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate())).thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013, 1, 1).toDate());
@@ -203,8 +198,7 @@ public class ReposCompServiceTest {
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(
-				base);
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(base);
 
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
@@ -220,8 +214,7 @@ public class ReposCompServiceTest {
 
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
-		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.anyInt(), Mockito.any(Date.class),
-				Mockito.eq(0));
+		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.eq(0));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -246,8 +239,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate()))
-				.thenReturn(hSs);
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate())).thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013, 1, 1).toDate());
@@ -278,8 +270,7 @@ public class ReposCompServiceTest {
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(
-				base);
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(base);
 
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
@@ -295,8 +286,7 @@ public class ReposCompServiceTest {
 
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
-		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()),
-				Mockito.eq(hs.getDateLundi()), Mockito.eq(9));
+		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()), Mockito.eq(hs.getDateLundi()), Mockito.eq(9));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -321,8 +311,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate()))
-				.thenReturn(hSs);
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate())).thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013, 1, 1).toDate());
@@ -353,8 +342,7 @@ public class ReposCompServiceTest {
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(
-				base);
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(base);
 
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
@@ -370,8 +358,7 @@ public class ReposCompServiceTest {
 
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
-		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()),
-				Mockito.eq(hs.getDateLundi()), Mockito.eq(18));
+		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()), Mockito.eq(hs.getDateLundi()), Mockito.eq(18));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -396,8 +383,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate()))
-				.thenReturn(hSs);
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate())).thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013, 1, 1).toDate());
@@ -428,8 +414,7 @@ public class ReposCompServiceTest {
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(
-				base);
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(base);
 
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
@@ -445,8 +430,8 @@ public class ReposCompServiceTest {
 
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
-		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()),
-				Mockito.eq(hs.getDateLundi()), Mockito.eq(135));
+		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()), Mockito.eq(hs.getDateLundi()),
+				Mockito.eq(new Double((hs.getMSup() / 60) * 30).intValue()));
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -471,8 +456,7 @@ public class ReposCompServiceTest {
 		hs.setDateLundi(new LocalDate(2013, 12, 16).toDate());
 		hSs.add(hs);
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate()))
-				.thenReturn(hSs);
+		Mockito.when(vR.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(t.getIdAgent(), vd.getIdVentilDate())).thenReturn(hSs);
 
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new LocalDate(2013, 1, 1).toDate());
@@ -503,8 +487,7 @@ public class ReposCompServiceTest {
 		IAbsWsConsumer absWs = Mockito.mock(IAbsWsConsumer.class);
 
 		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(
-				base);
+		Mockito.when(sirhWSConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(base);
 
 		ReposCompService service = new ReposCompService();
 		ReflectionTestUtils.setField(service, "reposCompRepository", rcR);
@@ -520,8 +503,8 @@ public class ReposCompServiceTest {
 
 		// Then
 		Mockito.verify(pR, Mockito.times(1)).persisEntity(Mockito.isA(ReposCompHisto.class));
-		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()),
-				Mockito.eq(hs.getDateLundi()), Mockito.eq(247));
+		Mockito.verify(absWs, Mockito.times(1)).addReposCompToAgent(Mockito.eq(t.getIdAgent()), Mockito.eq(hs.getDateLundi()),
+				Mockito.eq(new Double((hs.getMSup() / 60) * 30).intValue()));
 	}
 
 	@Test

@@ -3,6 +3,14 @@ package nc.noumea.mairie.ptg.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.ReposCompHisto;
@@ -17,42 +25,34 @@ import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 @Service
 public class ReposCompService implements IReposCompService {
 
-	private Logger logger = LoggerFactory.getLogger(ReposCompService.class);
+	private Logger					logger						= LoggerFactory.getLogger(ReposCompService.class);
 
 	@Autowired
-	private IReposCompRepository reposCompRepository;
+	private IReposCompRepository	reposCompRepository;
 
 	@Autowired
-	private IVentilationRepository ventilationRepository;
+	private IVentilationRepository	ventilationRepository;
 
 	@Autowired
-	private IPointageRepository pointageRepository;
+	private IPointageRepository		pointageRepository;
 
 	@Autowired
-	private HelperService helperService;
+	private HelperService			helperService;
 
 	@Autowired
-	private IMairieRepository mairieRepository;
+	private IMairieRepository		mairieRepository;
 
 	@Autowired
-	private IAbsWsConsumer absWsConsumer;
+	private IAbsWsConsumer			absWsConsumer;
 
 	@Autowired
-	private ISirhWSConsumer sirhWSConsumer;
+	private ISirhWSConsumer			sirhWSConsumer;
 
-	private static int MAX_MIN_PER_WEEK = 42 * 60; // 42h
-	private static int REPOS_COMP_COEF_THRESHOLD = 130 * 60; // 130h
+	private static int				MAX_MIN_PER_WEEK			= 42 * 60;											// 42h
+	private static int				REPOS_COMP_COEF_THRESHOLD	= 130 * 60;											// 130h
 
 	@Override
 	public void processReposCompTask(Integer idReposCompTask) {
@@ -68,8 +68,8 @@ public class ReposCompService implements IReposCompService {
 
 		logger.info("Agent {}.", task.getIdAgent());
 
-		List<VentilHsup> hSs = ventilationRepository.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(
-				task.getIdAgent(), task.getVentilDate().getIdVentilDate());
+		List<VentilHsup> hSs = ventilationRepository.getListVentilHSupForAgentAndVentilDateOrderByDateAscForReposComp(task.getIdAgent(),
+				task.getVentilDate().getIdVentilDate());
 
 		if (hSs.size() == 0) {
 			logger.info("Agent {} does not have any HSUPS over ventilation period. Exiting process.", task.getIdAgent());
@@ -83,8 +83,7 @@ public class ReposCompService implements IReposCompService {
 
 			logger.info("Processing week {}", vhs.getDateLundi());
 
-			Spcarr carr = mairieRepository.getAgentCurrentCarriere(
-					helperService.getMairieMatrFromIdAgent(task.getIdAgent()), vhs.getDateLundi());
+			Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(task.getIdAgent()), vhs.getDateLundi());
 
 			// Check on Agent status (this process will stop if the user is of
 			// status fonctionnaire)
@@ -92,40 +91,45 @@ public class ReposCompService implements IReposCompService {
 				logger.info("Agent status is [{}]. Stopping process for that week.", carr.getStatutCarriere());
 				continue;
 			}
-			
+
 			Date dateFinSemaine = new DateTime(vhs.getDateLundi()).plusDays(7).toDate();
-			BaseHorairePointageDto baseDto = sirhWSConsumer.getBaseHorairePointageAgent(task.getIdAgent(),
-					vhs.getDateLundi(), dateFinSemaine);
-			
+			BaseHorairePointageDto baseDto = sirhWSConsumer.getBaseHorairePointageAgent(task.getIdAgent(), vhs.getDateLundi(), dateFinSemaine);
+
 			if (baseDto == null || baseDto.getIdBaseHorairePointage() == null) {
 				logger.info("BaseHoraireAgent  is null. Stopping process for that week.");
 				continue;
 			}
 			int weekBase = (int) (helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getBaseLegale()));
 
-			Pair<ReposCompHisto, Integer> histo = getOrCreateReposCompHisto(task.getIdAgent(), vhs.getDateLundi(),
-					weekBase, vhs.getMSup());
+			Pair<ReposCompHisto, Integer> histo = getOrCreateReposCompHisto(task.getIdAgent(), vhs.getDateLundi(), weekBase, vhs.getMSup());
 
 			// Adding the nb of HSups to the counter in order to not have to
 			// query again the db for total amount of Hsups over the year
 			totalMinutesOfYear += histo.getRight();
 
-			logger.info("Hsups: {} minutes. Total HSups count for year is {} minutes: {} hours.", histo.getLeft()
-					.getMSup(), totalMinutesOfYear, totalMinutesOfYear / 60);
+			logger.info("Hsups: {} minutes. Total HSups count for year is {}  minutes: {} hours.", histo.getLeft().getMSup(), totalMinutesOfYear,
+					totalMinutesOfYear / 60);
 
-			// #14420 prendre en compte les minutes dans l ajout de RC et ne pas arrondir a l heure
-			double nbMinutesBeforeThreshold = (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD) > 0 ? (histo.getLeft()
-					.getMSup() - (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD)) : histo.getLeft().getMSup();
-			double nbMinutesAfterThreshold = totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD > 0 ? histo.getLeft()
-					.getMSup() - nbMinutesBeforeThreshold : 0;
+			// #14420 prendre en compte les minutes dans l ajout de RC et ne pas
+			// arrondir a l heure
+			double nbMinutesBeforeThreshold = (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD) > 0
+					? (histo.getLeft().getMSup() - (totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD)) : histo.getLeft().getMSup();
+			double nbMinutesAfterThreshold = totalMinutesOfYear - REPOS_COMP_COEF_THRESHOLD > 0 ? histo.getLeft().getMSup() - nbMinutesBeforeThreshold
+					: 0;
 			logger.info("Agent has done {} minutes over than 130H per year.", nbMinutesAfterThreshold);
 
-			double nbMinutesBeforeThresholdToCount = (weekBase + nbMinutesBeforeThreshold) - MAX_MIN_PER_WEEK > 0 ? (weekBase + nbMinutesBeforeThreshold)
-					- MAX_MIN_PER_WEEK
-					: 0;
-			logger.info("Agent has done {} minutes more than 42H this week.", nbMinutesBeforeThresholdToCount);
-
-			int nbRecups = new Double((nbMinutesBeforeThresholdToCount / 60) * 12 + (nbMinutesAfterThreshold / 60) * 30).intValue();
+			// #33382 : on ne cumule pas les superieurs à 130H et 42H/semaine.
+			// #33382 : au dela de 130H, on ne compte que le resultat de la
+			// ventil
+			int nbRecups = 0;
+			if (nbMinutesAfterThreshold > 0) {
+				nbRecups = new Double((vhs.getMSup() / 60) * 30).intValue();
+			} else {
+				double nbMinutesBeforeThresholdToCount = (weekBase + nbMinutesBeforeThreshold) - MAX_MIN_PER_WEEK > 0
+						? (weekBase + nbMinutesBeforeThreshold) - MAX_MIN_PER_WEEK : 0;
+				logger.info("Agent has done {} minutes more than 42H this week.", nbMinutesBeforeThresholdToCount);
+				nbRecups = new Double((nbMinutesBeforeThresholdToCount / 60) * 12).intValue();
+			}
 
 			logger.info("Agent is accountable for {} minutes.", nbRecups);
 
@@ -136,8 +140,7 @@ public class ReposCompService implements IReposCompService {
 		logger.info("Done processing ReposCompTask.");
 	}
 
-	protected Pair<ReposCompHisto, Integer> getOrCreateReposCompHisto(Integer idAgent, Date dateLundi,
-			Integer weekBase, Integer mSups) {
+	protected Pair<ReposCompHisto, Integer> getOrCreateReposCompHisto(Integer idAgent, Date dateLundi, Integer weekBase, Integer mSups) {
 
 		ReposCompHisto histo = reposCompRepository.findReposCompHistoForAgentAndDate(idAgent, dateLundi);
 
