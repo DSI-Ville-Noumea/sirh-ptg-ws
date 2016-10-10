@@ -10,6 +10,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.itextpdf.text.DocumentException;
+
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
@@ -44,16 +55,6 @@ import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
 
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.lowagie.text.DocumentException;
 
 @Service
 public class TitreRepasService implements ITitreRepasService {

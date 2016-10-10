@@ -4,12 +4,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.ptg.dto.AgentDto;
-import nc.noumea.mairie.ptg.reporting.FichePointageHebdoReporting;
-import nc.noumea.mairie.ptg.service.IAccessRightsService;
-import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.ptg.service.IFichesService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +19,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.lowagie.text.DocumentException;
+import com.itextpdf.text.DocumentException;
 
 import flexjson.JSONSerializer;
+import nc.noumea.mairie.ptg.dto.AgentDto;
+import nc.noumea.mairie.ptg.reporting.FichePointageHebdoReporting;
+import nc.noumea.mairie.ptg.service.IAccessRightsService;
+import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.ptg.service.IFichesService;
 
 @Controller
 @RequestMapping("/edition")

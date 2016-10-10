@@ -1,6 +1,5 @@
 package nc.noumea.mairie.ptg.reporting;
 
-import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -9,6 +8,17 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.dto.FichePointageDto;
 import nc.noumea.mairie.ptg.dto.FichePointageListDto;
@@ -16,15 +26,6 @@ import nc.noumea.mairie.ptg.dto.JourPointageDto;
 import nc.noumea.mairie.ptg.reporting.vo.CellVo;
 import nc.noumea.mairie.ptg.service.IPointageService;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.Element;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
 
 @Service("FichePointageHebdoReporting")
 public class FichePointageHebdoReporting extends AbstractReporting {
@@ -88,7 +89,7 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		List<CellVo> listValuesLigne1 = new ArrayList<CellVo>();
 		listValuesLigne1.add(new CellVo(""));
 		for (JourPointageDto jour : fiche.getSaisies()) {
-			listValuesLigne1.add(new CellVo(sdfddMMyyyy.format(jour.getDate()), true, 1, new Color(233, 233, 233)));
+			listValuesLigne1.add(new CellVo(sdfddMMyyyy.format(jour.getDate()), true, 1, new BaseColor(233, 233, 233)));
 		}
 		writeLine(table, 3, Element.ALIGN_CENTER, listValuesLigne1);
 
@@ -98,7 +99,7 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		for (JourPointageDto jour : fiche.getSaisies()) {
 			String nomJour = sdfNomJour.format(jour.getDate());
 			nomJour = nomJour.substring(0, 1).toUpperCase() + nomJour.substring(1, nomJour.length());
-			listValuesLigne2.add(new CellVo(nomJour, true, 1, new Color(233, 233, 233)));
+			listValuesLigne2.add(new CellVo(nomJour, true, 1, new BaseColor(233, 233, 233)));
 		}
 		writeLine(table, 3, Element.ALIGN_CENTER, listValuesLigne2);
 
@@ -116,7 +117,7 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 
 		// 3e ligne : titre Heures Supplementaires
 		writeLine(table, 3, Element.ALIGN_CENTER,
-				Arrays.asList(new CellVo(""), new CellVo("Heures supplémentaires", false, 7, new Color(255, 215, 196))));
+				Arrays.asList(new CellVo(""), new CellVo("Heures supplémentaires", false, 7, new BaseColor(255, 215, 196))));
 
 		// on traite les donnees
 		Integer nombreLigneHeuresSup = 1;
@@ -169,7 +170,7 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 	protected void writeAbsences(PdfPTable table, FichePointageDto fiche) {
 
 		// 3e ligne : titre Absences
-		writeLine(table, 3, Arrays.asList(new CellVo(""), new CellVo("Absences", false, 7, new Color(255, 215, 196),
+		writeLine(table, 3, Arrays.asList(new CellVo(""), new CellVo("Absences", false, 7, new BaseColor(255, 215, 196),
 				Element.ALIGN_CENTER)));
 
 		// on traite les donnees
@@ -232,7 +233,7 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 					3,
 					Element.ALIGN_CENTER,
 					Arrays.asList(new CellVo(""), new CellVo(fiche.getSaisies().get(0).getPrimes().get(prime)
-							.getTitre(), false, 7, new Color(255, 215, 196))));
+							.getTitre(), false, 7, new BaseColor(255, 215, 196))));
 
 			List<CellVo> ligneNombre = new ArrayList<CellVo>();
 			ligneNombre.add(new CellVo("Nombre", 1, Element.ALIGN_LEFT));
@@ -264,15 +265,15 @@ public class FichePointageHebdoReporting extends AbstractReporting {
 		table.setSpacingAfter(10);
 
 		writeLine(table, 3, Element.ALIGN_LEFT, Arrays.asList(
-				new CellVo("Entité :", true, 1, new Color(233, 233, 233)), new CellVo(fiche.getAgent().getService())));
+				new CellVo("Entité :", true, 1, new BaseColor(233, 233, 233)), new CellVo(fiche.getAgent().getService())));
 		writeLine(
 				table,
 				3,
 				Element.ALIGN_LEFT,
-				Arrays.asList(new CellVo("Agent :", true, 1, new Color(233, 233, 233)), new CellVo(fiche.getAgent()
+				Arrays.asList(new CellVo("Agent :", true, 1, new BaseColor(233, 233, 233)), new CellVo(fiche.getAgent()
 						.getNomatr() + " - " + fiche.getAgent().getNom() + " " + fiche.getAgent().getPrenom())));
 		writeLine(table, 3, Element.ALIGN_LEFT, Arrays.asList(
-				new CellVo("Semaine :", true, 1, new Color(233, 233, 233)), new CellVo(fiche.getSemaine())));
+				new CellVo("Semaine :", true, 1, new BaseColor(233, 233, 233)), new CellVo(fiche.getSemaine())));
 		document.add(table);
 	}
 }
