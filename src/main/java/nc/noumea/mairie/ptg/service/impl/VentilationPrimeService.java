@@ -63,12 +63,15 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 			
 			// #18234 cas particulier des primes TID exceptionnelles qui fusionnent avec les autres TID "normales"
 			List<RefPrime> listPrimes = null;
+			// Bug #33902 : si pas de TID normales alors l'agent n'était jamais payé
+			RefPrime primeRemplacement = null;
 			switch (ptg.getRefPrime().getNoRubr()) {
 				case PRIME_TID_EXCEP_7723:
 					listPrimes = pointageRepository.getRefPrimes(Arrays.asList(PRIME_TID_7720), statut);
 					if(null != listPrimes
 							&& !listPrimes.isEmpty()) {
 						idRefPrime = listPrimes.get(0).getIdRefPrime();
+						primeRemplacement = listPrimes.get(0);
 					}
 					break;
 				case PRIME_TID_EXCEP_7724:
@@ -76,6 +79,7 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 					if(null != listPrimes
 							&& !listPrimes.isEmpty()) {
 						idRefPrime = listPrimes.get(0).getIdRefPrime();
+						primeRemplacement = listPrimes.get(0);
 					}
 					break;
 				case PRIME_TID_EXCEP_7725:
@@ -83,6 +87,7 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 					if(null != listPrimes
 							&& !listPrimes.isEmpty()) {
 						idRefPrime = listPrimes.get(0).getIdRefPrime();
+						primeRemplacement = listPrimes.get(0);
 					}
 					break;
 			}
@@ -90,7 +95,7 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 			if (!primesByMonth.containsKey(idRefPrime)) {
 				VentilPrime vp = new VentilPrime();
 				vp.setIdAgent(idAgent);
-				vp.setRefPrime(ptg.getRefPrime());
+				vp.setRefPrime(primeRemplacement == null ? ptg.getRefPrime() : primeRemplacement);
 				vp.setDateDebutMois(dateDebutMois);
 				vp.setDatePrime(ptg.getDateDebut());
 				vp.setEtat(EtatPointageEnum.VENTILE);
