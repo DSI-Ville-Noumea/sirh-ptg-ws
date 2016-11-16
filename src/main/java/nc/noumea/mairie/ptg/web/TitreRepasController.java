@@ -180,7 +180,7 @@ public class TitreRepasController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/genereEtatPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(readOnly = true)
+	@Transactional(value = "chainedTransactionManager")
 	public ReturnMessageDto genereEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte) {
 
 		logger.debug("entered GET [titreRepas/historique] => getTitreRepasArchives with parameters idTrDemande = {}", idAgentConnecte);

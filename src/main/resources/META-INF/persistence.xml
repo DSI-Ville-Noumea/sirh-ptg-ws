@@ -62,6 +62,7 @@
         <class>nc.noumea.mairie.domain.Spmatr</class>
         <class>nc.noumea.mairie.domain.SpWFEtat</class>
         <class>nc.noumea.mairie.domain.SpWFPaie</class>
+        <class>nc.noumea.mairie.domain.Spchge</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.DB2400Dialect"/>

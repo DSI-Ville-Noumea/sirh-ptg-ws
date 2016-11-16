@@ -54,7 +54,13 @@
         <class>nc.noumea.mairie.domain.Spadmn</class>
         <class>nc.noumea.mairie.domain.Sppact</class>
         <class>nc.noumea.mairie.domain.Spacti</class>
+        <class>nc.noumea.mairie.domain.Spphre</class>
         <class>nc.noumea.mairie.domain.Sppprm</class>
+        <class>nc.noumea.mairie.domain.Spprim</class>
+        <class>nc.noumea.mairie.domain.Spmatr</class>
+        <class>nc.noumea.mairie.domain.SpWFEtat</class>
+        <class>nc.noumea.mairie.domain.SpWFPaie</class>
+        <class>nc.noumea.mairie.domain.Spchge</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>

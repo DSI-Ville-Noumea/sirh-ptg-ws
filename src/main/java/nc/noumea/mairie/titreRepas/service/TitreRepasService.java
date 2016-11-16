@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,8 @@ import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.domain.Spchge;
+import nc.noumea.mairie.domain.SpchgeId;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.RefEtat;
@@ -55,86 +58,87 @@ import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
 
-
 @Service
 public class TitreRepasService implements ITitreRepasService {
 
-	private Logger logger = LoggerFactory.getLogger(TitreRepasService.class);
+	private Logger							logger														= LoggerFactory
+			.getLogger(TitreRepasService.class);
 
 	@Autowired
-	private HelperService helperService;
+	private HelperService					helperService;
 
 	@Autowired
-	private EnvironnementService environnementService;
+	private EnvironnementService			environnementService;
 
 	@Autowired
-	private IMairieRepository mairieRepository;
+	private IMairieRepository				mairieRepository;
 
 	@Autowired
-	private ITitreRepasRepository titreRepasRepository;
+	private ITitreRepasRepository			titreRepasRepository;
 
 	@Autowired
-	private IPointageRepository pointageRepository;
+	private IPointageRepository				pointageRepository;
 
 	@Autowired
-	private IAccessRightsRepository accessRightsRepository;
+	private IAccessRightsRepository			accessRightsRepository;
 
 	@Autowired
-	private IAbsWsConsumer absWsConsumer;
+	private IAbsWsConsumer					absWsConsumer;
 
 	@Autowired
-	private ISirhWSConsumer sirhWsConsumer;
+	private ISirhWSConsumer					sirhWsConsumer;
 
 	@Autowired
-	private SirhWSUtils sirhWSUtils;
+	private SirhWSUtils						sirhWSUtils;
 
 	@Autowired
-	private IAccessRightsService accessRightsService;
+	private IAccessRightsService			accessRightsService;
 
 	@Autowired
-	private IPaieWorkflowService paieWorkflowService;
+	private IPaieWorkflowService			paieWorkflowService;
 
 	@Autowired
-	private EtatPayeurTitreRepasReporting reportingService;
+	private EtatPayeurTitreRepasReporting	reportingService;
 
 	@Autowired
-	private IAccessRightsService accessRightService;
+	private IAccessRightsService			accessRightService;
 
-	private static SimpleDateFormat sfd = new SimpleDateFormat("YYYY-MM");
+	private static SimpleDateFormat			sfd															= new SimpleDateFormat("YYYY-MM");
 
-	public static final String ERREUR_DROIT_AGENT = "Vous n'avez pas les droits pour traiter cette demande de titre repas.";
-	public static final String DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS = "Vous ne pouvez commander les titres repas qu'entre le 1 et 10 de chaque mois.";
-	public static final String EDITION_PAYEUR_DEJA_EDITEE = "Vous ne pouvez saisir des demandes de titres repas car l'édition du payeur a déjà été effectuée pour ce mois.";
-	public static final String DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR = "Vous ne pouvez approuver/refuser des titres repas qu'entre le 11 du mois et l'édition du payeur.";
-	public static final String AUCUNE_PA_ACTIVE_MOIS_PRECEDENT = "L'agent %s n'a pas travaillé le mois précédent.";
-	public static final String AUCUNE_BASE_CONGE = "La base congé n'est pas renseignée pour l'agent %s.";
-	public static final String PRIME_PANIER = "L'agent a le droit aux primes panier et ne peut donc pas commander des titres repas.";
-	public static final String FILIERE_INCENDIE = "L'agent fait parti de la filière incendie et ne peut donc pas commander de titres repas.";
-	public static final String TITRE_DEMANDE_DEJA_EXISTANT = "Une demande de titre repas existe déjà pour ce mois-ci pour l'agent %s.";
-	public static final String TITRE_DEMANDE_INEXISTANT = "La demande de titre repas n'existe pas.";
-	public static final String DTO_NULL = "Merci de saisir la demande de titre repas.";
-	public static final String MOIS_COURS_NON_SAISI = "Le mois en cours de la demande n'est pas saisi.";
-	public static final String AGENT_NON_SAISI = "L'ID agent n'est pas renseigné.";
-	public static final String ETAT_NON_SAISI = "L'état de la demande de titre repas n'est pas renseigné pour l'agent : %s.";
-	public static final String AUCUNE_DEMANDE = "Aucune demande de titre repas à approuver.";
-	public static final String AUCUN_ID_DEMANDE = "L'ID de la demande de titre repas n'est pas renseigné.";
-	public static final String AUCUNE_DEMANDE_TROUVEE = "La demande de titre repas n'existe pas.";
-	public static final String DEMANDE_MOIS_EN_COURS_ERROR = "La demande de titre repas n'existe pas.";
-	public static final String DEMANDE_NON_COMMANDE = "Vous ne pouvez pas approuvé une demande de titre repas non commandée.";
-	public static final String ERROR_ETAT_DEMANDE = "Vous ne pouvez pas %s une demande de titre repas à l'état %s.";
-	public static final String NOUVELLE_ETAT_INCORRECT = "Le nouvel état de la demande de titre repas est incorrect.";
-	public static final String PAIE_EN_COURS = "Génération impossible. Une paie est en cours sous l'AS400.";
-	public static final String DEMANDE_EN_COURS = "Génération impossible. Il reste des demandes à l'état 'saisie'.";
-	public static final String GENERATION_IMPOSSIBLE_AVANT_11 = "Génération impossible avant le 11 du mois.";
-	public static final String MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE = "Vous ne pouvez pas modifier une demande journalisée.";
-	public static final String MODIFICATION_IMPOSSIBLE_DEMANDE_AUTRE_SAISI_DEPUIS_KIOSQUE = "Vous ne pouvez pas modifier une demande approuvée, rejetée ou journalisée.";
+	public static final String				ERREUR_DROIT_AGENT											= "Vous n'avez pas les droits pour traiter cette demande de titre repas.";
+	public static final String				DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS				= "Vous ne pouvez commander les titres repas qu'entre le 1 et 10 de chaque mois.";
+	public static final String				EDITION_PAYEUR_DEJA_EDITEE									= "Vous ne pouvez saisir des demandes de titres repas car l'édition du payeur a déjà été effectuée pour ce mois.";
+	public static final String				DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR			= "Vous ne pouvez approuver/refuser des titres repas qu'entre le 11 du mois et l'édition du payeur.";
+	public static final String				AUCUNE_PA_ACTIVE_MOIS_PRECEDENT								= "L'agent %s n'a pas travaillé le mois précédent.";
+	public static final String				AUCUNE_BASE_CONGE											= "La base congé n'est pas renseignée pour l'agent %s.";
+	public static final String				PRIME_PANIER												= "L'agent a le droit aux primes panier et ne peut donc pas commander des titres repas.";
+	public static final String				FILIERE_INCENDIE											= "L'agent fait parti de la filière incendie et ne peut donc pas commander de titres repas.";
+	public static final String				TITRE_DEMANDE_DEJA_EXISTANT									= "Une demande de titre repas existe déjà pour ce mois-ci pour l'agent %s.";
+	public static final String				TITRE_DEMANDE_INEXISTANT									= "La demande de titre repas n'existe pas.";
+	public static final String				DTO_NULL													= "Merci de saisir la demande de titre repas.";
+	public static final String				MOIS_COURS_NON_SAISI										= "Le mois en cours de la demande n'est pas saisi.";
+	public static final String				AGENT_NON_SAISI												= "L'ID agent n'est pas renseigné.";
+	public static final String				ETAT_NON_SAISI												= "L'état de la demande de titre repas n'est pas renseigné pour l'agent : %s.";
+	public static final String				AUCUNE_DEMANDE												= "Aucune demande de titre repas à approuver.";
+	public static final String				AUCUN_ID_DEMANDE											= "L'ID de la demande de titre repas n'est pas renseigné.";
+	public static final String				AUCUNE_DEMANDE_TROUVEE										= "La demande de titre repas n'existe pas.";
+	public static final String				DEMANDE_MOIS_EN_COURS_ERROR									= "La demande de titre repas n'existe pas.";
+	public static final String				DEMANDE_NON_COMMANDE										= "Vous ne pouvez pas approuvé une demande de titre repas non commandée.";
+	public static final String				ERROR_ETAT_DEMANDE											= "Vous ne pouvez pas %s une demande de titre repas à l'état %s.";
+	public static final String				NOUVELLE_ETAT_INCORRECT										= "Le nouvel état de la demande de titre repas est incorrect.";
+	public static final String				PAIE_EN_COURS												= "Génération impossible. Une paie est en cours sous l'AS400.";
+	public static final String				DEMANDE_EN_COURS											= "Génération impossible. Il reste des demandes à l'état 'saisie'.";
+	public static final String				GENERATION_IMPOSSIBLE_AVANT_11								= "Génération impossible avant le 11 du mois.";
+	public static final String				MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE					= "Vous ne pouvez pas modifier une demande journalisée.";
+	public static final String				MODIFICATION_IMPOSSIBLE_DEMANDE_AUTRE_SAISI_DEPUIS_KIOSQUE	= "Vous ne pouvez pas modifier une demande approuvée, rejetée ou journalisée.";
 
-	public static final String ENREGISTREMENT_OK = "La demande est bien enregistrée.";
-	public static final String ENREGISTREMENT_PLURIEL_OK = "Les demandes sont bien enregistrées.";
-	public static final String GENERATION_ETAT_PAYEUR_OK = "L'état payeur des titres repas est bien généré.";
+	public static final String				ENREGISTREMENT_OK											= "La demande est bien enregistrée.";
+	public static final String				ENREGISTREMENT_PLURIEL_OK									= "Les demandes sont bien enregistrées.";
+	public static final String				GENERATION_ETAT_PAYEUR_OK									= "L'état payeur des titres repas est bien généré.";
 
-	public static final List<Integer> LIST_PRIMES_PANIER = Arrays.asList(7704, 7713);
-	public static final String CODE_FILIERE_INCENDIE = "I";
+	public static final List<Integer>		LIST_PRIMES_PANIER											= Arrays.asList(7704, 7713);
+	public static final String				CODE_FILIERE_INCENDIE										= "I";
+	public final static int					RUBRIQUE_TITRE_REPAS										= 6500;
 
 	/**
 	 * Enregistre une liste de demande de Titre Repas depuis le Kiosque RH.
@@ -153,7 +157,8 @@ public class TitreRepasService implements ITitreRepasService {
 		Integer idAgentDemande = null;
 		if (listTitreRepasDemandeDto != null && listTitreRepasDemandeDto.size() == 1) {
 			idAgentDemande = listTitreRepasDemandeDto.get(0).getAgent().getIdAgent();
-			if (!idAgentConnecte.equals(idAgentDemande) && !accessRightsService.isUserApprobateur(idAgentConnecte) && !accessRightsService.isUserOperateur(idAgentConnecte)) {
+			if (!idAgentConnecte.equals(idAgentDemande) && !accessRightsService.isUserApprobateur(idAgentConnecte)
+					&& !accessRightsService.isUserOperateur(idAgentConnecte)) {
 				rmd.getErrors().add(ERREUR_DROIT_AGENT);
 				return rmd;
 			}
@@ -189,7 +194,8 @@ public class TitreRepasService implements ITitreRepasService {
 		Date dateFinMois = helperService.getDateDernierJourOfMonth(new Date());
 
 		List<JourDto> listJourFerieMoisEnCours = sirhWsConsumer.getListeJoursFeries(dateDebutMois, dateFinMois);
-		List<AffectationDto> listAffectation = sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(listIdsAgent, dateDebutMois, dateFinMois);
+		List<AffectationDto> listAffectation = sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(listIdsAgent, dateDebutMois,
+				dateFinMois);
 		List<DemandeDto> listAbsences = absWsConsumer.getListAbsencesForListAgentsBetween2Dates(listIdsAgent, dateDebutMois, dateFinMois);
 		List<RefTypeSaisiCongeAnnuelDto> listBasesConges = getListBasesConges();
 		// ///////////////////////////////////////////////////////////////
@@ -202,7 +208,8 @@ public class TitreRepasService implements ITitreRepasService {
 			RefTypeSaisiCongeAnnuelDto baseCongeAgent = getRefTypeSaisiCongeAnnuelDto(listBasesConges, affectation.getBaseConge());
 			List<DemandeDto> listAbsencesAgent = getListeAbsencesByAgent(listAbsences, dto.getAgent().getIdAgent());
 
-			ReturnMessageDto response = enregistreTitreDemandeOneByOne(idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent, listJourFerieMoisEnCours, affectation, false);
+			ReturnMessageDto response = enregistreTitreDemandeOneByOne(idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent,
+					listJourFerieMoisEnCours, affectation, false);
 
 			if (!response.getErrors().isEmpty()) {
 				result.getErrors().addAll(response.getErrors());
@@ -260,7 +267,8 @@ public class TitreRepasService implements ITitreRepasService {
 		Date dateFinMois = helperService.getDateDernierJourOfMonth(new Date());
 
 		List<JourDto> listJourFerieMoisEnCours = sirhWsConsumer.getListeJoursFeries(dateDebutMois, dateFinMois);
-		List<AffectationDto> listAffectation = sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(listIdsAgent, dateDebutMois, dateFinMois);
+		List<AffectationDto> listAffectation = sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(listIdsAgent, dateDebutMois,
+				dateFinMois);
 		List<DemandeDto> listAbsences = absWsConsumer.getListAbsencesForListAgentsBetween2Dates(listIdsAgent, dateDebutMois, dateFinMois);
 		List<RefTypeSaisiCongeAnnuelDto> listBasesConges = getListBasesConges();
 		// ///////////////////////////////////////////////////////////////
@@ -273,11 +281,13 @@ public class TitreRepasService implements ITitreRepasService {
 			RefTypeSaisiCongeAnnuelDto baseCongeAgent = getRefTypeSaisiCongeAnnuelDto(listBasesConges, affectation.getBaseConge());
 			List<DemandeDto> listAbsencesAgent = getListeAbsencesByAgent(listAbsences, dto.getAgent().getIdAgent());
 
-			ReturnMessageDto response = enregistreTitreDemandeOneByOne(idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent, listJourFerieMoisEnCours, affectation, true);
+			ReturnMessageDto response = enregistreTitreDemandeOneByOne(idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent,
+					listJourFerieMoisEnCours, affectation, true);
 
 			if (!response.getErrors().isEmpty()) {
 				for (String error : response.getErrors()) {
-					if (error.contains(String.format(TITRE_DEMANDE_DEJA_EXISTANT, dto.getAgent().getIdAgent())) || error.contains(TITRE_DEMANDE_INEXISTANT)) {
+					if (error.contains(String.format(TITRE_DEMANDE_DEJA_EXISTANT, dto.getAgent().getIdAgent()))
+							|| error.contains(TITRE_DEMANDE_INEXISTANT)) {
 						result.getErrors().add(error);
 					} else {
 						result.getInfos().add(error);
@@ -313,8 +323,8 @@ public class TitreRepasService implements ITitreRepasService {
 	 *            AffectationDto
 	 * @return ReturnMessageDto
 	 */
-	protected ReturnMessageDto enregistreTitreDemandeOneByOne(Integer idAgentConnecte, TitreRepasDemandeDto dto, List<DemandeDto> listAbsences, RefTypeSaisiCongeAnnuelDto baseCongeAgent,
-			List<JourDto> listJoursFeries, AffectationDto affectation, boolean isSIRH) {
+	protected ReturnMessageDto enregistreTitreDemandeOneByOne(Integer idAgentConnecte, TitreRepasDemandeDto dto, List<DemandeDto> listAbsences,
+			RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries, AffectationDto affectation, boolean isSIRH) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
@@ -327,7 +337,8 @@ public class TitreRepasService implements ITitreRepasService {
 			return result;
 
 		// check les RG
-		result = checkDroitATitreRepas(result, dto.getAgent().getIdAgent(), dto.getDateMonth(), listAbsences, baseCongeAgent, listJoursFeries, affectation);
+		result = checkDroitATitreRepas(result, dto.getAgent().getIdAgent(), dto.getDateMonth(), listAbsences, baseCongeAgent, listJoursFeries,
+				affectation);
 		if (!result.getErrors().isEmpty() && !isSIRH)
 			return result;
 
@@ -346,21 +357,22 @@ public class TitreRepasService implements ITitreRepasService {
 				result.getErrors().add(MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE);
 				return result;
 			}
-			if (!isSIRH
-					&& !EtatPointageEnum.SAISI.equals(trDemande.getLatestEtatTitreRepasDemande().getEtat())) {
+			if (!isSIRH && !EtatPointageEnum.SAISI.equals(trDemande.getLatestEtatTitreRepasDemande().getEtat())) {
 				result.getErrors().add(MODIFICATION_IMPOSSIBLE_DEMANDE_AUTRE_SAISI_DEPUIS_KIOSQUE);
 				return result;
 			}
 
 			// si pas de changement, on ne fait rien
-			if (dto.getIdRefEtat().equals(trDemande.getLatestEtatTitreRepasDemande().getEtat().getCodeEtat()) && dto.getCommande().equals(trDemande.getCommande())) {
+			if (dto.getIdRefEtat().equals(trDemande.getLatestEtatTitreRepasDemande().getEtat().getCodeEtat())
+					&& dto.getCommande().equals(trDemande.getCommande())) {
 				result.getInfos().add(ENREGISTREMENT_OK);
 				return result;
 			}
 
 		} else {
 			// on verifie qu une demande n existe pas
-			List<TitreRepasDemande> listTitreRepasDemande = titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, null, null, dto.getDateMonth());
+			List<TitreRepasDemande> listTitreRepasDemande = titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()),
+					null, null, null, null, dto.getDateMonth());
 
 			if (null != listTitreRepasDemande && !listTitreRepasDemande.isEmpty()) {
 				result.getErrors().add(String.format(TITRE_DEMANDE_DEJA_EXISTANT, dto.getAgent().getIdAgent()));
@@ -402,13 +414,13 @@ public class TitreRepasService implements ITitreRepasService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(Integer idAgentConnecte, Date fromDate, Date toDate, Integer etat, Boolean commande, Date dateMonth, Integer idServiceADS,
-			Integer idAgent, List<Integer> listIdsAgent, Boolean isFromSIRH) throws AccessForbiddenException {
+	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(Integer idAgentConnecte, Date fromDate, Date toDate, Integer etat, Boolean commande,
+			Date dateMonth, Integer idServiceADS, Integer idAgent, List<Integer> listIdsAgent, Boolean isFromSIRH) throws AccessForbiddenException {
 
 		Date dateJour = new Date();
 		// ///////// TEST de DROIT /////////////////
 		if ((null == idAgent || !idAgent.equals(idAgentConnecte))
-		// => si ce n est pas l agent qui consulte ces demandes
+				// => si ce n est pas l agent qui consulte ces demandes
 				&& !accessRightService.canUserAccessVisualisation(idAgentConnecte)
 				// =>si ce n est pas l opêrateur ou approbateur
 				&& !sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte).getErrors().isEmpty())
@@ -439,7 +451,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 				for (DroitsAgent da : listDroitsAgentTemp) {
 					AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, da.getIdAgent());
-					if (agDtoServ != null && agDtoServ.getIdServiceADS() != null && agDtoServ.getIdServiceADS().toString().equals(idServiceADS.toString())) {
+					if (agDtoServ != null && agDtoServ.getIdServiceADS() != null
+							&& agDtoServ.getIdServiceADS().toString().equals(idServiceADS.toString())) {
 						listDroitsAgent.add(da);
 					}
 				}
@@ -484,7 +497,8 @@ public class TitreRepasService implements ITitreRepasService {
 				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
 				TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);
 
-				AgentWithServiceDto opeDto = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getLatestEtatTitreRepasDemande().getIdAgent());
+				AgentWithServiceDto opeDto = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto,
+						TR.getLatestEtatTitreRepasDemande().getIdAgent());
 				dto.updateEtat(TR.getLatestEtatTitreRepasDemande(), opeDto);
 
 				result.add(dto);
@@ -583,7 +597,8 @@ public class TitreRepasService implements ITitreRepasService {
 			return rmd;
 		}
 
-		if (!dto.getIdRefEtat().equals(EtatPointageEnum.APPROUVE.getCodeEtat()) && !dto.getIdRefEtat().equals(EtatPointageEnum.REJETE.getCodeEtat())) {
+		if (!dto.getIdRefEtat().equals(EtatPointageEnum.APPROUVE.getCodeEtat())
+				&& !dto.getIdRefEtat().equals(EtatPointageEnum.REJETE.getCodeEtat())) {
 			rmd.getErrors().add(NOUVELLE_ETAT_INCORRECT);
 			return rmd;
 		}
@@ -602,17 +617,20 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		// on check l ETAT
-		if (null == titreRepasDemande.getLatestEtatTitreRepasDemande().getCommande() || !titreRepasDemande.getLatestEtatTitreRepasDemande().getCommande()) {
+		if (null == titreRepasDemande.getLatestEtatTitreRepasDemande().getCommande()
+				|| !titreRepasDemande.getLatestEtatTitreRepasDemande().getCommande()) {
 			rmd.getErrors().add(DEMANDE_NON_COMMANDE);
 			return rmd;
 		}
 
-		if ((dto.getIdRefEtat().equals(EtatPointageEnum.APPROUVE.getCodeEtat()) && !titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().equals(EtatPointageEnum.SAISI) && !titreRepasDemande
-				.getLatestEtatTitreRepasDemande().getEtat().equals(EtatPointageEnum.REJETE))
-				|| (dto.getIdRefEtat().equals(EtatPointageEnum.REJETE.getCodeEtat()) && !titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().equals(EtatPointageEnum.SAISI) && !titreRepasDemande
-						.getLatestEtatTitreRepasDemande().getEtat().equals(EtatPointageEnum.APPROUVE))) {
-			rmd.getErrors()
-					.add(String.format(ERROR_ETAT_DEMANDE, EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()).name(), titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().name()));
+		if ((dto.getIdRefEtat().equals(EtatPointageEnum.APPROUVE.getCodeEtat())
+				&& !titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().equals(EtatPointageEnum.SAISI)
+				&& !titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().equals(EtatPointageEnum.REJETE))
+				|| (dto.getIdRefEtat().equals(EtatPointageEnum.REJETE.getCodeEtat())
+						&& !titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().equals(EtatPointageEnum.SAISI)
+						&& !titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().equals(EtatPointageEnum.APPROUVE))) {
+			rmd.getErrors().add(String.format(ERROR_ETAT_DEMANDE, EtatPointageEnum.getEtatPointageEnum(dto.getIdRefEtat()).name(),
+					titreRepasDemande.getLatestEtatTitreRepasDemande().getEtat().name()));
 			return rmd;
 		}
 
@@ -641,8 +659,8 @@ public class TitreRepasService implements ITitreRepasService {
 	 * @return ReturnMessageDto
 	 */
 	@Override
-	public ReturnMessageDto checkDroitATitreRepas(ReturnMessageDto rmd, Integer idAgent, Date dateMonthEnCours, List<DemandeDto> listAbsences, RefTypeSaisiCongeAnnuelDto baseCongeAgent,
-			List<JourDto> listJoursFeries, AffectationDto affectation) {
+	public ReturnMessageDto checkDroitATitreRepas(ReturnMessageDto rmd, Integer idAgent, Date dateMonthEnCours, List<DemandeDto> listAbsences,
+			RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries, AffectationDto affectation) {
 
 		Date dateMoisPrecedent = new DateTime(dateMonthEnCours).minusMonths(1).toDate();
 
@@ -680,7 +698,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 		Date dateDebutMois = helperService.getDatePremierJourOfMonth(new Date());
 		Date dateFinMois = helperService.getDateDernierJourOfMonth(new Date());
-		List<AffectationDto> listAffectation = sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(Arrays.asList(idAgent), dateDebutMois, dateFinMois);
+		List<AffectationDto> listAffectation = sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(Arrays.asList(idAgent),
+				dateDebutMois, dateFinMois);
 		AffectationDto affectation = getDernierAffectationByAgent(idAgent, listAffectation);
 
 		if (checkPrimePanierSurAffectation(affectation, idAgent)) {
@@ -815,8 +834,8 @@ public class TitreRepasService implements ITitreRepasService {
 	 *            Date
 	 * @return ReturnMessageDto
 	 */
-	protected ReturnMessageDto checkUnJourDePresenceSurLeMoisPrecedent(ReturnMessageDto rmd, Integer idAgent, Date dateMoisPrecedent, List<DemandeDto> listAbsences,
-			RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries) {
+	protected ReturnMessageDto checkUnJourDePresenceSurLeMoisPrecedent(ReturnMessageDto rmd, Integer idAgent, Date dateMoisPrecedent,
+			List<DemandeDto> listAbsences, RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries) {
 
 		// 1. on check la PA
 		if (!checkPAUnJourActiviteMinimumsurMoisPrecedent(idAgent, dateMoisPrecedent)) {
@@ -862,7 +881,8 @@ public class TitreRepasService implements ITitreRepasService {
 	 *            List<JourDto>
 	 * @return boolean
 	 */
-	protected boolean checkUnJourSansAbsenceSurLeMois(List<DemandeDto> listAbsences, Integer idAgent, Date dateMoisPrecedent, RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries) {
+	protected boolean checkUnJourSansAbsenceSurLeMois(List<DemandeDto> listAbsences, Integer idAgent, Date dateMoisPrecedent,
+			RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries) {
 
 		// si pas d absence, donc result = TRUE
 		boolean result = true;
@@ -883,8 +903,9 @@ public class TitreRepasService implements ITitreRepasService {
 				// on regarde la base conge de l agent
 				// si la base conge decompte le samedi
 				// alors c est que l agent ne travaille pas le weekend
-				if (!(baseCongeAgent.isDecompteSamedi() && (startDate.getDayOfWeek() == DateTimeConstants.SATURDAY || startDate.getDayOfWeek() == DateTimeConstants.SUNDAY || helperService
-						.isJourHoliday(listJoursFeries, startDate.toDate())))) {
+				if (!(baseCongeAgent.isDecompteSamedi()
+						&& (startDate.getDayOfWeek() == DateTimeConstants.SATURDAY || startDate.getDayOfWeek() == DateTimeConstants.SUNDAY
+								|| helperService.isJourHoliday(listJoursFeries, startDate.toDate())))) {
 
 					boolean isAuMoinsUnCongeSurLaJournee = false;
 					// on boucle sur les conges
@@ -894,7 +915,8 @@ public class TitreRepasService implements ITitreRepasService {
 							if (!demandeDto.getGroupeAbsence().getIdRefGroupeAbsence().equals(RefTypeGroupeAbsenceEnum.AS.getValue())) {
 
 								if ((demandeDto.getDateDebut().before(startDate.toDate()) || demandeDto.getDateDebut().equals(startDate.toDate()))
-										&& (demandeDto.getDateFin().after(startDate.toDate()) || demandeDto.getDateFin().equals(startDate.toDate()))) {
+										&& (demandeDto.getDateFin().after(startDate.toDate())
+												|| demandeDto.getDateFin().equals(startDate.toDate()))) {
 									isAuMoinsUnCongeSurLaJournee = true;
 									break;
 								}
@@ -973,7 +995,8 @@ public class TitreRepasService implements ITitreRepasService {
 		return result;
 	}
 
-	private RefTypeSaisiCongeAnnuelDto getRefTypeSaisiCongeAnnuelDto(List<RefTypeSaisiCongeAnnuelDto> listRefBaseConge, RefTypeSaisiCongeAnnuelDto baseCongeAgent) {
+	private RefTypeSaisiCongeAnnuelDto getRefTypeSaisiCongeAnnuelDto(List<RefTypeSaisiCongeAnnuelDto> listRefBaseConge,
+			RefTypeSaisiCongeAnnuelDto baseCongeAgent) {
 
 		RefTypeSaisiCongeAnnuelDto result = null;
 		if (null != listRefBaseConge && null != baseCongeAgent) {
@@ -1011,7 +1034,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 		if (null != listAbsences) {
 			for (DemandeDto demande : listAbsences) {
-				if (null != demande.getAgentWithServiceDto() && null != demande.getAgentWithServiceDto().getIdAgent() && demande.getAgentWithServiceDto().getIdAgent().equals(idAgent)) {
+				if (null != demande.getAgentWithServiceDto() && null != demande.getAgentWithServiceDto().getIdAgent()
+						&& demande.getAgentWithServiceDto().getIdAgent().equals(idAgent)) {
 					result.add(demande);
 				}
 			}
@@ -1021,7 +1045,6 @@ public class TitreRepasService implements ITitreRepasService {
 	}
 
 	@Override
-	@Transactional("ptgTransactionManager")
 	public ReturnMessageDto genereEtatPayeur(Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
@@ -1049,16 +1072,16 @@ public class TitreRepasService implements ITitreRepasService {
 
 		// on verifie qu'il ne reste plus de demandes à l'état "Saisie" pour ce
 		// mois
-		List<TitreRepasDemande> listDemandeTRSaisi = titreRepasRepository.getListTitreRepasDemande(null, null, null, EtatPointageEnum.SAISI.getCodeEtat(), true,
-				helperService.getDatePremierJourOfMonth(helperService.getCurrentDate()));
+		List<TitreRepasDemande> listDemandeTRSaisi = titreRepasRepository.getListTitreRepasDemande(null, null, null,
+				EtatPointageEnum.SAISI.getCodeEtat(), true, helperService.getDatePremierJourOfMonth(helperService.getCurrentDate()));
 		if (listDemandeTRSaisi != null && listDemandeTRSaisi.size() > 0) {
 			result.getErrors().add(DEMANDE_EN_COURS);
 			return result;
 		}
 
 		// 2. on recupere la liste des demandes de Titre Repas de ce mois-ci
-		List<TitreRepasDemande> listDemandeTR = titreRepasRepository.getListTitreRepasDemande(null, null, null, EtatPointageEnum.APPROUVE.getCodeEtat(), true,
-				helperService.getDatePremierJourOfMonth(helperService.getCurrentDate()));
+		List<TitreRepasDemande> listDemandeTR = titreRepasRepository.getListTitreRepasDemande(null, null, null,
+				EtatPointageEnum.APPROUVE.getCodeEtat(), true, helperService.getDatePremierJourOfMonth(helperService.getCurrentDate()));
 
 		List<Integer> listIdsAgent = new ArrayList<Integer>();
 		if (null != listDemandeTR) {
@@ -1103,7 +1126,7 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		// 5. generer une charge dans l AS400
-		// TODO
+		persistSpchge(genereChargeAS400(listDemandeTR));
 
 		// 5. bis on genère le fichier pour le prestataire
 		// TODO
@@ -1130,6 +1153,33 @@ public class TitreRepasService implements ITitreRepasService {
 		return result;
 	}
 
+	protected void persistSpchge(List<Spchge> listeCharge) {
+		for (Spchge charge : listeCharge) {
+			mairieRepository.mergeEntity(charge);
+		}
+	}
+
+	private List<Spchge> genereChargeAS400(List<TitreRepasDemande> listDemandeTR) {
+		List<Spchge> listeCharge = new ArrayList<>();
+		for (TitreRepasDemande demandeTR : listDemandeTR) {
+
+			Integer nomatr = helperService.getMairieMatrFromIdAgent(demandeTR.getIdAgent());
+			Integer dateDebut = helperService.getIntegerDateMairieFromDate(demandeTR.getDateMonth());
+			//en date de fin on met le 1er jour du mois suivant. Car la paie exclue la date de fin
+			Calendar dateFinMoisSuivant = Calendar.getInstance();
+			dateFinMoisSuivant.setTime(demandeTR.getDateMonth());
+			dateFinMoisSuivant.add(Calendar.MONTH, 1);
+			Integer dateFin = helperService.getIntegerDateMairieFromDate(dateFinMoisSuivant.getTime());
+			SpchgeId id = new SpchgeId(nomatr, dateDebut, RUBRIQUE_TITRE_REPAS);
+			Spchge charge = new Spchge();
+			charge.setId(id);
+			charge.setDateFin(dateFin);
+
+			listeCharge.add(charge);
+		}
+		return listeCharge;
+	}
+
 	/**
 	 * Retourne la liste des états possible pour une demande de Titre Repas.
 	 */
@@ -1142,8 +1192,10 @@ public class TitreRepasService implements ITitreRepasService {
 		List<RefEtat> refEtats = pointageRepository.findAllRefEtats();
 
 		for (RefEtat etat : refEtats) {
-			if (etat.getIdRefEtat().equals(EtatPointageEnum.SAISI.getCodeEtat()) || etat.getIdRefEtat().equals(EtatPointageEnum.APPROUVE.getCodeEtat())
-					|| etat.getIdRefEtat().equals(EtatPointageEnum.REJETE.getCodeEtat()) || etat.getIdRefEtat().equals(EtatPointageEnum.JOURNALISE.getCodeEtat())) {
+			if (etat.getIdRefEtat().equals(EtatPointageEnum.SAISI.getCodeEtat())
+					|| etat.getIdRefEtat().equals(EtatPointageEnum.APPROUVE.getCodeEtat())
+					|| etat.getIdRefEtat().equals(EtatPointageEnum.REJETE.getCodeEtat())
+					|| etat.getIdRefEtat().equals(EtatPointageEnum.JOURNALISE.getCodeEtat())) {
 				RefEtatDto dto = new RefEtatDto(etat);
 				result.add(dto);
 			}
