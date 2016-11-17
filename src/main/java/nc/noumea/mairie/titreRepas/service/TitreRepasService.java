@@ -27,8 +27,11 @@ import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spchge;
 import nc.noumea.mairie.domain.SpchgeId;
+import nc.noumea.mairie.domain.Spmatr;
+import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.RefEtat;
@@ -1126,7 +1129,7 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		// 5. generer une charge dans l AS400
-		persistSpchge(genereChargeAS400(listDemandeTR));
+		persistSpchgeAndSpmatr(genereChargeAS400(listDemandeTR));
 
 		// 5. bis on genère le fichier pour le prestataire
 		// TODO
@@ -1153,8 +1156,32 @@ public class TitreRepasService implements ITitreRepasService {
 		return result;
 	}
 
-	protected void persistSpchge(List<Spchge> listeCharge) {
+	protected void persistSpchgeAndSpmatr(List<Spchge> listeCharge) {
 		for (Spchge charge : listeCharge) {
+			Spmatr matr = mairieRepository.findSpmatrForAgent(charge.getId().getNomatr());
+
+			Integer dateCharge = helperService
+					.getIntegerMonthDateMairieFromDate(helperService.getDateFromMairieInteger(charge.getId().getDateDebut()));
+
+			if (matr == null) {
+				matr = new Spmatr();
+				matr.setNomatr(charge.getId().getNomatr());
+				matr.setPerrap(dateCharge);
+
+				Spcarr carr = mairieRepository.getAgentCurrentCarriere(charge.getId().getNomatr(),
+						helperService.getDateFromMairieInteger(dateCharge));
+
+				if (carr == null) {
+					continue;
+				}
+				TypeChainePaieEnum chainePaie = helperService.getTypeChainePaieFromStatut(carr.getStatutCarriere());
+				matr.setTypeChainePaie(chainePaie);
+			}
+
+			if (matr.getPerrap() > dateCharge) {
+				matr.setPerrap(dateCharge);
+			}
+			mairieRepository.persistEntity(matr);
 			mairieRepository.mergeEntity(charge);
 		}
 	}
@@ -1165,7 +1192,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 			Integer nomatr = helperService.getMairieMatrFromIdAgent(demandeTR.getIdAgent());
 			Integer dateDebut = helperService.getIntegerDateMairieFromDate(demandeTR.getDateMonth());
-			//en date de fin on met le 1er jour du mois suivant. Car la paie exclue la date de fin
+			// en date de fin on met le 1er jour du mois suivant. Car la paie
+			// exclue la date de fin
 			Calendar dateFinMoisSuivant = Calendar.getInstance();
 			dateFinMoisSuivant.setTime(demandeTR.getDateMonth());
 			dateFinMoisSuivant.add(Calendar.MONTH, 1);

@@ -23,7 +23,9 @@ import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spchge;
+import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
@@ -2277,6 +2279,9 @@ public class TitreRepasServiceTest {
 		List<TitreRepasDemande> listeTr = new ArrayList<>();
 		listeTr.add(tr1);
 		listeTr.add(tr2);
+		
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(1);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(currentDate2);
@@ -2293,6 +2298,7 @@ public class TitreRepasServiceTest {
 		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(new ArrayList<AgentWithServiceDto>(), 9002990)).thenReturn(ag2);
 
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(carr);
 
 		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
 		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(false);
@@ -2316,5 +2322,6 @@ public class TitreRepasServiceTest {
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(mairieRepository, Mockito.times(2)).mergeEntity(Mockito.isA(Spchge.class));
+		Mockito.verify(mairieRepository, Mockito.times(2)).persistEntity(Mockito.isA(Spmatr.class));
 	}
 }
