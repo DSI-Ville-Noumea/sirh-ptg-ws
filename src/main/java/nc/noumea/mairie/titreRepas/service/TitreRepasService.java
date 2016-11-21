@@ -5,7 +5,6 @@ import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1191,13 +1190,13 @@ public class TitreRepasService implements ITitreRepasService {
 		for (TitreRepasDemande demandeTR : listDemandeTR) {
 
 			Integer nomatr = helperService.getMairieMatrFromIdAgent(demandeTR.getIdAgent());
-			Integer dateDebut = helperService.getIntegerDateMairieFromDate(demandeTR.getDateMonth());
+
+			// on met mois +1 en date de debut de la charge
+			Date dateDebutCharge = new LocalDate(demandeTR.getDateMonth()).plusMonths(1).withDayOfMonth(1).toDate();
+			Integer dateDebut = helperService.getIntegerDateMairieFromDate(dateDebutCharge);
 			// en date de fin on met le 1er jour du mois suivant. Car la paie
 			// exclue la date de fin
-			Calendar dateFinMoisSuivant = Calendar.getInstance();
-			dateFinMoisSuivant.setTime(demandeTR.getDateMonth());
-			dateFinMoisSuivant.add(Calendar.MONTH, 1);
-			Integer dateFin = helperService.getIntegerDateMairieFromDate(dateFinMoisSuivant.getTime());
+			Integer dateFin = helperService.getIntegerDateMairieFromDate(new LocalDate(dateDebutCharge).plusMonths(1).withDayOfMonth(1).toDate());
 			SpchgeId id = new SpchgeId(nomatr, dateDebut, RUBRIQUE_TITRE_REPAS);
 			Spchge charge = new Spchge();
 			charge.setId(id);
