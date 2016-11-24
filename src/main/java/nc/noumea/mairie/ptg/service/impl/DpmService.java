@@ -37,6 +37,7 @@ public class DpmService implements IDpmService {
 	
 	protected final static String CREATION_IMPOSSIBLE = "Vous ne pouvez pas créer de nouvelle entrée.";
 	protected final static String NON_TROUVE = "Enregistrement non trouvé.";
+	protected final static String CREATION_OK = "Création réussie.";
 	protected final static String MODIFICATION_OK = "Enregistré.";
 	protected final static String HORS_PERIODE = "La période est fermée. Vous ne pouvez plus choisir.";
 	protected final static String INTERDIT = "Pas de droit pour l'Indemnité forfaitaire travail DPM.";
@@ -44,6 +45,7 @@ public class DpmService implements IDpmService {
 	protected final static String AGENT_INTERDIT = "L'agent %s le droit à l'Indemnité forfaitaire travail DPM.";
 	protected final static String AGENT_CHOIX_OBLIGATOIRE = "Veuillez choisir Indemnité ou Récupération pour l'agent %S.";
 	protected final static String CHAMPS_NON_REMPLIE = "Veuillez remplir tous les champs obligatoires.";
+	protected final static String ANNEE_EXISTANTE = "Cette année est déjà renseignée.";
 	protected final static String SUPPRESSION_OK = "Supprimé.";
 	
 
@@ -390,6 +392,50 @@ public class DpmService implements IDpmService {
 				result.add(dto);
 			}
 		}
+		
+		return result;
+	}
+
+	@Override
+	@Transactional(value = "ptgTransactionManager")
+	public ReturnMessageDto createDpmIndemAnnee(Integer idAgentConnecte, DpmIndemniteAnneeDto dto) {
+		
+		// gestion des droits
+		if(null == idAgentConnecte) {
+			throw new AccessForbiddenException();
+		}else{
+			ReturnMessageDto isUtilisateurSIRH = sirhWSConsumer.isUtilisateurSIRH(idAgentConnecte);
+			if (!isUtilisateurSIRH.getErrors().isEmpty()) {
+				throw new AccessForbiddenException();
+			}
+		}
+		
+		ReturnMessageDto result = new ReturnMessageDto();
+		
+		// champs obligatoire
+		if(null == dto.getDateDebut()
+				|| null == dto.getDateFin() || null == dto.getAnnee()) {
+			result.getErrors().add(CHAMPS_NON_REMPLIE);
+			return result;
+		}
+		
+
+		DpmIndemAnnee dpmIndemAnnee = dpmRepository.getDpmIndemAnneeByAnnee(dto.getAnnee());
+		if (dpmIndemAnnee != null) {
+			result.getErrors().add(ANNEE_EXISTANTE);
+			return result;
+		}
+		
+		
+		DpmIndemAnnee dpmAnnee = new DpmIndemAnnee();
+		
+		dpmAnnee.setAnnee(dto.getAnnee());
+		dpmAnnee.setDateDebut(dto.getDateDebut());
+		dpmAnnee.setDateFin(dto.getDateFin());
+		
+		dpmRepository.persistEntity(dpmAnnee);
+		
+		result.getInfos().add(CREATION_OK);
 		
 		return result;
 	}

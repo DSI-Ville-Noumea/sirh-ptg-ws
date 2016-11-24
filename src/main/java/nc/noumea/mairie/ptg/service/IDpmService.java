@@ -56,7 +56,16 @@ public interface IDpmService {
 	List<DpmIndemniteAnneeDto> getListDpmIndemAnnee(Integer idAgentConnecte);
 
 	/**
-	 * Sauvegarde le parametrage d une campagne de choix pour Indemnité forfaitaire travail DPM
+	 * Ajoute le parametrage d une campagne de choix pour Indemnité forfaitaire travail DPM
+	 * 
+	 * @param idAgentConnecte Integer
+	 * @param dto DpmIndemniteAnneeDto
+	 * @return ReturnMessageDto
+	 */
+	ReturnMessageDto createDpmIndemAnnee(Integer idAgentConnecte, DpmIndemniteAnneeDto dto);
+
+	/**
+	 * Enregistre le parametrage d une campagne de choix pour Indemnité forfaitaire travail DPM
 	 * 
 	 * @param idAgentConnecte Integer
 	 * @param dto DpmIndemniteAnneeDto

@@ -224,6 +224,27 @@ public class DpmController {
 	}
 
 	/**
+	 * Création d'une annee DpmIndemniteAnneeDto
+	 * 
+	 * @param idAgentConnecte Integer
+	 * @param dto DpmIndemniteAnneeDto
+	 * @return ReturnMessageDto
+	 */
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, value = "/createDpmIndemAnnee", produces = "application/json;charset=utf-8", consumes = "application/json")
+	public ReturnMessageDto createDpmIndemAnnee(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte, 
+			@RequestBody(required = true) DpmIndemniteAnneeDto dto) {
+		
+		logger.debug(
+				"entered POST [dpm/createDpmIndemAnnee] => createDpmIndemAnnee with parameters idAgentConnecte = {} "
+				+ "and annee = {} and dto = {}", idAgentConnecte, dto.getAnnee(), dto.toString());
+
+		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
+
+		return dpmService.createDpmIndemAnnee(convertedIdAgentConnecte, dto);
+	}
+
+	/**
 	 * Sauvegarde le parametrage pour une annee DpmIndemniteAnneeDto
 	 * 
 	 * @param idAgentConnecte Integer
@@ -237,7 +258,7 @@ public class DpmController {
 		
 		logger.debug(
 				"entered POST [dpm/saveDpmIndemAnnee] => saveDpmIndemAnnee with parameters idAgentConnecte = {} "
-				+ "and annee = {} and dto = {}", idAgentConnecte, dto.toString());
+				+ "and annee = {} and dto = {}", idAgentConnecte, dto.getAnnee(), dto.toString());
 
 		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
 
