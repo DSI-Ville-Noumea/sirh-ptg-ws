@@ -72,7 +72,7 @@
 	<!-- ALFRESCO -->
 	<!-- -->
 	<Environment name="ALFRESCO_URL" type="java.lang.String"
-		description="Alfresco endpoint url" value="http://localhost:8080/"
+		description="Alfresco endpoint url" value="http://svi-alfresco.site-mairie.noumea.nc:8080/"
 		override="false" />
 
 	<Environment name="ALFRESCO_LOGIN" type="java.lang.String"
