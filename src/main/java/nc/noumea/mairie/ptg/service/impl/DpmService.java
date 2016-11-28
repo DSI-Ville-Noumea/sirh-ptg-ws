@@ -75,7 +75,8 @@ public class DpmService implements IDpmService {
 			throw new AccessForbiddenException();
 		}
 		
-		return saveIndemniteChoixAgent(idAgentConnecte, dto);
+		// L'année doit être ouverte via Kiosque => true
+		return saveIndemniteChoixAgent(idAgentConnecte, dto, true);
 	}
 	
 	@Override
@@ -88,18 +89,28 @@ public class DpmService implements IDpmService {
 			throw new AccessForbiddenException();
 		}
 		
-		return saveIndemniteChoixAgent(idAgentConnecte, dto);
+		// La RH n'a pas besoin que l'année soit ouverte pour faire les modifications => false
+		return saveIndemniteChoixAgent(idAgentConnecte, dto, false);
 	}
 	
-	private ReturnMessageDto saveIndemniteChoixAgent(Integer idAgentConnecte, DpmIndemniteChoixAgentDto dto) {
+	/**
+	 * Enregistre le choix d'un agent.
+	 * 
+	 * @param idAgentConnecte l'id de l'agent actant la modification
+	 * @param dto l'objet à enregistrer
+	 * @param yearShouldBeOpened true si la période en cours doit être ouverte pour effectuer les modifications.
+	 * @return
+	 */
+	private ReturnMessageDto saveIndemniteChoixAgent(Integer idAgentConnecte, DpmIndemniteChoixAgentDto dto, boolean yearShouldBeOpened) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 		
 		// ouverture du choix : periode
-		if(null == dto.getDpmIndemniteAnnee()
-				|| !isPeriodeChoixOuverte(dto.getDpmIndemniteAnnee().getAnnee())) {
-			result.getErrors().add(HORS_PERIODE);
-			return result;
+		if (yearShouldBeOpened) {
+			if(null == dto.getDpmIndemniteAnnee() || !isPeriodeChoixOuverte(dto.getDpmIndemniteAnnee().getAnnee())) {
+				result.getErrors().add(HORS_PERIODE);
+				return result;
+			}
 		}
 		
 		// etre en non cycle et avoir la prime sur l affectation 
