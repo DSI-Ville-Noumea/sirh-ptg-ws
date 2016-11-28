@@ -249,19 +249,19 @@ public class DpmService implements IDpmService {
 	
 		List<DpmIndemChoixAgent> listDpmIndemChoixAgent = dpmRepository.getListDpmIndemChoixAgent(listIdsAgent, annee, isChoixIndemnite, isChoixRecuperation);
 		
-		if(null != listDpmIndemChoixAgent
-				&& !listDpmIndemChoixAgent.isEmpty()) {
-			// on recupere les id agent des operateurs
-			for(DpmIndemChoixAgent choixAgent : listDpmIndemChoixAgent) {
-				if(null != listIdsAgent
-						&& !listIdsAgent.contains(choixAgent.getIdAgent())) {
-					listIdsAgent.add(choixAgent.getIdAgent());
-				}
-				if(null != listIdsAgent
-						&& !listIdsAgent.contains(choixAgent.getIdAgentCreation())) {
-					listIdsAgent.add(choixAgent.getIdAgentCreation());
+		if(null != listDpmIndemChoixAgent && !listDpmIndemChoixAgent.isEmpty()) {
+			// on recupere les id agent des operateurs si les id's ne sont pas null.
+			if (null != listIdsAgent) {
+				for(DpmIndemChoixAgent choixAgent : listDpmIndemChoixAgent) {
+					if(!listIdsAgent.contains(choixAgent.getIdAgent())) {
+						listIdsAgent.add(choixAgent.getIdAgent());
+					}
+					if(!listIdsAgent.contains(choixAgent.getIdAgentCreation())) {
+						listIdsAgent.add(choixAgent.getIdAgentCreation());
+					}
 				}
 			}
+			
 			// ///////////////// on recupere la liste d agents // ///////
 			List<AgentWithServiceDto> listAgentServiceDto = sirhWSConsumer.getListAgentsWithService(listIdsAgent, null);
 			
@@ -392,6 +392,21 @@ public class DpmService implements IDpmService {
 				result.add(dto);
 			}
 		}
+		
+		return result;
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public DpmIndemniteAnneeDto getDpmIndemAnneeByAnnee(Integer annee) {
+		
+		DpmIndemAnnee dpmIndemAnnee = dpmRepository.getDpmIndemAnneeByAnnee(annee);
+		
+		// Si on initialise à null, on a un problème de désérialization dans la méthode BaseWsConsumer.readResponse:156 => On envoie un objet non persistant.
+		DpmIndemniteAnneeDto result = new DpmIndemniteAnneeDto();
+		
+		if(null != dpmIndemAnnee)
+			result = new DpmIndemniteAnneeDto(dpmIndemAnnee, false);
 		
 		return result;
 	}

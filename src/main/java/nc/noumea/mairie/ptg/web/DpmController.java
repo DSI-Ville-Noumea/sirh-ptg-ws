@@ -185,11 +185,27 @@ public class DpmController {
 	public List<DpmIndemniteAnneeDto> getListDpmIndemAnnee(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte) {
 		
 		logger.debug(
-				"entered POST [dpm/listDpmIndemAnnee] => getListDpmIndemAnnee with parameters idAgentConnecte = {}", idAgentConnecte);
+				"entered GET [dpm/listDpmIndemAnnee] => getListDpmIndemAnnee with parameters idAgentConnecte = {}", idAgentConnecte);
 
 		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
 
 		return dpmService.getListDpmIndemAnnee(convertedIdAgentConnecte);
+	}
+
+	/**
+	 * Retourne l'année de saisie des choix agents pour la prime Indemnité forfaitaire travail DPM
+	 * pour l ecran de parametrage dans SIRH
+	 * 
+	 * @param annee l'année voulue
+	 * @return DpmIndemniteAnneeDto l'année pour parametrage
+	 */
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.GET, value = "/getDpmIndemAnneeByAnnee", produces = "application/json;charset=utf-8")
+	public DpmIndemniteAnneeDto getDpmIndemAnneeByAnnee(@RequestParam(required = true, value = "annee") Integer annee) {
+		
+		logger.debug("entered GET [dpm/getDpmIndemAnnee] => getDpmIndemAnnee with parameters annee = {}", annee);
+
+		return dpmService.getDpmIndemAnneeByAnnee(annee);
 	}
 
 	/**

@@ -168,4 +168,6 @@ public interface IDpmService {
 	 * @return int nombre de minutes a rajouter au recup 
 	 */
 	int calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(Pointage ptg);
+
+	DpmIndemniteAnneeDto getDpmIndemAnneeByAnnee(Integer annee);
 }
