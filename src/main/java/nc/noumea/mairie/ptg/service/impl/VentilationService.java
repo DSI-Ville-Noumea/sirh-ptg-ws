@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
@@ -112,7 +113,7 @@ public class VentilationService implements IVentilationService {
 		if (givenVentilationDate.dayOfWeek().get() != DateTimeConstants.SUNDAY) {
 			String msg = String
 					.format("La date de ventilation choisie est un [%s]. Impossible de ventiler les pointages à une date autre qu'un dimanche.",
-							givenVentilationDate.dayOfWeek().getAsText());
+							givenVentilationDate.dayOfWeek().getAsText(Locale.FRANCE));
 			logger.error(msg);
 			result.getErrors().add(msg);
 			return result;
