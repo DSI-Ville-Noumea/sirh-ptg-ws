@@ -43,6 +43,9 @@ public class VentilAbsence {
 	@Column(name = "MINUTES_IMMEDIAT")
 	private int minutesImmediat;
 
+	@Column(name = "MINUTES_GREVE")
+	private int minutesGreve;
+
 	@Column(name = "ETAT")
 	@Enumerated(EnumType.ORDINAL)
 	private EtatPointageEnum etat;
@@ -74,6 +77,10 @@ public class VentilAbsence {
 
 	public void addMinutesImmediate(Integer minutes) {
 		minutesImmediat += minutes;
+	}
+
+	public void addMinutesGreve(Integer minutes) {
+		minutesGreve += minutes;
 	}
 
 	public void addNombreAbsenceInferieur1(Integer occurence) {
@@ -182,6 +189,14 @@ public class VentilAbsence {
 
 	public void setNombreAbsenceSuperieur1(Integer nombreAbsenceSuperieur1) {
 		this.nombreAbsenceSuperieur1 = nombreAbsenceSuperieur1;
+	}
+
+	public int getMinutesGreve() {
+		return minutesGreve;
+	}
+
+	public void setMinutesGreve(int minutesGreve) {
+		this.minutesGreve = minutesGreve;
 	}
 	
 }

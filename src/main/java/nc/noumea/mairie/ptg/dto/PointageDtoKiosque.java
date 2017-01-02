@@ -8,18 +8,18 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 
 public abstract class PointageDtoKiosque {
 
-	private Integer idPointage;
-	private Date heureDebutDate;
-	private String heureDebut;
-	private String minuteDebut;
-	private Date heureFinDate;
-	private String heureFin;
-	private String minuteFin;
-	private String motif;
-	private String commentaire;
-	private Integer idRefEtat;
-	private boolean aSupprimer;
-	private String saisieJ1;
+	private Integer	idPointage;
+	private Date	heureDebutDate;
+	private String	heureDebut;
+	private String	minuteDebut;
+	private Date	heureFinDate;
+	private String	heureFin;
+	private String	minuteFin;
+	private String	motif;
+	private String	commentaire;
+	private Integer	idRefEtat;
+	private boolean	aSupprimer;
+	private String	saisieJ1;
 
 	public PointageDtoKiosque() {
 

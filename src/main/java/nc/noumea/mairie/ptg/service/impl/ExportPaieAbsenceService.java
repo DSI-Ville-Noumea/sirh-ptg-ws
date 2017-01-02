@@ -97,6 +97,9 @@ public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
 			case IMMEDIATE:
 				codeActi = Spacti.CODE_ACTIVITE_ABS_IMMEDIATE;
 				break;
+			case GREVE:
+				codeActi = Spacti.CODE_ACTIVITE_ABS_GREVE;
+				break;
 		}
 
 		Spacti activite = mairieRepository.getEntity(Spacti.class, codeActi);
@@ -141,6 +144,9 @@ public class ExportPaieAbsenceService implements IExportPaieAbsenceService {
 					break;
 				case IMMEDIATE:
 					codeActi = Spacti.CODE_ACTIVITE_ABS_IMMEDIATE;
+					break;
+				case GREVE:
+					codeActi = Spacti.CODE_ACTIVITE_ABS_GREVE;
 					break;
 			}
 

@@ -12,6 +12,7 @@ public class Spacti {
 	public static String CODE_ACTIVITE_ABS_NON_CONCERTEE = "A01";
 	public static String CODE_ACTIVITE_ABS_CONCERTEE = "A02";
 	public static String CODE_ACTIVITE_ABS_IMMEDIATE = "A07";
+	public static String CODE_ACTIVITE_ABS_GREVE = "A03";
 
 	@Id
 	@Column(name = "CDACT3", insertable = false, updatable = false, columnDefinition = "char")

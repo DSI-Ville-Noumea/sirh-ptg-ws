@@ -2,7 +2,7 @@ package nc.noumea.mairie.ptg.domain;
 
 public enum RefTypeAbsenceEnum {
 
-	CONCERTEE(1), NON_CONCERTEE(2), IMMEDIATE(3);
+	CONCERTEE(1), NON_CONCERTEE(2), IMMEDIATE(3), GREVE(4);
 
 	private Integer type;
 
@@ -31,6 +31,8 @@ public enum RefTypeAbsenceEnum {
 				return NON_CONCERTEE;
 			case 3:
 				return IMMEDIATE;
+			case 4:
+				return GREVE;
 			default:
 				return null;
 		}

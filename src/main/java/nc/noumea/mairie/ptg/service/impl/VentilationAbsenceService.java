@@ -54,6 +54,9 @@ public class VentilationAbsenceService implements IVentilationAbsenceService {
 				case IMMEDIATE:
 					result.addMinutesImmediate((int) minutes);
 					break;
+				case GREVE:
+					result.addMinutesGreve((int) minutes);
+					break;
 			}
 			
 			// #15518
