@@ -13,6 +13,7 @@ import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.Pointage;
+import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
@@ -63,6 +64,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String ERROR_PRIME_SAISIE_J1_POINTAGE = "Pour la prime %s du %s, la saisie à J+1 n'est pas autorisée.";
 	public static final String ERROR_PRIME_QUANTITE_POINTAGE = "Pour la prime %s du %s, la quantité ne peut être supérieure à 24.";
 	public static final String ERROR_PRIME_EPANDAGE_QUANTITE = "Pour la prime %s du %s, la quantité ne peut être supérieure à 2.";
+	public static final String ERROR_ABSENCE_GREVE = "Pour l'absence sans titre du %s, le type d'absence ne peut être %s. Ce type est reservé à la DRH.";
 
 	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
 
@@ -428,6 +430,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			srm.getErrors().add(PAS_AFFECTATION_MSG);
 		}
 
+		//#34095 : si c'est une absence de type greve alors on ne peut pas la saisir depuis le kiosque
+		checkAbsenceGreve(srm, idAgent, dateLundi, pointages);
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
 		checkIntervalleDateDebDateFin(srm, idAgent, pointages);
 		// DEBUT on check les types d'absences du projet SIRH-ABS-WS
@@ -447,6 +451,18 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkPrime7651(srm, idAgent, dateLundi, pointages);
 		checkPrime7652(srm, idAgent, dateLundi, pointages);
 		checkPrime7704(srm, idAgent, dateLundi, pointages);
+	}
+
+	private ReturnMessageDto checkAbsenceGreve(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+
+		for (Pointage ptg : pointages) {
+			if (ptg.getTypePointageEnum() == RefTypePointageEnum.ABSENCE && ptg.getRefTypeAbsence().getIdRefTypeAbsence()==RefTypeAbsenceEnum.GREVE.getValue())
+				srm.getErrors().add(String.format(ERROR_ABSENCE_GREVE,  sdf.format(ptg.getDateDebut()),RefTypeAbsenceEnum.GREVE.getLib()));
+			
+		}
+
+		return srm;
+		
 	}
 
 	private ReturnMessageDto checkIntervalleDateDebDateFin(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {

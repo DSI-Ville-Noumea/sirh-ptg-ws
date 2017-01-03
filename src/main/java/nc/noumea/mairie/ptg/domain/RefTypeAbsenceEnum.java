@@ -2,12 +2,14 @@ package nc.noumea.mairie.ptg.domain;
 
 public enum RefTypeAbsenceEnum {
 
-	CONCERTEE(1), NON_CONCERTEE(2), IMMEDIATE(3), GREVE(4);
+	CONCERTEE(1, "Abs. concertée"), NON_CONCERTEE(2, "Abs. non concertée"), IMMEDIATE(3, "Abs. immédiate"), GREVE(4, "Abs. grève");
 
 	private Integer type;
+	private String lib;
 
-	private RefTypeAbsenceEnum(Integer _type) {
+	private RefTypeAbsenceEnum(Integer _type, String _lib) {
 		type = _type;
+		lib = _lib;
 	}
 
 	@Override
@@ -17,6 +19,10 @@ public enum RefTypeAbsenceEnum {
 
 	public Integer getValue() {
 		return type;
+	}
+
+	public String getLib() {
+		return lib;
 	}
 
 	public static RefTypeAbsenceEnum getRefTypeAbsenceEnum(Integer type) {
