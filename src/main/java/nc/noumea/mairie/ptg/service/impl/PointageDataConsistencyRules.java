@@ -35,43 +35,45 @@ import org.springframework.stereotype.Service;
 public class PointageDataConsistencyRules implements IPointageDataConsistencyRules {
 
 	@Autowired
-	private IMairieRepository mairieRepository;
+	private IMairieRepository			mairieRepository;
 
 	@Autowired
-	private ISirhWSConsumer sirhWsConsumer;
+	private ISirhWSConsumer				sirhWsConsumer;
 
 	@Autowired
-	private IAbsWsConsumer absWsConsumer;
+	private IAbsWsConsumer				absWsConsumer;
 
 	@Autowired
-	private HelperService helperService;
+	private HelperService				helperService;
 
 	// -- MESSAGES --//
-	public static final String BASE_HOR_MAX = "L'agent dépasse sa base horaire";
-	public static final String MALADIE_MSG = "%s : L'agent est en maladie sur cette période.";
-	public static final String HS_INA_315_MSG = "L'agent n'a pas droit aux HS sur la période (INA > 315)";
-	public static final String BASE_HOR_00Z_MSG = "L'agent est en base horaire \"00Z\" sur la période";
-	public static final String INACTIVITE_MSG = "L'agent n'est pas en activité le %s.";
-	public static final String PAS_AFFECTATION_MSG = "L'agent n'a pas d'affectation ou la base horaire de pointage n'y est pas renseignée.";
-	public static final String AVERT_MESSAGE_ABS = "Soyez vigilant, vous avez saisi des primes et/ou heures supplémentaires sur des périodes où l’agent était absent.";
-	public static final String ERROR_7651_MSG = "";
-	public static final String ERROR_7652_MSG = "";
-	public static final String ERROR_POINTAGE_PLUS_3_MOIS = "La semaine sélectionnée est trop ancienne pour être modifiée.";
-	public static final String ERROR_POINTAGE_SUP_DATE_JOUR = "La semaine sélectionnée est dans le futur et ne peut donc être modifiée.";
-	public static final String HS_TPS_PARTIEL_MSG = "L'agent est en temps partiel, il ne peut pas avoir plus de %s d'heures supplémentaires.";
-	public static final String ERROR_DATE_POINTAGE = "Pour le pointage du %s, la date de fin est antérieure à la date de début.";
-	public static final String ERROR_INTERVALLE_POINTAGE = "Pour le pointage du %s, il faut 30 minutes d'intervalle entre la date de début et la date de fin.";
-	public static final String ERROR_PRIME_SAISIE_J1_POINTAGE = "Pour la prime %s du %s, la saisie à J+1 n'est pas autorisée.";
-	public static final String ERROR_PRIME_QUANTITE_POINTAGE = "Pour la prime %s du %s, la quantité ne peut être supérieure à 24.";
-	public static final String ERROR_PRIME_EPANDAGE_QUANTITE = "Pour la prime %s du %s, la quantité ne peut être supérieure à 2.";
-	public static final String ERROR_ABSENCE_GREVE = "Pour l'absence sans titre du %s, le type d'absence ne peut être %s. Ce type est reservé à la DRH.";
+	public static final String			BASE_HOR_MAX					= "L'agent dépasse sa base horaire";
+	public static final String			MALADIE_MSG						= "%s : L'agent est en maladie sur cette période.";
+	public static final String			HS_INA_315_MSG					= "L'agent n'a pas droit aux HS sur la période (INA > 315)";
+	public static final String			BASE_HOR_00Z_MSG				= "L'agent est en base horaire \"00Z\" sur la période";
+	public static final String			INACTIVITE_MSG					= "L'agent n'est pas en activité le %s.";
+	public static final String			PAS_AFFECTATION_MSG				= "L'agent n'a pas d'affectation ou la base horaire de pointage n'y est pas renseignée.";
+	public static final String			AVERT_MESSAGE_ABS				= "Soyez vigilant, vous avez saisi des primes et/ou heures supplémentaires sur des périodes où l’agent était absent.";
+	public static final String			ERROR_7651_MSG					= "";
+	public static final String			ERROR_7652_MSG					= "";
+	public static final String			ERROR_POINTAGE_PLUS_3_MOIS		= "La semaine sélectionnée est trop ancienne pour être modifiée.";
+	public static final String			ERROR_POINTAGE_SUP_DATE_JOUR	= "La semaine sélectionnée est dans le futur et ne peut donc être modifiée.";
+	public static final String			HS_TPS_PARTIEL_MSG				= "L'agent est en temps partiel, il ne peut pas avoir plus de %s d'heures supplémentaires.";
+	public static final String			ERROR_DATE_POINTAGE				= "Pour le pointage du %s, la date de fin est antérieure à la date de début.";
+	public static final String			ERROR_INTERVALLE_POINTAGE		= "Pour le pointage du %s, il faut 30 minutes d'intervalle entre la date de début et la date de fin.";
+	public static final String			ERROR_PRIME_SAISIE_J1_POINTAGE	= "Pour la prime %s du %s, la saisie à J+1 n'est pas autorisée.";
+	public static final String			ERROR_PRIME_QUANTITE_POINTAGE	= "Pour la prime %s du %s, la quantité ne peut être supérieure à 24.";
+	public static final String			ERROR_PRIME_EPANDAGE_QUANTITE	= "Pour la prime %s du %s, la quantité ne peut être supérieure à 2.";
+	public static final String			ERROR_ABSENCE_GREVE				= "Pour l'absence sans titre du %s, le type d'absence ne peut être %s. Ce type est reservé à la DRH.";
 
-	public static final List<String> ACTIVITE_CODES = Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
+	public static final List<String>	ACTIVITE_CODES					= Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63",
+			"64", "65", "66");
 
-	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	SimpleDateFormat					sdf								= new SimpleDateFormat("dd/MM/yyyy");
 
 	@Override
-	public ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
+	public ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, Spcarr carr,
+			BaseHorairePointageDto baseDto) {
 
 		double nbHours = 0;
 
@@ -217,7 +219,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto) {
+	public ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, Spcarr carr,
+			BaseHorairePointageDto baseDto) {
 
 		// cas de la DPM #11622
 		EntiteDto service = sirhWsConsumer.getAgentDirection(idAgent, dateLundi);
@@ -231,8 +234,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				}
 				// cas de la DPM #11622
 				// bug hsup #20374
-				if ((null != service && service.getSigle().toUpperCase().equals("DPM")) 
-						|| carr.getSpbarem().getIna() > 315) {
+				if ((null != service && service.getSigle().toUpperCase().equals("DPM")) || carr.getSpbarem().getIna() > 315) {
 					ptg.setHeureSupRecuperee(true);
 				}
 			}
@@ -242,7 +244,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, AgentGeneriqueDto ag) {
+	public ReturnMessageDto checkAgentInactivity(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages,
+			AgentGeneriqueDto ag) {
 
 		if (null != pointages) {
 			for (Pointage ptg : pointages) {
@@ -266,7 +269,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
 			if (deb.getDayOfWeek() == DateTimeConstants.SATURDAY || deb.getDayOfWeek() == DateTimeConstants.SUNDAY)
-				srm.getErrors().add(String.format("La prime 7650 du %s n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.", deb.toString("dd/MM/yyyy")));
+				srm.getErrors().add(String.format("La prime 7650 du %s n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.",
+						deb.toString("dd/MM/yyyy")));
 
 		}
 
@@ -282,9 +286,12 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
-			if (deb.getDayOfWeek() != DateTimeConstants.SATURDAY && deb.getDayOfWeek() != DateTimeConstants.SUNDAY && !sirhWsConsumer.isHoliday(deb) && !sirhWsConsumer.isHoliday(deb.plusDays(1)))
-				srm.getErrors().add(
-						String.format("La prime 7651 du %s n'est pas valide. Elle ne peut être saisie qu'un samedi et dimanche, ou alors une veille et jour férié.", deb.toString("dd/MM/yyyy")));
+			if (deb.getDayOfWeek() != DateTimeConstants.SATURDAY && deb.getDayOfWeek() != DateTimeConstants.SUNDAY && !sirhWsConsumer.isHoliday(deb)
+					&& !sirhWsConsumer.isHoliday(deb.plusDays(1)))
+				srm.getErrors()
+						.add(String.format(
+								"La prime 7651 du %s n'est pas valide. Elle ne peut être saisie qu'un samedi et dimanche, ou alors une veille et jour férié.",
+								deb.toString("dd/MM/yyyy")));
 
 		}
 
@@ -301,7 +308,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
 			if (deb.getDayOfWeek() != DateTimeConstants.SUNDAY && !sirhWsConsumer.isHoliday(deb))
-				srm.getErrors().add(String.format("La prime 7652 du %s n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.", deb.toString("dd/MM/yyyy")));
+				srm.getErrors().add(String.format("La prime 7652 du %s n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.",
+						deb.toString("dd/MM/yyyy")));
 
 		}
 
@@ -318,7 +326,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			DateTime deb = new DateTime(ptg.getDateDebut());
 
 			if (ptg.getQuantite() > 2)
-				srm.getErrors().add(String.format("La prime 7704 du %s n'est pas valide. Sa quantité ne peut être supérieur à 2.", deb.toString("dd/MM/yyyy")));
+				srm.getErrors().add(
+						String.format("La prime 7704 du %s n'est pas valide. Sa quantité ne peut être supérieur à 2.", deb.toString("dd/MM/yyyy")));
 
 		}
 
@@ -368,7 +377,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	 *            The list of pointages to test the period against
 	 * @return The structure containing the INFO or ERROR messages
 	 */
-	protected ReturnMessageDto checkInterval(ReturnMessageDto srm, String message, Integer start, Integer codem1, Integer end, Integer codem2, List<Pointage> pointages) {
+	protected ReturnMessageDto checkInterval(ReturnMessageDto srm, String message, Integer start, Integer codem1, Integer end, Integer codem2,
+			List<Pointage> pointages) {
 
 		DateTime recupDateDeb = getDateDebut(start, codem1);
 		DateTime recupDateFin = getDateFin(end, codem2);
@@ -396,8 +406,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 				if (rInterval.overlaps(pInterval)) {
 
-					if (ptgTimeStart.dayOfYear().get() == dayOfYearDeb && partialDayDeb || ptgTimeStart.dayOfYear().get() == dayOfYearFin && partialDayFin
-							|| ptgTimeEnd.dayOfYear().get() == dayOfYearDeb && partialDayDeb || ptgTimeEnd.dayOfYear().get() == dayOfYearFin && partialDayFin) {
+					if (ptgTimeStart.dayOfYear().get() == dayOfYearDeb && partialDayDeb
+							|| ptgTimeStart.dayOfYear().get() == dayOfYearFin && partialDayFin
+							|| ptgTimeEnd.dayOfYear().get() == dayOfYearDeb && partialDayDeb
+							|| ptgTimeEnd.dayOfYear().get() == dayOfYearFin && partialDayFin) {
 						if (!srm.getInfos().contains(AVERT_MESSAGE_ABS)) {
 							srm.getInfos().add(AVERT_MESSAGE_ABS);
 						}
@@ -430,8 +442,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			srm.getErrors().add(PAS_AFFECTATION_MSG);
 		}
 
-		//#34095 : si c'est une absence de type greve alors on ne peut pas la saisir depuis le kiosque
-		checkAbsenceGreve(srm, idAgent, dateLundi, pointages);
+		// #34095 : si c'est une absence de type greve alors on ne peut pas la
+		// saisir depuis le kiosque
+		checkAbsenceGreve(srm, idAgent, dateLundi, pointages, isFromSIRH);
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
 		checkIntervalleDateDebDateFin(srm, idAgent, pointages);
 		// DEBUT on check les types d'absences du projet SIRH-ABS-WS
@@ -453,16 +466,17 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkPrime7704(srm, idAgent, dateLundi, pointages);
 	}
 
-	private ReturnMessageDto checkAbsenceGreve(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+	private ReturnMessageDto checkAbsenceGreve(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, boolean isFromSIRH) {
+		if (!isFromSIRH) {
+			for (Pointage ptg : pointages) {
+				if (ptg.getTypePointageEnum() == RefTypePointageEnum.ABSENCE
+						&& ptg.getRefTypeAbsence().getIdRefTypeAbsence() == RefTypeAbsenceEnum.GREVE.getValue())
+					srm.getErrors().add(String.format(ERROR_ABSENCE_GREVE, sdf.format(ptg.getDateDebut()), RefTypeAbsenceEnum.GREVE.getLib()));
 
-		for (Pointage ptg : pointages) {
-			if (ptg.getTypePointageEnum() == RefTypePointageEnum.ABSENCE && ptg.getRefTypeAbsence().getIdRefTypeAbsence()==RefTypeAbsenceEnum.GREVE.getValue())
-				srm.getErrors().add(String.format(ERROR_ABSENCE_GREVE,  sdf.format(ptg.getDateDebut()),RefTypeAbsenceEnum.GREVE.getLib()));
-			
+			}
 		}
-
 		return srm;
-		
+
 	}
 
 	private ReturnMessageDto checkIntervalleDateDebDateFin(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
@@ -481,26 +495,28 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				srm.getErrors().add(String.format(ERROR_DATE_POINTAGE, sdf.format(ptg.getDateDebut())));
 			}
 			// on verif intervalle de 30 min minimum entre les 2 dates
-			if (null != ptg.getRefPrime() && ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES) && fin != null && (fin.getTimeInMillis() - debut.getTimeInMillis()) < 1800000) {
+			if (null != ptg.getRefPrime() && ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES) && fin != null
+					&& (fin.getTimeInMillis() - debut.getTimeInMillis()) < 1800000) {
 				srm.getErrors().add(String.format(ERROR_INTERVALLE_POINTAGE, sdf.format(ptg.getDateDebut())));
 			}
 			// pour les primes
 			if (ptg.getTypePointageEnum().equals(RefTypePointageEnum.PRIME)) {
 				// si 7715 alors saisie j+1 autorisée sinon non
 				// #19718 si RENFORT DE GARDE 7717 autorisé egalement
-				if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES) 
+				if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES)
 						&& ptg.getRefPrime().getNoRubr() != VentilationPrimeService.INDEMNITE_DE_ROULEMENT
 						&& ptg.getRefPrime().getNoRubr() != VentilationPrimeService.PRIME_RENFORT_GARDE
 						&& debut.get(Calendar.DAY_OF_MONTH) != fin.get(Calendar.DAY_OF_MONTH)) {
-					srm.getErrors().add(String.format(ERROR_PRIME_SAISIE_J1_POINTAGE, ptg.getRefPrime().getLibelle(), sdf.format(ptg.getDateDebut())));
+					srm.getErrors()
+							.add(String.format(ERROR_PRIME_SAISIE_J1_POINTAGE, ptg.getRefPrime().getLibelle(), sdf.format(ptg.getDateDebut())));
 					// pour les primes de type NOMBRE_HEURE, la quantite ne doit
 					// pas depasser 24H
 				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES) && ptg.getQuantite() > 24 * 60) {
 					srm.getErrors().add(String.format(ERROR_PRIME_QUANTITE_POINTAGE, ptg.getRefPrime().getLibelle(), sdf.format(ptg.getDateDebut())));
 					// PRIME FICTIVE D EPANDAGE pour le SIPRES
 					// ne peut pas depasser 2H
-				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES) && ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.PRIME_EPANDAGE_7716)
-						&& ptg.getQuantite() > 2 * 60) {
+				} else if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.NB_HEURES)
+						&& ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.PRIME_EPANDAGE_7716) && ptg.getQuantite() > 2 * 60) {
 					srm.getErrors().add(String.format(ERROR_PRIME_EPANDAGE_QUANTITE, ptg.getRefPrime().getLibelle(), sdf.format(ptg.getDateDebut())));
 				}
 
@@ -536,8 +552,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				calDateFinLimite.set(GregorianCalendar.MILLISECOND, 0);
 
 				if (ptg.getDateFin().after(calDateFinLimite.getTime())) {
-					srm.getErrors().add(
-							String.format("L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser %sh (limite des heures de nuit).",
+					srm.getErrors()
+							.add(String.format(
+									"L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser %sh (limite des heures de nuit).",
 									new DateTime(ptg.getDateDebut()).toString("dd/MM/yyyy"), heureFinNuit));
 				}
 			}
@@ -565,8 +582,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
-	public ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, 
-			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto, boolean isFromSIRH) {
+	public ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages,
+			Spcarr carr, BaseHorairePointageDto baseDto, boolean isFromSIRH) {
 
 		boolean tempsPartiel = carr.getSpbhor().getTaux().intValue() != 1;
 		if (tempsPartiel) {
@@ -594,26 +611,26 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			// mais si temps effectif de travail hebdomadaire > 39h
 			// alors on bloque a 39h
 			baseLegaleHsupMax = baseLegaleHsupMax > 39 * 60 ? 39 * 60 : baseLegaleHsupMax;
-			
+
 			// #28723 arrondir au 1/4 heure superieur le plus proche
-			if(baseLegaleHsupMax%15 != 0) {
-				baseLegaleHsupMax = baseLegaleHsupMax - (baseLegaleHsupMax%15) + 15;
+			if (baseLegaleHsupMax % 15 != 0) {
+				baseLegaleHsupMax = baseLegaleHsupMax - (baseLegaleHsupMax % 15) + 15;
 			}
 
 			if ((weekBase + minutesHSupWeek - minutesAbsWeek) > baseLegaleHsupMax) {
-				
+
 				Double nombreMinutes = new Double(baseLegaleHsupMax - weekBase + minutesAbsWeek);
 				// #28723 arrondir au 1/4 heure superieur le plus proche
-				if(nombreMinutes%15 != 0) {
-					nombreMinutes = nombreMinutes - (nombreMinutes%15) + 15;
+				if (nombreMinutes % 15 != 0) {
+					nombreMinutes = nombreMinutes - (nombreMinutes % 15) + 15;
 				}
 				String nombre = helperService.formatMinutesToString(nombreMinutes.intValue());
-				
+
 				String msg = String.format(HS_TPS_PARTIEL_MSG, nombre);
 				// #20056
-				if(isFromSIRH) {
+				if (isFromSIRH) {
 					srm.getInfos().add(msg);
-				}else{
+				} else {
 					srm.getErrors().add(msg);
 				}
 			}
