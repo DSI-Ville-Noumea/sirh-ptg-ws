@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.DpmIndemAnnee;
@@ -52,9 +53,17 @@ public interface IDpmRepository {
 	/**
 	 * Retourne la liste des DpmIndemAnnee par annee
 	 * @param annee Integer
-	 * @return List<DpmIndemAnnee>
+	 * @return DpmIndemAnnee
 	 */
 	DpmIndemAnnee getDpmIndemAnneeByAnnee(Integer annee);
+
+	/**
+	 * Retourne la liste des DpmIndemAnnee avec des dates comprises 
+	 * @param date Date
+	 * @param dpmExistante 
+	 * @return DpmIndemAnnee
+	 */
+	DpmIndemAnnee getDpmIndemAnneeByDateBetween(Date date, DpmIndemAnnee dpmExistante);
 
 	/**
 	 * Retourne la liste des DpmIndemAnnee ouverte

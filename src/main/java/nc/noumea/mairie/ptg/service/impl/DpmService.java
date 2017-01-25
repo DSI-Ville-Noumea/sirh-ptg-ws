@@ -45,6 +45,8 @@ public class DpmService implements IDpmService {
 	protected final static String	AGENT_CHOIX_OBLIGATOIRE	= "Veuillez choisir Indemnité ou Récupération pour l'agent %S.";
 	protected final static String	CHAMPS_NON_REMPLIE		= "Veuillez remplir tous les champs obligatoires.";
 	protected final static String	ANNEE_EXISTANTE			= "Cette année est déjà renseignée.";
+	protected final static String	CAMPAGNE_WITH_SAME_DATE	= "Une campagne existe dejà avec ces dates.";
+	protected final static String	CAMPAGNE_TERMINEE		= "Cette campagne de choix est terminée, vous ne pouvez plus faire de modification.";
 	protected final static String	SUPPRESSION_OK			= "Supprimé.";
 
 	@Autowired
@@ -443,6 +445,11 @@ public class DpmService implements IDpmService {
 			return result;
 		}
 
+		result = checkCampagneWithSameDate(result, dto, null);
+		if (!result.getErrors().isEmpty()) {
+			return result;
+		}
+
 		DpmIndemAnnee dpmAnnee = new DpmIndemAnnee();
 
 		dpmAnnee.setAnnee(dto.getAnnee());
@@ -452,6 +459,32 @@ public class DpmService implements IDpmService {
 		dpmRepository.persistEntity(dpmAnnee);
 
 		result.getInfos().add(CREATION_OK);
+
+		return result;
+	}
+
+	private ReturnMessageDto checkCampagneWithSameDate(ReturnMessageDto result, DpmIndemniteAnneeDto dto, DpmIndemAnnee dpmExistante) {
+
+		// on cherche si il y a deja une autre campagne dans les dates
+		DpmIndemAnnee dateDebut = dpmRepository.getDpmIndemAnneeByDateBetween(dto.getDateDebut(), dpmExistante);
+		if (dateDebut != null && dateDebut.getIdDpmIndemAnnee() != null) {
+			result.getErrors().add(CAMPAGNE_WITH_SAME_DATE);
+			return result;
+		}
+		DpmIndemAnnee dateFin = dpmRepository.getDpmIndemAnneeByDateBetween(dto.getDateFin(), dpmExistante);
+		if (dateFin != null && dateFin.getIdDpmIndemAnnee() != null) {
+			result.getErrors().add(CAMPAGNE_WITH_SAME_DATE);
+			return result;
+		}
+
+		// si on fait une modification, si la date de fin est depassée, on ne
+		// peut plus faire de modif
+		if (dpmExistante != null && dpmExistante.getIdDpmIndemAnnee() != null) {
+			if (dpmExistante.getAnnee() <= new DateTime().getYear()) {
+				result.getErrors().add(CAMPAGNE_TERMINEE);
+				return result;
+			}
+		}
 
 		return result;
 	}
@@ -491,6 +524,11 @@ public class DpmService implements IDpmService {
 			return result;
 		}
 
+		result = checkCampagneWithSameDate(result, dto, dpmAnnee);
+		if (!result.getErrors().isEmpty()) {
+			return result;
+		}
+
 		// on ne peut modifier que les dates d ouverture et fermeture dans le
 		// kiosque
 		dpmAnnee.setDateDebut(dto.getDateDebut());
@@ -503,23 +541,22 @@ public class DpmService implements IDpmService {
 		return result;
 	}
 
-
 	protected boolean isAgentWithIndemniteForfaitaireTravailDPMInAffectation(Integer idAgent, Date date) {
-		
-		if(null == date) {
+
+		if (null == date) {
 			date = helperService.getCurrentDate();
 		}
-		
+
 		List<Integer> listNoRubr = sirhWSConsumer.getPrimePointagesByAgent(idAgent, date, date);
 
-		if(null != listNoRubr) {
-			for(Integer noRubr : listNoRubr) {
-				if(noRubr.equals(VentilationPrimeService.INDEMNITE_FORFAITAIRE_TRAVAIL_DPM)) {
+		if (null != listNoRubr) {
+			for (Integer noRubr : listNoRubr) {
+				if (noRubr.equals(VentilationPrimeService.INDEMNITE_FORFAITAIRE_TRAVAIL_DPM)) {
 					return true;
 				}
 			}
 		}
-		
+
 		return false;
 	}
 

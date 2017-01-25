@@ -33,8 +33,17 @@ public class DpmRepositoryTest {
 	@PersistenceContext(unitName = "ptgPersistenceUnit")
 	private EntityManager ptgEntityManager;
 	
+	private DpmIndemAnnee  dpmAnneePrec;
+	
 	@Before
 	public void before() {
+		
+		DpmIndemAnnee  dpmAnneePrec = new DpmIndemAnnee();
+		dpmAnneePrec.setAnnee(new DateTime().getYear()-1);
+		dpmAnneePrec.setDateDebut(new DateTime().minusYears(1).minusMonths(3).toDate());
+		dpmAnneePrec.setDateFin(new DateTime().minusYears(1).plusMonths(3).toDate());
+		dpmRepository.persistEntity(dpmAnneePrec);
+		setDpmAnneePrec(dpmAnneePrec);
 		
 		DpmIndemAnnee  dpmAnnee = new DpmIndemAnnee();
 		dpmAnnee.setAnnee(new DateTime().getYear());
@@ -104,14 +113,14 @@ public class DpmRepositoryTest {
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void getDpmIndemAnneeByAnnee() {
-		assertNull(dpmRepository.getDpmIndemAnneeByAnnee(new DateTime().getYear()-1));
+		assertNull(dpmRepository.getDpmIndemAnneeByAnnee(new DateTime().getYear()-2));
 		assertNotNull(dpmRepository.getDpmIndemAnneeByAnnee(new DateTime().getYear()));
 	}
 	
 	@Test
 	@Transactional("ptgTransactionManager")
 	public void getListDpmIndemAnnee() {
-		assertEquals(1, dpmRepository.getListDpmIndemAnnee().size());
+		assertEquals(2, dpmRepository.getListDpmIndemAnnee().size());
 	}
 	
 	@Test
@@ -123,5 +132,23 @@ public class DpmRepositoryTest {
 		assertNull(dpmRepository.getDpmIndemChoixAgentByAgentAndAnnee(9005138+1, new DateTime().getYear()));
 		// teste date
 		assertNull(dpmRepository.getDpmIndemChoixAgentByAgentAndAnnee(9005138, new DateTime().getYear()+1));
+	}
+	
+
+	
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getDpmIndemAnneeByDateBetween() {
+		assertNull(dpmRepository.getDpmIndemAnneeByDateBetween(new DateTime().minusYears(2).minusMonths(3).toDate(),null));
+		assertNull(dpmRepository.getDpmIndemAnneeByDateBetween(new DateTime().minusYears(1).minusMonths(3).toDate(),getDpmAnneePrec()));
+		assertNotNull(dpmRepository.getDpmIndemAnneeByDateBetween(new DateTime().minusYears(1).minusMonths(3).toDate(),null));
+	}
+
+	public DpmIndemAnnee getDpmAnneePrec() {
+		return dpmAnneePrec;
+	}
+
+	public void setDpmAnneePrec(DpmIndemAnnee dpmAnneePrec) {
+		this.dpmAnneePrec = dpmAnneePrec;
 	}
 }
