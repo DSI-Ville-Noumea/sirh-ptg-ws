@@ -80,7 +80,8 @@ public class AccessRightsService implements IAccessRightsService {
 		//  #30544 concerne la Indemnité forfaitaire travail DPM
 		result.setSaisiePrimesDpmOperateur(false);
 		// si operateur on recupere les agents affectes 
-		if(accessRightsRepository.isUserOperator(idAgent)) {
+		//#36341 : on ajoute le droit à l'approbateur egalement
+		if(accessRightsRepository.isUserOperator(idAgent) || accessRightsRepository.isUserApprobator(idAgent)) {
 			List<DroitsAgent> listDroitsAgent = accessRightsRepository.getListOfAgentsToInputOrApprove(idAgent);
 			
 			Set<Integer> listIdsAgent = new HashSet<Integer>();

@@ -102,6 +102,9 @@
 	<jee:jndi-lookup id="sirhAbsDateBlocagePointage"
 		jndi-name="SIRH_ABS_DATE_BLOCAGE_POINTAGE" expected-type="java.lang.String" />
 
+	<jee:jndi-lookup id="sirhPtgDateBlocagePointagePrimeDpm"
+		jndi-name="SIRH_PTG_DATE_BLOCAGE_POINTAGE_PRIME_DPM" expected-type="java.lang.String" />
+
 	<jee:jndi-lookup id="adsWsBaseUrl" jndi-name="ADS_WS_URL"
 		expected-type="java.lang.String" />
 

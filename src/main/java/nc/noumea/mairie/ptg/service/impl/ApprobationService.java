@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.LocalDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
@@ -34,10 +38,6 @@ import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
-
-import org.joda.time.LocalDate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class ApprobationService implements IApprobationService {
@@ -320,7 +320,12 @@ public class ApprobationService implements IApprobationService {
 			// #18224 REJETER un pointage JOURNALISE :
 			// on ne peut pas modifier un pointage de plus de 3 mois dans le
 			// kiosque
-			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, ptg.getDateLundi());
+			// #36156 : on autorise le changement pour la prime 7714
+			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(result, ptg.getDateLundi(),ptg);
+			if (!result.getErrors().isEmpty()) {
+				break;
+			}
+			
 			if (!result.getErrors().isEmpty()) {
 				break;
 			}
@@ -665,10 +670,10 @@ public class ApprobationService implements IApprobationService {
 			Integer nombreMinutes = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
 			
 			// #30544 Indemnité forfaitaire travail DPM
-			int nombreMinutesMajoreesFromPrimeDPM = dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg);
-			
-			if(0 < nombreMinutesMajoreesFromPrimeDPM) {
-				nombreMinutes += nombreMinutesMajoreesFromPrimeDPM;
+			int nombreMinutesMajorees = dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg);
+
+			if (0 < nombreMinutesMajorees) {
+				nombreMinutes += nombreMinutesMajorees;
 			}
 
 			EtatPointageEnum currentEtat = ptg.getLatestEtatPointage().getEtat();

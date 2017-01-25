@@ -6,6 +6,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
@@ -40,10 +44,6 @@ import nc.noumea.mairie.ptg.service.NotAMondayException;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
 @Service
 public class SaisieService implements ISaisieService {
@@ -104,8 +104,9 @@ public class SaisieService implements ISaisieService {
 			throw new NotAMondayException();
 
 		if (!approveModifiedPointages) {
-			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, dateLundi);
-			//#15410 on bloque la saisie des pointages dans le futur
+			// #36156 : on autorise le changement pour la prime 7714
+			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(result, dateLundi, null);
+			// #15410 on bloque la saisie des pointages dans le futur
 			result = ptgDataCosistencyRules.checkDateLundiNotSuperieurDateJour(result, dateLundi);
 		}
 		if (!result.getErrors().isEmpty())
@@ -550,8 +551,7 @@ public class SaisieService implements ISaisieService {
 			throw new NotAMondayException();
 
 		if (!approveModifiedPointages) {
-			result = ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(result, dateLundi);
-			//#15410 on bloque la saisie des pointages dans le futur
+			// #15410 on bloque la saisie des pointages dans le futur
 			result = ptgDataCosistencyRules.checkDateLundiNotSuperieurDateJour(result, dateLundi);
 		}
 		if (!result.getErrors().isEmpty())
@@ -598,6 +598,8 @@ public class SaisieService implements ISaisieService {
 
 				isPointageAbsenceModifie = true;
 				finalPointages.add(ptg);
+				// #36156 : on autorise le changement pour la prime 7714
+				result = ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(result, ptg.getDateLundi(), ptg);
 			}
 
 			for (HeureSupDtoKiosque hs : jourDto.getHeuresSup()) {
@@ -635,6 +637,8 @@ public class SaisieService implements ISaisieService {
 
 				isPointageHSupModifie = true;
 				finalPointages.add(ptg);
+				// #36156 : on autorise le changement pour la prime 7714
+				result = ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(result, ptg.getDateLundi(), ptg);
 			}
 
 			for (PrimeDtoKiosque prime : jourDto.getPrimes()) {
@@ -668,6 +672,9 @@ public class SaisieService implements ISaisieService {
 
 				isPointagePrimeModifie = true;
 				finalPointages.add(ptg);
+
+				// #36156 : on autorise le changement pour la prime 7714
+				result = ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(result, ptg.getDateLundi(), ptg);
 			}
 		}
 
@@ -880,10 +887,10 @@ public class SaisieService implements ISaisieService {
 						Integer nombreMinutes = helperService.getDureeBetweenDateDebutAndDateFin(ptg.getDateDebut(), ptg.getDateFin());
 						
 						// #30544 Indemnité forfaitaire travail DPM
-						int nombreMinutesMajoreesFromPrimeDPM = dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg);
-						
-						if(0 < nombreMinutesMajoreesFromPrimeDPM) {
-							nombreMinutes += nombreMinutesMajoreesFromPrimeDPM;
+						int nombreMinutesMajorees = dpmService.calculNombreMinutesRecupereesMajoreesToAgentForOnePointage(ptg);
+
+						if (0 < nombreMinutesMajorees) {
+							nombreMinutes += nombreMinutesMajorees;
 						}
 						
 						absWsConsumer.addRecuperationsToCompteurAgentForOnePointage(ptg.getIdAgent(), ptg.getDateDebut(), nombreMinutes, 

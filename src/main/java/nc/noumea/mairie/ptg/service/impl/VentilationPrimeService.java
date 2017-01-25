@@ -36,15 +36,16 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 	
 	public final static int PRIME_RENFORT_GARDE = 7717;
 	public final static int INDEMNITE_DE_ROULEMENT = 7715;
-	//TODO
-	public final static int RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM = 7718;
-	public final static int RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM = 7719;
+	public final static int INDEMNITE_FORFAITAIRE_TRAVAIL_DPM = 7714;
+	public final static int				INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_SAMEDI	= 7718;
+	public final static int				INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_DJF		= 7719;
 	
 	// List of rubrique to not aggregate because used for calculating other Primes
 	// #13327 HSup SIPRES (épandage) : creation d une prime FICTIVE 7760
+	//#35605 : on ajoute la nouvelle prime DPM
 	private final static List<Integer> RUBRIQUES_SAISIES_NOT_TAKEN = Arrays.asList(
 			INDEMNITE_DE_ROULEMENT, PRIME_EPANDAGE_7716, PRIME_RENFORT_GARDE,
-			RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_SAMEDI_DPM, RUBRIQUE_INDEMNITE_FORFAITAIRE_TRAVAIL_DJF_DPM);
+			INDEMNITE_FORFAITAIRE_TRAVAIL_DPM);
 
 	@Autowired
 	private IPointageRepository pointageRepository;

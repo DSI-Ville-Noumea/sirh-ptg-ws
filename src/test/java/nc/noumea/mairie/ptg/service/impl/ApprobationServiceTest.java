@@ -11,6 +11,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.joda.time.DateTime;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
@@ -40,11 +45,6 @@ import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 import nc.noumea.mairie.ws.SirhWSUtils;
-
-import org.joda.time.DateTime;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class ApprobationServiceTest {
 
@@ -368,7 +368,8 @@ public class ApprobationServiceTest {
 		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.any(Date.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.any(Date.class),
+				Mockito.any(Pointage.class))).thenReturn(new ReturnMessageDto());
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
@@ -411,7 +412,8 @@ public class ApprobationServiceTest {
 		Mockito.when(matrService.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.any(Date.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.any(Date.class),
+				Mockito.any(Pointage.class))).thenReturn(new ReturnMessageDto());
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
@@ -456,7 +458,8 @@ public class ApprobationServiceTest {
 		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.any(Date.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.any(Date.class),
+				Mockito.any(Pointage.class))).thenReturn(new ReturnMessageDto());
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
@@ -505,7 +508,8 @@ public class ApprobationServiceTest {
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
 		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
 
-		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
 		;
 
 		ApprobationService service = new ApprobationService();
@@ -555,7 +559,8 @@ public class ApprobationServiceTest {
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
 		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
 
-		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
 
 		ApprobationService service = new ApprobationService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pRepo);
@@ -605,7 +610,8 @@ public class ApprobationServiceTest {
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
 		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
 
-		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
 		;
 
 		ApprobationService service = new ApprobationService();
@@ -658,7 +664,8 @@ public class ApprobationServiceTest {
 
 		ReturnMessageDto rmd = new ReturnMessageDto();
 		rmd.getErrors().add("pointage plus de 3 mois");
-		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(rmd);
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(rmd);
 		;
 
 		ApprobationService service = new ApprobationService();
@@ -710,7 +717,8 @@ public class ApprobationServiceTest {
 		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
 
 		ReturnMessageDto rmd = new ReturnMessageDto();
-		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(rmd);
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(rmd);
 
 		IAgentMatriculeConverterService matriculeConvertor = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(matriculeConvertor.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);
@@ -765,7 +773,8 @@ public class ApprobationServiceTest {
 		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
 
 		ReturnMessageDto rmd = new ReturnMessageDto();
-		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class))).thenReturn(rmd);
+		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(rmd);
 
 		IAgentMatriculeConverterService matriculeConvertor = Mockito.mock(IAgentMatriculeConverterService.class);
 		Mockito.when(matriculeConvertor.tryConvertIdAgentToNomatr(9005678)).thenReturn(5678);

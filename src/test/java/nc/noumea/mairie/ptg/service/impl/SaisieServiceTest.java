@@ -12,6 +12,15 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
@@ -50,15 +59,6 @@ import nc.noumea.mairie.ptg.service.NotAMondayException;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class SaisieServiceTest {
 
@@ -133,10 +133,9 @@ public class SaisieServiceTest {
 				.thenReturn(newAbsPointage);
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
@@ -232,10 +231,9 @@ public class SaisieServiceTest {
 				.thenReturn(newHsPointage);
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
@@ -343,10 +341,9 @@ public class SaisieServiceTest {
 				.thenReturn(newPrimePointage);
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		SaisieService service = new SaisieService();
@@ -437,10 +434,9 @@ public class SaisieServiceTest {
 				.thenReturn(newPrimePointage);
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		SaisieService service = new SaisieService();
@@ -526,10 +522,9 @@ public class SaisieServiceTest {
 				.processDataConsistency(Mockito.any(ReturnMessageDto.class), Mockito.eq(agent.getIdAgent()),
 						Mockito.eq(lundi), Mockito.anyList(), Mockito.anyBoolean());
 
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		SaisieService service = new SaisieService();
@@ -584,10 +579,9 @@ public class SaisieServiceTest {
 				Arrays.asList(p, p2));
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		SaisieService service = Mockito.spy(new SaisieService());
@@ -684,10 +678,9 @@ public class SaisieServiceTest {
 				Arrays.asList(existingPointageApprouve, existingPointageSaisi));
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		SaisieService service = new SaisieService();
@@ -722,10 +715,9 @@ public class SaisieServiceTest {
 		Mockito.when(hS.isDateAMonday(lundi)).thenReturn(true);
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(srm);
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(srm);
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		SaisieService service = new SaisieService();
@@ -822,10 +814,9 @@ public class SaisieServiceTest {
 				Arrays.asList(existingPointageApprouve, existingPointageSaisi));
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(srm);
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(srm);
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
@@ -931,10 +922,9 @@ public class SaisieServiceTest {
 				Arrays.asList(existingPointageApprouve));
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
@@ -1856,10 +1846,9 @@ public class SaisieServiceTest {
 				.thenReturn(newAbsPointage);
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
@@ -1954,10 +1943,9 @@ public class SaisieServiceTest {
 				.thenReturn(newHsPointage);
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
@@ -2064,10 +2052,9 @@ public class SaisieServiceTest {
 				.thenReturn(newPrimePointage);
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		SaisieService service = new SaisieService();
@@ -2333,10 +2320,9 @@ public class SaisieServiceTest {
 		}).when(pService).getLatestPointagesForSaisieForAgentAndDateMonday(dto.getAgent().getIdAgent(), lundi);
 
 		IPointageDataConsistencyRules dcMock = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.when(dcMock.checkDateLundiAnterieurA3Mois(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
-				.thenReturn(new ReturnMessageDto());
-		Mockito.when(
-				dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
+		Mockito.when(dcMock.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
+				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
+		Mockito.when(dcMock.checkDateLundiNotSuperieurDateJour(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class)))
 				.thenReturn(new ReturnMessageDto());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);

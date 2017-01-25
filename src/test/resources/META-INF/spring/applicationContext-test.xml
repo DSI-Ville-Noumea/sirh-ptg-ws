@@ -97,6 +97,8 @@
 	
 	<bean class="java.lang.String" id="sirhAbsDateBlocagePointage" />
 	
+	<bean class="java.lang.String" id="sirhPtgDateBlocagePointagePrimeDpm" />
+	
 	<bean class="java.lang.String" id="adsWsBaseUrl" />
 
 	<!-- Pour Type environnement (RECETTE ou PROD) -->

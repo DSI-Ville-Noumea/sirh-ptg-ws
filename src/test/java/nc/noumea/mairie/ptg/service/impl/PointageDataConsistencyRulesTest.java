@@ -9,6 +9,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.SpabsenId;
@@ -26,14 +34,6 @@ import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.test.util.ReflectionTestUtils;
 
 public class PointageDataConsistencyRulesTest {
 
@@ -1827,7 +1827,7 @@ public class PointageDataConsistencyRulesTest {
 	}
 
 	@Test
-	public void checkDateLundiAnterieurA3Mois_OK() {
+	public void checkDateLundiAnterieurA3MoisWithPointage_OK() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
@@ -1835,13 +1835,13 @@ public class PointageDataConsistencyRulesTest {
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
-		srm = service.checkDateLundiAnterieurA3Mois(srm, dateLundi);
+		srm = service.checkDateLundiAnterieurA3MoisWithPointage(srm, dateLundi, null);
 
 		assertEquals(0, srm.getErrors().size());
 	}
 
 	@Test
-	public void checkDateLundiAnterieurA3Mois_KO() {
+	public void checkDateLundiAnterieurA3MoisWithPointage_KO() {
 
 		ReturnMessageDto srm = new ReturnMessageDto();
 
@@ -1854,7 +1854,7 @@ public class PointageDataConsistencyRulesTest {
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
-		srm = service.checkDateLundiAnterieurA3Mois(srm, calStr1.getTime());
+		srm = service.checkDateLundiAnterieurA3MoisWithPointage(srm, calStr1.getTime(), null);
 
 		assertEquals(1, srm.getErrors().size());
 	}

@@ -47,7 +47,7 @@ public interface IPointageDataConsistencyRules {
 
 	ReturnMessageDto checkPrime7704(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 
-	ReturnMessageDto checkDateLundiAnterieurA3Mois(ReturnMessageDto srm, Date dateLundi);
+	ReturnMessageDto checkPrimeHsup7714(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 
 	ReturnMessageDto checkDateLundiNotSuperieurDateJour(ReturnMessageDto srm, Date dateLundi);
 
@@ -59,4 +59,6 @@ public interface IPointageDataConsistencyRules {
 			List<Pointage> pointages, Spcarr carr);
 
 	void checkAllAbsences(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
+
+	ReturnMessageDto checkDateLundiAnterieurA3MoisWithPointage(ReturnMessageDto result, Date dateLundi, Pointage ptg);
 }

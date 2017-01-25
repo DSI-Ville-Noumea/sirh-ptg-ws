@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.service.impl;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -7,29 +8,33 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.Interval;
+import org.joda.time.LocalTime;
+import org.joda.time.Minutes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefTypeAbsenceEnum;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.TypeSaisieEnum;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.service.IPointageDataConsistencyRules;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.Interval;
-import org.joda.time.Minutes;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class PointageDataConsistencyRules implements IPointageDataConsistencyRules {
@@ -45,6 +50,13 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 	@Autowired
 	private HelperService				helperService;
+
+	@Autowired
+	private IDpmRepository				dpmRepository;
+
+	@Autowired
+	@Qualifier("sirhPtgDateBlocagePointagePrimeDpm")
+	private String						sirhPtgDateBlocagePointagePrimeDpm;
 
 	// -- MESSAGES --//
 	public static final String			BASE_HOR_MAX					= "L'agent dépasse sa base horaire";
@@ -64,6 +76,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String			ERROR_PRIME_SAISIE_J1_POINTAGE	= "Pour la prime %s du %s, la saisie à J+1 n'est pas autorisée.";
 	public static final String			ERROR_PRIME_QUANTITE_POINTAGE	= "Pour la prime %s du %s, la quantité ne peut être supérieure à 24.";
 	public static final String			ERROR_PRIME_EPANDAGE_QUANTITE	= "Pour la prime %s du %s, la quantité ne peut être supérieure à 2.";
+	public static final String			ERROR_PRIME_JOURS_FERIE			= "La prime %s du %s, ne peut être saisie qu'un samedi, dimanche ou jour férié.";
+	public static final String			ERROR_PRIME_DPM_INTERVALLE		= "Pour le pointage du %s, il faut au moins 5 minutes comprises entre 5h et 21h.";
 	public static final String			ERROR_ABSENCE_GREVE				= "Pour l'absence sans titre du %s, le type d'absence ne peut être %s. Ce type est reservé à la DRH.";
 
 	public static final List<String>	ACTIVITE_CODES					= Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63",
@@ -464,6 +478,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkPrime7651(srm, idAgent, dateLundi, pointages);
 		checkPrime7652(srm, idAgent, dateLundi, pointages);
 		checkPrime7704(srm, idAgent, dateLundi, pointages);
+		// #35605 : pour la prime DPM 7714, on ne peut la saisir que sur
+		// samed/dimanche et jours féries
+		checkPrimeHsup7714(srm, idAgent, dateLundi, pointages);
 	}
 
 	private ReturnMessageDto checkAbsenceGreve(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages, boolean isFromSIRH) {
@@ -563,23 +580,6 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		return srm;
 	}
 
-	@Override
-	public ReturnMessageDto checkDateLundiAnterieurA3Mois(ReturnMessageDto srm, Date dateLundi) {
-
-		GregorianCalendar calStr1 = new GregorianCalendar();
-		calStr1.setTime(new Date());
-		calStr1.add(GregorianCalendar.MONTH, -3);
-		calStr1.add(GregorianCalendar.WEEK_OF_YEAR, -1); // back to previous
-															// week
-		calStr1.set(GregorianCalendar.DAY_OF_WEEK, Calendar.MONDAY); // jump to
-																		// next
-																		// monday
-
-		if (dateLundi.before(calStr1.getTime())) {
-			srm.getErrors().add(String.format(ERROR_POINTAGE_PLUS_3_MOIS));
-		}
-		return srm;
-	}
 
 	@Override
 	public ReturnMessageDto checkAgentTempsPartielAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages,
@@ -662,6 +662,105 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkDateLundiNotSuperieurDateJour(ReturnMessageDto srm, Date dateLundi) {
 		if (dateLundi.after(new Date())) {
 			srm.getErrors().add(String.format(ERROR_POINTAGE_SUP_DATE_JOUR));
+		}
+		return srm;
+	}
+
+	@Override
+	public ReturnMessageDto checkPrimeHsup7714(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
+
+
+		for (Pointage ptg : pointages) {
+			DateTime dateDebut = new DateTime(ptg.getDateDebut());
+
+			// si c'est une Hsup et que l'agent à la prime DPM sur son
+			// affectation et qu'il n'a fait aucun choix alors on bloque
+			if (ptg.getTypePointageEnum() == RefTypePointageEnum.H_SUP) {
+				if (dateDebut.getDayOfWeek() == DateTimeConstants.SATURDAY || dateDebut.getDayOfWeek() == DateTimeConstants.SUNDAY
+						|| sirhWsConsumer.isHoliday(dateDebut)) {
+					List<Integer> norubrs = sirhWsConsumer.getPrimePointagesByAgent(idAgent, ptg.getDateDebut(), ptg.getDateDebut());
+					if (norubrs.contains(VentilationPrimeService.INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_SAMEDI)
+							|| norubrs.contains(VentilationPrimeService.INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_DJF)
+							|| norubrs.contains(VentilationPrimeService.INDEMNITE_FORFAITAIRE_TRAVAIL_DPM)) {
+						// si l'agent n'a pas fait de choix, on sort
+						DpmIndemChoixAgent choixAgent = dpmRepository.getDpmIndemChoixAgent(idAgent, new DateTime(ptg.getDateDebut()).getYear());
+
+						if (null == choixAgent) {
+							srm.getErrors()
+									.add("Aucun choix de l agent pour la prime DPM => aucune heure sup. ne peut être saisie.");
+						}
+
+					}
+				}
+			}
+			if (ptg.getTypePointageEnum() == RefTypePointageEnum.PRIME
+					&& ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_FORFAITAIRE_TRAVAIL_DPM)) {
+				// si l'agent n'a pas fait de choix, on sort
+				DpmIndemChoixAgent choixAgent = dpmRepository.getDpmIndemChoixAgent(idAgent, new DateTime(ptg.getDateDebut()).getYear());
+
+				if (null == choixAgent) {
+					srm.getErrors()
+							.add("Aucun choix de l agent pour la prime DPM => aucune prime. ne peut être saisie.");
+				}
+
+				// la prime doit etre un samedi, dimanche ou jour ferie/chomé
+				if (!(dateDebut.getDayOfWeek() == DateTimeConstants.SATURDAY || dateDebut.getDayOfWeek() == DateTimeConstants.SUNDAY
+						|| sirhWsConsumer.isHoliday(dateDebut))) {
+					srm.getErrors().add(String.format(ERROR_PRIME_JOURS_FERIE, "INDEMNITE FORFAITAIRE TRAVAIL DPM", sdf.format(ptg.getDateDebut())));
+				}
+				// l interval de la deliberation pour la prime est de 5h a 21h
+				int dayTotalMinutes = helperService.calculMinutesPointageInInterval(ptg,
+						new LocalTime(PointageCalculeService.HEURE_JOUR_DEBUT_PRIME_DPM, 0, 0),
+						new LocalTime(PointageCalculeService.HEURE_JOUR_FIN_PRIME_DPM, 0, 0));
+				// si au on a pas 5min alors on rejete
+				if (dayTotalMinutes < 5) {
+					srm.getErrors().add(String.format(ERROR_PRIME_DPM_INTERVALLE, sdf.format(ptg.getDateDebut())));
+				}
+			}
+
+		}
+
+		return srm;
+	}
+
+	@Override
+	public ReturnMessageDto checkDateLundiAnterieurA3MoisWithPointage(ReturnMessageDto srm, Date dateLundi, Pointage ptg) {
+		GregorianCalendar calStr1 = new GregorianCalendar();
+		calStr1.setTime(new Date());
+		calStr1.add(GregorianCalendar.MONTH, -3);
+		calStr1.add(GregorianCalendar.WEEK_OF_YEAR, -1); // back to
+															// previous
+															// week
+		calStr1.set(GregorianCalendar.DAY_OF_WEEK, Calendar.MONDAY); // jump
+																		// to
+																		// next
+																		// monday
+		
+		if (ptg!=null && RefTypePointageEnum.PRIME.equals(ptg.getTypePointageEnum()) && ptg.getRefPrime() != null
+				&& ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_FORFAITAIRE_TRAVAIL_DPM)) {
+
+			if (dateLundi.before(calStr1.getTime())) {
+				// si on est dans le cas d'un pointage au dela de 3
+				// mois
+				if (ptg.getDateDebut().before(new DateTime(2016, 4, 1, 0, 0, 0).toDate())) {
+					srm.getErrors().add(String.format(ERROR_POINTAGE_PLUS_3_MOIS));
+					return srm;
+				} else {
+					try {
+						if (new Date().after(new SimpleDateFormat("dd/MM/yyyy").parse(sirhPtgDateBlocagePointagePrimeDpm))) {
+							srm.getErrors().add(String.format(ERROR_POINTAGE_PLUS_3_MOIS));
+							return srm;
+						}
+					} catch (ParseException e) {
+
+					}
+				}
+			}
+		} else {
+			if (dateLundi.before(calStr1.getTime())) {
+				srm.getErrors().add(String.format(ERROR_POINTAGE_PLUS_3_MOIS));
+				return srm;
+			}
 		}
 		return srm;
 	}

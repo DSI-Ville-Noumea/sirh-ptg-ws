@@ -62,6 +62,13 @@
 		description="Parametre pour savoir avant quelle date la saisie des pointages est interdite(correspond à la date de MEP finale)"
 		value="27/04/2015" override="false" />
 
+	<!-- -->
+	<!-- Parametre pour savoir apres quelle date on re-active le check de la saisie des pointages antérieurs à 3mois pour la prime 7714 -->
+	<!-- -->
+	<Environment name="SIRH_PTG_DATE_BLOCAGE_POINTAGE_PRIME_DPM" type="java.lang.String"
+		description="Parametre pour savoir apres quelle date on re-active le check de la saisie des pointages antérieurs à 3mois pour la prime 7714"
+		value="01/03/2017" override="false" />
+
 
 	<!-- Paramètre pour différencier QUAL et PROD -->
 	<Environment name="TYPE_ENV" type="java.lang.String"

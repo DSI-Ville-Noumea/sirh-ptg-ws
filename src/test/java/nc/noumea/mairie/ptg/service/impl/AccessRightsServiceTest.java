@@ -165,7 +165,61 @@ public class AccessRightsServiceTest {
 	}
 
 	@Test
-	public void getAgentAccessRights_isNotOperator_NoRightsToPrimeDpm() {
+	public void getAgentAccessRights_isApprobateur_withAgentWithPrimeDpm() {
+
+		// Given
+		Integer idAgent = 906543;
+		Droit da = new Droit();
+		da.setIdAgent(idAgent);
+		da.setApprobateur(true);
+		List<Droit> droits = Arrays.asList(da);
+
+		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
+		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(droits);
+		Mockito.when(arRepo.isUserApprobator(idAgent)).thenReturn(true);
+		
+		DroitsAgent agent1 = new DroitsAgent();
+		agent1.setIdAgent(9005138);
+		DroitsAgent agent2 = new DroitsAgent();
+		agent2.setIdAgent(9005138);
+		List<DroitsAgent> listDroitsAgent = new ArrayList<DroitsAgent>();
+		listDroitsAgent.add(agent1);
+		listDroitsAgent.add(agent2);
+		Mockito.when(arRepo.getListOfAgentsToInputOrApprove(idAgent)).thenReturn(listDroitsAgent);
+
+		ITitreRepasService titreRepasService = Mockito.mock(ITitreRepasService.class);
+		Mockito.when(titreRepasService.checkPrimePanierEtFiliereIncendie(idAgent)).thenReturn(false);
+
+		IDpmService dpmService = Mockito.mock(IDpmService.class);
+		Mockito.when(dpmService.isDroitAgentToIndemniteForfaitaireDPM(idAgent)).thenReturn(true);
+		
+		List<AgentWithServiceDto> listAgentWithServiceDto = new ArrayList<AgentWithServiceDto>();
+		listAgentWithServiceDto.add(new AgentWithServiceDto());
+		ISirhWSConsumer sirhWSConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWSConsumer.getListeAgentWithIndemniteForfaitTravailDPM(Mockito.anySetOf(Integer.class))).thenReturn(listAgentWithServiceDto);
+		
+		AccessRightsService service = new AccessRightsService();
+		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
+		ReflectionTestUtils.setField(service, "titreRepasService", titreRepasService);
+		ReflectionTestUtils.setField(service, "dpmService", dpmService);
+		ReflectionTestUtils.setField(service, "sirhWSConsumer", sirhWSConsumer);
+
+		// When
+		AccessRightsDto result = service.getAgentAccessRights(idAgent);
+
+		// Then
+		assertTrue(result.isFiches());
+		assertTrue(result.isSaisie());
+		assertTrue(result.isVisualisation());
+		assertTrue(result.isApprobation());
+		assertTrue(result.isGestionDroitsAcces());
+		assertTrue(result.isTitreRepas());
+		assertTrue(result.isPrimeDpm());
+		assertTrue(result.isSaisiePrimesDpmOperateur());
+	}
+
+	@Test
+	public void getAgentAccessRights_NaAgent_NoRightsToPrimeDpm() {
 
 		// Given
 		Integer idAgent = 906543;
@@ -177,6 +231,7 @@ public class AccessRightsServiceTest {
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
 		Mockito.when(arRepo.getAgentAccessRights(idAgent)).thenReturn(droits);
 		Mockito.when(arRepo.isUserOperator(idAgent)).thenReturn(false);
+		Mockito.when(arRepo.isUserApprobator(idAgent)).thenReturn(true);
 
 		ITitreRepasService titreRepasService = Mockito.mock(ITitreRepasService.class);
 		Mockito.when(titreRepasService.checkPrimePanierEtFiliereIncendie(idAgent)).thenReturn(false);
