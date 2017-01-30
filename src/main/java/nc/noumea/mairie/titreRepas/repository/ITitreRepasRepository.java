@@ -26,4 +26,6 @@ public interface ITitreRepasRepository {
 
 	List<Date> getListeMoisTitreRepasSaisie();
 
+	TitreRepasEtatPrestataire getEtatPrestataireByMonth(Date dateEtatPayeur);
+
 }

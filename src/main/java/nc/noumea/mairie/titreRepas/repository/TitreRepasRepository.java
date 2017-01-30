@@ -127,4 +127,22 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 		return r.size() == 0 ? null : r.get(0);
 	}
 
+	@Override
+	public TitreRepasEtatPrestataire getEtatPrestataireByMonth(Date dateEtatPayeur) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(tr) from TitreRepasEtatPrestataire tr ");
+		sb.append("where tr.dateEtatPrestataire = :dateMonth ");
+		sb.append("order by tr.dateEdition desc");
+
+		TypedQuery<TitreRepasEtatPrestataire> query = ptgEntityManager.createQuery(sb.toString(), TitreRepasEtatPrestataire.class);
+
+		query.setParameter("dateMonth", dateEtatPayeur);
+		TitreRepasEtatPrestataire result = null;
+		List<TitreRepasEtatPrestataire> list = query.getResultList();
+		if (list.size() > 0) {
+			result = list.get(0);
+		}
+		return result;
+	}
+
 }

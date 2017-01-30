@@ -525,7 +525,9 @@ public class TitreRepasService implements ITitreRepasService {
 
 		if (null != listEtatPayeur) {
 			for (TitreRepasEtatPayeur etatPayeur : listEtatPayeur) {
-				TitreRepasEtatPayeurDto dto = new TitreRepasEtatPayeurDto(etatPayeur);
+				//on cherche l'etat prestataire correspondant
+				TitreRepasEtatPrestataire etatPrestataire = titreRepasRepository.getEtatPrestataireByMonth(etatPayeur.getDateEtatPayeur());
+				TitreRepasEtatPayeurDto dto = new TitreRepasEtatPayeurDto(etatPayeur,etatPrestataire);
 
 				AgentWithServiceDto agent = sirhWsConsumer.getAgentService(etatPayeur.getIdAgent(), new Date());
 				dto.setAgent(agent);
