@@ -37,11 +37,13 @@ import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
+import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.reporting.EtatPayeurTitreRepasReporting;
+import nc.noumea.mairie.ptg.reporting.EtatPrestataireTitreRepasReporting;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
@@ -63,81 +65,84 @@ import nc.noumea.mairie.ws.SirhWSUtils;
 @Service
 public class TitreRepasService implements ITitreRepasService {
 
-	private Logger							logger														= LoggerFactory
+	private Logger								logger														= LoggerFactory
 			.getLogger(TitreRepasService.class);
 
 	@Autowired
-	private HelperService					helperService;
+	private HelperService						helperService;
 
 	@Autowired
-	private IMairieRepository				mairieRepository;
+	private IMairieRepository					mairieRepository;
 
 	@Autowired
-	private ITitreRepasRepository			titreRepasRepository;
+	private ITitreRepasRepository				titreRepasRepository;
 
 	@Autowired
-	private IPointageRepository				pointageRepository;
+	private IPointageRepository					pointageRepository;
 
 	@Autowired
-	private IAccessRightsRepository			accessRightsRepository;
+	private IAccessRightsRepository				accessRightsRepository;
 
 	@Autowired
-	private IAbsWsConsumer					absWsConsumer;
+	private IAbsWsConsumer						absWsConsumer;
 
 	@Autowired
-	private ISirhWSConsumer					sirhWsConsumer;
+	private ISirhWSConsumer						sirhWsConsumer;
 
 	@Autowired
-	private SirhWSUtils						sirhWSUtils;
+	private SirhWSUtils							sirhWSUtils;
 
 	@Autowired
-	private IAccessRightsService			accessRightsService;
+	private IAccessRightsService				accessRightsService;
 
 	@Autowired
-	private IPaieWorkflowService			paieWorkflowService;
+	private IPaieWorkflowService				paieWorkflowService;
 
 	@Autowired
-	private EtatPayeurTitreRepasReporting	reportingService;
+	private EtatPayeurTitreRepasReporting		reportingTitreRepasPayeurService;
 
 	@Autowired
-	private IAccessRightsService			accessRightService;
+	private EtatPrestataireTitreRepasReporting	reportingTitreRepasPrestataireService;
 
-	private static SimpleDateFormat			sfd															= new SimpleDateFormat("YYYY-MM");
+	@Autowired
+	private IAccessRightsService				accessRightService;
 
-	public static final String				ERREUR_DROIT_AGENT											= "Vous n'avez pas les droits pour traiter cette demande de titre repas.";
-	public static final String				DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS				= "Vous ne pouvez commander les titres repas qu'entre le 1 et 10 de chaque mois.";
-	public static final String				EDITION_PAYEUR_DEJA_EDITEE									= "Vous ne pouvez saisir des demandes de titres repas car l'édition du payeur a déjà été effectuée pour ce mois.";
-	public static final String				DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR			= "Vous ne pouvez approuver/refuser des titres repas qu'entre le 11 du mois et l'édition du payeur.";
-	public static final String				AUCUNE_PA_ACTIVE_MOIS_PRECEDENT								= "L'agent %s n'a pas travaillé le mois précédent.";
-	public static final String				AUCUNE_BASE_CONGE											= "La base congé n'est pas renseignée pour l'agent %s.";
-	public static final String				PRIME_PANIER												= "L'agent a le droit aux primes panier et ne peut donc pas commander des titres repas.";
-	public static final String				FILIERE_INCENDIE											= "L'agent fait parti de la filière incendie et ne peut donc pas commander de titres repas.";
-	public static final String				TITRE_DEMANDE_DEJA_EXISTANT									= "Une demande de titre repas existe déjà pour ce mois-ci pour l'agent %s.";
-	public static final String				TITRE_DEMANDE_INEXISTANT									= "La demande de titre repas n'existe pas.";
-	public static final String				DTO_NULL													= "Merci de saisir la demande de titre repas.";
-	public static final String				MOIS_COURS_NON_SAISI										= "Le mois en cours de la demande n'est pas saisi.";
-	public static final String				AGENT_NON_SAISI												= "L'ID agent n'est pas renseigné.";
-	public static final String				ETAT_NON_SAISI												= "L'état de la demande de titre repas n'est pas renseigné pour l'agent : %s.";
-	public static final String				AUCUNE_DEMANDE												= "Aucune demande de titre repas à approuver.";
-	public static final String				AUCUN_ID_DEMANDE											= "L'ID de la demande de titre repas n'est pas renseigné.";
-	public static final String				AUCUNE_DEMANDE_TROUVEE										= "La demande de titre repas n'existe pas.";
-	public static final String				DEMANDE_MOIS_EN_COURS_ERROR									= "La demande de titre repas n'existe pas.";
-	public static final String				DEMANDE_NON_COMMANDE										= "Vous ne pouvez pas approuvé une demande de titre repas non commandée.";
-	public static final String				ERROR_ETAT_DEMANDE											= "Vous ne pouvez pas %s une demande de titre repas à l'état %s.";
-	public static final String				NOUVELLE_ETAT_INCORRECT										= "Le nouvel état de la demande de titre repas est incorrect.";
-	public static final String				PAIE_EN_COURS												= "Génération impossible. Une paie est en cours sous l'AS400.";
-	public static final String				DEMANDE_EN_COURS											= "Génération impossible. Il reste des demandes à l'état 'saisie'.";
-	public static final String				GENERATION_IMPOSSIBLE_AVANT_11								= "Génération impossible avant le 11 du mois.";
-	public static final String				MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE					= "Vous ne pouvez pas modifier une demande journalisée.";
-	public static final String				MODIFICATION_IMPOSSIBLE_DEMANDE_AUTRE_SAISI_DEPUIS_KIOSQUE	= "Vous ne pouvez pas modifier une demande approuvée, rejetée ou journalisée.";
+	private static SimpleDateFormat				sfd															= new SimpleDateFormat("YYYY-MM");
 
-	public static final String				ENREGISTREMENT_OK											= "La demande est bien enregistrée.";
-	public static final String				ENREGISTREMENT_PLURIEL_OK									= "Les demandes sont bien enregistrées.";
-	public static final String				GENERATION_ETAT_PAYEUR_OK									= "L'état payeur des titres repas est bien généré.";
+	public static final String					ERREUR_DROIT_AGENT											= "Vous n'avez pas les droits pour traiter cette demande de titre repas.";
+	public static final String					DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS				= "Vous ne pouvez commander les titres repas qu'entre le 1 et 10 de chaque mois.";
+	public static final String					EDITION_PAYEUR_DEJA_EDITEE									= "Vous ne pouvez saisir des demandes de titres repas car l'édition du payeur a déjà été effectuée pour ce mois.";
+	public static final String					DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR			= "Vous ne pouvez approuver/refuser des titres repas qu'entre le 11 du mois et l'édition du payeur.";
+	public static final String					AUCUNE_PA_ACTIVE_MOIS_PRECEDENT								= "L'agent %s n'a pas travaillé le mois précédent.";
+	public static final String					AUCUNE_BASE_CONGE											= "La base congé n'est pas renseignée pour l'agent %s.";
+	public static final String					PRIME_PANIER												= "L'agent a le droit aux primes panier et ne peut donc pas commander des titres repas.";
+	public static final String					FILIERE_INCENDIE											= "L'agent fait parti de la filière incendie et ne peut donc pas commander de titres repas.";
+	public static final String					TITRE_DEMANDE_DEJA_EXISTANT									= "Une demande de titre repas existe déjà pour ce mois-ci pour l'agent %s.";
+	public static final String					TITRE_DEMANDE_INEXISTANT									= "La demande de titre repas n'existe pas.";
+	public static final String					DTO_NULL													= "Merci de saisir la demande de titre repas.";
+	public static final String					MOIS_COURS_NON_SAISI										= "Le mois en cours de la demande n'est pas saisi.";
+	public static final String					AGENT_NON_SAISI												= "L'ID agent n'est pas renseigné.";
+	public static final String					ETAT_NON_SAISI												= "L'état de la demande de titre repas n'est pas renseigné pour l'agent : %s.";
+	public static final String					AUCUNE_DEMANDE												= "Aucune demande de titre repas à approuver.";
+	public static final String					AUCUN_ID_DEMANDE											= "L'ID de la demande de titre repas n'est pas renseigné.";
+	public static final String					AUCUNE_DEMANDE_TROUVEE										= "La demande de titre repas n'existe pas.";
+	public static final String					DEMANDE_MOIS_EN_COURS_ERROR									= "La demande de titre repas n'existe pas.";
+	public static final String					DEMANDE_NON_COMMANDE										= "Vous ne pouvez pas approuvé une demande de titre repas non commandée.";
+	public static final String					ERROR_ETAT_DEMANDE											= "Vous ne pouvez pas %s une demande de titre repas à l'état %s.";
+	public static final String					NOUVELLE_ETAT_INCORRECT										= "Le nouvel état de la demande de titre repas est incorrect.";
+	public static final String					PAIE_EN_COURS												= "Génération impossible. Une paie est en cours sous l'AS400.";
+	public static final String					DEMANDE_EN_COURS											= "Génération impossible. Il reste des demandes à l'état 'saisie'.";
+	public static final String					GENERATION_IMPOSSIBLE_AVANT_11								= "Génération impossible avant le 11 du mois.";
+	public static final String					MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE					= "Vous ne pouvez pas modifier une demande journalisée.";
+	public static final String					MODIFICATION_IMPOSSIBLE_DEMANDE_AUTRE_SAISI_DEPUIS_KIOSQUE	= "Vous ne pouvez pas modifier une demande approuvée, rejetée ou journalisée.";
 
-	public static final List<Integer>		LIST_PRIMES_PANIER											= Arrays.asList(7704, 7713);
-	public static final String				CODE_FILIERE_INCENDIE										= "I";
-	public final static int					RUBRIQUE_TITRE_REPAS										= 6500;
+	public static final String					ENREGISTREMENT_OK											= "La demande est bien enregistrée.";
+	public static final String					ENREGISTREMENT_PLURIEL_OK									= "Les demandes sont bien enregistrées.";
+	public static final String					GENERATION_ETAT_PAYEUR_OK									= "L'état payeur des titres repas est bien généré.";
+
+	public static final List<Integer>			LIST_PRIMES_PANIER											= Arrays.asList(7704, 7713);
+	public static final String					CODE_FILIERE_INCENDIE										= "I";
+	public final static int						RUBRIQUE_TITRE_REPAS										= 6500;
 
 	/**
 	 * Enregistre une liste de demande de Titre Repas depuis le Kiosque RH.
@@ -1106,7 +1111,7 @@ public class TitreRepasService implements ITitreRepasService {
 
 		// 4. generer le fichier d'état du payeur des TR
 		try {
-			reportingService.downloadEtatPayeurTitreRepas(etatPayeurTR, listTitreRepasDemandeDto);
+			reportingTitreRepasPayeurService.downloadEtatPayeurTitreRepas(etatPayeurTR, listTitreRepasDemandeDto);
 		} catch (MalformedURLException e) {
 			logger.debug(e.getMessage());
 			result.getErrors().add("Une erreur est survenue lors de la génération de l'état payeur des titres repas.");
@@ -1119,15 +1124,36 @@ public class TitreRepasService implements ITitreRepasService {
 			logger.debug(e.getMessage());
 			result.getErrors().add("Une erreur est survenue lors de la génération de l'état payeur des titres repas.");
 			return result;
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			result.getErrors().add("Une erreur est survenue lors de la génération de l'état payeur des titres repas.");
+			return result;
 		}
 
-		// 5. generer une charge dans l AS400
+		// 5. on genère le fichier pour le prestataire
+		TitreRepasEtatPrestataire etatPrestataireTR = new TitreRepasEtatPrestataire();
+		etatPrestataireTR.setFichier(String.format("Etat-Prestataire-Titre-Repas-%s.csv", sfd.format(dateJour.toDate())));
+		etatPrestataireTR.setLabel(String.format("%s", sfd.format(dateJour.toDate())));
+		etatPrestataireTR.setDateEtatPrestataire(new LocalDate(dateJour.toDate()).withDayOfMonth(1).toDate());
+		etatPrestataireTR.setIdAgent(idAgentConnecte);
+		etatPrestataireTR.setDateEdition(dateJour.toDate());
+
+		try {
+			reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, listTitreRepasDemandeDto);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			result.getErrors().add("Une erreur est survenue lors de la génération de l'état prestataire des titres repas.");
+			return result;
+		}
+
+		if (!result.getErrors().isEmpty()) {
+			return result;
+		}
+
+		// 6. generer une charge dans l AS400
 		persistSpchgeAndSpmatr(genereChargeAS400(listDemandeTR));
 
-		// 5. bis on genère le fichier pour le prestataire
-		// TODO
-
-		// 6. passer les demandes a l etat JOURNALISE
+		// 7. passer les demandes a l etat JOURNALISE
 		if (null != listDemandeTR) {
 			for (TitreRepasDemande demandeTR : listDemandeTR) {
 				TitreRepasEtatDemande etat = new TitreRepasEtatDemande();
@@ -1141,8 +1167,9 @@ public class TitreRepasService implements ITitreRepasService {
 			}
 		}
 
-		// 7. on enregistre
-		titreRepasRepository.persist(etatPayeurTR);
+		// 8. on enregistre
+		titreRepasRepository.persistEtatPayeur(etatPayeurTR);
+		titreRepasRepository.persistEtatPrestataire(etatPrestataireTR);
 
 		result.getInfos().add(GENERATION_ETAT_PAYEUR_OK);
 
@@ -1162,7 +1189,7 @@ public class TitreRepasService implements ITitreRepasService {
 				matr.setPerrap(dateCharge);
 
 				Spcarr carr = mairieRepository.getAgentCurrentCarriere(charge.getId().getNomatr(),
-						helperService.getDateFromMairieInteger(dateCharge));
+						helperService.getMonthDateFromMairieInteger(dateCharge));
 
 				if (carr == null) {
 					continue;

@@ -5,18 +5,20 @@ import java.util.List;
 
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
+import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
 
 public interface ITitreRepasRepository {
 
 	List<TitreRepasEtatPayeur> getListTitreRepasEtatPayeur();
 
-	TitreRepasEtatPayeur getTitreRepasEtatPayeurById(Integer idTitreRepasEtatPayeur);
-
 	TitreRepasEtatPayeur getTitreRepasEtatPayeurByMonth(Date mois);
 
-	void persist(TitreRepasEtatPayeur titreRepasDemande);
+	void persistEtatPayeur(TitreRepasEtatPayeur titreRepasDemande);
 
-	List<TitreRepasDemande> getListTitreRepasDemande(List<Integer> listIdsAgent, Date fromDate, Date toDate, Integer etat, Boolean commande, Date dateMonth);
+	void persistEtatPrestataire(TitreRepasEtatPrestataire titreRepasDemande);
+
+	List<TitreRepasDemande> getListTitreRepasDemande(List<Integer> listIdsAgent, Date fromDate, Date toDate, Integer etat, Boolean commande,
+			Date dateMonth);
 
 	void persist(TitreRepasDemande titreRepasDemande);
 

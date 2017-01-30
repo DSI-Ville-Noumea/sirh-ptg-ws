@@ -7,15 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nc.noumea.mairie.ads.dto.EntiteDto;
-import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
-import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
-import nc.noumea.mairie.sirh.dto.AffectationDto;
-import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
-import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
-import nc.noumea.mairie.sirh.dto.JourDto;
-import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
-
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,30 +17,40 @@ import org.springframework.stereotype.Service;
 import com.sun.jersey.api.client.ClientResponse;
 
 import flexjson.JSONSerializer;
+import nc.noumea.mairie.ads.dto.EntiteDto;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.sirh.dto.AffectationDto;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
+import nc.noumea.mairie.sirh.dto.JourDto;
+import nc.noumea.mairie.sirh.dto.ProfilAgentDto;
+import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 
 @Service
 public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 	@Autowired
 	@Qualifier("sirhWsBaseUrl")
-	private String sirhWsBaseUrl;
+	private String				sirhWsBaseUrl;
 
-	private static final String sirhAgentDirectionUrl = "agents/direction";
-	private static final String sirhAgentServiceUrl = "services/agent";
-	private static final String sirhListAgentsWithServiceUrl = "services/listAgentsWithService";
-	private static final String sirhListAgentsWithServiceOldAffectationUrl = "services/listAgentsWithServiceOldAffectation";
-	private static final String sirhAgentUrl = "agents/getAgent";
-	private static final String sirhGetListAgentsUrl = "agents/getListAgents";
-	private static final String sirhHolidayUrl = "utils/isHoliday";
-	private static final String sirhListPrimePointageUrl = "pointages/listPrimePointages";
-	private static final String sirhJourFerieUrl = "utils/isJourFerie";
-	private static final String listeJoursFeriesUrl = "utils/listeJoursFeries";
-	private static final String sirhBaseHorairePointageUrl = "pointages/baseHoraire";
-	private static final String sirhlistAgentsWithPrimeTIDOnAffectationUrl = "pointages/listAgentsWithPrimeTIDOnAffectation";
-	private static final String sirhlisteAffectationDtosForListAgentByPeriodeUrl = "pointages/listeAffectationDtosForListAgentByPeriode";
-	private static final String isUtilisateurSIRHServiceUrl = "utilisateur/isUtilisateurSIRH";
-	private static final String sirhBaseCongeUrl = "absences/baseHoraire";
-	private static final String sirhListeAgentWithIndemniteForfaitTravailDPMUrl = "agents/listeAgentWithIndemniteForfaitTravailDPM";
+	private static final String	sirhAgentEtatCivilUrl								= "agents/getEtatCivil";
+	private static final String	sirhAgentDirectionUrl								= "agents/direction";
+	private static final String	sirhAgentServiceUrl									= "services/agent";
+	private static final String	sirhListAgentsWithServiceUrl						= "services/listAgentsWithService";
+	private static final String	sirhListAgentsWithServiceOldAffectationUrl			= "services/listAgentsWithServiceOldAffectation";
+	private static final String	sirhAgentUrl										= "agents/getAgent";
+	private static final String	sirhGetListAgentsUrl								= "agents/getListAgents";
+	private static final String	sirhHolidayUrl										= "utils/isHoliday";
+	private static final String	sirhListPrimePointageUrl							= "pointages/listPrimePointages";
+	private static final String	sirhJourFerieUrl									= "utils/isJourFerie";
+	private static final String	listeJoursFeriesUrl									= "utils/listeJoursFeries";
+	private static final String	sirhBaseHorairePointageUrl							= "pointages/baseHoraire";
+	private static final String	sirhlistAgentsWithPrimeTIDOnAffectationUrl			= "pointages/listAgentsWithPrimeTIDOnAffectation";
+	private static final String	sirhlisteAffectationDtosForListAgentByPeriodeUrl	= "pointages/listeAffectationDtosForListAgentByPeriode";
+	private static final String	isUtilisateurSIRHServiceUrl							= "utilisateur/isUtilisateurSIRH";
+	private static final String	sirhBaseCongeUrl									= "absences/baseHoraire";
+	private static final String	sirhListeAgentWithIndemniteForfaitTravailDPMUrl		= "agents/listeAgentWithIndemniteForfaitTravailDPM";
 
 	@Override
 	public EntiteDto getAgentDirection(Integer idAgent, Date date) {
@@ -167,9 +168,9 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 	@Override
 	public boolean isJourFerie(DateTime deb) {
-		
+
 		String url = String.format(sirhWsBaseUrl + sirhJourFerieUrl);
-		
+
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("date", deb.toString("yyyyMMdd"));
 
@@ -327,9 +328,9 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 	@Override
 	public List<AgentWithServiceDto> getListeAgentWithIndemniteForfaitTravailDPM(Set<Integer> listIdsAgent) {
-		
+
 		String url = String.format(sirhWsBaseUrl + sirhListeAgentWithIndemniteForfaitTravailDPMUrl);
-		
+
 		Map<String, String> parameters = new HashMap<String, String>();
 
 		String json = new JSONSerializer().exclude("*.class").deepSerialize(listIdsAgent);
@@ -337,5 +338,15 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFirePostRequest(parameters, url, json);
 
 		return readResponseAsList(AgentWithServiceDto.class, res, url);
+	}
+
+	@Override
+	public ProfilAgentDto getEtatCivil(Integer idAgent) {
+		String url = String.format(sirhWsBaseUrl + sirhAgentEtatCivilUrl);
+		HashMap<String, String> params = new HashMap<>();
+		params.put("idAgent", idAgent.toString());
+
+		ClientResponse res = createAndFireGetRequest(params, url);
+		return readResponse(ProfilAgentDto.class, res, url);
 	}
 }

@@ -36,6 +36,7 @@ import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.reporting.EtatPayeurTitreRepasReporting;
+import nc.noumea.mairie.ptg.reporting.EtatPrestataireTitreRepasReporting;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
@@ -2280,13 +2281,15 @@ public class TitreRepasServiceTest {
 		Mockito.when(sirhWsConsumer.getListAgentsWithService(Arrays.asList(idAgent, 9002990), currentDate2))
 				.thenReturn(new ArrayList<AgentWithServiceDto>());
 
-		EtatPayeurTitreRepasReporting reportingService = Mockito.mock(EtatPayeurTitreRepasReporting.class);
+		EtatPayeurTitreRepasReporting reportingTitreRepasPayeurService = Mockito.mock(EtatPayeurTitreRepasReporting.class);
+		EtatPrestataireTitreRepasReporting reportingTitreRepasPrestataireService = Mockito.mock(EtatPrestataireTitreRepasReporting.class);
 
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "reportingService", reportingService);
+		ReflectionTestUtils.setField(service, "reportingTitreRepasPayeurService", reportingTitreRepasPayeurService);
+		ReflectionTestUtils.setField(service, "reportingTitreRepasPrestataireService", reportingTitreRepasPrestataireService);
 		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 

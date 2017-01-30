@@ -11,6 +11,7 @@ import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
+import nc.noumea.mairie.sirh.dto.ProfilAgentDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 
 import org.joda.time.DateTime;
@@ -65,4 +66,6 @@ public interface ISirhWSConsumer {
 	 * @return List<AgentWithServiceDto> La liste des agents avec la prime Indemnité forfaitaire travail DPM 
 	 */
 	List<AgentWithServiceDto> getListeAgentWithIndemniteForfaitTravailDPM(Set<Integer> listIdsAgent);
+
+	ProfilAgentDto getEtatCivil(Integer idAgent);
 }

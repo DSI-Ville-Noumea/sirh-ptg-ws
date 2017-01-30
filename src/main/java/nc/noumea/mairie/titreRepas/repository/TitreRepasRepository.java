@@ -7,11 +7,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.springframework.stereotype.Repository;
+
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
-
-import org.springframework.stereotype.Repository;
+import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
 
 @Repository
 public class TitreRepasRepository implements ITitreRepasRepository {
@@ -20,7 +21,12 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 	private EntityManager ptgEntityManager;
 
 	@Override
-	public void persist(TitreRepasEtatPayeur titreRepasDemande) {
+	public void persistEtatPayeur(TitreRepasEtatPayeur titreRepasDemande) {
+		ptgEntityManager.persist(titreRepasDemande);
+	}
+
+	@Override
+	public void persistEtatPrestataire(TitreRepasEtatPrestataire titreRepasDemande) {
 		ptgEntityManager.persist(titreRepasDemande);
 	}
 
@@ -37,19 +43,14 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 	}
 
 	@Override
-	public TitreRepasEtatPayeur getTitreRepasEtatPayeurById(Integer idTitreRepasEtatPayeur) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public TitreRepasDemande getTitreRepasDemandeById(Integer idTrDemande) {
 
 		return ptgEntityManager.find(TitreRepasDemande.class, idTrDemande);
 	}
 
 	@Override
-	public List<TitreRepasDemande> getListTitreRepasDemande(List<Integer> listIdsAgent, Date fromDate, Date toDate, Integer etat, Boolean commande, Date dateMonth) {
+	public List<TitreRepasDemande> getListTitreRepasDemande(List<Integer> listIdsAgent, Date fromDate, Date toDate, Integer etat, Boolean commande,
+			Date dateMonth) {
 
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(tr) from TitreRepasDemande tr ");
