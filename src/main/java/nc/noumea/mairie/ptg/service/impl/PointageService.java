@@ -118,9 +118,13 @@ public class PointageService implements IPointageService {
 			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
 
 			for (RefPrime prime : refPrimes) {
-				//#35743 : ne pas afficher les primes calculées
-				if (!prime.isCalculee()) {
+				//#35743 et #36588 : ne pas afficher les primes calculées sauf si elles sont affichage "kiosque"
+				if(prime.isAffichageKiosque()){
 					jourPointageTemplate.getPrimes().add(new PrimeDto(prime));
+				}else{
+					if (!prime.isCalculee()) {
+						jourPointageTemplate.getPrimes().add(new PrimeDto(prime));
+					}
 				}
 			}
 		}
