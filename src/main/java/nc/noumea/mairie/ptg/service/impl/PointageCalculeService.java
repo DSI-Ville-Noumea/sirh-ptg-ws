@@ -544,6 +544,26 @@ public class PointageCalculeService implements IPointageCalculeService {
 				logger.error(String.format("Aucun choix de l agent %d pour la prime DPM => aucune prime DPM calcule", idAgent));
 				continue;
 			}
+
+			// #36587 : si il y a des hsup rappel en service sur la journée et
+			// que l'agent à choisi recupération, alors on ene calcule pas la
+			// prime
+			if (choixAgent.isChoixRecuperation()) {
+				boolean sortCalcul = false;
+				List<Pointage> listeHsupJournee = getPointagesHSupForDay(pointages, new DateTime(ptg.getDateDebut()));
+				for (Pointage hsupJournee : listeHsupJournee) {
+					if (hsupJournee.getHeureSupRappelService()) {
+						sortCalcul = true;
+						break;
+					}
+				}
+				if (sortCalcul) {
+					logger.error(String.format("[prime DPM 7714] l agent %d  a choisi recupération et a une hsup RS => aucune prime DPM calcule",
+							idAgent));
+					continue;
+				}
+			}
+
 			// si on est un samedi POUR LA 7718
 			if (new DateTime(ptg.getDateDebut()).getDayOfWeek() == DateTimeConstants.SATURDAY
 					&& prime.getNoRubr().equals(VentilationPrimeService.INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_SAMEDI)) {
