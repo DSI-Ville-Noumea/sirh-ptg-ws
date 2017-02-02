@@ -6,29 +6,33 @@ import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 
 @XmlRootElement
-public class PrimeDto extends PointageDto  {
+public class PrimeDto extends PointageDto {
 
-	private String titre;
-	private String typeSaisie;
-	private Integer quantite;
-	private Integer numRubrique;
-	private Integer idRefPrime;
-	private String aide;
+	private String	titre;
+	private String	typeSaisie;
+	private Integer	quantite;
+	private Integer	numRubrique;
+	private Integer	idRefPrime;
+	private String	aide;
 
 	public PrimeDto() {
 	}
 
-	public PrimeDto(RefPrime prime) {
-		this.titre = prime.getLibelle();
+	public PrimeDto(RefPrime prime, String choixAgentDPM) {
+		if (choixAgentDPM == null) {
+			this.titre = prime.getLibelle();
+		} else {
+			this.titre = prime.getLibelle() + "\n" + "(" + choixAgentDPM + ")";
+		}
 		this.idRefPrime = prime.getIdRefPrime();
 		this.numRubrique = prime.getNoRubr();
 		this.typeSaisie = prime.getTypeSaisie().name();
 		this.aide = prime.getAide();
 	}
-	
+
 	public PrimeDto(PrimeDto primeDto) {
 		super((PointageDto) primeDto);
-		
+
 		this.titre = primeDto.titre;
 		this.typeSaisie = primeDto.typeSaisie;
 		this.quantite = primeDto.quantite;
@@ -42,8 +46,8 @@ public class PrimeDto extends PointageDto  {
 		this.setIdRefEtat(ptg.getLatestEtatPointage().getEtat().getCodeEtat());
 		this.setMotif(ptg.getMotif() == null ? "" : ptg.getMotif().getText());
 		this.setCommentaire(ptg.getCommentaire() == null ? "" : ptg.getCommentaire().getText());
-		
-		switch(ptg.getRefPrime().getTypeSaisie()) {
+
+		switch (ptg.getRefPrime().getTypeSaisie()) {
 			case CASE_A_COCHER:
 			case NB_HEURES:
 			case NB_INDEMNITES:
@@ -104,6 +108,4 @@ public class PrimeDto extends PointageDto  {
 		this.aide = aide;
 	}
 
-	
-	
 }

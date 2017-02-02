@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.MotifHeureSup;
@@ -42,6 +43,7 @@ import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.ptg.dto.RefTypePointageDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
+import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.service.IPointageService;
@@ -57,6 +59,9 @@ public class PointageService implements IPointageService {
 
 	@Autowired
 	private IPointageRepository				pointageRepository;
+
+	@Autowired
+	private IDpmRepository					dpmRepository;
 
 	@Autowired
 	private IMairieRepository				mairieRepository;
@@ -118,12 +123,26 @@ public class PointageService implements IPointageService {
 			List<RefPrime> refPrimes = pointageRepository.getRefPrimes(pps, carr.getStatutCarriere());
 
 			for (RefPrime prime : refPrimes) {
-				//#35743 et #36588 : ne pas afficher les primes calculées sauf si elles sont affichage "kiosque"
-				if(prime.isAffichageKiosque()){
-					jourPointageTemplate.getPrimes().add(new PrimeDto(prime));
-				}else{
+				// #36585 : on affiche le choix de l'agent pour la prime 7714
+				String choixDPM = null;
+				if (prime.getNoRubr().equals(VentilationPrimeService.INDEMNITE_FORFAITAIRE_TRAVAIL_DPM)) {
+					DpmIndemChoixAgent choixAgent = dpmRepository.getDpmIndemChoixAgent(agent.getIdAgent(), new DateTime(date).getYear());
+
+					if (null == choixAgent) {
+						choixDPM = "aucun choix";
+					}else if(choixAgent.isChoixIndemnite()){
+						choixDPM = "Indemnite";
+					}else if(choixAgent.isChoixRecuperation()){
+						choixDPM = "Récupération";
+					}
+				}
+				// #35743 et #36588 : ne pas afficher les primes calculées sauf
+				// si elles sont affichage "kiosque"
+				if (prime.isAffichageKiosque()) {
+					jourPointageTemplate.getPrimes().add(new PrimeDto(prime, choixDPM));
+				} else {
 					if (!prime.isCalculee()) {
-						jourPointageTemplate.getPrimes().add(new PrimeDto(prime));
+						jourPointageTemplate.getPrimes().add(new PrimeDto(prime, choixDPM));
 					}
 				}
 			}
@@ -609,7 +628,20 @@ public class PointageService implements IPointageService {
 
 			for (RefPrime prime : refPrimes) {
 				if (prime.isAffichageKiosque()) {
-					jourPointageTemplate.getPrimes().add(new PrimeDtoKiosque(prime));
+					// #36585 : on affiche le choix de l'agent pour la prime 7714
+					String choixDPM = null;
+					if (prime.getNoRubr().equals(VentilationPrimeService.INDEMNITE_FORFAITAIRE_TRAVAIL_DPM)) {
+						DpmIndemChoixAgent choixAgent = dpmRepository.getDpmIndemChoixAgent(agent.getIdAgent(), new DateTime(date).getYear());
+
+						if (null == choixAgent) {
+							choixDPM = "aucun choix";
+						}else if(choixAgent.isChoixIndemnite()){
+							choixDPM = "Indemnite";
+						}else if(choixAgent.isChoixRecuperation()){
+							choixDPM = "Récupération";
+						}
+					}
+					jourPointageTemplate.getPrimes().add(new PrimeDtoKiosque(prime,choixDPM));
 				}
 			}
 		}

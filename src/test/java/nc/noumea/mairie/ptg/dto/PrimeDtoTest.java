@@ -28,10 +28,32 @@ public class PrimeDtoTest {
 		ref.setTypeSaisie(TypeSaisieEnum.CASE_A_COCHER);
 
 		// When
-		PrimeDto result = new PrimeDto(ref);
+		PrimeDto result = new PrimeDto(ref,null);
 
 		// Then
 		assertEquals(ref.getLibelle(), result.getTitre());
+		assertEquals("CASE_A_COCHER", result.getTypeSaisie());
+		assertEquals(ref.getIdRefPrime(), result.getIdRefPrime());
+		assertEquals(ref.getNoRubr(), result.getNumRubrique());
+	}
+
+	@Test
+	public void ctor_withpointage_AvecChoixDPM() {
+
+		// Given
+		RefPrime ref = new RefPrime();
+		ref.setCalculee(false);
+		ref.setDescription("description");
+		ref.setLibelle("libelle");
+		ref.setNoRubr(7714);
+		ref.setStatut(AgentStatutEnum.F);
+		ref.setTypeSaisie(TypeSaisieEnum.CASE_A_COCHER);
+
+		// When
+		PrimeDto result = new PrimeDto(ref,"indem");
+
+		// Then
+		assertEquals(ref.getLibelle()+"\n(indem)", result.getTitre());
 		assertEquals("CASE_A_COCHER", result.getTypeSaisie());
 		assertEquals(ref.getIdRefPrime(), result.getIdRefPrime());
 		assertEquals(ref.getNoRubr(), result.getNumRubrique());

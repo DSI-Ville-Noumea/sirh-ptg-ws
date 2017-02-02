@@ -11,18 +11,22 @@ import nc.noumea.mairie.ptg.domain.RefPrime;
 @XmlRootElement
 public class PrimeDtoKiosque extends PointageDtoKiosque {
 
-	private String titre;
-	private String typeSaisie;
-	private Integer quantite;
-	private Integer numRubrique;
-	private Integer idRefPrime;
-	private String aide;
+	private String	titre;
+	private String	typeSaisie;
+	private Integer	quantite;
+	private Integer	numRubrique;
+	private Integer	idRefPrime;
+	private String	aide;
 
 	public PrimeDtoKiosque() {
 	}
 
-	public PrimeDtoKiosque(RefPrime prime) {
-		this.titre = prime.getLibelle();
+	public PrimeDtoKiosque(RefPrime prime, String choixAgentDPM) {
+		if (choixAgentDPM == null) {
+			this.titre = prime.getLibelle();
+		} else {
+			this.titre = prime.getLibelle() + "\n" + "(" + choixAgentDPM + ")";
+		}
 		this.idRefPrime = prime.getIdRefPrime();
 		this.numRubrique = prime.getNoRubr();
 		this.typeSaisie = prime.getTypeSaisie().name();
