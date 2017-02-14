@@ -94,7 +94,7 @@ public interface ITitreRepasService {
 	 * @return ReturnMessageDto
 	 */
 	ReturnMessageDto checkDroitATitreRepas(ReturnMessageDto rmd, Integer idAgent, Date dateMonthEnCours, List<DemandeDto> listAbsences, RefTypeSaisiCongeAnnuelDto baseCongeAgent,
-			List<JourDto> listJoursFeries, AffectationDto affectation);
+			List<JourDto> listJoursFeries, AffectationDto affectation, boolean isFromSIRH);
 
 	/**
 	 * On verifie si l agent a le droit au prime panier ou fait parti de la

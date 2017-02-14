@@ -177,9 +177,9 @@ public class TitreRepasService implements ITitreRepasService {
 		// saisie entre le 1 et le 10
 		// si au dela du 10 du mois, cela ne sert a rien de faire tous les
 		// appels ci-dessous
-		rmd = checkDateJourBetween1And10ofMonth(rmd);
-		if (!rmd.getErrors().isEmpty())
-			return rmd;
+//		rmd = checkDateJourBetween1And10ofMonth(rmd);
+//		if (!rmd.getErrors().isEmpty())
+//			return rmd;
 
 		// ///////////////////////////////////////////////////////////////
 		// /////// on recupere toutes les donnees qui nous interessent ///
@@ -339,8 +339,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 		// check les RG
 		result = checkDroitATitreRepas(result, dto.getAgent().getIdAgent(), dto.getDateMonth(), listAbsences, baseCongeAgent, listJoursFeries,
-				affectation);
-		if (!result.getErrors().isEmpty() && !isSIRH)
+				affectation, isSIRH);
+		if (!result.getErrors().isEmpty())
 			return result;
 
 		// on verifie si une demande existe deja
@@ -525,9 +525,9 @@ public class TitreRepasService implements ITitreRepasService {
 
 		if (null != listEtatPayeur) {
 			for (TitreRepasEtatPayeur etatPayeur : listEtatPayeur) {
-				//on cherche l'etat prestataire correspondant
+				// on cherche l'etat prestataire correspondant
 				TitreRepasEtatPrestataire etatPrestataire = titreRepasRepository.getEtatPrestataireByMonth(etatPayeur.getDateEtatPayeur());
-				TitreRepasEtatPayeurDto dto = new TitreRepasEtatPayeurDto(etatPayeur,etatPrestataire);
+				TitreRepasEtatPayeurDto dto = new TitreRepasEtatPayeurDto(etatPayeur, etatPrestataire);
 
 				AgentWithServiceDto agent = sirhWsConsumer.getAgentService(etatPayeur.getIdAgent(), new Date());
 				dto.setAgent(agent);
@@ -663,22 +663,24 @@ public class TitreRepasService implements ITitreRepasService {
 	 */
 	@Override
 	public ReturnMessageDto checkDroitATitreRepas(ReturnMessageDto rmd, Integer idAgent, Date dateMonthEnCours, List<DemandeDto> listAbsences,
-			RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries, AffectationDto affectation) {
+			RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries, AffectationDto affectation, boolean isFromSIRH) {
 
 		Date dateMoisPrecedent = new DateTime(dateMonthEnCours).minusMonths(1).toDate();
 
-		rmd = checkUnJourDePresenceSurLeMoisPrecedent(rmd, idAgent, dateMoisPrecedent, listAbsences, baseCongeAgent, listJoursFeries);
-		if (!rmd.getErrors().isEmpty())
-			return rmd;
+		rmd = checkUnJourDePresenceSurLeMoisPrecedent(rmd, idAgent, dateMoisPrecedent, listAbsences, baseCongeAgent, listJoursFeries, isFromSIRH);
 
 		if (checkPrimePanierSurAffectation(affectation, idAgent)) {
-			rmd.getErrors().add(PRIME_PANIER);
-			return rmd;
+			if (isFromSIRH)
+				rmd.getInfos().add(PRIME_PANIER);
+			else
+				rmd.getErrors().add(PRIME_PANIER);
 		}
 
 		if (checkAgentIsFiliereIncendie(idAgent, dateMoisPrecedent)) {
-			rmd.getErrors().add(FILIERE_INCENDIE);
-			return rmd;
+			if (isFromSIRH)
+				rmd.getInfos().add(FILIERE_INCENDIE);
+			else
+				rmd.getErrors().add(FILIERE_INCENDIE);
 		}
 
 		return rmd;
@@ -838,24 +840,30 @@ public class TitreRepasService implements ITitreRepasService {
 	 * @return ReturnMessageDto
 	 */
 	protected ReturnMessageDto checkUnJourDePresenceSurLeMoisPrecedent(ReturnMessageDto rmd, Integer idAgent, Date dateMoisPrecedent,
-			List<DemandeDto> listAbsences, RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries) {
+			List<DemandeDto> listAbsences, RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries, boolean isFromSIRH) {
 
 		// 1. on check la PA
 		if (!checkPAUnJourActiviteMinimumsurMoisPrecedent(idAgent, dateMoisPrecedent)) {
-			rmd.getErrors().add(String.format(AUCUNE_PA_ACTIVE_MOIS_PRECEDENT, idAgent));
-			return rmd;
+			if (isFromSIRH)
+				rmd.getInfos().add(String.format(AUCUNE_PA_ACTIVE_MOIS_PRECEDENT, idAgent));
+			else
+				rmd.getErrors().add(String.format(AUCUNE_PA_ACTIVE_MOIS_PRECEDENT, idAgent));
 		}
 
 		// 2. base conge doit etre renseigne
 		if (null == baseCongeAgent) {
-			rmd.getErrors().add(String.format(AUCUNE_BASE_CONGE, idAgent));
-			return rmd;
+			if (isFromSIRH)
+				rmd.getInfos().add(String.format(AUCUNE_BASE_CONGE, idAgent));
+			else
+				rmd.getErrors().add(String.format(AUCUNE_BASE_CONGE, idAgent));
 		}
 
 		// 3. on check toutes les absences (meme MALADIES (AS400)) sauf ASA
 		if (!checkUnJourSansAbsenceSurLeMois(listAbsences, idAgent, dateMoisPrecedent, baseCongeAgent, listJoursFeries)) {
-			rmd.getErrors().add(String.format(AUCUNE_PA_ACTIVE_MOIS_PRECEDENT, idAgent));
-			return rmd;
+			if (isFromSIRH)
+				rmd.getInfos().add(String.format(AUCUNE_PA_ACTIVE_MOIS_PRECEDENT, idAgent));
+			else
+				rmd.getErrors().add(String.format(AUCUNE_PA_ACTIVE_MOIS_PRECEDENT, idAgent));
 		}
 
 		return rmd;
