@@ -106,7 +106,7 @@ public interface ITitreRepasService {
 	 *            Integer
 	 * @return boolean
 	 */
-	boolean checkPrimePanierEtFiliereIncendie(Integer idAgent);
+	boolean checkAffichageMenuTitreRepasAgent(Integer idAgent);
 
 	/**
 	 * Retourne la liste des états possible pour une demande de Titre Repas.

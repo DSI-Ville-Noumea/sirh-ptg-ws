@@ -10,6 +10,7 @@ public class AccessRightsDto implements IJSONSerialize {
 	private boolean visualisation;
 	private boolean approbation;
 	private boolean titreRepas;
+	private boolean titreRepasAgent;
 	// concerne la Indemnité forfaitaire travail DPM #30544
 	private boolean primeDpm;
 	private boolean saisiePrimesDpmOperateur;
@@ -66,5 +67,11 @@ public class AccessRightsDto implements IJSONSerialize {
 	@Override
 	public String serializeInJSON() {
 		return new JSONSerializer().exclude("*.class").serialize(this);
+	}
+	public boolean isTitreRepasAgent() {
+		return titreRepasAgent;
+	}
+	public void setTitreRepasAgent(boolean titreRepasAgent) {
+		this.titreRepasAgent = titreRepasAgent;
 	}
 }

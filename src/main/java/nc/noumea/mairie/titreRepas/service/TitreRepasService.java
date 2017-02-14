@@ -115,7 +115,7 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String					DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR			= "Vous ne pouvez approuver/refuser des titres repas qu'entre le 11 du mois et l'édition du payeur.";
 	public static final String					AUCUNE_PA_ACTIVE_MOIS_PRECEDENT								= "L'agent %s n'a pas travaillé le mois précédent.";
 	public static final String					AUCUNE_BASE_CONGE											= "La base congé n'est pas renseignée pour l'agent %s.";
-	public static final String					PRIME_PANIER												= "L'agent a le droit aux primes panier et ne peut donc pas commander des titres repas.";
+	public static final String					BASE_CONGE_C												= "L'agent est en base congé C et ne peut donc pas commander des titres repas.";
 	public static final String					FILIERE_INCENDIE											= "L'agent fait parti de la filière incendie et ne peut donc pas commander de titres repas.";
 	public static final String					TITRE_DEMANDE_DEJA_EXISTANT									= "Une demande de titre repas existe déjà pour ce mois-ci pour l'agent %s.";
 	public static final String					TITRE_DEMANDE_INEXISTANT									= "La demande de titre repas n'existe pas.";
@@ -669,11 +669,11 @@ public class TitreRepasService implements ITitreRepasService {
 
 		rmd = checkUnJourDePresenceSurLeMoisPrecedent(rmd, idAgent, dateMoisPrecedent, listAbsences, baseCongeAgent, listJoursFeries, isFromSIRH);
 
-		if (checkPrimePanierSurAffectation(affectation, idAgent)) {
+		if (checkBaseCongeCSurAffectation(affectation, idAgent)) {
 			if (isFromSIRH)
-				rmd.getInfos().add(PRIME_PANIER);
+				rmd.getInfos().add(BASE_CONGE_C);
 			else
-				rmd.getErrors().add(PRIME_PANIER);
+				rmd.getErrors().add(BASE_CONGE_C);
 		}
 
 		if (checkAgentIsFiliereIncendie(idAgent, dateMoisPrecedent)) {
@@ -688,7 +688,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 	/**
 	 * On verifie si l agent a le droit au prime panier ou fait parti de la
-	 * filiere Incendie.
+	 * filiere Incendie ou est en base congé C pour savoir si on affiche le menu
+	 * "mes titres repas"
 	 * 
 	 * Si oui, il n a pas le droit au Titre Repas.
 	 * 
@@ -697,7 +698,7 @@ public class TitreRepasService implements ITitreRepasService {
 	 * @return boolean
 	 */
 	@Override
-	public boolean checkPrimePanierEtFiliereIncendie(Integer idAgent) {
+	public boolean checkAffichageMenuTitreRepasAgent(Integer idAgent) {
 
 		Date dateMoisPrecedent = new DateTime(helperService.getCurrentDate()).minusMonths(1).toDate();
 
@@ -708,6 +709,10 @@ public class TitreRepasService implements ITitreRepasService {
 		AffectationDto affectation = getDernierAffectationByAgent(idAgent, listAffectation);
 
 		if (checkPrimePanierSurAffectation(affectation, idAgent)) {
+			return true;
+		}
+
+		if (checkBaseCongeCSurAffectation(affectation, idAgent)) {
 			return true;
 		}
 
@@ -824,6 +829,27 @@ public class TitreRepasService implements ITitreRepasService {
 				}
 			}
 		}
+		return result;
+	}
+
+	/**
+	 * On verifie que l agent est sur une base congé C sur son affectation
+	 * 
+	 * @param affectation
+	 *            AffectationDto
+	 * @param idAgent
+	 *            Integer
+	 * @return boolean
+	 */
+	protected boolean checkBaseCongeCSurAffectation(AffectationDto affectation, Integer idAgent) {
+
+		boolean result = false;
+		if (null != affectation && affectation.getIdAgent().equals(idAgent) && affectation.getBaseConge() != null) {
+			if (affectation.getBaseConge().getCodeBaseHoraireAbsence().equals("C")) {
+				result = true;
+			}
+		}
+
 		return result;
 	}
 

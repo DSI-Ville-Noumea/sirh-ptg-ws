@@ -62,6 +62,7 @@ public class TitreRepasServiceTest {
 	public void setting() {
 		baseConge.setIdRefTypeSaisiCongeAnnuel(1);
 		baseConge.setDecompteSamedi(true);
+		baseConge.setCodeBaseHoraireAbsence("C");
 	}
 
 	@Test
@@ -1162,6 +1163,7 @@ public class TitreRepasServiceTest {
 				dateFinMois)).thenReturn(listAffectation);
 
 		RefTypeAbsenceDto refTypeAbsence = new RefTypeAbsenceDto();
+		baseConge.setCodeBaseHoraireAbsence("A");
 		refTypeAbsence.setTypeSaisiCongeAnnuelDto(baseConge);
 		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
 		listTypeAbsence.add(refTypeAbsence);
@@ -1239,6 +1241,7 @@ public class TitreRepasServiceTest {
 				dateFinMois)).thenReturn(listAffectation);
 
 		RefTypeAbsenceDto refTypeAbsence = new RefTypeAbsenceDto();
+		baseConge.setCodeBaseHoraireAbsence("A");
 		refTypeAbsence.setTypeSaisiCongeAnnuelDto(baseConge);
 		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
 		listTypeAbsence.add(refTypeAbsence);
@@ -1310,6 +1313,7 @@ public class TitreRepasServiceTest {
 				dateFinMois)).thenReturn(listAffectation);
 
 		RefTypeAbsenceDto refTypeAbsence = new RefTypeAbsenceDto();
+		baseConge.setCodeBaseHoraireAbsence("A");
 		refTypeAbsence.setTypeSaisiCongeAnnuelDto(baseConge);
 		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
 		listTypeAbsence.add(refTypeAbsence);
@@ -1391,6 +1395,7 @@ public class TitreRepasServiceTest {
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto.getAgent().getIdAgent())).thenReturn(noMatr);
 
 		AffectationDto aff = new AffectationDto();
+		baseConge.setCodeBaseHoraireAbsence("A");
 		aff.setBaseConge(baseConge);
 		aff.setIdAgent(dto.getAgent().getIdAgent());
 
@@ -1480,6 +1485,7 @@ public class TitreRepasServiceTest {
 				dateFinMois)).thenReturn(listAffectation);
 
 		RefTypeAbsenceDto refTypeAbsence = new RefTypeAbsenceDto();
+		baseConge.setCodeBaseHoraireAbsence("A");
 		refTypeAbsence.setTypeSaisiCongeAnnuelDto(baseConge);
 		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
 		listTypeAbsence.add(refTypeAbsence);
@@ -1619,6 +1625,7 @@ public class TitreRepasServiceTest {
 				.thenReturn(listAffectation);
 
 		RefTypeAbsenceDto refTypeAbsence = new RefTypeAbsenceDto();
+		baseConge.setCodeBaseHoraireAbsence("A");
 		refTypeAbsence.setTypeSaisiCongeAnnuelDto(baseConge);
 		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
 		listTypeAbsence.add(refTypeAbsence);
@@ -1761,6 +1768,7 @@ public class TitreRepasServiceTest {
 				.thenReturn(listAffectation);
 
 		RefTypeAbsenceDto refTypeAbsence = new RefTypeAbsenceDto();
+		baseConge.setCodeBaseHoraireAbsence("A");
 		refTypeAbsence.setTypeSaisiCongeAnnuelDto(baseConge);
 		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
 		listTypeAbsence.add(refTypeAbsence);
