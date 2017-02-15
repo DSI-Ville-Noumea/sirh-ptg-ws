@@ -29,6 +29,10 @@ public class HelperService {
 		return new Date();
 	}
 
+	public Date getCurrentDatePlus1Mois() {
+		return new DateTime().plusMonths(1).toDate();
+	}
+
 	public boolean isDateAMonday(final Date date) {
 		return new DateTime(date).dayOfWeek().get() == 1;
 	}
@@ -198,6 +202,18 @@ public class HelperService {
 		return date.toDate();
 	}
 	
+	public Date getDatePremierJourOfMonthSuivant(Date dateMonth) {
+		
+		DateTime date = new DateTime(dateMonth)
+		    .withDayOfMonth(1)
+			.withHourOfDay(0)
+			.withMinuteOfHour(0)
+			.withSecondOfMinute(0)
+			.withMillisOfSecond(0).plusMonths(1);
+
+		return date.toDate();
+	}
+	
 	public Date getDateDernierJourOfMonth(Date dateMonth) {
 		
 		DateTime date = new DateTime(dateMonth)
@@ -206,6 +222,18 @@ public class HelperService {
 			.withMinuteOfHour(59)
 			.withSecondOfMinute(59)
 			.withMillisOfSecond(0);
+
+		return date.toDate();
+	}
+	
+	public Date getDateDernierJourOfMonthSuivant(Date dateMonth) {
+		
+		DateTime date = new DateTime(dateMonth)
+			.dayOfMonth().withMaximumValue()
+			.withHourOfDay(23)
+			.withMinuteOfHour(59)
+			.withSecondOfMinute(59)
+			.withMillisOfSecond(0).plusMonths(1);
 
 		return date.toDate();
 	}

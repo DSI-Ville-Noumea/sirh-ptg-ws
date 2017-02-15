@@ -389,6 +389,29 @@ public class HelperServiceTest {
 	}
 	
 	@Test 
+	public void getDatePremierJourOfMonthSuivant() {
+		
+		HelperService service = new HelperService();
+		Date date = service.getDatePremierJourOfMonthSuivant(new DateTime(2015,2,13,8,30,0).toDate());
+		
+		assertEquals(date, new DateTime(2015,3,1,0,0,0).toDate());
+	}
+	
+	@Test 
+	public void getDateDernierJourOfMonthSuivant() {
+		
+		HelperService service = new HelperService();
+		Date date = service.getDateDernierJourOfMonthSuivant(new DateTime(2015,2,13,8,30,0).toDate());
+		assertEquals(date, new DateTime(2015,3,28,23,59,59).toDate());
+		
+		date = service.getDateDernierJourOfMonthSuivant(new DateTime(2015,6,13,8,30,0).toDate());
+		assertEquals(date, new DateTime(2015,7,30,23,59,59).toDate());
+		
+		date = service.getDateDernierJourOfMonthSuivant(new DateTime(2015,12,13,8,30,0).toDate());
+		assertEquals(date, new DateTime(2016,01,31,23,59,59).toDate());
+	}
+	
+	@Test 
 	public void getDateDernierJourOfMonth() {
 		
 		HelperService service = new HelperService();

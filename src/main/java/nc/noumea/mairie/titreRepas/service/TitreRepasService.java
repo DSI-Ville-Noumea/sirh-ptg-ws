@@ -176,6 +176,7 @@ public class TitreRepasService implements ITitreRepasService {
 		// saisie entre le 1 et le 10
 		// si au dela du 10 du mois, cela ne sert a rien de faire tous les
 		// appels ci-dessous
+		//TODO
 		rmd = checkDateJourBetween1And10ofMonth(rmd);
 		if (!rmd.getErrors().isEmpty())
 			return rmd;
@@ -338,8 +339,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		// on force la date du mois en cours
-		dto.setDateMonth(helperService.getDatePremierJourOfMonth(new Date()));
+		// on force la date du mois en cours +1
+		dto.setDateMonth(helperService.getDatePremierJourOfMonthSuivant(new Date()));
 
 		// on verifie les donnees du DTO
 		result = checkDataTitreRepasDemandeDto(result, dto);
@@ -483,7 +484,7 @@ public class TitreRepasService implements ITitreRepasService {
 
 		// ////////////// on checke les DATES ////////////////////////
 		if (null == fromDate && null == toDate && null == dateMonth) {
-			toDate = helperService.getCurrentDate();
+			toDate = helperService.getCurrentDatePlus1Mois();
 			fromDate = new DateTime(helperService.getCurrentDate()).minusYears(1).toDate();
 		}
 
