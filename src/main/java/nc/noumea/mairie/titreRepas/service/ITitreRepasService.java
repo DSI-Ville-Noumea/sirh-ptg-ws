@@ -87,7 +87,7 @@ public interface ITitreRepasService {
 	 * cours - possible si l'agent a au - 1 jour de présence sur le mois
 	 * précédent : en activité (PA) + pas en absence : message d'erreur au clic
 	 * - exclure les agents qui ont au moins une prime panier saisie sur le mois
-	 * précédent - exclure les agents de la filière incendie (dans le grade
+	 * précédent - (dans le grade
 	 * générique de la carrière m-1) (si 2 carrières à cheval sur le mois m-1,
 	 * on prend la dernière saisie)
 	 *
@@ -97,8 +97,7 @@ public interface ITitreRepasService {
 			List<JourDto> listJoursFeries, AffectationDto affectation, boolean isFromSIRH);
 
 	/**
-	 * On verifie si l agent a le droit au prime panier ou fait parti de la
-	 * filiere Incendie.
+	 * On verifie si l agent a le droit aux titres repas
 	 * 
 	 * Si oui, il n a pas le droit au Titre Repas.
 	 * 

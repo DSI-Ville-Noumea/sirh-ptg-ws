@@ -116,7 +116,6 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String					AUCUNE_PA_ACTIVE_MOIS_PRECEDENT								= "L'agent %s n'a pas travaillé le mois précédent.";
 	public static final String					AUCUNE_BASE_CONGE											= "La base congé n'est pas renseignée pour l'agent %s.";
 	public static final String					BASE_CONGE_C												= "L'agent est en base congé C et ne peut donc pas commander des titres repas.";
-	public static final String					FILIERE_INCENDIE											= "L'agent fait parti de la filière incendie et ne peut donc pas commander de titres repas.";
 	public static final String					TITRE_DEMANDE_DEJA_EXISTANT									= "Une demande de titre repas existe déjà pour ce mois-ci pour l'agent %s.";
 	public static final String					TITRE_DEMANDE_INEXISTANT									= "La demande de titre repas n'existe pas.";
 	public static final String					DTO_NULL													= "Merci de saisir la demande de titre repas.";
@@ -216,15 +215,25 @@ public class TitreRepasService implements ITitreRepasService {
 				result.getErrors().addAll(response.getErrors());
 			}
 			if (!response.getInfos().isEmpty()) {
-				if (!result.getInfos().contains(response.getInfos().get(0))) {
-					result.getInfos().addAll(response.getInfos());
-				} else {
-					if (response.getInfos().get(0).equals(ENREGISTREMENT_OK)) {
-						result.getInfos().clear();
-						result.getInfos().add(ENREGISTREMENT_PLURIEL_OK);
-					}
-				}
+				result.getInfos().addAll(response.getInfos());
+
 			}
+		}
+
+		int nbEnregistrements = 0;
+		for (String inf : result.getInfos()) {
+			if (inf.equals(ENREGISTREMENT_OK))
+				nbEnregistrements++;
+		}
+		if (nbEnregistrements > 1) {
+			List<String> listeInfo = new ArrayList<>();
+			for (String inf : result.getInfos()) {
+				if (!inf.equals(ENREGISTREMENT_OK))
+					listeInfo.add(inf);
+			}
+			result.getInfos().clear();
+			result.getInfos().add(ENREGISTREMENT_PLURIEL_OK);
+			result.getInfos().addAll(listeInfo);
 		}
 
 		return result;
@@ -655,9 +664,9 @@ public class TitreRepasService implements ITitreRepasService {
 	 * RG : - saisie possible entre le 1 et le 10 de chaque mois pour le mois en
 	 * cours - possible si l'agent a au - 1 jour de présence sur le mois
 	 * précédent : en activité (PA) + pas d absence - exclure les agents qui ont
-	 * au moins une prime panier sur leur affectation - exclure les agents de la
-	 * filière incendie (dans le grade générique de la carrière m-1) (si 2
-	 * carrières à cheval sur le mois m-1, on prend la dernière saisie)
+	 * au moins une prime panier sur leur affectation - (dans le grade générique
+	 * de la carrière m-1) (si 2 carrières à cheval sur le mois m-1, on prend la
+	 * dernière saisie)
 	 *
 	 * @return ReturnMessageDto
 	 */
@@ -675,14 +684,6 @@ public class TitreRepasService implements ITitreRepasService {
 			else
 				rmd.getErrors().add(BASE_CONGE_C);
 		}
-
-		if (checkAgentIsFiliereIncendie(idAgent, dateMoisPrecedent)) {
-			if (isFromSIRH)
-				rmd.getInfos().add(FILIERE_INCENDIE);
-			else
-				rmd.getErrors().add(FILIERE_INCENDIE);
-		}
-
 		return rmd;
 	}
 

@@ -1647,8 +1647,6 @@ public class TitreRepasServiceTest {
 		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(noMatr2, dateDebutMois, dateFinMois)).thenReturn(listPA);
 		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(noMatr3, dateDebutMois, dateFinMois)).thenReturn(listPA);
 
-		Mockito.when(mairieRepository.getDerniereFiliereOfAgentOnPeriod(noMatr3, dateDebutMois, dateFinMois)).thenReturn("I");
-
 		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
 
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -1660,11 +1658,10 @@ public class TitreRepasServiceTest {
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromSIRH(idAgentConnecte, listDto);
 
 		assertEquals(0, result.getErrors().size());
-		assertEquals(4, result.getInfos().size());
+		assertEquals(3, result.getInfos().size());
 		assertEquals(result.getInfos().get(0), TitreRepasService.ENREGISTREMENT_OK);
 		assertEquals(result.getInfos().get(1), TitreRepasService.ENREGISTREMENT_OK);
-		assertEquals(result.getInfos().get(2), TitreRepasService.FILIERE_INCENDIE);
-		assertEquals(result.getInfos().get(3), TitreRepasService.ENREGISTREMENT_OK);
+		assertEquals(result.getInfos().get(2), TitreRepasService.ENREGISTREMENT_OK);
 		Mockito.verify(titreRepasRepository, Mockito.times(3)).persist(Mockito.isA(TitreRepasDemande.class));
 	}
 
@@ -1790,7 +1787,124 @@ public class TitreRepasServiceTest {
 		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(noMatr2, dateDebutMois, dateFinMois)).thenReturn(listPA);
 		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(noMatr3, dateDebutMois, dateFinMois)).thenReturn(listPA);
 
-		Mockito.when(mairieRepository.getDerniereFiliereOfAgentOnPeriod(noMatr3, dateDebutMois, dateFinMois)).thenReturn("I");
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+
+		IAccessRightsService accessRightsService = Mockito.mock(IAccessRightsService.class);
+		Mockito.when(accessRightsService.isUserApprobateur(idAgentConnecte)).thenReturn(true);
+		Mockito.when(accessRightsService.isUserOperateur(idAgentConnecte)).thenReturn(false);
+
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "accessRightsService", accessRightsService);
+
+		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, listDto);
+
+		assertEquals(0, result.getErrors().size());
+		assertEquals(1, result.getInfos().size());
+		assertEquals(result.getInfos().get(0), TitreRepasService.ENREGISTREMENT_PLURIEL_OK);
+		Mockito.verify(titreRepasRepository, Mockito.times(3)).persist(Mockito.isA(TitreRepasDemande.class));
+	}
+
+	@Test
+	public void enregistreListTitreDemandeFromKiosque_errorBaseConge() {
+
+		Integer idAgentConnecte = 9005138;
+
+		AgentWithServiceDto ag3 = new AgentWithServiceDto();
+		ag3.setIdAgent(9009999);
+		AgentWithServiceDto ag2 = new AgentWithServiceDto();
+		ag2.setIdAgent(9005854);
+		AgentWithServiceDto ag = new AgentWithServiceDto();
+		ag.setIdAgent(9005131);
+
+		TitreRepasDemandeDto dto = new TitreRepasDemandeDto();
+		dto.setDateMonth(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
+		dto.setCommande(true);
+		dto.setCommentaire("commentaire 1");
+		dto.setAgent(ag);
+		dto.setIdRefEtat(EtatPointageEnum.SAISI.getCodeEtat());
+
+		TitreRepasDemandeDto dto2 = new TitreRepasDemandeDto();
+		dto2.setDateMonth(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
+		dto2.setCommande(false);
+		dto2.setCommentaire("commentaire 2");
+		dto2.setAgent(ag2);
+		dto2.setIdRefEtat(EtatPointageEnum.SAISI.getCodeEtat());
+
+		TitreRepasDemandeDto dto3 = new TitreRepasDemandeDto();
+		dto3.setDateMonth(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
+		dto3.setCommande(true);
+		dto3.setCommentaire("commentaire 3");
+		dto3.setAgent(ag3);
+		dto3.setIdRefEtat(EtatPointageEnum.SAISI.getCodeEtat());
+
+		List<TitreRepasDemandeDto> listDto = new ArrayList<TitreRepasDemandeDto>();
+		listDto.add(dto);
+		listDto.add(dto2);
+		listDto.add(dto3);
+
+		Date dateDebutMois = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date dateFinMois = new DateTime(2015, 10, 31, 0, 0, 0).toDate();
+
+		Integer noMatr = dto.getAgent().getIdAgent() - 9000000;
+		Integer noMatr2 = dto2.getAgent().getIdAgent() - 9000000;
+		Integer noMatr3 = dto3.getAgent().getIdAgent() - 9000000;
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
+		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
+		Mockito.when(helperService.getDateDernierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateFinMois);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(dto.getAgent().getIdAgent())).thenReturn(noMatr);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(dto2.getAgent().getIdAgent())).thenReturn(noMatr2);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(dto3.getAgent().getIdAgent())).thenReturn(noMatr3);
+
+		AffectationDto aff = new AffectationDto();
+		aff.setBaseConge(baseConge);
+		aff.setIdAgent(dto.getAgent().getIdAgent());
+
+		AffectationDto aff2 = new AffectationDto();
+		aff2.setBaseConge(baseConge);
+		aff2.setIdAgent(dto2.getAgent().getIdAgent());
+
+		AffectationDto aff3 = new AffectationDto();
+		aff3.setBaseConge(baseConge);
+		aff3.setIdAgent(dto3.getAgent().getIdAgent());
+
+		List<AffectationDto> listAffectation = new ArrayList<AffectationDto>();
+		listAffectation.add(aff);
+		listAffectation.add(aff2);
+		listAffectation.add(aff3);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.getListeJoursFeries(dateDebutMois, dateFinMois)).thenReturn(new ArrayList<JourDto>());
+		Mockito.when(sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(
+				Arrays.asList(dto.getAgent().getIdAgent(), dto2.getAgent().getIdAgent(), dto3.getAgent().getIdAgent()), dateDebutMois, dateFinMois))
+				.thenReturn(listAffectation);
+
+		RefTypeAbsenceDto refTypeAbsence = new RefTypeAbsenceDto();
+		refTypeAbsence.setTypeSaisiCongeAnnuelDto(baseConge);
+		List<RefTypeAbsenceDto> listTypeAbsence = new ArrayList<RefTypeAbsenceDto>();
+		listTypeAbsence.add(refTypeAbsence);
+
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		Mockito.when(absWsConsumer.getListAbsencesForListAgentsBetween2Dates(
+				Arrays.asList(dto.getAgent().getIdAgent(), dto2.getAgent().getIdAgent(), dto3.getAgent().getIdAgent()), dateDebutMois, dateFinMois))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListeTypAbsenceCongeAnnuel()).thenReturn(listTypeAbsence);
+
+		Spadmn pa = new Spadmn();
+		pa.setCdpadm("01");
+
+		List<Spadmn> listPA = new ArrayList<Spadmn>();
+		listPA.add(pa);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(noMatr, dateDebutMois, dateFinMois)).thenReturn(listPA);
+		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(noMatr2, dateDebutMois, dateFinMois)).thenReturn(listPA);
+		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(noMatr3, dateDebutMois, dateFinMois)).thenReturn(listPA);
 
 		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
 
@@ -1807,11 +1921,10 @@ public class TitreRepasServiceTest {
 
 		ReturnMessageDto result = service.enregistreListTitreDemandeFromKiosque(idAgentConnecte, listDto);
 
-		assertEquals(1, result.getErrors().size());
-		assertEquals(1, result.getInfos().size());
-		assertEquals(result.getInfos().get(0), TitreRepasService.ENREGISTREMENT_PLURIEL_OK);
-		assertEquals(result.getErrors().get(0), TitreRepasService.FILIERE_INCENDIE);
-		Mockito.verify(titreRepasRepository, Mockito.times(2)).persist(Mockito.isA(TitreRepasDemande.class));
+		assertEquals(3, result.getErrors().size());
+		assertEquals(0, result.getInfos().size());
+		assertEquals(result.getErrors().get(0), TitreRepasService.BASE_CONGE_C);
+		Mockito.verify(titreRepasRepository, Mockito.times(0)).persist(Mockito.isA(TitreRepasDemande.class));
 	}
 
 	@Test
