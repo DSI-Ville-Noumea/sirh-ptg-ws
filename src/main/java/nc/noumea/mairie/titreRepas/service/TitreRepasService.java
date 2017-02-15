@@ -374,7 +374,7 @@ public class TitreRepasService implements ITitreRepasService {
 
 			// si pas de changement, on ne fait rien
 			if (dto.getIdRefEtat().equals(trDemande.getLatestEtatTitreRepasDemande().getEtat().getCodeEtat())
-					&& dto.getCommande().equals(trDemande.getCommande())) {
+					&& dto.getCommande() == trDemande.getCommande()) {
 				result.getInfos().add(ENREGISTREMENT_OK);
 				return result;
 			}

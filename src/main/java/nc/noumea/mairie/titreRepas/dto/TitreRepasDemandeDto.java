@@ -22,7 +22,7 @@ public class TitreRepasDemandeDto {
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
 	private Date dateMonth;
-	private Boolean commande;
+	private boolean commande;
 	private String commentaire;
 	private AgentWithServiceDto operateur;
 
@@ -62,11 +62,11 @@ public class TitreRepasDemandeDto {
 		this.dateMonth = dateMonth;
 	}
 
-	public Boolean getCommande() {
+	public boolean getCommande() {
 		return commande;
 	}
 
-	public void setCommande(Boolean commande) {
+	public void setCommande(boolean commande) {
 		this.commande = commande;
 	}
 

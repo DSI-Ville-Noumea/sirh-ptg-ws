@@ -22,6 +22,8 @@ import javax.persistence.Transient;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Type;
+
 @Entity
 @Table(name = "PTG_TR_DEMANDE")
 @NamedQueries({
@@ -44,7 +46,8 @@ public class TitreRepasDemande {
 	private Date dateMonth;
 	
 	@Column(name = "COMMANDE")
-	private Boolean commande;
+	@Type(type = "boolean")
+	private boolean commande;
 
 	@OneToMany(mappedBy = "titreRepasDemande", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.PERSIST)
 	@OrderBy("idTrEtatDemande desc")
@@ -99,11 +102,11 @@ public class TitreRepasDemande {
 		this.version = version;
 	}
 
-	public Boolean getCommande() {
+	public boolean getCommande() {
 		return commande;
 	}
 
-	public void setCommande(Boolean commande) {
+	public void setCommande(boolean commande) {
 		this.commande = commande;
 	}
 	

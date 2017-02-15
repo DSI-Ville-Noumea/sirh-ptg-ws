@@ -1437,6 +1437,7 @@ public class TitreRepasServiceTest {
 
 		TitreRepasEtatDemande etatJournalise = new TitreRepasEtatDemande();
 		etatJournalise.setEtat(EtatPointageEnum.SAISI);
+		etatJournalise.setCommande(true);
 
 		TitreRepasDemande tr = new TitreRepasDemande();
 		tr.getEtats().add(etatJournalise);
