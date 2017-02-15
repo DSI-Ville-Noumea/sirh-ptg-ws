@@ -1072,11 +1072,13 @@ public class TitreRepasServiceTest {
 		dto.setIdRefEtat(EtatPointageEnum.SAISI.getCodeEtat());
 
 		Date dateDebutMois = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
 		Date dateFinMois = new DateTime(2015, 10, 31, 0, 0, 0).toDate();
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(dateDebutMoisSuivant);
 		Mockito.when(helperService.getDateDernierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateFinMois);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto.getAgent().getIdAgent())).thenReturn(noMatr);
 
@@ -1134,8 +1136,9 @@ public class TitreRepasServiceTest {
 		AgentWithServiceDto ag = new AgentWithServiceDto();
 		ag.setIdAgent(idAgentConnecte);
 
+		Date dateDebutMoisSuiv = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
+
 		TitreRepasDemandeDto dto = new TitreRepasDemandeDto();
-		dto.setDateMonth(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		dto.setCommande(true);
 		dto.setCommentaire("commentaire");
 		dto.setAgent(ag);
@@ -1161,6 +1164,7 @@ public class TitreRepasServiceTest {
 		Mockito.when(sirhWsConsumer.getListeJoursFeries(dateDebutMois, dateFinMois)).thenReturn(new ArrayList<JourDto>());
 		Mockito.when(sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(Arrays.asList(dto.getAgent().getIdAgent()), dateDebutMois,
 				dateFinMois)).thenReturn(listAffectation);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(dateDebutMoisSuiv);
 
 		RefTypeAbsenceDto refTypeAbsence = new RefTypeAbsenceDto();
 		baseConge.setCodeBaseHoraireAbsence("A");
@@ -1186,8 +1190,7 @@ public class TitreRepasServiceTest {
 		listTitreRepasDemande.add(new TitreRepasDemande());
 
 		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
-		Mockito.when(
-				titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()), null, null, null, null, dto.getDateMonth()))
+		Mockito.when(titreRepasRepository.getListTitreRepasDemande(Mockito.anyListOf(Integer.class), Mockito.any(Date.class), Mockito.any(Date.class), Mockito.any(Integer.class), Mockito.any(boolean.class), Mockito.any(Date.class)))
 				.thenReturn(listTitreRepasDemande);
 
 		ReflectionTestUtils.setField(service, "helperService", helperService);
@@ -1220,11 +1223,13 @@ public class TitreRepasServiceTest {
 		dto.setIdTrDemande(1);
 
 		Date dateDebutMois = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
 		Date dateFinMois = new DateTime(2015, 10, 31, 0, 0, 0).toDate();
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(dateDebutMoisSuivant);
 		Mockito.when(helperService.getDateDernierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateFinMois);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto.getAgent().getIdAgent())).thenReturn(noMatr);
 
@@ -1292,10 +1297,12 @@ public class TitreRepasServiceTest {
 		dto.setIdTrDemande(1);
 
 		Date dateDebutMois = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
 		Date dateFinMois = new DateTime(2015, 10, 31, 0, 0, 0).toDate();
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(dateDebutMoisSuivant);
 		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
 		Mockito.when(helperService.getDateDernierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateFinMois);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto.getAgent().getIdAgent())).thenReturn(noMatr);
@@ -1386,11 +1393,13 @@ public class TitreRepasServiceTest {
 		dto.setIdTrDemande(1);
 
 		Date dateDebutMois = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date dateDebutMoisSuiv = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
 		Date dateFinMois = new DateTime(2015, 10, 31, 0, 0, 0).toDate();
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(dateDebutMoisSuiv);
 		Mockito.when(helperService.getDateDernierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateFinMois);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto.getAgent().getIdAgent())).thenReturn(noMatr);
 
@@ -1457,18 +1466,19 @@ public class TitreRepasServiceTest {
 		ag.setIdAgent(idAgentConnecte);
 
 		TitreRepasDemandeDto dto = new TitreRepasDemandeDto();
-		dto.setDateMonth(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		dto.setCommande(true);
 		dto.setCommentaire("commentaire");
 		dto.setAgent(ag);
 		dto.setIdRefEtat(EtatPointageEnum.SAISI.getCodeEtat());
 
 		Date dateDebutMois = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date dateDebutMoisSuiv = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
 		Date dateFinMois = new DateTime(2015, 10, 31, 0, 0, 0).toDate();
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(dateDebutMoisSuiv);
 		Mockito.when(helperService.getDateDernierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateFinMois);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto.getAgent().getIdAgent())).thenReturn(noMatr);
 
@@ -1586,6 +1596,7 @@ public class TitreRepasServiceTest {
 		listDto.add(dto3);
 
 		Date dateDebutMois = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date dateDebutMoisSuiv = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
 		Date dateFinMois = new DateTime(2015, 10, 31, 0, 0, 0).toDate();
 
 		Integer noMatr = dto.getAgent().getIdAgent() - 9000000;
@@ -1595,6 +1606,7 @@ public class TitreRepasServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(dateDebutMoisSuiv);
 		Mockito.when(helperService.getDateDernierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateFinMois);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto.getAgent().getIdAgent())).thenReturn(noMatr);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto2.getAgent().getIdAgent())).thenReturn(noMatr2);
@@ -1727,6 +1739,7 @@ public class TitreRepasServiceTest {
 		listDto.add(dto3);
 
 		Date dateDebutMois = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
 		Date dateFinMois = new DateTime(2015, 10, 31, 0, 0, 0).toDate();
 
 		Integer noMatr = dto.getAgent().getIdAgent() - 9000000;
@@ -1736,6 +1749,7 @@ public class TitreRepasServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(dateDebutMoisSuivant);
 		Mockito.when(helperService.getDateDernierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateFinMois);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto.getAgent().getIdAgent())).thenReturn(noMatr);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto2.getAgent().getIdAgent())).thenReturn(noMatr2);
@@ -1847,6 +1861,7 @@ public class TitreRepasServiceTest {
 		listDto.add(dto3);
 
 		Date dateDebutMois = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date dateDebutMoisSuiv = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
 		Date dateFinMois = new DateTime(2015, 10, 31, 0, 0, 0).toDate();
 
 		Integer noMatr = dto.getAgent().getIdAgent() - 9000000;
@@ -1856,6 +1871,7 @@ public class TitreRepasServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateDebutMois);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(dateDebutMoisSuiv);
 		Mockito.when(helperService.getDateDernierJourOfMonth(Mockito.any(Date.class))).thenReturn(dateFinMois);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto.getAgent().getIdAgent())).thenReturn(noMatr);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(dto2.getAgent().getIdAgent())).thenReturn(noMatr2);
@@ -2205,6 +2221,7 @@ public class TitreRepasServiceTest {
 
 		Date fromDate = new DateTime(2015, 9, 1, 0, 0, 0).toDate();
 		Date toDate = new DateTime(2015, 9, 30, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
 
 		AffectationDto aff = new AffectationDto();
 		aff.setIdAgent(agent.getIdAgent());
@@ -2221,6 +2238,8 @@ public class TitreRepasServiceTest {
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new DateTime(2015, 10, 11, 0, 0, 0).toDate());
 		Mockito.when(helperService.getDatePremierJourOfMonth(Mockito.any(Date.class))).thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
+
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(dateDebutMoisSuivant);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(9005138)).thenReturn(5138);
 		Mockito.when(helperService.getDatePremierJourOfMonth(new DateTime(2015, 9, 1, 0, 0, 0).toDate())).thenReturn(fromDate);
 		Mockito.when(helperService.getDateDernierJourOfMonth(new DateTime(2015, 9, 1, 0, 0, 0).toDate())).thenReturn(toDate);
@@ -2245,7 +2264,7 @@ public class TitreRepasServiceTest {
 
 		ReturnMessageDto erreuUser = new ReturnMessageDto();
 		erreuUser.getErrors().add("bad user");
-		
+
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
@@ -2269,7 +2288,7 @@ public class TitreRepasServiceTest {
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
-		
+
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 
 		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
@@ -2296,7 +2315,7 @@ public class TitreRepasServiceTest {
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(currentDate);
-		
+
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 
 		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
@@ -2333,7 +2352,7 @@ public class TitreRepasServiceTest {
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
-		
+
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
@@ -2373,7 +2392,7 @@ public class TitreRepasServiceTest {
 		List<TitreRepasDemande> listeTr = new ArrayList<>();
 		listeTr.add(tr1);
 		listeTr.add(tr2);
-		
+
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(1);
 

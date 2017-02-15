@@ -176,7 +176,6 @@ public class TitreRepasService implements ITitreRepasService {
 		// saisie entre le 1 et le 10
 		// si au dela du 10 du mois, cela ne sert a rien de faire tous les
 		// appels ci-dessous
-		//TODO
 		rmd = checkDateJourBetween1And10ofMonth(rmd);
 		if (!rmd.getErrors().isEmpty())
 			return rmd;
@@ -770,8 +769,11 @@ public class TitreRepasService implements ITitreRepasService {
 	}
 
 	protected ReturnMessageDto checkDateJourBetween11OfMonthAndGeneration(ReturnMessageDto rmd) {
-
 		DateTime dateJour = new DateTime(helperService.getCurrentDate());
+		if (dateJour.getDayOfMonth() <= 10) {
+			rmd.getErrors().add(DATE_ETAT_NON_COMPRISE_ENTRE_11_ET_EDITION_PAYEUR);
+			return rmd;
+		}
 
 		// action possible si pas de génération pour le mois en cours
 		TitreRepasEtatPayeur etatPourMois = titreRepasRepository.getTitreRepasEtatPayeurByMonth(new LocalDate(dateJour).withDayOfMonth(1).toDate());
