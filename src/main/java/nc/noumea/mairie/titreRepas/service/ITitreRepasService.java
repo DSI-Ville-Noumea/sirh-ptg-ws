@@ -105,7 +105,7 @@ public interface ITitreRepasService {
 	 *            Integer
 	 * @return boolean
 	 */
-	boolean checkAffichageMenuTitreRepasAgent(Integer idAgent);
+	boolean checkAffichageMenuTitreRepasAgent(Integer idAgent, Date dateJour);
 
 	/**
 	 * Retourne la liste des états possible pour une demande de Titre Repas.

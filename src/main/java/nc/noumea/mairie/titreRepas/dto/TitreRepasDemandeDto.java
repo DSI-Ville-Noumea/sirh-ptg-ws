@@ -2,29 +2,29 @@ package nc.noumea.mairie.titreRepas.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.JsonDateDeserializer;
 import nc.noumea.mairie.ptg.dto.JsonDateSerializer;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 public class TitreRepasDemandeDto {
 
-	private Integer idTrDemande;
-	private AgentWithServiceDto agent;
-	private Integer idRefEtat;
+	private Integer				idTrDemande;
+	private AgentWithServiceDto	agent;
+	private Integer				idRefEtat;
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
-	private Date dateSaisie;
+	private Date				dateSaisie;
 	@JsonSerialize(using = JsonDateSerializer.class)
 	@JsonDeserialize(using = JsonDateDeserializer.class)
-	private Date dateMonth;
-	private boolean commande;
-	private String commentaire;
-	private AgentWithServiceDto operateur;
+	private Date				dateMonth;
+	private boolean				commande;
+	private String				commentaire;
+	private AgentWithServiceDto	operateur;
 
 	public TitreRepasDemandeDto() {
 		super();
@@ -35,7 +35,7 @@ public class TitreRepasDemandeDto {
 		this.idTrDemande = titreRepasDemande.getIdTrDemande();
 		this.agent = agent;
 		this.dateMonth = titreRepasDemande.getDateMonth();
-		this.setCommande(titreRepasDemande.getCommande());
+		this.commande = titreRepasDemande.getCommande();
 	}
 
 	public void updateEtat(TitreRepasEtatDemande etat, AgentWithServiceDto ope) {
@@ -43,7 +43,7 @@ public class TitreRepasDemandeDto {
 		dateSaisie = etat.getDateMaj();
 		operateur = ope;
 		commentaire = etat.getCommentaire();
-		this.setCommande(etat.getCommande());
+		commande = etat.getCommande();
 	}
 
 	public Integer getIdTrDemande() {

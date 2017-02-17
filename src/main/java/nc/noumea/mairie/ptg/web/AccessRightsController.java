@@ -60,7 +60,7 @@ public class AccessRightsController {
 		if (accessRightService.findAgent(convertedIdAgent) == null)
 			throw new NotFoundException();
 
-		AccessRightsDto result = accessRightService.getAgentAccessRights(convertedIdAgent);
+		AccessRightsDto result = accessRightService.getAgentAccessRights(convertedIdAgent,new Date());
 
 		return new ResponseEntity<String>(result.serializeInJSON(), HttpStatus.OK);
 	}

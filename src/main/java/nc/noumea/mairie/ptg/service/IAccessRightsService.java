@@ -14,7 +14,7 @@ import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
 public interface IAccessRightsService {
 
-	AccessRightsDto getAgentAccessRights(Integer idAgent);
+	AccessRightsDto getAgentAccessRights(Integer idAgent,Date dateJour);
 
 	DelegatorAndOperatorsDto getDelegatorAndOperators(Integer idAgent);
 

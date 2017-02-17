@@ -61,7 +61,7 @@ public class AccessRightsService implements IAccessRightsService {
 	private IDpmService dpmService;
 
 	@Override
-	public AccessRightsDto getAgentAccessRights(Integer idAgent) {
+	public AccessRightsDto getAgentAccessRights(Integer idAgent,Date dateJour) {
 
 		AccessRightsDto result = new AccessRightsDto();
 
@@ -75,7 +75,7 @@ public class AccessRightsService implements IAccessRightsService {
 			result.setTitreRepas(da.isApprobateur() || da.isOperateur());
 		}
 
-		result.setTitreRepasAgent(!titreRepasService.checkAffichageMenuTitreRepasAgent(idAgent));
+		result.setTitreRepasAgent(titreRepasService.checkAffichageMenuTitreRepasAgent(idAgent,dateJour));
 		result.setPrimeDpm(dpmService.isDroitAgentToIndemniteForfaitaireDPM(idAgent));
 		
 		//  #30544 concerne la Indemnité forfaitaire travail DPM

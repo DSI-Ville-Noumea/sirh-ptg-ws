@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +41,6 @@ public class EtatPrestataireTitreRepasReporting {
 	private static final String		NEW_LINE_SEPARATOR							= "\n";
 	private static final Object[]	FILE_HEADER									= { "Civilité", "Nom", "Prénom", "Date de naissance" };
 
-	private SimpleDateFormat		sdf											= new SimpleDateFormat("dd/MM/yyyy");
-
 	public void downloadEtatPrestataireTitreRepas(TitreRepasEtatPrestataire etatPrestataireTR, List<TitreRepasDemandeDto> listDemandeTR)
 			throws DocumentException, MalformedURLException, IOException {
 
@@ -62,7 +59,7 @@ public class EtatPrestataireTitreRepasReporting {
 			studentDataRecord.add(agentDto.getTitre().toUpperCase().trim());
 			studentDataRecord.add(agentDto.getAgent().getDisplayNom().toUpperCase().trim());
 			studentDataRecord.add(agentDto.getAgent().getDisplayPrenom().toUpperCase().trim());
-			studentDataRecord.add(sdf.format(agentDto.getDateNaissance()));
+			studentDataRecord.add("");
 			csvPrinter.printRecord(studentDataRecord);
 
 		}

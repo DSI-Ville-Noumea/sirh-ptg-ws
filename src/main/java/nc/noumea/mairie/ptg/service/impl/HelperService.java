@@ -214,6 +214,18 @@ public class HelperService {
 		return date.toDate();
 	}
 	
+	public Date getDatePremierJourOfMonthPrecedent(Date dateMonth) {
+		
+		DateTime date = new DateTime(dateMonth)
+		    .withDayOfMonth(1)
+			.withHourOfDay(0)
+			.withMinuteOfHour(0)
+			.withSecondOfMinute(0)
+			.withMillisOfSecond(0).minusMonths(1);
+
+		return date.toDate();
+	}
+	
 	public Date getDateDernierJourOfMonth(Date dateMonth) {
 		
 		DateTime date = new DateTime(dateMonth)
@@ -234,6 +246,18 @@ public class HelperService {
 			.withMinuteOfHour(59)
 			.withSecondOfMinute(59)
 			.withMillisOfSecond(0).plusMonths(1);
+
+		return date.toDate();
+	}
+	
+	public Date getDateDernierJourOfMonthPrecedent(Date dateMonth) {
+		
+		DateTime date = new DateTime(dateMonth)
+			.dayOfMonth().withMaximumValue()
+			.withHourOfDay(23)
+			.withMinuteOfHour(59)
+			.withSecondOfMinute(59)
+			.withMillisOfSecond(0).minusMonths(1);
 
 		return date.toDate();
 	}
