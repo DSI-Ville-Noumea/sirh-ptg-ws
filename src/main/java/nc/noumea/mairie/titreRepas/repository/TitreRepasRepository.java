@@ -13,6 +13,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
+import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 
 @Repository
 public class TitreRepasRepository implements ITitreRepasRepository {
@@ -143,6 +144,51 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 			result = list.get(0);
 		}
 		return result;
+	}
+
+	@Override
+	public TitreRepasExportEtatPayeurTask getTitreRepasEtatPayeurTaskByMonthAndStatus(Date date, String statut) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(tr) from TitreRepasExportEtatPayeurTask tr ");
+		sb.append("where tr.dateMonth = :dateMonth ");
+		if (statut == null) {
+			sb.append("and tr.taskStatus is null ");
+		} else {
+			sb.append("and tr.taskStatus = :statut ");
+		}
+
+		TypedQuery<TitreRepasExportEtatPayeurTask> query = ptgEntityManager.createQuery(sb.toString(), TitreRepasExportEtatPayeurTask.class);
+
+		query.setParameter("dateMonth", date);
+		if (statut != null) {
+			query.setParameter("statut", statut);
+		}
+		TitreRepasExportEtatPayeurTask result = null;
+		List<TitreRepasExportEtatPayeurTask> list = query.getResultList();
+		if (list.size() > 0) {
+			result = list.get(0);
+		}
+		return result;
+	}
+
+	@Override
+	public void persisTitreRepasExportEtatPayeurTask(TitreRepasExportEtatPayeurTask task) {
+		ptgEntityManager.persist(task);
+	}
+
+	@Override
+	public List<TitreRepasExportEtatPayeurTask> getListTitreRepasTaskErreur() {
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(tr) from TitreRepasExportEtatPayeurTask tr ");
+		sb.append("where tr.taskStatus != :statut ");
+		sb.append("and tr.taskStatus is not null ");
+
+		TypedQuery<TitreRepasExportEtatPayeurTask> query = ptgEntityManager.createQuery(sb.toString(), TitreRepasExportEtatPayeurTask.class);
+
+		query.setParameter("statut", "OK");
+
+		return query.getResultList();
 	}
 
 }

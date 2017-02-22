@@ -2,6 +2,7 @@ package nc.noumea.mairie.titreRepas.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -31,6 +32,7 @@ import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
+import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
@@ -47,6 +49,7 @@ import nc.noumea.mairie.sirh.dto.AffectationDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
+import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurTaskDto;
 import nc.noumea.mairie.titreRepas.repository.ITitreRepasRepository;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -2112,8 +2115,10 @@ public class TitreRepasServiceTest {
 	}
 
 	@Test
-	public void genereEtatPayeur_PaieEnCours() {
+	public void genereEtatPayeur_EtatDejaGenere() {
 		Integer idAgent = 9005138;
+		Date dateJour = new DateTime(2016, 02, 25, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2016, 03, 01, 0, 0, 0).toDate();
 
 		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
 		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(true);
@@ -2123,9 +2128,89 @@ public class TitreRepasServiceTest {
 
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(dateJour)).thenReturn(dateDebutMoisSuivant);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurByMonth(dateDebutMoisSuivant)).thenReturn(new TitreRepasEtatPayeur());
+
 		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), TitreRepasService.GENERATION_EXIST);
+		Mockito.verify(mairieRepository, Mockito.never()).mergeEntity(Mockito.isA(Spchge.class));
+	}
+
+	@Test
+	public void genereEtatPayeur_EtatDejaGenere_avecTaskOK() {
+		Integer idAgent = 9005138;
+		Date dateJour = new DateTime(2016, 02, 25, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2016, 03, 01, 0, 0, 0).toDate();
+
+		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(true);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(dateJour)).thenReturn(dateDebutMoisSuivant);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurByMonth(dateDebutMoisSuivant)).thenReturn(null);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateDebutMoisSuivant, "OK"))
+				.thenReturn(new TitreRepasExportEtatPayeurTask());
+
+		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), TitreRepasService.GENERATION_EXIST);
+		Mockito.verify(mairieRepository, Mockito.never()).mergeEntity(Mockito.isA(Spchge.class));
+	}
+
+	@Test
+	public void genereEtatPayeur_PaieEnCours() {
+		Integer idAgent = 9005138;
+		Date dateJour = new DateTime(2016, 02, 25, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2016, 03, 01, 0, 0, 0).toDate();
+
+		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(true);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(dateJour)).thenReturn(dateDebutMoisSuivant);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurByMonth(dateDebutMoisSuivant)).thenReturn(null);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateDebutMoisSuivant, "OK")).thenReturn(null);
+
+		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
 
@@ -2908,6 +2993,142 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		assertTrue(service.checkPAUnJourActiviteMinimumsurMoisPrecedent(idAgent, dateMonth));
+	}
+
+	@Test
+	public void isEtatPayeurRunning_ReturnTrue() {
+
+		Date dateJour = new DateTime(2015, 10, 22, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(dateJour)).thenReturn(dateDebutMoisSuivant);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateDebutMoisSuivant, null))
+				.thenReturn(new TitreRepasExportEtatPayeurTask());
+
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+
+		assertTrue(service.isEtatPayeurRunning());
+	}
+
+	@Test
+	public void isEtatPayeurRunning_ReturnFalse() {
+
+		Date dateJour = new DateTime(2015, 10, 22, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(dateJour)).thenReturn(dateDebutMoisSuivant);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateDebutMoisSuivant, null)).thenReturn(null);
+
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+
+		assertFalse(service.isEtatPayeurRunning());
+	}
+
+	@Test
+	public void startEtatPayeurTitreRepas_OK() {
+		Integer idAgent = 9005138;
+
+		Date dateJour = new DateTime(2015, 10, 22, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
+
+		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(false);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(dateJour)).thenReturn(dateDebutMoisSuivant);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurByMonth(dateDebutMoisSuivant)).thenReturn(null);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateDebutMoisSuivant, "OK")).thenReturn(null);
+
+		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		ReturnMessageDto result = service.startEtatPayeurTitreRepas(idAgent);
+
+		assertNotNull(result);
+		assertEquals(0, result.getErrors().size());
+		Mockito.verify(titreRepasRepository, Mockito.times(1))
+				.persisTitreRepasExportEtatPayeurTask(Mockito.isA(TitreRepasExportEtatPayeurTask.class));
+	}
+
+	@Test
+	public void getListTitreRepasTaskErreur_NoResult() {
+		Date dateJour = new DateTime(2015, 10, 22, 0, 0, 0).toDate();
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getListTitreRepasTaskErreur()).thenReturn(new ArrayList<TitreRepasExportEtatPayeurTask>());
+
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		List<TitreRepasEtatPayeurTaskDto> result = service.getListTitreRepasTaskErreur();
+
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void getListTitreRepasTaskErreur_Result() {
+		Date dateJour = new DateTime(2015, 10, 22, 0, 0, 0).toDate();
+
+		AgentWithServiceDto agDto1 = new AgentWithServiceDto();
+		agDto1.setIdAgent(9002990);
+		agDto1.setNom("TOTO");
+		agDto1.setService("service");
+		agDto1.setIdServiceADS(11);
+
+		TitreRepasExportEtatPayeurTask task = new TitreRepasExportEtatPayeurTask();
+		task.setIdAgent(9002990);
+		task.setDateMonth(new DateTime(2015, 11, 01, 0, 0, 0).toDate());
+		task.setDateExport(dateJour);
+		task.setTaskStatus("Erreur");
+
+		List<TitreRepasExportEtatPayeurTask> listErr = new ArrayList<TitreRepasExportEtatPayeurTask>();
+		listErr.add(task);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getListTitreRepasTaskErreur()).thenReturn(listErr);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.getAgentService(task.getIdAgent(), dateJour)).thenReturn(agDto1);
+
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+
+		List<TitreRepasEtatPayeurTaskDto> result = service.getListTitreRepasTaskErreur();
+
+		assertEquals(1, result.size());
+		assertEquals(new Integer(9002990), result.get(0).getIdAgent());
+		assertEquals(dateJour, result.get(0).getDateExport());
+		assertEquals(new DateTime(2015, 11, 01, 0, 0, 0).toDate(), result.get(0).getDateMonth());
+		assertEquals("Erreur", result.get(0).getErreur());
+		assertEquals("TOTO", result.get(0).getAgent().getNom());
 	}
 
 }

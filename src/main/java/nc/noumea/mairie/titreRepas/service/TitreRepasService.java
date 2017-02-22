@@ -37,6 +37,7 @@ import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
+import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
 import nc.noumea.mairie.ptg.dto.RefPrimeDto;
@@ -56,6 +57,7 @@ import nc.noumea.mairie.sirh.dto.JourDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurDto;
+import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurTaskDto;
 import nc.noumea.mairie.titreRepas.repository.ITitreRepasRepository;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -127,6 +129,7 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String					ERROR_ETAT_DEMANDE											= "Vous ne pouvez pas %s une demande de titre repas à l'état %s.";
 	public static final String					NOUVELLE_ETAT_INCORRECT										= "Le nouvel état de la demande de titre repas est incorrect.";
 	public static final String					PAIE_EN_COURS												= "Génération impossible. Une paie est en cours sous l'AS400.";
+	public static final String					GENERATION_EXIST											= "Une génération a dejà eu lieu pour ce mois-ci.";
 	public static final String					DEMANDE_EN_COURS											= "Génération impossible. Il reste des demandes à l'état 'saisie'.";
 	public static final String					GENERATION_IMPOSSIBLE_AVANT_11								= "Génération impossible avant le 11 du mois.";
 	public static final String					MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE					= "Vous ne pouvez pas modifier une demande journalisée.";
@@ -409,7 +412,6 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		etat.setIdAgent(idAgentConnecte);
-		etat.setCommande(dto.getCommande());
 		etat.setTitreRepasDemande(trDemande);
 
 		trDemande.getEtats().add(etat);
@@ -586,7 +588,11 @@ public class TitreRepasService implements ITitreRepasService {
 				result.getInfos().addAll(rmd.getErrors());
 			}
 			if (!rmd.getInfos().isEmpty()) {
-				result.getInfos().addAll(rmd.getInfos());
+				for (String info : rmd.getInfos()) {
+					if (!result.getInfos().contains(info)) {
+						result.getInfos().add(info);
+					}
+				}
 			}
 		}
 
@@ -1083,40 +1089,9 @@ public class TitreRepasService implements ITitreRepasService {
 	public ReturnMessageDto genereEtatPayeur(Integer idAgentConnecte) {
 
 		ReturnMessageDto result = new ReturnMessageDto();
-
-		// pre requis : verifie les droits
-		ReturnMessageDto messageSIRH = sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte);
-		if (!messageSIRH.getErrors().isEmpty()) {
-			result.getErrors().add(ERREUR_DROIT_AGENT);
-			return result;
-		}
-
-		// 1.VERIFICATIONS
-		// on verifie si une paye est en cours
-		if (paieWorkflowService.isCalculSalaireEnCours()) {
-			result.getErrors().add(PAIE_EN_COURS);
-			return result;
-		}
-
-		// action possible si pas de génération pour le mois en cours
-		result = checkDateJourBetween11OfMonthAndGeneration(result, false);
+		result = checkLancementEtatPayeurTitreRepas(idAgentConnecte, result);
 		if (!result.getErrors().isEmpty())
 			return result;
-
-		// on verifie qu'on est au moins le 11 du mois
-		if (new DateTime(helperService.getCurrentDate()).getDayOfMonth() < 11) {
-			result.getErrors().add(GENERATION_IMPOSSIBLE_AVANT_11);
-			return result;
-		}
-
-		// on verifie qu'il ne reste plus de demandes à l'état "Saisie" pour ce
-		// mois
-		List<TitreRepasDemande> listDemandeTRSaisi = titreRepasRepository.getListTitreRepasDemande(null, null, null,
-				EtatPointageEnum.SAISI.getCodeEtat(), true, helperService.getDatePremierJourOfMonthSuivant(helperService.getCurrentDate()));
-		if (listDemandeTRSaisi != null && listDemandeTRSaisi.size() > 0) {
-			result.getErrors().add(DEMANDE_EN_COURS);
-			return result;
-		}
 
 		// 2. on recupere la liste des demandes de Titre Repas de ce mois-ci
 		List<TitreRepasDemande> listDemandeTR = titreRepasRepository.getListTitreRepasDemande(null, null, null,
@@ -1215,6 +1190,59 @@ public class TitreRepasService implements ITitreRepasService {
 
 		result.getInfos().add(GENERATION_ETAT_PAYEUR_OK);
 
+		return result;
+	}
+
+	private ReturnMessageDto checkLancementEtatPayeurTitreRepas(Integer idAgentConnecte, ReturnMessageDto result) {
+
+		// pre requis : verifie les droits
+		ReturnMessageDto messageSIRH = sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte);
+		if (!messageSIRH.getErrors().isEmpty()) {
+			result.getErrors().add(ERREUR_DROIT_AGENT);
+			return result;
+		}
+
+		// 1.VERIFICATIONS
+
+		Date dateJour = helperService.getCurrentDate();
+		Date dateDebutMoisSuivant = helperService.getDatePremierJourOfMonthSuivant(dateJour);
+
+		// si l'etat du payeur est deja généré
+		TitreRepasEtatPayeur etatPay = titreRepasRepository.getTitreRepasEtatPayeurByMonth(dateDebutMoisSuivant);
+		if (etatPay != null) {
+			result.getErrors().add(GENERATION_EXIST);
+			return result;
+		}
+		// si il y a un etat à OK alors on ne peut pas
+		TitreRepasExportEtatPayeurTask task = titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateDebutMoisSuivant, "OK");
+		if (task != null) {
+			result.getErrors().add(GENERATION_EXIST);
+			return result;
+		}
+
+		// on verifie si une paye est en cours
+		if (paieWorkflowService.isCalculSalaireEnCours()) {
+			result.getErrors().add(PAIE_EN_COURS);
+			return result;
+		}
+
+		// action possible si pas de génération pour le mois en cours
+		result = checkDateJourBetween11OfMonthAndGeneration(result, false);
+
+		// on verifie qu'on est au moins le 11 du mois
+		if (new DateTime(dateJour).getDayOfMonth() < 11) {
+			result.getErrors().add(GENERATION_IMPOSSIBLE_AVANT_11);
+			return result;
+		}
+
+		// on verifie qu'il ne reste plus de demandes à l'état "Saisie" pour ce
+		// mois
+		List<TitreRepasDemande> listDemandeTRSaisi = titreRepasRepository.getListTitreRepasDemande(null, null, null,
+				EtatPointageEnum.SAISI.getCodeEtat(), true, dateDebutMoisSuivant);
+		if (listDemandeTRSaisi != null && listDemandeTRSaisi.size() > 0) {
+			result.getErrors().add(DEMANDE_EN_COURS);
+			return result;
+		}
 		return result;
 	}
 
@@ -1335,6 +1363,50 @@ public class TitreRepasService implements ITitreRepasService {
 	@Override
 	public List<Date> getListeMoisTitreRepasSaisie() {
 		List<Date> result = titreRepasRepository.getListeMoisTitreRepasSaisie();
+		return result;
+	}
+
+	@Override
+	public boolean isEtatPayeurRunning() {
+		Date dateJour = helperService.getCurrentDate();
+		Date dateDebutMoisSuivant = helperService.getDatePremierJourOfMonthSuivant(dateJour);
+
+		// on check si il y a deja un etat en cours
+		TitreRepasExportEtatPayeurTask taskEnCours = titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateDebutMoisSuivant, null);
+		if (taskEnCours == null) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	@Transactional("ptgTransactionManager")
+	public ReturnMessageDto startEtatPayeurTitreRepas(Integer convertedIdAgentConnecte) {
+		ReturnMessageDto result = new ReturnMessageDto();
+		result = checkLancementEtatPayeurTitreRepas(convertedIdAgentConnecte, result);
+		if (!result.getErrors().isEmpty())
+			return result;
+
+		// on crée une tache de lancement des etats du payeur
+		TitreRepasExportEtatPayeurTask task = new TitreRepasExportEtatPayeurTask();
+		task.setIdAgent(convertedIdAgentConnecte);
+		task.setDateCreation(helperService.getCurrentDate());
+		task.setDateMonth(helperService.getDatePremierJourOfMonthSuivant(helperService.getCurrentDate()));
+
+		titreRepasRepository.persisTitreRepasExportEtatPayeurTask(task);
+		return result;
+	}
+
+	@Override
+	public List<TitreRepasEtatPayeurTaskDto> getListTitreRepasTaskErreur() {
+		Date dateJour = helperService.getCurrentDate();
+		List<TitreRepasEtatPayeurTaskDto> result = new ArrayList<>();
+		for (TitreRepasExportEtatPayeurTask task : titreRepasRepository.getListTitreRepasTaskErreur()) {
+			TitreRepasEtatPayeurTaskDto dto = new TitreRepasEtatPayeurTaskDto(task);
+			AgentWithServiceDto agent = sirhWsConsumer.getAgentService(task.getIdAgent(), dateJour);
+			dto.setAgent(agent);
+			result.add(dto);
+		}
 		return result;
 	}
 

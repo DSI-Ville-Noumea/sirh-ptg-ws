@@ -52,15 +52,25 @@ public class EtatPrestataireTitreRepasReporting {
 		// Create CSV file header
 		csvPrinter.printRecord(FILE_HEADER);
 		for (TitreRepasDemandeDto tr : listDemandeTR) {
-			// on recupere les informations de l'agent
-			ProfilAgentDto agentDto = sirhWSConsumer.getEtatCivil(tr.getAgent().getIdAgent());
+			if (tr.getAgent() == null || tr.getAgent().getIdAgent() == null) {
+				List<String> studentDataRecord = new ArrayList<>();
+				studentDataRecord.add("Erreur sur demande " + tr.getIdTrDemande());
+				studentDataRecord.add("Erreur");
+				studentDataRecord.add("Erreur");
+				studentDataRecord.add("");
+				csvPrinter.printRecord(studentDataRecord);
+			} else {
+				// on recupere les informations de l'agent
+				ProfilAgentDto agentDto = sirhWSConsumer.getEtatCivil(tr.getAgent().getIdAgent());
 
-			List<String> studentDataRecord = new ArrayList<>();
-			studentDataRecord.add(agentDto.getTitre().toUpperCase().trim());
-			studentDataRecord.add(agentDto.getAgent().getDisplayNom().toUpperCase().trim());
-			studentDataRecord.add(agentDto.getAgent().getDisplayPrenom().toUpperCase().trim());
-			studentDataRecord.add("");
-			csvPrinter.printRecord(studentDataRecord);
+				List<String> studentDataRecord = new ArrayList<>();
+				studentDataRecord.add(agentDto.getTitre().toUpperCase().trim());
+				studentDataRecord.add(agentDto.getAgent().getDisplayNom().toUpperCase().trim());
+				studentDataRecord.add(agentDto.getAgent().getDisplayPrenom().toUpperCase().trim());
+				studentDataRecord.add("");
+				csvPrinter.printRecord(studentDataRecord);
+
+			}
 
 		}
 

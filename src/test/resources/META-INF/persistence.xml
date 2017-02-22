@@ -31,6 +31,7 @@
         <class>nc.noumea.mairie.ptg.domain.DpmIndemAnnee</class>
         <class>nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent</class>
         <class>nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire</class>
+        <class>nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>

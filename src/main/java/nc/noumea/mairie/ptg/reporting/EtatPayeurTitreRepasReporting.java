@@ -113,15 +113,23 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 	}
 
 	private void writeLineByAgent(PdfPTable table, TitreRepasDemandeDto demandeTR) {
-
 		List<CellVo> listValuesByAgent = new ArrayList<CellVo>();
+		if (demandeTR.getAgent() == null || demandeTR.getAgent().getIdAgent() == null) {
 
-		// on ecrit les donnees de l agent
-		listValuesByAgent.add(new CellVo(agentMatriculeConverterService.tryConvertIdAgentToNomatr(demandeTR.getAgent().getIdAgent()).toString(), 1,
-				Element.ALIGN_CENTER));
-		listValuesByAgent.add(new CellVo(demandeTR.getAgent().getNom() + " " + demandeTR.getAgent().getPrenom()));
-		listValuesByAgent.add(new CellVo(demandeTR.getAgent().getSigleService()));
-		listValuesByAgent.add(new CellVo(demandeTR.getCommande() ? "Oui" : "Non", 1, Element.ALIGN_CENTER));
+			// on ecrit les donnees de l agent
+			listValuesByAgent.add(new CellVo("Erreur sur demande " + demandeTR.getIdTrDemande(), 1, Element.ALIGN_CENTER));
+			listValuesByAgent.add(new CellVo("Erreur"));
+			listValuesByAgent.add(new CellVo("Erreur"));
+			listValuesByAgent.add(new CellVo(demandeTR.getCommande() ? "Oui" : "Non", 1, Element.ALIGN_CENTER));
+		} else {
+			// on ecrit les donnees de l agent
+			listValuesByAgent.add(new CellVo(agentMatriculeConverterService.tryConvertIdAgentToNomatr(demandeTR.getAgent().getIdAgent()).toString(),
+					1, Element.ALIGN_CENTER));
+			listValuesByAgent.add(new CellVo(demandeTR.getAgent().getNom() + " " + demandeTR.getAgent().getPrenom()));
+			listValuesByAgent.add(new CellVo(demandeTR.getAgent().getSigleService()));
+			listValuesByAgent.add(new CellVo(demandeTR.getCommande() ? "Oui" : "Non", 1, Element.ALIGN_CENTER));
+
+		}
 
 		writeLine(table, 3, listValuesByAgent);
 	}

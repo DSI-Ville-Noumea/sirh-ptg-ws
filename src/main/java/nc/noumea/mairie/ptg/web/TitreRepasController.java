@@ -26,19 +26,20 @@ import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
 import nc.noumea.mairie.ptg.transformer.MSDateTransformer;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurDto;
+import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurTaskDto;
 import nc.noumea.mairie.titreRepas.service.ITitreRepasService;
 
 @Controller
 @RequestMapping("/titreRepas")
 public class TitreRepasController {
 
-	private Logger logger = LoggerFactory.getLogger(TitreRepasController.class);
+	private Logger							logger	= LoggerFactory.getLogger(TitreRepasController.class);
 
 	@Autowired
-	private ITitreRepasService titreRepasService;
+	private ITitreRepasService				titreRepasService;
 
 	@Autowired
-	private IAgentMatriculeConverterService agentMatriculeConverterService;
+	private IAgentMatriculeConverterService	agentMatriculeConverterService;
 
 	/**
 	 * Enregistre une liste de demande de Titre Repas depuis le Kiosque RH
@@ -60,10 +61,11 @@ public class TitreRepasController {
 	public ReturnMessageDto enregistreListTitreDemande(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
 			@RequestParam(required = true, value = "isFromSIRH") boolean isFromSIRH, @RequestBody(required = true) String listTitreRepas) {
 
-		List<TitreRepasDemandeDto> listTitreRepasDemandeDto = new JSONDeserializer<List<TitreRepasDemandeDto>>().use(null, ArrayList.class).use(Date.class, new MSDateTransformer())
-				.use("values", TitreRepasDemandeDto.class).deserialize(listTitreRepas);
+		List<TitreRepasDemandeDto> listTitreRepasDemandeDto = new JSONDeserializer<List<TitreRepasDemandeDto>>().use(null, ArrayList.class)
+				.use(Date.class, new MSDateTransformer()).use("values", TitreRepasDemandeDto.class).deserialize(listTitreRepas);
 
-		logger.debug("entered POST [titreRepas/enregistreListTitreDemande] => enregistreListTitreDemande with parameters idAgentConnecte = {}, isFromSIRH = {} and listTitreRepasDemandeDto.size = {}",
+		logger.debug(
+				"entered POST [titreRepas/enregistreListTitreDemande] => enregistreListTitreDemande with parameters idAgentConnecte = {}, isFromSIRH = {} and listTitreRepasDemandeDto.size = {}",
 				idAgentConnecte, isFromSIRH, listTitreRepasDemandeDto.size());
 
 		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
@@ -98,19 +100,24 @@ public class TitreRepasController {
 	@RequestMapping(method = RequestMethod.GET, value = "/listTitreRepas", produces = "application/json;charset=utf-8")
 	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
 			@RequestParam(required = false, value = "fromDate") @DateTimeFormat(pattern = "yyyyMMdd") Date fromDate,
-			@RequestParam(required = false, value = "toDate") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, @RequestParam(required = false, value = "etat") Integer etat,
-			@RequestParam(required = false, value = "commande") Boolean commande, @RequestParam(required = false, value = "dateMonth") @DateTimeFormat(pattern = "yyyyMMdd") Date dateMonth,
-			@RequestParam(required = false, value = "idServiceADS") Integer idServiceADS, @RequestParam(required = false, value = "idAgent") Integer idAgent,
-			@RequestParam(required = false, value = "listIdsAgent") List<Integer> listIdsAgent, @RequestParam(required = false, value = "isFromSIRH") Boolean isFromSIRH) {
+			@RequestParam(required = false, value = "toDate") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate,
+			@RequestParam(required = false, value = "etat") Integer etat, @RequestParam(required = false, value = "commande") Boolean commande,
+			@RequestParam(required = false, value = "dateMonth") @DateTimeFormat(pattern = "yyyyMMdd") Date dateMonth,
+			@RequestParam(required = false, value = "idServiceADS") Integer idServiceADS,
+			@RequestParam(required = false, value = "idAgent") Integer idAgent,
+			@RequestParam(required = false, value = "listIdsAgent") List<Integer> listIdsAgent,
+			@RequestParam(required = false, value = "isFromSIRH") Boolean isFromSIRH) {
 
-		logger.debug("entered GET [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, "
-				+ "from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {} and isFromSIRH = {}", idAgentConnecte, fromDate, toDate, idServiceADS, idAgent,
-				etat, commande, dateMonth, isFromSIRH);
+		logger.debug(
+				"entered GET [titreRepas/listTitreRepas] => getListTitreRepasDemandeDto with parameters parameters idAgentConnecte = {}, "
+						+ "from = {}, to = {}, idServiceAds = {}, idAgent = {}, etat = {}, commande = {} and dateMonth = {} and isFromSIRH = {}",
+				idAgentConnecte, fromDate, toDate, idServiceADS, idAgent, etat, commande, dateMonth, isFromSIRH);
 
 		Integer convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
 		Integer convertedIdAgent = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgent);
 
-		return titreRepasService.getListTitreRepasDemandeDto(convertedIdAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS, convertedIdAgent, listIdsAgent, isFromSIRH);
+		return titreRepasService.getListTitreRepasDemandeDto(convertedIdAgentConnecte, fromDate, toDate, etat, commande, dateMonth, idServiceADS,
+				convertedIdAgent, listIdsAgent, isFromSIRH);
 	}
 
 	/**
@@ -134,7 +141,8 @@ public class TitreRepasController {
 	public ReturnMessageDto updateEtatForListTitreRepasDemande(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
 			@RequestBody(required = true) List<TitreRepasDemandeDto> listTitreRepasDemandeDto) {
 
-		logger.debug("entered POST [titreRepas/updateEtatForListTitreRepasDemande] => updateEtatForListTitreRepasDemande with parameters idAgentConnecte = {} and listTitreRepasDemandeDto.size = {}",
+		logger.debug(
+				"entered POST [titreRepas/updateEtatForListTitreRepasDemande] => updateEtatForListTitreRepasDemande with parameters idAgentConnecte = {} and listTitreRepasDemandeDto.size = {}",
 				idAgentConnecte, listTitreRepasDemandeDto.size());
 
 		int convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
@@ -203,7 +211,7 @@ public class TitreRepasController {
 		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(result);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Retourne la liste des états payeur de Titre Repas.
 	 * 
@@ -213,12 +221,64 @@ public class TitreRepasController {
 	 */
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "/listTitreRepasEtatPayeur", produces = "application/json;charset=utf-8")
-	public List<TitreRepasEtatPayeurDto> getListTitreRepasEtatPayeurDto(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte) {
+	public List<TitreRepasEtatPayeurDto> getListTitreRepasEtatPayeurDto(
+			@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte) {
 
-		logger.debug("entered GET [titreRepas/listTitreRepasEtatPayeur] => getListTitreRepasEtatPayeurDto with parameters parameters idAgentConnecte = {}", idAgentConnecte);
+		logger.debug(
+				"entered GET [titreRepas/listTitreRepasEtatPayeur] => getListTitreRepasEtatPayeurDto with parameters parameters idAgentConnecte = {}",
+				idAgentConnecte);
 
 		Integer convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
 
 		return titreRepasService.getListTitreRepasEtatPayeurDto(convertedIdAgentConnecte);
+	}
+
+	/**
+	 * Permet de savoir si un etat du payeur est en cours le compteur de temps
+	 * dans SIRH
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/isEtatPayeurRunning", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<String> isEtatPayeurRunning() {
+
+		logger.debug("entered GET [titreRepas/isEtatPayeurRunning] => isEtatPayeurRunning ");
+
+		if (titreRepasService.isEtatPayeurRunning()) {
+			return new ResponseEntity<String>("", HttpStatus.CONFLICT);
+		} else {
+
+			return new ResponseEntity<String>("", HttpStatus.OK);
+		}
+	}
+
+	/**
+	 * Permet de créer une ligne de task pour lancer le job quartz de generation
+	 * de l'état du payeur
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/startEtatPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	public ReturnMessageDto startEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte) {
+
+		logger.debug("entered GET [titreRepas/startEtatPayeur] => startEtatPayeur with parameters idAgentConnecte = {}", idAgentConnecte);
+
+		Integer convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
+
+		return titreRepasService.startEtatPayeurTitreRepas(convertedIdAgentConnecte);
+	}
+
+	/**
+	 * Retourne la liste des états payeur en erreur de Titre Repas.
+	 * 
+	 * @return List<TitreRepasDemandeDto> liste de demandes de Titre Repas task
+	 *         en erreur
+	 */
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.GET, value = "/listTitreRepasTaskErreur", produces = "application/json;charset=utf-8")
+	public List<TitreRepasEtatPayeurTaskDto> getListTitreRepasTaskErreur() {
+
+		logger.debug("entered GET [titreRepas/listTitreRepasTaskErreur] => getListTitreRepasTaskErreur");
+
+		return titreRepasService.getListTitreRepasTaskErreur();
 	}
 }

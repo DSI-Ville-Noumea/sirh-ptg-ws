@@ -26,6 +26,7 @@ import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
+import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/META-INF/spring/applicationContext-test.xml" })
@@ -258,6 +259,129 @@ public class TitreRepasRepositoryTest {
 
 		assertNotNull(result);
 		assertEquals("label", result.getLabel());
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getTitreRepasEtatPayeurTaskByMonthAndStatus_Result() {
+		Date dateRecherche = new DateTime(2016, 1, 1, 0, 0, 0).toDate();
+
+		TitreRepasExportEtatPayeurTask task = new TitreRepasExportEtatPayeurTask();
+		task.setIdTitreRepasExportEtatsPayeurTask(1);
+		task.setDateCreation(new Date());
+		task.setDateMonth(dateRecherche);
+		task.setIdAgent(9005154);
+		task.setDateExport(new Date());
+		task.setTaskStatus("OK");
+		ptgEntityManager.persist(task);
+
+		TitreRepasExportEtatPayeurTask result = repository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateRecherche, "OK");
+
+		assertNotNull(result);
+		assertEquals("OK", result.getTaskStatus());
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getTitreRepasEtatPayeurTaskByMonthAndStatus_WithNull_Result() {
+		Date dateRecherche = new DateTime(2016, 1, 1, 0, 0, 0).toDate();
+
+		TitreRepasExportEtatPayeurTask task = new TitreRepasExportEtatPayeurTask();
+		task.setIdTitreRepasExportEtatsPayeurTask(1);
+		task.setDateCreation(new Date());
+		task.setDateMonth(dateRecherche);
+		task.setIdAgent(9005154);
+		task.setDateExport(new Date());
+		ptgEntityManager.persist(task);
+
+		TitreRepasExportEtatPayeurTask result = repository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateRecherche, null);
+
+		assertNotNull(result);
+		assertNull(result.getTaskStatus());
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getTitreRepasEtatPayeurTaskByMonthAndStatus_NoResult() {
+		Date dateRecherche = new DateTime(2016, 1, 1, 0, 0, 0).toDate();
+
+		TitreRepasExportEtatPayeurTask task = new TitreRepasExportEtatPayeurTask();
+		task.setIdTitreRepasExportEtatsPayeurTask(1);
+		task.setDateCreation(new Date());
+		task.setDateMonth(dateRecherche);
+		task.setIdAgent(9005154);
+		task.setDateExport(new Date());
+		ptgEntityManager.persist(task);
+
+		TitreRepasExportEtatPayeurTask result = repository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateRecherche, "OK");
+
+		assertNull(result);
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListTitreRepasTaskErreur_Result() {
+		Date dateRecherche = new DateTime(2016, 1, 1, 0, 0, 0).toDate();
+
+		TitreRepasExportEtatPayeurTask taskOK = new TitreRepasExportEtatPayeurTask();
+		taskOK.setIdTitreRepasExportEtatsPayeurTask(1);
+		taskOK.setDateCreation(new Date());
+		taskOK.setDateMonth(dateRecherche);
+		taskOK.setIdAgent(9005154);
+		taskOK.setDateExport(new Date());
+		taskOK.setTaskStatus("OK");
+		ptgEntityManager.persist(taskOK);
+
+		TitreRepasExportEtatPayeurTask taskErreur = new TitreRepasExportEtatPayeurTask();
+		taskErreur.setIdTitreRepasExportEtatsPayeurTask(2);
+		taskErreur.setDateCreation(new Date());
+		taskErreur.setDateMonth(dateRecherche);
+		taskErreur.setIdAgent(9005154);
+		taskErreur.setDateExport(new Date());
+		taskErreur.setTaskStatus("Pas ok");
+		ptgEntityManager.persist(taskErreur);
+
+		TitreRepasExportEtatPayeurTask taskNull = new TitreRepasExportEtatPayeurTask();
+		taskNull.setIdTitreRepasExportEtatsPayeurTask(3);
+		taskNull.setDateCreation(new Date());
+		taskNull.setDateMonth(dateRecherche);
+		taskNull.setIdAgent(9005154);
+		taskNull.setDateExport(new Date());
+		ptgEntityManager.persist(taskNull);
+
+		List<TitreRepasExportEtatPayeurTask> result = repository.getListTitreRepasTaskErreur();
+
+		assertNotNull(result);
+		assertEquals(1, result.size());
+		assertEquals(taskErreur.getTaskStatus(), result.get(0).getTaskStatus());
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getListTitreRepasTaskErreur_NoResult() {
+		Date dateRecherche = new DateTime(2016, 1, 1, 0, 0, 0).toDate();
+
+		TitreRepasExportEtatPayeurTask taskOK = new TitreRepasExportEtatPayeurTask();
+		taskOK.setIdTitreRepasExportEtatsPayeurTask(1);
+		taskOK.setDateCreation(new Date());
+		taskOK.setDateMonth(dateRecherche);
+		taskOK.setIdAgent(9005154);
+		taskOK.setDateExport(new Date());
+		taskOK.setTaskStatus("OK");
+		ptgEntityManager.persist(taskOK);
+
+		TitreRepasExportEtatPayeurTask taskNull = new TitreRepasExportEtatPayeurTask();
+		taskNull.setIdTitreRepasExportEtatsPayeurTask(3);
+		taskNull.setDateCreation(new Date());
+		taskNull.setDateMonth(dateRecherche);
+		taskNull.setIdAgent(9005154);
+		taskNull.setDateExport(new Date());
+		ptgEntityManager.persist(taskNull);
+
+		List<TitreRepasExportEtatPayeurTask> result = repository.getListTitreRepasTaskErreur();
+
+		assertNotNull(result);
+		assertEquals(0, result.size());
 	}
 
 }

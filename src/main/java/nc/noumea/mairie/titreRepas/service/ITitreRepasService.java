@@ -12,6 +12,7 @@ import nc.noumea.mairie.sirh.dto.JourDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurDto;
+import nc.noumea.mairie.titreRepas.dto.TitreRepasEtatPayeurTaskDto;
 
 public interface ITitreRepasService {
 
@@ -55,11 +56,8 @@ public interface ITitreRepasService {
 	 *            List<Integer>
 	 * @return List<TitreRepasDemandeDto>
 	 */
-	List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(
-			Integer idAgentConnecte, Date fromDate, Date toDate, Integer etat,
-			Boolean commande, Date dateMonth, Integer idServiceADS,
-			Integer idAgent, List<Integer> listIdsAgent, Boolean isFromSIRH)
-			throws AccessForbiddenException;
+	List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(Integer idAgentConnecte, Date fromDate, Date toDate, Integer etat, Boolean commande,
+			Date dateMonth, Integer idServiceADS, Integer idAgent, List<Integer> listIdsAgent, Boolean isFromSIRH) throws AccessForbiddenException;
 
 	/**
 	 * Retourne la liste des Etat Payeur de Titre Repas
@@ -87,14 +85,13 @@ public interface ITitreRepasService {
 	 * cours - possible si l'agent a au - 1 jour de présence sur le mois
 	 * précédent : en activité (PA) + pas en absence : message d'erreur au clic
 	 * - exclure les agents qui ont au moins une prime panier saisie sur le mois
-	 * précédent - (dans le grade
-	 * générique de la carrière m-1) (si 2 carrières à cheval sur le mois m-1,
-	 * on prend la dernière saisie)
+	 * précédent - (dans le grade générique de la carrière m-1) (si 2 carrières
+	 * à cheval sur le mois m-1, on prend la dernière saisie)
 	 *
 	 * @return ReturnMessageDto
 	 */
-	ReturnMessageDto checkDroitATitreRepas(ReturnMessageDto rmd, Integer idAgent, Date dateMonthEnCours, List<DemandeDto> listAbsences, RefTypeSaisiCongeAnnuelDto baseCongeAgent,
-			List<JourDto> listJoursFeries, AffectationDto affectation, boolean isFromSIRH);
+	ReturnMessageDto checkDroitATitreRepas(ReturnMessageDto rmd, Integer idAgent, Date dateMonthEnCours, List<DemandeDto> listAbsences,
+			RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries, AffectationDto affectation, boolean isFromSIRH);
 
 	/**
 	 * On verifie si l agent a le droit aux titres repas
@@ -140,4 +137,15 @@ public interface ITitreRepasService {
 	 * @return List<Date>
 	 */
 	List<Date> getListeMoisTitreRepasSaisie();
+
+	/**
+	 * Retourne true si un etat du payeur est en cours, sinon false
+	 * 
+	 * @return
+	 */
+	boolean isEtatPayeurRunning();
+
+	ReturnMessageDto startEtatPayeurTitreRepas(Integer convertedIdAgentConnecte);
+
+	List<TitreRepasEtatPayeurTaskDto> getListTitreRepasTaskErreur();
 }
