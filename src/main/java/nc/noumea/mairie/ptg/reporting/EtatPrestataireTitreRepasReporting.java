@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
@@ -20,10 +21,9 @@ import com.itextpdf.text.DocumentException;
 
 import nc.noumea.mairie.alfresco.cmis.IAlfrescoCMISService;
 import nc.noumea.mairie.ptg.TypeEtatPayeurPointageEnum;
+import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
-import nc.noumea.mairie.sirh.dto.ProfilAgentDto;
-import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
-import nc.noumea.mairie.ws.ISirhWSConsumer;
+import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 
 @Service
 public class EtatPrestataireTitreRepasReporting {
@@ -31,18 +31,15 @@ public class EtatPrestataireTitreRepasReporting {
 	private Logger					logger										= LoggerFactory.getLogger(EtatPrestataireTitreRepasReporting.class);
 
 	@Autowired
-	private ISirhWSConsumer			sirhWSConsumer;
-
-	@Autowired
 	private IAlfrescoCMISService	alfrescoCMISService;
 
 	private static final String		DESCRIPTION_ETAT_PRESTATAIRE_TITRE_REPAS	= "Etat Prestataire des Titres Repas du ";
 
 	private static final String		NEW_LINE_SEPARATOR							= "\n";
-	private static final Object[]	FILE_HEADER									= { "Civilité", "Nom", "Prénom", "Date de naissance" };
+	private static final Object[]	FILE_HEADER									= { "Matricule", "Nom", "Prénom", "Service", "Commande" };
 
-	public void downloadEtatPrestataireTitreRepas(TitreRepasEtatPrestataire etatPrestataireTR, List<TitreRepasDemandeDto> listDemandeTR)
-			throws DocumentException, MalformedURLException, IOException {
+	public void downloadEtatPrestataireTitreRepas(TitreRepasEtatPrestataire etatPrestataireTR, Map<Integer, TitreRepasDemande> mapAgentTR,
+			List<AgentWithServiceDto> listeAgentActif) throws DocumentException, MalformedURLException, IOException {
 
 		ByteArrayOutputStream outB = new ByteArrayOutputStream();
 		Writer out = new BufferedWriter(new OutputStreamWriter(outB));
@@ -51,26 +48,30 @@ public class EtatPrestataireTitreRepasReporting {
 
 		// Create CSV file header
 		csvPrinter.printRecord(FILE_HEADER);
-		for (TitreRepasDemandeDto tr : listDemandeTR) {
-			if (tr.getAgent() == null || tr.getAgent().getIdAgent() == null) {
-				List<String> studentDataRecord = new ArrayList<>();
-				studentDataRecord.add("Erreur sur demande " + tr.getIdTrDemande());
-				studentDataRecord.add("Erreur");
-				studentDataRecord.add("Erreur");
-				studentDataRecord.add("");
-				csvPrinter.printRecord(studentDataRecord);
-			} else {
-				// on recupere les informations de l'agent
-				ProfilAgentDto agentDto = sirhWSConsumer.getEtatCivil(tr.getAgent().getIdAgent());
 
-				List<String> studentDataRecord = new ArrayList<>();
-				studentDataRecord.add(agentDto.getTitre().toUpperCase().trim());
-				studentDataRecord.add(agentDto.getAgent().getDisplayNom().toUpperCase().trim());
-				studentDataRecord.add(agentDto.getAgent().getDisplayPrenom().toUpperCase().trim());
-				studentDataRecord.add("");
-				csvPrinter.printRecord(studentDataRecord);
-
+		// on ecrit tous les agents actifs
+		for (AgentWithServiceDto ag : listeAgentActif) {
+			List<String> studentDataRecord = new ArrayList<>();
+			Integer idAgent = ag.getIdAgent() - 9000000;
+			studentDataRecord.add(idAgent.toString());
+			studentDataRecord.add(ag.getNom().toUpperCase().trim());
+			studentDataRecord.add(ag.getPrenom().toUpperCase().trim());
+			studentDataRecord.add(ag.getSigleService());
+			// on recupere la titre demande si il existe
+			TitreRepasDemande tr = null;
+			try {
+				tr = mapAgentTR.get(ag.getIdAgent());
+				if (tr != null && tr.getCommande()) {
+					studentDataRecord.add("oui");
+				} else {
+					studentDataRecord.add("non");
+				}
+			} catch (Exception e) {
+				// pas de demande enregistrée
+				studentDataRecord.add("non");
 			}
+
+			csvPrinter.printRecord(studentDataRecord);
 
 		}
 

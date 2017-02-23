@@ -51,6 +51,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String	isUtilisateurSIRHServiceUrl							= "utilisateur/isUtilisateurSIRH";
 	private static final String	sirhBaseCongeUrl									= "absences/baseHoraire";
 	private static final String	sirhListeAgentWithIndemniteForfaitTravailDPMUrl		= "agents/listeAgentWithIndemniteForfaitTravailDPM";
+	private static final String	sirhListeAgentEnActiviteSurPeriodeUrl				= "agents/listeAgentsMairieSurPeriode";
 
 	@Override
 	public EntiteDto getAgentDirection(Integer idAgent, Date date) {
@@ -348,5 +349,20 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 		ClientResponse res = createAndFireGetRequest(params, url);
 		return readResponse(ProfilAgentDto.class, res, url);
+	}
+
+	@Override
+	public List<AgentWithServiceDto> getListeAgentsMairieSurPeriode(Date datePremierJourOfMonth, Date dateDernierJourOfMonth) {
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+
+		String url = String.format(sirhWsBaseUrl + sirhListeAgentEnActiviteSurPeriodeUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("dateDebutPeriode", sf.format(datePremierJourOfMonth));
+		parameters.put("dateFinPeriode", sf.format(dateDernierJourOfMonth));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponseAsList(AgentWithServiceDto.class, res, url);
 	}
 }

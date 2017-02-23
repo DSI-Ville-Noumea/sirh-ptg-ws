@@ -1096,12 +1096,14 @@ public class TitreRepasService implements ITitreRepasService {
 		// 2. on recupere la liste des demandes de Titre Repas de ce mois-ci
 		List<TitreRepasDemande> listDemandeTR = titreRepasRepository.getListTitreRepasDemande(null, null, null,
 				EtatPointageEnum.APPROUVE.getCodeEtat(), true, helperService.getDatePremierJourOfMonthSuivant(helperService.getCurrentDate()));
+		Map<Integer, TitreRepasDemande> mapAgentTR = new HashMap<>();
 
 		List<Integer> listIdsAgent = new ArrayList<Integer>();
 		if (null != listDemandeTR) {
 			for (TitreRepasDemande demandeTR : listDemandeTR) {
 				if (!listIdsAgent.contains(demandeTR.getIdAgent()))
 					listIdsAgent.add(demandeTR.getIdAgent());
+				mapAgentTR.put(demandeTR.getIdAgent(), demandeTR);
 			}
 		}
 
@@ -1155,8 +1157,11 @@ public class TitreRepasService implements ITitreRepasService {
 		etatPrestataireTR.setIdAgent(idAgentConnecte);
 		etatPrestataireTR.setDateEdition(helperService.getCurrentDate());
 
+		// on recupere tous les agents en activite
+		List<AgentWithServiceDto> listeAgentActif = sirhWsConsumer.getListeAgentsMairieSurPeriode(helperService.getDatePremierJourOfMonthPrecedent(datejour),
+				helperService.getDateDernierJourOfMonthPrecedent(datejour));
 		try {
-			reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, listTitreRepasDemandeDto);
+			reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, mapAgentTR,listeAgentActif);
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			result.getErrors().add("Une erreur est survenue lors de la génération de l'état prestataire des titres repas.");
