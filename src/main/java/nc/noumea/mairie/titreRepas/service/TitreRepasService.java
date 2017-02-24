@@ -1292,7 +1292,7 @@ public class TitreRepasService implements ITitreRepasService {
 			Integer dateDebut = helperService.getIntegerDateMairieFromDate(demandeTR.getDateMonth());
 			// en date de fin on met le 1er jour du mois suivant. Car la paie
 			// exclue la date de fin
-			Integer dateFin = helperService.getIntegerDateMairieFromDate(helperService.getDateDernierJourOfMonth(demandeTR.getDateMonth()));
+			Integer dateFin = helperService.getIntegerDateMairieFromDate(helperService.getDatePremierJourOfMonthSuivant(demandeTR.getDateMonth()));
 			SpchgeId id = new SpchgeId(nomatr, dateDebut, RUBRIQUE_TITRE_REPAS);
 			Spchge charge = new Spchge();
 			charge.setId(id);
