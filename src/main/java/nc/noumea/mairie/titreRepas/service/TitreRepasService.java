@@ -15,6 +15,7 @@ import org.joda.time.DateTimeConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -1173,7 +1174,11 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		// 6. generer une charge dans l AS400
-		persistSpchgeAndSpmatr(genereChargeAS400(listDemandeTR));
+		persistSpchgeAndSpmatr(genereChargeAS400(listDemandeTR),result);
+
+		if (!result.getErrors().isEmpty()) {
+			return result;
+		}
 
 		// 7. passer les demandes a l etat JOURNALISE
 		if (null != listDemandeTR) {
@@ -1251,9 +1256,16 @@ public class TitreRepasService implements ITitreRepasService {
 		return result;
 	}
 
-	protected void persistSpchgeAndSpmatr(List<Spchge> listeCharge) {
+	protected void persistSpchgeAndSpmatr(List<Spchge> listeCharge, ReturnMessageDto result) {
+		Spmatr matr = null;
 		for (Spchge charge : listeCharge) {
-			Spmatr matr = mairieRepository.findSpmatrForAgent(charge.getId().getNomatr());
+			try {
+				matr = mairieRepository.findSpmatrForAgent(charge.getId().getNomatr());
+			} catch (InvalidDataAccessApiUsageException e) {
+				logger.error("Erreur de mapping pour spmatr : " + e.getMessage());
+				result.getErrors().add("Erreur de mapping pour spmatr :" + charge.getId().getNomatr());
+				return;
+			}
 
 			Integer dateCharge = helperService
 					.getIntegerMonthDateMairieFromDate(helperService.getDateFromMairieInteger(charge.getId().getDateDebut()));
