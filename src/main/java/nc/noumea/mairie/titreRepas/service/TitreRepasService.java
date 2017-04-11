@@ -135,6 +135,7 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String					GENERATION_IMPOSSIBLE_AVANT_11								= "Génération impossible avant le 11 du mois.";
 	public static final String					MODIFICATION_IMPOSSIBLE_DEMANDE_JOURNALISEE					= "Vous ne pouvez pas modifier une demande journalisée.";
 	public static final String					MODIFICATION_IMPOSSIBLE_DEMANDE_AUTRE_SAISI_DEPUIS_KIOSQUE	= "Vous ne pouvez pas modifier une demande approuvée, rejetée ou journalisée.";
+	public static final String					AUCUNE_AFFECTATION_MOIS_EN_COURS							= "L'agent %s n'a plus d'affectation";
 
 	public static final String					ENREGISTREMENT_OK											= "La demande est bien enregistrée.";
 	public static final String					ENREGISTREMENT_PLURIEL_OK									= "Les demandes sont bien enregistrées.";
@@ -291,6 +292,10 @@ public class TitreRepasService implements ITitreRepasService {
 
 			// on trie les donnees pour l agent concerne
 			AffectationDto affectation = getDernierAffectationByAgent(dto.getAgent().getIdAgent(), listAffectation);
+			if (affectation == null) {
+				rmd.getErrors().add(String.format(AUCUNE_AFFECTATION_MOIS_EN_COURS, dto.getAgent().getIdAgent()));
+				return rmd;
+			}
 			RefTypeSaisiCongeAnnuelDto baseCongeAgent = getRefTypeSaisiCongeAnnuelDto(listBasesConges, affectation.getBaseConge());
 			List<DemandeDto> listAbsencesAgent = getListeAbsencesByAgent(listAbsences, dto.getAgent().getIdAgent());
 

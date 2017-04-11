@@ -26,6 +26,7 @@ import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.repository.IAccessRightsRepository;
 import nc.noumea.mairie.ptg.service.IAccessRightsService;
 import nc.noumea.mairie.ptg.service.IDpmService;
+import nc.noumea.mairie.ptg.transformer.AgentComparator;
 import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.sirh.comparator.ApprobateurDtoComparator;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
@@ -512,7 +513,7 @@ public class AccessRightsService implements IAccessRightsService {
 				}
 			}
 		}
-
+		resultAg.sort(new AgentComparator());
 		return resultAg;
 	}
 

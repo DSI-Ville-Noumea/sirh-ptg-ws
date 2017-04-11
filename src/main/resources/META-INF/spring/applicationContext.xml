@@ -37,53 +37,39 @@
 		The most commonly used annotation is @Autowired, which instructs Spring to 
 		dependency inject an object into your class. -->
 	<context:component-scan base-package="nc.noumea.mairie">
-		<context:exclude-filter expression="org.springframework.stereotype.Controller"
-			type="annotation" />
-		<context:exclude-filter type="regex"
-			expression="nc.noumea.mairie.apidocs.SwaggerConfig" />
+		<context:exclude-filter expression="org.springframework.stereotype.Controller" type="annotation" />
+		<context:exclude-filter type="regex" expression="nc.noumea.mairie.apidocs.SwaggerConfig" />
 	</context:component-scan>
 
 	<!-- Datasources and ORM -->
-	<jee:jndi-lookup id="ptgPostgreDataSource" jndi-name="jdbc/PTG_WS_DS1"
-		resource-ref="true" />
+	<jee:jndi-lookup id="ptgPostgreDataSource" jndi-name="jdbc/PTG_WS_DS1" resource-ref="true" />
+	<jee:jndi-lookup id="sirhDb400DataSource" jndi-name="jdbc/PTG_WS_DS2" resource-ref="true" />
 
-	<jee:jndi-lookup id="sirhDb400DataSource" jndi-name="jdbc/PTG_WS_DS2"
-		resource-ref="true" />
-
-	<tx:annotation-driven mode="aspectj"
-		transaction-manager="ptgTransactionManager" />
-	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
-		id="ptgTransactionManager" primary="false">
+	<tx:annotation-driven mode="aspectj" transaction-manager="ptgTransactionManager" />
+	
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager" id="ptgTransactionManager" primary="false">
 		<property name="entityManagerFactory" ref="ptgEntityManagerFactory" />
 		<qualifier value="ptgTransactionManager" />
 	</bean>
-	<bean
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-		id="ptgEntityManagerFactory">
+	<bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="ptgEntityManagerFactory">
 		<property name="persistenceUnitName" value="ptgPersistenceUnit" />
 		<property name="dataSource" ref="ptgPostgreDataSource" />
 	</bean>
 
-	<tx:annotation-driven mode="aspectj"
-		transaction-manager="sirhTransactionManager" />
-	<bean class="org.springframework.orm.jpa.JpaTransactionManager"
-		id="sirhTransactionManager" primary="false">
+	<tx:annotation-driven mode="aspectj" transaction-manager="sirhTransactionManager" />
+	<bean class="org.springframework.orm.jpa.JpaTransactionManager" id="sirhTransactionManager" primary="false">
 		<property name="entityManagerFactory" ref="sirhEntityManagerFactory" />
 		<qualifier value="sirhTransactionManager" />
 	</bean>
-	<bean
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"
-		id="sirhEntityManagerFactory">
+	<bean class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" id="sirhEntityManagerFactory">
 		<property name="persistenceUnitName" value="sirhPersistenceUnit" />
 		<property name="dataSource" ref="sirhDb400DataSource" />
 	</bean>
 
 	<!-- Custom ChainedTransactionManager Awaiting Spring Issue https://jira.springsource.org/browse/SPR-3844 
 		to be released (probably in Spring 4) to switch to official implementation -->
-	<tx:annotation-driven mode="aspectj"
-		transaction-manager="chainedTransactionManager" />
-	<bean id="chainedTransactionManager" class="nc.noumea.mairie.technical.ChainedTransactionManager"
-		primary="true">
+	<tx:annotation-driven mode="aspectj" transaction-manager="chainedTransactionManager" />
+	<bean id="chainedTransactionManager" class="nc.noumea.mairie.technical.ChainedTransactionManager" primary="true">
 		<constructor-arg>
 			<list>
 				<ref bean="ptgTransactionManager" />
