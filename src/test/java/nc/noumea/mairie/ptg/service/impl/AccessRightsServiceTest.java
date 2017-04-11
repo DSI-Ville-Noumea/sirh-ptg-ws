@@ -828,8 +828,8 @@ public class AccessRightsServiceTest {
 
 		// Then
 		assertEquals(3, result.size());
-		assertEquals(9005138, result.get(0).getIdAgent().intValue());
-		assertEquals(9005131, result.get(1).getIdAgent().intValue());
+		assertEquals(9005131, result.get(0).getIdAgent().intValue());
+		assertEquals(9005138, result.get(1).getIdAgent().intValue());
 		assertEquals(9005157, result.get(2).getIdAgent().intValue());
 	}
 
@@ -902,8 +902,8 @@ public class AccessRightsServiceTest {
 
 		// Then
 		assertEquals(3, result.size());
-		assertEquals(9005138, result.get(0).getIdAgent().intValue());
-		assertEquals(9005131, result.get(1).getIdAgent().intValue());
+		assertEquals(9005131, result.get(0).getIdAgent().intValue());
+		assertEquals(9005138, result.get(1).getIdAgent().intValue());
 		assertEquals(9005157, result.get(2).getIdAgent().intValue());
 	}
 
