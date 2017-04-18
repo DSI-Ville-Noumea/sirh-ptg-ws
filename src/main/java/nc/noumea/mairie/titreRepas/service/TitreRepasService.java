@@ -346,7 +346,7 @@ public class TitreRepasService implements ITitreRepasService {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		// on force la date du mois en cours +1
+		// on force la date du mois en cours +1, pour affichage du mois de traitement des TR : en Avril, on traite les TR de Mai.
 		dto.setDateMonth(helperService.getDatePremierJourOfMonthSuivant(helperService.getCurrentDate()));
 
 		// on verifie les donnees du DTO
@@ -683,10 +683,10 @@ public class TitreRepasService implements ITitreRepasService {
 	 * @return ReturnMessageDto
 	 */
 	@Override
-	public ReturnMessageDto checkDroitATitreRepas(ReturnMessageDto rmd, Integer idAgent, Date dateMonthEnCours, List<DemandeDto> listAbsences,
+	public ReturnMessageDto checkDroitATitreRepas(ReturnMessageDto rmd, Integer idAgent, Date dateMoisSuivant, List<DemandeDto> listAbsences,
 			RefTypeSaisiCongeAnnuelDto baseCongeAgent, List<JourDto> listJoursFeries, AffectationDto affectation, boolean isFromSIRH) {
 
-		Date dateMoisPrecedent = new DateTime(dateMonthEnCours).minusMonths(1).toDate();
+		Date dateMoisPrecedent = new DateTime(dateMoisSuivant).minusMonths(2).toDate();
 
 		// 1. on check la PA
 		if (!checkPAUnJourActiviteMinimumsurMoisPrecedent(idAgent, dateMoisPrecedent)) {
