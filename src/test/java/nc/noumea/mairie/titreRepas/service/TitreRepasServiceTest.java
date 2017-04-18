@@ -2290,7 +2290,7 @@ public class TitreRepasServiceTest {
 	}
 
 	@Test
-	public void genereEtatPayeur_ok() {
+	public void genereEtatPayeur_EcartDonnees() {
 		Integer idAgent = 9005138;
 		Date currentDate = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
 		Date currentDate2 = new DateTime(2015, 10, 11, 0, 0, 0).toDate();
@@ -2342,6 +2342,84 @@ public class TitreRepasServiceTest {
 		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
 		Mockito.when(sirhWsConsumer.getListAgentsWithService(Arrays.asList(idAgent, 9002990), currentDate2))
 				.thenReturn(new ArrayList<AgentWithServiceDto>());
+
+		EtatPayeurTitreRepasReporting reportingTitreRepasPayeurService = Mockito.mock(EtatPayeurTitreRepasReporting.class);
+		EtatPrestataireTitreRepasReporting reportingTitreRepasPrestataireService = Mockito.mock(EtatPrestataireTitreRepasReporting.class);
+
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "reportingTitreRepasPayeurService", reportingTitreRepasPayeurService);
+		ReflectionTestUtils.setField(service, "reportingTitreRepasPrestataireService", reportingTitreRepasPrestataireService);
+		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+
+		assertEquals(1, result.getErrors().size());
+		assertEquals(result.getErrors().get(0), "Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
+		Mockito.verify(mairieRepository, Mockito.never()).mergeEntity(Mockito.isA(Spchge.class));
+		Mockito.verify(mairieRepository, Mockito.never()).persistEntity(Mockito.isA(Spmatr.class));
+	}
+
+	@Test
+	public void genereEtatPayeur_ok() {
+		Integer idAgent = 9005138;
+		Date currentDate = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
+		Date currentDate2 = new DateTime(2015, 10, 11, 0, 0, 0).toDate();
+
+		AgentWithServiceDto ag1 = new AgentWithServiceDto();
+		ag1.setIdAgent(idAgent);
+		AgentWithServiceDto ag2 = new AgentWithServiceDto();
+		ag2.setIdAgent(9002990);
+
+		TitreRepasDemande tr1 = new TitreRepasDemande();
+		tr1.setIdAgent(idAgent);
+		tr1.setDateMonth(currentDate);
+		tr1.setCommande(true);
+
+		TitreRepasDemande tr2 = new TitreRepasDemande();
+		tr2.setIdAgent(9002990);
+		tr2.setDateMonth(currentDate);
+		tr2.setCommande(true);
+
+		List<TitreRepasDemande> listeTr = new ArrayList<>();
+		listeTr.add(tr1);
+		listeTr.add(tr2);
+
+		Spcarr carr = new Spcarr();
+		carr.setCdcate(1);
+		
+		List<AgentWithServiceDto> listAgWithService=new ArrayList<AgentWithServiceDto>();
+		listAgWithService.add(new AgentWithServiceDto());
+		listAgWithService.add(new AgentWithServiceDto());
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(currentDate2);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(currentDate2)).thenReturn(currentDate);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(currentDate);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getListTitreRepasDemande(null, null, null, EtatPointageEnum.SAISI.getCodeEtat(), true, currentDate))
+				.thenReturn(new ArrayList<TitreRepasDemande>());
+		Mockito.when(titreRepasRepository.getListTitreRepasDemande(null, null, null, EtatPointageEnum.APPROUVE.getCodeEtat(), true, currentDate))
+				.thenReturn(listeTr);
+
+		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(new ArrayList<AgentWithServiceDto>(), idAgent)).thenReturn(ag1);
+		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(new ArrayList<AgentWithServiceDto>(), 9002990)).thenReturn(ag2);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(carr);
+
+		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(false);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		Mockito.when(sirhWsConsumer.getListAgentsWithService(Arrays.asList(idAgent, 9002990), currentDate2))
+				.thenReturn(listAgWithService);
 
 		EtatPayeurTitreRepasReporting reportingTitreRepasPayeurService = Mockito.mock(EtatPayeurTitreRepasReporting.class);
 		EtatPrestataireTitreRepasReporting reportingTitreRepasPrestataireService = Mockito.mock(EtatPrestataireTitreRepasReporting.class);

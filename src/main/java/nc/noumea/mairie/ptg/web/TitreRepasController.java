@@ -191,7 +191,7 @@ public class TitreRepasController {
 	@Transactional(value = "chainedTransactionManager")
 	public ReturnMessageDto genereEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte) {
 
-		logger.debug("entered GET [titreRepas/historique] => getTitreRepasArchives with parameters idTrDemande = {}", idAgentConnecte);
+		logger.debug("entered GET [titreRepas/genereEtatPayeur] => genereEtatPayeur with parameters idTrDemande = {}", idAgentConnecte);
 
 		return titreRepasService.genereEtatPayeur(idAgentConnecte);
 	}

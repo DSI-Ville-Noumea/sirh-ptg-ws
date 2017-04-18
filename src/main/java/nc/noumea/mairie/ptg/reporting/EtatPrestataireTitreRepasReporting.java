@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ import nc.noumea.mairie.ptg.TypeEtatPayeurPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
+import nc.noumea.mairie.sirh.dto.ProfilAgentDto;
+import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 @Service
 public class EtatPrestataireTitreRepasReporting {
@@ -32,6 +35,9 @@ public class EtatPrestataireTitreRepasReporting {
 
 	@Autowired
 	private IAlfrescoCMISService	alfrescoCMISService;
+
+	@Autowired
+	private ISirhWSConsumer						sirhWsConsumer;
 
 	private static final String		DESCRIPTION_ETAT_PRESTATAIRE_TITRE_REPAS	= "Etat Prestataire des Titres Repas du ";
 
@@ -50,6 +56,7 @@ public class EtatPrestataireTitreRepasReporting {
 		csvPrinter.printRecord(FILE_HEADER);
 
 		// on ecrit tous les agents actifs
+		Map<Integer, AgentWithServiceDto> mapAgentActifs = new HashMap<>();
 		for (AgentWithServiceDto ag : listeAgentActif) {
 			List<String> studentDataRecord = new ArrayList<>();
 			Integer idAgent = ag.getIdAgent() - 9000000;
@@ -72,8 +79,39 @@ public class EtatPrestataireTitreRepasReporting {
 			}
 
 			csvPrinter.printRecord(studentDataRecord);
-
+			//#38362 : on fait 2 verifications desormais
+			mapAgentActifs.put(ag.getIdAgent(), ag);
 		}
+		
+		//#38362 : on fait un tri sur les agents ayant commandé pour etre sur de n'oublier personne
+		for (Integer idAgentAyantCommande : mapAgentTR.keySet()) {
+			if(!mapAgentActifs.containsKey(idAgentAyantCommande)){
+				List<String> studentDataRecord = new ArrayList<>();
+				Integer idAgent = idAgentAyantCommande - 9000000;
+				ProfilAgentDto agentSansService = sirhWsConsumer.getEtatCivil(idAgentAyantCommande);
+				studentDataRecord.add(idAgent.toString());
+				studentDataRecord.add(agentSansService.getAgent().getDisplayNom().toUpperCase().trim());
+				studentDataRecord.add(agentSansService.getAgent().getDisplayPrenom().toUpperCase().trim());
+				studentDataRecord.add("");
+				// on recupere la titre demande si il existe
+				TitreRepasDemande tr = null;
+				try {
+					tr = mapAgentTR.get(idAgentAyantCommande);
+					if (tr != null && tr.getCommande()) {
+						studentDataRecord.add("oui");
+					} else {
+						studentDataRecord.add("non");
+					}
+				} catch (Exception e) {
+					// pas de demande enregistrée
+					studentDataRecord.add("non");
+				}
+
+				csvPrinter.printRecord(studentDataRecord);
+			}
+			
+		}
+		
 
 		logger.debug("CSV file was created successfully !!!");
 		csvPrinter.close();

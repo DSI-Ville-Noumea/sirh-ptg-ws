@@ -1121,6 +1121,15 @@ public class TitreRepasService implements ITitreRepasService {
 			TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);
 			listTitreRepasDemandeDto.add(dto);
 		}
+		
+		//#38362 : avant d'aller plus loin, on fait un controle sur le nb demande = nb d'agent pour etre sur de n'oublier personne
+		if(listAgentServiceDto.size()!=listIdsAgent.size()){
+			logger.debug("Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
+			result.getErrors().add("Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
+			return result;
+		}
+		
+		
 		Date datejour = helperService.getCurrentDate();
 		Date dateMonthSuivant = helperService.getDatePremierJourOfMonthSuivant(datejour);
 
