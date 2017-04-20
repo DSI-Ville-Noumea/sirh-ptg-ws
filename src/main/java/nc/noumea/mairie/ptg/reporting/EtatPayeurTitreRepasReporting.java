@@ -41,7 +41,7 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 
 	private SimpleDateFormat				sdfMMMMyyyy							= new SimpleDateFormat("MMMM yyyy");
 
-	public void downloadEtatPayeurTitreRepas(TitreRepasEtatPayeur etatPayeurTR, List<TitreRepasDemandeDto> listDemandeTR)
+	public void downloadEtatPayeurTitreRepas(TitreRepasEtatPayeur etatPayeurTR, List<TitreRepasDemandeDto> listDemandeTRConventions,List<TitreRepasDemandeDto> listDemandeTRHorsConventions)
 			throws DocumentException, MalformedURLException, IOException {
 
 		// on crée le document
@@ -51,13 +51,32 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		PdfWriter.getInstance(document, baos);
 
 		// on genere les metadata
-		addMetaData(document, getTitreDocument(etatPayeurTR), etatPayeurTR.getIdAgent());
+		addMetaData(document, getTitreDocument(etatPayeurTR, null), etatPayeurTR.getIdAgent());
 
 		// on ouvre le document
 		document.open();
 
-		// on ecrit dans le document
-		writeDocument(document, etatPayeurTR, listDemandeTR);
+		// on ecrit la page des hros conventions (fonctionnaire/contractuels...)
+		if (listDemandeTRHorsConventions.size() > 0) {
+			writeDocument(document, etatPayeurTR, listDemandeTRHorsConventions, false);
+
+			// on fait un saut de page
+			document.newPage();
+			document.add(new Paragraph(""));
+			document.newPage();
+
+		}
+
+		// on ecrit la page des conventions collectives
+		if (listDemandeTRConventions.size() > 0) {
+			writeDocument(document, etatPayeurTR, listDemandeTRConventions, true);
+
+			// on fait un saut de page
+			document.newPage();
+			document.add(new Paragraph(""));
+			document.newPage();
+
+		}
 
 		// on ferme le document
 		document.close();
@@ -71,11 +90,12 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		etatPayeurTR.setNodeRefAlfresco(node);
 	}
 
-	private void writeDocument(Document document, TitreRepasEtatPayeur etatPayeurTR, List<TitreRepasDemandeDto> listDemandeTR)
-			throws DocumentException {
+	private void writeDocument(Document document, TitreRepasEtatPayeur etatPayeurTR, List<TitreRepasDemandeDto> listDemandeTR,
+			boolean isConventionCollective) throws DocumentException {
 
 		// on ajoute le titre, le logo sur le document
-		writeTitle(document, getTitreDocument(etatPayeurTR), this.getClass().getClassLoader().getResource("images/logo_mairie.png"), false, false);
+		writeTitle(document, getTitreDocument(etatPayeurTR, isConventionCollective),
+				this.getClass().getClassLoader().getResource("images/logo_mairie.png"), false, false);
 
 		// on ecrit le tableau
 		writeTableau(document, listDemandeTR);
@@ -86,8 +106,10 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		writeCachet(document);
 	}
 
-	private String getTitreDocument(TitreRepasEtatPayeur dto) {
-		return "ETAT PAYEUR DES TITRES REPAS SUR " + sdfMMMMyyyy.format(dto.getDateEtatPayeur());
+	private String getTitreDocument(TitreRepasEtatPayeur dto, Boolean isConventionCollective) {
+		return "ETAT PAYEUR DES TITRES REPAS\n"
+				+ (isConventionCollective == null ? "" : isConventionCollective ? "CONVENTION COLLECTIVE" : "HORS CONVENTION") + " - "
+				+ sdfMMMMyyyy.format(dto.getDateEtatPayeur()).toUpperCase();
 	}
 
 	private void writeTableau(Document document, List<TitreRepasDemandeDto> listDemandeTR) throws DocumentException {

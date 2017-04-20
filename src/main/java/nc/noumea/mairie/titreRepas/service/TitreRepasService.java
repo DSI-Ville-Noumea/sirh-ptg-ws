@@ -24,6 +24,7 @@ import com.itextpdf.text.DocumentException;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
+import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
@@ -1114,22 +1115,29 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		List<AgentWithServiceDto> listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listIdsAgent, helperService.getCurrentDate());
-
-		List<TitreRepasDemandeDto> listTitreRepasDemandeDto = new ArrayList<TitreRepasDemandeDto>();
-		for (TitreRepasDemande TR : listDemandeTR) {
-			AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
-			TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);
-			listTitreRepasDemandeDto.add(dto);
-		}
 		
-		//#38362 : avant d'aller plus loin, on fait un controle sur le nb demande = nb d'agent pour etre sur de n'oublier personne
-		if(listAgentServiceDto.size()!=listIdsAgent.size()){
+		// #38362 : avant d'aller plus loin, on fait un controle sur le nb
+		// demande = nb d'agent pour etre sur de n'oublier personne
+		if (listAgentServiceDto.size() != listIdsAgent.size()) {
 			logger.debug("Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
 			result.getErrors().add("Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
 			return result;
 		}
-		
-		
+
+		List<TitreRepasDemandeDto> listTitreRepasDemandeDtoHorsConventions = new ArrayList<TitreRepasDemandeDto>();
+		List<TitreRepasDemandeDto> listTitreRepasDemandeDtoConventions = new ArrayList<TitreRepasDemandeDto>();
+		for (TitreRepasDemande TR : listDemandeTR) {
+			AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
+			TitreRepasDemandeDto dto = new TitreRepasDemandeDto(TR, agDtoServ);
+			Spcarr spcarr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(TR.getIdAgent()),
+					helperService.getCurrentDate());
+			if (spcarr == null || spcarr.getStatutCarriere() == null || spcarr.getStatutCarriere().equals(AgentStatutEnum.CC)) {
+				listTitreRepasDemandeDtoConventions.add(dto);
+			} else {
+				listTitreRepasDemandeDtoHorsConventions.add(dto);
+			}
+		}
+
 		Date datejour = helperService.getCurrentDate();
 		Date dateMonthSuivant = helperService.getDatePremierJourOfMonthSuivant(datejour);
 
@@ -1144,7 +1152,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 		// 4. generer le fichier d'état du payeur des TR
 		try {
-			reportingTitreRepasPayeurService.downloadEtatPayeurTitreRepas(etatPayeurTR, listTitreRepasDemandeDto);
+			reportingTitreRepasPayeurService.downloadEtatPayeurTitreRepas(etatPayeurTR, listTitreRepasDemandeDtoConventions,
+					listTitreRepasDemandeDtoHorsConventions);
 		} catch (MalformedURLException e) {
 			logger.debug(e.getMessage());
 			result.getErrors().add("Une erreur est survenue lors de la génération de l'état payeur des titres repas.");
