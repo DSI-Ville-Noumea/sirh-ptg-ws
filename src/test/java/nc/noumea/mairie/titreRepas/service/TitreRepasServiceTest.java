@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -31,6 +30,7 @@ import nc.noumea.mairie.domain.SpadmnId;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spchge;
 import nc.noumea.mairie.domain.Spmatr;
+import nc.noumea.mairie.domain.Spperm;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
@@ -2395,6 +2395,9 @@ public class TitreRepasServiceTest {
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(1);
 		
+		Spperm refPrime = new Spperm();
+		
+		
 		List<AgentWithServiceDto> listAgWithService=new ArrayList<AgentWithServiceDto>();
 		listAgWithService.add(new AgentWithServiceDto());
 		listAgWithService.add(new AgentWithServiceDto());
@@ -2416,6 +2419,7 @@ public class TitreRepasServiceTest {
 
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mairieRepository.getAgentCurrentCarriere(Mockito.anyInt(), Mockito.any(Date.class))).thenReturn(carr);
+		Mockito.when(mairieRepository.getTREtatPayeurRates(Mockito.any(Date.class))).thenReturn(refPrime);
 
 		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
 		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(false);

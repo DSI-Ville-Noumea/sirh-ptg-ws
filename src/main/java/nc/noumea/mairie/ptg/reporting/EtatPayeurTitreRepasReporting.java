@@ -1,8 +1,12 @@
 package nc.noumea.mairie.ptg.reporting;
 
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,8 +24,11 @@ import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.PdfStamper;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import nc.noumea.mairie.alfresco.cmis.IAlfrescoCMISService;
@@ -54,10 +61,10 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		Document document = new Document(PageSize.A4);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PdfWriter.getInstance(document, baos);
+		PdfWriter writer = PdfWriter.getInstance(document, baos);
 
 		// on genere les metadata
-		addMetaData(document, getTitreDocument(etatPayeurTR, null), etatPayeurTR.getIdAgent());
+		addMetaData(document, getTitreDocument(etatPayeurTR, null, false), etatPayeurTR.getIdAgent());
 
 		// on ouvre le document
 		document.open();
@@ -85,32 +92,53 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		}
 
 		// Insertion du récap. global
-		insertGlobalSummary(document, listDemandeTRHorsConventions, listDemandeTRConventions, refPrime);
+		insertGlobalSummary(document, listDemandeTRHorsConventions, listDemandeTRConventions, refPrime, etatPayeurTR);
 
 		// on ferme le document
 		document.close();
 
 		// on génere les numeros de page
-		baos = genereNumeroPageA3Paysage(baos);
+		baos = genereNumeroPageA3Portrait(writer, baos, sdfMMMMyyyy.format(etatPayeurTR.getDateEtatPayeur()));
 
 		String node = alfrescoCMISService.uploadDocument(etatPayeurTR.getIdAgent(), baos.toByteArray(), etatPayeurTR.getFichier(),
 				DESCRIPTION_ETAT_PAYEUR_TITRE_REPAS + etatPayeurTR.getDateEtatPayeur(), TypeEtatPayeurPointageEnum.TYPE_ETAT_PAYEUR_TITRE_REPAS);
 
 		etatPayeurTR.setNodeRefAlfresco(node);
+		
+	}
+
+	private ByteArrayOutputStream genereNumeroPageA3Portrait(PdfWriter writer, ByteArrayOutputStream baos, String text)
+			throws FileNotFoundException, DocumentException, IOException {
+
+		int pageCount = writer.getPageNumber();
+		PdfReader reader = new PdfReader(baos.toByteArray());
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+		DataOutputStream output = new DataOutputStream(outputStream);
+		PdfStamper stamper = new PdfStamper(reader, output);
+		for (int i = 1; i <= pageCount; i++) {
+			//à droite le numero de page
+			ColumnText.showTextAligned(stamper.getOverContent(i), Element.ALIGN_CENTER, new Phrase(" page " + i + "/" + pageCount, fontNormal10), 550,
+					30, 0);
+			//à gauche le rappel du mois
+			ColumnText.showTextAligned(stamper.getOverContent(i), Element.ALIGN_CENTER, new Phrase(text, fontNormal10), 50, 30, 0);
+		}
+		stamper.close();
+		return outputStream;
 	}
 
 	private void writeDocument(Document document, TitreRepasEtatPayeur etatPayeurTR, List<TitreRepasDemandeDto> listDemandeTR,
 			boolean isConventionCollective, Spperm refPrime) throws DocumentException {
 
 		// on ajoute le titre, le logo sur le document
-		writeTitle(document, getTitreDocument(etatPayeurTR, isConventionCollective),
+		writeTitle(document, getTitreDocument(etatPayeurTR, isConventionCollective, false),
 				this.getClass().getClassLoader().getResource("images/logo_mairie.png"), false, false);
 
 		// on ecrit le tableau en récupérant le nombre d'agent réel : Si des agents sont en erreur, il ne faut pas les prendre en compte dans le calcul des sommes !!
 		Integer nbAgents = writeTableau(document, listDemandeTR, refPrime);
 
 		// on insert le récapitulatif
-		insertSummary(document, nbAgents, refPrime);
+		String typeChainePaie = isConventionCollective ? "convention collective" : "hors convention";
+		insertSummary(document, nbAgents, refPrime, typeChainePaie);
 
 		// on ecrit : "Vérification DRH
 		// le
@@ -118,10 +146,14 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		writeCachet(document);
 	}
 
-	private String getTitreDocument(TitreRepasEtatPayeur dto, Boolean isConventionCollective) {
-		return "ETAT PAYEUR DES TITRES REPAS\n"
-				+ (isConventionCollective == null ? "" : isConventionCollective ? "CONVENTION COLLECTIVE" : "HORS CONVENTION") + " - "
-				+ sdfMMMMyyyy.format(dto.getDateEtatPayeur()).toUpperCase();
+	private String getTitreDocument(TitreRepasEtatPayeur dto, Boolean isConventionCollective, boolean recap) {
+		if (recap) {
+			return "ETAT PAYEUR DES TITRES REPAS\n" + "  RECAPITULATIF - " + sdfMMMMyyyy.format(dto.getDateEtatPayeur()).toUpperCase();
+		} else {
+			return "ETAT PAYEUR DES TITRES REPAS\n"
+					+ (isConventionCollective == null ? "" : isConventionCollective ? "CONVENTION COLLECTIVE" : "HORS CONVENTION") + " - "
+					+ sdfMMMMyyyy.format(dto.getDateEtatPayeur()).toUpperCase();
+		}
 	}
 
 	/**
@@ -171,22 +203,20 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 			listValuesByAgent.add(new CellVo("Erreur sur demande " + demandeTR.getIdTrDemande(), 1, Element.ALIGN_CENTER));
 			listValuesByAgent.add(new CellVo("Erreur"));
 			listValuesByAgent.add(new CellVo("Erreur"));
-			//listValuesByAgent.add(new CellVo(demandeTR.getCommande() ? "Oui" : "Non", 1, Element.ALIGN_CENTER));
 			listValuesByAgent.add(new CellVo("Erreur"));
 			listValuesByAgent.add(new CellVo("Erreur"));
 			listValuesByAgent.add(new CellVo("Erreur"));
 		} else {
-			
+
 			// on ecrit les donnees de l agent
 			listValuesByAgent.add(new CellVo(agentMatriculeConverterService.tryConvertIdAgentToNomatr(demandeTR.getAgent().getIdAgent()).toString(),
 					1, Element.ALIGN_CENTER));
 			listValuesByAgent.add(new CellVo(demandeTR.getAgent().getNom() + " " + demandeTR.getAgent().getPrenom()));
 			listValuesByAgent.add(new CellVo(demandeTR.getAgent().getSigleService()));
-			//listValuesByAgent.add(new CellVo(demandeTR.getCommande() ? "Oui" : "Non", 1, Element.ALIGN_CENTER));
-			listValuesByAgent.add(new CellVo(String.valueOf(partPatr)));
-			listValuesByAgent.add(new CellVo(String.valueOf(partSal)));
-			listValuesByAgent.add(new CellVo(String.valueOf(somme)));
-			
+			listValuesByAgent.add(new CellVo(formatMillier(partPatr)));
+			listValuesByAgent.add(new CellVo(formatMillier(partSal)));
+			listValuesByAgent.add(new CellVo(formatMillier(somme)));
+
 			isInsertOk = true;
 		}
 
@@ -195,7 +225,7 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		return isInsertOk;
 	}
 
-	private void insertSummary(Document document, Integer nbAgents, Spperm refPrime) throws DocumentException {
+	private void insertSummary(Document document, Integer nbAgents, Spperm refPrime, String typeChainePaie) throws DocumentException {
 
 		// Le tableau de float permet de spécifier le nombre de colonnes, avec leur taille.
 		PdfPTable table = writeTableau(document, new float[] { 10, 3 });
@@ -207,14 +237,23 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		listValuesLigne2.add(new CellVo("Nombre d'agents", 1, Element.ALIGN_CENTER));
 		listValuesLigne2.add(new CellVo(String.valueOf(nbAgents)));
 		// Somme des montants
-		listValuesLigne2.add(new CellVo("Total chaine de paie", 1, Element.ALIGN_CENTER));
-		listValuesLigne2.add(new CellVo(String.valueOf(nbAgents * (int)(refPrime.getMontantForfait() * refPrime.getMontantPlafond()))));
+		listValuesLigne2.add(new CellVo("Total chaine de paie " + typeChainePaie, 1, Element.ALIGN_CENTER));
+		int totalChainPaie = nbAgents * (int) (refPrime.getMontantForfait() * refPrime.getMontantPlafond());
+		listValuesLigne2.add(new CellVo(formatMillier(totalChainPaie) + " cfp"));
 		writeLine(table, 3, listValuesLigne2);
 
 		document.add(table);
 	}
 
-	private void insertGlobalSummary(Document document, List<TitreRepasDemandeDto> list, List<TitreRepasDemandeDto> listCC, Spperm refPrime) throws DocumentException {
+	public static String formatMillier(long montantAvantVirgule) {
+		DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
+		symbols.setGroupingSeparator(' ');
+		DecimalFormat formatter = new DecimalFormat("###,###.##", symbols);
+		return formatter.format(montantAvantVirgule);
+	}
+
+	private void insertGlobalSummary(Document document, List<TitreRepasDemandeDto> list, List<TitreRepasDemandeDto> listCC, Spperm refPrime,
+			TitreRepasEtatPayeur etatPayeurTR) throws DocumentException {
 
 		// On récupère le nombre réel d'agents ayant demandé les TR
 		Integer nbTotalAgent = 0;
@@ -228,22 +267,10 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		}
 		
 		// On écrit les infos
-		Phrase phrase = new Phrase("Récapitulatif");
-		Paragraph paragraph = new Paragraph(phrase);
+		writeTitle(document, getTitreDocument(etatPayeurTR, null, true), null, false, false);
 
-		PdfPCell cellCachet = new PdfPCell();
-		cellCachet.addElement(paragraph);
-		cellCachet.setBorder(Rectangle.NO_BORDER);
-
-		PdfPTable titre = null;
-		titre = new PdfPTable(new float[] { 18 });
-
-		titre.setWidthPercentage(100f);
-		titre.addCell(cellCachet);
-
-		document.add(titre);
-		
-		// Le tableau de float permet de spécifier le nombre de colonnes, avec leur taille.
+		// Le tableau de float permet de spécifier le nombre de colonnes, avec
+		// leur taille.
 		PdfPTable table = writeTableau(document, new float[] { 2, 2 });
 		table.setSpacingBefore(10);
 		table.setSpacingAfter(10);
@@ -253,9 +280,10 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		listValuesLigne2.add(new CellVo("Nombre global d'agents", 1, Element.ALIGN_CENTER));
 		listValuesLigne2.add(new CellVo(String.valueOf(nbTotalAgent)));
 		// Somme des montants
+		int totalGlobal = nbTotalAgent * (int) (refPrime.getMontantForfait() * refPrime.getMontantPlafond());
 		listValuesLigne2.add(new CellVo("Somme globale du montant des titres repas", 1, Element.ALIGN_CENTER));
-		listValuesLigne2.add(new CellVo(String.valueOf(nbTotalAgent * (int) (refPrime.getMontantForfait() * refPrime.getMontantPlafond()))));
-		
+		listValuesLigne2.add(new CellVo(formatMillier(totalGlobal) + " cfp"));
+
 		writeLine(table, 3, listValuesLigne2);
 
 		document.add(table);
