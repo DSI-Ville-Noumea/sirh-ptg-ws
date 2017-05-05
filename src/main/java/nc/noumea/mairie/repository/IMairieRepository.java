@@ -7,6 +7,7 @@ import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
+import nc.noumea.mairie.domain.Spperm;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
 public interface IMairieRepository {
@@ -26,6 +27,8 @@ public interface IMairieRepository {
 	Spcarr getAgentCurrentCarriere(Integer noMatr, Date asOfDate);
 
 	Spadmn getAgentCurrentPosition(AgentGeneriqueDto ag, Date asOfDate);
+	
+	Spperm getTREtatPayeurRates(Date dateMoisSuivant);
 
 	List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end);
 	

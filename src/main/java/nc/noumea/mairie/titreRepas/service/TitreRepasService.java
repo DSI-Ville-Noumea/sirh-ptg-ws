@@ -31,6 +31,7 @@ import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spchge;
 import nc.noumea.mairie.domain.SpchgeId;
 import nc.noumea.mairie.domain.Spmatr;
+import nc.noumea.mairie.domain.Spperm;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -112,6 +113,7 @@ public class TitreRepasService implements ITitreRepasService {
 
 	private static SimpleDateFormat				sfd															= new SimpleDateFormat("YYYY-MM");
 
+	public static final String					ERREUR_REFERENCE_TAUX										= "Aucune données sur les taux n'ont été trouvées concernant la date de traitement voulue.";
 	public static final String					ERREUR_DROIT_AGENT											= "Vous n'avez pas les droits pour traiter cette demande de titre repas.";
 	public static final String					DATE_SAISIE_NON_COMPRISE_ENTRE_1_ET_10_DU_MOIS				= "Vous ne pouvez commander les titres repas qu'entre le 1 et 10 de chaque mois.";
 	public static final String					EDITION_PAYEUR_DEJA_EDITEE									= "Vous ne pouvez saisir des demandes de titres repas car l'édition du payeur a déjà été effectuée pour ce mois.";
@@ -1140,6 +1142,13 @@ public class TitreRepasService implements ITitreRepasService {
 
 		Date datejour = helperService.getCurrentDate();
 		Date dateMonthSuivant = helperService.getDatePremierJourOfMonthSuivant(datejour);
+		
+		// On récupère les taux patronal/salarial en fonction de la date du mois suivant
+		Spperm refPrime = mairieRepository.getTREtatPayeurRates(dateMonthSuivant);
+		if (refPrime == null) {
+			result.getErrors().add(ERREUR_REFERENCE_TAUX);
+			return result;
+		}
 
 		// 3. on cree/recupere l état payeur de ce mois-ci
 		TitreRepasEtatPayeur etatPayeurTR = new TitreRepasEtatPayeur();
@@ -1153,7 +1162,7 @@ public class TitreRepasService implements ITitreRepasService {
 		// 4. generer le fichier d'état du payeur des TR
 		try {
 			reportingTitreRepasPayeurService.downloadEtatPayeurTitreRepas(etatPayeurTR, listTitreRepasDemandeDtoConventions,
-					listTitreRepasDemandeDtoHorsConventions);
+					listTitreRepasDemandeDtoHorsConventions, refPrime);
 		} catch (MalformedURLException e) {
 			logger.debug(e.getMessage());
 			result.getErrors().add("Une erreur est survenue lors de la génération de l'état payeur des titres repas.");

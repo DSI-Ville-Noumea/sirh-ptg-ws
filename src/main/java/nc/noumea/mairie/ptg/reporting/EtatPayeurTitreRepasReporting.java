@@ -5,11 +5,14 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -22,10 +25,13 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
 import nc.noumea.mairie.alfresco.cmis.IAlfrescoCMISService;
+import nc.noumea.mairie.domain.Spperm;
 import nc.noumea.mairie.ptg.TypeEtatPayeurPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.reporting.vo.CellVo;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 
 @Service
@@ -41,7 +47,7 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 
 	private SimpleDateFormat				sdfMMMMyyyy							= new SimpleDateFormat("MMMM yyyy");
 
-	public void downloadEtatPayeurTitreRepas(TitreRepasEtatPayeur etatPayeurTR, List<TitreRepasDemandeDto> listDemandeTRConventions,List<TitreRepasDemandeDto> listDemandeTRHorsConventions)
+	public void downloadEtatPayeurTitreRepas(TitreRepasEtatPayeur etatPayeurTR, List<TitreRepasDemandeDto> listDemandeTRConventions,List<TitreRepasDemandeDto> listDemandeTRHorsConventions, Spperm refPrime)
 			throws DocumentException, MalformedURLException, IOException {
 
 		// on crée le document
@@ -56,10 +62,10 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		// on ouvre le document
 		document.open();
 
-		// on ecrit la page des hros conventions (fonctionnaire/contractuels...)
+		// on ecrit la page des hors conventions (fonctionnaire/contractuels...)
 		if (listDemandeTRHorsConventions.size() > 0) {
-			writeDocument(document, etatPayeurTR, listDemandeTRHorsConventions, false);
-
+			writeDocument(document, etatPayeurTR, listDemandeTRHorsConventions, false, refPrime);
+			
 			// on fait un saut de page
 			document.newPage();
 			document.add(new Paragraph(""));
@@ -69,7 +75,7 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 
 		// on ecrit la page des conventions collectives
 		if (listDemandeTRConventions.size() > 0) {
-			writeDocument(document, etatPayeurTR, listDemandeTRConventions, true);
+			writeDocument(document, etatPayeurTR, listDemandeTRConventions, true, refPrime);
 
 			// on fait un saut de page
 			document.newPage();
@@ -77,6 +83,9 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 			document.newPage();
 
 		}
+
+		// Insertion du récap. global
+		insertGlobalSummary(document, listDemandeTRHorsConventions, listDemandeTRConventions, refPrime);
 
 		// on ferme le document
 		document.close();
@@ -91,14 +100,17 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 	}
 
 	private void writeDocument(Document document, TitreRepasEtatPayeur etatPayeurTR, List<TitreRepasDemandeDto> listDemandeTR,
-			boolean isConventionCollective) throws DocumentException {
+			boolean isConventionCollective, Spperm refPrime) throws DocumentException {
 
 		// on ajoute le titre, le logo sur le document
 		writeTitle(document, getTitreDocument(etatPayeurTR, isConventionCollective),
 				this.getClass().getClassLoader().getResource("images/logo_mairie.png"), false, false);
 
-		// on ecrit le tableau
-		writeTableau(document, listDemandeTR);
+		// on ecrit le tableau en récupérant le nombre d'agent réel : Si des agents sont en erreur, il ne faut pas les prendre en compte dans le calcul des sommes !!
+		Integer nbAgents = writeTableau(document, listDemandeTR, refPrime);
+
+		// on insert le récapitulatif
+		insertSummary(document, nbAgents, refPrime);
 
 		// on ecrit : "Vérification DRH
 		// le
@@ -112,9 +124,14 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 				+ sdfMMMMyyyy.format(dto.getDateEtatPayeur()).toUpperCase();
 	}
 
-	private void writeTableau(Document document, List<TitreRepasDemandeDto> listDemandeTR) throws DocumentException {
+	/**
+	 * Ecrit le tableau des titres repas, et retourne le nombre d'agent valides.
+	 */
+	private Integer writeTableau(Document document, List<TitreRepasDemandeDto> listDemandeTR, Spperm refPrime) throws DocumentException {
+		Integer nbAgentsValides = 0;
 
-		PdfPTable table = writeTableau(document, new float[] { 2, 5, 3, 3 });
+		// Le tableau de float permet de spécifier le nombre de colonnes, avec leur taille.
+		PdfPTable table = writeTableau(document, new float[] { 2, 4, 2, 2, 2, 2 });
 		table.setSpacingBefore(10);
 		table.setSpacingAfter(10);
 
@@ -123,37 +140,125 @@ public class EtatPayeurTitreRepasReporting extends AbstractReporting {
 		listValuesLigne2.add(new CellVo("Matricule", 1, Element.ALIGN_CENTER));
 		listValuesLigne2.add(new CellVo("Nom Prénom", 1, Element.ALIGN_CENTER));
 		listValuesLigne2.add(new CellVo("Service", 1, Element.ALIGN_CENTER));
-		listValuesLigne2.add(new CellVo("Titre Repas", 1, Element.ALIGN_CENTER));
+		listValuesLigne2.add(new CellVo("Part patronale", 1, Element.ALIGN_CENTER));
+		listValuesLigne2.add(new CellVo("Part salariale", 1, Element.ALIGN_CENTER));
+		listValuesLigne2.add(new CellVo("Somme part patronale + part salariale", 1, Element.ALIGN_CENTER));
 		writeLine(table, 3, listValuesLigne2);
 
+		// Calcul des parts avant la boucle sur agents, car les montants sont tous les même.
+		Integer somme = (int) (refPrime.getMontantForfait() * refPrime.getMontantPlafond());
+		Integer partPatr = (int) (somme * refPrime.getTauxPatronal());
+		Integer partSal = (int) (somme * refPrime.getTauxSalarial());
+		
 		// on boucle sur les agents
 		for (TitreRepasDemandeDto demandeTR : listDemandeTR) {
-			writeLineByAgent(table, demandeTR);
+			// Si l'insertion a été fructueuse, on met à jour les compteurs
+			if(writeLineByAgent(table, demandeTR, partPatr, partSal, somme))
+				++nbAgentsValides;
 		}
 
 		document.add(table);
+
+		return nbAgentsValides;
 	}
 
-	private void writeLineByAgent(PdfPTable table, TitreRepasDemandeDto demandeTR) {
+	private Boolean writeLineByAgent(PdfPTable table, TitreRepasDemandeDto demandeTR, Integer partPatr, Integer partSal, Integer somme) {
+		Boolean isInsertOk = false;
+		
 		List<CellVo> listValuesByAgent = new ArrayList<CellVo>();
 		if (demandeTR.getAgent() == null || demandeTR.getAgent().getIdAgent() == null) {
-
 			// on ecrit les donnees de l agent
 			listValuesByAgent.add(new CellVo("Erreur sur demande " + demandeTR.getIdTrDemande(), 1, Element.ALIGN_CENTER));
 			listValuesByAgent.add(new CellVo("Erreur"));
 			listValuesByAgent.add(new CellVo("Erreur"));
-			listValuesByAgent.add(new CellVo(demandeTR.getCommande() ? "Oui" : "Non", 1, Element.ALIGN_CENTER));
+			//listValuesByAgent.add(new CellVo(demandeTR.getCommande() ? "Oui" : "Non", 1, Element.ALIGN_CENTER));
+			listValuesByAgent.add(new CellVo("Erreur"));
+			listValuesByAgent.add(new CellVo("Erreur"));
+			listValuesByAgent.add(new CellVo("Erreur"));
 		} else {
+			
 			// on ecrit les donnees de l agent
 			listValuesByAgent.add(new CellVo(agentMatriculeConverterService.tryConvertIdAgentToNomatr(demandeTR.getAgent().getIdAgent()).toString(),
 					1, Element.ALIGN_CENTER));
 			listValuesByAgent.add(new CellVo(demandeTR.getAgent().getNom() + " " + demandeTR.getAgent().getPrenom()));
 			listValuesByAgent.add(new CellVo(demandeTR.getAgent().getSigleService()));
-			listValuesByAgent.add(new CellVo(demandeTR.getCommande() ? "Oui" : "Non", 1, Element.ALIGN_CENTER));
-
+			//listValuesByAgent.add(new CellVo(demandeTR.getCommande() ? "Oui" : "Non", 1, Element.ALIGN_CENTER));
+			listValuesByAgent.add(new CellVo(String.valueOf(partPatr)));
+			listValuesByAgent.add(new CellVo(String.valueOf(partSal)));
+			listValuesByAgent.add(new CellVo(String.valueOf(somme)));
+			
+			isInsertOk = true;
 		}
 
 		writeLine(table, 3, listValuesByAgent);
+		
+		return isInsertOk;
+	}
+
+	private void insertSummary(Document document, Integer nbAgents, Spperm refPrime) throws DocumentException {
+
+		// Le tableau de float permet de spécifier le nombre de colonnes, avec leur taille.
+		PdfPTable table = writeTableau(document, new float[] { 10, 3 });
+		table.setSpacingBefore(5);
+		table.setSpacingAfter(5);
+
+		List<CellVo> listValuesLigne2 = new ArrayList<CellVo>();
+		// Nombre d'agents
+		listValuesLigne2.add(new CellVo("Nombre d'agents", 1, Element.ALIGN_CENTER));
+		listValuesLigne2.add(new CellVo(String.valueOf(nbAgents)));
+		// Somme des montants
+		listValuesLigne2.add(new CellVo("Total chaine de paie", 1, Element.ALIGN_CENTER));
+		listValuesLigne2.add(new CellVo(String.valueOf(nbAgents * (int)(refPrime.getMontantForfait() * refPrime.getMontantPlafond()))));
+		writeLine(table, 3, listValuesLigne2);
+
+		document.add(table);
+	}
+
+	private void insertGlobalSummary(Document document, List<TitreRepasDemandeDto> list, List<TitreRepasDemandeDto> listCC, Spperm refPrime) throws DocumentException {
+
+		// On récupère le nombre réel d'agents ayant demandé les TR
+		Integer nbTotalAgent = 0;
+		for (TitreRepasDemandeDto tr : list) {
+			if (tr.getAgent() != null && tr.getAgent().getIdAgent() != null)
+				++nbTotalAgent;
+		}
+		for (TitreRepasDemandeDto tr : listCC) {
+			if (tr.getAgent() != null && tr.getAgent().getIdAgent() != null)
+				++nbTotalAgent;
+		}
+		
+		// On écrit les infos
+		Phrase phrase = new Phrase("Récapitulatif");
+		Paragraph paragraph = new Paragraph(phrase);
+
+		PdfPCell cellCachet = new PdfPCell();
+		cellCachet.addElement(paragraph);
+		cellCachet.setBorder(Rectangle.NO_BORDER);
+
+		PdfPTable titre = null;
+		titre = new PdfPTable(new float[] { 18 });
+
+		titre.setWidthPercentage(100f);
+		titre.addCell(cellCachet);
+
+		document.add(titre);
+		
+		// Le tableau de float permet de spécifier le nombre de colonnes, avec leur taille.
+		PdfPTable table = writeTableau(document, new float[] { 2, 2 });
+		table.setSpacingBefore(10);
+		table.setSpacingAfter(10);
+
+		List<CellVo> listValuesLigne2 = new ArrayList<CellVo>();
+		// Nombre d'agents
+		listValuesLigne2.add(new CellVo("Nombre global d'agents", 1, Element.ALIGN_CENTER));
+		listValuesLigne2.add(new CellVo(String.valueOf(nbTotalAgent)));
+		// Somme des montants
+		listValuesLigne2.add(new CellVo("Somme globale du montant des titres repas", 1, Element.ALIGN_CENTER));
+		listValuesLigne2.add(new CellVo(String.valueOf(nbTotalAgent * (int) (refPrime.getMontantForfait() * refPrime.getMontantPlafond()))));
+		
+		writeLine(table, 3, listValuesLigne2);
+
+		document.add(table);
 	}
 
 	private void writeCachet(Document document) throws DocumentException {

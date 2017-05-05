@@ -13,6 +13,7 @@ import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
+import nc.noumea.mairie.domain.Spperm;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 
@@ -72,6 +73,19 @@ public class MairieRepository implements IMairieRepository {
 
 		// bug #19943 si 2 carrieres le meme jour 
 		// une finissant, une commencant
+		return null != result ? result.get(0) : null;
+	}
+
+	@Override
+	public Spperm getTREtatPayeurRates(Date dateMoisSuivant) {
+
+		TypedQuery<Spperm> qPerm = entityManager.createNamedQuery("getSppermForTREtatPayeurOnPeriod", Spperm.class);
+
+		String moisSuivant = new SimpleDateFormat("yyyyMM").format(dateMoisSuivant);
+		qPerm.setParameter("date", Integer.valueOf(moisSuivant));
+
+		List<Spperm> result = qPerm.getResultList();
+
 		return null != result ? result.get(0) : null;
 	}
 
