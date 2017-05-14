@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
-import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -31,7 +30,6 @@ import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
-import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -50,10 +48,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 	private IPointageRepository	pointageRepository;
 
 	@Autowired
-	private ISirhWSConsumer		sirhWsConsumer;
-
-	@Autowired
-	private IMairieRepository	mairieRepository;
+	private ISirhWSConsumer sirhWsConsumer;
 
 	@Autowired
 	private HelperService		helperService;
@@ -267,15 +262,24 @@ public class PointageCalculeService implements IPointageCalculeService {
 
 		// - A cette base sera aussi retranchée toutes les périodes maladie sans
 		// distinction
-		// second retrieve all the absences in SPABSEN
-		List<Spabsen> listSpAbsen = mairieRepository.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate());
-
-		// - A cette base sera enfin retranchée toutes les périodes de congés
-		// exceptionnels
+		// #19829 on recupere maintenant les maladies du projet SIRH-ABS-WS
+		List<DemandeDto> listMaladies = absWsConsumer.getListMaladiesEtatPrisBetween(
+				idAgent, dateLundi, new DateTime(dateLundi).plusDays(7)
+						.toDate());
+		
+		// - A cette base sera enfin retranchée toutes les périodes de congés exceptionnels
 		// on ne compte pas les conges annuels et les conges annules
-		List<DemandeDto> listConges = absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(idAgent, dateLundi,
-				new DateTime(dateLundi).plusDays(7).toDate());
+		List<DemandeDto> listConges = absWsConsumer
+				.getListCongesExeptionnelsEtatPrisBetween(idAgent,
+						dateLundi, new DateTime(dateLundi).plusDays(7).toDate());
+		
+		List<DemandeDto> listCongesExcepEtMaladies = new ArrayList<DemandeDto>();
+		if(null != listMaladies && !listMaladies.isEmpty())
+			listCongesExcepEtMaladies.addAll(listMaladies);
 
+		if(null != listConges && !listConges.isEmpty())
+			listCongesExcepEtMaladies.addAll(listConges);
+		
 		for (int i = 0; i < 7; i++) {
 
 			DateTime dday = new DateTime(dateLundi).plusDays(i);
@@ -298,40 +302,18 @@ public class PointageCalculeService implements IPointageCalculeService {
 			for (Pointage ptg : getPointagesAbsenceForDay(pointages, dday)) {
 				dayTotalMinutes -= new Interval(new DateTime(ptg.getDateDebut()), new DateTime(ptg.getDateFin())).toDuration().getStandardMinutes();
 			}
-
-			// - A cette base sera aussi retranchée toutes les périodes maladie
-			// sans distinction
-			// second retrieve all the absences in SPABSEN
-			int minutesSpAbsen = 0;
-			for (Spabsen spabsen : listSpAbsen) {
-				DateTime startDate = new DateTime(helperService.getDateFromMairieInteger(spabsen.getId().getDatdeb()));
-				if (dateLundi.after(startDate.toDate())) {
-					startDate = new DateTime(dateLundi);
-				}
-
-				DateTime endDate = new DateTime(helperService.getDateFromMairieInteger(spabsen.getDatfin()));
-				if (endDate.toDate().after(new DateTime(dateLundi).plusDays(7).toDate())) {
-					endDate = new DateTime(dateLundi).plusDays(7);
-				}
-
-				Date dateJour = new DateTime(dateLundi).plusDays(i).toDate();
-				if ((dateJour.equals(startDate.toDate()) || dateJour.after(startDate.toDate()))
-						&& (dateJour.equals(endDate.toDate()) || dateJour.before(endDate.toDate()))) {
-					minutesSpAbsen += helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getDayBase(i));
-				}
-			}
-
-			// - A cette base sera enfin retranchée toutes les périodes de
-			// congés exceptionnels
+			
+			// - A cette base sera enfin retranchée toutes les périodes de congés exceptionnels
+			// et maladies
 			// on ne compte pas les conges annuels et les conges annules
-			int minutesConges = 0;
-			for (DemandeDto conge : listConges) {
-				DateTime startDate = new DateTime(conge.getDateDebut());
+			int minutesCongesEtMaladies = 0;
+			for (DemandeDto congeExcepMaladie : listCongesExcepEtMaladies) {
+				DateTime startDate = new DateTime(congeExcepMaladie.getDateDebut());
 				if (dateLundi.after(startDate.toDate())) {
 					startDate = new DateTime(dateLundi);
 				}
 
-				DateTime endDate = new DateTime(conge.getDateFin());
+				DateTime endDate = new DateTime(congeExcepMaladie.getDateFin());
 				if (endDate.toDate().after(new DateTime(dateLundi).plusDays(7).toDate())) {
 					endDate = new DateTime(dateLundi).plusDays(7);
 				}
@@ -341,38 +323,41 @@ public class PointageCalculeService implements IPointageCalculeService {
 				if ((dateJour.getDayOfYear() == startDate.getDayOfYear() || dateJour.toDate().after(startDate.toDate()))
 						&& (dateJour.getDayOfYear() == endDate.plusMinutes(-1).getDayOfYear() || dateJour.toDate().before(endDate.toDate()))) {
 
-					int minutesCongesDay = helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getDayBase(i));
+					int minutesCongesMaladiesDay = helperService
+							.convertMairieNbHeuresFormatToMinutes(baseDto
+									.getDayBase(i));
 					// on gere ici les demis journees
-					DateTime dateDebut = new DateTime(conge.getDateDebut());
-					DateTime dateFin = new DateTime(conge.getDateFin());
+					DateTime dateDebut = new DateTime(congeExcepMaladie.getDateDebut());
+					DateTime dateFin = new DateTime(congeExcepMaladie.getDateFin());
 
-					List<RefTypeSaisiDto> listTypeAbsence = absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande());
+					List<RefTypeSaisiDto> listTypeAbsence = absWsConsumer
+							.getTypeSaisiAbsence(congeExcepMaladie.getIdTypeDemande());
 
 					if (null != listTypeAbsence && !listTypeAbsence.isEmpty()) {
 
 						if (listTypeAbsence.get(0).getUniteDecompte().equals("minutes")) {
-							minutesCongesDay = conge.getDuree().intValue();
+							minutesCongesMaladiesDay = congeExcepMaladie.getDuree().intValue();
 						}
 						if (listTypeAbsence.get(0).getUniteDecompte().equals("jours")) {
 							if (dateDebut.dayOfYear().equals(dateFin.dayOfYear()) && startDate.getDayOfWeek() - 1 == i) {
 
 								if ((dateDebut.getHourOfDay() == 0 && dateFin.getHourOfDay() == 11)
 										|| (dateDebut.getHourOfDay() == 12 && dateFin.getHourOfDay() == 23)) {
-									minutesCongesDay = minutesCongesDay / 2;
+									minutesCongesMaladiesDay = minutesCongesMaladiesDay / 2;
 								}
 							} else if (startDate.getDayOfWeek() - 1 == i && dateDebut.getHourOfDay() == 12) {
-								minutesCongesDay = minutesCongesDay / 2;
+								minutesCongesMaladiesDay = minutesCongesMaladiesDay / 2;
 							} else if (endDate.getDayOfWeek() - 1 == i && dateFin.getHourOfDay() == 11) {
-								minutesCongesDay = minutesCongesDay / 2;
+								minutesCongesMaladiesDay = minutesCongesMaladiesDay / 2;
 							}
 						}
 
-						minutesConges += minutesCongesDay;
+						minutesCongesEtMaladies += minutesCongesMaladiesDay;
 					}
 				}
 			}
 
-			dayTotalMinutes = dayTotalMinutes - minutesSpAbsen - minutesConges;
+			dayTotalMinutes = dayTotalMinutes - minutesCongesEtMaladies;
 
 			List<Pointage> listPtg = pointageRepository.getListPointages(idAgent, dday.toDate(), RefTypePointageEnum.PRIME.getValue(),
 					prime.getIdRefPrime());

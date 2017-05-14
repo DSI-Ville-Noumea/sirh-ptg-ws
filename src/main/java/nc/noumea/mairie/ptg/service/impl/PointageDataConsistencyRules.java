@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
-import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
@@ -112,8 +111,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		return srm;
 	}
 
+	// #19828 on check maintenant en un appel WS tous les types d absences pour optimiser 
 	@Override
-	public ReturnMessageDto checkRecuperation(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
+	public ReturnMessageDto checkAbsences(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		for (Pointage p : pointages) {
 
@@ -121,114 +121,16 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			// si oui, on ajoute des erreurs
 			// #6843 attention on ne check pas les primes
 			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
-				result = absWsConsumer.checkRecuperation(idAgent, p.getDateDebut(), p.getDateFin());
+				result = absWsConsumer.checkAbsences(idAgent, p.getDateDebut(), p.getDateFin());
+			}
+
+			for (String info : result.getInfos()) {
+				srm.getInfos().add(info);
+			}
+			for (String erreur : result.getErrors()) {
+				srm.getErrors().add(erreur);
 			}
 		}
-
-		for (String info : result.getInfos()) {
-			srm.getInfos().add(info);
-		}
-		for (String erreur : result.getErrors()) {
-			srm.getErrors().add(erreur);
-		}
-		return srm;
-	}
-
-	@Override
-	public ReturnMessageDto checkReposComp(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
-		ReturnMessageDto result = new ReturnMessageDto();
-		for (Pointage p : pointages) {
-			// pour chaque pointage on verifie si en repos comp
-			// si oui, on ajoute des erreurs
-			// #6843 attention on ne check pas les primes
-			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
-				result = absWsConsumer.checkReposComp(idAgent, p.getDateDebut(), p.getDateFin());
-			}
-		}
-
-		for (String info : result.getInfos()) {
-			srm.getInfos().add(info);
-		}
-		for (String erreur : result.getErrors()) {
-			srm.getErrors().add(erreur);
-		}
-		return srm;
-	}
-
-	@Override
-	public ReturnMessageDto checkAbsencesSyndicales(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
-		ReturnMessageDto result = new ReturnMessageDto();
-		for (Pointage p : pointages) {
-			// pour chaque pointage on verifie si en ASA
-			// si oui, on ajoute des erreurs
-			// #6843 attention on ne check pas les primes
-			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
-				result = absWsConsumer.checkAbsencesSyndicales(idAgent, p.getDateDebut(), p.getDateFin());
-			}
-		}
-
-		for (String info : result.getInfos()) {
-			srm.getInfos().add(info);
-		}
-		for (String erreur : result.getErrors()) {
-			srm.getErrors().add(erreur);
-		}
-		return srm;
-	}
-
-	@Override
-	public ReturnMessageDto checkCongesExceptionnels(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
-		ReturnMessageDto result = new ReturnMessageDto();
-		for (Pointage p : pointages) {
-			// pour chaque pointage on verifie si en conge exceptionnel
-			// si oui, on ajoute des erreurs
-			// #6843 attention on ne check pas les primes
-			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
-				result = absWsConsumer.checkCongesExceptionnels(idAgent, p.getDateDebut(), p.getDateFin());
-			}
-		}
-
-		for (String info : result.getInfos()) {
-			srm.getInfos().add(info);
-		}
-		for (String erreur : result.getErrors()) {
-			srm.getErrors().add(erreur);
-		}
-		return srm;
-	}
-
-	@Override
-	public ReturnMessageDto checkCongeAnnuel(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
-		ReturnMessageDto result = new ReturnMessageDto();
-		for (Pointage p : pointages) {
-			// pour chaque pointage on verifie si en conge annuel
-			// si oui, on ajoute des erreurs
-			// #6843 attention on ne check pas les primes
-			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
-				result = absWsConsumer.checkCongeAnnuel(idAgent, p.getDateDebut(), p.getDateFin());
-			}
-		}
-
-		for (String info : result.getInfos()) {
-			srm.getInfos().add(info);
-		}
-		for (String erreur : result.getErrors()) {
-			srm.getErrors().add(erreur);
-		}
-		return srm;
-	}
-
-	@Override
-	public ReturnMessageDto checkSpabsenMaladie(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
-
-		Date end = new DateTime(dateLundi).plusDays(7).toDate();
-
-		List<Spabsen> maladies = mairieRepository.getListMaladieBetween(idAgent, dateLundi, end);
-
-		for (Spabsen mal : maladies) {
-			checkInterval(srm, MALADIE_MSG, mal.getId().getDatdeb(), null, mal.getDatfin(), null, pointages);
-		}
-
 		return srm;
 	}
 
@@ -461,14 +363,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkAbsenceGreve(srm, idAgent, dateLundi, pointages, isFromSIRH);
 		checkHeureFinSaisieHSup(srm, idAgent, dateLundi, pointages, carr);
 		checkIntervalleDateDebDateFin(srm, idAgent, pointages);
-		// DEBUT on check les types d'absences du projet SIRH-ABS-WS
-		checkRecuperation(srm, idAgent, pointages);
-		checkReposComp(srm, idAgent, pointages);
-		checkAbsencesSyndicales(srm, idAgent, pointages);
-		checkCongesExceptionnels(srm, idAgent, pointages);
-		checkCongeAnnuel(srm, idAgent, pointages);
-		// TODO reste à traiter les maladies
-		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
+		// DEBUT on check les absences du projet SIRH-ABS-WS
+		checkAbsences(srm, idAgent, pointages);
 		// FIN on check les types d'absences du projet SIRH-ABS-WS
 		checkMaxAbsenceHebdo(srm, idAgent, dateLundi, pointages, carr, baseDto);
 		checkAgentINAAndHSup(srm, idAgent, dateLundi, pointages, carr, baseDto);
@@ -637,25 +533,6 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		}
 
 		return srm;
-	}
-
-	/**
-	 * Processes the data consistency of a set of Pointages being input by a
-	 * user. It will check the different business rules in order to make sure
-	 * they're consistent
-	 */
-	@Override
-	public void checkAllAbsences(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
-
-		// DEBUT on check les types d'absences du projet SIRH-ABS-WS
-		checkRecuperation(srm, idAgent, pointages);
-		checkReposComp(srm, idAgent, pointages);
-		checkAbsencesSyndicales(srm, idAgent, pointages);
-		checkCongesExceptionnels(srm, idAgent, pointages);
-		checkCongeAnnuel(srm, idAgent, pointages);
-		// TODO reste à traiter les maladies
-		checkSpabsenMaladie(srm, idAgent, dateLundi, pointages);
-		// FIN on check les types d'absences du projet SIRH-ABS-WS
 	}
 
 	@Override

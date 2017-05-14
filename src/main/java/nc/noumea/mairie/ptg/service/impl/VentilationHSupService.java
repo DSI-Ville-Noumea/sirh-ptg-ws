@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
-import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
@@ -23,7 +22,6 @@ import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IVentilationHSupService;
-import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -51,9 +49,6 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 	@Autowired
 	private HelperService helperService;
-
-	@Autowired
-	private IMairieRepository mairieRepository;
 
 	@Autowired
 	private IVentilationRepository ventilationRepository;
@@ -151,22 +146,34 @@ public class VentilationHSupService implements IVentilationHSupService {
 
 		// second retrieve all the absences 
 		// on ne compte pas les conges annuels et les conges annules
-		List<DemandeDto> listConges = absWsConsumer
-				.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(idAgent,
+		List<DemandeDto> listCongesExcep = absWsConsumer
+				.getListCongesExeptionnelsEtatPrisBetween(idAgent,
 						dateLundi, new DateTime(dateLundi).plusDays(7).toDate());
-		for (DemandeDto conge : listConges) {
-			DateTime startDate = new DateTime(conge.getDateDebut());
+		// #19829 on recupere maintenant les maladies du projet SIRH-ABS-WS
+		List<DemandeDto> listMaladies = absWsConsumer
+				.getListMaladiesEtatPrisBetween(idAgent,
+						dateLundi, new DateTime(dateLundi).plusDays(7).toDate());
+		
+		List<DemandeDto> listCongesExcepEtMaladies = new ArrayList<DemandeDto>();
+		if(null != listMaladies && !listMaladies.isEmpty())
+			listCongesExcepEtMaladies.addAll(listMaladies);
+
+		if(null != listCongesExcep && !listCongesExcep.isEmpty())
+			listCongesExcepEtMaladies.addAll(listCongesExcep);
+		
+		for (DemandeDto congeMaladie : listCongesExcepEtMaladies) {
+			DateTime startDate = new DateTime(congeMaladie.getDateDebut());
 			if (dateLundi.after(startDate.toDate())) {
 				startDate = new DateTime(dateLundi);
 			}
 
-			DateTime endDate = new DateTime(conge.getDateFin());
+			DateTime endDate = new DateTime(congeMaladie.getDateFin());
 			if (endDate.toDate().after(
 					new DateTime(dateLundi).plusDays(7).toDate())) {
 				endDate = new DateTime(dateLundi).plusDays(7);
 			}
 
-			int minutesConges = 0;
+			int minutesCongesMaladies = 0;
 			for (int i = 0; i < 7; i++) {
 				DateTime dateJour = new DateTime(dateLundi).plusDays(i);
 
@@ -176,21 +183,21 @@ public class VentilationHSupService implements IVentilationHSupService {
 								.getDayOfYear() || dateJour.toDate().before(
 								endDate.toDate()))) {
 
-					int minutesCongesDay = helperService
+					int minutesCongesMaladiesDay = helperService
 							.convertMairieNbHeuresFormatToMinutes(baseDto
 									.getDayBase(i));
 					// on gere ici les demis journees
-					DateTime dateDebut = new DateTime(conge.getDateDebut());
-					DateTime dateFin = new DateTime(conge.getDateFin());
+					DateTime dateDebut = new DateTime(congeMaladie.getDateDebut());
+					DateTime dateFin = new DateTime(congeMaladie.getDateFin());
 
 					List<RefTypeSaisiDto> listTypeAbsence = absWsConsumer
-							.getTypeSaisiAbsence(conge.getIdTypeDemande());
+							.getTypeSaisiAbsence(congeMaladie.getIdTypeDemande());
 
 					if (null != listTypeAbsence && !listTypeAbsence.isEmpty()) {
 
 						if (listTypeAbsence.get(0).getUniteDecompte()
 								.equals("minutes")) {
-							minutesCongesDay = conge.getDuree().intValue();
+							minutesCongesMaladiesDay = congeMaladie.getDuree().intValue();
 						}
 						if (listTypeAbsence.get(0).getUniteDecompte()
 								.equals("jours")) {
@@ -202,59 +209,23 @@ public class VentilationHSupService implements IVentilationHSupService {
 										.getHourOfDay() == 11)
 										|| (dateDebut.getHourOfDay() == 12 && dateFin
 												.getHourOfDay() == 23)) {
-									minutesCongesDay = minutesCongesDay / 2;
+									minutesCongesMaladiesDay = minutesCongesMaladiesDay / 2;
 								}
 							} else if (startDate.getDayOfWeek() - 1 == i
 									&& dateDebut.getHourOfDay() == 12) {
-								minutesCongesDay = minutesCongesDay / 2;
+								minutesCongesMaladiesDay = minutesCongesMaladiesDay / 2;
 							} else if (endDate.getDayOfWeek() - 1 == i
 									&& dateFin.getHourOfDay() == 11) {
-								minutesCongesDay = minutesCongesDay / 2;
+								minutesCongesMaladiesDay = minutesCongesMaladiesDay / 2;
 							}
 						}
 
-						minutesConges += minutesCongesDay;
+						minutesCongesMaladies += minutesCongesMaladiesDay;
 					}
 				}
 			}
 
-			result.setMAbsencesAS400(result.getMAbsencesAS400() + minutesConges);
-		}
-
-		// second retrieve all the absences in SPABSEN
-		List<Spabsen> listSpAbsen = mairieRepository.getListMaladieBetween(
-				idAgent, dateLundi, new DateTime(dateLundi).plusDays(7)
-						.toDate());
-		for (Spabsen spabsen : listSpAbsen) {
-			DateTime startDate = new DateTime(
-					helperService.getDateFromMairieInteger(spabsen.getId()
-							.getDatdeb()));
-			if (dateLundi.after(startDate.toDate())) {
-				startDate = new DateTime(dateLundi);
-			}
-
-			DateTime endDate = new DateTime(
-					helperService.getDateFromMairieInteger(spabsen.getDatfin()));
-			if (endDate.toDate().after(
-					new DateTime(dateLundi).plusDays(7).toDate())) {
-				endDate = new DateTime(dateLundi).plusDays(7);
-			}
-
-			int minutesSpAbsen = 0;
-			for (int i = 0; i < 7; i++) {
-				Date dateJour = new DateTime(dateLundi).plusDays(i).toDate();
-				if ((dateJour.equals(startDate.toDate()) || dateJour
-						.after(startDate.toDate()))
-						&& (dateJour.equals(endDate.toDate()) || dateJour
-								.before(endDate.toDate()))) {
-					minutesSpAbsen += helperService
-							.convertMairieNbHeuresFormatToMinutes(baseDto
-									.getDayBase(i));
-				}
-			}
-
-			result.setMAbsencesAS400(result.getMAbsencesAS400()
-					+ minutesSpAbsen);
+			result.setMAbsencesAS400(result.getMAbsencesAS400() + minutesCongesMaladies);
 		}
 
 		// Compute the agent week hour base

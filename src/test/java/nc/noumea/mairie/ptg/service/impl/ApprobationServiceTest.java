@@ -506,7 +506,9 @@ public class ApprobationServiceTest {
 		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		Mockito.when(ptgDataCosistencyRules
+			.checkAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyListOf(Pointage.class)))
+			.thenReturn(new ReturnMessageDto());
 
 		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
 				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
@@ -557,7 +559,9 @@ public class ApprobationServiceTest {
 		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		Mockito.when(ptgDataCosistencyRules
+				.checkAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyListOf(Pointage.class)))
+				.thenReturn(new ReturnMessageDto());
 
 		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
 				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
@@ -608,7 +612,9 @@ public class ApprobationServiceTest {
 		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		Mockito.when(ptgDataCosistencyRules
+				.checkAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyListOf(Pointage.class)))
+				.thenReturn(new ReturnMessageDto());
 
 		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
 				Mockito.isA(Pointage.class))).thenReturn(new ReturnMessageDto());
@@ -660,7 +666,9 @@ public class ApprobationServiceTest {
 		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		Mockito.when(ptgDataCosistencyRules
+				.checkAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyListOf(Pointage.class)))
+				.thenReturn(new ReturnMessageDto());
 
 		ReturnMessageDto rmd = new ReturnMessageDto();
 		rmd.getErrors().add("pointage plus de 3 mois");
@@ -714,7 +722,9 @@ public class ApprobationServiceTest {
 		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		Mockito.when(ptgDataCosistencyRules
+				.checkAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyListOf(Pointage.class)))
+				.thenReturn(new ReturnMessageDto());
 
 		ReturnMessageDto rmd = new ReturnMessageDto();
 		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
@@ -770,7 +780,9 @@ public class ApprobationServiceTest {
 		Mockito.when(hService.getCurrentDate()).thenReturn(new Date());
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		Mockito.when(ptgDataCosistencyRules
+				.checkAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyListOf(Pointage.class)))
+				.thenReturn(new ReturnMessageDto());
 
 		ReturnMessageDto rmd = new ReturnMessageDto();
 		Mockito.when(ptgDataCosistencyRules.checkDateLundiAnterieurA3MoisWithPointage(Mockito.isA(ReturnMessageDto.class), Mockito.isA(Date.class),
@@ -1157,7 +1169,9 @@ public class ApprobationServiceTest {
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(null);
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		Mockito.when(ptgDataCosistencyRules
+				.checkAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyListOf(Pointage.class)))
+				.thenReturn(new ReturnMessageDto());
 
 		Spcarr spCarr = new Spcarr();
 
@@ -1211,7 +1225,9 @@ public class ApprobationServiceTest {
 		Mockito.when(vR.getLatestVentilDate(TypeChainePaieEnum.SHC, false)).thenReturn(ventilDate);
 
 		IPointageDataConsistencyRules ptgDataCosistencyRules = Mockito.mock(IPointageDataConsistencyRules.class);
-		Mockito.doNothing().when(ptgDataCosistencyRules).checkAllAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.isA(Date.class), Mockito.anyListOf(Pointage.class));
+		Mockito.when(ptgDataCosistencyRules
+				.checkAbsences(Mockito.isA(ReturnMessageDto.class), Mockito.anyInt(), Mockito.anyListOf(Pointage.class)))
+				.thenReturn(new ReturnMessageDto());
 
 		Spcarr spCarr = new Spcarr();
 

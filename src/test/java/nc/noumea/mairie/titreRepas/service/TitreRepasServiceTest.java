@@ -23,8 +23,6 @@ import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
-import nc.noumea.mairie.domain.Spabsen;
-import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.SpadmnId;
 import nc.noumea.mairie.domain.Spcarr;
@@ -539,23 +537,17 @@ public class TitreRepasServiceTest {
 		Mockito.when(helperService.getDatePremierJourOfMonth(dateMoisPrecedent)).thenReturn(fromDate);
 		Mockito.when(helperService.getDateDernierJourOfMonth(dateMoisPrecedent)).thenReturn(toDate);
 
-		SpabsenId spabsenId = new SpabsenId();
-		spabsenId.setDatdeb(20151024);
-		Spabsen spabsen = new Spabsen();
-		spabsen.setId(spabsenId);
-		spabsen.setDatfin(20151031);
-
-		List<Spabsen> listSpAbsen = new ArrayList<Spabsen>();
-		listSpAbsen.add(spabsen);
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mairieRepository.getListMaladieBetween(idAgent, fromDate, toDate)).thenReturn(listSpAbsen);
-
-		Mockito.when(helperService.getDateFromMairieInteger(spabsen.getId().getDatdeb())).thenReturn(new DateTime(2015, 10, 24, 0, 0, 0).toDate());
-		Mockito.when(helperService.getDateFromMairieInteger(spabsen.getDatfin())).thenReturn(new DateTime(2015, 10, 31, 0, 0, 0).toDate());
+		RefGroupeAbsenceDto groupeAbsenceMaladies = new RefGroupeAbsenceDto();
+		groupeAbsenceMaladies.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.MALADIES.getValue());
+		
+		DemandeDto demandeMaladies = new DemandeDto();
+		demandeMaladies.setAgentWithServiceDto(agent);
+		demandeMaladies.setDateDebut(new DateTime(2015, 10, 24, 0, 0, 0).toDate());
+		demandeMaladies.setDateFin(new DateTime(2015, 10, 31, 23, 59, 59).toDate());
+		demandeMaladies.setGroupeAbsence(groupeAbsenceMaladies);
+		listAbences.add(demandeMaladies);
 
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		assertFalse(service.checkUnJourSansAbsenceSurLeMois(listAbences, idAgent, dateMoisPrecedent, baseCongeAgent, null));
 	}
@@ -600,23 +592,17 @@ public class TitreRepasServiceTest {
 		Mockito.when(helperService.getDatePremierJourOfMonth(dateMoisPrecedent)).thenReturn(fromDate);
 		Mockito.when(helperService.getDateDernierJourOfMonth(dateMoisPrecedent)).thenReturn(toDate);
 
-		SpabsenId spabsenId = new SpabsenId();
-		spabsenId.setDatdeb(20151025);
-		Spabsen spabsen = new Spabsen();
-		spabsen.setId(spabsenId);
-		spabsen.setDatfin(20151031);
-
-		List<Spabsen> listSpAbsen = new ArrayList<Spabsen>();
-		listSpAbsen.add(spabsen);
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mairieRepository.getListMaladieBetween(idAgent, fromDate, toDate)).thenReturn(listSpAbsen);
-
-		Mockito.when(helperService.getDateFromMairieInteger(spabsen.getId().getDatdeb())).thenReturn(new DateTime(2015, 10, 25, 0, 0, 0).toDate());
-		Mockito.when(helperService.getDateFromMairieInteger(spabsen.getDatfin())).thenReturn(new DateTime(2015, 10, 31, 0, 0, 0).toDate());
+		RefGroupeAbsenceDto groupeAbsenceMaladies = new RefGroupeAbsenceDto();
+		groupeAbsenceMaladies.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.MALADIES.getValue());
+		
+		DemandeDto demandeMaladies = new DemandeDto();
+		demandeMaladies.setAgentWithServiceDto(agent);
+		demandeMaladies.setDateDebut(new DateTime(2015, 10, 25, 0, 0, 0).toDate());
+		demandeMaladies.setDateFin(new DateTime(2015, 10, 31, 23, 59, 59).toDate());
+		demandeMaladies.setGroupeAbsence(groupeAbsenceMaladies);
+		listAbences.add(demandeMaladies);
 
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		assertTrue(service.checkUnJourSansAbsenceSurLeMois(listAbences, idAgent, dateMoisPrecedent, baseCongeAgent, null));
 	}
@@ -662,23 +648,17 @@ public class TitreRepasServiceTest {
 		Mockito.when(helperService.getDatePremierJourOfMonth(dateMoisPrecedent)).thenReturn(fromDate);
 		Mockito.when(helperService.getDateDernierJourOfMonth(dateMoisPrecedent)).thenReturn(toDate);
 
-		SpabsenId spabsenId = new SpabsenId();
-		spabsenId.setDatdeb(20151026);
-		Spabsen spabsen = new Spabsen();
-		spabsen.setId(spabsenId);
-		spabsen.setDatfin(20151031);
-
-		List<Spabsen> listSpAbsen = new ArrayList<Spabsen>();
-		listSpAbsen.add(spabsen);
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mairieRepository.getListMaladieBetween(idAgent, fromDate, toDate)).thenReturn(listSpAbsen);
-
-		Mockito.when(helperService.getDateFromMairieInteger(spabsen.getId().getDatdeb())).thenReturn(new DateTime(2015, 10, 26, 0, 0, 0).toDate());
-		Mockito.when(helperService.getDateFromMairieInteger(spabsen.getDatfin())).thenReturn(new DateTime(2015, 10, 31, 0, 0, 0).toDate());
+		RefGroupeAbsenceDto groupeAbsenceMaladies = new RefGroupeAbsenceDto();
+		groupeAbsenceMaladies.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.MALADIES.getValue());
+		
+		DemandeDto demandeMaladies = new DemandeDto();
+		demandeMaladies.setAgentWithServiceDto(agent);
+		demandeMaladies.setDateDebut(new DateTime(2015, 10, 26, 0, 0, 0).toDate());
+		demandeMaladies.setDateFin(new DateTime(2015, 10, 31, 23, 59, 59).toDate());
+		demandeMaladies.setGroupeAbsence(groupeAbsenceMaladies);
+		listAbences.add(demandeMaladies);
 
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		assertFalse(service.checkUnJourSansAbsenceSurLeMois(listAbences, idAgent, dateMoisPrecedent, baseCongeAgent, null));
 	}
@@ -724,23 +704,17 @@ public class TitreRepasServiceTest {
 		Mockito.when(helperService.getDatePremierJourOfMonth(dateMoisPrecedent)).thenReturn(fromDate);
 		Mockito.when(helperService.getDateDernierJourOfMonth(dateMoisPrecedent)).thenReturn(toDate);
 
-		SpabsenId spabsenId = new SpabsenId();
-		spabsenId.setDatdeb(20151027);
-		Spabsen spabsen = new Spabsen();
-		spabsen.setId(spabsenId);
-		spabsen.setDatfin(20151031);
-
-		List<Spabsen> listSpAbsen = new ArrayList<Spabsen>();
-		listSpAbsen.add(spabsen);
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mairieRepository.getListMaladieBetween(idAgent, fromDate, toDate)).thenReturn(listSpAbsen);
-
-		Mockito.when(helperService.getDateFromMairieInteger(spabsen.getId().getDatdeb())).thenReturn(new DateTime(2015, 10, 27, 0, 0, 0).toDate());
-		Mockito.when(helperService.getDateFromMairieInteger(spabsen.getDatfin())).thenReturn(new DateTime(2015, 10, 31, 0, 0, 0).toDate());
+		RefGroupeAbsenceDto groupeAbsenceMaladies = new RefGroupeAbsenceDto();
+		groupeAbsenceMaladies.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.MALADIES.getValue());
+		
+		DemandeDto demandeMaladies = new DemandeDto();
+		demandeMaladies.setAgentWithServiceDto(agent);
+		demandeMaladies.setDateDebut(new DateTime(2015, 10, 27, 0, 0, 0).toDate());
+		demandeMaladies.setDateFin(new DateTime(2015, 10, 31, 23, 59, 59).toDate());
+		demandeMaladies.setGroupeAbsence(groupeAbsenceMaladies);
+		listAbences.add(demandeMaladies);
 
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		// travaille le lundi 26/10/2015
 		assertTrue(service.checkUnJourSansAbsenceSurLeMois(listAbences, idAgent, dateMoisPrecedent, baseCongeAgent, null));
 	}
@@ -2361,10 +2335,10 @@ public class TitreRepasServiceTest {
 
 		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
 
-		/*assertEquals(1, result.getErrors().size());
+		assertEquals(1, result.getErrors().size());
 		assertEquals(result.getErrors().get(0), "Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
 		Mockito.verify(mairieRepository, Mockito.never()).mergeEntity(Mockito.isA(Spchge.class));
-		Mockito.verify(mairieRepository, Mockito.never()).persistEntity(Mockito.isA(Spmatr.class));*/
+		Mockito.verify(mairieRepository, Mockito.never()).persistEntity(Mockito.isA(Spmatr.class));
 	}
 
 	@Test
@@ -2897,14 +2871,7 @@ public class TitreRepasServiceTest {
 		List<Spadmn> listSpAdmn = new ArrayList<>();
 		listSpAdmn.add(spadmn);
 		baseConge.setCodeBaseHoraireAbsence("A");
-		SpabsenId id = new SpabsenId();
-		id.setNomatr(5138);
-		id.setDatdeb(20150901);
-		Spabsen spabsen = new Spabsen();
-		spabsen.setId(id);
-		spabsen.setDatfin(20151102);
-		List<Spabsen> listSpAbsen = new ArrayList<>();
-		listSpAbsen.add(spabsen);
+
 		RefGroupeAbsenceDto groupeAbsence = new RefGroupeAbsenceDto();
 		groupeAbsence.setIdRefGroupeAbsence(3);
 		AgentWithServiceDto agentWithServiceDto = new AgentWithServiceDto();
@@ -2918,8 +2885,6 @@ public class TitreRepasServiceTest {
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(5138, new DateTime(2015, 10, 1, 0, 0, 0).toDate(),
 				new DateTime(2015, 10, 31, 23, 59, 59).toDate())).thenReturn(listSpAdmn);
-		Mockito.when(mairieRepository.getListMaladieBetween(idAgent, new DateTime(2015, 10, 1, 0, 0, 0).toDate(),
-				new DateTime(2015, 10, 31, 23, 59, 59).toDate())).thenReturn(listSpAbsen);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(idAgent)).thenReturn(5138);
@@ -2931,9 +2896,7 @@ public class TitreRepasServiceTest {
 				.thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		Mockito.when(helperService.getDateDernierJourOfMonth(new DateTime(dateMonth).toDate()))
 				.thenReturn(new DateTime(2015, 10, 31, 23, 59, 59).toDate());
-		Mockito.when(helperService.getDateFromMairieInteger(spabsen.getId().getDatdeb())).thenReturn(new DateTime(2015, 9, 1, 0, 0, 0).toDate());
-		Mockito.when(helperService.getDateFromMairieInteger(spabsen.getDatfin())).thenReturn(new DateTime(2015, 11, 2, 0, 0, 0).toDate());
-
+		
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 

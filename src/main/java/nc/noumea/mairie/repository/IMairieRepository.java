@@ -3,7 +3,6 @@ package nc.noumea.mairie.repository;
 import java.util.Date;
 import java.util.List;
 
-import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
@@ -29,8 +28,6 @@ public interface IMairieRepository {
 	Spadmn getAgentCurrentPosition(AgentGeneriqueDto ag, Date asOfDate);
 	
 	Spperm getTREtatPayeurRates(Date dateMoisSuivant);
-
-	List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end);
 	
 	List<Spadmn> getListPAOfAgentBetween2Date(Integer noMatr, Date fromDate,
 			Date toDate);

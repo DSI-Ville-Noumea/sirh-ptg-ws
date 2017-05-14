@@ -9,11 +9,16 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
+
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
-import nc.noumea.mairie.domain.Spabsen;
-import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.domain.Spbhor;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -25,22 +30,14 @@ import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.domain.VentilDate;
 import nc.noumea.mairie.ptg.domain.VentilHsup;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
-import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.springframework.test.util.ReflectionTestUtils;
-
 public class VentilationHSupServiceTest {
 
-	private static RefTypePointage hSup;
-	private static RefTypePointage abs;
+	private static RefTypePointage	hSup;
+	private static RefTypePointage	abs;
 
 	@BeforeClass
 	public static void Setup() {
@@ -82,9 +79,8 @@ public class VentilationHSupServiceTest {
 		List<VentilHsup> listOldVentilHSup = new ArrayList<VentilHsup>();
 
 		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(
-				ventilationRepository.getListOfOldVentilHSForAgentAndDateLundi(9008765, dateLundi,
-						ventilDate.getIdVentilDate())).thenReturn(listOldVentilHSup);
+		Mockito.when(ventilationRepository.getListOfOldVentilHSForAgentAndDateLundi(9008765, dateLundi, ventilDate.getIdVentilDate()))
+				.thenReturn(listOldVentilHSup);
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
@@ -114,9 +110,8 @@ public class VentilationHSupServiceTest {
 		listOldVentilHSup.add(new VentilHsup());
 
 		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(
-				ventilationRepository.getListOfOldVentilHSForAgentAndDateLundi(9008765, dateLundi,
-						ventilDate.getIdVentilDate())).thenReturn(listOldVentilHSup);
+		Mockito.when(ventilationRepository.getListOfOldVentilHSForAgentAndDateLundi(9008765, dateLundi, ventilDate.getIdVentilDate()))
+				.thenReturn(listOldVentilHSup);
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
@@ -164,18 +159,16 @@ public class VentilationHSupServiceTest {
 		List<VentilHsup> listOldVentilHSup = new ArrayList<VentilHsup>();
 
 		IVentilationRepository ventilationRepository = Mockito.mock(IVentilationRepository.class);
-		Mockito.when(
-				ventilationRepository.getListOfOldVentilHSForAgentAndDateLundi(9008765, dateLundi,
-						ventilDate.getIdVentilDate())).thenReturn(listOldVentilHSup);
+		Mockito.when(ventilationRepository.getListOfOldVentilHSForAgentAndDateLundi(9008765, dateLundi, ventilDate.getIdVentilDate()))
+				.thenReturn(listOldVentilHSup);
 
 		Pointage ptg = new Pointage();
 		ptg.setType(hSup);
 		List<Pointage> pointagesJournalisesRejetes = new ArrayList<Pointage>();
 		pointagesJournalisesRejetes.add(ptg);
-		
-		Mockito.when(ventilationRepository
-				.getPriorOldVentilHSupAgentAndDate(9008765, dateLundi, ventilDate)).thenReturn(new VentilHsup());
-		
+
+		Mockito.when(ventilationRepository.getPriorOldVentilHSupAgentAndDate(9008765, dateLundi, ventilDate)).thenReturn(new VentilHsup());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepository);
 
@@ -248,24 +241,19 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-		
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		
+
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				new VentilDate());
-		
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
+
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
 		assertEquals(p1.getDateLundi(), result.getDateLundi());
@@ -331,26 +319,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-		
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -433,26 +416,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -551,26 +529,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5, p6), new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -661,26 +634,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -747,26 +715,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-		
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -857,26 +820,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -971,26 +929,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1085,26 +1038,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1173,26 +1121,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 04, 1, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				true, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), true, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1280,26 +1223,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5, p6), new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1352,26 +1290,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(Mockito.any(DateTime.class))).thenReturn(false);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1394,7 +1327,7 @@ public class VentilationHSupServiceTest {
 
 	/******************************************************
 	 * TESTS UNITAIRES BASES SUR LES TABLEAUX EXCELS DE MICHEL RECUS PAR FICHIER
-	 * EXCEL LE 18/07/2014 : "Copie de Exemple calculs  HS  JDFet nuit V3.xlsx"
+	 * EXCEL LE 18/07/2014 : "Copie de Exemple calculs HS JDFet nuit V3.xlsx"
 	 */
 
 	/************************************************************
@@ -1450,26 +1383,21 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1541,26 +1469,21 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1625,26 +1548,21 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1757,26 +1675,22 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9),
+				new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1859,26 +1773,21 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -1998,26 +1907,22 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9), new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9),
+				new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2088,26 +1993,21 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2169,26 +2069,21 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2256,57 +2151,51 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 
-		SpabsenId id = new SpabsenId();
-		id.setDatdeb(20131112);
-		Spabsen absence = new Spabsen();
-		absence.setId(id);
-		absence.setDatfin(20131112);
+		DemandeDto absence = new DemandeDto();
+		absence.setDateDebut(new DateTime(2013, 11, 12, 0, 0, 0).toDate());
+		absence.setDateFin(new DateTime(2013, 11, 12, 23, 59, 59).toDate());
 
-		List<Spabsen> listAbsence = new ArrayList<Spabsen>();
+		List<DemandeDto> listAbsence = new ArrayList<DemandeDto>();
 		listAbsence.add(absence);
 
-		Date dateDebutAbsence = new DateTime(2013, 11, 12, 0, 0, 0).toDate();
-		Date dateFinAbsence = new DateTime(2013, 11, 12, 0, 0, 0).toDate();
-
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getDateFromMairieInteger(absence.getId().getDatdeb())).thenReturn(dateDebutAbsence);
-		Mockito.when(helperService.getDateFromMairieInteger(absence.getDatfin())).thenReturn(dateFinAbsence);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureLundi())).thenReturn(
-				new Double(spbase.getHeureLundi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMardi())).thenReturn(
-				new Double(spbase.getHeureMardi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMercredi())).thenReturn(
-				new Double(spbase.getHeureMercredi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureJeudi())).thenReturn(
-				new Double(spbase.getHeureJeudi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureVendredi())).thenReturn(
-				new Double(spbase.getHeureVendredi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee())).thenReturn(
-				new Double(spbase.getBaseCalculee()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureLundi()))
+				.thenReturn(new Double(spbase.getHeureLundi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMardi()))
+				.thenReturn(new Double(spbase.getHeureMardi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMercredi()))
+				.thenReturn(new Double(spbase.getHeureMercredi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureJeudi()))
+				.thenReturn(new Double(spbase.getHeureJeudi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureVendredi()))
+				.thenReturn(new Double(spbase.getHeureVendredi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee()))
+				.thenReturn(new Double(spbase.getBaseCalculee()).intValue() * 60);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		List<RefTypeSaisiDto> listTypeDemande = new ArrayList<RefTypeSaisiDto>();
+		RefTypeSaisiDto typeDemande1 = new RefTypeSaisiDto();
+		typeDemande1.setUniteDecompte("jours");
+		listTypeDemande.add(typeDemande1);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(listAbsence);
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(listAbsence);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(absence.getIdTypeDemande())).thenReturn(listTypeDemande);
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2390,26 +2279,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi,
-				Arrays.asList(p2, p3, p4, p5, p6), new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2484,26 +2368,21 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3),
-				new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2574,26 +2453,21 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3),
-				new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2656,26 +2530,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2787,26 +2656,22 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9),
+				new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -2889,26 +2754,21 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3028,26 +2888,22 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9), new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p1_bis, p2, p3, p4, p5, p6, p7, p8, p9),
+				new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3118,26 +2974,21 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6),
-				new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3199,28 +3050,21 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		// les conges annuels et annules ne sont pas retournes par la requete
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3282,13 +3126,13 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		// les conges maternite
 		List<DemandeDto> listConges = new ArrayList<DemandeDto>();
 		DemandeDto conge = new DemandeDto();
-		conge.setDateDebut(new DateTime(2013,11,12,0,0,0).toDate());
-		conge.setDateFin(new DateTime(2013,11,12,11,59,59).toDate());
+		conge.setDateDebut(new DateTime(2013, 11, 12, 0, 0, 0).toDate());
+		conge.setDateFin(new DateTime(2013, 11, 12, 11, 59, 59).toDate());
 		conge.setIdTypeDemande(1);
 		listConges.add(conge);
 
@@ -3296,26 +3140,21 @@ public class VentilationHSupServiceTest {
 		RefTypeSaisiDto typeDemande1 = new RefTypeSaisiDto();
 		typeDemande1.setUniteDecompte("jours");
 		listTypeDemande.add(typeDemande1);
-		
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(listConges);
-		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
 
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(listConges);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3391,13 +3230,13 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		// les conges maternite
 		List<DemandeDto> listConges = new ArrayList<DemandeDto>();
 		DemandeDto conge = new DemandeDto();
-		conge.setDateDebut(new DateTime(2013,11,12,12,0,0).toDate());
-		conge.setDateFin(new DateTime(2013,11,14,11,59,59).toDate());
+		conge.setDateDebut(new DateTime(2013, 11, 12, 12, 0, 0).toDate());
+		conge.setDateFin(new DateTime(2013, 11, 14, 11, 59, 59).toDate());
 		conge.setIdTypeDemande(1);
 		listConges.add(conge);
 
@@ -3405,26 +3244,21 @@ public class VentilationHSupServiceTest {
 		RefTypeSaisiDto typeDemande1 = new RefTypeSaisiDto();
 		typeDemande1.setUniteDecompte("jours");
 		listTypeDemande.add(typeDemande1);
-		
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(listConges);
-		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
 
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(listConges);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p3, p1, p2, p4),
-				new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p3, p1, p2, p4), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3446,7 +3280,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
-	
+
 	/**
 	 * Test PLEIN TEMPS CONGE ANNUEL
 	 */
@@ -3500,13 +3334,13 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		// les conges maternite
 		List<DemandeDto> listConges = new ArrayList<DemandeDto>();
 		DemandeDto conge = new DemandeDto();
-		conge.setDateDebut(new DateTime(2013,11,12,10,0,0).toDate());
-		conge.setDateFin(new DateTime(2013,11,12,12,0,0).toDate());
+		conge.setDateDebut(new DateTime(2013, 11, 12, 10, 0, 0).toDate());
+		conge.setDateFin(new DateTime(2013, 11, 12, 12, 0, 0).toDate());
 		conge.setIdTypeDemande(1);
 		conge.setDuree(120.0);
 		listConges.add(conge);
@@ -3515,26 +3349,21 @@ public class VentilationHSupServiceTest {
 		RefTypeSaisiDto typeDemande1 = new RefTypeSaisiDto();
 		typeDemande1.setUniteDecompte("minutes");
 		listTypeDemande.add(typeDemande1);
-		
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(listConges);
-		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
 
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(listConges);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p3, p1, p2, p4),
-				new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p3, p1, p2, p4), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3602,57 +3431,51 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 
-		SpabsenId id = new SpabsenId();
-		id.setDatdeb(20131112);
-		Spabsen absence = new Spabsen();
-		absence.setId(id);
-		absence.setDatfin(20131112);
+		DemandeDto absence = new DemandeDto();
+		absence.setDateDebut(new DateTime(2013, 11, 12, 0, 0, 0).toDate());
+		absence.setDateFin(new DateTime(2013, 11, 12, 23, 59, 59).toDate());
 
-		List<Spabsen> listAbsence = new ArrayList<Spabsen>();
+		List<DemandeDto> listAbsence = new ArrayList<DemandeDto>();
 		listAbsence.add(absence);
 
-		Date dateDebutAbsence = new DateTime(2013, 11, 12, 0, 0, 0).toDate();
-		Date dateFinAbsence = new DateTime(2013, 11, 12, 0, 0, 0).toDate();
-
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getDateFromMairieInteger(absence.getId().getDatdeb())).thenReturn(dateDebutAbsence);
-		Mockito.when(helperService.getDateFromMairieInteger(absence.getDatfin())).thenReturn(dateFinAbsence);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureLundi())).thenReturn(
-				new Double(spbase.getHeureLundi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMardi())).thenReturn(
-				new Double(spbase.getHeureMardi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMercredi())).thenReturn(
-				new Double(spbase.getHeureMercredi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureJeudi())).thenReturn(
-				new Double(spbase.getHeureJeudi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureVendredi())).thenReturn(
-				new Double(spbase.getHeureVendredi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee())).thenReturn(
-				new Double(spbase.getBaseCalculee()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureLundi()))
+				.thenReturn(new Double(spbase.getHeureLundi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMardi()))
+				.thenReturn(new Double(spbase.getHeureMardi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMercredi()))
+				.thenReturn(new Double(spbase.getHeureMercredi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureJeudi()))
+				.thenReturn(new Double(spbase.getHeureJeudi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureVendredi()))
+				.thenReturn(new Double(spbase.getHeureVendredi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee()))
+				.thenReturn(new Double(spbase.getBaseCalculee()).intValue() * 60);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		List<RefTypeSaisiDto> listTypeDemande = new ArrayList<RefTypeSaisiDto>();
+		RefTypeSaisiDto typeDemande1 = new RefTypeSaisiDto();
+		typeDemande1.setUniteDecompte("jours");
+		listTypeDemande.add(typeDemande1);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(listAbsence);
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(listAbsence);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(absence.getIdTypeDemande())).thenReturn(listTypeDemande);
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4),
-				new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3736,26 +3559,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isJourFerie(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi,
-				Arrays.asList(p2, p3, p4, p5, p6), new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3832,26 +3650,21 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -3924,26 +3737,21 @@ public class VentilationHSupServiceTest {
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 1, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 2, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4006,26 +3814,21 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4137,26 +3940,22 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5, p6, p7, p8, p9),
+				false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4240,26 +4039,22 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3, p4, p5), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3, p4, p5), false,
+				new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4379,21 +4174,17 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 8, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
@@ -4470,26 +4261,21 @@ public class VentilationHSupServiceTest {
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p6), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p6), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4551,26 +4337,21 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2),
-				false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4640,14 +4421,14 @@ public class VentilationHSupServiceTest {
 
 		List<DemandeDto> listConges = new ArrayList<DemandeDto>();
 		DemandeDto conge = new DemandeDto();
-		conge.setDateDebut(new DateTime(2013,11,12,0,0,0).toDate());
-		conge.setDateFin(new DateTime(2013,11,13,11,59,59).toDate());
+		conge.setDateDebut(new DateTime(2013, 11, 12, 0, 0, 0).toDate());
+		conge.setDateFin(new DateTime(2013, 11, 13, 11, 59, 59).toDate());
 		conge.setIdTypeDemande(1);
 		listConges.add(conge);
-		
+
 		DemandeDto conge2 = new DemandeDto();
-		conge2.setDateDebut(new DateTime(2013,11,14,12,0,0).toDate());
-		conge2.setDateFin(new DateTime(2013,11,14,23,59,59).toDate());
+		conge2.setDateDebut(new DateTime(2013, 11, 14, 12, 0, 0).toDate());
+		conge2.setDateFin(new DateTime(2013, 11, 14, 23, 59, 59).toDate());
 		conge2.setIdTypeDemande(2);
 		listConges.add(conge2);
 
@@ -4659,30 +4440,25 @@ public class VentilationHSupServiceTest {
 		RefTypeSaisiDto typeDemande2 = new RefTypeSaisiDto();
 		typeDemande2.setUniteDecompte("jours");
 		listTypeDemande2.add(typeDemande2);
-		
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(listConges);
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(listConges);
 		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge.getIdTypeDemande())).thenReturn(listTypeDemande);
 		Mockito.when(absWsConsumer.getTypeSaisiAbsence(conge2.getIdTypeDemande())).thenReturn(listTypeDemande2);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p2, p3), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p2, p3), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4750,57 +4526,51 @@ public class VentilationHSupServiceTest {
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
 
-		SpabsenId id = new SpabsenId();
-		id.setDatdeb(20131112);
-		Spabsen absence = new Spabsen();
-		absence.setId(id);
-		absence.setDatfin(20131112);
+		DemandeDto absence = new DemandeDto();
+		absence.setDateDebut(new DateTime(2013, 11, 12, 0, 0, 0).toDate());
+		absence.setDateFin(new DateTime(2013, 11, 12, 23, 59, 59).toDate());
 
-		List<Spabsen> listAbsence = new ArrayList<Spabsen>();
+		List<DemandeDto> listAbsence = new ArrayList<DemandeDto>();
 		listAbsence.add(absence);
 
-		Date dateDebutAbsence = new DateTime(2013, 11, 12, 0, 0, 0).toDate();
-		Date dateFinAbsence = new DateTime(2013, 11, 12, 0, 0, 0).toDate();
-
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.getDateFromMairieInteger(absence.getId().getDatdeb())).thenReturn(dateDebutAbsence);
-		Mockito.when(helperService.getDateFromMairieInteger(absence.getDatfin())).thenReturn(dateFinAbsence);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureLundi())).thenReturn(
-				new Double(spbase.getHeureLundi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMardi())).thenReturn(
-				new Double(spbase.getHeureMardi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMercredi())).thenReturn(
-				new Double(spbase.getHeureMercredi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureJeudi())).thenReturn(
-				new Double(spbase.getHeureJeudi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureVendredi())).thenReturn(
-				new Double(spbase.getHeureVendredi()).intValue() * 60);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee())).thenReturn(
-				new Double(spbase.getBaseCalculee()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureLundi()))
+				.thenReturn(new Double(spbase.getHeureLundi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMardi()))
+				.thenReturn(new Double(spbase.getHeureMardi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureMercredi()))
+				.thenReturn(new Double(spbase.getHeureMercredi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureJeudi()))
+				.thenReturn(new Double(spbase.getHeureJeudi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getHeureVendredi()))
+				.thenReturn(new Double(spbase.getHeureVendredi()).intValue() * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee()))
+				.thenReturn(new Double(spbase.getBaseCalculee()).intValue() * 60);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 20, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		List<RefTypeSaisiDto> listTypeDemande = new ArrayList<RefTypeSaisiDto>();
+		RefTypeSaisiDto typeDemande1 = new RefTypeSaisiDto();
+		typeDemande1.setUniteDecompte("jours");
+		listTypeDemande.add(typeDemande1);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(listAbsence);
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(listAbsence);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(absence.getIdTypeDemande())).thenReturn(listTypeDemande);
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p1, p3, p4), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p1, p3, p4), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4884,26 +4654,22 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p2, p3, p4, p5, p6), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), false,
+				new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -4987,26 +4753,22 @@ public class VentilationHSupServiceTest {
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(hService.isHoliday(new DateTime(2013, 11, 11, 0, 0, 0))).thenReturn(true);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p2, p3, p4, p5, p6), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), false,
+				new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -5078,26 +4840,21 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p2, p3, p4), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4), false, new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -5166,26 +4923,21 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p2, p3),
-				new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p2, p3), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -5257,26 +5009,21 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4),
-				new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4), new VentilDate());
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
 		assertEquals(p2.getDateLundi(), result.getDateLundi());
@@ -5302,7 +5049,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
-	
+
 	/**
 	 * Test ABSENCES Nuit et DJF 39H
 	 */
@@ -5363,26 +5110,22 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi,
-				Arrays.asList(p2, p3, p4, p5, p6), false, new VentilDate());
+		VentilHsup result = service.processHSupConventionCollective(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), false,
+				new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -5405,7 +5148,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
-	
+
 	/**
 	 * Test ABSENCES Nuit et DJF 39H
 	 */
@@ -5466,26 +5209,21 @@ public class VentilationHSupServiceTest {
 		spcarr.setSpbhor(spbhor);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi,
-				Arrays.asList(p2, p3, p4, p5, p6), new VentilDate());
+		VentilHsup result = service.processHSupContractuel(9007865, spcarr, dateLundi, Arrays.asList(p2, p3, p4, p5, p6), new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -5508,7 +5246,7 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
-	
+
 	/**
 	 * Test ABSENCES Nuit et DJF 39H
 	 */
@@ -5568,29 +5306,25 @@ public class VentilationHSupServiceTest {
 		spbase.setHeureVendredi(7.45);
 		spbase.setHeureSamedi(0.0);
 		spbase.setHeureDimanche(0.0);
-		spbase.setBaseCalculee(38.45); 
+		spbase.setBaseCalculee(38.45);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(Mockito.anyInt(),
-						Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(new ArrayList<DemandeDto>());
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(
-				mairieRepository.getListMaladieBetween(Mockito.anyInt(), Mockito.any(Date.class),
-						Mockito.any(Date.class))).thenReturn(new ArrayList<Spabsen>());
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(new ArrayList<DemandeDto>());
 
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		VentilHsup result = service.processHSupFonctionnaire(9007865, new Spcarr(), dateLundi,
-				Arrays.asList(p2, p3, p4, p5, p6, p7), new VentilDate());
+		VentilHsup result = service.processHSupFonctionnaire(9007865, new Spcarr(), dateLundi, Arrays.asList(p2, p3, p4, p5, p6, p7),
+				new VentilDate());
 
 		// Then
 		assertEquals(9007865, (int) result.getIdAgent());
@@ -5613,36 +5347,36 @@ public class VentilationHSupServiceTest {
 
 		assertEquals(EtatPointageEnum.VENTILE, result.getEtat());
 	}
-	
+
 	@Test
 	public void processHeuresSupEpandageForSIPRES_Fonctionnaire_2HSimple() {
-		
+
 		RefPrime prime = new RefPrime();
 		prime.setNoRubr(7716);
 
-		Date dateLundi = new DateTime(2015,2,9,0,0,0).toDate();
-		
+		Date dateLundi = new DateTime(2015, 2, 9, 0, 0, 0).toDate();
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setRefPrime(prime);
 		ptg.setQuantite(120);
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,2,9,5,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,2,9,7,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 2, 9, 5, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 2, 9, 7, 0, 0).toDate());
 		ptg.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
 		Integer idAgent = 9005138;
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		pointages.add(ptg);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ventilHsup = service.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, pointages, AgentStatutEnum.F);
-		
-		assertEquals(ventilHsup.getMHorsContrat(), 2*60);
-		assertEquals(ventilHsup.getMSimple(), 2*60);
+
+		assertEquals(ventilHsup.getMHorsContrat(), 2 * 60);
+		assertEquals(ventilHsup.getMSimple(), 2 * 60);
 		assertEquals(ventilHsup.getMComposees(), 0);
 		assertEquals(ventilHsup.getMNormales(), 0);
 		assertEquals(ventilHsup.getMSup25(), 0);
@@ -5651,85 +5385,85 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsdjf(), 0);
 		assertEquals(ventilHsup.getMsNuit(), 0);
 	}
-	
+
 	@Test
 	public void processHeuresSupEpandageForSIPRES_Fonctionnaire_8HSimple_6HComposees() {
-		
+
 		RefPrime prime = new RefPrime();
 		prime.setNoRubr(7716);
 
-		Date dateLundi = new DateTime(2015,2,9,0,0,0).toDate();
-		
+		Date dateLundi = new DateTime(2015, 2, 9, 0, 0, 0).toDate();
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setRefPrime(prime);
 		ptg.setQuantite(120);
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,2,9,5,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,2,9,7,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 2, 9, 5, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 2, 9, 7, 0, 0).toDate());
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setRefPrime(prime);
 		ptg2.setQuantite(120);
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,2,10,5,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,2,10,7,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 2, 10, 5, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 2, 10, 7, 0, 0).toDate());
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setRefPrime(prime);
 		ptg3.setQuantite(120);
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,2,11,5,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,2,11,7,0,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 2, 11, 5, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 2, 11, 7, 0, 0).toDate());
 		ptg3.setType(type);
-		
+
 		Pointage ptg4 = new Pointage();
 		ptg4.setRefPrime(prime);
 		ptg4.setQuantite(120);
 		ptg4.setDateLundi(dateLundi);
-		ptg4.setDateDebut(new DateTime(2015,2,12,5,0,0).toDate());
-		ptg4.setDateFin(new DateTime(2015,2,12,7,0,0).toDate());
+		ptg4.setDateDebut(new DateTime(2015, 2, 12, 5, 0, 0).toDate());
+		ptg4.setDateFin(new DateTime(2015, 2, 12, 7, 0, 0).toDate());
 		ptg4.setType(type);
-		
+
 		Pointage ptg5 = new Pointage();
 		ptg5.setRefPrime(prime);
 		ptg5.setQuantite(120);
 		ptg5.setDateLundi(dateLundi);
-		ptg5.setDateDebut(new DateTime(2015,2,13,5,0,0).toDate());
-		ptg5.setDateFin(new DateTime(2015,2,13,7,0,0).toDate());
+		ptg5.setDateDebut(new DateTime(2015, 2, 13, 5, 0, 0).toDate());
+		ptg5.setDateFin(new DateTime(2015, 2, 13, 7, 0, 0).toDate());
 		ptg5.setType(type);
-		
+
 		Pointage ptg6 = new Pointage();
 		ptg6.setRefPrime(prime);
 		ptg6.setQuantite(120);
 		ptg6.setDateLundi(dateLundi);
-		ptg6.setDateDebut(new DateTime(2015,2,14,5,0,0).toDate());
-		ptg6.setDateFin(new DateTime(2015,2,14,7,0,0).toDate());
+		ptg6.setDateDebut(new DateTime(2015, 2, 14, 5, 0, 0).toDate());
+		ptg6.setDateFin(new DateTime(2015, 2, 14, 7, 0, 0).toDate());
 		ptg6.setType(type);
-		
+
 		Pointage ptg7 = new Pointage();
 		ptg7.setRefPrime(prime);
 		ptg7.setQuantite(120);
 		ptg7.setDateLundi(dateLundi);
-		ptg7.setDateDebut(new DateTime(2015,2,15,5,0,0).toDate());
-		ptg7.setDateFin(new DateTime(2015,2,15,7,0,0).toDate());
+		ptg7.setDateDebut(new DateTime(2015, 2, 15, 5, 0, 0).toDate());
+		ptg7.setDateFin(new DateTime(2015, 2, 15, 7, 0, 0).toDate());
 		ptg7.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
 		Integer idAgent = 9005138;
 		List<Pointage> pointages = new ArrayList<Pointage>();
-		pointages.addAll(Arrays.asList(ptg,ptg2,ptg3,ptg4,ptg5,ptg6,ptg7));
-		
+		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4, ptg5, ptg6, ptg7));
+
 		VentilationHSupService service = new VentilationHSupService();
 		ventilHsup = service.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, pointages, AgentStatutEnum.F);
 
-		assertEquals(ventilHsup.getMHorsContrat(), 14*60);
-		assertEquals(ventilHsup.getMSimple(), 8*60);
-		assertEquals(ventilHsup.getMComposees(), 6*60);
+		assertEquals(ventilHsup.getMHorsContrat(), 14 * 60);
+		assertEquals(ventilHsup.getMSimple(), 8 * 60);
+		assertEquals(ventilHsup.getMComposees(), 6 * 60);
 		assertEquals(ventilHsup.getMNormales(), 0);
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
@@ -5737,284 +5471,284 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsdjf(), 0);
 		assertEquals(ventilHsup.getMsNuit(), 0);
 	}
-	
+
 	@Test
 	public void processHeuresSupEpandageForSIPRES_Fonctionnaire_8HSimple_6HComposees_HeuresSuppDejaPresentes() {
-		
+
 		RefPrime prime = new RefPrime();
 		prime.setNoRubr(7716);
 
-		Date dateLundi = new DateTime(2015,2,9,0,0,0).toDate();
-		
+		Date dateLundi = new DateTime(2015, 2, 9, 0, 0, 0).toDate();
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setRefPrime(prime);
 		ptg.setQuantite(120);
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,2,9,5,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,2,9,7,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 2, 9, 5, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 2, 9, 7, 0, 0).toDate());
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setRefPrime(prime);
 		ptg2.setQuantite(120);
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,2,10,5,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,2,10,7,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 2, 10, 5, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 2, 10, 7, 0, 0).toDate());
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setRefPrime(prime);
 		ptg3.setQuantite(120);
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,2,11,5,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,2,11,7,0,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 2, 11, 5, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 2, 11, 7, 0, 0).toDate());
 		ptg3.setType(type);
-		
+
 		Pointage ptg4 = new Pointage();
 		ptg4.setRefPrime(prime);
 		ptg4.setQuantite(120);
 		ptg4.setDateLundi(dateLundi);
-		ptg4.setDateDebut(new DateTime(2015,2,12,5,0,0).toDate());
-		ptg4.setDateFin(new DateTime(2015,2,12,7,0,0).toDate());
+		ptg4.setDateDebut(new DateTime(2015, 2, 12, 5, 0, 0).toDate());
+		ptg4.setDateFin(new DateTime(2015, 2, 12, 7, 0, 0).toDate());
 		ptg4.setType(type);
-		
+
 		Pointage ptg5 = new Pointage();
 		ptg5.setRefPrime(prime);
 		ptg5.setQuantite(120);
 		ptg5.setDateLundi(dateLundi);
-		ptg5.setDateDebut(new DateTime(2015,2,13,5,0,0).toDate());
-		ptg5.setDateFin(new DateTime(2015,2,13,7,0,0).toDate());
+		ptg5.setDateDebut(new DateTime(2015, 2, 13, 5, 0, 0).toDate());
+		ptg5.setDateFin(new DateTime(2015, 2, 13, 7, 0, 0).toDate());
 		ptg5.setType(type);
-		
+
 		Pointage ptg6 = new Pointage();
 		ptg6.setRefPrime(prime);
 		ptg6.setQuantite(120);
 		ptg6.setDateLundi(dateLundi);
-		ptg6.setDateDebut(new DateTime(2015,2,14,5,0,0).toDate());
-		ptg6.setDateFin(new DateTime(2015,2,14,7,0,0).toDate());
+		ptg6.setDateDebut(new DateTime(2015, 2, 14, 5, 0, 0).toDate());
+		ptg6.setDateFin(new DateTime(2015, 2, 14, 7, 0, 0).toDate());
 		ptg6.setType(type);
-		
+
 		Pointage ptg7 = new Pointage();
 		ptg7.setRefPrime(prime);
 		ptg7.setQuantite(120);
 		ptg7.setDateLundi(dateLundi);
-		ptg7.setDateDebut(new DateTime(2015,2,15,5,0,0).toDate());
-		ptg7.setDateFin(new DateTime(2015,2,15,7,0,0).toDate());
+		ptg7.setDateDebut(new DateTime(2015, 2, 15, 5, 0, 0).toDate());
+		ptg7.setDateFin(new DateTime(2015, 2, 15, 7, 0, 0).toDate());
 		ptg7.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		ventilHsup.setMNormales(1*60);
-		ventilHsup.setMSimple(3*60);
-		ventilHsup.setMComposees(2*60);
-		ventilHsup.setMHorsContrat(5*60);
-		
+		ventilHsup.setMNormales(1 * 60);
+		ventilHsup.setMSimple(3 * 60);
+		ventilHsup.setMComposees(2 * 60);
+		ventilHsup.setMHorsContrat(5 * 60);
+
 		Integer idAgent = 9005138;
 		List<Pointage> pointages = new ArrayList<Pointage>();
-		pointages.addAll(Arrays.asList(ptg,ptg2,ptg3,ptg4,ptg5,ptg6,ptg7));
-		
+		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4, ptg5, ptg6, ptg7));
+
 		VentilationHSupService service = new VentilationHSupService();
 		ventilHsup = service.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, pointages, AgentStatutEnum.F);
-		
-		assertEquals(ventilHsup.getMHorsContrat(), 19*60);
-		assertEquals(ventilHsup.getMSimple(), 11*60);
-		assertEquals(ventilHsup.getMComposees(), 8*60);
-		assertEquals(ventilHsup.getMNormales(), 1*60);
+
+		assertEquals(ventilHsup.getMHorsContrat(), 19 * 60);
+		assertEquals(ventilHsup.getMSimple(), 11 * 60);
+		assertEquals(ventilHsup.getMComposees(), 8 * 60);
+		assertEquals(ventilHsup.getMNormales(), 1 * 60);
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
 		assertEquals(ventilHsup.getMsdjf(), 0);
 		assertEquals(ventilHsup.getMsNuit(), 0);
 	}
-	
+
 	@Test
 	public void processHeuresSupEpandageForSIPRES_Contractuel_8HSimple_6HComposees_HeuresSuppDejaPresentes() {
-		
+
 		RefPrime prime = new RefPrime();
 		prime.setNoRubr(7716);
 
-		Date dateLundi = new DateTime(2015,2,9,0,0,0).toDate();
-		
+		Date dateLundi = new DateTime(2015, 2, 9, 0, 0, 0).toDate();
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setRefPrime(prime);
 		ptg.setQuantite(120);
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,2,9,5,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,2,9,7,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 2, 9, 5, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 2, 9, 7, 0, 0).toDate());
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setRefPrime(prime);
 		ptg2.setQuantite(120);
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,2,10,5,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,2,10,7,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 2, 10, 5, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 2, 10, 7, 0, 0).toDate());
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setRefPrime(prime);
 		ptg3.setQuantite(120);
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,2,11,5,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,2,11,7,0,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 2, 11, 5, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 2, 11, 7, 0, 0).toDate());
 		ptg3.setType(type);
-		
+
 		Pointage ptg4 = new Pointage();
 		ptg4.setRefPrime(prime);
 		ptg4.setQuantite(120);
 		ptg4.setDateLundi(dateLundi);
-		ptg4.setDateDebut(new DateTime(2015,2,12,5,0,0).toDate());
-		ptg4.setDateFin(new DateTime(2015,2,12,7,0,0).toDate());
+		ptg4.setDateDebut(new DateTime(2015, 2, 12, 5, 0, 0).toDate());
+		ptg4.setDateFin(new DateTime(2015, 2, 12, 7, 0, 0).toDate());
 		ptg4.setType(type);
-		
+
 		Pointage ptg5 = new Pointage();
 		ptg5.setRefPrime(prime);
 		ptg5.setQuantite(120);
 		ptg5.setDateLundi(dateLundi);
-		ptg5.setDateDebut(new DateTime(2015,2,13,5,0,0).toDate());
-		ptg5.setDateFin(new DateTime(2015,2,13,7,0,0).toDate());
+		ptg5.setDateDebut(new DateTime(2015, 2, 13, 5, 0, 0).toDate());
+		ptg5.setDateFin(new DateTime(2015, 2, 13, 7, 0, 0).toDate());
 		ptg5.setType(type);
-		
+
 		Pointage ptg6 = new Pointage();
 		ptg6.setRefPrime(prime);
 		ptg6.setQuantite(120);
 		ptg6.setDateLundi(dateLundi);
-		ptg6.setDateDebut(new DateTime(2015,2,14,5,0,0).toDate());
-		ptg6.setDateFin(new DateTime(2015,2,14,7,0,0).toDate());
+		ptg6.setDateDebut(new DateTime(2015, 2, 14, 5, 0, 0).toDate());
+		ptg6.setDateFin(new DateTime(2015, 2, 14, 7, 0, 0).toDate());
 		ptg6.setType(type);
-		
+
 		Pointage ptg7 = new Pointage();
 		ptg7.setRefPrime(prime);
 		ptg7.setQuantite(120);
 		ptg7.setDateLundi(dateLundi);
-		ptg7.setDateDebut(new DateTime(2015,2,15,5,0,0).toDate());
-		ptg7.setDateFin(new DateTime(2015,2,15,7,0,0).toDate());
+		ptg7.setDateDebut(new DateTime(2015, 2, 15, 5, 0, 0).toDate());
+		ptg7.setDateFin(new DateTime(2015, 2, 15, 7, 0, 0).toDate());
 		ptg7.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		ventilHsup.setMNormales(1*60);
-		ventilHsup.setMSup25(3*60);
-		ventilHsup.setMSup50(2*60);
-		ventilHsup.setMHorsContrat(5*60);
-		
+		ventilHsup.setMNormales(1 * 60);
+		ventilHsup.setMSup25(3 * 60);
+		ventilHsup.setMSup50(2 * 60);
+		ventilHsup.setMHorsContrat(5 * 60);
+
 		Integer idAgent = 9005138;
 		List<Pointage> pointages = new ArrayList<Pointage>();
-		pointages.addAll(Arrays.asList(ptg,ptg2,ptg3,ptg4,ptg5,ptg6,ptg7));
-		
+		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4, ptg5, ptg6, ptg7));
+
 		VentilationHSupService service = new VentilationHSupService();
 		ventilHsup = service.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, pointages, AgentStatutEnum.C);
 
-		assertEquals(ventilHsup.getMHorsContrat(), 19*60);
+		assertEquals(ventilHsup.getMHorsContrat(), 19 * 60);
 		assertEquals(ventilHsup.getMSimple(), 0);
 		assertEquals(ventilHsup.getMComposees(), 0);
-		assertEquals(ventilHsup.getMNormales(), 1*60);
-		assertEquals(ventilHsup.getMSup25(), 11*60);
-		assertEquals(ventilHsup.getMSup50(), 8*60);
+		assertEquals(ventilHsup.getMNormales(), 1 * 60);
+		assertEquals(ventilHsup.getMSup25(), 11 * 60);
+		assertEquals(ventilHsup.getMSup50(), 8 * 60);
 		assertEquals(ventilHsup.getMMai(), 0);
 		assertEquals(ventilHsup.getMsdjf(), 0);
 		assertEquals(ventilHsup.getMsNuit(), 0);
 	}
-	
+
 	@Test
 	public void processHeuresSupEpandageForSIPRES_ConvColl_8HSimple_6HComposees_HeuresSuppDejaPresentes() {
-		
+
 		RefPrime prime = new RefPrime();
 		prime.setNoRubr(7716);
 
-		Date dateLundi = new DateTime(2015,2,9,0,0,0).toDate();
-		
+		Date dateLundi = new DateTime(2015, 2, 9, 0, 0, 0).toDate();
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setRefPrime(prime);
 		ptg.setQuantite(120);
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,2,9,5,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,2,9,7,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 2, 9, 5, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 2, 9, 7, 0, 0).toDate());
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setRefPrime(prime);
 		ptg2.setQuantite(120);
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,2,10,5,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,2,10,7,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 2, 10, 5, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 2, 10, 7, 0, 0).toDate());
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setRefPrime(prime);
 		ptg3.setQuantite(120);
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,2,11,5,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,2,11,7,0,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 2, 11, 5, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 2, 11, 7, 0, 0).toDate());
 		ptg3.setType(type);
-		
+
 		Pointage ptg4 = new Pointage();
 		ptg4.setRefPrime(prime);
 		ptg4.setQuantite(120);
 		ptg4.setDateLundi(dateLundi);
-		ptg4.setDateDebut(new DateTime(2015,2,12,5,0,0).toDate());
-		ptg4.setDateFin(new DateTime(2015,2,12,7,0,0).toDate());
+		ptg4.setDateDebut(new DateTime(2015, 2, 12, 5, 0, 0).toDate());
+		ptg4.setDateFin(new DateTime(2015, 2, 12, 7, 0, 0).toDate());
 		ptg4.setType(type);
-		
+
 		Pointage ptg5 = new Pointage();
 		ptg5.setRefPrime(prime);
 		ptg5.setQuantite(120);
 		ptg5.setDateLundi(dateLundi);
-		ptg5.setDateDebut(new DateTime(2015,2,13,5,0,0).toDate());
-		ptg5.setDateFin(new DateTime(2015,2,13,7,0,0).toDate());
+		ptg5.setDateDebut(new DateTime(2015, 2, 13, 5, 0, 0).toDate());
+		ptg5.setDateFin(new DateTime(2015, 2, 13, 7, 0, 0).toDate());
 		ptg5.setType(type);
-		
+
 		Pointage ptg6 = new Pointage();
 		ptg6.setRefPrime(prime);
 		ptg6.setQuantite(120);
 		ptg6.setDateLundi(dateLundi);
-		ptg6.setDateDebut(new DateTime(2015,2,14,5,0,0).toDate());
-		ptg6.setDateFin(new DateTime(2015,2,14,7,0,0).toDate());
+		ptg6.setDateDebut(new DateTime(2015, 2, 14, 5, 0, 0).toDate());
+		ptg6.setDateFin(new DateTime(2015, 2, 14, 7, 0, 0).toDate());
 		ptg6.setType(type);
-		
+
 		Pointage ptg7 = new Pointage();
 		ptg7.setRefPrime(prime);
 		ptg7.setQuantite(120);
 		ptg7.setDateLundi(dateLundi);
-		ptg7.setDateDebut(new DateTime(2015,2,15,5,0,0).toDate());
-		ptg7.setDateFin(new DateTime(2015,2,15,7,0,0).toDate());
+		ptg7.setDateDebut(new DateTime(2015, 2, 15, 5, 0, 0).toDate());
+		ptg7.setDateFin(new DateTime(2015, 2, 15, 7, 0, 0).toDate());
 		ptg7.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		ventilHsup.setMNormales(1*60);
-		ventilHsup.setMSup25(3*60);
-		ventilHsup.setMSup50(2*60);
-		ventilHsup.setMHorsContrat(5*60);
-		
+		ventilHsup.setMNormales(1 * 60);
+		ventilHsup.setMSup25(3 * 60);
+		ventilHsup.setMSup50(2 * 60);
+		ventilHsup.setMHorsContrat(5 * 60);
+
 		Integer idAgent = 9005138;
 		List<Pointage> pointages = new ArrayList<Pointage>();
-		pointages.addAll(Arrays.asList(ptg,ptg2,ptg3,ptg4,ptg5,ptg6,ptg7));
-		
+		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4, ptg5, ptg6, ptg7));
+
 		VentilationHSupService service = new VentilationHSupService();
 		ventilHsup = service.processHeuresSupEpandageForSIPRES(ventilHsup, idAgent, dateLundi, pointages, AgentStatutEnum.CC);
 
-		assertEquals(ventilHsup.getMHorsContrat(), 19*60);
+		assertEquals(ventilHsup.getMHorsContrat(), 19 * 60);
 		assertEquals(ventilHsup.getMSimple(), 0);
 		assertEquals(ventilHsup.getMComposees(), 0);
-		assertEquals(ventilHsup.getMNormales(), 1*60);
-		assertEquals(ventilHsup.getMSup25(), 11*60);
-		assertEquals(ventilHsup.getMSup50(), 8*60);
+		assertEquals(ventilHsup.getMNormales(), 1 * 60);
+		assertEquals(ventilHsup.getMSup25(), 11 * 60);
+		assertEquals(ventilHsup.getMSup50(), 8 * 60);
 		assertEquals(ventilHsup.getMMai(), 0);
 		assertEquals(ventilHsup.getMsdjf(), 0);
 		assertEquals(ventilHsup.getMsNuit(), 0);
 	}
-	
+
 	// bug #17361
 	@Test
 	public void processHeuresSup_Contractuel_bugHSupRecupereesDimanche() {
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(7.48);
 		spbase.setHeureMardi(7.48);
@@ -6026,91 +5760,89 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(39.0);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		Date dateLundi = new DateTime(2015,7,6,0,0,0).toDate();
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		Date dateLundi = new DateTime(2015, 7, 6, 0, 0, 0).toDate();
 		Integer idAgent = 9004670;
-		
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,7,6,15,30,0).toDate());
-		ptg.setDateFin(new DateTime(2015,7,6,16,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 7, 6, 15, 30, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 7, 6, 16, 0, 0).toDate());
 		ptg.setHeureSupRecuperee(true);
 		ptg.setHeureSupRappelService(false);
 		ptg.setIdAgent(idAgent);
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,7,8,3,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,7,8,12,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 7, 8, 3, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 7, 8, 12, 0, 0).toDate());
 		ptg2.setHeureSupRecuperee(false);
 		ptg2.setHeureSupRappelService(false);
 		ptg2.setIdAgent(idAgent);
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,7,12,3,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,7,12,23,0,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 7, 12, 3, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 7, 12, 23, 0, 0).toDate());
 		ptg3.setHeureSupRecuperee(true);
 		ptg3.setHeureSupRappelService(false);
 		ptg3.setIdAgent(idAgent);
 		ptg3.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		
+
 		Spcarr spcarr = new Spcarr();
 
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
-		
+
 		List<Pointage> pointages = new ArrayList<Pointage>();
-		pointages.addAll(Arrays.asList(ptg,ptg2,ptg3));
-		
+		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3));
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		
+
 		ventilHsup = service.processHSupContractuel(idAgent, spcarr, dateLundi, pointages, new VentilDate());
 
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*29.5).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*29.5).intValue());
-		
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 29.5).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 29.5).intValue());
+
 		assertEquals(ventilHsup.getMSimple(), 0);
 		assertEquals(ventilHsup.getMNormales(), 0);
 		assertEquals(ventilHsup.getMComposees(), 0);
-		
-		assertEquals(ventilHsup.getMSup25(), new Double(60*7.5).intValue());
+
+		assertEquals(ventilHsup.getMSup25(), new Double(60 * 7.5).intValue());
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
-		assertEquals(ventilHsup.getMsdjf(), 17*60);
-		assertEquals(ventilHsup.getMsNuit(), 5*60);
+		assertEquals(ventilHsup.getMsdjf(), 17 * 60);
+		assertEquals(ventilHsup.getMsNuit(), 5 * 60);
 
 		assertEquals(ventilHsup.getMNormalesRecup(), 0);
 		assertEquals(ventilHsup.getMSimpleRecup(), 0);
 		assertEquals(ventilHsup.getMComposeesRecup(), 0);
 
-		assertEquals(ventilHsup.getMSup25Recup(), new Double(60*0.5).intValue());
+		assertEquals(ventilHsup.getMSup25Recup(), new Double(60 * 0.5).intValue());
 		assertEquals(ventilHsup.getMSup50Recup(), 0);
 		assertEquals(ventilHsup.getMMaiRecup(), 0);
-		assertEquals(ventilHsup.getMsdjfRecup(), 17*60);
-		assertEquals(ventilHsup.getMsNuitRecup(), 3*60);
+		assertEquals(ventilHsup.getMsdjfRecup(), 17 * 60);
+		assertEquals(ventilHsup.getMsNuitRecup(), 3 * 60);
 	}
 
 	// bug #17361 meme bug mais reproduit en PROD
 	@Test
 	public void processHeuresSup_Contractuel_bugHSupRecupereesEnProdNoMatr5490() {
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(7.48);
 		spbase.setHeureMardi(7.48);
@@ -6122,82 +5854,80 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(39.0);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		Date dateLundi = new DateTime(2015,6,29,0,0,0).toDate();
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		Date dateLundi = new DateTime(2015, 6, 29, 0, 0, 0).toDate();
 		Integer idAgent = 9005490;
-		
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,6,29,20,45,0).toDate());
-		ptg.setDateFin(new DateTime(2015,6,30,0,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 6, 29, 20, 45, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 6, 30, 0, 0, 0).toDate());
 		ptg.setHeureSupRecuperee(true);
 		ptg.setHeureSupRappelService(false);
 		ptg.setIdAgent(idAgent);
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,6,30,0,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,6,30,5,15,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 6, 30, 0, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 6, 30, 5, 15, 0).toDate());
 		ptg2.setHeureSupRecuperee(true);
 		ptg2.setHeureSupRappelService(false);
 		ptg2.setIdAgent(idAgent);
 		ptg2.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		
+
 		Spcarr spcarr = new Spcarr();
 
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
-		
+
 		List<Pointage> pointages = new ArrayList<Pointage>();
-		pointages.addAll(Arrays.asList(ptg,ptg2));
-		
+		pointages.addAll(Arrays.asList(ptg, ptg2));
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		
+
 		ventilHsup = service.processHSupContractuel(idAgent, spcarr, dateLundi, pointages, new VentilDate());
 
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*8.5).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*8.5).intValue());
-		
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 8.5).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 8.5).intValue());
+
 		assertEquals(ventilHsup.getMSimple(), 0);
 		assertEquals(ventilHsup.getMNormales(), 0);
 		assertEquals(ventilHsup.getMComposees(), 0);
-		
-		assertEquals(ventilHsup.getMSup25(), new Double(60*1.5).intValue());
+
+		assertEquals(ventilHsup.getMSup25(), new Double(60 * 1.5).intValue());
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
 		assertEquals(ventilHsup.getMsdjf(), 0);
-		assertEquals(ventilHsup.getMsNuit(), 7*60);
+		assertEquals(ventilHsup.getMsNuit(), 7 * 60);
 
 		assertEquals(ventilHsup.getMNormalesRecup(), 0);
 		assertEquals(ventilHsup.getMSimpleRecup(), 0);
 		assertEquals(ventilHsup.getMComposeesRecup(), 0);
 
-		assertEquals(ventilHsup.getMSup25Recup(), new Double(60*1.5).intValue());
+		assertEquals(ventilHsup.getMSup25Recup(), new Double(60 * 1.5).intValue());
 		assertEquals(ventilHsup.getMSup50Recup(), 0);
 		assertEquals(ventilHsup.getMMaiRecup(), 0);
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
-		assertEquals(ventilHsup.getMsNuitRecup(), 7*60);
+		assertEquals(ventilHsup.getMsNuitRecup(), 7 * 60);
 	}
-	
+
 	// bug #17361 meme bug mais reproduit en PROD
 	@Test
 	public void processHeuresSup_Contractuel_bugHSupRecupereesEnProdNoMatr4744() {
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(7.48);
 		spbase.setHeureMardi(7.48);
@@ -6209,100 +5939,98 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(39.0);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		Date dateLundi = new DateTime(2015,6,15,0,0,0).toDate();
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		Date dateLundi = new DateTime(2015, 6, 15, 0, 0, 0).toDate();
 		Integer idAgent = 9004744;
-		
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,6,16,17,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,6,16,21,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 6, 16, 17, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 6, 16, 21, 0, 0).toDate());
 		ptg.setHeureSupRecuperee(true);
 		ptg.setHeureSupRappelService(false);
 		ptg.setIdAgent(idAgent);
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,6,19,17,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,6,19,21,15,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 6, 19, 17, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 6, 19, 21, 15, 0).toDate());
 		ptg2.setHeureSupRecuperee(true);
 		ptg2.setHeureSupRappelService(false);
 		ptg2.setIdAgent(idAgent);
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,6,20,16,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,6,20,23,45,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 6, 20, 16, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 6, 20, 23, 45, 0).toDate());
 		ptg3.setHeureSupRecuperee(true);
 		ptg3.setHeureSupRappelService(false);
 		ptg3.setIdAgent(idAgent);
 		ptg3.setType(type);
-		
+
 		Pointage ptg4 = new Pointage();
 		ptg4.setDateLundi(dateLundi);
-		ptg4.setDateDebut(new DateTime(2015,6,21,16,0,0).toDate());
-		ptg4.setDateFin(new DateTime(2015,6,21,21,0,0).toDate());
+		ptg4.setDateDebut(new DateTime(2015, 6, 21, 16, 0, 0).toDate());
+		ptg4.setDateFin(new DateTime(2015, 6, 21, 21, 0, 0).toDate());
 		ptg4.setHeureSupRecuperee(true);
 		ptg4.setHeureSupRappelService(false);
 		ptg4.setIdAgent(idAgent);
 		ptg4.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		
+
 		Spcarr spcarr = new Spcarr();
 
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
-		
+
 		List<Pointage> pointages = new ArrayList<Pointage>();
-		pointages.addAll(Arrays.asList(ptg,ptg2, ptg3, ptg4));
-		
+		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4));
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		
+
 		ventilHsup = service.processHSupContractuel(idAgent, spcarr, dateLundi, pointages, new VentilDate());
 
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*21).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*21).intValue());
-		
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 21).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 21).intValue());
+
 		assertEquals(ventilHsup.getMSimple(), 0);
 		assertEquals(ventilHsup.getMNormales(), 0);
 		assertEquals(ventilHsup.getMComposees(), 0);
-		
-		assertEquals(ventilHsup.getMSup25(), 60*8);
-		assertEquals(ventilHsup.getMSup50(), new Double(60*6.25).intValue());
+
+		assertEquals(ventilHsup.getMSup25(), 60 * 8);
+		assertEquals(ventilHsup.getMSup50(), new Double(60 * 6.25).intValue());
 		assertEquals(ventilHsup.getMMai(), 0);
-		assertEquals(ventilHsup.getMsdjf(), 60*5);
-		assertEquals(ventilHsup.getMsNuit(), new Double(60*1.75).intValue());
+		assertEquals(ventilHsup.getMsdjf(), 60 * 5);
+		assertEquals(ventilHsup.getMsNuit(), new Double(60 * 1.75).intValue());
 
 		assertEquals(ventilHsup.getMNormalesRecup(), 0);
 		assertEquals(ventilHsup.getMSimpleRecup(), 0);
 		assertEquals(ventilHsup.getMComposeesRecup(), 0);
 
-		assertEquals(ventilHsup.getMSup25Recup(), 60*8);
-		assertEquals(ventilHsup.getMSup50Recup(), new Double(60*6.25).intValue());
+		assertEquals(ventilHsup.getMSup25Recup(), 60 * 8);
+		assertEquals(ventilHsup.getMSup50Recup(), new Double(60 * 6.25).intValue());
 		assertEquals(ventilHsup.getMMaiRecup(), 0);
-		assertEquals(ventilHsup.getMsdjfRecup(), 60*5);
-		assertEquals(ventilHsup.getMsNuitRecup(), new Double(60*1.75).intValue());
+		assertEquals(ventilHsup.getMsdjfRecup(), 60 * 5);
+		assertEquals(ventilHsup.getMsNuitRecup(), new Double(60 * 1.75).intValue());
 	}
-	
+
 	// bug #28268 bug en PROD
 	@Test
 	public void processHeuresSup_Contractuel_bugHSup_miTemps_NoMatr4569_semaine24() {
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(4.0);
 		spbase.setHeureMardi(4.0);
@@ -6314,80 +6042,78 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(19.3);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		Date dateLundi = new DateTime(2015,6,8,0,0,0).toDate();
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		Date dateLundi = new DateTime(2015, 6, 8, 0, 0, 0).toDate();
 		Integer idAgent = 9004569;
-		
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,6,9,11,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,6,9,16,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 6, 9, 11, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 6, 9, 16, 0, 0).toDate());
 		ptg.setHeureSupRecuperee(false);
 		ptg.setHeureSupRappelService(false);
 		ptg.setIdAgent(idAgent);
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,6,10,11,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,6,10,16,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 6, 10, 11, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 6, 10, 16, 0, 0).toDate());
 		ptg2.setHeureSupRecuperee(false);
 		ptg2.setHeureSupRappelService(false);
 		ptg2.setIdAgent(idAgent);
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,6,11,11,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,6,11,16,0,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 6, 11, 11, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 6, 11, 16, 0, 0).toDate());
 		ptg3.setHeureSupRecuperee(false);
 		ptg3.setHeureSupRappelService(false);
 		ptg3.setIdAgent(idAgent);
 		ptg3.setType(type);
-		
+
 		Pointage ptg4 = new Pointage();
 		ptg4.setDateLundi(dateLundi);
-		ptg4.setDateDebut(new DateTime(2015,6,12,11,0,0).toDate());
-		ptg4.setDateFin(new DateTime(2015,6,12,16,0,0).toDate());
+		ptg4.setDateDebut(new DateTime(2015, 6, 12, 11, 0, 0).toDate());
+		ptg4.setDateFin(new DateTime(2015, 6, 12, 16, 0, 0).toDate());
 		ptg4.setHeureSupRecuperee(false);
 		ptg4.setHeureSupRappelService(false);
 		ptg4.setIdAgent(idAgent);
 		ptg4.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		
+
 		Spcarr spcarr = new Spcarr();
 
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
-		
+
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4));
-		
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		
+
 		ventilHsup = service.processHSupContractuel(idAgent, spcarr, dateLundi, pointages, new VentilDate());
 
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*20).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*0.5).intValue());
-		
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 20).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 0.5).intValue());
+
 		assertEquals(ventilHsup.getMSimple(), 0);
-		assertEquals(ventilHsup.getMNormales(), new Double(60*19.5).intValue());
+		assertEquals(ventilHsup.getMNormales(), new Double(60 * 19.5).intValue());
 		assertEquals(ventilHsup.getMComposees(), 0);
-		
-		assertEquals(ventilHsup.getMSup25(), new Double(60*0.5).intValue());
+
+		assertEquals(ventilHsup.getMSup25(), new Double(60 * 0.5).intValue());
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
 		assertEquals(ventilHsup.getMsdjf(), 0);
@@ -6403,11 +6129,11 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
 	}
-	
+
 	// bug #28268 bug en PROD
 	@Test
 	public void processHeuresSup_Contractuel_bugHSup_miTemps_NoMatr4570_semaine42() {
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(4.0);
 		spbase.setHeureMardi(4.0);
@@ -6419,70 +6145,68 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(19.3);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		Date dateLundi = new DateTime(2015,10,12,0,0,0).toDate();
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		Date dateLundi = new DateTime(2015, 10, 12, 0, 0, 0).toDate();
 		Integer idAgent = 9004570;
-		
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,10,13,11,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,10,13,16,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 10, 13, 11, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 10, 13, 16, 0, 0).toDate());
 		ptg.setHeureSupRecuperee(false);
 		ptg.setHeureSupRappelService(false);
 		ptg.setIdAgent(idAgent);
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,10,14,11,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,10,14,16,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 10, 14, 11, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 10, 14, 16, 0, 0).toDate());
 		ptg2.setHeureSupRecuperee(false);
 		ptg2.setHeureSupRappelService(false);
 		ptg2.setIdAgent(idAgent);
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,10,15,11,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,10,15,16,0,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 10, 15, 11, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 10, 15, 16, 0, 0).toDate());
 		ptg3.setHeureSupRecuperee(false);
 		ptg3.setHeureSupRappelService(false);
 		ptg3.setIdAgent(idAgent);
 		ptg3.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		
+
 		Spcarr spcarr = new Spcarr();
 
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
-		
+
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3));
-		
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		
+
 		ventilHsup = service.processHSupContractuel(idAgent, spcarr, dateLundi, pointages, new VentilDate());
 
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*15).intValue());
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 15).intValue());
 		assertEquals(ventilHsup.getMSup(), 0);
-		
+
 		assertEquals(ventilHsup.getMSimple(), 0);
-		assertEquals(ventilHsup.getMNormales(), new Double(60*15).intValue());
+		assertEquals(ventilHsup.getMNormales(), new Double(60 * 15).intValue());
 		assertEquals(ventilHsup.getMComposees(), 0);
-		
+
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
@@ -6499,11 +6223,11 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
 	}
-	
+
 	// bug #28286 bug en PROD
 	@Test
 	public void processHeuresSup_Contractuel_bugHSup_miTemps_NoMatr4569_semaine25() {
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(4.0);
 		spbase.setHeureMardi(4.0);
@@ -6515,89 +6239,87 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(19.3);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		Date dateLundi = new DateTime(2015,6,15,0,0,0).toDate();
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		Date dateLundi = new DateTime(2015, 6, 15, 0, 0, 0).toDate();
 		Integer idAgent = 9004569;
-		
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,6,15,11,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,6,15,16,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 6, 15, 11, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 6, 15, 16, 0, 0).toDate());
 		ptg.setHeureSupRecuperee(false);
 		ptg.setHeureSupRappelService(false);
 		ptg.setIdAgent(idAgent);
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,6,16,11,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,6,16,16,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 6, 16, 11, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 6, 16, 16, 0, 0).toDate());
 		ptg2.setHeureSupRecuperee(false);
 		ptg2.setHeureSupRappelService(false);
 		ptg2.setIdAgent(idAgent);
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,6,17,11,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,6,17,16,0,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 6, 17, 11, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 6, 17, 16, 0, 0).toDate());
 		ptg3.setHeureSupRecuperee(false);
 		ptg3.setHeureSupRappelService(false);
 		ptg3.setIdAgent(idAgent);
 		ptg3.setType(type);
-		
+
 		Pointage ptg4 = new Pointage();
 		ptg4.setDateLundi(dateLundi);
-		ptg4.setDateDebut(new DateTime(2015,6,18,11,0,0).toDate());
-		ptg4.setDateFin(new DateTime(2015,6,18,16,0,0).toDate());
+		ptg4.setDateDebut(new DateTime(2015, 6, 18, 11, 0, 0).toDate());
+		ptg4.setDateFin(new DateTime(2015, 6, 18, 16, 0, 0).toDate());
 		ptg4.setHeureSupRecuperee(false);
 		ptg4.setHeureSupRappelService(false);
 		ptg4.setIdAgent(idAgent);
 		ptg4.setType(type);
-		
+
 		Pointage ptg5 = new Pointage();
 		ptg5.setDateLundi(dateLundi);
-		ptg5.setDateDebut(new DateTime(2015,6,19,11,0,0).toDate());
-		ptg5.setDateFin(new DateTime(2015,6,19,16,0,0).toDate());
+		ptg5.setDateDebut(new DateTime(2015, 6, 19, 11, 0, 0).toDate());
+		ptg5.setDateFin(new DateTime(2015, 6, 19, 16, 0, 0).toDate());
 		ptg5.setHeureSupRecuperee(false);
 		ptg5.setHeureSupRappelService(false);
 		ptg5.setIdAgent(idAgent);
 		ptg5.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		
+
 		Spcarr spcarr = new Spcarr();
 
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
-		
+
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4, ptg5));
-		
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		
+
 		ventilHsup = service.processHSupContractuel(idAgent, spcarr, dateLundi, pointages, new VentilDate());
 
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*25).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*5.5).intValue());
-		
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 25).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 5.5).intValue());
+
 		assertEquals(ventilHsup.getMSimple(), 0);
-		assertEquals(ventilHsup.getMNormales(), new Double(60*19.5).intValue());
+		assertEquals(ventilHsup.getMNormales(), new Double(60 * 19.5).intValue());
 		assertEquals(ventilHsup.getMComposees(), 0);
-		
-		assertEquals(ventilHsup.getMSup25(), new Double(60*5.5).intValue());
+
+		assertEquals(ventilHsup.getMSup25(), new Double(60 * 5.5).intValue());
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
 		assertEquals(ventilHsup.getMsdjf(), 0);
@@ -6613,12 +6335,12 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
 	}
-	
+
 	// bug #28286 bug en PROD
 	// on fait le meme cas de test que ci-dessus mais pour les fonctionnaires
 	@Test
 	public void processHeuresSup_fonctionnaire_bugHSup_miTemps_NoMatr5364_semaine43() {
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(4.0);
 		spbase.setHeureMardi(4.0);
@@ -6630,88 +6352,86 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(19.3);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		Date dateLundi = new DateTime(2015,10,19,0,0,0).toDate();
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		Date dateLundi = new DateTime(2015, 10, 19, 0, 0, 0).toDate();
 		Integer idAgent = 9005364;
-		
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,10,19,11,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,10,19,16,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 10, 19, 11, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 10, 19, 16, 0, 0).toDate());
 		ptg.setHeureSupRecuperee(false);
 		ptg.setHeureSupRappelService(false);
 		ptg.setIdAgent(idAgent);
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,10,20,11,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,10,20,16,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 10, 20, 11, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 10, 20, 16, 0, 0).toDate());
 		ptg2.setHeureSupRecuperee(false);
 		ptg2.setHeureSupRappelService(false);
 		ptg2.setIdAgent(idAgent);
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,10,21,11,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,10,21,16,0,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 10, 21, 11, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 10, 21, 16, 0, 0).toDate());
 		ptg3.setHeureSupRecuperee(false);
 		ptg3.setHeureSupRappelService(false);
 		ptg3.setIdAgent(idAgent);
 		ptg3.setType(type);
-		
+
 		Pointage ptg4 = new Pointage();
 		ptg4.setDateLundi(dateLundi);
-		ptg4.setDateDebut(new DateTime(2015,10,22,11,0,0).toDate());
-		ptg4.setDateFin(new DateTime(2015,10,22,16,0,0).toDate());
+		ptg4.setDateDebut(new DateTime(2015, 10, 22, 11, 0, 0).toDate());
+		ptg4.setDateFin(new DateTime(2015, 10, 22, 16, 0, 0).toDate());
 		ptg4.setHeureSupRecuperee(false);
 		ptg4.setHeureSupRappelService(false);
 		ptg4.setIdAgent(idAgent);
 		ptg4.setType(type);
-		
+
 		Pointage ptg5 = new Pointage();
 		ptg5.setDateLundi(dateLundi);
-		ptg5.setDateDebut(new DateTime(2015,10,23,11,0,0).toDate());
-		ptg5.setDateFin(new DateTime(2015,10,23,16,0,0).toDate());
+		ptg5.setDateDebut(new DateTime(2015, 10, 23, 11, 0, 0).toDate());
+		ptg5.setDateFin(new DateTime(2015, 10, 23, 16, 0, 0).toDate());
 		ptg5.setHeureSupRecuperee(false);
 		ptg5.setHeureSupRappelService(false);
 		ptg5.setIdAgent(idAgent);
 		ptg5.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		
+
 		Spcarr spcarr = new Spcarr();
 
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
-		
+
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4, ptg5));
-		
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		
+
 		ventilHsup = service.processHSupFonctionnaire(idAgent, spcarr, dateLundi, pointages, new VentilDate());
 
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*25).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*5.5).intValue());
-		
-		assertEquals(ventilHsup.getMNormales(), new Double(60*19.5).intValue());
-		assertEquals(ventilHsup.getMSimple(), new Double(60*3.0).intValue());
-		assertEquals(ventilHsup.getMComposees(), new Double(60*2.5).intValue());
-		
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 25).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 5.5).intValue());
+
+		assertEquals(ventilHsup.getMNormales(), new Double(60 * 19.5).intValue());
+		assertEquals(ventilHsup.getMSimple(), new Double(60 * 3.0).intValue());
+		assertEquals(ventilHsup.getMComposees(), new Double(60 * 2.5).intValue());
+
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
@@ -6728,12 +6448,13 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
 	}
-	
+
 	// bug #28286 bug en PROD
-	// on fait le meme cas de test que ci-dessus mais pour les conventions collectives
+	// on fait le meme cas de test que ci-dessus mais pour les conventions
+	// collectives
 	@Test
 	public void processHeuresSup_convColl_bugHSup_miTemps_NoMatr5364_semaine43() {
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(4.0);
 		spbase.setHeureMardi(4.0);
@@ -6745,89 +6466,87 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(19.3);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		Date dateLundi = new DateTime(2015,10,19,0,0,0).toDate();
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		Date dateLundi = new DateTime(2015, 10, 19, 0, 0, 0).toDate();
 		Integer idAgent = 9005364;
-		
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2015,10,19,11,0,0).toDate());
-		ptg.setDateFin(new DateTime(2015,10,19,16,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2015, 10, 19, 11, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2015, 10, 19, 16, 0, 0).toDate());
 		ptg.setHeureSupRecuperee(false);
 		ptg.setHeureSupRappelService(false);
 		ptg.setIdAgent(idAgent);
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2015,10,20,11,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2015,10,20,16,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2015, 10, 20, 11, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2015, 10, 20, 16, 0, 0).toDate());
 		ptg2.setHeureSupRecuperee(false);
 		ptg2.setHeureSupRappelService(false);
 		ptg2.setIdAgent(idAgent);
 		ptg2.setType(type);
-		
+
 		Pointage ptg3 = new Pointage();
 		ptg3.setDateLundi(dateLundi);
-		ptg3.setDateDebut(new DateTime(2015,10,21,11,0,0).toDate());
-		ptg3.setDateFin(new DateTime(2015,10,21,16,0,0).toDate());
+		ptg3.setDateDebut(new DateTime(2015, 10, 21, 11, 0, 0).toDate());
+		ptg3.setDateFin(new DateTime(2015, 10, 21, 16, 0, 0).toDate());
 		ptg3.setHeureSupRecuperee(false);
 		ptg3.setHeureSupRappelService(false);
 		ptg3.setIdAgent(idAgent);
 		ptg3.setType(type);
-		
+
 		Pointage ptg4 = new Pointage();
 		ptg4.setDateLundi(dateLundi);
-		ptg4.setDateDebut(new DateTime(2015,10,22,11,0,0).toDate());
-		ptg4.setDateFin(new DateTime(2015,10,22,16,0,0).toDate());
+		ptg4.setDateDebut(new DateTime(2015, 10, 22, 11, 0, 0).toDate());
+		ptg4.setDateFin(new DateTime(2015, 10, 22, 16, 0, 0).toDate());
 		ptg4.setHeureSupRecuperee(false);
 		ptg4.setHeureSupRappelService(false);
 		ptg4.setIdAgent(idAgent);
 		ptg4.setType(type);
-		
+
 		Pointage ptg5 = new Pointage();
 		ptg5.setDateLundi(dateLundi);
-		ptg5.setDateDebut(new DateTime(2015,10,23,11,0,0).toDate());
-		ptg5.setDateFin(new DateTime(2015,10,23,16,0,0).toDate());
+		ptg5.setDateDebut(new DateTime(2015, 10, 23, 11, 0, 0).toDate());
+		ptg5.setDateFin(new DateTime(2015, 10, 23, 16, 0, 0).toDate());
 		ptg5.setHeureSupRecuperee(false);
 		ptg5.setHeureSupRappelService(false);
 		ptg5.setIdAgent(idAgent);
 		ptg5.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		
+
 		Spcarr spcarr = new Spcarr();
 
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
-		
+
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		pointages.addAll(Arrays.asList(ptg, ptg2, ptg3, ptg4, ptg5));
-		
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		
+
 		ventilHsup = service.processHSupConventionCollective(idAgent, spcarr, dateLundi, pointages, false, new VentilDate());
 
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*25).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*5.5).intValue());
-		
-		assertEquals(ventilHsup.getMNormales(), new Double(60*19.5).intValue());
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 25).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 5.5).intValue());
+
+		assertEquals(ventilHsup.getMNormales(), new Double(60 * 19.5).intValue());
 		assertEquals(ventilHsup.getMSimple(), 0);
 		assertEquals(ventilHsup.getMComposees(), 0);
-		
-		assertEquals(ventilHsup.getMSup25(), new Double(60*5.5).intValue());
+
+		assertEquals(ventilHsup.getMSup25(), new Double(60 * 5.5).intValue());
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
 		assertEquals(ventilHsup.getMsdjf(), 0);
@@ -6843,11 +6562,11 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
 	}
-	
+
 	// bug #31224 bug en PROD
 	@Test
 	public void processHeuresSup_fonctionnaire_bugHSup_pleinTemps_NoMatr3368_semaine18_1erMai() {
-		
+
 		// base pointage 39B - 39h DPM
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(8.0);
@@ -6860,83 +6579,81 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(39.0);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		Date dateLundi = new DateTime(2016,4,25,0,0,0).toDate();
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		Date dateLundi = new DateTime(2016, 4, 25, 0, 0, 0).toDate();
 		Integer idAgent = 9005364;
-		
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2016,4,29,17,0,0).toDate());
-		ptg.setDateFin(new DateTime(2016,4,29,20,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2016, 4, 29, 17, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2016, 4, 29, 20, 0, 0).toDate());
 		ptg.setHeureSupRecuperee(true);
 		ptg.setHeureSupRappelService(false);
 		ptg.setIdAgent(idAgent);
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2016,5,1,7,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2016,5,1,12,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2016, 5, 1, 7, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2016, 5, 1, 12, 0, 0).toDate());
 		ptg2.setHeureSupRecuperee(true);
 		ptg2.setHeureSupRappelService(false);
 		ptg2.setIdAgent(idAgent);
 		ptg2.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		
+
 		Spcarr spcarr = new Spcarr();
 
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
-		
+
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		pointages.addAll(Arrays.asList(ptg, ptg2));
-		
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		
+
 		ventilHsup = service.processHSupFonctionnaire(idAgent, spcarr, dateLundi, pointages, new VentilDate());
 
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*8).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*8).intValue());
-		
-		assertEquals(ventilHsup.getMNormales(), new Double(60*0).intValue());
-		assertEquals(ventilHsup.getMSimple(), new Double(60*3.0).intValue());
-		assertEquals(ventilHsup.getMComposees(), new Double(60*0).intValue());
-		
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 8).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 8).intValue());
+
+		assertEquals(ventilHsup.getMNormales(), new Double(60 * 0).intValue());
+		assertEquals(ventilHsup.getMSimple(), new Double(60 * 3.0).intValue());
+		assertEquals(ventilHsup.getMComposees(), new Double(60 * 0).intValue());
+
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
-		assertEquals(ventilHsup.getMMai(), 5*60);
+		assertEquals(ventilHsup.getMMai(), 5 * 60);
 		assertEquals(ventilHsup.getMsdjf(), 0);
 		assertEquals(ventilHsup.getMsNuit(), 0);
 
 		assertEquals(ventilHsup.getMNormalesRecup(), 0);
-		assertEquals(ventilHsup.getMSimpleRecup(), 3*60);
+		assertEquals(ventilHsup.getMSimpleRecup(), 3 * 60);
 		assertEquals(ventilHsup.getMComposeesRecup(), 0);
 
 		assertEquals(ventilHsup.getMSup25Recup(), 0);
 		assertEquals(ventilHsup.getMSup50Recup(), 0);
-		assertEquals(ventilHsup.getMMaiRecup(), 5*60);
+		assertEquals(ventilHsup.getMMaiRecup(), 5 * 60);
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
 	}
-	
+
 	// bug #31224 bug en PROD
 	// meme cas que ci-dessus mais pour les contractuels
 	@Test
 	public void processHeuresSup_contractuel_bugHSup_pleinTemps_NoMatr3368_semaine18() {
-		
+
 		// base pointage 39B - 39h DPM
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setHeureLundi(8.0);
@@ -6949,64 +6666,62 @@ public class VentilationHSupServiceTest {
 		spbase.setBaseCalculee(39.0);
 
 		ISirhWSConsumer hService = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
-		Date dateLundi = new DateTime(2016,4,25,0,0,0).toDate();
+		Mockito.when(hService.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class))).thenReturn(spbase);
+
+		Date dateLundi = new DateTime(2016, 4, 25, 0, 0, 0).toDate();
 		Integer idAgent = 9005364;
-		
+
 		RefTypePointage type = new RefTypePointage();
 		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		
+
 		Pointage ptg = new Pointage();
 		ptg.setDateLundi(dateLundi);
-		ptg.setDateDebut(new DateTime(2016,4,29,17,0,0).toDate());
-		ptg.setDateFin(new DateTime(2016,4,29,20,0,0).toDate());
+		ptg.setDateDebut(new DateTime(2016, 4, 29, 17, 0, 0).toDate());
+		ptg.setDateFin(new DateTime(2016, 4, 29, 20, 0, 0).toDate());
 		ptg.setHeureSupRecuperee(true);
 		ptg.setHeureSupRappelService(false);
 		ptg.setIdAgent(idAgent);
 		ptg.setType(type);
-		
+
 		Pointage ptg2 = new Pointage();
 		ptg2.setDateLundi(dateLundi);
-		ptg2.setDateDebut(new DateTime(2016,5,1,7,0,0).toDate());
-		ptg2.setDateFin(new DateTime(2016,5,1,12,0,0).toDate());
+		ptg2.setDateDebut(new DateTime(2016, 5, 1, 7, 0, 0).toDate());
+		ptg2.setDateFin(new DateTime(2016, 5, 1, 12, 0, 0).toDate());
 		ptg2.setHeureSupRecuperee(true);
 		ptg2.setHeureSupRappelService(false);
 		ptg2.setIdAgent(idAgent);
 		ptg2.setType(type);
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		
+
 		Spcarr spcarr = new Spcarr();
 
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(1d);
 		spcarr.setSpbhor(spbhor);
-		
+
 		List<Pointage> pointages = new ArrayList<Pointage>();
 		pointages.addAll(Arrays.asList(ptg, ptg2));
-		
+
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", hService);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "helperService", new HelperService());
-		
+
 		ventilHsup = service.processHSupContractuel(idAgent, spcarr, dateLundi, pointages, new VentilDate());
 
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*8).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*8).intValue());
-		
-		assertEquals(ventilHsup.getMNormales(), new Double(60*0).intValue());
-		assertEquals(ventilHsup.getMSimple(), new Double(60*0).intValue());
-		assertEquals(ventilHsup.getMComposees(), new Double(60*0).intValue());
-		
-		assertEquals(ventilHsup.getMSup25(), new Double(60*3).intValue());
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 8).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 8).intValue());
+
+		assertEquals(ventilHsup.getMNormales(), new Double(60 * 0).intValue());
+		assertEquals(ventilHsup.getMSimple(), new Double(60 * 0).intValue());
+		assertEquals(ventilHsup.getMComposees(), new Double(60 * 0).intValue());
+
+		assertEquals(ventilHsup.getMSup25(), new Double(60 * 3).intValue());
 		assertEquals(ventilHsup.getMSup50(), 0);
-		assertEquals(ventilHsup.getMMai(), 5*60);
+		assertEquals(ventilHsup.getMMai(), 5 * 60);
 		assertEquals(ventilHsup.getMsdjf(), 0);
 		assertEquals(ventilHsup.getMsNuit(), 0);
 
@@ -7014,67 +6729,69 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMSimpleRecup(), 0);
 		assertEquals(ventilHsup.getMComposeesRecup(), 0);
 
-		assertEquals(ventilHsup.getMSup25Recup(), 3*60);
+		assertEquals(ventilHsup.getMSup25Recup(), 3 * 60);
 		assertEquals(ventilHsup.getMSup50Recup(), 0);
-		assertEquals(ventilHsup.getMMaiRecup(), 5*60);
+		assertEquals(ventilHsup.getMMaiRecup(), 5 * 60);
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
 	}
-	
+
 	@Test
 	public void processHSupFromPointageCalcule_returnNull() {
 
 		Integer idAgent = 9005138;
 		Date dateLundi = new DateTime().toDate();
-		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>(); 
-		
+		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>();
+
 		VentilHsup ventilHSup = null;
-		
+
 		VentilationHSupService service = new VentilationHSupService();
-		
+
 		ventilHSup = service.processHSupFromPointageCalcule(idAgent, dateLundi, pointagesCalcules, ventilHSup);
-		
+
 		assertNull(ventilHSup);
 	}
-	
+
 	@Test
 	public void processHSupFromPointageCalcule_cas1_VentilHsupNull() {
 
 		Integer idAgent = 9005138;
 		Date dateLundi = new DateTime().toDate();
 		VentilHsup ventilHsup = null;
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setBaseCalculee(39.0);
-		
+
 		PointageCalcule ptg1 = new PointageCalcule();
-		ptg1.setQuantite(new Double(2*60));
+		ptg1.setQuantite(new Double(2 * 60));
 		ptg1.setType(hSup);
-		
-		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>(); 
+
+		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>();
 		pointagesCalcules.add(ptg1);
-		
+
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWsConsumer.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
+		Mockito.when(sirhWsConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(spbase);
+
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee())).thenReturn(new Double(spbase.getBaseCalculee()*60).intValue());
-				
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee()))
+				.thenReturn(new Double(spbase.getBaseCalculee() * 60).intValue());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		
+
 		/////////////////////////////
 		// 1er calcul avec juste 2h Supp
 		ventilHsup = service.processHSupFromPointageCalcule(idAgent, dateLundi, pointagesCalcules, ventilHsup);
-		
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*2).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*2).intValue());
-		
-		assertEquals(ventilHsup.getMSimple(), 2*60);
+
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 2).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 2).intValue());
+
+		assertEquals(ventilHsup.getMSimple(), 2 * 60);
 		assertEquals(ventilHsup.getMNormales(), 0);
 		assertEquals(ventilHsup.getMComposees(), 0);
-		
+
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
@@ -7090,26 +6807,26 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMMaiRecup(), 0);
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
-		
+
 		/////////////////////////////
 		// 2e calcul avec 5h Supp
-		
+
 		ventilHsup = null;
 		PointageCalcule ptg2 = new PointageCalcule();
-		ptg2.setQuantite(new Double(3*60));
+		ptg2.setQuantite(new Double(3 * 60));
 		ptg2.setType(hSup);
-		
+
 		pointagesCalcules.add(ptg2);
-		
+
 		ventilHsup = service.processHSupFromPointageCalcule(idAgent, dateLundi, pointagesCalcules, ventilHsup);
-		
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*5).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*5).intValue());
-		
-		assertEquals(ventilHsup.getMSimple(), 3*60);
+
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 5).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 5).intValue());
+
+		assertEquals(ventilHsup.getMSimple(), 3 * 60);
 		assertEquals(ventilHsup.getMNormales(), 0);
-		assertEquals(ventilHsup.getMComposees(), 2*60);
-		
+		assertEquals(ventilHsup.getMComposees(), 2 * 60);
+
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
@@ -7126,44 +6843,46 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
 	}
-	
+
 	@Test
 	public void processHSupFromPointageCalcule_cas2_baseHoraire25h() {
 
 		Integer idAgent = 9005138;
 		Date dateLundi = new DateTime().toDate();
 		VentilHsup ventilHsup = null;
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setBaseCalculee(25.0);
-		
+
 		PointageCalcule ptg1 = new PointageCalcule();
-		ptg1.setQuantite(new Double(12*60));
+		ptg1.setQuantite(new Double(12 * 60));
 		ptg1.setType(hSup);
-		
-		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>(); 
+
+		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>();
 		pointagesCalcules.add(ptg1);
-		
+
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWsConsumer.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
+		Mockito.when(sirhWsConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(spbase);
+
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee())).thenReturn(new Double(spbase.getBaseCalculee()*60).intValue());
-				
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee()))
+				.thenReturn(new Double(spbase.getBaseCalculee() * 60).intValue());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		/////////////////////////////
 		// 1er calcul avec juste 12h Supp
 		ventilHsup = service.processHSupFromPointageCalcule(idAgent, dateLundi, pointagesCalcules, ventilHsup);
-		
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*12).intValue());
+
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 12).intValue());
 		assertEquals(ventilHsup.getMSup(), 0);
 
-		assertEquals(ventilHsup.getMNormales(), 12*60);
+		assertEquals(ventilHsup.getMNormales(), 12 * 60);
 		assertEquals(ventilHsup.getMSimple(), 0);
 		assertEquals(ventilHsup.getMComposees(), 0);
-		
+
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
@@ -7179,26 +6898,26 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMMaiRecup(), 0);
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
-		
+
 		/////////////////////////////
 		// 2e calcul avec 24h Supp
-		
+
 		ventilHsup = null;
 		PointageCalcule ptg2 = new PointageCalcule();
-		ptg2.setQuantite(new Double(12*60));
+		ptg2.setQuantite(new Double(12 * 60));
 		ptg2.setType(hSup);
-		
-		pointagesCalcules.add(ptg2);
-		
-		ventilHsup = service.processHSupFromPointageCalcule(idAgent, dateLundi, pointagesCalcules, ventilHsup);
-		
-		assertEquals(ventilHsup.getMHorsContrat(), new Double(60*24).intValue());
-		assertEquals(ventilHsup.getMSup(), new Double(60*10).intValue());
 
-		assertEquals(ventilHsup.getMNormales(), 14*60);
-		assertEquals(ventilHsup.getMSimple(), 3*60);
-		assertEquals(ventilHsup.getMComposees(), 7*60);
-		
+		pointagesCalcules.add(ptg2);
+
+		ventilHsup = service.processHSupFromPointageCalcule(idAgent, dateLundi, pointagesCalcules, ventilHsup);
+
+		assertEquals(ventilHsup.getMHorsContrat(), new Double(60 * 24).intValue());
+		assertEquals(ventilHsup.getMSup(), new Double(60 * 10).intValue());
+
+		assertEquals(ventilHsup.getMNormales(), 14 * 60);
+		assertEquals(ventilHsup.getMSimple(), 3 * 60);
+		assertEquals(ventilHsup.getMComposees(), 7 * 60);
+
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
@@ -7215,50 +6934,52 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
 	}
-	
+
 	@Test
 	public void processHSupFromPointageCalcule_cas3_VentilHsupExistant_baseHoraire35h() {
 
 		Integer idAgent = 9005138;
 		Date dateLundi = new DateTime().toDate();
-		
+
 		VentilHsup ventilHsup = new VentilHsup();
-		ventilHsup.setMHorsContrat(3*60);
+		ventilHsup.setMHorsContrat(3 * 60);
 		ventilHsup.setMSup(0);
-		ventilHsup.setMNormales(3*60);
+		ventilHsup.setMNormales(3 * 60);
 		ventilHsup.setMSimple(0);
-		
+
 		BaseHorairePointageDto spbase = new BaseHorairePointageDto();
 		spbase.setBaseCalculee(35.0);
-		
+
 		PointageCalcule ptg1 = new PointageCalcule();
-		ptg1.setQuantite(new Double(12*60));
+		ptg1.setQuantite(new Double(12 * 60));
 		ptg1.setType(hSup);
-		
-		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>(); 
+
+		List<PointageCalcule> pointagesCalcules = new ArrayList<PointageCalcule>();
 		pointagesCalcules.add(ptg1);
-		
+
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
-		Mockito.when(sirhWsConsumer.getBaseHorairePointageAgent(Mockito.anyInt(),Mockito.any(Date.class),Mockito.any(Date.class))).thenReturn(spbase);
-		
+		Mockito.when(sirhWsConsumer.getBaseHorairePointageAgent(Mockito.anyInt(), Mockito.any(Date.class), Mockito.any(Date.class)))
+				.thenReturn(spbase);
+
 		HelperService helperService = Mockito.mock(HelperService.class);
-		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee())).thenReturn(new Double(spbase.getBaseCalculee()*60).intValue());
-				
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(spbase.getBaseCalculee()))
+				.thenReturn(new Double(spbase.getBaseCalculee() * 60).intValue());
+
 		VentilationHSupService service = new VentilationHSupService();
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
-		
+
 		/////////////////////////////
 		// 1er calcul avec juste 12h Supp
 		ventilHsup = service.processHSupFromPointageCalcule(idAgent, dateLundi, pointagesCalcules, ventilHsup);
-		
-		assertEquals(ventilHsup.getMHorsContrat(), 60*15);
-		assertEquals(ventilHsup.getMSup(), 60*11);
 
-		assertEquals(ventilHsup.getMNormales(), 4*60);
-		assertEquals(ventilHsup.getMSimple(), 3*60);
-		assertEquals(ventilHsup.getMComposees(), 8*60);
-		
+		assertEquals(ventilHsup.getMHorsContrat(), 60 * 15);
+		assertEquals(ventilHsup.getMSup(), 60 * 11);
+
+		assertEquals(ventilHsup.getMNormales(), 4 * 60);
+		assertEquals(ventilHsup.getMSimple(), 3 * 60);
+		assertEquals(ventilHsup.getMComposees(), 8 * 60);
+
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);
@@ -7274,31 +6995,31 @@ public class VentilationHSupServiceTest {
 		assertEquals(ventilHsup.getMMaiRecup(), 0);
 		assertEquals(ventilHsup.getMsdjfRecup(), 0);
 		assertEquals(ventilHsup.getMsNuitRecup(), 0);
-		
+
 		/////////////////////////////
 		// 2e calcul avec 24h Supp
-		
-		ventilHsup = new VentilHsup();
-		ventilHsup.setMHorsContrat(3*60);
-		ventilHsup.setMSup(0);
-		ventilHsup.setMNormales(3*60);
-		ventilHsup.setMSimple(0);
-		
-		PointageCalcule ptg2 = new PointageCalcule();
-		ptg2.setQuantite(new Double(12*60));
-		ptg2.setType(hSup);
-		
-		pointagesCalcules.add(ptg2);
-		
-		ventilHsup = service.processHSupFromPointageCalcule(idAgent, dateLundi, pointagesCalcules, ventilHsup);
-		
-		assertEquals(ventilHsup.getMHorsContrat(), 60*27);
-		assertEquals(ventilHsup.getMSup(), 60*23);
 
-		assertEquals(ventilHsup.getMNormales(), 4*60);
-		assertEquals(ventilHsup.getMSimple(), 3*60);
-		assertEquals(ventilHsup.getMComposees(), 20*60);
-		
+		ventilHsup = new VentilHsup();
+		ventilHsup.setMHorsContrat(3 * 60);
+		ventilHsup.setMSup(0);
+		ventilHsup.setMNormales(3 * 60);
+		ventilHsup.setMSimple(0);
+
+		PointageCalcule ptg2 = new PointageCalcule();
+		ptg2.setQuantite(new Double(12 * 60));
+		ptg2.setType(hSup);
+
+		pointagesCalcules.add(ptg2);
+
+		ventilHsup = service.processHSupFromPointageCalcule(idAgent, dateLundi, pointagesCalcules, ventilHsup);
+
+		assertEquals(ventilHsup.getMHorsContrat(), 60 * 27);
+		assertEquals(ventilHsup.getMSup(), 60 * 23);
+
+		assertEquals(ventilHsup.getMNormales(), 4 * 60);
+		assertEquals(ventilHsup.getMSimple(), 3 * 60);
+		assertEquals(ventilHsup.getMComposees(), 20 * 60);
+
 		assertEquals(ventilHsup.getMSup25(), 0);
 		assertEquals(ventilHsup.getMSup50(), 0);
 		assertEquals(ventilHsup.getMMai(), 0);

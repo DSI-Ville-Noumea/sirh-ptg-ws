@@ -18,8 +18,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
-import nc.noumea.mairie.domain.Spabsen;
-import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
@@ -29,7 +27,6 @@ import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
 import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
-import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -570,7 +567,6 @@ public class PointageCalculeServiceTest {
 		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pointageRepository.getRefPrimes(norubrs, statut)).thenReturn(listRefPrime);
 
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -580,7 +576,6 @@ public class PointageCalculeServiceTest {
 		PointageCalculeService service = new PointageCalculeService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
@@ -651,18 +646,11 @@ public class PointageCalculeServiceTest {
 		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
 		Mockito.when(pointageRepository.getRefPrimes(norubrs, statut)).thenReturn(listRefPrime);
 
-		SpabsenId absenId = new SpabsenId();
-		absenId.setDatdeb(20151006);
-		absenId.setNomatr(idAgent - 9000000);
-		Spabsen absen = new Spabsen();
-		absen.setId(absenId);
-		absen.setDatfin(20151006);
-		List<Spabsen> listSpAbsen = new ArrayList<Spabsen>();
-		listSpAbsen.add(absen);
-
-		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mairieRepository.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
-				.thenReturn(listSpAbsen);
+		DemandeDto maladieDto = new DemandeDto();
+		maladieDto.setDateDebut(new DateTime(2015, 10, 6, 0, 0, 0).toDate());
+		maladieDto.setDateFin(new DateTime(2015, 10, 6, 23, 59, 59).toDate());
+		List<DemandeDto> listMaladies = new ArrayList<DemandeDto>();
+		listMaladies.add(maladieDto);
 
 		DemandeDto demandeDto = new DemandeDto();
 		demandeDto.setDateDebut(new DateTime(2015, 10, 7, 0, 0, 0).toDate());
@@ -678,21 +666,19 @@ public class PointageCalculeServiceTest {
 		listTypeAbsence.add(typeConge);
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.getListCongeWithoutCongesAnnuelsEtAnnulesBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(listConges);
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
+				.thenReturn(listMaladies);
 		Mockito.when(absWsConsumer.getTypeSaisiAbsence(demandeDto.getIdTypeDemande())).thenReturn(listTypeAbsence);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(8.0)).thenReturn(8 * 60);
 		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(7.0)).thenReturn(7 * 60);
 
-		Mockito.when(helperService.getDateFromMairieInteger(absen.getId().getDatdeb())).thenReturn(new DateTime(2015, 10, 6, 0, 0, 0).toDate());
-		Mockito.when(helperService.getDateFromMairieInteger(absen.getDatfin())).thenReturn(new DateTime(2015, 10, 6, 0, 0, 0).toDate());
-
 		PointageCalculeService service = new PointageCalculeService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
-		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 

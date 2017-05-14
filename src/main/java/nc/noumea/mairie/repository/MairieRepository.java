@@ -9,25 +9,19 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import nc.noumea.mairie.domain.Spabsen;
+import org.springframework.stereotype.Repository;
+
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spmatr;
 import nc.noumea.mairie.domain.Spperm;
-import nc.noumea.mairie.ptg.service.impl.HelperService;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 @Repository
 public class MairieRepository implements IMairieRepository {
 
 	@PersistenceContext(unitName = "sirhPersistenceUnit")
 	private EntityManager entityManager;
-
-	@Autowired
-	private HelperService helperService;
 
 	@Override
 	public <T> T getEntity(Class<T> Tclass, Object Id) {
@@ -87,16 +81,6 @@ public class MairieRepository implements IMairieRepository {
 		List<Spperm> result = qPerm.getResultList();
 
 		return null != result ? result.get(0) : null;
-	}
-
-	@Override
-	public List<Spabsen> getListMaladieBetween(Integer idAgent, Date start, Date end) {
-		TypedQuery<Spabsen> query = entityManager.createNamedQuery("getSpabsenForAgentAndPeriod", Spabsen.class);
-		query.setParameter("nomatr", helperService.getMairieMatrFromIdAgent(idAgent));
-		query.setParameter("start", helperService.getIntegerDateMairieFromDate(start));
-		query.setParameter("end", helperService.getIntegerDateMairieFromDate(end));
-
-		return query.getResultList();
 	}
 
 	@Override

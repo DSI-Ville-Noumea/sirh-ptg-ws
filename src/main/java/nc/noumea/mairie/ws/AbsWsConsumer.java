@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import nc.noumea.mairie.abs.dto.DemandeDto;
+import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 
@@ -30,11 +31,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	private static final String addRecuperationsUrl = "recuperations/addForPTG";
 	private static final String addRecuperationsForPointagePTGUrl = "recuperations/addForPointagePTG";
 	private static final String addReposCompensateursUrl = "reposcomps/addForPTG";
-	private static final String checkRecuperationsUrl = "recuperations/checkRecuperations";
-	private static final String checkReposCompensateursUrl = "reposcomps/checkReposCompensateurs";
-	private static final String checkAbsencesSyndicalesUrl = "asa/checkAbsencesSyndicales";
-	private static final String checkCongesExceptionnelsUrl = "congeexceptionnel/checkCongesExceptionnels";
-	private static final String checkCongesAnnuelsUrl = "congeannuel/checkCongesAnnuels";
+	private static final String checkAbsencesUrl = "demandes/checkAbsences";
 	private static final String listeDemandesSIRHUrl = "demandes/listeDemandesSIRH";
 	private static final String getTypeAbsenceUrl = "filtres/getTypesSaisi";
 	private static final String getListeTypeAbsenceUrl = "typeAbsence/getListeTypeAbsence";
@@ -108,10 +105,10 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	}
 
 	@Override
-	public ReturnMessageDto checkRecuperation(Integer idAgent, Date dateDebut, Date dateFin) {
+	public ReturnMessageDto checkAbsences(Integer idAgent, Date dateDebut, Date dateFin) {
 		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
-		String url = String.format(sirhAbsWsBaseUrl + checkRecuperationsUrl);
+		String url = String.format(sirhAbsWsBaseUrl + checkAbsencesUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();
 		parameters.put("idAgent", String.valueOf(idAgent));
@@ -124,71 +121,7 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 	}
 
 	@Override
-	public ReturnMessageDto checkReposComp(Integer idAgent, Date dateDebut, Date dateFin) {
-		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
-		String url = String.format(sirhAbsWsBaseUrl + checkReposCompensateursUrl);
-
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("idAgent", String.valueOf(idAgent));
-		parameters.put("dateDebut", sf.format(dateDebut));
-		parameters.put("dateFin", sf.format(dateFin));
-
-		ClientResponse res = createAndFireGetRequest(parameters, url);
-
-		return readResponse(ReturnMessageDto.class, res, url);
-	}
-
-	@Override
-	public ReturnMessageDto checkAbsencesSyndicales(Integer idAgent, Date dateDebut, Date dateFin) {
-		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
-		String url = String.format(sirhAbsWsBaseUrl + checkAbsencesSyndicalesUrl);
-
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("idAgent", String.valueOf(idAgent));
-		parameters.put("dateDebut", sf.format(dateDebut));
-		parameters.put("dateFin", sf.format(dateFin));
-
-		ClientResponse res = createAndFireGetRequest(parameters, url);
-
-		return readResponse(ReturnMessageDto.class, res, url);
-	}
-
-	@Override
-	public ReturnMessageDto checkCongesExceptionnels(Integer idAgent, Date dateDebut, Date dateFin) {
-		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
-		String url = String.format(sirhAbsWsBaseUrl + checkCongesExceptionnelsUrl);
-
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("idAgent", String.valueOf(idAgent));
-		parameters.put("dateDebut", sf.format(dateDebut));
-		parameters.put("dateFin", sf.format(dateFin));
-
-		ClientResponse res = createAndFireGetRequest(parameters, url);
-
-		return readResponse(ReturnMessageDto.class, res, url);
-	}
-
-	@Override
-	public ReturnMessageDto checkCongeAnnuel(Integer idAgent, Date dateDebut, Date dateFin) {
-		SimpleDateFormat sf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-
-		String url = String.format(sirhAbsWsBaseUrl + checkCongesAnnuelsUrl);
-
-		Map<String, String> parameters = new HashMap<String, String>();
-		parameters.put("idAgent", String.valueOf(idAgent));
-		parameters.put("dateDebut", sf.format(dateDebut));
-		parameters.put("dateFin", sf.format(dateFin));
-
-		ClientResponse res = createAndFireGetRequest(parameters, url);
-
-		return readResponse(ReturnMessageDto.class, res, url);
-	}
-
-	@Override
-	public List<DemandeDto> getListCongeWithoutCongesAnnuelsEtAnnulesBetween(
+	public List<DemandeDto> getListCongesExeptionnelsEtatPrisBetween(
 			Integer idAgent, Date start, Date end) {
 		
 		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
@@ -200,7 +133,28 @@ public class AbsWsConsumer extends BaseWsConsumer implements IAbsWsConsumer {
 		parameters.put("from", sf.format(start));
 		parameters.put("to", sf.format(end));
 		parameters.put("etat", "6"); // etat PRIS
-		parameters.put("groupe", "4"); // conges exceptionnels uniquement
+		parameters.put("groupe", RefTypeGroupeAbsenceEnum.CONGES_EXCEP.toString()); // conges exceptionnels uniquement
+		parameters.put("aValider", "false");
+		
+		ClientResponse response = createAndFireGetRequest(parameters, url);
+		
+		return readResponseAsList(DemandeDto.class, response, url);
+	}
+
+	@Override
+	public List<DemandeDto> getListMaladiesEtatPrisBetween(
+			Integer idAgent, Date start, Date end) {
+		
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+		
+		String url = String.format(sirhAbsWsBaseUrl + listeDemandesSIRHUrl);
+		
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgentRecherche", String.valueOf(idAgent));
+		parameters.put("from", sf.format(start));
+		parameters.put("to", sf.format(end));
+		parameters.put("etat", "6"); // etat PRIS
+		parameters.put("groupe", RefTypeGroupeAbsenceEnum.MALADIES.toString()); // maladies uniquement
 		parameters.put("aValider", "false");
 		
 		ClientResponse response = createAndFireGetRequest(parameters, url);

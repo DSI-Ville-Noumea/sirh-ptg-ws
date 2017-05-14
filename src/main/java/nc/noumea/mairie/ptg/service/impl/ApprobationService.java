@@ -368,7 +368,7 @@ public class ApprobationService implements IApprobationService {
 			// #13380 dans le cas ou on approuve ou saisit, on check si une
 			// absence n existe pas sur les memes dates
 			if (targetEtat == EtatPointageEnum.SAISI || targetEtat == EtatPointageEnum.APPROUVE) {
-				ptgDataCosistencyRules.checkAllAbsences(result, ptg.getIdAgent(), ptg.getDateLundi(), Arrays.asList(ptg));
+				ptgDataCosistencyRules.checkAbsences(result, ptg.getIdAgent(), Arrays.asList(ptg));
 				if (!result.getErrors().isEmpty())
 					continue;
 			}
@@ -445,7 +445,7 @@ public class ApprobationService implements IApprobationService {
 			// #13380 dans le cas ou on approuve ou saisit, on check si une
 			// absence n existe pas sur les memes dates
 			if (targetEtat == EtatPointageEnum.SAISI || targetEtat == EtatPointageEnum.APPROUVE) {
-				ptgDataCosistencyRules.checkAllAbsences(result, ptg.getIdAgent(), ptg.getDateLundi(), Arrays.asList(ptg));
+				ptgDataCosistencyRules.checkAbsences(result, ptg.getIdAgent(), Arrays.asList(ptg));
 				if (!result.getErrors().isEmpty())
 					continue;
 			}

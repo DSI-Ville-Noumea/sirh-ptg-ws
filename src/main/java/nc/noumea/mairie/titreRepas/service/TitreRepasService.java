@@ -25,7 +25,6 @@ import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
 import nc.noumea.mairie.abs.dto.RefTypeGroupeAbsenceEnum;
 import nc.noumea.mairie.domain.AgentStatutEnum;
-import nc.noumea.mairie.domain.Spabsen;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spchge;
@@ -940,8 +939,6 @@ public class TitreRepasService implements ITitreRepasService {
 		DateTime startDate = new DateTime(helperService.getDatePremierJourOfMonth(dateMoisPrecedent));
 		DateTime endDate = new DateTime(helperService.getDateDernierJourOfMonth(dateMoisPrecedent));
 
-		List<Spabsen> listSpAbsen = mairieRepository.getListMaladieBetween(idAgent, startDate.toDate(), endDate.toDate());
-
 		if (null != listAbsences && !listAbsences.isEmpty()) {
 			// on passe a false avant test
 			result = false;
@@ -970,19 +967,6 @@ public class TitreRepasService implements ITitreRepasService {
 									isAuMoinsUnCongeSurLaJournee = true;
 									break;
 								}
-							}
-						}
-					}
-
-					if (null != listSpAbsen) {
-						for (Spabsen spabsen : listSpAbsen) {
-							Date startDateSpAbsen = helperService.getDateFromMairieInteger(spabsen.getId().getDatdeb());
-							Date endDateSpAbsen = helperService.getDateFromMairieInteger(spabsen.getDatfin());
-
-							if ((startDateSpAbsen.before(startDate.toDate()) || startDateSpAbsen.equals(startDate.toDate()))
-									&& (endDateSpAbsen.after(startDate.toDate()) || endDateSpAbsen.equals(startDate.toDate()))) {
-								isAuMoinsUnCongeSurLaJournee = true;
-								break;
 							}
 						}
 					}

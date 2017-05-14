@@ -9,17 +9,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.test.util.ReflectionTestUtils;
-
 import nc.noumea.mairie.ads.dto.EntiteDto;
-import nc.noumea.mairie.domain.Spabsen;
-import nc.noumea.mairie.domain.SpabsenId;
 import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.domain.Spbarem;
 import nc.noumea.mairie.domain.Spbhor;
@@ -34,6 +24,14 @@ import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
+
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.junit.Test;
+import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.springframework.test.util.ReflectionTestUtils;
 
 public class PointageDataConsistencyRulesTest {
 
@@ -62,39 +60,31 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
-		Mockito.doReturn(rmd).when(service).checkRecuperation(rmd, idAgent, pointages);
-		Mockito.doReturn(rmd).when(service).checkReposComp(rmd, idAgent, pointages);
-		Mockito.doReturn(rmd).when(service).checkAbsencesSyndicales(rmd, idAgent, pointages);
-		Mockito.doReturn(rmd).when(service).checkCongesExceptionnels(rmd, idAgent, pointages);
-		Mockito.doReturn(rmd).when(service).checkCongeAnnuel(rmd, idAgent, pointages);
-		Mockito.doReturn(rmd).when(service).checkSpabsenMaladie(rmd, idAgent, dateLundi, pointages);
+		Mockito.doReturn(rmd).when(service).checkAbsences(rmd, idAgent, pointages);
 		Mockito.doReturn(rmd).when(service).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr, base);
 		Mockito.doReturn(rmd).when(service).checkAgentINAAndHSup(rmd, idAgent, dateLundi, pointages, carr, base);
 		Mockito.doReturn(rmd).when(service).checkAgentInactivity(rmd, idAgent, dateLundi, pointages, agent);
 		Mockito.doReturn(rmd).when(service).checkPrime7650(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkPrime7651(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkPrime7652(rmd, idAgent, dateLundi, pointages);
-		Mockito.doReturn(rmd).when(service).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, base, false);
+		Mockito.doReturn(rmd).when(service)
+				.checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, base, false);
 
 		// When
 		service.processDataConsistency(rmd, idAgent, dateLundi, pointages, false);
 
 		// Then
-		Mockito.verify(service, Mockito.times(1)).checkRecuperation(rmd, idAgent, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkReposComp(rmd, idAgent, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkAbsencesSyndicales(rmd, idAgent, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkCongesExceptionnels(rmd, idAgent, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkCongeAnnuel(rmd, idAgent, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkSpabsenMaladie(rmd, idAgent, dateLundi, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkAbsences(rmd, idAgent, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr, base);
 		Mockito.verify(service, Mockito.times(1)).checkAgentINAAndHSup(rmd, idAgent, dateLundi, pointages, carr, base);
 		Mockito.verify(service, Mockito.times(1)).checkAgentInactivity(rmd, idAgent, dateLundi, pointages, agent);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7650(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7651(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7652(rmd, idAgent, dateLundi, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, base, false);
+		Mockito.verify(service, Mockito.times(1)).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages,
+				carr, base, false);
 	}
-
+	
 	@Test
 	public void processDataConsistency_CheckDataMethodsAreCalled_pasAffectation() {
 
@@ -118,43 +108,35 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sRepo);
 
-		Mockito.doReturn(rmd).when(service).checkRecuperation(rmd, idAgent, pointages);
-		Mockito.doReturn(rmd).when(service).checkReposComp(rmd, idAgent, pointages);
-		Mockito.doReturn(rmd).when(service).checkAbsencesSyndicales(rmd, idAgent, pointages);
-		Mockito.doReturn(rmd).when(service).checkCongesExceptionnels(rmd, idAgent, pointages);
-		Mockito.doReturn(rmd).when(service).checkCongeAnnuel(rmd, idAgent, pointages);
-		Mockito.doReturn(rmd).when(service).checkSpabsenMaladie(rmd, idAgent, dateLundi, pointages);
+		Mockito.doReturn(rmd).when(service).checkAbsences(rmd, idAgent, pointages);
 		Mockito.doReturn(rmd).when(service).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr, null);
 		Mockito.doReturn(rmd).when(service).checkAgentINAAndHSup(rmd, idAgent, dateLundi, pointages, carr, null);
 		Mockito.doReturn(rmd).when(service).checkAgentInactivity(rmd, idAgent, dateLundi, pointages, agent);
 		Mockito.doReturn(rmd).when(service).checkPrime7650(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkPrime7651(rmd, idAgent, dateLundi, pointages);
 		Mockito.doReturn(rmd).when(service).checkPrime7652(rmd, idAgent, dateLundi, pointages);
-		Mockito.doReturn(rmd).when(service).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, null, false);
+		Mockito.doReturn(rmd).when(service)
+				.checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, null, false);
 
 		// When
 		service.processDataConsistency(rmd, idAgent, dateLundi, pointages, false);
 
 		// Then
-		Mockito.verify(service, Mockito.times(1)).checkRecuperation(rmd, idAgent, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkReposComp(rmd, idAgent, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkAbsencesSyndicales(rmd, idAgent, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkCongesExceptionnels(rmd, idAgent, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkCongeAnnuel(rmd, idAgent, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkSpabsenMaladie(rmd, idAgent, dateLundi, pointages);
+		Mockito.verify(service, Mockito.times(1)).checkAbsences(rmd, idAgent, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkMaxAbsenceHebdo(rmd, idAgent, dateLundi, pointages, carr, null);
 		Mockito.verify(service, Mockito.times(1)).checkAgentINAAndHSup(rmd, idAgent, dateLundi, pointages, carr, null);
 		Mockito.verify(service, Mockito.times(1)).checkAgentInactivity(rmd, idAgent, dateLundi, pointages, agent);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7650(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7651(rmd, idAgent, dateLundi, pointages);
 		Mockito.verify(service, Mockito.times(1)).checkPrime7652(rmd, idAgent, dateLundi, pointages);
-		Mockito.verify(service, Mockito.times(1)).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages, carr, null, false);
-
-		assertEquals(rmd.getErrors().get(0), "L'agent n'a pas d'affectation ou la base horaire de pointage n'y est pas renseignée.");
+		Mockito.verify(service, Mockito.times(1)).checkAgentTempsPartielAndHSup(rmd, idAgent, dateLundi, pointages,
+				carr, null, false);
+		
+		assertEquals(rmd.getErrors().get(0), "L'agent n'a pas d'affectation ou la base horaire de pointage n'y est pas renseignée."); 
 	}
 
 	@Test
-	public void checkRecuperation_NoError() {
+	public void checkAbsences_NoError() {
 
 		// Given
 		Integer idAgent = 9005138;
@@ -162,14 +144,14 @@ public class PointageDataConsistencyRulesTest {
 		List<Pointage> pointages = new ArrayList<Pointage>();
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkRecuperation(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
+		Mockito.when(absWsConsumer.checkAbsences(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
 				.thenReturn(new ReturnMessageDto());
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		ReturnMessageDto result = service.checkRecuperation(new ReturnMessageDto(), idAgent, pointages);
+		ReturnMessageDto result = service.checkAbsences(new ReturnMessageDto(), idAgent, pointages);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -177,7 +159,7 @@ public class PointageDataConsistencyRulesTest {
 	}
 
 	@Test
-	public void checkRecuperation_ReturnErrors() {
+	public void checkAbsences_ReturnErrors() {
 
 		// Given
 		Integer idAgent = 9005138;
@@ -196,13 +178,13 @@ public class PointageDataConsistencyRulesTest {
 		res.getErrors().add("21/05/2013 : L'agent est en récupération sur cette période.");
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkRecuperation(idAgent, dateDebut, dateFin)).thenReturn(res);
+		Mockito.when(absWsConsumer.checkAbsences(idAgent, dateDebut, dateFin)).thenReturn(res);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		ReturnMessageDto result = service.checkRecuperation(new ReturnMessageDto(), idAgent, pointages);
+		ReturnMessageDto result = service.checkAbsences(new ReturnMessageDto(), idAgent, pointages);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -211,7 +193,7 @@ public class PointageDataConsistencyRulesTest {
 	}
 
 	@Test
-	public void checkRecuperation_withPrime() {
+	public void checkAbsences_withPrime() {
 
 		// Given
 		Integer idAgent = 9005138;
@@ -230,548 +212,17 @@ public class PointageDataConsistencyRulesTest {
 		res.getErrors().add("21/05/2013 : L'agent est en récupération sur cette période.");
 
 		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkRecuperation(idAgent, dateDebut, dateFin)).thenReturn(res);
+		Mockito.when(absWsConsumer.checkAbsences(idAgent, dateDebut, dateFin)).thenReturn(res);
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 
 		// When
-		ReturnMessageDto result = service.checkRecuperation(new ReturnMessageDto(), idAgent, pointages);
+		ReturnMessageDto result = service.checkAbsences(new ReturnMessageDto(), idAgent, pointages);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkReposComp_NoError() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkReposComp(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
-				.thenReturn(new ReturnMessageDto());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkReposComp(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkReposComp_ReturnErrors() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-		Pointage p = new Pointage();
-		RefTypePointage type = new RefTypePointage();
-		type.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
-		p.setDateDebut(dateDebut);
-		p.setDateFin(dateFin);
-		p.setType(type);
-		pointages.add(p);
-
-		ReturnMessageDto res = new ReturnMessageDto();
-		res.getErrors().add("21/05/2013 : L'agent est en repos compensateur sur cette période.");
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkReposComp(idAgent, dateDebut, dateFin)).thenReturn(res);
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkReposComp(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(1, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-		assertEquals("21/05/2013 : L'agent est en repos compensateur sur cette période.", result.getErrors().get(0));
-	}
-
-	@Test
-	public void checkReposComp_withPrime() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-		Pointage p = new Pointage();
-		RefTypePointage type = new RefTypePointage();
-		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		p.setDateDebut(dateDebut);
-		p.setDateFin(dateFin);
-		p.setType(type);
-		pointages.add(p);
-
-		ReturnMessageDto res = new ReturnMessageDto();
-		res.getErrors().add("21/05/2013 : L'agent est en repos compensateur sur cette période.");
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkReposComp(idAgent, dateDebut, dateFin)).thenReturn(res);
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkReposComp(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkAbsencesSyndicales_NoError() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkAbsencesSyndicales(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
-				.thenReturn(new ReturnMessageDto());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkAbsencesSyndicales(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkAbsencesSyndicales_ReturnErrors() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-		RefTypePointage type = new RefTypePointage();
-		type.setIdRefTypePointage(RefTypePointageEnum.ABSENCE.getValue());
-		Pointage p = new Pointage();
-		p.setDateDebut(dateDebut);
-		p.setDateFin(dateFin);
-		p.setType(type);
-		pointages.add(p);
-
-		ReturnMessageDto res = new ReturnMessageDto();
-		res.getErrors().add("21/05/2013 : L'agent est en absence syndicale sur cette période.");
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkAbsencesSyndicales(idAgent, dateDebut, dateFin)).thenReturn(res);
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkAbsencesSyndicales(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(1, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-		assertEquals("21/05/2013 : L'agent est en absence syndicale sur cette période.", result.getErrors().get(0));
-	}
-
-	@Test
-	public void checkAbsencesSyndicales_withPrime() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-		RefTypePointage type = new RefTypePointage();
-		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		Pointage p = new Pointage();
-		p.setDateDebut(dateDebut);
-		p.setDateFin(dateFin);
-		p.setType(type);
-		pointages.add(p);
-
-		ReturnMessageDto res = new ReturnMessageDto();
-		res.getErrors().add("21/05/2013 : L'agent est en absence syndicale sur cette période.");
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkAbsencesSyndicales(idAgent, dateDebut, dateFin)).thenReturn(res);
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkAbsencesSyndicales(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkCongesExceptionnels_NoError() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkCongesExceptionnels(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
-				.thenReturn(new ReturnMessageDto());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkCongesExceptionnels(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkCongesExceptionnels_ReturnErrors() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-		RefTypePointage type = new RefTypePointage();
-		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		Pointage p = new Pointage();
-		p.setDateDebut(dateDebut);
-		p.setDateFin(dateFin);
-		p.setType(type);
-		pointages.add(p);
-
-		ReturnMessageDto res = new ReturnMessageDto();
-		res.getErrors().add("21/05/2013 : L'agent est en congé exceptionnel sur cette période.");
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkCongesExceptionnels(idAgent, dateDebut, dateFin)).thenReturn(res);
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkCongesExceptionnels(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(1, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-		assertEquals("21/05/2013 : L'agent est en congé exceptionnel sur cette période.", result.getErrors().get(0));
-	}
-
-	@Test
-	public void checkCongesExceptionnels_withPrime() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-		RefTypePointage type = new RefTypePointage();
-		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		Pointage p = new Pointage();
-		p.setDateDebut(dateDebut);
-		p.setDateFin(dateFin);
-		p.setType(type);
-		pointages.add(p);
-
-		ReturnMessageDto res = new ReturnMessageDto();
-		res.getErrors().add("21/05/2013 : L'agent est en congé exceptionnel sur cette période.");
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkCongesExceptionnels(idAgent, dateDebut, dateFin)).thenReturn(res);
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkCongesExceptionnels(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkCongeAnnuel_NoError() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkCongeAnnuel(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
-				.thenReturn(new ReturnMessageDto());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkCongeAnnuel(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkCongeAnnuel_ReturnErrors() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-		RefTypePointage type = new RefTypePointage();
-		type.setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		Pointage p = new Pointage();
-		p.setDateDebut(dateDebut);
-		p.setDateFin(dateFin);
-		p.setType(type);
-		pointages.add(p);
-
-		ReturnMessageDto res = new ReturnMessageDto();
-		res.getErrors().add("21/05/2013 : L'agent est en congé annuel sur cette période.");
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkCongeAnnuel(idAgent, dateDebut, dateFin)).thenReturn(res);
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkCongeAnnuel(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(1, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-		assertEquals("21/05/2013 : L'agent est en congé annuel sur cette période.", result.getErrors().get(0));
-	}
-
-	@Test
-	public void checkCongeAnnuel_withPrime() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateDebut = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		Date dateFin = new DateTime(2013, 5, 20, 2, 0, 0).toDate();
-		List<Pointage> pointages = new ArrayList<Pointage>();
-		RefTypePointage type = new RefTypePointage();
-		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		Pointage p = new Pointage();
-		p.setDateDebut(dateDebut);
-		p.setDateFin(dateFin);
-		p.setType(type);
-		pointages.add(p);
-
-		ReturnMessageDto res = new ReturnMessageDto();
-		res.getErrors().add("21/05/2013 : L'agent est en congé annuel sur cette période.");
-
-		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
-		Mockito.when(absWsConsumer.checkCongeAnnuel(idAgent, dateDebut, dateFin)).thenReturn(res);
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
-
-		// When
-		ReturnMessageDto result = service.checkCongeAnnuel(new ReturnMessageDto(), idAgent, pointages);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkSpabsenMaladie_NoSpabsen_NoError() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		List<Pointage> ptgs = new ArrayList<Pointage>();
-
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
-				.thenReturn(new ArrayList<Spabsen>());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
-
-		// When
-		ReturnMessageDto result = service.checkSpabsenMaladie(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkSpabsenMaladie_1Spabsen_NoPointageThatDay_NoError() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-		List<Pointage> ptgs = new ArrayList<Pointage>();
-
-		Spabsen sp = new Spabsen();
-		sp.setId(new SpabsenId(5138, 20130519, null));
-		sp.setDatfin(20130521);
-
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate())).thenReturn(Arrays.asList(sp));
-
-		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getDateFromMairieInteger(20130519)).thenReturn(new DateTime(2013, 5, 19, 0, 0, 0).toDate());
-		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
-		ReflectionTestUtils.setField(service, "helperService", hS);
-
-		// When
-		ReturnMessageDto result = service.checkSpabsenMaladie(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkSpabsenMaladie_1Spabsen_NoPointageHorsPrimeThatDay_NoError() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-
-		Pointage p1 = new Pointage();
-		p1.setDateLundi(dateLundi);
-		p1.setDateDebut(new DateTime(2013, 5, 21, 7, 0, 0).toDate());
-		p1.setDateFin(new DateTime(2013, 5, 21, 9, 0, 0).toDate());
-		p1.setType(new RefTypePointage());
-		p1.getType().setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
-		List<Pointage> ptgs = Arrays.asList(p1);
-
-		// en recup le matin du 21/05/2013
-		Spabsen sp = new Spabsen();
-		sp.setId(new SpabsenId(5138, 20130521, null));
-		sp.setDatfin(20130521);
-
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate())).thenReturn(Arrays.asList(sp));
-
-		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
-		ReflectionTestUtils.setField(service, "helperService", hS);
-
-		// When
-		ReturnMessageDto result = service.checkSpabsenMaladie(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
-
-		// Then
-		assertEquals(0, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-	}
-
-	@Test
-	public void checkSpabsenMaladie_1Spabsen_1PointageThatDay_ReturnError() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-
-		Pointage p1 = new Pointage();
-		p1.setDateLundi(dateLundi);
-		p1.setDateDebut(new DateTime(2013, 5, 21, 7, 0, 0).toDate());
-		p1.setDateFin(new DateTime(2013, 5, 21, 9, 0, 0).toDate());
-		p1.setType(new RefTypePointage());
-		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		List<Pointage> ptgs = Arrays.asList(p1);
-
-		// en recup le matin du 21/05/2013
-		Spabsen sp = new Spabsen();
-		sp.setId(new SpabsenId(5138, 20130521, null));
-		sp.setDatfin(20130521);
-
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate())).thenReturn(Arrays.asList(sp));
-
-		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getDateFromMairieInteger(20130521)).thenReturn(new DateTime(2013, 5, 21, 0, 0, 0).toDate());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
-		ReflectionTestUtils.setField(service, "helperService", hS);
-
-		// When
-		ReturnMessageDto result = service.checkSpabsenMaladie(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
-
-		// Then
-		assertEquals(1, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-		assertEquals("21/05/2013 07:00 : L'agent est en maladie sur cette période.", result.getErrors().get(0));
-	}
-
-	@Test
-	public void checkSpabsenMaladie_1Spabsen_1PointageInsidePeriod_ReturnError() {
-
-		// Given
-		Integer idAgent = 9005138;
-		Date dateLundi = new DateTime(2013, 5, 20, 0, 0, 0).toDate();
-
-		Pointage p1 = new Pointage();
-		p1.setDateLundi(dateLundi);
-		p1.setDateDebut(new DateTime(2013, 5, 22, 11, 0, 0).toDate());
-		p1.setDateFin(new DateTime(2013, 5, 22, 12, 0, 0).toDate());
-		p1.setType(new RefTypePointage());
-		p1.getType().setIdRefTypePointage(RefTypePointageEnum.H_SUP.getValue());
-		List<Pointage> ptgs = Arrays.asList(p1);
-
-		// en recup le matin du 21/05/2013
-		Spabsen sp = new Spabsen();
-		sp.setId(new SpabsenId(5138, 20130515, null));
-		sp.setDatfin(20130527);
-
-		IMairieRepository mRepo = Mockito.mock(IMairieRepository.class);
-		Mockito.when(mRepo.getListMaladieBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate())).thenReturn(Arrays.asList(sp));
-
-		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.getDateFromMairieInteger(20130515)).thenReturn(new DateTime(2013, 5, 15, 0, 0, 0).toDate());
-		Mockito.when(hS.getDateFromMairieInteger(20130522)).thenReturn(new DateTime(2013, 5, 27, 0, 0, 0).toDate());
-
-		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
-		ReflectionTestUtils.setField(service, "mairieRepository", mRepo);
-		ReflectionTestUtils.setField(service, "helperService", hS);
-
-		// When
-		ReturnMessageDto result = service.checkSpabsenMaladie(new ReturnMessageDto(), idAgent, dateLundi, ptgs);
-
-		// Then
-		assertEquals(1, result.getErrors().size());
-		assertEquals(0, result.getInfos().size());
-		assertEquals("22/05/2013 11:00 : L'agent est en maladie sur cette période.", result.getErrors().get(0));
 	}
 
 	@Test
@@ -794,13 +245,13 @@ public class PointageDataConsistencyRulesTest {
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
 		// When
-		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2), carr, base);
+		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1, p2), carr, base);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 	}
-
 
 	@Test
 	public void checkMaxAbsenceHebdo_2absences_NbHeureDepasse_returnError() {
@@ -830,7 +281,8 @@ public class PointageDataConsistencyRulesTest {
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
 		// When
-		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2), car, bas);
+		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1, p2), car, bas);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -866,7 +318,8 @@ public class PointageDataConsistencyRulesTest {
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
 		// When
-		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2), car, bas);
+		ReturnMessageDto result = service.checkMaxAbsenceHebdo(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1, p2), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -904,7 +357,8 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
-		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas);
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -943,7 +397,8 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
-		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas);
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -989,7 +444,8 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
-		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2), car, bas);
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1, p2), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -1029,7 +485,8 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
-		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas);
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -1067,7 +524,8 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
-		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas);
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
@@ -1106,7 +564,8 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhRepo);
 
 		// When
-		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas);
+		ReturnMessageDto result = service.checkAgentINAAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas);
 
 		// Then
 		assertEquals(0, result.getInfos().size());
@@ -1137,7 +596,7 @@ public class PointageDataConsistencyRulesTest {
 		Pointage ptg = new Pointage();
 		ptg.setDateDebut(dateDebut);
 		listPointages.add(ptg);
-
+		
 		// When
 		ReturnMessageDto result = service.checkAgentInactivity(new ReturnMessageDto(), 9007865, dateLundi, listPointages, ag);
 
@@ -1262,7 +721,9 @@ public class PointageDataConsistencyRulesTest {
 
 		// Then
 		assertEquals(1, result.getErrors().size());
-		assertEquals("La prime 7650 du 28/09/2013 n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.", result.getErrors().get(0));
+		assertEquals(
+				"La prime 7650 du 28/09/2013 n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.",
+				result.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 	}
 
@@ -1306,7 +767,9 @@ public class PointageDataConsistencyRulesTest {
 
 		// Then
 		assertEquals(1, result.getErrors().size());
-		assertEquals("La prime 7650 du 29/09/2013 n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.", result.getErrors().get(0));
+		assertEquals(
+				"La prime 7650 du 29/09/2013 n'est pas valide. Elle ne peut être saisie que du lundi au vendredi.",
+				result.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 	}
 
@@ -1737,7 +1200,8 @@ public class PointageDataConsistencyRulesTest {
 
 		// Then
 		assertEquals(1, result.getErrors().size());
-		assertEquals("La prime 7652 du 28/09/2013 n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.",
+		assertEquals(
+				"La prime 7652 du 28/09/2013 n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.",
 				result.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 	}
@@ -1768,7 +1232,8 @@ public class PointageDataConsistencyRulesTest {
 
 		// Then
 		assertEquals(1, result.getErrors().size());
-		assertEquals("La prime 7704 du 28/09/2013 n'est pas valide. Sa quantité ne peut être supérieur à 2.", result.getErrors().get(0));
+		assertEquals("La prime 7704 du 28/09/2013 n'est pas valide. Sa quantité ne peut être supérieur à 2.", result
+				.getErrors().get(0));
 		assertEquals(0, result.getInfos().size());
 	}
 
@@ -1857,8 +1322,8 @@ public class PointageDataConsistencyRulesTest {
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 
 		// When
-		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas,
-				false);
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas, false);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -1895,8 +1360,8 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas,
-				false);
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas, false);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -1936,8 +1401,8 @@ public class PointageDataConsistencyRulesTest {
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
-				assertEquals(nombreMinutesHSupAutorisees, new Integer(4 * 60).intValue());
-				return new Integer(nombreMinutesHSupAutorisees / 60).toString() + "h";
+				assertEquals(nombreMinutesHSupAutorisees, new Integer(4*60).intValue());
+				return new Integer(nombreMinutesHSupAutorisees/60).toString() + "h";
 			}
 		}).when(hS).formatMinutesToString(Mockito.anyInt());
 
@@ -1945,13 +1410,14 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas,
-				false);
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas, false);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4h d'heures supplémentaires.", result.getErrors().get(0));
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4h d'heures supplémentaires.", result
+				.getErrors().get(0));
 	}
 
 	// #28723 arrondir au 1/4 heure superieur le plus proche
@@ -1986,7 +1452,7 @@ public class PointageDataConsistencyRulesTest {
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
 				int nbMinutesModulo = nombreMinutesHSupAutorisees % 60;
-				return new Integer(nombreMinutesHSupAutorisees / 60).toString() + "h" + (0 < nbMinutesModulo ? nbMinutesModulo + "m" : "");
+				return new Integer(nombreMinutesHSupAutorisees/60).toString() + "h" + (0 < nbMinutesModulo ? nbMinutesModulo + "m" : "");
 			}
 		}).when(hS).formatMinutesToString(Mockito.anyInt());
 
@@ -1994,13 +1460,14 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas,
-				false);
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas, false);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4h d'heures supplémentaires.", result.getErrors().get(0));
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4h d'heures supplémentaires.", result
+				.getErrors().get(0));
 	}
 
 	// #28723 arrondir au 1/4 heure superieur le plus proche
@@ -2035,7 +1502,7 @@ public class PointageDataConsistencyRulesTest {
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
 				int nbMinutesModulo = nombreMinutesHSupAutorisees % 60;
-				return new Integer(nombreMinutesHSupAutorisees / 60).toString() + "h" + (0 < nbMinutesModulo ? nbMinutesModulo + "m" : "");
+				return new Integer(nombreMinutesHSupAutorisees/60).toString() + "h" + (0 < nbMinutesModulo ? nbMinutesModulo + "m" : "");
 			}
 		}).when(hS).formatMinutesToString(Mockito.anyInt());
 
@@ -2043,8 +1510,8 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas,
-				false);
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas, false);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -2087,8 +1554,8 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2), car, bas,
-				false);
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1, p2), car, bas, false);
 
 		// Then
 		assertEquals(0, result.getErrors().size());
@@ -2098,7 +1565,7 @@ public class PointageDataConsistencyRulesTest {
 	// #18728 : evol sur le calcul
 	// ici la personne est a temps partiel à 20h30 par semaine
 	// il a donc le droit à 20h30 x 20% = 4 HSUP
-	// + 1 heure d absence
+	// + 1 heure d absence 
 	// soit 5 HSup
 	@Test
 	public void checkAgentTempsPartielAndHSup_WithAbsence_KO() {
@@ -2109,7 +1576,7 @@ public class PointageDataConsistencyRulesTest {
 
 		BaseHorairePointageDto bas = new BaseHorairePointageDto();
 		bas.setCodeBaseHorairePointage("A");
-		bas.setBaseCalculee(20.5);
+		bas.setBaseCalculee(20.5); 
 		bas.setBaseLegale(39.0);
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(0.5);
@@ -2136,8 +1603,8 @@ public class PointageDataConsistencyRulesTest {
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
-				assertEquals(nombreMinutesHSupAutorisees, new Integer(5 * 60).intValue());
-				return new Integer(nombreMinutesHSupAutorisees / 60).toString() + "h";
+				assertEquals(nombreMinutesHSupAutorisees, new Integer(5*60).intValue());
+				return new Integer(nombreMinutesHSupAutorisees/60).toString() + "h";
 			}
 		}).when(hS).formatMinutesToString(Mockito.anyInt());
 
@@ -2145,13 +1612,14 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1, p2), car, bas,
-				false);
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1, p2), car, bas, false);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 5h d'heures supplémentaires.", result.getErrors().get(0));
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 5h d'heures supplémentaires.", result
+				.getErrors().get(0));
 	}
 
 	// #18728 : evol sur le calcul
@@ -2169,7 +1637,7 @@ public class PointageDataConsistencyRulesTest {
 
 		BaseHorairePointageDto bas = new BaseHorairePointageDto();
 		bas.setCodeBaseHorairePointage("A");
-		bas.setBaseCalculee(35.0);
+		bas.setBaseCalculee(35.0); 
 		bas.setBaseLegale(39.0);
 		Spbhor spbhor = new Spbhor();
 		spbhor.setTaux(0.5);
@@ -2190,8 +1658,8 @@ public class PointageDataConsistencyRulesTest {
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				int nombreMinutesHSupAutorisees = (int) invocation.getArguments()[0];
-				assertEquals(nombreMinutesHSupAutorisees, new Integer(4 * 60).intValue());
-				return new Integer(nombreMinutesHSupAutorisees / 60).toString();
+				assertEquals(nombreMinutesHSupAutorisees, new Integer(4*60).intValue());
+				return new Integer(nombreMinutesHSupAutorisees/60).toString();
 			}
 		}).when(hS).formatMinutesToString(Mockito.anyInt());
 
@@ -2199,22 +1667,25 @@ public class PointageDataConsistencyRulesTest {
 		ReflectionTestUtils.setField(service, "helperService", hS);
 
 		// When
-		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car, bas,
-				false);
+		ReturnMessageDto result = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas, false);
 
 		// Then
 		assertEquals(1, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 d'heures supplémentaires.", result.getErrors().get(0));
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 d'heures supplémentaires.", result
+				.getErrors().get(0));
+		
 
 		// When
-		ReturnMessageDto resultFromSIRH = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p1), car,
-				bas, true);
+		ReturnMessageDto resultFromSIRH = service.checkAgentTempsPartielAndHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p1), car, bas, true);
 
 		// Then
 		assertEquals(0, resultFromSIRH.getErrors().size());
 		assertEquals(1, resultFromSIRH.getInfos().size());
-		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 d'heures supplémentaires.", resultFromSIRH.getInfos().get(0));
+		assertEquals("L'agent est en temps partiel, il ne peut pas avoir plus de 4 d'heures supplémentaires.", resultFromSIRH
+				.getInfos().get(0));
 	}
 
 	@Test
@@ -2232,7 +1703,8 @@ public class PointageDataConsistencyRulesTest {
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		// When
-		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p2), car);
+		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p2), car);
 
 		assertEquals(0, result.getInfos().size());
 		assertEquals(0, result.getErrors().size());
@@ -2254,12 +1726,15 @@ public class PointageDataConsistencyRulesTest {
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		// When
-		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p2), car);
+		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p2), car);
 
 		assertEquals(0, result.getInfos().size());
 		assertEquals(1, result.getErrors().size());
-		assertEquals(result.getErrors().get(0),
-				String.format("L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser 4h (limite des heures de nuit).",
+		assertEquals(
+				result.getErrors().get(0),
+				String.format(
+						"L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser 4h (limite des heures de nuit).",
 						new DateTime(p2.getDateDebut()).toString("dd/MM/yyyy")));
 	}
 
@@ -2279,7 +1754,8 @@ public class PointageDataConsistencyRulesTest {
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		// When
-		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p2), car);
+		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p2), car);
 
 		assertEquals(0, result.getInfos().size());
 		assertEquals(0, result.getErrors().size());
@@ -2301,7 +1777,8 @@ public class PointageDataConsistencyRulesTest {
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		// When
-		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p2), car);
+		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p2), car);
 
 		assertEquals(0, result.getInfos().size());
 		assertEquals(0, result.getErrors().size());
@@ -2323,12 +1800,15 @@ public class PointageDataConsistencyRulesTest {
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		// When
-		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p2), car);
+		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p2), car);
 
 		assertEquals(0, result.getInfos().size());
 		assertEquals(1, result.getErrors().size());
-		assertEquals(result.getErrors().get(0),
-				String.format("L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser 5h (limite des heures de nuit).",
+		assertEquals(
+				result.getErrors().get(0),
+				String.format(
+						"L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser 5h (limite des heures de nuit).",
 						new DateTime(p2.getDateDebut()).toString("dd/MM/yyyy")));
 	}
 
@@ -2348,12 +1828,15 @@ public class PointageDataConsistencyRulesTest {
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		// When
-		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p2), car);
+		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p2), car);
 
 		assertEquals(0, result.getInfos().size());
 		assertEquals(1, result.getErrors().size());
-		assertEquals(result.getErrors().get(0),
-				String.format("L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser 4h (limite des heures de nuit).",
+		assertEquals(
+				result.getErrors().get(0),
+				String.format(
+						"L'heure de fin pour les Heures Sup. saisie le %s ne peut pas dépasser 4h (limite des heures de nuit).",
 						new DateTime(p2.getDateDebut()).toString("dd/MM/yyyy")));
 	}
 
@@ -2373,7 +1856,8 @@ public class PointageDataConsistencyRulesTest {
 
 		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
 		// When
-		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi, Arrays.asList(p2), car);
+		ReturnMessageDto result = service.checkHeureFinSaisieHSup(new ReturnMessageDto(), idAgent, dateLundi,
+				Arrays.asList(p2), car);
 
 		assertEquals(0, result.getInfos().size());
 		assertEquals(0, result.getErrors().size());

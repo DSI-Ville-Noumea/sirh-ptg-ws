@@ -78,6 +78,7 @@
 	<!-- -->
 	<!-- ALFRESCO -->
 	<!-- -->
+	<!-- ATTENTION : bien mettre le "/" apres le port -->
 	<Environment name="ALFRESCO_URL" type="java.lang.String"
 		description="Alfresco endpoint url" value="http://svi-alfresco.site-mairie.noumea.nc:8080/"
 		override="false" />

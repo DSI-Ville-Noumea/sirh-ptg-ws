@@ -1072,8 +1072,16 @@ public class PointageServiceTest {
 		
 		Pointage p = new Pointage();
 		p.getEtats().add(etat);
+
+		EtatPointage etatSaisi = new EtatPointage();
+		etatSaisi.setEtat(EtatPointageEnum.SAISI);
+		
+		Pointage pSaisi = new Pointage();
+		pSaisi.getEtats().add(etatSaisi);
+		
 		List<Pointage> listePointage = new ArrayList<Pointage>();
 		listePointage.add(p);
+		listePointage.add(pSaisi);
 
 		IPointageRepository arRepo = Mockito.mock(IPointageRepository.class);
 		Mockito.when(
@@ -1092,6 +1100,8 @@ public class PointageServiceTest {
 		// Then
 		assertEquals(1, dto.getErrors().size());
 		assertEquals("01/01/2014 00:00 : L'agent a déjà un pointage sur cette période.", dto.getErrors().get(0));
+		// #31896
+		assertEquals("01/01/2014 00:00 : L'agent a déjà un pointage saisi sur cette période.", dto.getInfos().get(0));
 	}
 
 	@Test

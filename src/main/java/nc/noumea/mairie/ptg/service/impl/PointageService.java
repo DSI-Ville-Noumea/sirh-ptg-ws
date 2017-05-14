@@ -80,6 +80,7 @@ public class PointageService implements IPointageService {
 
 	// POUR LES MESSAGE A ENVOYE AU PROJET SIRH-ABS-WS
 	public static final String				POINTAGE_MSG				= "%s : L'agent a déjà un pointage sur cette période.";
+	public static final String POINTAGE_SAISI_MSG = "%s : L'agent a déjà un pointage saisi sur cette période.";
 
 	protected FichePointageDto getFichePointageForAgent(AgentGeneriqueDto agent, Date date) {
 
@@ -679,11 +680,22 @@ public class PointageService implements IPointageService {
 		listEtatsAcceptes.addAll(Arrays.asList(EtatPointageEnum.APPROUVE, EtatPointageEnum.VENTILE, EtatPointageEnum.VALIDE,
 				EtatPointageEnum.EN_ATTENTE, EtatPointageEnum.JOURNALISE));
 
-		listePointage = filterOldPointagesAndEtatFromList(listePointage, listEtatsAcceptes, null);
-		if (listePointage.size() > 0) {
+		List<Pointage> listePointageAcceptes = filterOldPointagesAndEtatFromList(listePointage, listEtatsAcceptes, null);
+		if (listePointageAcceptes.size() > 0) {
 			// on bloque quel que soit l'etat du pointage
 			String msg = String.format(POINTAGE_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
 			result.getErrors().add(msg);
+		}
+		
+		// #31896 message information si pointage saisie
+		List<EtatPointageEnum> listEtatsMessageInfo = new ArrayList<EtatPointageEnum>();
+		listEtatsMessageInfo.addAll(Arrays.asList(EtatPointageEnum.SAISI));
+
+		List<Pointage> listePointageSaisi = filterOldPointagesAndEtatFromList(listePointage, listEtatsMessageInfo, null);
+		if (listePointageSaisi.size() > 0) {
+			// on informe
+			String msg = String.format(POINTAGE_SAISI_MSG, new DateTime(fromDate).toString("dd/MM/yyyy HH:mm"));
+			result.getInfos().add(msg);
 		}
 
 		return result;

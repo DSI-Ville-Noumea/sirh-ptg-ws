@@ -18,18 +18,6 @@ public interface IPointageDataConsistencyRules {
 	ReturnMessageDto checkMaxAbsenceHebdo(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto);
 
-	ReturnMessageDto checkRecuperation(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages);
-
-	ReturnMessageDto checkReposComp(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages);
-
-	ReturnMessageDto checkAbsencesSyndicales(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages);
-
-	ReturnMessageDto checkCongesExceptionnels(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages);
-
-	ReturnMessageDto checkCongeAnnuel(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages);
-
-	ReturnMessageDto checkSpabsenMaladie(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
-
 	ReturnMessageDto checkAgentINAAndHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, Spcarr carr, BaseHorairePointageDto baseDto);
 
@@ -58,7 +46,17 @@ public interface IPointageDataConsistencyRules {
 	ReturnMessageDto checkHeureFinSaisieHSup(ReturnMessageDto srm, Integer idAgent, Date dateLundi,
 			List<Pointage> pointages, Spcarr carr);
 
-	void checkAllAbsences(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
+	/**
+	 * #19828
+	 * On check si une absence (quelque soit son type) ne chevauche pas un pointage.
+	 * 
+	 * @param srm ReturnMessageDto
+	 * @param idAgent Integer l ID de l agent
+	 * @param pointages List<Pointage> la liste des pointages a verifier
+	 * @return ReturnMessageDto Retourne message d erreur ou info
+	 */
+	ReturnMessageDto checkAbsences(ReturnMessageDto srm, Integer idAgent,
+			List<Pointage> pointages);
 
 	ReturnMessageDto checkDateLundiAnterieurA3MoisWithPointage(ReturnMessageDto result, Date dateLundi, Pointage ptg);
 }
