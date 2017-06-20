@@ -3120,7 +3120,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		String fakeInput = "This is the string that your fake input stream will return";
+		String fakeInput = "0 bkzagbrjka";
 		StringReader reader = new StringReader(fakeInput);
 		InputStream fakeStream = new ReaderInputStream(reader);
 		
