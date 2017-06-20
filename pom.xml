@@ -315,7 +315,7 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>ROOT##${project.artifactId}-${project.version}</finalName>
+		<finalName>sirh-ptg-ws##${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -538,7 +538,7 @@
 						<fileSet>
 							<directory>target</directory>
 							<includes>
-								<include>ROOT##${project.artifactId}-${project.version}.war</include>
+								<include>sirh-ptg-ws##${project.version}.war</include>
 							</includes>
 						</fileSet>
 					</fileSets>
