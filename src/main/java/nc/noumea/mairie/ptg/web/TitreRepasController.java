@@ -264,7 +264,7 @@ public class TitreRepasController {
 	 */
 	@ResponseBody
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@RequestMapping(value = "/startEtatPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@RequestMapping(value = "/startEtatPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.POST)
 	public ReturnMessageDto startEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
 			@FormDataParam("fileInputStream") InputStream inputStream) {
 

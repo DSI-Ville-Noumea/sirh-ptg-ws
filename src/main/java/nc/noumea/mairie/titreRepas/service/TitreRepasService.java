@@ -1421,6 +1421,15 @@ public class TitreRepasService implements ITitreRepasService {
 		return true;
 	}
 
+	private boolean estNumerique(String param) {
+		try {
+			Long.parseLong(param);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	@Override
 	@Transactional("ptgTransactionManager")
 	public ReturnMessageDto startEtatPayeurTitreRepas(Integer convertedIdAgentConnecte, InputStream inputStream) {
@@ -1444,26 +1453,14 @@ public class TitreRepasService implements ITitreRepasService {
 					continue;
 				}
 
-				// 1ere ligne on verifie que ca contient "LISTE DES SALARIES"
-				if (ligne.startsWith("LISTE DES SALARIES")) {
+				// on verifie si c'est du numerique ou du texte
+				if (!estNumerique(ligne))
 					continue;
-				}
-
-				// 2eme ligne c'est l'entete du fichier
-				if (ligne.startsWith("ID")) {
-					continue;
-				}
 
 				// C'est la ligne d'exemple fourni par TR
 				if (ligne.startsWith("0")) {
 					continue;
 				}
-
-				// C'est la ligne de fin fournie par TR
-				if (ligne.startsWith("ATTENTION")) {
-					continue;
-				}
-
 				// on cherche la correspondance de l'id Agent
 				AgentGeneriqueDto ag = sirhWsConsumer.getAgentByIdTitreRepas(new Integer(nextLine[0].trim()));
 
