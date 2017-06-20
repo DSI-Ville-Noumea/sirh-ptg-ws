@@ -6,6 +6,7 @@ import java.util.List;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
+import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurData;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 
 public interface ITitreRepasRepository {
@@ -34,5 +35,7 @@ public interface ITitreRepasRepository {
 	void persisTitreRepasExportEtatPayeurTask(TitreRepasExportEtatPayeurTask task);
 
 	List<TitreRepasExportEtatPayeurTask> getListTitreRepasTaskErreur();
+
+	void persisTitreRepasExportEtatPayeurData(List<TitreRepasExportEtatPayeurData> data);
 
 }

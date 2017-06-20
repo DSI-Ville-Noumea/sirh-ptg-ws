@@ -13,6 +13,7 @@ import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
+import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurData;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 
 @Repository
@@ -189,6 +190,13 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 		query.setParameter("statut", "OK");
 
 		return query.getResultList();
+	}
+
+	@Override
+	public void persisTitreRepasExportEtatPayeurData(List<TitreRepasExportEtatPayeurData> listData) {
+		for (TitreRepasExportEtatPayeurData data : listData) {
+			ptgEntityManager.persist(data);
+		}
 	}
 
 }

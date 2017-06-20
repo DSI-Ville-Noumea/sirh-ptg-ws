@@ -40,6 +40,7 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String	sirhListAgentsWithServiceUrl						= "services/listAgentsWithService";
 	private static final String	sirhListAgentsWithServiceOldAffectationUrl			= "services/listAgentsWithServiceOldAffectation";
 	private static final String	sirhAgentUrl										= "agents/getAgent";
+	private static final String	sirhAgentByTitreRepasUrl							= "agents/getAgentByTitreRepas";
 	private static final String	sirhGetListAgentsUrl								= "agents/getListAgents";
 	private static final String	sirhHolidayUrl										= "utils/isHoliday";
 	private static final String	sirhListPrimePointageUrl							= "pointages/listPrimePointages";
@@ -364,5 +365,17 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponseAsList(AgentWithServiceDto.class, res, url);
+	}
+
+	@Override
+	public AgentGeneriqueDto getAgentByIdTitreRepas(Integer idTitreRepas) {
+		String url = String.format(sirhWsBaseUrl + sirhAgentByTitreRepasUrl);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idTitreRepas", String.valueOf(idTitreRepas));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(AgentGeneriqueDto.class, res, url);
 	}
 }

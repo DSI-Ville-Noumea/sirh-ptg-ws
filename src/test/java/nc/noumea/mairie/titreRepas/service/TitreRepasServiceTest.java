@@ -6,11 +6,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.input.ReaderInputStream;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -3088,7 +3092,7 @@ public class TitreRepasServiceTest {
 	}
 
 	@Test
-	public void startEtatPayeurTitreRepas_OK() {
+	public void startEtatPayeurTitreRepas_OK() throws IOException {
 		Integer idAgent = 9005138;
 
 		Date dateJour = new DateTime(2015, 10, 22, 0, 0, 0).toDate();
@@ -3116,7 +3120,11 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		ReturnMessageDto result = service.startEtatPayeurTitreRepas(idAgent);
+		String fakeInput = "This is the string that your fake input stream will return";
+		StringReader reader = new StringReader(fakeInput);
+		InputStream fakeStream = new ReaderInputStream(reader);
+		
+		ReturnMessageDto result = service.startEtatPayeurTitreRepas(idAgent, fakeStream);
 
 		assertNotNull(result);
 		assertEquals(0, result.getErrors().size());

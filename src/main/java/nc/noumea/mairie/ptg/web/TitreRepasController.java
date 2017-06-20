@@ -1,8 +1,12 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.sun.jersey.multipart.FormDataParam;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
@@ -257,14 +263,16 @@ public class TitreRepasController {
 	 * de l'état du payeur
 	 */
 	@ResponseBody
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@RequestMapping(value = "/startEtatPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	public ReturnMessageDto startEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte) {
+	public ReturnMessageDto startEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
+			@FormDataParam("fileInputStream") InputStream inputStream) {
 
 		logger.debug("entered GET [titreRepas/startEtatPayeur] => startEtatPayeur with parameters idAgentConnecte = {}", idAgentConnecte);
 
 		Integer convertedIdAgentConnecte = agentMatriculeConverterService.tryConvertFromADIdAgentToSIRHIdAgent(idAgentConnecte);
 
-		return titreRepasService.startEtatPayeurTitreRepas(convertedIdAgentConnecte);
+		return titreRepasService.startEtatPayeurTitreRepas(convertedIdAgentConnecte, inputStream);
 	}
 
 	/**

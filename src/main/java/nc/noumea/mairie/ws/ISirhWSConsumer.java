@@ -23,6 +23,8 @@ public interface ISirhWSConsumer {
 
 	AgentGeneriqueDto getAgent(Integer idAgent);
 
+	AgentGeneriqueDto getAgentByIdTitreRepas(Integer idTitreRepas);
+
 	boolean isHoliday(LocalDate datePointage);
 
 	boolean isHoliday(DateTime deb);
