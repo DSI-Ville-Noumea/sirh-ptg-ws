@@ -199,4 +199,17 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 		}
 	}
 
+	@Override
+	public List<TitreRepasExportEtatPayeurData> getTitreRepasEtatPayeurDataByTask(Integer idTitreRepasExportEtatsPayeurTask) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("select data from TitreRepasExportEtatPayeurData data ");
+		sb.append("where data.titreRepasExportEtatsPayeurTask.idTitreRepasExportEtatsPayeurTask = :id ");
+		sb.append("order by data.idTitreRepasExportEtatsPayeurData");
+
+		TypedQuery<TitreRepasExportEtatPayeurData> query = ptgEntityManager.createQuery(sb.toString(), TitreRepasExportEtatPayeurData.class);
+		query.setParameter("id", idTitreRepasExportEtatsPayeurTask);
+
+		return query.getResultList();
+	}
+
 }

@@ -9,14 +9,11 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Maps;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -37,8 +34,6 @@ import nc.noumea.mairie.ptg.TypeEtatPayeurPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.reporting.vo.CellVo;
 import nc.noumea.mairie.ptg.service.IAgentMatriculeConverterService;
-import nc.noumea.mairie.ptg.service.impl.HelperService;
-import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
 
 @Service

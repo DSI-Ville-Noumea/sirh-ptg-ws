@@ -26,6 +26,7 @@ import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
+import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurData;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -379,6 +380,75 @@ public class TitreRepasRepositoryTest {
 		ptgEntityManager.persist(taskNull);
 
 		List<TitreRepasExportEtatPayeurTask> result = repository.getListTitreRepasTaskErreur();
+
+		assertNotNull(result);
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getTitreRepasEtatPayeurDataByTask_Result() {
+		Date dateRecherche = new DateTime(2016, 1, 1, 0, 0, 0).toDate();
+
+		TitreRepasExportEtatPayeurTask taskOK2 = new TitreRepasExportEtatPayeurTask();
+		taskOK2.setIdTitreRepasExportEtatsPayeurTask(1);
+		taskOK2.setDateCreation(new Date());
+		taskOK2.setDateMonth(dateRecherche);
+		taskOK2.setIdAgent(9005154);
+		taskOK2.setDateExport(new Date());
+		taskOK2.setTaskStatus("OK");
+		ptgEntityManager.persist(taskOK2);
+		
+		TitreRepasExportEtatPayeurData d2= new TitreRepasExportEtatPayeurData();
+		d2.setIdAgent(9005138);
+		d2.setTitreRepasExportEtatsPayeurTask(taskOK2);
+		d2.setCiviliteTitreRepas("MME");
+		d2.setDateNaissanceTitreRepas(new Date());
+		d2.setIdTitreRepas(1);
+		d2.setNomTitreRepas("nom");
+		d2.setPrenomTitreRepas("prenom");
+		ptgEntityManager.persist(d2);
+
+		TitreRepasExportEtatPayeurTask taskOK = new TitreRepasExportEtatPayeurTask();
+		taskOK.setIdTitreRepasExportEtatsPayeurTask(2);
+		taskOK.setDateCreation(new Date());
+		taskOK.setDateMonth(dateRecherche);
+		taskOK.setIdAgent(9005154);
+		taskOK.setDateExport(new Date());
+		taskOK.setTaskStatus("OK");
+		ptgEntityManager.persist(taskOK);
+		
+		TitreRepasExportEtatPayeurData d= new TitreRepasExportEtatPayeurData();
+		d.setTitreRepasExportEtatsPayeurTask(taskOK);
+		d.setIdAgent(9005487);
+		d.setCiviliteTitreRepas("MME");
+		d.setDateNaissanceTitreRepas(new Date());
+		d.setIdTitreRepas(1);
+		d.setNomTitreRepas("nom");
+		d.setPrenomTitreRepas("prenom");
+		ptgEntityManager.persist(d);
+
+		List<TitreRepasExportEtatPayeurData> result = repository.getTitreRepasEtatPayeurDataByTask(taskOK.getIdTitreRepasExportEtatsPayeurTask());
+
+		assertNotNull(result);
+		assertEquals(1, result.size());
+	}
+
+	@Test
+	@Transactional("ptgTransactionManager")
+	public void getTitreRepasEtatPayeurDataByTask_NoResult() {
+		Date dateRecherche = new DateTime(2016, 1, 1, 0, 0, 0).toDate();
+
+		TitreRepasExportEtatPayeurTask taskOK = new TitreRepasExportEtatPayeurTask();
+		taskOK.setIdTitreRepasExportEtatsPayeurTask(1);
+		taskOK.setDateCreation(new Date());
+		taskOK.setDateMonth(dateRecherche);
+		taskOK.setIdAgent(9005154);
+		taskOK.setDateExport(new Date());
+		taskOK.setTaskStatus("OK");
+		ptgEntityManager.persist(taskOK);
+
+		List<TitreRepasExportEtatPayeurData> result = repository.getTitreRepasEtatPayeurDataByTask(taskOK.getIdTitreRepasExportEtatsPayeurTask());
 
 		assertNotNull(result);
 		assertEquals(0, result.size());

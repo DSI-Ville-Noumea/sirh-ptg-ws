@@ -30,23 +30,24 @@ public class TitreRepasExportEtatPayeurData {
 	@JoinColumn(name = "ID_TR_EXPORT_ETATS_PAYEUR_TASK")
 	private TitreRepasExportEtatPayeurTask	titreRepasExportEtatsPayeurTask;
 
-	@Column(name = "ID_AGENT")
+	@NotNull
+	@Column(name = "ID_AGENT", nullable = false)
 	private Integer							idAgent;
 
 	@NotNull
-	@Column(name = "ID_TR")
+	@Column(name = "ID_TR", nullable = false)
 	private Integer							idTitreRepas;
 
 	@NotNull
-	@Column(name = "CIVILITE_TR")
+	@Column(name = "CIVILITE_TR", nullable = false)
 	private String							civiliteTitreRepas;
 
 	@NotNull
-	@Column(name = "NOM_TR")
+	@Column(name = "NOM_TR", nullable = false)
 	private String							nomTitreRepas;
 
 	@NotNull
-	@Column(name = "PRENOM_TR")
+	@Column(name = "PRENOM_TR", nullable = false)
 	private String							prenomTitreRepas;
 
 	@NotNull

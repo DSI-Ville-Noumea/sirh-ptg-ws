@@ -1183,11 +1183,13 @@ public class TitreRepasService implements ITitreRepasService {
 		etatPrestataireTR.setIdAgent(idAgentConnecte);
 		etatPrestataireTR.setDateEdition(helperService.getCurrentDate());
 
-		// on recupere tous les agents en activite
-		List<AgentWithServiceDto> listeAgentActif = sirhWsConsumer.getListeAgentsMairieSurPeriode(helperService.getDatePremierJourOfMonthPrecedent(datejour),
-				helperService.getDateDernierJourOfMonthPrecedent(datejour));
+		// on recupere toutes les data correspondants
+		TitreRepasExportEtatPayeurTask taskEnCours = titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateMonthSuivant, null);
+		List<TitreRepasExportEtatPayeurData> listeDataTR = titreRepasRepository
+				.getTitreRepasEtatPayeurDataByTask(taskEnCours.getIdTitreRepasExportEtatsPayeurTask());
+
 		try {
-			reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, mapAgentTR,listeAgentActif);
+			reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, mapAgentTR, listeDataTR, refPrime);
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			result.getErrors().add("Une erreur est survenue lors de la génération de l'état prestataire des titres repas.");
@@ -1442,6 +1444,7 @@ public class TitreRepasService implements ITitreRepasService {
 
 		// on lit le fichier
 		try {
+			@SuppressWarnings("resource")
 			CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream), SEPARATOR);
 
 			String[] nextLine = null;
@@ -1463,6 +1466,13 @@ public class TitreRepasService implements ITitreRepasService {
 				}
 				// on cherche la correspondance de l'id Agent
 				AgentGeneriqueDto ag = sirhWsConsumer.getAgentByIdTitreRepas(new Integer(nextLine[0].trim()));
+				if (ag == null || ag.getIdAgent() == null) {
+					result.getErrors()
+							.add(String.format(
+									"Aucune correpondance trouvé pour l'agent %s %s . Merci de mettre à jour manuellement son ID Titre repas dans sa fiche etat civil",
+									nextLine[2].trim(), nextLine[3].trim()));
+					continue;
+				}
 
 				TitreRepasExportEtatPayeurData data = new TitreRepasExportEtatPayeurData(ag == null ? null : ag.getIdAgent(), nextLine, task);
 				listeData.add(data);

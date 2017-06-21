@@ -38,4 +38,6 @@ public interface ITitreRepasRepository {
 
 	void persisTitreRepasExportEtatPayeurData(List<TitreRepasExportEtatPayeurData> data);
 
+	List<TitreRepasExportEtatPayeurData> getTitreRepasEtatPayeurDataByTask(Integer idTitreRepasExportEtatsPayeurTask);
+
 }
