@@ -1158,7 +1158,7 @@ public class TitreRepasService implements ITitreRepasService {
 				.getTitreRepasEtatPayeurDataByTask(taskEnCours.getIdTitreRepasExportEtatsPayeurTask());
 
 		try {
-			result = reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, mapAgentTR, listeDataTR, refPrime,result);
+			reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, mapAgentTR, listeDataTR, refPrime);
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			result.getErrors().add("Une erreur est survenue lors de la génération de l'état prestataire des titres repas.");
@@ -1484,6 +1484,9 @@ public class TitreRepasService implements ITitreRepasService {
 			result.getErrors().add("Erreur dans le parse d'une date de naissance " + e.getMessage());
 		} catch (IOException e) {
 			result.getErrors().add("Erreur dans la lecture du fichier " + e.getMessage());
+		}
+		if(listeData.size()<10){
+			result.getErrors().add("Erreur dans le fichier prestataire (est-ce que le separateur est bien ';' ?");			
 		}
 
 		if (!result.getErrors().isEmpty())

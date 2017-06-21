@@ -27,7 +27,6 @@ import nc.noumea.mairie.ptg.TypeEtatPayeurPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurData;
-import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.sirh.dto.ProfilAgentDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -48,8 +47,8 @@ public class EtatPrestataireTitreRepasReporting {
 	private static final Object[]	FILE_HEADER									= { "Id", "Civilité", "Nom", "Prénom", "Date de naissance",
 			"Solde actuels", "Nb tickets", "Valeur faciale" };
 
-	public ReturnMessageDto downloadEtatPrestataireTitreRepas(TitreRepasEtatPrestataire etatPrestataireTR, Map<Integer, TitreRepasDemande> mapAgentTR,
-			List<TitreRepasExportEtatPayeurData> listeDataTR, Spperm refPrime,ReturnMessageDto result) throws DocumentException, MalformedURLException, IOException {
+	public void downloadEtatPrestataireTitreRepas(TitreRepasEtatPrestataire etatPrestataireTR, Map<Integer, TitreRepasDemande> mapAgentTR,
+			List<TitreRepasExportEtatPayeurData> listeDataTR, Spperm refPrime) throws DocumentException, MalformedURLException, IOException {
 
 		String valeurFaciale = String.valueOf(refPrime.getMontantForfait().intValue());
 		String nbTicket = String.valueOf(refPrime.getMontantPlafond().intValue());
@@ -95,10 +94,6 @@ public class EtatPrestataireTitreRepasReporting {
 			// #38362 : on fait 2 verifications desormais
 			mapAgentActifs.put(data.getIdAgent(), data.getIdAgent());
 
-		}
-		if(mapAgentActifs.size()<10){
-			result.getErrors().add("Erreur dans le fichier prestataire (est-ce que le separateur est bien ';' ?");
-			return result;
 		}
 
 		// #38362 : on fait un tri sur les agents ayant commandé pour etre sur
@@ -158,6 +153,5 @@ public class EtatPrestataireTitreRepasReporting {
 				TypeEtatPayeurPointageEnum.TYPE_ETAT_PAYEUR_TITRE_REPAS);
 
 		etatPrestataireTR.setNodeRefAlfresco(node);
-		return result;
 	}
 }
