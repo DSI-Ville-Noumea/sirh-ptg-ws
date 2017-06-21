@@ -1143,7 +1143,33 @@ public class TitreRepasService implements ITitreRepasService {
 			return result;
 		}
 
-		// 3. on cree/recupere l état payeur de ce mois-ci
+		// 3. on genère le fichier pour le prestataire
+		TitreRepasEtatPrestataire etatPrestataireTR = new TitreRepasEtatPrestataire();
+		etatPrestataireTR.setFichier(
+				String.format("Etat-Prestataire-Titre-Repas-%s.csv", sfd.format(helperService.getDatePremierJourOfMonthSuivant(datejour))));
+		etatPrestataireTR.setLabel(String.format("%s", sfd.format(dateMonthSuivant)));
+		etatPrestataireTR.setDateEtatPrestataire(dateMonthSuivant);
+		etatPrestataireTR.setIdAgent(idAgentConnecte);
+		etatPrestataireTR.setDateEdition(helperService.getCurrentDate());
+
+		// on recupere toutes les data correspondants
+		TitreRepasExportEtatPayeurTask taskEnCours = titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateMonthSuivant, null);
+		List<TitreRepasExportEtatPayeurData> listeDataTR = titreRepasRepository
+				.getTitreRepasEtatPayeurDataByTask(taskEnCours.getIdTitreRepasExportEtatsPayeurTask());
+
+		try {
+			result = reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, mapAgentTR, listeDataTR, refPrime,result);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			result.getErrors().add("Une erreur est survenue lors de la génération de l'état prestataire des titres repas.");
+			return result;
+		}
+
+		if (!result.getErrors().isEmpty()) {
+			return result;
+		}
+
+		// 4. on cree/recupere l état payeur de ce mois-ci
 		TitreRepasEtatPayeur etatPayeurTR = new TitreRepasEtatPayeur();
 		etatPayeurTR
 				.setFichier(String.format("Etat-Payeur-Titre-Repas-%s.pdf", sfd.format(helperService.getDatePremierJourOfMonthSuivant(datejour))));
@@ -1152,7 +1178,7 @@ public class TitreRepasService implements ITitreRepasService {
 		etatPayeurTR.setIdAgent(idAgentConnecte);
 		etatPayeurTR.setDateEdition(datejour);
 
-		// 4. generer le fichier d'état du payeur des TR
+		// 5. generer le fichier d'état du payeur des TR
 		try {
 			reportingTitreRepasPayeurService.downloadEtatPayeurTitreRepas(etatPayeurTR, listTitreRepasDemandeDtoConventions,
 					listTitreRepasDemandeDtoHorsConventions, refPrime);
@@ -1171,32 +1197,6 @@ public class TitreRepasService implements ITitreRepasService {
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
 			result.getErrors().add("Une erreur est survenue lors de la génération de l'état payeur des titres repas.");
-			return result;
-		}
-
-		// 5. on genère le fichier pour le prestataire
-		TitreRepasEtatPrestataire etatPrestataireTR = new TitreRepasEtatPrestataire();
-		etatPrestataireTR.setFichier(
-				String.format("Etat-Prestataire-Titre-Repas-%s.csv", sfd.format(helperService.getDatePremierJourOfMonthSuivant(datejour))));
-		etatPrestataireTR.setLabel(String.format("%s", sfd.format(dateMonthSuivant)));
-		etatPrestataireTR.setDateEtatPrestataire(dateMonthSuivant);
-		etatPrestataireTR.setIdAgent(idAgentConnecte);
-		etatPrestataireTR.setDateEdition(helperService.getCurrentDate());
-
-		// on recupere toutes les data correspondants
-		TitreRepasExportEtatPayeurTask taskEnCours = titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateMonthSuivant, null);
-		List<TitreRepasExportEtatPayeurData> listeDataTR = titreRepasRepository
-				.getTitreRepasEtatPayeurDataByTask(taskEnCours.getIdTitreRepasExportEtatsPayeurTask());
-
-		try {
-			reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, mapAgentTR, listeDataTR, refPrime);
-		} catch (Exception e) {
-			logger.debug(e.getMessage());
-			result.getErrors().add("Une erreur est survenue lors de la génération de l'état prestataire des titres repas.");
-			return result;
-		}
-
-		if (!result.getErrors().isEmpty()) {
 			return result;
 		}
 

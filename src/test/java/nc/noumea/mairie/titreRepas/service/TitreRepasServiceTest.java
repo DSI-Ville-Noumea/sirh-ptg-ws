@@ -9,10 +9,12 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.input.ReaderInputStream;
 import org.joda.time.DateTime;
@@ -22,6 +24,7 @@ import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
+import com.itextpdf.text.DocumentException;
 
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
@@ -38,6 +41,7 @@ import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
+import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurData;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
@@ -2349,6 +2353,7 @@ public class TitreRepasServiceTest {
 
 	@Test
 	public void genereEtatPayeur_ok() {
+		ReturnMessageDto result = new ReturnMessageDto();
 		Integer idAgent = 9005138;
 		Date currentDate = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
 		Date currentDate2 = new DateTime(2015, 10, 11, 0, 0, 0).toDate();
@@ -2427,6 +2432,16 @@ public class TitreRepasServiceTest {
 
 		EtatPayeurTitreRepasReporting reportingTitreRepasPayeurService = Mockito.mock(EtatPayeurTitreRepasReporting.class);
 		EtatPrestataireTitreRepasReporting reportingTitreRepasPrestataireService = Mockito.mock(EtatPrestataireTitreRepasReporting.class);
+		try {
+			Mockito.when(reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(Mockito.any(TitreRepasEtatPrestataire.class),
+					Mockito.any(Map.class), Mockito.any(List.class), Mockito.any(Spperm.class), Mockito.any(ReturnMessageDto.class))).thenReturn(result);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (DocumentException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
@@ -2437,7 +2452,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
-		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+		result = service.genereEtatPayeur(idAgent);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(mairieRepository, Mockito.times(2)).mergeEntity(Mockito.isA(Spchge.class));
