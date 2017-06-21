@@ -35,6 +35,7 @@
         <class>nc.noumea.mairie.ptg.domain.RevInfo</class>
         <class>nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire</class>
         <class>nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask</class>
+        <class>nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurData</class>
       	<exclude-unlisted-classes>true</exclude-unlisted-classes>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect"/>

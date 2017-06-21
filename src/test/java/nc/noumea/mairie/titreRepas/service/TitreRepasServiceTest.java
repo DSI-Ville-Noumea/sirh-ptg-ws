@@ -6,11 +6,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.io.input.ReaderInputStream;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +38,7 @@ import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
+import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurData;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
@@ -48,6 +53,7 @@ import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
@@ -539,7 +545,7 @@ public class TitreRepasServiceTest {
 
 		RefGroupeAbsenceDto groupeAbsenceMaladies = new RefGroupeAbsenceDto();
 		groupeAbsenceMaladies.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.MALADIES.getValue());
-		
+
 		DemandeDto demandeMaladies = new DemandeDto();
 		demandeMaladies.setAgentWithServiceDto(agent);
 		demandeMaladies.setDateDebut(new DateTime(2015, 10, 24, 0, 0, 0).toDate());
@@ -594,7 +600,7 @@ public class TitreRepasServiceTest {
 
 		RefGroupeAbsenceDto groupeAbsenceMaladies = new RefGroupeAbsenceDto();
 		groupeAbsenceMaladies.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.MALADIES.getValue());
-		
+
 		DemandeDto demandeMaladies = new DemandeDto();
 		demandeMaladies.setAgentWithServiceDto(agent);
 		demandeMaladies.setDateDebut(new DateTime(2015, 10, 25, 0, 0, 0).toDate());
@@ -650,7 +656,7 @@ public class TitreRepasServiceTest {
 
 		RefGroupeAbsenceDto groupeAbsenceMaladies = new RefGroupeAbsenceDto();
 		groupeAbsenceMaladies.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.MALADIES.getValue());
-		
+
 		DemandeDto demandeMaladies = new DemandeDto();
 		demandeMaladies.setAgentWithServiceDto(agent);
 		demandeMaladies.setDateDebut(new DateTime(2015, 10, 26, 0, 0, 0).toDate());
@@ -706,7 +712,7 @@ public class TitreRepasServiceTest {
 
 		RefGroupeAbsenceDto groupeAbsenceMaladies = new RefGroupeAbsenceDto();
 		groupeAbsenceMaladies.setIdRefGroupeAbsence(RefTypeGroupeAbsenceEnum.MALADIES.getValue());
-		
+
 		DemandeDto demandeMaladies = new DemandeDto();
 		demandeMaladies.setAgentWithServiceDto(agent);
 		demandeMaladies.setDateDebut(new DateTime(2015, 10, 27, 0, 0, 0).toDate());
@@ -2336,13 +2342,15 @@ public class TitreRepasServiceTest {
 		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
 
 		assertEquals(1, result.getErrors().size());
-		assertEquals(result.getErrors().get(0), "Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
+		assertEquals(result.getErrors().get(0),
+				"Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
 		Mockito.verify(mairieRepository, Mockito.never()).mergeEntity(Mockito.isA(Spchge.class));
 		Mockito.verify(mairieRepository, Mockito.never()).persistEntity(Mockito.isA(Spmatr.class));
 	}
 
 	@Test
 	public void genereEtatPayeur_ok() {
+		ReturnMessageDto result = new ReturnMessageDto();
 		Integer idAgent = 9005138;
 		Date currentDate = new DateTime(2015, 10, 1, 0, 0, 0).toDate();
 		Date currentDate2 = new DateTime(2015, 10, 11, 0, 0, 0).toDate();
@@ -2368,11 +2376,26 @@ public class TitreRepasServiceTest {
 
 		Spcarr carr = new Spcarr();
 		carr.setCdcate(1);
-		
+
 		Spperm refPrime = new Spperm();
-		
-		
-		List<AgentWithServiceDto> listAgWithService=new ArrayList<AgentWithServiceDto>();
+
+		TitreRepasExportEtatPayeurTask task = new TitreRepasExportEtatPayeurTask();
+		task.setIdAgent(9002990);
+		task.setDateMonth(new DateTime(2015, 11, 01, 0, 0, 0).toDate());
+		task.setIdTitreRepasExportEtatsPayeurTask(1);
+
+		TitreRepasExportEtatPayeurData d = new TitreRepasExportEtatPayeurData();
+		d.setTitreRepasExportEtatsPayeurTask(task);
+		d.setCiviliteTitreRepas("MME");
+		d.setDateNaissanceTitreRepas(new Date());
+		d.setIdTitreRepas(1);
+		d.setNomTitreRepas("nom");
+		d.setPrenomTitreRepas("prenom");
+
+		List<TitreRepasExportEtatPayeurData> listeData = new ArrayList<>();
+		listeData.add(d);
+
+		List<AgentWithServiceDto> listAgWithService = new ArrayList<AgentWithServiceDto>();
 		listAgWithService.add(new AgentWithServiceDto());
 		listAgWithService.add(new AgentWithServiceDto());
 
@@ -2386,6 +2409,8 @@ public class TitreRepasServiceTest {
 				.thenReturn(new ArrayList<TitreRepasDemande>());
 		Mockito.when(titreRepasRepository.getListTitreRepasDemande(null, null, null, EtatPointageEnum.APPROUVE.getCodeEtat(), true, currentDate))
 				.thenReturn(listeTr);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(currentDate, null)).thenReturn(task);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurDataByTask(task.getIdTitreRepasExportEtatsPayeurTask())).thenReturn(listeData);
 
 		SirhWSUtils sirhWSUtils = Mockito.mock(SirhWSUtils.class);
 		Mockito.when(sirhWSUtils.getAgentOfListAgentWithServiceDto(new ArrayList<AgentWithServiceDto>(), idAgent)).thenReturn(ag1);
@@ -2400,11 +2425,11 @@ public class TitreRepasServiceTest {
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
-		Mockito.when(sirhWsConsumer.getListAgentsWithService(Arrays.asList(idAgent, 9002990), currentDate2))
-				.thenReturn(listAgWithService);
+		Mockito.when(sirhWsConsumer.getListAgentsWithService(Arrays.asList(idAgent, 9002990), currentDate2)).thenReturn(listAgWithService);
 
 		EtatPayeurTitreRepasReporting reportingTitreRepasPayeurService = Mockito.mock(EtatPayeurTitreRepasReporting.class);
 		EtatPrestataireTitreRepasReporting reportingTitreRepasPrestataireService = Mockito.mock(EtatPrestataireTitreRepasReporting.class);
+
 
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
@@ -2415,7 +2440,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
-		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+		result = service.genereEtatPayeur(idAgent);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(mairieRepository, Mockito.times(2)).mergeEntity(Mockito.isA(Spchge.class));
@@ -2896,7 +2921,7 @@ public class TitreRepasServiceTest {
 				.thenReturn(new DateTime(2015, 10, 1, 0, 0, 0).toDate());
 		Mockito.when(helperService.getDateDernierJourOfMonth(new DateTime(dateMonth).toDate()))
 				.thenReturn(new DateTime(2015, 10, 31, 23, 59, 59).toDate());
-		
+
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
@@ -3088,8 +3113,10 @@ public class TitreRepasServiceTest {
 	}
 
 	@Test
-	public void startEtatPayeurTitreRepas_OK() {
+	public void startEtatPayeurTitreRepas_OK() throws IOException {
 		Integer idAgent = 9005138;
+		AgentGeneriqueDto a1 = new AgentGeneriqueDto();
+		a1.setIdAgent(idAgent);
 
 		Date dateJour = new DateTime(2015, 10, 22, 0, 0, 0).toDate();
 		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
@@ -3099,6 +3126,7 @@ public class TitreRepasServiceTest {
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		Mockito.when(sirhWsConsumer.getAgentByIdTitreRepas(2204)).thenReturn(a1);
 
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 
@@ -3116,7 +3144,11 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		ReturnMessageDto result = service.startEtatPayeurTitreRepas(idAgent);
+		String fakeInput = "2204;MR;ACHIMOFF;LOIC;27/02/1981;;0;1000 XPF";
+		StringReader reader = new StringReader(fakeInput);
+		InputStream fakeStream = new ReaderInputStream(reader);
+
+		ReturnMessageDto result = service.startEtatPayeurTitreRepas(idAgent, fakeStream);
 
 		assertNotNull(result);
 		assertEquals(0, result.getErrors().size());
@@ -3186,30 +3218,32 @@ public class TitreRepasServiceTest {
 
 	@Test
 	public void checkPAMoisPrecedent_true() {
-		
+
 		Spadmn pa1 = new Spadmn();
 		SpadmnId pa1Id = new SpadmnId();
 		Spadmn pa2 = new Spadmn();
 		SpadmnId pa2Id = new SpadmnId();
-		
+
 		// Première PA
 		pa1Id.setDatdeb(20150101);
 		pa1Id.setNomatr(5421);
 		pa1.setId(pa1Id);
 		pa1.setDatfin(20170306);
-		pa1.setCdpadm("01");    	// Activité normale  	=> L'agent a le droit aux TR
-		
+		pa1.setCdpadm("01"); // Activité normale => L'agent a le droit aux TR
+
 		// Deuxième PA
 		pa2Id.setDatdeb(20170307);
 		pa2Id.setNomatr(5421);
 		pa2.setId(pa2Id);
 		pa2.setDatfin(0);
-		pa2.setCdpadm("41");    	// Accident du travail  => L'agent n'a pas le droit aux TR sur le mois d'avril uniquement (il a travaillé la première semaine de mars)
-		
+		pa2.setCdpadm("41"); // Accident du travail => L'agent n'a pas le droit
+								// aux TR sur le mois d'avril uniquement (il a
+								// travaillé la première semaine de mars)
+
 		List<Spadmn> listPA = Lists.newArrayList();
 		listPA.add(pa1);
 		listPA.add(pa2);
-		
+
 		// Base de congé
 		RefTypeSaisiCongeAnnuelDto bc = new RefTypeSaisiCongeAnnuelDto();
 		bc.setCodeBaseHoraireAbsence("A");
@@ -3219,15 +3253,19 @@ public class TitreRepasServiceTest {
 		trDto.setAgent(new AgentWithServiceDto());
 		trDto.getAgent().setIdAgent(5421);
 		trDto.setIdRefEtat(1);
-		
-		// Dates
-		Date dateDebutMoisPrecedent = new DateTime(2017, 03, 01, 0, 0, 0).toDate();				// 1e mars
-		Date dateFinMoisPrecedent = new DateTime(2017, 03, 31, 0, 0, 0).toDate();				// 31 mars
 
-		Date dateDebutMois = new DateTime(2017, 04, 01, 0, 0, 0).toDate();						// 1e avril
-		Date dateJour = new DateTime(2017, 04, 04, 0, 0, 0).toDate();							// 4 avril
-		
-		Date dateDebutMoisSuivant = new DateTime(2017, 05, 01, 0, 0, 0).toDate();				// 1e mai
+		// Dates
+		Date dateDebutMoisPrecedent = new DateTime(2017, 03, 01, 0, 0, 0).toDate(); // 1e
+																					// mars
+		Date dateFinMoisPrecedent = new DateTime(2017, 03, 31, 0, 0, 0).toDate(); // 31
+																					// mars
+
+		Date dateDebutMois = new DateTime(2017, 04, 01, 0, 0, 0).toDate(); // 1e
+																			// avril
+		Date dateJour = new DateTime(2017, 04, 04, 0, 0, 0).toDate(); // 4 avril
+
+		Date dateDebutMoisSuivant = new DateTime(2017, 05, 01, 0, 0, 0).toDate(); // 1e
+																					// mai
 
 		// Mock datas
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -3240,41 +3278,41 @@ public class TitreRepasServiceTest {
 
 		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(5421)).thenReturn(9005421);
-		
-		// TODO : Méthode précédente : getDatePremierJourOfMonthSuivant(), à changer par getDatePremierJourOfMonth dans TitreRepasService, l.350
+
+		// TODO : Méthode précédente : getDatePremierJourOfMonthSuivant(), à
+		// changer par getDatePremierJourOfMonth dans TitreRepasService, l.350
 		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(dateJour)).thenReturn(dateDebutMoisSuivant);
 		Mockito.when(helperService.getDatePremierJourOfMonth(dateJour)).thenReturn(dateDebutMois);
-		
+
 		Mockito.when(helperService.getDatePremierJourOfMonth(dateDebutMoisPrecedent)).thenReturn(dateDebutMoisPrecedent);
 		Mockito.when(helperService.getDateDernierJourOfMonth(dateDebutMoisPrecedent)).thenReturn(dateFinMoisPrecedent);
-		
+
 		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(9005421, dateDebutMoisPrecedent, dateFinMoisPrecedent)).thenReturn(listPA);
-		
 
 		ReturnMessageDto message = service.enregistreTitreDemandeOneByOne(9005555, trDto, null, bc, null, null, false);
-		
+
 		assertEquals(message.getErrors().size(), 0);
 		assertEquals(message.getInfos().size(), 1);
 		assertEquals(message.getInfos().get(0), "La demande est bien enregistrée.");
 	}
 
-	
 	@Test
 	public void checkPAMoisPrecedent_false() {
-		
+
 		Spadmn pa1 = new Spadmn();
 		SpadmnId pa1Id = new SpadmnId();
-		
+
 		// Deuxième PA
 		pa1Id.setDatdeb(20170207);
 		pa1Id.setNomatr(5421);
 		pa1.setId(pa1Id);
 		pa1.setDatfin(0);
-		pa1.setCdpadm("41");    	// Accident du travail  => L'agent n'a pas le droit aux TR
-		
+		pa1.setCdpadm("41"); // Accident du travail => L'agent n'a pas le droit
+								// aux TR
+
 		List<Spadmn> listPA = Lists.newArrayList();
 		listPA.add(pa1);
-		
+
 		// Base de congé
 		RefTypeSaisiCongeAnnuelDto bc = new RefTypeSaisiCongeAnnuelDto();
 		bc.setCodeBaseHoraireAbsence("A");
@@ -3284,13 +3322,16 @@ public class TitreRepasServiceTest {
 		trDto.setAgent(new AgentWithServiceDto());
 		trDto.getAgent().setIdAgent(5421);
 		trDto.setIdRefEtat(1);
-		
-		// Dates
-		Date dateDebutMois = new DateTime(2017, 04, 01, 0, 0, 0).toDate();						// 1e avril
-		Date dateJour = new DateTime(2017, 04, 04, 0, 0, 0).toDate();							// 4 avril
-		Date datefinMois = new DateTime(2017, 04, 30, 0, 0, 0).toDate();						// 30 avril
 
-		Date dateDebutMoisSuivant = new DateTime(2017, 05, 01, 0, 0, 0).toDate();				// 1e mai
+		// Dates
+		Date dateDebutMois = new DateTime(2017, 04, 01, 0, 0, 0).toDate(); // 1e
+																			// avril
+		Date dateJour = new DateTime(2017, 04, 04, 0, 0, 0).toDate(); // 4 avril
+		Date datefinMois = new DateTime(2017, 04, 30, 0, 0, 0).toDate(); // 30
+																			// avril
+
+		Date dateDebutMoisSuivant = new DateTime(2017, 05, 01, 0, 0, 0).toDate(); // 1e
+																					// mai
 
 		// Mock datas
 		HelperService helperService = Mockito.mock(HelperService.class);
@@ -3303,17 +3344,17 @@ public class TitreRepasServiceTest {
 
 		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
 		Mockito.when(helperService.getMairieMatrFromIdAgent(5421)).thenReturn(9005421);
-		
+
 		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(dateJour)).thenReturn(dateDebutMoisSuivant);
 		Mockito.when(helperService.getDatePremierJourOfMonth(dateJour)).thenReturn(dateDebutMois);
-		
+
 		Mockito.when(helperService.getDatePremierJourOfMonth(dateDebutMois)).thenReturn(dateDebutMois);
 		Mockito.when(helperService.getDateDernierJourOfMonth(dateDebutMois)).thenReturn(datefinMois);
-		
+
 		Mockito.when(mairieRepository.getListPAOfAgentBetween2Date(9005421, dateDebutMois, datefinMois)).thenReturn(listPA);
 
 		ReturnMessageDto message = service.enregistreTitreDemandeOneByOne(9005555, trDto, null, bc, null, null, false);
-		
+
 		assertEquals(message.getErrors().size(), 1);
 		assertEquals(message.getErrors().get(0), "L'agent 5421 n'a pas travaillé le mois précédent.");
 		assertEquals(message.getInfos().size(), 0);

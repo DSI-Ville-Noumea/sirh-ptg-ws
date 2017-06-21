@@ -1,5 +1,6 @@
 package nc.noumea.mairie.titreRepas.service;
 
+import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
@@ -145,7 +146,7 @@ public interface ITitreRepasService {
 	 */
 	boolean isEtatPayeurRunning();
 
-	ReturnMessageDto startEtatPayeurTitreRepas(Integer convertedIdAgentConnecte);
+	ReturnMessageDto startEtatPayeurTitreRepas(Integer convertedIdAgentConnecte, InputStream inputStream) ;
 
 	List<TitreRepasEtatPayeurTaskDto> getListTitreRepasTaskErreur();
 }

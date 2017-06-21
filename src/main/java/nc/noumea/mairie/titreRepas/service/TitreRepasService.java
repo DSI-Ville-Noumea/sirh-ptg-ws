@@ -1,7 +1,11 @@
 package nc.noumea.mairie.titreRepas.service;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.itextpdf.text.DocumentException;
+import com.opencsv.CSVReader;
 
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeAbsenceDto;
@@ -39,6 +44,7 @@ import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
+import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurData;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.RefEtatDto;
@@ -55,6 +61,7 @@ import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
@@ -70,6 +77,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 	private Logger								logger														= LoggerFactory
 			.getLogger(TitreRepasService.class);
+
+	private final static char					SEPARATOR													= ';';
 
 	@Autowired
 	private HelperService						helperService;
@@ -348,7 +357,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		// on force la date du mois en cours +1, pour affichage du mois de traitement des TR : en Avril, on traite les TR de Mai.
+		// on force la date du mois en cours +1, pour affichage du mois de
+		// traitement des TR : en Avril, on traite les TR de Mai.
 		dto.setDateMonth(helperService.getDatePremierJourOfMonthSuivant(helperService.getCurrentDate()));
 
 		// on verifie les donnees du DTO
@@ -1101,7 +1111,7 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		List<AgentWithServiceDto> listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listIdsAgent, helperService.getCurrentDate());
-		
+
 		// #38362 : avant d'aller plus loin, on fait un controle sur le nb
 		// demande = nb d'agent pour etre sur de n'oublier personne
 		if (listAgentServiceDto.size() != listIdsAgent.size()) {
@@ -1126,15 +1136,42 @@ public class TitreRepasService implements ITitreRepasService {
 
 		Date datejour = helperService.getCurrentDate();
 		Date dateMonthSuivant = helperService.getDatePremierJourOfMonthSuivant(datejour);
-		
-		// On récupère les taux patronal/salarial en fonction de la date du mois suivant
+
+		// On récupère les taux patronal/salarial en fonction de la date du mois
+		// suivant
 		Spperm refPrime = mairieRepository.getTREtatPayeurRates(dateMonthSuivant);
 		if (refPrime == null) {
 			result.getErrors().add(ERREUR_REFERENCE_TAUX);
 			return result;
 		}
 
-		// 3. on cree/recupere l état payeur de ce mois-ci
+		// 3. on genère le fichier pour le prestataire
+		TitreRepasEtatPrestataire etatPrestataireTR = new TitreRepasEtatPrestataire();
+		etatPrestataireTR.setFichier(
+				String.format("Etat-Prestataire-Titre-Repas-%s.csv", sfd.format(helperService.getDatePremierJourOfMonthSuivant(datejour))));
+		etatPrestataireTR.setLabel(String.format("%s", sfd.format(dateMonthSuivant)));
+		etatPrestataireTR.setDateEtatPrestataire(dateMonthSuivant);
+		etatPrestataireTR.setIdAgent(idAgentConnecte);
+		etatPrestataireTR.setDateEdition(helperService.getCurrentDate());
+
+		// on recupere toutes les data correspondants
+		TitreRepasExportEtatPayeurTask taskEnCours = titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateMonthSuivant, null);
+		List<TitreRepasExportEtatPayeurData> listeDataTR = titreRepasRepository
+				.getTitreRepasEtatPayeurDataByTask(taskEnCours.getIdTitreRepasExportEtatsPayeurTask());
+
+		try {
+			reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, mapAgentTR, listeDataTR, refPrime);
+		} catch (Exception e) {
+			logger.debug(e.getMessage());
+			result.getErrors().add("Une erreur est survenue lors de la génération de l'état prestataire des titres repas.");
+			return result;
+		}
+
+		if (!result.getErrors().isEmpty()) {
+			return result;
+		}
+
+		// 4. on cree/recupere l état payeur de ce mois-ci
 		TitreRepasEtatPayeur etatPayeurTR = new TitreRepasEtatPayeur();
 		etatPayeurTR
 				.setFichier(String.format("Etat-Payeur-Titre-Repas-%s.pdf", sfd.format(helperService.getDatePremierJourOfMonthSuivant(datejour))));
@@ -1143,7 +1180,7 @@ public class TitreRepasService implements ITitreRepasService {
 		etatPayeurTR.setIdAgent(idAgentConnecte);
 		etatPayeurTR.setDateEdition(datejour);
 
-		// 4. generer le fichier d'état du payeur des TR
+		// 5. generer le fichier d'état du payeur des TR
 		try {
 			reportingTitreRepasPayeurService.downloadEtatPayeurTitreRepas(etatPayeurTR, listTitreRepasDemandeDtoConventions,
 					listTitreRepasDemandeDtoHorsConventions, refPrime);
@@ -1165,32 +1202,8 @@ public class TitreRepasService implements ITitreRepasService {
 			return result;
 		}
 
-		// 5. on genère le fichier pour le prestataire
-		TitreRepasEtatPrestataire etatPrestataireTR = new TitreRepasEtatPrestataire();
-		etatPrestataireTR.setFichier(
-				String.format("Etat-Prestataire-Titre-Repas-%s.csv", sfd.format(helperService.getDatePremierJourOfMonthSuivant(datejour))));
-		etatPrestataireTR.setLabel(String.format("%s", sfd.format(dateMonthSuivant)));
-		etatPrestataireTR.setDateEtatPrestataire(dateMonthSuivant);
-		etatPrestataireTR.setIdAgent(idAgentConnecte);
-		etatPrestataireTR.setDateEdition(helperService.getCurrentDate());
-
-		// on recupere tous les agents en activite
-		List<AgentWithServiceDto> listeAgentActif = sirhWsConsumer.getListeAgentsMairieSurPeriode(helperService.getDatePremierJourOfMonthPrecedent(datejour),
-				helperService.getDateDernierJourOfMonthPrecedent(datejour));
-		try {
-			reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, mapAgentTR,listeAgentActif);
-		} catch (Exception e) {
-			logger.debug(e.getMessage());
-			result.getErrors().add("Une erreur est survenue lors de la génération de l'état prestataire des titres repas.");
-			return result;
-		}
-
-		if (!result.getErrors().isEmpty()) {
-			return result;
-		}
-
 		// 6. generer une charge dans l AS400
-		persistSpchgeAndSpmatr(genereChargeAS400(listDemandeTR),result);
+		persistSpchgeAndSpmatr(genereChargeAS400(listDemandeTR), result);
 
 		if (!result.getErrors().isEmpty()) {
 			return result;
@@ -1412,21 +1425,85 @@ public class TitreRepasService implements ITitreRepasService {
 		return true;
 	}
 
+	private boolean estNumerique(String param) {
+		try {
+			Long.parseLong(param);
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
+	}
+
 	@Override
 	@Transactional("ptgTransactionManager")
-	public ReturnMessageDto startEtatPayeurTitreRepas(Integer convertedIdAgentConnecte) {
+	public ReturnMessageDto startEtatPayeurTitreRepas(Integer convertedIdAgentConnecte, InputStream inputStream) {
+		TitreRepasExportEtatPayeurTask task = new TitreRepasExportEtatPayeurTask();
+		List<TitreRepasExportEtatPayeurData> listeData = new ArrayList<>();
 		ReturnMessageDto result = new ReturnMessageDto();
 		result = checkLancementEtatPayeurTitreRepas(convertedIdAgentConnecte, result);
 		if (!result.getErrors().isEmpty())
 			return result;
 
+		// on lit le fichier
+		try {
+			@SuppressWarnings("resource")
+			CSVReader csvReader = new CSVReader(new InputStreamReader(inputStream), SEPARATOR);
+
+			String[] nextLine = null;
+			while ((nextLine = csvReader.readNext()) != null) {
+				String ligne = nextLine[0].trim().toUpperCase();
+
+				// C'est une ligne vide
+				if (ligne.equals("")) {
+					continue;
+				}
+
+				// on verifie si c'est du numerique ou du texte
+				if (!estNumerique(ligne))
+					continue;
+
+				// C'est la ligne d'exemple fourni par TR
+				if (ligne.startsWith("0")) {
+					continue;
+				}
+				// on cherche la correspondance de l'id Agent
+				AgentGeneriqueDto ag = sirhWsConsumer.getAgentByIdTitreRepas(new Integer(nextLine[0].trim()));
+				if (ag == null || ag.getIdAgent() == null) {
+					result.getErrors()
+							.add(String.format(
+									"Aucune correpondance trouvé pour l'agent %s %s . Merci de mettre à jour manuellement son ID Titre repas dans sa fiche etat civil",
+									nextLine[2].trim(), nextLine[3].trim()));
+					continue;
+				}
+
+				TitreRepasExportEtatPayeurData data = new TitreRepasExportEtatPayeurData(ag == null ? null : ag.getIdAgent(), nextLine, task);
+				listeData.add(data);
+
+			}
+		} catch (FileNotFoundException e) {
+			result.getErrors().add("Erreur de transfert du fichier " + e.getMessage());
+		} catch (ParseException e) {
+			result.getErrors().add("Erreur dans le parse d'une date de naissance " + e.getMessage());
+		} catch (IOException e) {
+			result.getErrors().add("Erreur dans la lecture du fichier " + e.getMessage());
+		}
+
+		if (listeData.size() < 1) {
+			result.getErrors().add("Erreur dans le fichier prestataire. Est-ce que le separateur est bien ';' ?");
+		}
+
+		if (!result.getErrors().isEmpty())
+			return result;
+
 		// on crée une tache de lancement des etats du payeur
-		TitreRepasExportEtatPayeurTask task = new TitreRepasExportEtatPayeurTask();
 		task.setIdAgent(convertedIdAgentConnecte);
 		task.setDateCreation(helperService.getCurrentDate());
 		task.setDateMonth(helperService.getDatePremierJourOfMonthSuivant(helperService.getCurrentDate()));
 
 		titreRepasRepository.persisTitreRepasExportEtatPayeurTask(task);
+
+		// on sauvegarde les data
+		titreRepasRepository.persisTitreRepasExportEtatPayeurData(listeData);
 		return result;
 	}
 
