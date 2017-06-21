@@ -39,11 +39,12 @@ public class EtatPrestataireTitreRepasReporting {
 	private IAlfrescoCMISService	alfrescoCMISService;
 
 	@Autowired
-	private ISirhWSConsumer						sirhWsConsumer;
+	private ISirhWSConsumer			sirhWsConsumer;
 
 	private static final String		DESCRIPTION_ETAT_PRESTATAIRE_TITRE_REPAS	= "Etat Prestataire des Titres Repas du ";
 
 	private static final String		NEW_LINE_SEPARATOR							= "\n";
+	private static final char		SEPARATOR									= ';';
 	private static final Object[]	FILE_HEADER									= { "Id", "Civilité", "Nom", "Prénom", "Date de naissance",
 			"Solde actuels", "Nb tickets", "Valeur faciale" };
 
@@ -57,7 +58,7 @@ public class EtatPrestataireTitreRepasReporting {
 
 		ByteArrayOutputStream outB = new ByteArrayOutputStream();
 		Writer out = new BufferedWriter(new OutputStreamWriter(outB));
-		CSVFormat csvFileFormat = CSVFormat.EXCEL.withRecordSeparator(NEW_LINE_SEPARATOR);
+		CSVFormat csvFileFormat = CSVFormat.EXCEL.withRecordSeparator(NEW_LINE_SEPARATOR).withDelimiter(SEPARATOR);
 		CSVPrinter csvPrinter = new CSVPrinter(out, csvFileFormat);
 
 		// Create CSV file header
@@ -141,9 +142,8 @@ public class EtatPrestataireTitreRepasReporting {
 				dataRecord.add(valeurFaciale + " XPF");
 				csvPrinter.printRecord(dataRecord);
 			}
-			
+
 		}
-		
 
 		logger.debug("CSV file was created successfully !!!");
 		csvPrinter.close();
