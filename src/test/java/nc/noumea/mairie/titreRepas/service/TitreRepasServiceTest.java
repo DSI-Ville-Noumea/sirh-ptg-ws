@@ -9,12 +9,10 @@ import static org.junit.Assert.fail;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.input.ReaderInputStream;
 import org.joda.time.DateTime;
@@ -24,7 +22,6 @@ import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.google.common.collect.Lists;
-import com.itextpdf.text.DocumentException;
 
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefGroupeAbsenceDto;
@@ -41,7 +38,6 @@ import nc.noumea.mairie.ptg.domain.RefEtat;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPayeur;
-import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurData;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
@@ -57,6 +53,7 @@ import nc.noumea.mairie.ptg.web.AccessForbiddenException;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.JourDto;
 import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 import nc.noumea.mairie.titreRepas.dto.TitreRepasDemandeDto;
@@ -2432,16 +2429,7 @@ public class TitreRepasServiceTest {
 
 		EtatPayeurTitreRepasReporting reportingTitreRepasPayeurService = Mockito.mock(EtatPayeurTitreRepasReporting.class);
 		EtatPrestataireTitreRepasReporting reportingTitreRepasPrestataireService = Mockito.mock(EtatPrestataireTitreRepasReporting.class);
-		try {
-			Mockito.when(reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(Mockito.any(TitreRepasEtatPrestataire.class),
-					Mockito.any(Map.class), Mockito.any(List.class), Mockito.any(Spperm.class), Mockito.any(ReturnMessageDto.class))).thenReturn(result);
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (DocumentException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
 
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
@@ -3127,6 +3115,8 @@ public class TitreRepasServiceTest {
 	@Test
 	public void startEtatPayeurTitreRepas_OK() throws IOException {
 		Integer idAgent = 9005138;
+		AgentGeneriqueDto a1 = new AgentGeneriqueDto();
+		a1.setIdAgent(idAgent);
 
 		Date dateJour = new DateTime(2015, 10, 22, 0, 0, 0).toDate();
 		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
@@ -3136,6 +3126,7 @@ public class TitreRepasServiceTest {
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		Mockito.when(sirhWsConsumer.getAgentByIdTitreRepas(2204)).thenReturn(a1);
 
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 
@@ -3153,7 +3144,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		String fakeInput = "0 bkzagbrjka";
+		String fakeInput = "2204;MR;ACHIMOFF;LOIC;27/02/1981;;0;1000 XPF";
 		StringReader reader = new StringReader(fakeInput);
 		InputStream fakeStream = new ReaderInputStream(reader);
 

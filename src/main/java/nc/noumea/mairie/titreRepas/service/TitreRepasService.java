@@ -357,7 +357,8 @@ public class TitreRepasService implements ITitreRepasService {
 
 		ReturnMessageDto result = new ReturnMessageDto();
 
-		// on force la date du mois en cours +1, pour affichage du mois de traitement des TR : en Avril, on traite les TR de Mai.
+		// on force la date du mois en cours +1, pour affichage du mois de
+		// traitement des TR : en Avril, on traite les TR de Mai.
 		dto.setDateMonth(helperService.getDatePremierJourOfMonthSuivant(helperService.getCurrentDate()));
 
 		// on verifie les donnees du DTO
@@ -1110,7 +1111,7 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		List<AgentWithServiceDto> listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listIdsAgent, helperService.getCurrentDate());
-		
+
 		// #38362 : avant d'aller plus loin, on fait un controle sur le nb
 		// demande = nb d'agent pour etre sur de n'oublier personne
 		if (listAgentServiceDto.size() != listIdsAgent.size()) {
@@ -1135,8 +1136,9 @@ public class TitreRepasService implements ITitreRepasService {
 
 		Date datejour = helperService.getCurrentDate();
 		Date dateMonthSuivant = helperService.getDatePremierJourOfMonthSuivant(datejour);
-		
-		// On récupère les taux patronal/salarial en fonction de la date du mois suivant
+
+		// On récupère les taux patronal/salarial en fonction de la date du mois
+		// suivant
 		Spperm refPrime = mairieRepository.getTREtatPayeurRates(dateMonthSuivant);
 		if (refPrime == null) {
 			result.getErrors().add(ERREUR_REFERENCE_TAUX);
@@ -1201,7 +1203,7 @@ public class TitreRepasService implements ITitreRepasService {
 		}
 
 		// 6. generer une charge dans l AS400
-		persistSpchgeAndSpmatr(genereChargeAS400(listDemandeTR),result);
+		persistSpchgeAndSpmatr(genereChargeAS400(listDemandeTR), result);
 
 		if (!result.getErrors().isEmpty()) {
 			return result;
@@ -1485,8 +1487,9 @@ public class TitreRepasService implements ITitreRepasService {
 		} catch (IOException e) {
 			result.getErrors().add("Erreur dans la lecture du fichier " + e.getMessage());
 		}
-		if(listeData.size()<10){
-			result.getErrors().add("Erreur dans le fichier prestataire (est-ce que le separateur est bien ';' ?");			
+
+		if (listeData.size() < 1) {
+			result.getErrors().add("Erreur dans le fichier prestataire. Est-ce que le separateur est bien ';' ?");
 		}
 
 		if (!result.getErrors().isEmpty())
