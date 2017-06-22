@@ -21,12 +21,14 @@ import org.springframework.stereotype.Service;
 
 import com.itextpdf.text.DocumentException;
 
+import flexjson.JSONException;
 import nc.noumea.mairie.alfresco.cmis.IAlfrescoCMISService;
 import nc.noumea.mairie.domain.Spperm;
 import nc.noumea.mairie.ptg.TypeEtatPayeurPointageEnum;
 import nc.noumea.mairie.ptg.domain.TitreRepasDemande;
 import nc.noumea.mairie.ptg.domain.TitreRepasEtatPrestataire;
 import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurData;
+import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
 import nc.noumea.mairie.sirh.dto.ProfilAgentDto;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -102,45 +104,75 @@ public class EtatPrestataireTitreRepasReporting {
 		for (Integer idAgentAyantCommande : mapAgentTR.keySet()) {
 			if (!mapAgentActifs.containsKey(idAgentAyantCommande)) {
 				List<String> dataRecord = new ArrayList<>();
-				ProfilAgentDto agentSansService = sirhWsConsumer.getEtatCivil(idAgentAyantCommande);
-				// c'est un agent non présent dans le fichier issu de TR
-				dataRecord.add("0");
-				// cas de la civilité
-				String civilite = agentSansService.getTitre();
-				if (civilite != null && !civilite.trim().equals("")) {
-					if (civilite.equals("Monsieur"))
-						dataRecord.add("MR");
-					else if (civilite.equals("Madame"))
-						dataRecord.add("MME");
-					else if (civilite.equals("Mademoiselle"))
-						dataRecord.add("MLLE");
-					else
-						dataRecord.add("");
-
-				} else {
-					dataRecord.add("");
-				}
-
-				dataRecord.add(agentSansService.getAgent().getDisplayNom().toUpperCase().trim());
-				dataRecord.add(agentSansService.getAgent().getDisplayPrenom().toUpperCase().trim());
-				dataRecord.add(sdf.format(agentSansService.getDateNaissance()));
-				dataRecord.add("");
-				// on recupere la titre demande si il existe
-				TitreRepasDemande tr = null;
+				// des fois ca plante sur la date de naissance alors je met un
+				// try/catch
 				try {
-					tr = mapAgentTR.get(idAgentAyantCommande);
-					if (tr != null && tr.getCommande()) {
-						dataRecord.add(nbTicket);
+					ProfilAgentDto agentSansService = sirhWsConsumer.getEtatCivil(idAgentAyantCommande);
+					// c'est un agent non présent dans le fichier issu de TR
+					dataRecord.add("0");
+					// cas de la civilité
+					String civilite = agentSansService.getTitre();
+					if (civilite != null && !civilite.trim().equals("")) {
+						if (civilite.equals("Monsieur"))
+							dataRecord.add("MR");
+						else if (civilite.equals("Madame"))
+							dataRecord.add("MME");
+						else if (civilite.equals("Mademoiselle"))
+							dataRecord.add("MLLE");
+						else
+							dataRecord.add("");
+
 					} else {
+						dataRecord.add("");
+					}
+
+					dataRecord.add(agentSansService.getAgent().getDisplayNom().toUpperCase().trim());
+					dataRecord.add(agentSansService.getAgent().getDisplayPrenom().toUpperCase().trim());
+					dataRecord.add(sdf.format(agentSansService.getDateNaissance()));
+					dataRecord.add("");
+					// on recupere la titre demande si il existe
+					TitreRepasDemande tr = null;
+					try {
+						tr = mapAgentTR.get(idAgentAyantCommande);
+						if (tr != null && tr.getCommande()) {
+							dataRecord.add(nbTicket);
+						} else {
+							dataRecord.add("0");
+						}
+					} catch (Exception e) {
+						// pas de demande enregistrée
 						dataRecord.add("0");
 					}
-				} catch (Exception e) {
-					// pas de demande enregistrée
-					dataRecord.add("0");
-				}
 
-				dataRecord.add(valeurFaciale + " XPF");
-				csvPrinter.printRecord(dataRecord);
+					dataRecord.add(valeurFaciale + " XPF");
+					csvPrinter.printRecord(dataRecord);
+				} catch (JSONException e2) {
+					AgentGeneriqueDto agentSansService = sirhWsConsumer.getAgent(idAgentAyantCommande);
+					// c'est un agent non présent dans le fichier issu de TR
+					dataRecord.add("0");
+					dataRecord.add("");
+
+					dataRecord.add(agentSansService.getDisplayNom().toUpperCase().trim());
+					dataRecord.add(agentSansService.getDisplayPrenom().toUpperCase().trim());
+					dataRecord.add("");
+					dataRecord.add("");
+					// on recupere la titre demande si il existe
+					TitreRepasDemande tr = null;
+					try {
+						tr = mapAgentTR.get(idAgentAyantCommande);
+						if (tr != null && tr.getCommande()) {
+							dataRecord.add(nbTicket);
+						} else {
+							dataRecord.add("0");
+						}
+					} catch (Exception e) {
+						// pas de demande enregistrée
+						dataRecord.add("0");
+					}
+
+					dataRecord.add(valeurFaciale + " XPF");
+					csvPrinter.printRecord(dataRecord);
+				}
 			}
 
 		}
