@@ -1163,7 +1163,7 @@ public class TitreRepasService implements ITitreRepasService {
 			reportingTitreRepasPrestataireService.downloadEtatPrestataireTitreRepas(etatPrestataireTR, mapAgentTR, listeDataTR, refPrime);
 		} catch (Exception e) {
 			logger.debug(e.getMessage());
-			result.getErrors().add("Une erreur est survenue lors de la génération de l'état prestataire des titres repas.");
+			result.getErrors().add("Une erreur est survenue lors de la génération de l'état prestataire des titres repas." + e.getMessage());
 			return result;
 		}
 
