@@ -1444,6 +1444,13 @@ public class TitreRepasService implements ITitreRepasService {
 		if (!result.getErrors().isEmpty())
 			return result;
 
+		// on recupere tous les agents SIRH avec un id titre repas
+		List<AgentGeneriqueDto> listAgIdTitreRepas = sirhWsConsumer.listAgentAvecIdTitreRepas();
+		Map<Integer, AgentGeneriqueDto> mapAgentTR = new HashMap<>();
+		for (AgentGeneriqueDto ag : listAgIdTitreRepas) {
+			mapAgentTR.put(ag.getIdTicketRestaurant(), ag);
+		}
+
 		// on lit le fichier
 		try {
 			@SuppressWarnings("resource")
@@ -1467,7 +1474,7 @@ public class TitreRepasService implements ITitreRepasService {
 					continue;
 				}
 				// on cherche la correspondance de l'id Agent
-				AgentGeneriqueDto ag = sirhWsConsumer.getAgentByIdTitreRepas(new Integer(nextLine[0].trim()));
+				AgentGeneriqueDto ag = mapAgentTR.get(new Integer(ligne));
 				if (ag == null || ag.getIdAgent() == null) {
 					result.getErrors()
 							.add(String.format(

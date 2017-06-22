@@ -2430,7 +2430,6 @@ public class TitreRepasServiceTest {
 		EtatPayeurTitreRepasReporting reportingTitreRepasPayeurService = Mockito.mock(EtatPayeurTitreRepasReporting.class);
 		EtatPrestataireTitreRepasReporting reportingTitreRepasPrestataireService = Mockito.mock(EtatPrestataireTitreRepasReporting.class);
 
-
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
@@ -3117,6 +3116,7 @@ public class TitreRepasServiceTest {
 		Integer idAgent = 9005138;
 		AgentGeneriqueDto a1 = new AgentGeneriqueDto();
 		a1.setIdAgent(idAgent);
+		a1.setIdTicketRestaurant(2204);
 
 		Date dateJour = new DateTime(2015, 10, 22, 0, 0, 0).toDate();
 		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
@@ -3126,7 +3126,7 @@ public class TitreRepasServiceTest {
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
-		Mockito.when(sirhWsConsumer.getAgentByIdTitreRepas(2204)).thenReturn(a1);
+		Mockito.when(sirhWsConsumer.listAgentAvecIdTitreRepas()).thenReturn(Arrays.asList(a1));
 
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
 
@@ -3154,6 +3154,54 @@ public class TitreRepasServiceTest {
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(titreRepasRepository, Mockito.times(1))
 				.persisTitreRepasExportEtatPayeurTask(Mockito.isA(TitreRepasExportEtatPayeurTask.class));
+	}
+
+	@Test
+	public void startEtatPayeurTitreRepas_errorOnAgentWithNoIdTitreRepas() throws IOException {
+		Integer idAgent = 9005138;
+		AgentGeneriqueDto a2 = new AgentGeneriqueDto();
+		a2.setIdAgent(9002990);
+		a2.setIdTicketRestaurant(2206);
+		AgentGeneriqueDto a1 = new AgentGeneriqueDto();
+		a1.setIdAgent(idAgent);
+		a1.setIdTicketRestaurant(2205);
+
+		Date dateJour = new DateTime(2015, 10, 22, 0, 0, 0).toDate();
+		Date dateDebutMoisSuivant = new DateTime(2015, 11, 1, 0, 0, 0).toDate();
+
+		IPaieWorkflowService paieWorkflowService = Mockito.mock(IPaieWorkflowService.class);
+		Mockito.when(paieWorkflowService.isCalculSalaireEnCours()).thenReturn(false);
+
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(new ReturnMessageDto());
+		Mockito.when(sirhWsConsumer.listAgentAvecIdTitreRepas()).thenReturn(Arrays.asList(a1,a2));
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.getCurrentDate()).thenReturn(dateJour);
+		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(dateJour)).thenReturn(dateDebutMoisSuivant);
+
+		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurByMonth(dateDebutMoisSuivant)).thenReturn(null);
+		Mockito.when(titreRepasRepository.getTitreRepasEtatPayeurTaskByMonthAndStatus(dateDebutMoisSuivant, "OK")).thenReturn(null);
+
+		ReflectionTestUtils.setField(service, "paieWorkflowService", paieWorkflowService);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		String fakeInput = "2204;MR;ACHIMOFF;LOIC;27/02/1981;;0;1000 XPF\n2206;MR;BLABLA;LOIC;27/02/1981;;0;1000 XPF";
+		StringReader reader = new StringReader(fakeInput);
+		InputStream fakeStream = new ReaderInputStream(reader);
+
+		ReturnMessageDto result = service.startEtatPayeurTitreRepas(idAgent, fakeStream);
+
+		assertNotNull(result);
+		assertEquals(1, result.getErrors().size());
+		assertEquals("Aucune correpondance trouvé pour l'agent ACHIMOFF LOIC . Merci de mettre à jour manuellement son ID Titre repas dans sa fiche etat civil", result.getErrors().get(0));
+		Mockito.verify(titreRepasRepository, Mockito.never()).persisTitreRepasExportEtatPayeurTask(Mockito.isA(TitreRepasExportEtatPayeurTask.class));
 	}
 
 	@Test
