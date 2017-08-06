@@ -219,6 +219,10 @@ public class TitreRepasService implements ITitreRepasService {
 
 			// on trie les donnees pour l agent concerne
 			AffectationDto affectation = getDernierAffectationByAgent(dto.getAgent().getIdAgent(), listAffectation);
+			if (affectation == null) {
+				result.getErrors().add("Aucune affectation n'a été trouvée pour l'agent " + dto.getAgent().getNom() + " " + dto.getAgent().getPrenom() + ".");
+				continue;
+			}
 			RefTypeSaisiCongeAnnuelDto baseCongeAgent = getRefTypeSaisiCongeAnnuelDto(listBasesConges, affectation.getBaseConge());
 			List<DemandeDto> listAbsencesAgent = getListeAbsencesByAgent(listAbsences, dto.getAgent().getIdAgent());
 
