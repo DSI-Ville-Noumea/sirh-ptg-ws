@@ -210,7 +210,9 @@ public class TitreRepasService implements ITitreRepasService {
 		List<JourDto> listJourFerieMoisEnCours = sirhWsConsumer.getListeJoursFeries(dateDebutMois, dateFinMois);
 		List<AffectationDto> listAffectation = sirhWsConsumer.getListAffectationDtoBetweenTwoDateAndForListAgent(listIdsAgent, dateDebutMois,
 				dateFinMois);
+		logger.debug("Liste des affectations des agents suivants récupérées : " + listIdsAgent.toString());
 		List<DemandeDto> listAbsences = absWsConsumer.getListAbsencesForListAgentsBetween2Dates(listIdsAgent, dateDebutMois, dateFinMois);
+		logger.debug("Liste des absences récupérées pour les mêmes agents.");
 		List<RefTypeSaisiCongeAnnuelDto> listBasesConges = getListBasesConges();
 		// ///////////////////////////////////////////////////////////////
 
@@ -225,6 +227,7 @@ public class TitreRepasService implements ITitreRepasService {
 			}
 			RefTypeSaisiCongeAnnuelDto baseCongeAgent = getRefTypeSaisiCongeAnnuelDto(listBasesConges, affectation.getBaseConge());
 			List<DemandeDto> listAbsencesAgent = getListeAbsencesByAgent(listAbsences, dto.getAgent().getIdAgent());
+			logger.debug("La liste des absences pour l'agent {} a bien été récupérée.", dto.getAgent().getIdAgent());
 
 			ReturnMessageDto response = enregistreTitreDemandeOneByOne(idAgentConnecte, dto, listAbsencesAgent, baseCongeAgent,
 					listJourFerieMoisEnCours, affectation, false);
@@ -376,6 +379,7 @@ public class TitreRepasService implements ITitreRepasService {
 		if (!result.getErrors().isEmpty())
 			return result;
 
+		logger.debug("L'agent {} a bien le droit aux titre repas.", dto.getAgent().getIdAgent());
 		// on verifie si une demande existe deja
 		// si TitreRepasDemandeDto.idTrDemande <> NULL
 		// alors modification
@@ -405,6 +409,7 @@ public class TitreRepasService implements ITitreRepasService {
 
 		} else {
 			// on verifie qu une demande n existe pas
+			logger.debug("Création d'une nouvelle demande de titre repas pour l'agent {}.", dto.getAgent().getIdAgent());
 			List<TitreRepasDemande> listTitreRepasDemande = titreRepasRepository.getListTitreRepasDemande(Arrays.asList(dto.getAgent().getIdAgent()),
 					null, null, null, null, dto.getDateMonth());
 
@@ -437,6 +442,8 @@ public class TitreRepasService implements ITitreRepasService {
 		etat.setTitreRepasDemande(trDemande);
 
 		trDemande.getEtats().add(etat);
+		
+		logger.debug("Nouvel état mis à jour pour la demande de l'agent {}.", dto.getAgent().getIdAgent());
 
 		titreRepasRepository.persist(trDemande);
 
