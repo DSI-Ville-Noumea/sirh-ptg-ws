@@ -137,7 +137,7 @@ public class TitreRepasService implements ITitreRepasService {
 	public static final String					ETAT_NON_SAISI												= "L'état de la demande de titre repas n'est pas renseigné pour l'agent : %s.";
 	public static final String					AUCUNE_DEMANDE												= "Aucune demande de titre repas à approuver.";
 	public static final String					AUCUN_ID_DEMANDE											= "L'ID de la demande de titre repas n'est pas renseigné.";
-	public static final String					DEMANDE_NON_COMMANDE										= "Vous ne pouvez pas approuvé une demande de titre repas non commandée.";
+	public static final String					DEMANDE_NON_COMMANDE										= "Vous ne pouvez pas approuver une demande de titre repas non commandée.";
 	public static final String					ERROR_ETAT_DEMANDE											= "Vous ne pouvez pas %s une demande de titre repas à l'état %s.";
 	public static final String					NOUVELLE_ETAT_INCORRECT										= "Le nouvel état de la demande de titre repas est incorrect.";
 	public static final String					PAIE_EN_COURS												= "Génération impossible. Une paie est en cours sous l'AS400.";
@@ -480,8 +480,7 @@ public class TitreRepasService implements ITitreRepasService {
 				}
 				listIdsAgent.add(idAgent);
 			} else if (null != idServiceADS) {
-				// #18722 : pour chaque agent on va recuperer son
-				// service
+				// #18722 : pour chaque agent on va recuperer son service
 				List<Integer> listAgentDtoAppro = new ArrayList<Integer>();
 				for (DroitsAgent da : listDroitsAgentTemp) {
 					if (!listAgentDtoAppro.contains(da.getIdAgent()))
