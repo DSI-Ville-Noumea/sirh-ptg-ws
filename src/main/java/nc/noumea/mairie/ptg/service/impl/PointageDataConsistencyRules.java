@@ -13,9 +13,13 @@ import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
 import org.joda.time.LocalTime;
 import org.joda.time.Minutes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Lists;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
@@ -37,6 +41,8 @@ import nc.noumea.mairie.ws.ISirhWSConsumer;
 
 @Service
 public class PointageDataConsistencyRules implements IPointageDataConsistencyRules {
+	
+	private final Logger logger = LoggerFactory.getLogger(PointageDataConsistencyRules.class);
 
 	@Autowired
 	private IMairieRepository			mairieRepository;
@@ -350,6 +356,27 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(ag, dateLundi);
+		
+		// #41417 : Si l'affectation de l'agent commence après le lundi, on va chercher sa carrière avec la date des pointages.
+		// On créé une liste pour supprimer les pointages saisis avant l'affectation de l'agent. Sinon ça entraine des exceptions dans la suite du code.
+		List<Pointage> pointagesASupprimer = Lists.newArrayList();
+		if (carr == null) {
+			for (Pointage ptg : pointages) {
+				carr = mairieRepository.getAgentCurrentCarriere(ag, ptg.getDateDebut());
+				if (carr != null)
+					break;
+				else
+					pointagesASupprimer.add(ptg);
+			}
+			if (carr == null) {
+				logger.warn("Aucune carrière n'a été trouvé pour l'agent matricule " + idAgent + " à cette date : " + sdf.format(dateLundi));
+				srm.getErrors().add("Aucune carrière n'a été trouvé pour l'agent " + ag.getDisplayNom() + " " +  ag.getDisplayPrenom() + " à cette date : " + sdf.format(dateLundi));
+				return;
+			}
+		}
+		for (Pointage ptg : pointagesASupprimer) {
+			pointages.remove(ptg);
+		}
 
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		BaseHorairePointageDto baseDto = sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine);
