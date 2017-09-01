@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -360,6 +361,11 @@ public class SaisieService implements ISaisieService {
 	protected Date getCurrentDateEtat(Integer idAgent, Date dateLundi) {
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
 				dateLundi);
+		// #41417 : Si la carrière de l'agent ne commence pas un lundi, il ne faut pas prendre la date du lundi...
+		// TODO : Vérifier qu'il n'y ai pas d'effet de bord
+		if (carr == null) {
+			carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), new DateTime(dateLundi).plusWeeks(1).toDate());
+		}
 		VentilDate currentVentilation = ventilationRepository.getLatestVentilDate(
 				helperService.getTypeChainePaieFromStatut(carr.getStatutCarriere()), false);
 		return currentVentilation == null ? helperService.getCurrentDate() : currentVentilation.getDateVentilation();

@@ -67,7 +67,7 @@ public class MairieRepository implements IMairieRepository {
 
 		// bug #19943 si 2 carrieres le meme jour 
 		// une finissant, une commencant
-		return null != result ? result.get(0) : null;
+		return (null != result && !result.isEmpty()) ? result.get(0) : null;
 	}
 
 	@Override
