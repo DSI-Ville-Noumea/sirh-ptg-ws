@@ -155,7 +155,7 @@ public class ApprobationService implements IApprobationService {
 			}
 		}
 
-		// dans un souci de performances, on n affichera toçujours le service de
+		// dans un souci de performances, on n affichera toujours le service de
 		// l agent a la date du jour
 		// ce qui permet de ne faire qu un seul appel a SIRH-WS
 		// et non plus un appel par demande (avec la date de la demande)

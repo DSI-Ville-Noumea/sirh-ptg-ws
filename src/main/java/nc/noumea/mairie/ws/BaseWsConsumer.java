@@ -101,9 +101,7 @@ public abstract class BaseWsConsumer {
 
 	public <T> List<T> readResponseAsList(Class<T> targetClass, ClientResponse response, String url) {
 
-		List<T> result = null;
-
-		result = new ArrayList<T>();
+		List<T> result = new ArrayList<T>();
 
 		if (response.getStatus() == HttpStatus.NO_CONTENT.value()) {
 			return result;
