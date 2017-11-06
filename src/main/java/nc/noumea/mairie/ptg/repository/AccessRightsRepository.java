@@ -11,7 +11,10 @@ import javax.persistence.TypedQuery;
 import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class AccessRightsRepository implements IAccessRightsRepository {
@@ -36,7 +39,7 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	@Override
 	public Droit getDroitApprobateurByAgent(Integer idAgent) {
 		TypedQuery<Droit> q = ptgEntityManager.createQuery(
-				"from Droit d where d.approbateur = true and d.idAgent = :idAgent ", Droit.class);
+				"from Droit d JOIN FETCH d.agents where d.approbateur = true and d.idAgent = :idAgent ", Droit.class);
 		q.setParameter("idAgent", idAgent);
 
 		List<Droit> list = q.getResultList();
@@ -95,8 +98,8 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public boolean isUserApprobatorOrOperatorOrDelegataire(Integer idAgent) {
-
 		TypedQuery<Long> q = ptgEntityManager
 				.createQuery(
 						"select count(*) from Droit d where (d.approbateur = true or d.operateur = true) and (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent )",
