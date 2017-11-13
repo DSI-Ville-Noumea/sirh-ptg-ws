@@ -8,16 +8,17 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import nc.noumea.mairie.ptg.domain.Droit;
-import nc.noumea.mairie.ptg.domain.DroitsAgent;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
+
+import nc.noumea.mairie.ptg.domain.Droit;
+import nc.noumea.mairie.ptg.domain.DroitsAgent;
 
 @Repository
 public class AccessRightsRepository implements IAccessRightsRepository {
+	
+	private Logger logger = LoggerFactory.getLogger(AccessRightsRepository.class);
 
 	@PersistenceContext(unitName = "ptgPersistenceUnit")
 	private EntityManager ptgEntityManager;
@@ -98,8 +99,8 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
-	@Transactional(readOnly=true)
 	public boolean isUserApprobatorOrOperatorOrDelegataire(Integer idAgent) {
+		logger.debug("Enter isUserApprobatorOrOperatorOrDelegataire()");
 		TypedQuery<Long> q = ptgEntityManager
 				.createQuery(
 						"select count(*) from Droit d where (d.approbateur = true or d.operateur = true) and (d.idAgent = :idAgent or d.idAgentDelegataire = :idAgent )",

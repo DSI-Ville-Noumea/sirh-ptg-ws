@@ -362,7 +362,6 @@ public class SaisieService implements ISaisieService {
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
 				dateLundi);
 		// #41417 : Si la carrière de l'agent ne commence pas un lundi, il ne faut pas prendre la date du lundi...
-		// TODO : Vérifier qu'il n'y ai pas d'effet de bord
 		if (carr == null) {
 			carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), new DateTime(dateLundi).plusWeeks(1).toDate());
 		}

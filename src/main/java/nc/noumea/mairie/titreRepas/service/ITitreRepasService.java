@@ -119,7 +119,7 @@ public interface ITitreRepasService {
 	 *            Integer
 	 * @return ReturnMessageDto
 	 */
-	ReturnMessageDto genereEtatPayeur(Integer idAgentConnecte);
+	ReturnMessageDto genereEtatPayeur(Integer idAgentConnecte, Date dateGeneration);
 
 	/**
 	 * Retourne l'historique d'une demande de titre repas

@@ -2091,7 +2091,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
-		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent, null);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(result.getErrors().get(0), TitreRepasService.ERREUR_DROIT_AGENT);
@@ -2125,7 +2125,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent, null);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(result.getErrors().get(0), TitreRepasService.GENERATION_EXIST);
@@ -2161,7 +2161,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent, null);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(result.getErrors().get(0), TitreRepasService.GENERATION_EXIST);
@@ -2196,7 +2196,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent, null);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(result.getErrors().get(0), TitreRepasService.PAIE_EN_COURS);
@@ -2227,7 +2227,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 		ReflectionTestUtils.setField(service, "titreRepasRepository", titreRepasRepository);
 
-		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent, null);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(result.getErrors().get(0), TitreRepasService.GENERATION_IMPOSSIBLE_AVANT_11);
@@ -2266,7 +2266,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
-		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent, null);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(result.getErrors().get(0), TitreRepasService.DEMANDE_EN_COURS);
@@ -2339,11 +2339,11 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
-		ReturnMessageDto result = service.genereEtatPayeur(idAgent);
+		ReturnMessageDto result = service.genereEtatPayeur(idAgent, null);
 
 		assertEquals(1, result.getErrors().size());
 		assertEquals(result.getErrors().get(0),
-				"Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
+				"Il n'y a pas le même nombre d'agents entre le nombre de demandes (2) et le resultat des agents avec services (0)");
 		Mockito.verify(mairieRepository, Mockito.never()).mergeEntity(Mockito.isA(Spchge.class));
 		Mockito.verify(mairieRepository, Mockito.never()).persistEntity(Mockito.isA(Spmatr.class));
 	}
@@ -2439,7 +2439,7 @@ public class TitreRepasServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWSUtils", sirhWSUtils);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
-		result = service.genereEtatPayeur(idAgent);
+		result = service.genereEtatPayeur(idAgent, null);
 
 		assertEquals(0, result.getErrors().size());
 		Mockito.verify(mairieRepository, Mockito.times(2)).mergeEntity(Mockito.isA(Spchge.class));
