@@ -264,8 +264,7 @@ public class PointageCalculeService implements IPointageCalculeService {
 		// distinction
 		// #19829 on recupere maintenant les maladies du projet SIRH-ABS-WS
 		List<DemandeDto> listMaladies = absWsConsumer.getListMaladiesEtatPrisBetween(
-				idAgent, dateLundi, new DateTime(dateLundi).plusDays(7)
-						.toDate());
+				idAgent, dateLundi, dateFinSemaine);
 		
 		// - A cette base sera enfin retranchée toutes les périodes de congés exceptionnels
 		// on ne compte pas les conges annuels et les conges annules

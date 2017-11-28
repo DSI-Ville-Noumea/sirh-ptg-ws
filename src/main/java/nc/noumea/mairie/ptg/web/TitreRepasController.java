@@ -194,17 +194,16 @@ public class TitreRepasController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/genereEtatPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(value = "chainedTransactionManager")
-	public ReturnMessageDto genereEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte) {
+	public ReturnMessageDto genereEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
+			@RequestParam(required = false, value = "dateGeneration") @DateTimeFormat(pattern = "yyyyMMdd") Date dateGeneration) {
 
 		logger.debug("entered GET [titreRepas/genereEtatPayeur] => genereEtatPayeur with parameters idTrDemande = {}", idAgentConnecte);
 
-		return titreRepasService.genereEtatPayeur(idAgentConnecte);
+		return titreRepasService.genereEtatPayeur(idAgentConnecte, dateGeneration);
 	}
 
 	/**
-	 * Pour connaire sur les mois sur lesquels une demande de titre Repas est
-	 * saisie
+	 * Pour connaire sur les mois sur lesquels une demande de titre Repas est saisie
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getListeMoisTitreRepasSaisie", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
@@ -215,6 +214,7 @@ public class TitreRepasController {
 		List<Date> result = titreRepasService.getListeMoisTitreRepasSaisie();
 
 		String response = new JSONSerializer().exclude("*.class").transform(new MSDateTransformer(), Date.class).deepSerialize(result);
+		logger.debug("[titreRepas/getListeMoisTitreRepasSaisie] Got response : " + response);
 		return new ResponseEntity<String>(response, HttpStatus.OK);
 	}
 

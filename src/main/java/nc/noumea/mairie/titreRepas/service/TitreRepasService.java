@@ -456,16 +456,23 @@ public class TitreRepasService implements ITitreRepasService {
 	@Transactional(readOnly = true)
 	public List<TitreRepasDemandeDto> getListTitreRepasDemandeDto(Integer idAgentConnecte, Date fromDate, Date toDate, Integer etat, Boolean commande,
 			Date dateMonth, Integer idServiceADS, Integer idAgent, List<Integer> listIdsAgent, Boolean isFromSIRH) throws AccessForbiddenException {
-
 		Date dateJour = helperService.getCurrentDate();
-		// ///////// TEST de DROIT /////////////////
+		
+		// #42678 : On récupère la liste des affectation depuis le premier jour du mois précédent
+		Date datePreviousMonth = dateMonth != null ? new DateTime(dateMonth).minusMonths(1).toDate() : new DateTime(dateJour).minusMonths(1).toDate();
+		
+		// ///////// TESTS de DROIT /////////////////
 		if ((null == idAgent || !idAgent.equals(idAgentConnecte))
 				// => si ce n est pas l agent qui consulte ces demandes
 				&& !accessRightService.canUserAccessVisualisation(idAgentConnecte)
 				// =>si ce n est pas l opêrateur ou approbateur
-				&& !sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte).getErrors().isEmpty())
-			// => si ce n est pas un utilisateur SIRH
+				&& !sirhWsConsumer.isUtilisateurSIRH(idAgentConnecte).getErrors().isEmpty()) {
+				// => si ce n est pas un utilisateur SIRH
+			logger.debug("L'agent matricule {} n'a pas les droits pour accéder à ces titres repas.", idAgentConnecte);
 			throw new AccessForbiddenException(); // => on bloque
+			
+		}
+		logger.debug("Enter in getListTitreRepasDemandeDto()");
 
 		// ///////////////// on recupere la liste d agents // ///////
 		List<AgentWithServiceDto> listAgentServiceDto = new ArrayList<AgentWithServiceDto>();
@@ -530,7 +537,7 @@ public class TitreRepasService implements ITitreRepasService {
 					listAgentDtoAppro.add(tr.getLatestEtatTitreRepasDemande().getIdAgent());
 				}
 			}
-			listAgentServiceDto.addAll(sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, dateJour));
+			listAgentServiceDto.addAll(sirhWsConsumer.getListAgentsWithService(listAgentDtoAppro, datePreviousMonth));
 
 			for (TitreRepasDemande TR : listTR) {
 				AgentWithServiceDto agDtoServ = sirhWSUtils.getAgentOfListAgentWithServiceDto(listAgentServiceDto, TR.getIdAgent());
@@ -1099,8 +1106,10 @@ public class TitreRepasService implements ITitreRepasService {
 	}
 
 	@Override
-	public ReturnMessageDto genereEtatPayeur(Integer idAgentConnecte) {
+	public ReturnMessageDto genereEtatPayeur(Integer idAgentConnecte, Date dateGeneration) {
 
+		dateGeneration = dateGeneration == null ? helperService.getCurrentDate() : dateGeneration;
+		
 		ReturnMessageDto result = new ReturnMessageDto();
 		result = checkLancementEtatPayeurTitreRepas(idAgentConnecte, result);
 		if (!result.getErrors().isEmpty())
@@ -1108,7 +1117,7 @@ public class TitreRepasService implements ITitreRepasService {
 
 		// 2. on recupere la liste des demandes de Titre Repas de ce mois-ci
 		List<TitreRepasDemande> listDemandeTR = titreRepasRepository.getListTitreRepasDemande(null, null, null,
-				EtatPointageEnum.APPROUVE.getCodeEtat(), true, helperService.getDatePremierJourOfMonthSuivant(helperService.getCurrentDate()));
+				EtatPointageEnum.APPROUVE.getCodeEtat(), true, helperService.getDatePremierJourOfMonth(dateGeneration));
 		Map<Integer, TitreRepasDemande> mapAgentTR = new HashMap<>();
 
 		List<Integer> listIdsAgent = new ArrayList<Integer>();
@@ -1119,14 +1128,14 @@ public class TitreRepasService implements ITitreRepasService {
 				mapAgentTR.put(demandeTR.getIdAgent(), demandeTR);
 			}
 		}
-
-		List<AgentWithServiceDto> listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listIdsAgent, helperService.getCurrentDate());
+		
+		List<AgentWithServiceDto> listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listIdsAgent, helperService.getDatePremierJourOfMonthPrecedent(dateGeneration));
 
 		// #38362 : avant d'aller plus loin, on fait un controle sur le nb
 		// demande = nb d'agent pour etre sur de n'oublier personne
 		if (listAgentServiceDto.size() != listIdsAgent.size()) {
-			logger.debug("Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
-			result.getErrors().add("Il n'y a pas le même nombre d'agents entre le nombre de demande et le resultat des agents avec services.");
+			logger.debug("Il n'y a pas le même nombre d'agents entre le nombre de demandes ({}) et le resultat des agents avec services.", listIdsAgent.size(), listAgentServiceDto.size());
+			result.getErrors().add("Il n'y a pas le même nombre d'agents entre le nombre de demandes (" + listIdsAgent.size() + ") et le resultat des agents avec services (" + listAgentServiceDto.size() + ")");
 			return result;
 		}
 
@@ -1302,7 +1311,7 @@ public class TitreRepasService implements ITitreRepasService {
 				matr = mairieRepository.findSpmatrForAgent(charge.getId().getNomatr());
 			} catch (InvalidDataAccessApiUsageException e) {
 				logger.error("Erreur de mapping pour spmatr : " + e.getMessage());
-				result.getErrors().add("Erreur de mapping pour spmatr :" + charge.getId().getNomatr());
+				result.getErrors().add("Erreur de mapping pour spmatr : " + charge.getId().getNomatr());
 				return;
 			}
 

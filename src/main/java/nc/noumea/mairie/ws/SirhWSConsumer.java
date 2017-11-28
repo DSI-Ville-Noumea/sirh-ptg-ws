@@ -29,7 +29,7 @@ import nc.noumea.mairie.sirh.dto.RefTypeSaisiCongeAnnuelDto;
 
 @Service
 public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
-
+	
 	@Autowired
 	@Qualifier("sirhWsBaseUrl")
 	private String				sirhWsBaseUrl;
@@ -281,7 +281,6 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 
 	@Override
 	public ReturnMessageDto isUtilisateurSIRH(Integer idAgent) {
-
 		String url = String.format(sirhWsBaseUrl + isUtilisateurSIRHServiceUrl);
 
 		Map<String, String> parameters = new HashMap<String, String>();

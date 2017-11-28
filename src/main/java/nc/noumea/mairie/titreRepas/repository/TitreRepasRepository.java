@@ -7,6 +7,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -18,6 +20,8 @@ import nc.noumea.mairie.ptg.domain.TitreRepasExportEtatPayeurTask;
 
 @Repository
 public class TitreRepasRepository implements ITitreRepasRepository {
+	
+	private Logger logger = LoggerFactory.getLogger(TitreRepasRepository.class);
 
 	@PersistenceContext(unitName = "ptgPersistenceUnit")
 	private EntityManager ptgEntityManager;
@@ -109,11 +113,13 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 	@Override
 	public List<Date> getListeMoisTitreRepasSaisie() {
 
+		logger.debug("in getListeMoisTitreRepasSaisieRepository()");
 		StringBuilder sb = new StringBuilder();
 		sb.append("select distinct(c.dateMonth) from TitreRepasDemande c ");
 		sb.append("order by c.dateMonth desc ");
 
 		TypedQuery<Date> query = ptgEntityManager.createQuery(sb.toString(), Date.class);
+		logger.debug("query in getListeMoisTitreRepasSaisieRepository()");
 
 		return query.getResultList();
 	}
