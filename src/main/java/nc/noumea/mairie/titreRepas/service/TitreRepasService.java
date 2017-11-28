@@ -1311,7 +1311,7 @@ public class TitreRepasService implements ITitreRepasService {
 				matr = mairieRepository.findSpmatrForAgent(charge.getId().getNomatr());
 			} catch (InvalidDataAccessApiUsageException e) {
 				logger.error("Erreur de mapping pour spmatr : " + e.getMessage());
-				result.getErrors().add("Erreur de mapping pour spmatr :" + charge.getId().getNomatr());
+				result.getErrors().add("Erreur de mapping pour spmatr : " + charge.getId().getNomatr());
 				return;
 			}
 

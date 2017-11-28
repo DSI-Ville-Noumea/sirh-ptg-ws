@@ -194,7 +194,6 @@ public class TitreRepasController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/genereEtatPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
-	@Transactional(value = "chainedTransactionManager")
 	public ReturnMessageDto genereEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
 			@RequestParam(required = false, value = "dateGeneration") @DateTimeFormat(pattern = "yyyyMMdd") Date dateGeneration) {
 
@@ -204,8 +203,7 @@ public class TitreRepasController {
 	}
 
 	/**
-	 * Pour connaire sur les mois sur lesquels une demande de titre Repas est
-	 * saisie
+	 * Pour connaire sur les mois sur lesquels une demande de titre Repas est saisie
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/getListeMoisTitreRepasSaisie", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
