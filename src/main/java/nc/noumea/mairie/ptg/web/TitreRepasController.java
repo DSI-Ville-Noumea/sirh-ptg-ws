@@ -194,6 +194,7 @@ public class TitreRepasController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/genereEtatPayeur", produces = "application/json;charset=utf-8", method = RequestMethod.GET)
+	@Transactional(value = "chainedTransactionManager")
 	public ReturnMessageDto genereEtatPayeur(@RequestParam(required = true, value = "idAgentConnecte") Integer idAgentConnecte,
 			@RequestParam(required = false, value = "dateGeneration") @DateTimeFormat(pattern = "yyyyMMdd") Date dateGeneration) {
 
