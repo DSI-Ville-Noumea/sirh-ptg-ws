@@ -2085,11 +2085,13 @@ public class TitreRepasServiceTest {
 		erreuUser.getErrors().add("bad user");
 
 		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		HelperService helperService = Mockito.mock(HelperService.class);
 
 		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
 		Mockito.when(sirhWsConsumer.isUtilisateurSIRH(idAgent)).thenReturn(erreuUser);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
 
 		ReturnMessageDto result = service.genereEtatPayeur(idAgent, null);
 
@@ -2303,7 +2305,7 @@ public class TitreRepasServiceTest {
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(currentDate2);
-		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(currentDate2)).thenReturn(currentDate);
+		Mockito.when(helperService.getDatePremierJourOfMonth(currentDate2)).thenReturn(currentDate);
 		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(currentDate);
 
 		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
@@ -2401,7 +2403,8 @@ public class TitreRepasServiceTest {
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(currentDate2);
-		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(currentDate2)).thenReturn(currentDate);
+		Mockito.when(helperService.getDatePremierJourOfMonth(currentDate2)).thenReturn(currentDate);
+		Mockito.when(helperService.getDatePremierJourOfMonthPrecedent(Mockito.any(Date.class))).thenReturn(currentDate2);
 		Mockito.when(helperService.getDatePremierJourOfMonthSuivant(Mockito.any(Date.class))).thenReturn(currentDate);
 
 		ITitreRepasRepository titreRepasRepository = Mockito.mock(ITitreRepasRepository.class);
