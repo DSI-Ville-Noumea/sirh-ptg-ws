@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.Spadmn;
+import nc.noumea.mairie.domain.SpadmnId;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
 import nc.noumea.mairie.ptg.domain.Pointage;
@@ -25,8 +28,10 @@ import nc.noumea.mairie.ptg.domain.PointageCalcule;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.exception.NoPAException;
 import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -533,13 +538,86 @@ public class PointageCalculeServiceTest {
 	}
 
 	@Test
-	public void generatePointageTID_7720_7721_7722_noAbs_noHSup() {
+	public void generatePointageTID_7720_7721_7722_noAbs_noHSup_half_active_PA() {
 
 		Date dateLundi = new DateTime(2015, 10, 5, 0, 0, 0).toDate();
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
 		AgentStatutEnum statut = AgentStatutEnum.F;
 		Integer idAgentRH = 9005138;
 		Integer idAgent = 9002174;
+		
+		Spadmn activePA = new Spadmn();
+		activePA.setCdpadm("01");
+		
+		Spadmn inactivePA = new Spadmn();
+		inactivePA.setCdpadm("RT");
+
+		List<Pointage> listPointages = new ArrayList<Pointage>();
+
+		BaseHorairePointageDto baseDto = new BaseHorairePointageDto();
+		baseDto.setHeureLundi(8.0);
+		baseDto.setHeureMardi(8.0);
+		baseDto.setHeureMercredi(8.0);
+		baseDto.setHeureJeudi(8.0);
+		baseDto.setHeureVendredi(7.0);
+		baseDto.setHeureSamedi(0.0);
+		baseDto.setHeureDimanche(0.0);
+		baseDto.setBaseCalculee(39.0);
+
+		List<Integer> norubrs = new ArrayList<Integer>();
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(norubrs);
+		Mockito.when(sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(baseDto);
+
+		RefPrime prime = new RefPrime();
+		prime.setNoRubr(7720);
+
+		List<RefPrime> listRefPrime = new ArrayList<RefPrime>();
+		listRefPrime.add(prime);
+
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepository.getRefPrimes(norubrs, statut)).thenReturn(listRefPrime);
+
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(8.0)).thenReturn(8 * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(7.0)).thenReturn(7 * 60);
+		Mockito.when(helperService.getMairieMatrFromIdAgent(9002174)).thenReturn(2174);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		DateTime tmpDate = new DateTime(2015, 10, 5, 0, 0, 0);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(2174, tmpDate.toDate())).thenReturn(activePA);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(2174, tmpDate.plusDays(1).toDate())).thenReturn(activePA);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(2174, tmpDate.plusDays(2).toDate())).thenReturn(activePA);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(2174, tmpDate.plusDays(3).toDate())).thenReturn(inactivePA);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(2174, tmpDate.plusDays(4).toDate())).thenReturn(inactivePA);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(2174, tmpDate.plusDays(5).toDate())).thenReturn(inactivePA);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(2174, tmpDate.plusDays(6).toDate())).thenReturn(inactivePA);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(2174, tmpDate.plusDays(7).toDate())).thenReturn(inactivePA);
+
+		PointageCalculeService service = new PointageCalculeService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+
+		List<Pointage> result = service.generatePointageTID_7720_7721_7722(idAgentRH, idAgent, statut, dateLundi, listPointages);
+		assertEquals(3, result.size());
+	}
+
+	@Test
+	public void generatePointageTID_7720_7721_7722_noAbs_noHSup_inactive_PA() {
+
+		Date dateLundi = new DateTime(2015, 10, 5, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		Integer idAgentRH = 9005138;
+		Integer idAgent = 9002174;
+		
+		Spadmn posa = new Spadmn();
+		posa.setCdpadm("RT");
 
 		List<Pointage> listPointages = new ArrayList<Pointage>();
 
@@ -573,11 +651,73 @@ public class PointageCalculeServiceTest {
 		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(8.0)).thenReturn(8 * 60);
 		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(7.0)).thenReturn(7 * 60);
 
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(Mockito.anyInt(), any(Date.class))).thenReturn(posa);
+
 		PointageCalculeService service = new PointageCalculeService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
+
+		List<Pointage> result = service.generatePointageTID_7720_7721_7722(idAgentRH, idAgent, statut, dateLundi, listPointages);
+		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void generatePointageTID_7720_7721_7722_noAbs_noHSup() {
+
+		Date dateLundi = new DateTime(2015, 10, 5, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		Integer idAgentRH = 9005138;
+		Integer idAgent = 9002174;
+		
+		Spadmn posa = new Spadmn();
+		posa.setCdpadm("01");
+
+		List<Pointage> listPointages = new ArrayList<Pointage>();
+
+		BaseHorairePointageDto baseDto = new BaseHorairePointageDto();
+		baseDto.setHeureLundi(8.0);
+		baseDto.setHeureMardi(8.0);
+		baseDto.setHeureMercredi(8.0);
+		baseDto.setHeureJeudi(8.0);
+		baseDto.setHeureVendredi(7.0);
+		baseDto.setHeureSamedi(0.0);
+		baseDto.setHeureDimanche(0.0);
+		baseDto.setBaseCalculee(39.0);
+
+		List<Integer> norubrs = new ArrayList<Integer>();
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(norubrs);
+		Mockito.when(sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(baseDto);
+
+		RefPrime prime = new RefPrime();
+		prime.setNoRubr(7720);
+
+		List<RefPrime> listRefPrime = new ArrayList<RefPrime>();
+		listRefPrime.add(prime);
+
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepository.getRefPrimes(norubrs, statut)).thenReturn(listRefPrime);
+
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(8.0)).thenReturn(8 * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(7.0)).thenReturn(7 * 60);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(Mockito.anyInt(), any(Date.class))).thenReturn(posa);
+
+		PointageCalculeService service = new PointageCalculeService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		List<Pointage> result = service.generatePointageTID_7720_7721_7722(idAgentRH, idAgent, statut, dateLundi, listPointages);
 
@@ -599,8 +739,8 @@ public class PointageCalculeServiceTest {
 		assertEquals(7 * 60, result.get(4).getQuantite().intValue());
 	}
 
-	@Test
-	public void generatePointageTID_7720_7721_7722_withMaladieAndAbsAndHSup() {
+	@Test(expected = NoPAException.class)
+	public void generatePointageTID_7720_7721_7722_withMaladieAndAbsAndHSup_NoPA() {
 
 		Date dateLundi = new DateTime(2015, 10, 5, 0, 0, 0).toDate();
 		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
@@ -681,6 +821,102 @@ public class PointageCalculeServiceTest {
 		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
 		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		List<Pointage> result = service.generatePointageTID_7720_7721_7722(idAgentRH, idAgent, statut, dateLundi, listPointages);
+	}
+
+	@Test
+	public void generatePointageTID_7720_7721_7722_withMaladieAndAbsAndHSup() {
+
+		Date dateLundi = new DateTime(2015, 10, 5, 0, 0, 0).toDate();
+		Date dateFinSemaine = new DateTime(dateLundi).plusDays(7).toDate();
+		AgentStatutEnum statut = AgentStatutEnum.F;
+		Integer idAgentRH = 9005138;
+		Integer idAgent = 9002174;
+		
+		Spadmn posa = new Spadmn();
+		posa.setCdpadm("01");
+		SpadmnId spId = new SpadmnId();
+		spId.setDatdeb(20150905);
+		spId.setNomatr(2174);
+
+		Pointage ptgHSup = new Pointage();
+		ptgHSup.setType(hSup);
+		ptgHSup.setDateDebut(new DateTime(2015, 10, 11, 8, 0, 0).toDate());
+		ptgHSup.setDateFin(new DateTime(2015, 10, 11, 11, 0, 0).toDate());
+
+		Pointage absencePtg = new Pointage();
+		absencePtg.setType(abs);
+		absencePtg.setDateDebut(new DateTime(2015, 10, 9, 9, 0, 0).toDate());
+		absencePtg.setDateFin(new DateTime(2015, 10, 9, 11, 0, 0).toDate());
+
+		List<Pointage> listPointages = new ArrayList<Pointage>();
+		listPointages.add(ptgHSup);
+		listPointages.add(absencePtg);
+
+		BaseHorairePointageDto baseDto = new BaseHorairePointageDto();
+		baseDto.setHeureLundi(8.0);
+		baseDto.setHeureMardi(8.0);
+		baseDto.setHeureMercredi(8.0);
+		baseDto.setHeureJeudi(8.0);
+		baseDto.setHeureVendredi(7.0);
+		baseDto.setHeureSamedi(0.0);
+		baseDto.setHeureDimanche(0.0);
+		baseDto.setBaseCalculee(39.0);
+
+		List<Integer> norubrs = new ArrayList<Integer>();
+		ISirhWSConsumer sirhWsConsumer = Mockito.mock(ISirhWSConsumer.class);
+		Mockito.when(sirhWsConsumer.getPrimePointagesByAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(norubrs);
+		Mockito.when(sirhWsConsumer.getBaseHorairePointageAgent(idAgent, dateLundi, dateFinSemaine)).thenReturn(baseDto);
+
+		RefPrime prime = new RefPrime();
+		prime.setNoRubr(7720);
+
+		List<RefPrime> listRefPrime = new ArrayList<RefPrime>();
+		listRefPrime.add(prime);
+
+		IPointageRepository pointageRepository = Mockito.mock(IPointageRepository.class);
+		Mockito.when(pointageRepository.getRefPrimes(norubrs, statut)).thenReturn(listRefPrime);
+
+		DemandeDto maladieDto = new DemandeDto();
+		maladieDto.setDateDebut(new DateTime(2015, 10, 6, 0, 0, 0).toDate());
+		maladieDto.setDateFin(new DateTime(2015, 10, 6, 23, 59, 59).toDate());
+		List<DemandeDto> listMaladies = new ArrayList<DemandeDto>();
+		listMaladies.add(maladieDto);
+
+		DemandeDto demandeDto = new DemandeDto();
+		demandeDto.setDateDebut(new DateTime(2015, 10, 7, 0, 0, 0).toDate());
+		demandeDto.setDateFin(new DateTime(2015, 10, 7, 11, 59, 59).toDate());
+
+		List<DemandeDto> listConges = new ArrayList<DemandeDto>();
+		listConges.add(demandeDto);
+
+		RefTypeSaisiDto typeConge = new RefTypeSaisiDto();
+		typeConge.setUniteDecompte("jours");
+
+		List<RefTypeSaisiDto> listTypeAbsence = new ArrayList<RefTypeSaisiDto>();
+		listTypeAbsence.add(typeConge);
+
+		IAbsWsConsumer absWsConsumer = Mockito.mock(IAbsWsConsumer.class);
+		Mockito.when(absWsConsumer.getListCongesExeptionnelsEtatPrisBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
+				.thenReturn(listConges);
+		Mockito.when(absWsConsumer.getListMaladiesEtatPrisBetween(idAgent, dateLundi, new DateTime(dateLundi).plusDays(7).toDate()))
+				.thenReturn(listMaladies);
+		Mockito.when(absWsConsumer.getTypeSaisiAbsence(demandeDto.getIdTypeDemande())).thenReturn(listTypeAbsence);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(8.0)).thenReturn(8 * 60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(7.0)).thenReturn(7 * 60);
+
+		IMairieRepository mairieRepository = Mockito.mock(IMairieRepository.class);
+		Mockito.when(mairieRepository.getAgentCurrentPosition(Mockito.anyInt(), any(Date.class))).thenReturn(posa);
+
+		PointageCalculeService service = new PointageCalculeService();
+		ReflectionTestUtils.setField(service, "pointageRepository", pointageRepository);
+		ReflectionTestUtils.setField(service, "sirhWsConsumer", sirhWsConsumer);
+		ReflectionTestUtils.setField(service, "absWsConsumer", absWsConsumer);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+		ReflectionTestUtils.setField(service, "mairieRepository", mairieRepository);
 
 		List<Pointage> result = service.generatePointageTID_7720_7721_7722(idAgentRH, idAgent, statut, dateLundi, listPointages);
 

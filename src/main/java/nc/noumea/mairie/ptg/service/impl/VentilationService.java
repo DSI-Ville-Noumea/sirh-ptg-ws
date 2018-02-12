@@ -6,6 +6,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
@@ -28,6 +36,7 @@ import nc.noumea.mairie.ptg.dto.VentilDto;
 import nc.noumea.mairie.ptg.dto.VentilErreurDto;
 import nc.noumea.mairie.ptg.dto.VentilHSupDto;
 import nc.noumea.mairie.ptg.dto.VentilPrimeDto;
+import nc.noumea.mairie.ptg.exception.NoCarriereException;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
@@ -39,14 +48,6 @@ import nc.noumea.mairie.ptg.service.IVentilationService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class VentilationService implements IVentilationService {
@@ -230,7 +231,7 @@ public class VentilationService implements IVentilationService {
 		if(null == carr) {
 			throw new NoCarriereException();
 		}
-
+		
 		// 2. remove existing ventilations
 		removePreviousVentilations(toVentilDate, idAgent, pointageType);
 		

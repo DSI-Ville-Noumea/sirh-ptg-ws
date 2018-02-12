@@ -26,6 +26,8 @@ public interface IMairieRepository {
 	Spcarr getAgentCurrentCarriere(Integer noMatr, Date asOfDate);
 
 	Spadmn getAgentCurrentPosition(AgentGeneriqueDto ag, Date asOfDate);
+
+	Spadmn getAgentCurrentPosition(Integer noMatr, Date asOfDate);
 	
 	Spperm getTREtatPayeurRates(Date dateMoisSuivant);
 	

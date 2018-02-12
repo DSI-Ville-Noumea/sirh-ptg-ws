@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -27,9 +28,11 @@ import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.exception.NoPAException;
 import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -46,6 +49,9 @@ public class PointageCalculeService implements IPointageCalculeService {
 
 	@Autowired
 	private IPointageRepository	pointageRepository;
+
+	@Autowired
+	private IMairieRepository mairieRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
@@ -280,9 +286,18 @@ public class PointageCalculeService implements IPointageCalculeService {
 			listCongesExcepEtMaladies.addAll(listConges);
 		
 		for (int i = 0; i < 7; i++) {
-
 			DateTime dday = new DateTime(dateLundi).plusDays(i);
-
+			
+			// #43693 : Check agent PA on every day of the week.
+			Spadmn posa = null;
+			try {
+				posa = mairieRepository.getAgentCurrentPosition(helperService.getMairieMatrFromIdAgent(idAgent), dday.toDate());
+			} catch (Exception e) {
+				throw new NoPAException();
+			}
+			if (null == posa || !PointageDataConsistencyRules.ACTIVITE_CODES.contains(posa.getCdpadm()))
+				continue;
+			
 			int dayTotalMinutes = helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getDayBase(i));
 
 			// - A cette base sera ajoutée toutes les heures saisies dans les
