@@ -18,6 +18,7 @@ import com.sun.jersey.api.client.ClientResponse;
 
 import flexjson.JSONSerializer;
 import nc.noumea.mairie.ads.dto.EntiteDto;
+import nc.noumea.mairie.domain.Spphre;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
@@ -53,6 +54,8 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 	private static final String	sirhBaseCongeUrl									= "absences/baseHoraire";
 	private static final String	sirhListeAgentWithIndemniteForfaitTravailDPMUrl		= "agents/listeAgentWithIndemniteForfaitTravailDPM";
 	private static final String	sirhListeAgentEnActiviteSurPeriodeUrl				= "agents/listeAgentsMairieSurPeriode";
+
+	private static final String	sirhGetSpphreForPeriod								= "pointages/getSpphre";
 
 	@Override
 	public EntiteDto getAgentDirection(Integer idAgent, Date date) {
@@ -376,5 +379,19 @@ public class SirhWSConsumer extends BaseWsConsumer implements ISirhWSConsumer {
 		ClientResponse res = createAndFireGetRequest(parameters, url);
 
 		return readResponseAsList(AgentGeneriqueDto.class, res, url);
+	}
+
+	@Override
+	public Spphre getSpphre(Integer idAgent, Date dateLundi) {
+		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+		String url = String.format(sirhWsBaseUrl + sirhGetSpphreForPeriod);
+
+		Map<String, String> parameters = new HashMap<String, String>();
+		parameters.put("idAgent", String.valueOf(idAgent));
+		parameters.put("dateLundi", sf.format(dateLundi));
+
+		ClientResponse res = createAndFireGetRequest(parameters, url);
+
+		return readResponse(Spphre.class, res, url);
 	}
 }
