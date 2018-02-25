@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -66,6 +67,8 @@ public class PointageCalculeService implements IPointageCalculeService {
 	private IAbsWsConsumer		absWsConsumer;
 
 	private static final String	COMMENTAIRE_GENERATION_TID	= "Prime TID générée lors de la ventilation";
+
+	public static final List<String> TID_CODES = Arrays.asList("01","23","24");
 
 	/**
 	 * Calculating a list of PointageCalcule for an agent over a week (from =
@@ -295,8 +298,10 @@ public class PointageCalculeService implements IPointageCalculeService {
 			} catch (Exception e) {
 				throw new NoPAException();
 			}
-			if (null == posa || !PointageDataConsistencyRules.ACTIVITE_CODES.contains(posa.getCdpadm()))
+			if (null == posa || !TID_CODES.contains(posa.getCdpadm())) {
+				logger.debug("Prime TID non générée, car la position administrative de l'agent matricule {} n'est pas active à cette date : {}", idAgent, dday.toDate().toString());
 				continue;
+			}
 			
 			int dayTotalMinutes = helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getDayBase(i));
 
@@ -383,6 +388,12 @@ public class PointageCalculeService implements IPointageCalculeService {
 			if (dayTotalMinutes <= 0 || null != ptg)
 				continue;
 
+			// #41211 : Les mi-temps ne doivent percevoir que la moitié de la prime.
+			// On ne sais pas encore si on fait cette opération côté paye ou côté SIRH.
+			// TODO : Supprimer ce code si on traite côté paye.
+			/*if (MI_TEMPS_CODE.contains(posa.getCdpadm()))
+				dayTotalMinutes = dayTotalMinutes / 2;*/
+			
 			if (null == ptg) {
 				ptg = new Pointage();
 			}

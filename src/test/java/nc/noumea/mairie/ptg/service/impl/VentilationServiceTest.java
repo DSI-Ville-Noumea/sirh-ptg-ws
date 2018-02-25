@@ -13,6 +13,7 @@ import java.util.List;
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
 import nc.noumea.mairie.domain.Spphre;
+import nc.noumea.mairie.domain.SpphreId;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -109,7 +110,8 @@ public class VentilationServiceTest {
 	@Test
 	public void spphreNotEqualsVentilHSup_OK() {
 
-		Spphre spphre = new Spphre(); 
+		Spphre spphre = new Spphre();
+		SpphreId id = new SpphreId();
 		VentilHsup ventilHsup = new VentilHsup();
 		
 		spphre.setNbh25(3.30);
@@ -121,6 +123,7 @@ public class VentilationServiceTest {
 		spphre.setNbhrecuperees(1.15);
 		spphre.setNbhscomposees(0.45);
 		spphre.setNbhssimple(1.30);
+		spphre.setId(id);
 		
 		ventilHsup.setMSup25(310);
 		ventilHsup.setMSup25Recup(100);
@@ -165,7 +168,8 @@ public class VentilationServiceTest {
 	@Test
 	public void spphreEqualsVentilHSup_OK() {
 
-		Spphre spphre = new Spphre(); 
+		Spphre spphre = new Spphre();
+		SpphreId id = new SpphreId();
 		VentilHsup ventilHsup = new VentilHsup();
 		
 		spphre.setNbh25(3.30);
@@ -177,6 +181,7 @@ public class VentilationServiceTest {
 		spphre.setNbhrecuperees(1.15);
 		spphre.setNbhscomposees(0.45);
 		spphre.setNbhssimple(1.30);
+		spphre.setId(id);
 		
 		ventilHsup.setMSup25(310);
 		ventilHsup.setMSup25Recup(100);
