@@ -1,3 +1,3 @@
 # sirh-ptg-ws
 
-[![Build Status](https://travis-ci.org/DSI-Ville-Noumea/sirh-ptg-ws.svg?branch=master)](https://travis-ci.org/DSI-Ville-Noumea/sirh-ptg-ws) [![Dependency Status](https://www.versioneye.com/user/projects/593df402368b08004a574118/badge.svg?style=flat-square)](https://www.versioneye.com/user/projects/593df402368b08004a574118) [![Coverage Status](https://coveralls.io/repos/github/DSI-Ville-Noumea/sirh-ptg-ws/badge.svg)](https://coveralls.io/github/DSI-Ville-Noumea/sirh-ptg-ws)
+[![Build Status](https://travis-ci.org/DSI-Ville-Noumea/sirh-ptg-ws.svg?branch=master)](https://travis-ci.org/DSI-Ville-Noumea/sirh-ptg-ws) [![Coverage Status](https://coveralls.io/repos/github/DSI-Ville-Noumea/sirh-ptg-ws/badge.svg)](https://coveralls.io/github/DSI-Ville-Noumea/sirh-ptg-ws)
