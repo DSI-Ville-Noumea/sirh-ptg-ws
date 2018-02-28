@@ -1,9 +1,9 @@
-package nc.noumea.mairie.ptg.service.impl;
+package nc.noumea.mairie.ptg.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-@ResponseStatus(value = HttpStatus.CONFLICT, reason = "Pas de carrière active.")
+@ResponseStatus(value = HttpStatus.PRECONDITION_FAILED, reason = "Pas de carrière active.")
 public class NoCarriereException extends RuntimeException {
 
 	/**

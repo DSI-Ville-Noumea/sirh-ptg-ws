@@ -79,6 +79,8 @@ public class SaisieService implements ISaisieService {
 	@Autowired
 	@Qualifier("sirhAbsDateBlocagePointage")
 	private String sirhAbsDateBlocagePointage;
+	
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY HH:mm");
 
 	@Override
 	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDtoKiosque fichePointageDto)
@@ -208,6 +210,16 @@ public class SaisieService implements ISaisieService {
 				// If already existing, try and compare if it has changed
 				// compared to the original version
 				if (ptg != null && !hasPointageChanged(ptg, prime)) {
+					String info = "Le pointage de l'agent matricule " + ptg.getIdAgent();
+					
+					if (ptg.getDateDebut() != null)
+						info += " du "+ sdf.format(ptg.getDateDebut());
+					if (ptg.getDateFin() != null)
+						info += " au " + sdf.format(ptg.getDateFin());
+					info += " est inchangé.";
+					
+					result.getInfos().add(info);
+					
 					continue;
 				}
 
@@ -477,7 +489,8 @@ public class SaisieService implements ISaisieService {
 
 	protected boolean hasPointageChanged(Pointage ptg, PrimeDto prime) {
 
-		if (ptg.getQuantite() != null)
+		// #44443 : Si les 2 quantités sont à 0, mais que les heures changent, on ne s'en rend pas compte.
+		if (ptg.getQuantite() != null && ptg.getQuantite() != 0)
 			return (!ptg.getQuantite().equals(prime.getQuantite()) || ptg.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI
 					&& hasTextChanged(ptg, prime));
 

@@ -12,6 +12,8 @@ import java.util.List;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Spphre;
+import nc.noumea.mairie.domain.SpphreId;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -92,6 +94,133 @@ public class VentilationServiceTest {
 		Mockito.verify(ventilationRepo, Mockito.times(1)).removeVentilationsForDateAgentAndType(ventilDate, idAgent,
 				RefTypePointageEnum.PRIME);
 
+	}
+
+	@Test
+	public void spphreEmptyNotEqualsVentilHSup_OK() {
+		IVentilationRepository ventilationRepo = Mockito.mock(IVentilationRepository.class);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepo);
+
+		// When
+		assertFalse(service.isEqual(null, null));
+	}
+
+	@Test
+	public void spphreNotEqualsVentilHSup_OK() {
+
+		Spphre spphre = new Spphre();
+		SpphreId id = new SpphreId();
+		VentilHsup ventilHsup = new VentilHsup();
+		
+		spphre.setNbh25(3.30);
+		spphre.setNbh50(2.30);
+		spphre.setNbhcomplementaires(0.15);
+		spphre.setNbhdim(3.00);
+		spphre.setNbhmai(1.00);
+		spphre.setNbhnuit(2.45);
+		spphre.setNbhrecuperees(1.15);
+		spphre.setNbhscomposees(0.45);
+		spphre.setNbhssimple(1.30);
+		spphre.setId(id);
+		
+		ventilHsup.setMSup25(310);
+		ventilHsup.setMSup25Recup(100);
+		ventilHsup.setMSup50(175);
+		ventilHsup.setMSup50Recup(25);
+		ventilHsup.setMNormales(30);
+		ventilHsup.setMNormalesRecup(15);
+		ventilHsup.setMsdjf(180);
+		ventilHsup.setMsdjfRecup(0);
+		ventilHsup.setMMai(120);
+		ventilHsup.setMMaiRecup(60);
+		ventilHsup.setMsNuit(280);
+		ventilHsup.setMsNuitRecup(115);
+		ventilHsup.setMRecuperees(30);
+		ventilHsup.setMRappelService(120);
+		ventilHsup.setMComposees(60);
+		ventilHsup.setMComposeesRecup(15);
+		ventilHsup.setMSimple(120);
+		ventilHsup.setMSimpleRecup(30);
+		
+		IVentilationRepository ventilationRepo = Mockito.mock(IVentilationRepository.class);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(0.15)).thenReturn(15);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(0.45)).thenReturn(45);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(1.00)).thenReturn(60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(1.15)).thenReturn(75);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(1.30)).thenReturn(90);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(2.30)).thenReturn(150);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(2.45)).thenReturn(165);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(3.00)).thenReturn(180);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(3.30)).thenReturn(210);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepo);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		// When
+		assertFalse(service.isEqual(spphre, ventilHsup));
+	}
+
+	@Test
+	public void spphreEqualsVentilHSup_OK() {
+
+		Spphre spphre = new Spphre();
+		SpphreId id = new SpphreId();
+		VentilHsup ventilHsup = new VentilHsup();
+		
+		spphre.setNbh25(3.30);
+		spphre.setNbh50(2.30);
+		spphre.setNbhcomplementaires(0.15);
+		spphre.setNbhdim(3.00);
+		spphre.setNbhmai(1.00);
+		spphre.setNbhnuit(2.45);
+		spphre.setNbhrecuperees(1.15);
+		spphre.setNbhscomposees(0.45);
+		spphre.setNbhssimple(1.30);
+		spphre.setId(id);
+		
+		ventilHsup.setMSup25(310);
+		ventilHsup.setMSup25Recup(100);
+		ventilHsup.setMSup50(175);
+		ventilHsup.setMSup50Recup(25);
+		ventilHsup.setMNormales(30);
+		ventilHsup.setMNormalesRecup(15);
+		ventilHsup.setMsdjf(180);
+		ventilHsup.setMsdjfRecup(0);
+		ventilHsup.setMMai(120);
+		ventilHsup.setMMaiRecup(60);
+		ventilHsup.setMsNuit(280);
+		ventilHsup.setMsNuitRecup(115);
+		ventilHsup.setMRecuperees(30);
+		ventilHsup.setMRappelService(45);
+		ventilHsup.setMComposees(60);
+		ventilHsup.setMComposeesRecup(15);
+		ventilHsup.setMSimple(120);
+		ventilHsup.setMSimpleRecup(30);
+		
+		IVentilationRepository ventilationRepo = Mockito.mock(IVentilationRepository.class);
+
+		HelperService helperService = Mockito.mock(HelperService.class);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(0.15)).thenReturn(15);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(0.45)).thenReturn(45);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(1.00)).thenReturn(60);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(1.15)).thenReturn(75);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(1.30)).thenReturn(90);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(2.30)).thenReturn(150);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(2.45)).thenReturn(165);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(3.00)).thenReturn(180);
+		Mockito.when(helperService.convertMairieNbHeuresFormatToMinutes(3.30)).thenReturn(210);
+
+		VentilationService service = new VentilationService();
+		ReflectionTestUtils.setField(service, "ventilationRepository", ventilationRepo);
+		ReflectionTestUtils.setField(service, "helperService", helperService);
+
+		// When
+		assertTrue(service.isEqual(spphre, ventilHsup));
 	}
 
 	@Test

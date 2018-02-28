@@ -85,8 +85,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String			ERROR_PRIME_DPM_INTERVALLE		= "Pour le pointage du %s, il faut au moins 5 minutes comprises entre 5h et 21h.";
 	public static final String			ERROR_ABSENCE_GREVE				= "Pour l'absence sans titre du %s, le type d'absence ne peut être %s. Ce type est reservé à la DRH.";
 
-	public static final List<String>	ACTIVITE_CODES					= Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63",
-			"64", "65", "66");
+	public static final List<String>	ACTIVITE_CODES					= Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
 
 	SimpleDateFormat					sdf								= new SimpleDateFormat("dd/MM/yyyy");
 

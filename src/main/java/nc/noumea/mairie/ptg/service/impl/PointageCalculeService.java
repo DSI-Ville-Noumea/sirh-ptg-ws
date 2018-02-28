@@ -1,6 +1,7 @@
 package nc.noumea.mairie.ptg.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import nc.noumea.mairie.abs.dto.DemandeDto;
 import nc.noumea.mairie.abs.dto.RefTypeSaisiDto;
 import nc.noumea.mairie.domain.AgentStatutEnum;
+import nc.noumea.mairie.domain.Spadmn;
 import nc.noumea.mairie.ptg.domain.DpmIndemChoixAgent;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -27,9 +29,11 @@ import nc.noumea.mairie.ptg.domain.PtgComment;
 import nc.noumea.mairie.ptg.domain.RefPrime;
 import nc.noumea.mairie.ptg.domain.RefTypePointage;
 import nc.noumea.mairie.ptg.domain.RefTypePointageEnum;
+import nc.noumea.mairie.ptg.exception.NoPAException;
 import nc.noumea.mairie.ptg.repository.IDpmRepository;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
+import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.BaseHorairePointageDto;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
@@ -48,6 +52,9 @@ public class PointageCalculeService implements IPointageCalculeService {
 	private IPointageRepository	pointageRepository;
 
 	@Autowired
+	private IMairieRepository mairieRepository;
+
+	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
 
 	@Autowired
@@ -60,6 +67,8 @@ public class PointageCalculeService implements IPointageCalculeService {
 	private IAbsWsConsumer		absWsConsumer;
 
 	private static final String	COMMENTAIRE_GENERATION_TID	= "Prime TID générée lors de la ventilation";
+
+	public static final List<String> TID_CODES = Arrays.asList("01","23","24");
 
 	/**
 	 * Calculating a list of PointageCalcule for an agent over a week (from =
@@ -280,9 +289,20 @@ public class PointageCalculeService implements IPointageCalculeService {
 			listCongesExcepEtMaladies.addAll(listConges);
 		
 		for (int i = 0; i < 7; i++) {
-
 			DateTime dday = new DateTime(dateLundi).plusDays(i);
-
+			
+			// #43693 : Check agent PA on every day of the week.
+			Spadmn posa = null;
+			try {
+				posa = mairieRepository.getAgentCurrentPosition(helperService.getMairieMatrFromIdAgent(idAgent), dday.toDate());
+			} catch (Exception e) {
+				throw new NoPAException();
+			}
+			if (null == posa || !TID_CODES.contains(posa.getCdpadm())) {
+				logger.debug("Prime TID non générée, car la position administrative de l'agent matricule {} n'est pas active à cette date : {}", idAgent, dday.toDate().toString());
+				continue;
+			}
+			
 			int dayTotalMinutes = helperService.convertMairieNbHeuresFormatToMinutes(baseDto.getDayBase(i));
 
 			// - A cette base sera ajoutée toutes les heures saisies dans les
@@ -368,6 +388,12 @@ public class PointageCalculeService implements IPointageCalculeService {
 			if (dayTotalMinutes <= 0 || null != ptg)
 				continue;
 
+			// #41211 : Les mi-temps ne doivent percevoir que la moitié de la prime.
+			// On ne sais pas encore si on fait cette opération côté paye ou côté SIRH.
+			// TODO : Supprimer ce code si on traite côté paye.
+			/*if (MI_TEMPS_CODE.contains(posa.getCdpadm()))
+				dayTotalMinutes = dayTotalMinutes / 2;*/
+			
 			if (null == ptg) {
 				ptg = new Pointage();
 			}

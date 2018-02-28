@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import nc.noumea.mairie.ads.dto.EntiteDto;
+import nc.noumea.mairie.domain.Spphre;
 import nc.noumea.mairie.ptg.dto.AgentWithServiceDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.sirh.dto.AffectationDto;
@@ -79,4 +80,6 @@ public interface ISirhWSConsumer {
 	 */
 
 	List<AgentWithServiceDto> getListeAgentsMairieSurPeriode(Date datePremierJourOfMonth, Date dateDernierJourOfMonth);
+	
+	Spphre getSpphre(Integer idAgent, Date dateLundi);
 }

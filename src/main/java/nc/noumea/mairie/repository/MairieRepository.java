@@ -98,6 +98,20 @@ public class MairieRepository implements IMairieRepository {
 	}
 
 	@Override
+	public Spadmn getAgentCurrentPosition(Integer nomatr, Date asOfDate) {
+		TypedQuery<Spadmn> qSpadmn = entityManager.createNamedQuery("getAgentSpadmnAsOfDate", Spadmn.class);
+		qSpadmn.setParameter("nomatr", nomatr);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		int dateFormatMairie = Integer.valueOf(sdf.format(asOfDate));
+		qSpadmn.setParameter("dateFormatMairie", dateFormatMairie);
+
+		Spadmn adm = qSpadmn.getSingleResult();
+
+		return adm;
+	}
+
+	@Override
 	public List<Spadmn> getListPAOfAgentBetween2Date(Integer noMatr, Date fromDate, Date toDate) {
 
 		TypedQuery<Spadmn> qSpadmn = entityManager.createNamedQuery("getAgentListSpadmnBetweenTwoDate", Spadmn.class);

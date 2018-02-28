@@ -1131,8 +1131,7 @@ public class TitreRepasService implements ITitreRepasService {
 		
 		List<AgentWithServiceDto> listAgentServiceDto = sirhWsConsumer.getListAgentsWithService(listIdsAgent, helperService.getDatePremierJourOfMonthPrecedent(dateGeneration));
 
-		// #38362 : avant d'aller plus loin, on fait un controle sur le nb
-		// demande = nb d'agent pour etre sur de n'oublier personne
+		// #38362 : avant d'aller plus loin, on fait un controle sur le nb demande = nb d'agent pour etre sur de n'oublier personne
 		if (listAgentServiceDto.size() != listIdsAgent.size()) {
 			logger.debug("Il n'y a pas le même nombre d'agents entre le nombre de demandes ({}) et le resultat des agents avec services.", listIdsAgent.size(), listAgentServiceDto.size());
 			result.getErrors().add("Il n'y a pas le même nombre d'agents entre le nombre de demandes (" + listIdsAgent.size() + ") et le resultat des agents avec services (" + listAgentServiceDto.size() + ")");

@@ -6,8 +6,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
+import nc.noumea.mairie.domain.Spphre;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.EtatPointageEnum;
@@ -28,6 +37,7 @@ import nc.noumea.mairie.ptg.dto.VentilDto;
 import nc.noumea.mairie.ptg.dto.VentilErreurDto;
 import nc.noumea.mairie.ptg.dto.VentilHSupDto;
 import nc.noumea.mairie.ptg.dto.VentilPrimeDto;
+import nc.noumea.mairie.ptg.exception.NoCarriereException;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.IPointageCalculeService;
@@ -39,14 +49,6 @@ import nc.noumea.mairie.ptg.service.IVentilationService;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class VentilationService implements IVentilationService {
@@ -230,7 +232,7 @@ public class VentilationService implements IVentilationService {
 		if(null == carr) {
 			throw new NoCarriereException();
 		}
-
+		
 		// 2. remove existing ventilations
 		removePreviousVentilations(toVentilDate, idAgent, pointageType);
 		
@@ -417,8 +419,15 @@ public class VentilationService implements IVentilationService {
 		////////////////////////////////////////////////
 		// persisting all the generated entities linking them to the current ventil date
 		if (hSupsVentilees != null) {
-			hSupsVentilees.setVentilDate(ventilDate);
-			ventilationRepository.persistEntity(hSupsVentilees);
+			// #44792 : Ne pas afficher les H.Supp qui ne modifient pas la paie.
+			if (!isSimilarlyPaid(hSupsVentilees)) {
+				logger.debug("Enregistrement de la ventilation pour le matricule {} sur la semaine du {}.", idAgent, hSupsVentilees.getDateLundi());
+				hSupsVentilees.setVentilDate(ventilDate);
+				ventilationRepository.persistEntity(hSupsVentilees);
+			} else {
+				logger.debug("Aucun changement pour le matricule {} sur la semaine du {}. Suppression de ses ventilations à cette date.", idAgent, hSupsVentilees.getDateLundi());
+				ventilationRepository.removeVentilationsForDateAgentAndType(ventilDate, idAgent, RefTypePointageEnum.H_SUP);
+			}
 		}
 
 		if (vAbs != null) {
@@ -429,6 +438,59 @@ public class VentilationService implements IVentilationService {
 		return filteredAgentsPointageForPeriod;
 	}
 	
+	private boolean isSimilarlyPaid(VentilHsup ventilHsup) {
+		Spphre spphre = sirhWsConsumer.getSpphre(ventilHsup.getIdAgent(), ventilHsup.getDateLundi());
+		return isEqual(spphre, ventilHsup);
+	}
+	
+	/**
+	 * This function is the reverse copy of function fillInSpphre() present in 
+	 * SIRH-PTG-WS ExportPaieHSupService(), currently line 84.
+	 * 
+	 * Determines id there is a changment for wadge (#44792) 
+	 * 
+	 * @param spphre
+	 * @param ventilHsup
+	 * @return
+	 */
+	protected boolean isEqual(Spphre spphre, VentilHsup ventilHsup) {
+		
+		if (spphre == null || ventilHsup == null)
+			return false;
+		
+		boolean equal = true;
+
+		int mSup25 = ventilHsup.getMSup25() - ventilHsup.getMSup25Recup();
+		equal &= Integer.compare(mSup25, helperService.convertMairieNbHeuresFormatToMinutes(spphre.getNbh25())) == 0;
+		
+		int mSup50 = ventilHsup.getMSup50() - ventilHsup.getMSup50Recup();
+		equal &= Integer.compare(mSup50, helperService.convertMairieNbHeuresFormatToMinutes(spphre.getNbh50())) == 0;
+		
+		int mSdjf = ventilHsup.getMsdjf() - ventilHsup.getMsdjfRecup();
+		equal &= Integer.compare(mSdjf, helperService.convertMairieNbHeuresFormatToMinutes(spphre.getNbhdim())) == 0;
+		
+		int mMai = ventilHsup.getMMai() - ventilHsup.getMMaiRecup();
+		equal &= Integer.compare(mMai, helperService.convertMairieNbHeuresFormatToMinutes(spphre.getNbhmai())) == 0;
+		
+		int mSNuit = ventilHsup.getMsNuit() - ventilHsup.getMsNuitRecup();
+		equal &= Integer.compare(mSNuit, helperService.convertMairieNbHeuresFormatToMinutes(spphre.getNbhnuit())) == 0;
+		
+		int mSimple = ventilHsup.getMSimple() - ventilHsup.getMSimpleRecup();
+		equal &= Integer.compare(mSimple, helperService.convertMairieNbHeuresFormatToMinutes(spphre.getNbhssimple())) == 0;
+		
+		int mComposees = ventilHsup.getMComposees() - ventilHsup.getMComposeesRecup();
+		equal &= Integer.compare(mComposees, helperService.convertMairieNbHeuresFormatToMinutes(spphre.getNbhscomposees())) == 0;
+		
+		int nbHcomplementaires = ventilHsup.getMNormales() - ventilHsup.getMNormalesRecup();
+		equal &= Integer.compare(nbHcomplementaires, helperService.convertMairieNbHeuresFormatToMinutes(spphre.getNbhcomplementaires())) == 0;
+		
+		int nbhrecuperees = ventilHsup.getMRecuperees() + ventilHsup.getMRappelService();
+		equal &= Integer.compare(nbhrecuperees, helperService.convertMairieNbHeuresFormatToMinutes(spphre.getNbhrecuperees())) == 0;
+		
+		logger.debug("Equal comparison between spphre and ventilHsup for matricule {} and dateLundi {} is {}.", ventilHsup.getIdAgent(), spphre.getId().getDatJour(), equal);
+		
+		return equal;
+	}
 	
 	protected List<Pointage> processPrimesVentilationForMonthAndAgent(VentilDate ventilDate, Integer idAgent,
 			Date dateDebutMois, Date fromVentilDate, AgentStatutEnum statut) {
