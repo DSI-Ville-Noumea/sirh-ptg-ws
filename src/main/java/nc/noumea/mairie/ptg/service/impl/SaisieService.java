@@ -428,10 +428,9 @@ public class SaisieService implements ISaisieService {
 				if (pointageToDelete.getLatestEtatPointage().getEtat() == EtatPointageEnum.SAISI) {
 					pointageRepository.removeEntity(pointageToDelete);
 					continue;
-				// sinon message erreur
-				// #15502
+				// sinon message erreur (#15502)
 				} else {
-					result.getErrors().add("Vous ne pouvez pas supprimer un pointage à l'état Validée ou Approuvée.");
+					result.getErrors().add("Vous ne pouvez pas supprimer un pointage s'il n'est pas à l'état Saisi.");
 				}
 			}
 		}
