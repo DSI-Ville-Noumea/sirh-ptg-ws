@@ -39,6 +39,9 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 	public final static int INDEMNITE_FORFAITAIRE_TRAVAIL_DPM = 7714;
 	public final static int				INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_SAMEDI	= 7718;
 	public final static int				INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_DJF		= 7719;
+
+	public final static int INDEMNITE_TRAVAIL_DJF = 7756;
+	public final static int INDEMNITE_TRAVAIL_NUIT = 7757;
 	
 	// List of rubrique to not aggregate because used for calculating other Primes
 	// #13327 HSup SIPRES (épandage) : creation d une prime FICTIVE 7760
@@ -107,7 +110,27 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 			primesByMonth.get(idRefPrime).addQuantite(null != quantite ? quantite.doubleValue() : 0.0);
 		}
 		
-		return new ArrayList<VentilPrime>(primesByMonth.values());
+		ArrayList<VentilPrime> returnList = new ArrayList<VentilPrime>(primesByMonth.values());
+		
+		// #46679 : Nouvelle prime, les quantités doivent être transformées
+		updateQuantiteForIndemniteNuitDJF(returnList);
+		
+		return returnList;
+	}
+	
+	/**
+	 * This method is used to transform minutes into hours, with a rounded result
+	 * See redmine #46679 for more details
+	 * @param list
+	 */
+	protected void updateQuantiteForIndemniteNuitDJF(List<VentilPrime> list) {
+		for (VentilPrime prime : list) {
+			if (prime.getRefPrime().getNoRubr().equals(INDEMNITE_TRAVAIL_DJF) || 
+					prime.getRefPrime().getNoRubr().equals(INDEMNITE_TRAVAIL_NUIT)) {
+				Double qtite = (double) Math.round(prime.getQuantite() / 60);
+				prime.setQuantite(qtite);
+			}
+		}
 	}
 	
 	@Override
