@@ -445,6 +445,8 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				if (ptg.getRefPrime().getTypeSaisie().equals(TypeSaisieEnum.PERIODE_HEURES)
 						&& ptg.getRefPrime().getNoRubr() != VentilationPrimeService.INDEMNITE_DE_ROULEMENT
 						&& ptg.getRefPrime().getNoRubr() != VentilationPrimeService.PRIME_RENFORT_GARDE
+						&& ptg.getRefPrime().getNoRubr() != VentilationPrimeService.INDEMNITE_TRAVAIL_DJF
+						&& ptg.getRefPrime().getNoRubr() != VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT
 						&& debut.get(Calendar.DAY_OF_MONTH) != fin.get(Calendar.DAY_OF_MONTH)) {
 					srm.getErrors()
 							.add(String.format(ERROR_PRIME_SAISIE_J1_POINTAGE, ptg.getRefPrime().getLibelle(), sdf.format(ptg.getDateDebut())));

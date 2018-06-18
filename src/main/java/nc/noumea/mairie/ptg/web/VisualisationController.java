@@ -80,7 +80,6 @@ public class VisualisationController {
 			@RequestParam("to") @DateTimeFormat(pattern = "yyyyMMdd") Date toDate, @RequestParam(value = "idAgents", required = false) String idAgents,
 			@RequestParam(value = "etat", required = false) Integer idRefEtat, @RequestParam(value = "type", required = false) Integer idRefType,
 			@RequestParam(value = "typeHS", required = false) String typeHS, @RequestParam(value = "dateEtat", required = false) @DateTimeFormat(pattern = "yyyyMMdd") Date dateEtat) {
-		// TODO : traiter le cas de typeHS pour info SIRH renvoi R ou RS.
 		logger.debug("entered GET [visualisation/pointagesSIRH] => getListePointagesSIRH with parameters  from = {}, to = {},  idAgents = {}, etat = {}, type = {}, typeHS = {} and dateEtat = {}", fromDate,
 				toDate, idAgents, idRefEtat, idRefType, typeHS,dateEtat);
 

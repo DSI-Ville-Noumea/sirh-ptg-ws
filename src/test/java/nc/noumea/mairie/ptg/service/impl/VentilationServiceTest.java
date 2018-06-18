@@ -644,47 +644,6 @@ public class VentilationServiceTest {
 		assertEquals(ventilDate, ventilPrime.getVentilDate());
 		assertEquals(ventilDate, ventilPrime2.getVentilDate());
 	}
-	
-	@Test
-	public void processRoundingFor7756And7757() {
-		RefPrime refPrime1 = new RefPrime();
-		refPrime1.setNoRubr(7754);
-		RefPrime refPrime2 = new RefPrime();
-		refPrime2.setNoRubr(7756);
-		RefPrime refPrime3 = new RefPrime();
-		refPrime3.setNoRubr(7757);
-		
-		VentilPrime prime1 = new VentilPrime();
-		prime1.setRefPrime(refPrime1);
-		prime1.setQuantite(131d);
-		
-		VentilPrime prime2 = new VentilPrime();
-		prime2.setRefPrime(refPrime2);
-		prime2.setQuantite(149d);
-		
-		VentilPrime prime3 = new VentilPrime();
-		prime3.setRefPrime(refPrime2);
-		prime3.setQuantite(151d);
-		
-		VentilPrime prime4 = new VentilPrime();
-		prime4.setRefPrime(refPrime3);
-		prime4.setQuantite(750d);
-		
-		List<VentilPrime> list = new ArrayList<>();
-		list.add(prime1);
-		list.add(prime2);
-		list.add(prime3);
-		list.add(prime4);
-		
-		VentilationPrimeService service = new VentilationPrimeService();
-		
-		service.updateQuantiteForIndemniteNuitDJF(list);
-		
-		assertEquals((Double)list.get(0).getQuantite(), new Double(131));
-		assertEquals((Double)list.get(1).getQuantite(), new Double(2));
-		assertEquals((Double)list.get(2).getQuantite(), new Double(3));
-		assertEquals((Double)list.get(3).getQuantite(), new Double(13));
-	}
 
 	@Test
 	public void processPrimesVentilationForMonthAndAgent_VentilPrime_quantite0() {
