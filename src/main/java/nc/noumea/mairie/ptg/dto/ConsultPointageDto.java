@@ -2,9 +2,13 @@ package nc.noumea.mairie.ptg.dto;
 
 import java.util.Date;
 
+import org.joda.time.DateTime;
+import org.joda.time.Interval;
+
 import nc.noumea.mairie.ptg.domain.EtatPointage;
 import nc.noumea.mairie.ptg.domain.Pointage;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
+import nc.noumea.mairie.ptg.service.impl.VentilationPrimeService;
 
 public class ConsultPointageDto {
 
@@ -67,7 +71,14 @@ public class ConsultPointageDto {
 						quantite = helper.formatMinutesToString(ptg.getQuantite());
 						break;
 					case PERIODE_HEURES:
-						quantite = helper.formatMinutesToString(debut, fin);
+						// #46679 : Nouvelle prime, les quantités doivent être transformées pour arrondir chaque saisie et avoir la valeur en heures
+						if (ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT)
+								|| ptg.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF)) {
+							Integer tmp = (int) new Interval(new DateTime(ptg.getDateDebut()), (new DateTime(ptg.getDateFin())))
+									.toDuration().getStandardMinutes();
+							quantite = Math.round(tmp/60d) + "h";
+						} else 
+							quantite = helper.formatMinutesToString(debut, fin);
 						break;
 				}
 		}

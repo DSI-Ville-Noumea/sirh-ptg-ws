@@ -70,6 +70,61 @@ public class VentilationPrimeServiceTest {
 		// Then
 		assertEquals(0, result.size());
 	}
+	
+	@Test
+	public void getQuantiteFromPointageTest() {
+
+		// Given
+		RefPrime refPrime1 = new RefPrime();
+		refPrime1.setIdRefPrime(8907);
+		refPrime1.setNoRubr(8877);
+		refPrime1.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+
+		RefPrime refPrime2 = new RefPrime();
+		refPrime2.setIdRefPrime(8909);
+		refPrime2.setNoRubr(7757);
+		refPrime2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+
+		RefPrime refPrime3 = new RefPrime();
+		refPrime3.setIdRefPrime(8909);
+		refPrime3.setNoRubr(7756);
+		refPrime3.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
+
+		RefPrime refPrime4 = new RefPrime();
+		refPrime4.setIdRefPrime(8907);
+		refPrime4.setNoRubr(8877);
+		refPrime4.setTypeSaisie(TypeSaisieEnum.NB_INDEMNITES);
+		
+		VentilationPrimeService service = new VentilationPrimeService();
+
+		Pointage p1 = new Pointage();
+		p1.setQuantite(2);
+		p1.setDateDebut(new DateTime(2012, 04, 15, 8, 15, 0).toDate());
+		p1.setDateFin(new DateTime(2012, 04, 15, 11, 45, 0).toDate());
+		p1.setRefPrime(refPrime1);
+
+		Pointage p2 = new Pointage();
+		p2.setQuantite(3);
+		p2.setDateDebut(new DateTime(2012, 04, 15, 8, 15, 0).toDate());
+		p2.setDateFin(new DateTime(2012, 04, 15, 11, 45, 0).toDate());
+		p2.setRefPrime(refPrime2);
+
+		Pointage p3 = new Pointage();
+		p3.setDateDebut(new DateTime(2012, 04, 15, 8, 15, 0).toDate());
+		p3.setDateFin(new DateTime(2012, 04, 15, 11, 40, 0).toDate());
+		p3.setRefPrime(refPrime3);
+
+		Pointage p4 = new Pointage();
+		p4.setDateDebut(new DateTime(2012, 04, 15, 8, 15, 0).toDate());
+		p4.setDateFin(new DateTime(2012, 04, 15, 11, 45, 0).toDate());
+		p4.setQuantite(30);
+		p4.setRefPrime(refPrime4);
+
+		assertEquals((Integer)210, service.getQuantiteFromPointage(p1));
+		assertEquals((Integer)4, service.getQuantiteFromPointage(p2));
+		assertEquals((Integer)3, service.getQuantiteFromPointage(p3));
+		assertEquals((Integer)30, service.getQuantiteFromPointage(p4));
+	}
 
 	@Test
 	public void processPrimesAgent_2PrimesIn3Pointages_ReturnEmptyListOf2Aggregated() {

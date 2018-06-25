@@ -1010,7 +1010,7 @@ public class SaisieServiceTest {
 		// Then
 		Mockito.verify(pRepo, Mockito.times(0)).removeEntity(Mockito.isA(Pointage.class));
 		assertEquals(rmd.getErrors().get(0).toString(),
-				"Vous ne pouvez pas supprimer un pointage à l'état Validée ou Approuvée.");
+				"Vous ne pouvez pas supprimer un pointage s'il n'est pas à l'état Saisi.");
 	}
 
 	@Test

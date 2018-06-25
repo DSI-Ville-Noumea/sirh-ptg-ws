@@ -37,8 +37,11 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 	public final static int PRIME_RENFORT_GARDE = 7717;
 	public final static int INDEMNITE_DE_ROULEMENT = 7715;
 	public final static int INDEMNITE_FORFAITAIRE_TRAVAIL_DPM = 7714;
-	public final static int				INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_SAMEDI	= 7718;
-	public final static int				INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_DJF		= 7719;
+	public final static int	INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_SAMEDI	= 7718;
+	public final static int	INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_DJF		= 7719;
+
+	public final static int INDEMNITE_TRAVAIL_DJF = 7756;
+	public final static int INDEMNITE_TRAVAIL_NUIT = 7757;
 	
 	// List of rubrique to not aggregate because used for calculating other Primes
 	// #13327 HSup SIPRES (épandage) : creation d une prime FICTIVE 7760
@@ -150,7 +153,7 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 		return result;
 	}
 
-	private Integer getQuantiteFromPointage(Pointage ptg) {
+	protected Integer getQuantiteFromPointage(Pointage ptg) {
 		
 		switch (ptg.getRefPrime().getTypeSaisie()) {
 			case CASE_A_COCHER:
@@ -159,7 +162,15 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 				return ptg.getQuantite();
 
 			case PERIODE_HEURES:
-				return (int) new Interval(new DateTime(ptg.getDateDebut()), (new DateTime(ptg.getDateFin())))
+				// #46679 : Nouvelle prime, les quantités doivent être transformées pour arrondir chaque saisie et avoir la valeur en heures
+				if (ptg.getRefPrime().getNoRubr().equals(INDEMNITE_TRAVAIL_NUIT)
+						|| ptg.getRefPrime().getNoRubr().equals(INDEMNITE_TRAVAIL_DJF)) {
+					Integer tmp = (int) new Interval(new DateTime(ptg.getDateDebut()), (new DateTime(ptg.getDateFin())))
+							.toDuration().getStandardMinutes();
+					return (int) Math.round(tmp/60d);
+				}
+				else
+					return (int) new Interval(new DateTime(ptg.getDateDebut()), (new DateTime(ptg.getDateFin())))
 						.toDuration().getStandardMinutes();
 		}
 		
