@@ -33,6 +33,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.google.common.collect.Lists;
+
 public class PointageDataConsistencyRulesTest {
 
 	@Test
@@ -404,6 +406,89 @@ public class PointageDataConsistencyRulesTest {
 		assertEquals(0, result.getErrors().size());
 		assertEquals(0, result.getInfos().size());
 		assertEquals(p1.getHeureSupRecuperee(), true);
+	}
+
+	@Test
+	public void checkPrime7657_test_ok() {
+		// Given
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		RefPrime prime = new RefPrime();
+		prime.setNoRubr(7657);
+		
+		Pointage ptg = new Pointage();
+		ptg.setDateDebut(new DateTime(2018, 07, 06, 21, 15, 0).toDate());
+		ptg.setDateFin(new DateTime(2018, 07, 06, 04, 30, 0).toDate());
+		ptg.setRefPrime(prime);
+		ptg.setType(type);
+		
+		List<Pointage> pointages = Lists.newArrayList();
+		pointages.add(ptg);
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+
+		// When
+		ReturnMessageDto result = service.checkPrime7657(new ReturnMessageDto(), pointages);
+
+		// Then
+		assertEquals(0, result.getErrors().size());
+	}
+
+	@Test
+	public void checkPrime7657_test_ko() {
+		// Given
+		RefTypePointage type = new RefTypePointage();
+		type.setIdRefTypePointage(RefTypePointageEnum.PRIME.getValue());
+		RefPrime prime = new RefPrime();
+		prime.setNoRubr(7657);
+		
+		Pointage ptg = new Pointage();
+		ptg.setDateDebut(new DateTime(2018, 07, 6, 21, 15, 0).toDate());
+		ptg.setDateFin(new DateTime(2018, 07, 7, 6, 30, 0).toDate());
+		ptg.setType(type);
+		ptg.setRefPrime(prime);
+		
+		Pointage ptg2 = new Pointage();
+		ptg2.setDateDebut(new DateTime(2018, 07, 9, 19, 59, 0).toDate());
+		ptg2.setDateFin(new DateTime(2018, 07, 10, 4, 30, 0).toDate());
+		ptg2.setType(type);
+		ptg2.setRefPrime(prime);
+		
+		Pointage ptg3 = new Pointage();
+		ptg3.setDateDebut(new DateTime(2018, 07, 10, 20, 45, 0).toDate());
+		ptg3.setDateFin(new DateTime(2018, 07, 11, 05, 45, 0).toDate());
+		ptg3.setType(type);
+		ptg3.setRefPrime(prime);
+		
+		Pointage ptg4 = new Pointage();
+		ptg4.setDateDebut(new DateTime(2018, 07, 11, 20, 45, 0).toDate());
+		ptg4.setDateFin(new DateTime(2018, 07, 12, 4, 15, 0).toDate());
+		ptg4.setType(type);
+		ptg4.setRefPrime(prime);
+		
+		Pointage ptg5 = new Pointage();
+		ptg5.setDateDebut(new DateTime(2018, 07, 12, 20, 45, 0).toDate());
+		ptg5.setDateFin(new DateTime(2018, 07, 13, 5, 14, 0).toDate());
+		ptg5.setType(type);
+		ptg5.setRefPrime(prime);
+		
+		List<Pointage> pointages = Lists.newArrayList();
+		pointages.add(ptg);
+		pointages.add(ptg2);
+		pointages.add(ptg3);
+		pointages.add(ptg4);
+		pointages.add(ptg5);
+
+		PointageDataConsistencyRules service = new PointageDataConsistencyRules();
+
+		// When
+		ReturnMessageDto result = service.checkPrime7657(new ReturnMessageDto(), pointages);
+
+		// Then
+		assertEquals(result.getErrors().size(), 3);
+		assertEquals(result.getErrors().get(0), "La prime 7657 du 06/07/2018 n'est pas valide. Elle ne peut être saisie qu'entre 20h et 06h.");
+		assertEquals(result.getErrors().get(1), "La prime 7657 du 09/07/2018 n'est pas valide. Elle ne peut être saisie qu'entre 20h et 06h.");
+		assertEquals(result.getErrors().get(2), "Pour le pointage du 10/07/2018, il faut 8h pleines comprises entre 20h et 6h.");
 	}
 
 	@Test

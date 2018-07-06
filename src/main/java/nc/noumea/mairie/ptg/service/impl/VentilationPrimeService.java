@@ -40,8 +40,8 @@ public class VentilationPrimeService implements IVentilationPrimeService {
 	public final static int	INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_SAMEDI	= 7718;
 	public final static int	INDEMNITE_FORFAITAIRE_TRAVAIL_DPM_DJF		= 7719;
 
-	public final static int INDEMNITE_TRAVAIL_DJF = 7756;
-	public final static int INDEMNITE_TRAVAIL_NUIT = 7757;
+	public final static int INDEMNITE_TRAVAIL_DJF = 7656;
+	public final static int INDEMNITE_TRAVAIL_NUIT = 7657;
 	
 	// List of rubrique to not aggregate because used for calculating other Primes
 	// #13327 HSup SIPRES (épandage) : creation d une prime FICTIVE 7760

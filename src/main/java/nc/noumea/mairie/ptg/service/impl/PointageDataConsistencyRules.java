@@ -2,6 +2,7 @@ package nc.noumea.mairie.ptg.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.Interval;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.joda.time.Minutes;
 import org.slf4j.Logger;
@@ -83,6 +85,7 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public static final String			ERROR_PRIME_EPANDAGE_QUANTITE	= "Pour la prime %s du %s, la quantité ne peut être supérieure à 2.";
 	public static final String			ERROR_PRIME_JOURS_FERIE			= "La prime %s du %s, ne peut être saisie qu'un samedi, dimanche ou jour férié.";
 	public static final String			ERROR_PRIME_DPM_INTERVALLE		= "Pour le pointage du %s, il faut au moins 5 minutes comprises entre 5h et 21h.";
+	public static final String			ERROR_PRIME_RI_NUIT_INTERVAL	= "Pour le pointage du %s, il faut 8h pleines comprises entre 20h et 6h.";
 	public static final String			ERROR_ABSENCE_GREVE				= "Pour l'absence sans titre du %s, le type d'absence ne peut être %s. Ce type est reservé à la DRH.";
 
 	public static final List<String>	ACTIVITE_CODES					= Arrays.asList("01", "02", "03", "04", "23", "24", "60", "61", "62", "63", "64", "65", "66");
@@ -125,7 +128,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			// pour chaque pointage on verifie si en recup
 			// si oui, on ajoute des erreurs
 			// #6843 attention on ne check pas les primes
-			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum())) {
+			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum()) /*|| 
+					p.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT) || 
+					p.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF)*/) {
 				result = absWsConsumer.checkAbsences(idAgent, p.getDateDebut(), p.getDateFin());
 			}
 
@@ -234,6 +239,62 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 
 		}
 
+		return srm;
+	}
+
+	// #47288 : Prime 7656 : Régime indémnitaire DJF
+	protected ReturnMessageDto checkPrime7656(ReturnMessageDto srm, List<Pointage> pointages) {
+
+		for (Pointage ptg : pointages) {
+			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7656))
+				continue;
+
+			DateTime deb = new DateTime(ptg.getDateDebut());
+
+			if (deb.getDayOfWeek() != DateTimeConstants.SUNDAY && !sirhWsConsumer.isHoliday(deb))
+				srm.getErrors().add(String.format("La prime 7656 du %s n'est pas valide. Elle ne peut être saisie qu'un dimanche ou jour férié.",
+						deb.toString("dd/MM/yyyy")));
+
+		}
+
+		return srm;
+	}
+
+	// #47288 : Prime 7657 : Régime indémnitaire du nuit
+	// Entre 20h et 06h : Le temps doit être de 8h
+	// Entre 21h et 05h : pas de limite basse.
+	protected ReturnMessageDto checkPrime7657(ReturnMessageDto srm, List<Pointage> pointages) {
+
+		for (Pointage ptg : pointages) {
+			if (ptg.getTypePointageEnum() != RefTypePointageEnum.PRIME || !ptg.getRefPrime().getNoRubr().equals(7657))
+				continue;
+
+			DateTime deb = new DateTime(ptg.getDateDebut());
+			DateTime fin = new DateTime(ptg.getDateFin());
+			
+			DateTime debutReferenceAM = new DateTime(ptg.getDateDebut()).withHourOfDay(PointageCalculeService.HEURE_DEBUT_REGIME_INDEMNITAIRE_NUIT).withMinuteOfHour(0);
+			DateTime debutReferencePM = new DateTime(ptg.getDateDebut()).withHourOfDay(PointageCalculeService.HEURE_FIN_REGIME_INDEMNITAIRE_NUIT).withMinuteOfHour(0);
+			DateTime finReferenceAM = new DateTime(ptg.getDateFin()).withHourOfDay(PointageCalculeService.HEURE_DEBUT_REGIME_INDEMNITAIRE_NUIT).withMinuteOfHour(0);
+			DateTime finReferencePM = new DateTime(ptg.getDateFin()).withHourOfDay(PointageCalculeService.HEURE_FIN_REGIME_INDEMNITAIRE_NUIT).withMinuteOfHour(0);
+			
+			// Si l'heure de début ou de fin est comprise entre 06h et 20h, on bloque la saisie.
+			// Il faut aussi penser à bloquer si la date de début est le avant 06h, et la date de fin après 20h
+			if ((deb.isAfter(debutReferenceAM) && deb.isBefore(debutReferencePM))
+					|| (fin.isBefore(finReferencePM) && fin.isAfter(finReferenceAM))
+					|| (deb.isBefore(debutReferencePM) && fin.isAfter(finReferenceAM))) {
+				srm.getErrors().add(String.format("La prime 7657 du %s n'est pas valide. Elle ne peut être saisie qu'entre 20h et 06h.",deb.toString("dd/MM/yyyy")));
+			}
+			
+			// S'il y a une heure de début comprise entre 20h et 21h ou une heure de début comprise entre 05h et 06h, on vérifie que la saisie fait bien 8h
+			else if (((Integer)deb.getHourOfDay()).equals(20) || (((Integer)fin.getHourOfDay()).equals(5) && fin.getMinuteOfHour() != 0)) {
+				Interval interval = new Interval(deb, fin);
+				// Il faut avoir 8h après arrondi. => Entre 7h30(450min) et 8h29(509min)
+				if (interval.toDuration().getStandardMinutes() < 450 || interval.toDuration().getStandardMinutes() > 509)
+					srm.getErrors().add(String.format(ERROR_PRIME_RI_NUIT_INTERVAL, sdf.format(ptg.getDateDebut())));
+			}
+			
+		}
+		
 		return srm;
 	}
 
@@ -400,6 +461,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		checkPrime7651(srm, idAgent, dateLundi, pointages);
 		checkPrime7652(srm, idAgent, dateLundi, pointages);
 		checkPrime7704(srm, idAgent, dateLundi, pointages);
+		// # : Ajout des régimes indemnitaires
+		checkPrime7656(srm, pointages);
+		checkPrime7657(srm, pointages);
 		// #35605 : pour la prime DPM 7714, on ne peut la saisir que sur
 		// samed/dimanche et jours féries
 		checkPrimeHsup7714(srm, idAgent, dateLundi, pointages);
