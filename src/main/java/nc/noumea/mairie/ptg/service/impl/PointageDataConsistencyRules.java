@@ -636,6 +636,14 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	}
 
 	@Override
+	public ReturnMessageDto checkDateNotSuperieurDateJour(ReturnMessageDto srm, Date date, String errorMessage) {
+		if (date.after(new Date())) {
+			srm.getErrors().add(errorMessage);
+		}
+		return srm;
+	}
+
+	@Override
 	public ReturnMessageDto checkPrimeHsup7714(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages) {
 
 
