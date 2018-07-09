@@ -124,13 +124,14 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 	public ReturnMessageDto checkAbsences(ReturnMessageDto srm, Integer idAgent, List<Pointage> pointages) {
 		ReturnMessageDto result = new ReturnMessageDto();
 		for (Pointage p : pointages) {
+			
+			boolean isRegimeIndemnitaire = p.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT) || 
+					p.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF);
 
 			// pour chaque pointage on verifie si en recup
 			// si oui, on ajoute des erreurs
 			// #6843 attention on ne check pas les primes
-			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum()) /*|| 
-					p.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT) || 
-					p.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF)*/) {
+			if (!RefTypePointageEnum.PRIME.equals(p.getTypePointageEnum()) || isRegimeIndemnitaire) {
 				result = absWsConsumer.checkAbsences(idAgent, p.getDateDebut(), p.getDateFin());
 			}
 
@@ -138,7 +139,11 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 				srm.getInfos().add(info);
 			}
 			for (String erreur : result.getErrors()) {
-				srm.getErrors().add(erreur);
+				// #47288 : On ne bloque pas la saisie pour les régimes indemnitaires.
+				if (isRegimeIndemnitaire)
+					srm.getInfos().add(erreur);
+				else
+					srm.getErrors().add(erreur);
 			}
 		}
 		return srm;
