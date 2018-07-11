@@ -38,6 +38,8 @@ public interface IPointageDataConsistencyRules {
 	ReturnMessageDto checkPrimeHsup7714(ReturnMessageDto srm, Integer idAgent, Date dateLundi, List<Pointage> pointages);
 
 	ReturnMessageDto checkDateLundiNotSuperieurDateJour(ReturnMessageDto srm, Date dateLundi);
+	
+	ReturnMessageDto checkDateNotSuperieurDateJour(ReturnMessageDto srm, Date date, String errorMessage);
 
 	DateTime getDateDebut(Integer dateDeb, Integer codem1);
 

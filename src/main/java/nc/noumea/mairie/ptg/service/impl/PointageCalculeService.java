@@ -45,6 +45,9 @@ public class PointageCalculeService implements IPointageCalculeService {
 
 	public static int			HEURE_JOUR_DEBUT_PRIME_DPM	= 5;
 	public static int			HEURE_JOUR_FIN_PRIME_DPM	= 21;
+
+	public static int			HEURE_DEBUT_REGIME_INDEMNITAIRE_NUIT	= 6;
+	public static int			HEURE_FIN_REGIME_INDEMNITAIRE_NUIT		= 20;
 	// pour la prime DPM : 4h minimum
 	public static int			SEUIL_MINI_PRIME_DPM		= 4 * 60;
 

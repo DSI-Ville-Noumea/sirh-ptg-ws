@@ -81,6 +81,8 @@ public class SaisieService implements ISaisieService {
 	private String sirhAbsDateBlocagePointage;
 	
 	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/YYYY HH:mm");
+	
+	private static String REGIMES_INDEMNITAIRES_DATE_FUTURE = "Les régimes indemnitaires ne peuvent être saisis dans le futur.";
 
 	@Override
 	public ReturnMessageDto saveFichePointage(Integer idAgentOperator, FichePointageDtoKiosque fichePointageDto)
@@ -202,7 +204,16 @@ public class SaisieService implements ISaisieService {
 						&& (prime.getQuantite() == null || prime.getQuantite().equals(0))) {
 					continue;
 				}
-
+				
+				// #47288 : Les régimes indemnitaires ne peuvent pas être saisis dans le futur.
+				if (prime.getNumRubrique() != null && 
+						(prime.getNumRubrique().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT) ||
+						prime.getNumRubrique().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF))) {
+					ptgDataCosistencyRules.checkDateNotSuperieurDateJour(result, prime.getHeureDebut(), REGIMES_INDEMNITAIRES_DATE_FUTURE);
+				}
+				if (!result.getErrors().isEmpty())
+					continue;
+					
 				// Try to retrieve in the existing original pointages if it
 				// exists
 				Pointage ptg = findPointageAndRemoveFromOriginals(originalAgentPointages, prime);
@@ -666,6 +677,15 @@ public class SaisieService implements ISaisieService {
 						&& (prime.getQuantite() == null || prime.getQuantite().equals(0))) {
 					continue;
 				}
+				
+				// #47288 : Les régimes indemnitaires ne peuvent pas être saisis dans le futur.
+				if (prime.getNumRubrique() != null && 
+						(prime.getNumRubrique().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT) ||
+						prime.getNumRubrique().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF))) {
+					ptgDataCosistencyRules.checkDateNotSuperieurDateJour(result, prime.getHeureDebutDate(), REGIMES_INDEMNITAIRES_DATE_FUTURE);
+				}
+				if (!result.getErrors().isEmpty())
+					continue;
 
 				// Try to retrieve in the existing original pointages if it
 				// exists

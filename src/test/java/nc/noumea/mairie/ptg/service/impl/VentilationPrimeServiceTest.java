@@ -82,12 +82,12 @@ public class VentilationPrimeServiceTest {
 
 		RefPrime refPrime2 = new RefPrime();
 		refPrime2.setIdRefPrime(8909);
-		refPrime2.setNoRubr(7757);
+		refPrime2.setNoRubr(7657);
 		refPrime2.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 
 		RefPrime refPrime3 = new RefPrime();
 		refPrime3.setIdRefPrime(8909);
-		refPrime3.setNoRubr(7756);
+		refPrime3.setNoRubr(7656);
 		refPrime3.setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 
 		RefPrime refPrime4 = new RefPrime();
