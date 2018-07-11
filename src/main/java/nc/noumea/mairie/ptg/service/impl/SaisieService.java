@@ -206,8 +206,9 @@ public class SaisieService implements ISaisieService {
 				}
 				
 				// #47288 : Les régimes indemnitaires ne peuvent pas être saisis dans le futur.
-				if (prime.getNumRubrique().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT) ||
-						prime.getNumRubrique().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF)) {
+				if (prime.getNumRubrique() != null && 
+						(prime.getNumRubrique().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT) ||
+						prime.getNumRubrique().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF))) {
 					ptgDataCosistencyRules.checkDateNotSuperieurDateJour(result, prime.getHeureDebut(), REGIMES_INDEMNITAIRES_DATE_FUTURE);
 				}
 				if (!result.getErrors().isEmpty())
