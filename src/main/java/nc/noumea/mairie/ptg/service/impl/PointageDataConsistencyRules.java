@@ -291,7 +291,9 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 			}
 			
 			// S'il y a une heure de début comprise entre 20h et 21h ou une heure de début comprise entre 05h et 06h, on vérifie que la saisie fait bien 8h
-			else if (((Integer)deb.getHourOfDay()).equals(20) || (((Integer)fin.getHourOfDay()).equals(5) && fin.getMinuteOfHour() != 0)) {
+			else if (((Integer)deb.getHourOfDay()).equals(20) ||
+					((Integer)fin.getHourOfDay()).equals(6) ||
+					(((Integer)fin.getHourOfDay()).equals(5) && fin.getMinuteOfHour() != 0)) {
 				Interval interval = new Interval(deb, fin);
 				// Il faut avoir 8h après arrondi. => Entre 7h30(450min) et 8h29(509min)
 				if (interval.toDuration().getStandardMinutes() < 450 || interval.toDuration().getStandardMinutes() > 509)
