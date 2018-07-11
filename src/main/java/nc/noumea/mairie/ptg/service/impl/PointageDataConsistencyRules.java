@@ -125,8 +125,10 @@ public class PointageDataConsistencyRules implements IPointageDataConsistencyRul
 		ReturnMessageDto result = new ReturnMessageDto();
 		for (Pointage p : pointages) {
 			
-			boolean isRegimeIndemnitaire = p.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT) || 
-					p.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF);
+			boolean isRegimeIndemnitaire = p.getRefPrime() != null &&
+					p.getRefPrime().getNoRubr() != null &&
+					(p.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT) || 
+					p.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF));
 
 			// pour chaque pointage on verifie si en recup
 			// si oui, on ajoute des erreurs
