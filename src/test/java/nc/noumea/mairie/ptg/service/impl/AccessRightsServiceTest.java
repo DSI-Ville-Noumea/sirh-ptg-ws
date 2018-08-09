@@ -19,6 +19,8 @@ import org.mockito.stubbing.Answer;
 import org.springframework.mock.staticmock.MockStaticEntityMethods;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import com.google.common.collect.Lists;
+
 import nc.noumea.mairie.ads.dto.EntiteDto;
 import nc.noumea.mairie.ptg.domain.Droit;
 import nc.noumea.mairie.ptg.domain.DroitsAgent;
@@ -1867,9 +1869,11 @@ public class AccessRightsServiceTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 
 		Droit droitAppro = new Droit();
+		List<Droit> listDroits = Lists.newArrayList();
+		listDroits.add(droitAppro);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.getListApprobateurs(idAgent)).thenReturn(listDroits);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
@@ -1895,9 +1899,11 @@ public class AccessRightsServiceTest {
 		ReturnMessageDto result = new ReturnMessageDto();
 
 		Droit droitAppro = new Droit();
-
+		List<Droit> listDroits = Lists.newArrayList();
+		listDroits.add(droitAppro);
+		
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.getListApprobateurs(idAgent)).thenReturn(listDroits);
 		Mockito.when(arRepo.isUserOperator(9009999)).thenReturn(true);
 
 		AgentGeneriqueDto ag = new AgentGeneriqueDto();
@@ -1963,9 +1969,11 @@ public class AccessRightsServiceTest {
 
 		Droit droitAppro = new Droit();
 		droitAppro.setIdAgentDelegataire(9009999);
+		List<Droit> listDroits = Lists.newArrayList();
+		listDroits.add(droitAppro);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getApprobateurFetchOperateurs(idAgent)).thenReturn(droitAppro);
+		Mockito.when(arRepo.getListApprobateurs(idAgent)).thenReturn(listDroits);
 
 		AccessRightsService service = new AccessRightsService();
 		ReflectionTestUtils.setField(service, "accessRightsRepository", arRepo);
