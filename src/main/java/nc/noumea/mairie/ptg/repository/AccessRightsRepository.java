@@ -167,6 +167,21 @@ public class AccessRightsRepository implements IAccessRightsRepository {
 	}
 
 	@Override
+	public List<Droit> getListApprobateurs(Integer idAgentApprobateur) {
+
+		TypedQuery<Droit> q = ptgEntityManager.createQuery(
+				"from Droit d where d.idAgent = :idAgent and d.approbateur = true", Droit.class);
+		q.setParameter("idAgent", idAgentApprobateur);
+
+		List<Droit> r = q.getResultList();
+
+		if (r.size() == 0)
+			return null;
+
+		return r;
+	}
+
+	@Override
 	public Droit getApprobateur(Integer idAgentApprobateur) {
 
 		TypedQuery<Droit> q = ptgEntityManager.createQuery(
