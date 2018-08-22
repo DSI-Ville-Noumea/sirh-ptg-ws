@@ -452,7 +452,7 @@ public class AccessRightsServiceTest {
 		d.setApprobateur(true);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getDroitApprobateurByAgent(agentDto.getIdAgent())).thenReturn(d);
+		Mockito.when(arRepo.getApprobateur(agentDto.getIdAgent())).thenReturn(d);
 
 		HelperService helperService = Mockito.mock(HelperService.class);
 		Mockito.when(helperService.getCurrentDate()).thenReturn(new Date());
@@ -508,7 +508,9 @@ public class AccessRightsServiceTest {
 		d.setApprobateur(true);
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getDroitApprobateurByAgent(null)).thenReturn(d);
+		List<Droit> droits = Lists.newArrayList();
+		droits.add(d);
+		Mockito.when(arRepo.getListApprobateurs(null)).thenReturn(droits);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return true;
@@ -540,7 +542,9 @@ public class AccessRightsServiceTest {
 		Date date = new Date();
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getDroitApprobateurByAgent(agentDto.getIdAgent())).thenReturn(d);
+		List<Droit> droits = Lists.newArrayList();
+		droits.add(d);
+		Mockito.when(arRepo.getListApprobateurs(agentDto.getIdAgent())).thenReturn(droits);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return true;
@@ -594,7 +598,10 @@ public class AccessRightsServiceTest {
 		Date date = new Date();
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getDroitApprobateurByAgent(agentDto.getIdAgent())).thenReturn(d);
+		List<Droit> droits = Lists.newArrayList();
+		droits.add(d);
+		Mockito.when(arRepo.getListApprobateurs(agentDto.getIdAgent())).thenReturn(droits);
+		
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return true;
@@ -670,7 +677,9 @@ public class AccessRightsServiceTest {
 		Date date = new Date();
 
 		IAccessRightsRepository arRepo = Mockito.mock(IAccessRightsRepository.class);
-		Mockito.when(arRepo.getDroitApprobateurByAgent(agentDto.getIdAgent())).thenReturn(d);
+		List<Droit> droits = Lists.newArrayList();
+		droits.add(d);
+		Mockito.when(arRepo.getListApprobateurs(agentDto.getIdAgent())).thenReturn(droits);
 		Mockito.doAnswer(new Answer<Object>() {
 			public Object answer(InvocationOnMock invocation) {
 				return true;

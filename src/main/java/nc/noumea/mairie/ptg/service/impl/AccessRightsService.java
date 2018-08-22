@@ -309,7 +309,7 @@ public class AccessRightsService implements IAccessRightsService {
 	public ReturnMessageDto setApprobateur(AgentWithServiceDto dto) {
 		ReturnMessageDto res = new ReturnMessageDto();
 
-		Droit d = accessRightsRepository.getDroitApprobateurByAgent(dto.getIdAgent());
+		Droit d = accessRightsRepository.getApprobateur(dto.getIdAgent());
 		if (d == null) {
 			d = new Droit();
 			d.setApprobateur(true);
@@ -324,34 +324,13 @@ public class AccessRightsService implements IAccessRightsService {
 	@Override
 	public ReturnMessageDto deleteApprobateur(AgentWithServiceDto dto) {
 		ReturnMessageDto res = new ReturnMessageDto();
-		Droit d = accessRightsRepository.getDroitApprobateurByAgent(dto.getIdAgent());
-		if (d != null) {
-			// First, we remove all the agents this approbateur was approving
-			// this will also delete all the agents its operateurs were filling
-			// in for
-			for (DroitsAgent agentSaisiToDelete : d.getAgents()) {
-				// #29466 suite a une evol sur les transfert de droit (duplication)
-				// un agent peut avoir plusieurs approbateurs
-				// donc ne pas supprimer a tous les coups
-				boolean isOtherApprobateur = false;
-				for(Droit droitOtherRole : agentSaisiToDelete.getDroits()) {
-					if(!droitOtherRole.getIdDroit().equals(d.getIdDroit())
-							&& droitOtherRole.isApprobateur()) {
-						isOtherApprobateur = true;
-						break;
-					}
-				}
-				if(!isOtherApprobateur) {
-					agentSaisiToDelete.getDroits().clear();
-					accessRightsRepository.removeEntity(agentSaisiToDelete);
-				}else{
-					agentSaisiToDelete.getDroits().remove(d);
-					accessRightsRepository.persisEntity(agentSaisiToDelete);
-				}
-			}
-			
-			for (Droit operateur : d.getOperateurs()) {
-				for (DroitsAgent agentSaisiToDelete : operateur.getAgents()) {
+		List<Droit> droits = accessRightsRepository.getListApprobateurs(dto.getIdAgent());
+		for (Droit d : droits) {
+			if (d != null) { 
+				// First, we remove all the agents this approbateur was approving
+				// this will also delete all the agents its operateurs were filling
+				// in for
+				for (DroitsAgent agentSaisiToDelete : d.getAgents()) {
 					// #29466 suite a une evol sur les transfert de droit (duplication)
 					// un agent peut avoir plusieurs approbateurs
 					// donc ne pas supprimer a tous les coups
@@ -367,15 +346,38 @@ public class AccessRightsService implements IAccessRightsService {
 						agentSaisiToDelete.getDroits().clear();
 						accessRightsRepository.removeEntity(agentSaisiToDelete);
 					}else{
-						agentSaisiToDelete.getDroits().remove(operateur);
+						agentSaisiToDelete.getDroits().remove(d);
 						accessRightsRepository.persisEntity(agentSaisiToDelete);
 					}
 				}
+				
+				for (Droit operateur : d.getOperateurs()) {
+					for (DroitsAgent agentSaisiToDelete : operateur.getAgents()) {
+						// #29466 suite a une evol sur les transfert de droit (duplication)
+						// un agent peut avoir plusieurs approbateurs
+						// donc ne pas supprimer a tous les coups
+						boolean isOtherApprobateur = false;
+						for(Droit droitOtherRole : agentSaisiToDelete.getDroits()) {
+							if(!droitOtherRole.getIdDroit().equals(d.getIdDroit())
+									&& droitOtherRole.isApprobateur()) {
+								isOtherApprobateur = true;
+								break;
+							}
+						}
+						if(!isOtherApprobateur) {
+							agentSaisiToDelete.getDroits().clear();
+							accessRightsRepository.removeEntity(agentSaisiToDelete);
+						}else{
+							agentSaisiToDelete.getDroits().remove(operateur);
+							accessRightsRepository.persisEntity(agentSaisiToDelete);
+						}
+					}
+				}
+				// Then we delete the approbateur
+				accessRightsRepository.removeEntity(d);
+			} else {
+				res.getErrors().add("Aucun droit trouvé pour l'agent " + dto.getIdAgent());
 			}
-			// Then we delete the approbateur
-			accessRightsRepository.removeEntity(d);
-		} else {
-			res.getErrors().add("Aucun droit trouvé pour l'agent " + dto.getIdAgent());
 		}
 		return res;
 	}
