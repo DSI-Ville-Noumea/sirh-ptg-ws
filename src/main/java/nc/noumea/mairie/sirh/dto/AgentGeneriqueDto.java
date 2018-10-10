@@ -10,8 +10,9 @@ public class AgentGeneriqueDto {
 	private String nomUsage;
 	private String prenom;
 	private String prenomUsage;
-	// #40074 optimisation our Tickets restaurant
+	// #40074 optimisation pour Tickets restaurant
 	private Integer	idTicketRestaurant;
+	private String	idTiarhe;
 
 	public Integer getIdTicketRestaurant() {
 		return idTicketRestaurant;
@@ -83,5 +84,13 @@ public class AgentGeneriqueDto {
 
 	public void setPrenomUsage(String prenomUsage) {
 		this.prenomUsage = prenomUsage;
+	}
+
+	public String getIdTiarhe() {
+		return idTiarhe;
+	}
+
+	public void setIdTiarhe(String idTiarhe) {
+		this.idTiarhe = idTiarhe;
 	}
 }

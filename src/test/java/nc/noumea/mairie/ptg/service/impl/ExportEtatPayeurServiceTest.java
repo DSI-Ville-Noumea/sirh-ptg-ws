@@ -486,6 +486,7 @@ public class ExportEtatPayeurServiceTest {
 		Mockito.when(hS.getMairieMatrFromIdAgent(9008989)).thenReturn(8989);
 		Mockito.when(hS.formatMinutesToString(-30)).thenReturn("- 30m");
 		Mockito.when(hS.formatMinutesToString(30)).thenReturn("30m");
+		Mockito.when(hS.formatMinutesToString(null)).thenReturn("");
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 9, 8, 0, 0, 0).toDate());
 
 		IVentilationRepository vR = Mockito.mock(IVentilationRepository.class);
@@ -1677,7 +1678,7 @@ public class ExportEtatPayeurServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		result = service.getHeuresSupEtatPayeurDataForStatut(idAgent, result, toVentilDate, fromVentilDate);
+		result = service.getHeuresSupEtatPayeurDataForStatut(idAgent, result, toVentilDate, fromVentilDate, false);
 
 		assertNull(result);
 	}
@@ -1748,7 +1749,7 @@ public class ExportEtatPayeurServiceTest {
 		ReflectionTestUtils.setField(service, "ventilationRepository", vR);
 		ReflectionTestUtils.setField(service, "helperService", helperService);
 
-		result = service.getHeuresSupEtatPayeurDataForStatut(idAgent, result, toVentilDate, fromVentilDate);
+		result = service.getHeuresSupEtatPayeurDataForStatut(idAgent, result, toVentilDate, fromVentilDate, false);
 
 		assertNotNull(result.getHeuresSup());
 		assertEquals("", result.getHeuresSup().getNormales());

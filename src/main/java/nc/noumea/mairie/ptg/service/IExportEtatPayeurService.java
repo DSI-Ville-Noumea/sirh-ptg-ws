@@ -1,10 +1,14 @@
 package nc.noumea.mairie.ptg.service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.TypeChainePaieEnum;
 import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
+import nc.noumea.mairie.ptg.dto.evp.EVPDto;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 
 public interface IExportEtatPayeurService {
@@ -68,4 +72,8 @@ public interface IExportEtatPayeurService {
 	void stopExportEtatsPayeur(TypeChainePaieEnum typeChainePaie) throws WorkflowInvalidStateException;
 
 	EtatPayeurDto getEtatPayeurDataForStatut(AgentStatutEnum statut);
+
+	EVPDto getDataForEVP(String statut);
+	
+	byte[] exportEVP(EVPDto evpDto, String sheetName) throws FileNotFoundException, IOException;
 }

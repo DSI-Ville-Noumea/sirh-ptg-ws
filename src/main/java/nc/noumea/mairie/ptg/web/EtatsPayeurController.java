@@ -1,12 +1,18 @@
 package nc.noumea.mairie.ptg.web;
 
+import java.io.IOException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,6 +30,7 @@ import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.ListEtatsPayeurDto;
+import nc.noumea.mairie.ptg.dto.evp.EVPDto;
 import nc.noumea.mairie.ptg.service.IEtatPayeurService;
 import nc.noumea.mairie.ptg.service.IExportEtatPayeurService;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
@@ -44,7 +51,9 @@ public class EtatsPayeurController {
 
 	@Autowired
 	private IEtatPayeurService			etatPayeurService;
-
+	
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+	
 	@ResponseBody
 	@RequestMapping(value = "/xml/getEtatPayeur", produces = "application/xml", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
@@ -155,5 +164,28 @@ public class EtatsPayeurController {
 		}
 
 		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+
+	@ResponseBody
+	@RequestMapping(value = "/xml/getEVP", produces = "application/xml", method = RequestMethod.GET)
+	@Transactional(readOnly = true)
+	public ResponseEntity<byte[]> getXmlPreviousEtatsPayeur(@RequestParam("chainePaie") String chainePaie, HttpServletRequest request, HttpServletResponse response) throws ParseException, IOException {
+
+		logger.debug("entered GET [etatsPayeur/xml/getEVP] => getEVP with parameter statut = {}.", chainePaie);
+
+		if (!chainePaie.equals(TypeChainePaieEnum.SCV.toString()) && !chainePaie.equals(TypeChainePaieEnum.SHC.toString())) {
+			logger.error("Aucun statut ne correspond à cet argument.");
+		}
+
+		EVPDto result = exportEtatPayeurService.getDataForEVP(chainePaie);
+		byte[] byteArray = exportEtatPayeurService.exportEVP(result, chainePaie);
+		
+		logger.debug("Export done");
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Content-Type", "application/pdf");
+		headers.add("Content-Disposition", String.format("attachment; filename=\"VDN_EVP_"+chainePaie+"_"+sdf.format(new Date())+".xls\""));
+
+		return new ResponseEntity<byte[]>(byteArray, headers, HttpStatus.OK);
 	}
 }

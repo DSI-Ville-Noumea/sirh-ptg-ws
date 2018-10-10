@@ -1,16 +1,26 @@
 package nc.noumea.mairie.ptg.service.impl;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.h2.util.StringUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Lists;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
@@ -35,6 +45,8 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurVo;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
+import nc.noumea.mairie.ptg.dto.evp.EVPDto;
+import nc.noumea.mairie.ptg.dto.evp.EVPElementDto;
 import nc.noumea.mairie.ptg.reporting.EtatPayeurReporting;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
@@ -44,6 +56,7 @@ import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
 import nc.noumea.mairie.ptg.workflow.WorkflowInvalidStateException;
 import nc.noumea.mairie.repository.IMairieRepository;
 import nc.noumea.mairie.sirh.dto.AgentGeneriqueDto;
+import nc.noumea.mairie.titreRepas.repository.ITitreRepasRepository;
 import nc.noumea.mairie.ws.IAbsWsConsumer;
 import nc.noumea.mairie.ws.ISirhWSConsumer;
 
@@ -66,6 +79,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 	@Autowired
 	private IMairieRepository mairieRepository;
+
+	@Autowired
+	private ITitreRepasRepository trRepository;
 
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
@@ -121,8 +137,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	}
 
 	public AbstractItemEtatPayeurDto getHeuresSupEtatPayeurDataForStatut(Integer idAgent,
-			AbstractItemEtatPayeurDto result, VentilDate toVentilDate, VentilDate fromVentilDate) {
-
+			AbstractItemEtatPayeurDto result, VentilDate toVentilDate, VentilDate fromVentilDate, Boolean isForEVP) {
+		
 		List<HeuresSupEtatPayeurVo> listHSupEtatPayeur = new ArrayList<HeuresSupEtatPayeurVo>();
 
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
@@ -137,11 +153,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 				vhOld = ventilationRepository.getPriorVentilHSupAgentAndDate(vh.getIdAgent(), vh.getDateLundi(), vh);
 			}
 
-			// 3. Then create the DTOs for HSups
-			// #14640 on n affiche pas les heures sup recuperees
-			if (vh.getMHorsContrat() - vh.getMRecuperees() != 0
-					|| (null != vhOld && vhOld.getMHorsContrat() - vhOld.getMRecuperees() != 0)) {
-				HeuresSupEtatPayeurVo dtoHsup = new HeuresSupEtatPayeurVo(vh, vhOld);
+			// 3. Then create the DTOs for HSups : #14640 on n affiche pas les heures sup recuperees
+			if (vh.getMHorsContrat() - vh.getMRecuperees() != 0 || (null != vhOld && vhOld.getMHorsContrat() - vhOld.getMRecuperees() != 0)) {
+				HeuresSupEtatPayeurVo dtoHsup = new HeuresSupEtatPayeurVo(vh, vhOld, isForEVP);
 				listHSupEtatPayeur.add(dtoHsup);
 			}
 		}
@@ -176,8 +190,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 			// 3. Then create the DTOs for Primes
 			// #18592 supprimer les lignes a 0
-			if(null != vp
-					&& null != vp.getQuantite()) {
+			if(null != vp && null != vp.getQuantite()) {
 				double qte = vp.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0);
 			
 				if(0 != qte) {
@@ -202,10 +215,23 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		item.getAgent().setNom(ag.getDisplayNom());
 		item.getAgent().setPrenom(ag.getDisplayPrenom());
 		item.getAgent().setNomatr(ag.getNomatr());
+		item.getAgent().setIdAgent(idAgent);
 
 		AgentWithServiceDto agDto = sirhWsConsumer.getAgentService(idAgent, helperService.getCurrentDate());
 		// #17897 dans le cas ou les agents n ont plus d affectation
 		item.getAgent().setSigleService(null != agDto ? agDto.getSigleService() : "");
+	}
+	
+	protected void fillAgentsDataWithoutService(AbstractItemEtatPayeurDto item, Integer idAgent, Date fromVentilDate) {
+
+		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
+		
+		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), fromVentilDate);
+		Integer cdCate = carr.getCdcate();
+		
+		item.getAgent().setStatut(cdCate.toString());
+		item.getAgent().setIdTiarhe(ag.getIdTiarhe());
+		item.getAgent().setIdAgent(idAgent);
 	}
 
 	/**
@@ -522,8 +548,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		for (Integer idAgent : ventilationRepository
 				.getListOfAgentWithDateForEtatPayeur(toVentilDate.getIdVentilDate())) {
 
-			// 1. Verify whether this agent is eligible, through its
-			// AgentStatutEnum (Spcarr)
+			// 1. Verify whether this agent is eligible, through its AgentStatutEnum (Spcarr)
 			if (!isAgentEligibleToVentilation(idAgent, statut, toVentilDate.getDateVentilation())) {
 				logger.info("Agent {} not eligible for Etats payeurs (status not matching), skipping to next.", idAgent);
 				continue;
@@ -534,7 +559,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			result.getAgents().add(dto);
 			// on rempli les informations
 			getAbsencesEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate);
-			getHeuresSupEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate);
+			getHeuresSupEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate, false);
 			getPrimesEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate);
 
 			// #15314 si tout est vide, on supprime la ligne
@@ -552,5 +577,308 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		}
 
 		return result;
+	}
+
+	@Override
+	public EVPDto getDataForEVP(String chainePaieString) {
+
+		TypeChainePaieEnum chainePaie = chainePaieString.equals(TypeChainePaieEnum.SHC.toString()) ? TypeChainePaieEnum.SHC : TypeChainePaieEnum.SCV;
+
+		VentilDate toVentilDate = ventilationRepository.getLatestVentilDate(chainePaie, true);
+
+		if (toVentilDate == null) {
+			logger.error("Impossible to retrieve data for Etats Payeur, there is no unpaid ventilation for TypeChainePaie [{}]", chainePaie);
+			return new EVPDto();
+		}
+
+		EtatPayeurDto result = new EtatPayeurDto(toVentilDate.getDateVentilation());
+
+		VentilDate fromVentilDate = ventilationRepository.get2ndLatestVentilDate(chainePaie, true);
+		
+		List<Integer> listIdsAgents = ventilationRepository.getListOfAgentWithDateForEtatPayeur(toVentilDate.getIdVentilDate());
+		
+		logger.info("Processing list of {} agents.", listIdsAgents.size());
+		// on recupere tous les agents des différentes tables
+		for (Integer idAgent : listIdsAgents) {
+			
+			// on cree l'agent
+			AbstractItemEtatPayeurDto dto = new AbstractItemEtatPayeurDto();
+			fillAgentsDataWithoutService(dto, idAgent, fromVentilDate.getDateVentilation());
+			result.getAgents().add(dto);
+			
+			// on rempli les informations
+			getHeuresSupEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate, true);
+			getPrimesEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate);
+			
+			// #15314 si tout est vide, on supprime la ligne
+			if (dto.getHeuresSup().getDjf() == null && dto.getHeuresSup().getH1Mai() == null
+					&& dto.getHeuresSup().getNormales() == null && dto.getHeuresSup().getNuit() == null
+					&& dto.getHeuresSup().getSup25() == null && dto.getHeuresSup().getSup50() == null) {
+				if (dto.getPrimes() == null || dto.getPrimes().size() == 0) {
+					result.getAgents().remove(dto);
+				}
+			}
+		}
+
+		result.setChainePaie(chainePaieString);
+		logger.info("Mapping the result");
+		return mapEVP(result);
+	}
+	
+	private EVPDto mapEVP(EtatPayeurDto etatPayeur) {
+		EVPDto evp = new EVPDto();
+		
+		evp.setChainePaie(etatPayeur.getChainePaie());
+		SimpleDateFormat sdfVentil = new SimpleDateFormat("yyMM", Locale.FRENCH);
+		try {
+			evp.setDatePeriodePaie(sdfVentil.parse(etatPayeur.getDateVentilation()));
+		} catch (Exception e) {
+			
+		}
+		
+		logger.info("Mapping primes");
+		mapPrimes(evp, etatPayeur);
+		logger.info("Mapping h. supp.");
+		mapHSupp(evp, etatPayeur);
+		// Récupération des TR pour les ajouter aux EVP
+		logger.info("Mapping TR");
+		mapTR(evp, etatPayeur);
+		
+		return evp;
+	}
+	
+	private void mapPrimes(EVPDto evp, EtatPayeurDto etatPayeur) {
+		
+		List<EVPElementDto> listEVP;
+		
+		AgentWithServiceDto newAgent;
+		EVPElementDto elementEVP;
+		
+		for (AbstractItemEtatPayeurDto item : etatPayeur.getAgents()) {
+			listEVP = Lists.newArrayList();
+			newAgent = item.getAgent();
+			
+			for (PrimesEtatPayeurDto prime : item.getPrimes()) {
+
+				String type = "";
+				
+				switch (prime.getNorubr()) {
+					case 7121 : type = "IN9";
+						break;
+					case 7650 : type = "INE";
+						break;
+					case 7651 : type = "INF";
+						break;
+					case 7652 : type = "ING";
+						break;
+					case 7656 : type = "INU";
+						break;
+					case 7657 : type = "INV";
+						break;
+					case 7705 : type = "INI";
+						break;
+					case 7708 : type = "Oui";
+						break;
+					case 7709 : type = "INJ";
+						break;
+					case 7710 : type = "INK";
+						break;
+					case 7711 : type = "INL";
+						break;
+					case 7712 : type = "INM";
+						break;
+					case 7713 : type = "INN";
+						break;
+					case 7718 : type = "INO";
+						break;
+					case 7719 : type = "INP";
+						break;
+					case 7720 : type = "INQ";
+						break;
+					case 7721 : type = "INR";
+						break;
+					case 7722 : type = "INS";
+						break;
+				}
+				
+				elementEVP = new EVPElementDto();
+				elementEVP.setQuantite(prime.getQuantite());
+				elementEVP.setRubrique(type);
+				elementEVP.setPeriodeEV(prime.getDate());
+				listEVP.add(elementEVP);
+			}
+			
+			evp.getElements().put(newAgent, listEVP);
+		}
+	}
+
+	private void mapTR(EVPDto evp, EtatPayeurDto etatPayeur) {
+		List<EVPElementDto> listEVP;
+		AgentWithServiceDto newAgent;
+		EVPElementDto elementEVP;
+		
+		List<Integer> listIDAgentWithTR = trRepository.getListIdAgentWithTitreRepasByMonth(evp.getDatePeriodePaie());
+		
+		logger.info("Processing {} TR ...", listIDAgentWithTR.size());
+		Integer i = 0;
+		
+		for (Integer ida : listIDAgentWithTR) {
+			Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(ida), evp.getDatePeriodePaie());
+			
+			// Les TR n'ont pas de distinction sur le statut des agents. Il faut donc faire le filtre.
+			if (etatPayeur.getChainePaie().equals(TypeChainePaieEnum.SHC.toString()) && carr.getCdcate() == 7)
+				continue;
+			if (etatPayeur.getChainePaie().equals(TypeChainePaieEnum.SCV.toString()) && carr.getCdcate() != 7)
+				continue;
+			
+			elementEVP = new EVPElementDto();
+			elementEVP.setQuantite("15");
+			elementEVP.setRubrique("OTR");
+			elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
+
+			newAgent = new AgentWithServiceDto();
+			newAgent.setIdAgent(ida);
+			
+			// Si l'agent existe, on ajoute le TR, sinon on le créé.
+			if (evp.getElements().containsKey(newAgent)) {
+				evp.getElements().get(newAgent).add(elementEVP);
+			} else {
+				AgentGeneriqueDto age = sirhWsConsumer.getAgent(ida);
+				newAgent.setIdTiarhe(age.getIdTiarhe());
+				
+				listEVP = Lists.newArrayList();
+				listEVP.add(elementEVP);
+				evp.getElements().put(newAgent, listEVP);
+			}
+			++i;
+		}
+
+		logger.info("{} TR finally processed...", i);
+	}
+
+	private void mapHSupp(EVPDto evp, EtatPayeurDto etatPayeur) {
+		List<EVPElementDto> listEVP;
+		AgentWithServiceDto newAgent;
+		EVPElementDto elementEVP;
+		
+		for (AbstractItemEtatPayeurDto a : etatPayeur.getAgents()) {
+			if (a.getHeuresSup() != null) {
+				listEVP = Lists.newArrayList();
+				newAgent = new AgentWithServiceDto();
+				String statusAgent = a.getAgent().getStatut();
+				newAgent.setIdAgent(a.getAgent().getIdAgent());
+				newAgent.setIdTiarhe(a.getAgent().getIdTiarhe());
+				
+				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getDjf())) {
+					elementEVP = new EVPElementDto();
+					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
+					elementEVP.setQuantite(a.getHeuresSup().getDjf());
+					elementEVP.setRubrique(statusAgent.equals("4") ? "HCM" : statusAgent.equals("7") ? "HDF" : "HBA");
+					listEVP.add(elementEVP);
+				}
+				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getH1Mai())) {
+					elementEVP = new EVPElementDto();
+					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
+					elementEVP.setQuantite(a.getHeuresSup().getH1Mai());
+					elementEVP.setRubrique(statusAgent.equals("4") ? "HCM" : statusAgent.equals("7") ? "HDF" : "HBF");
+					listEVP.add(elementEVP);
+				}
+				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getNormales())) {
+					elementEVP = new EVPElementDto();
+					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
+					elementEVP.setQuantite(a.getHeuresSup().getNormales());
+					elementEVP.setRubrique(statusAgent.equals("4") ? "HCJ" : statusAgent.equals("7") ? "" : "HBE");
+					listEVP.add(elementEVP);
+				}
+				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getNuit())) {
+					elementEVP = new EVPElementDto();
+					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
+					elementEVP.setQuantite(a.getHeuresSup().getNuit());
+					elementEVP.setRubrique(statusAgent.equals("4") ? "HCN" : statusAgent.equals("7") ? "HDS" : "HBN");
+					listEVP.add(elementEVP);
+				}
+				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getSup25())) {
+					elementEVP = new EVPElementDto();
+					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
+					elementEVP.setQuantite(a.getHeuresSup().getSup25());
+					elementEVP.setRubrique(statusAgent.equals("4") ? "HCK" : statusAgent.equals("7") ? "HDP" : "");
+					listEVP.add(elementEVP);
+				}
+				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getSup50())) {
+					elementEVP = new EVPElementDto();
+					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
+					elementEVP.setQuantite(a.getHeuresSup().getSup50());
+					elementEVP.setRubrique(statusAgent.equals("4") ? "HCL" : statusAgent.equals("7") ? "HDQ" : "");
+					listEVP.add(elementEVP);
+				}
+				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getSimples())) {
+					elementEVP = new EVPElementDto();
+					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
+					elementEVP.setQuantite(a.getHeuresSup().getSimples());
+					elementEVP.setRubrique(statusAgent.equals("4") ? "" : statusAgent.equals("7") ? "" : "HBK");
+					listEVP.add(elementEVP);
+				}
+				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getComposees())) {
+					elementEVP = new EVPElementDto();
+					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
+					elementEVP.setQuantite(a.getHeuresSup().getComposees());
+					elementEVP.setRubrique(statusAgent.equals("4") ? "" : statusAgent.equals("7") ? "" : "HBL");
+					listEVP.add(elementEVP);
+				}
+				
+				// Si l'agent existe, on ajoute les h. supp., sinon on créé l'agent avec ses heures.
+				if (evp.getElements().containsKey(newAgent)) {
+					evp.getElements().get(newAgent).addAll(listEVP);
+				} else {
+					ArrayList<EVPElementDto> listNewEVP = Lists.newArrayList();
+					listNewEVP.addAll(listEVP);
+					evp.getElements().put(newAgent, listNewEVP);
+				}
+			}
+		}
+	}
+
+	@Override
+	public byte[] exportEVP(EVPDto evpDto, String sheetName) throws FileNotFoundException, IOException {
+		
+	    HSSFWorkbook wb = new HSSFWorkbook();
+	    SimpleDateFormat sdf = new SimpleDateFormat("MMyy");
+	    Sheet sheet1 = wb.createSheet(sheetName);
+	    
+	    // En-têtes
+	    Row row = sheet1.createRow(0);
+	    row.createCell(0).setCellValue("Soccle");
+	    row.createCell(1).setCellValue("Matcle");
+		row.createCell(2).setCellValue("Rubrique");
+		row.createCell(3).setCellValue("Format");
+		row.createCell(4).setCellValue("Nombre/base");
+		row.createCell(5).setCellValue("Montant/Taux sal.");
+		row.createCell(6).setCellValue("Période d'origine");
+		row.createCell(7).setCellValue("Période de paie");
+	    row.createCell(8).setCellValue("IdAgent");
+	    // Fin des en-têtes
+	    
+	    Integer i = 1;
+	    
+	    for (Map.Entry<AgentWithServiceDto,List<EVPElementDto>> entry : evpDto.getElements().entrySet()) {
+			AgentWithServiceDto key = entry.getKey();
+			
+			for (EVPElementDto elt : entry.getValue()) {
+			    row = sheet1.createRow(i);
+			    row.createCell(0).setCellValue("18");
+			    row.createCell(1).setCellValue(key.getIdTiarhe());
+				row.createCell(2).setCellValue(elt.getRubrique());
+				row.createCell(3).setCellValue("Q");
+				row.createCell(4).setCellValue(elt.getQuantite());
+				row.createCell(5).setCellValue("");
+				row.createCell(6).setCellValue(sdf.format(elt.getPeriodeEV()));
+				row.createCell(7).setCellValue(sdf.format(evpDto.getDatePeriodePaie()));
+				row.createCell(8).setCellValue(entry.getKey().getIdAgent());
+			    ++i;
+			}
+		}
+
+	    // Write the output to a file
+	    return wb.getBytes();
 	}
 }

@@ -12,6 +12,8 @@ public class HeuresSupEtatPayeurDto {
 	private String nuit;
 	private String djf;
 	private String h1Mai;
+	private String simples;
+	private String composees;
 
 	public HeuresSupEtatPayeurDto() {
 
@@ -25,6 +27,8 @@ public class HeuresSupEtatPayeurDto {
 		int mH1Mai = 0;
 		int mNuit = 0;
 		int mNormales = 0;
+		int mSimples = 0;
+		int mComposees = 0;
 		
 		if(null != listHSupEtatPayeur) {
 			for(HeuresSupEtatPayeurVo vo : listHSupEtatPayeur) {
@@ -34,6 +38,8 @@ public class HeuresSupEtatPayeurDto {
 				mH1Mai += vo.getH1Mai();
 				mNuit += vo.getNuit();
 				mNormales += vo.getNormales();
+				mSimples += vo.getSimples();
+				mComposees += vo.getComposees();
 			}
 		}
 		
@@ -43,6 +49,8 @@ public class HeuresSupEtatPayeurDto {
 		h1Mai = hS.formatMinutesToString(mH1Mai);
 		nuit = hS.formatMinutesToString(mNuit);
 		normales = hS.formatMinutesToString(mNormales);
+		simples = hS.formatMinutesToString(mSimples);
+		composees = hS.formatMinutesToString(mComposees);
 	}
 
 	public String getSup25() {
@@ -91,6 +99,22 @@ public class HeuresSupEtatPayeurDto {
 
 	public void setNormales(String normales) {
 		this.normales = normales;
+	}
+
+	public String getSimples() {
+		return simples;
+	}
+
+	public void setSimples(String simples) {
+		this.simples = simples;
+	}
+
+	public String getComposees() {
+		return composees;
+	}
+
+	public void setComposees(String composees) {
+		this.composees = composees;
 	}
 
 }

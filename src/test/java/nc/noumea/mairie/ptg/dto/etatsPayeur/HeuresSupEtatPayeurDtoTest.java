@@ -45,6 +45,8 @@ public class HeuresSupEtatPayeurDtoTest {
 		vo1.setNuit(4);
 		vo1.setDjf(5);
 		vo1.setH1Mai(6);
+		vo1.setSimples(0);
+		vo1.setComposees(0);
 		
 		HeuresSupEtatPayeurVo vo2 = new HeuresSupEtatPayeurVo();
 		vo2.setNormales(10);
@@ -53,6 +55,8 @@ public class HeuresSupEtatPayeurDtoTest {
 		vo2.setNuit(40);
 		vo2.setDjf(50);
 		vo2.setH1Mai(60);
+		vo2.setSimples(0);
+		vo2.setComposees(0);
 		
 		listHSupEtatPayeur.add(vo1);
 		listHSupEtatPayeur.add(vo2);

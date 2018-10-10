@@ -40,4 +40,6 @@ public interface ITitreRepasRepository {
 
 	List<TitreRepasExportEtatPayeurData> getTitreRepasEtatPayeurDataByTask(Integer idTitreRepasExportEtatsPayeurTask);
 
+	List<Integer> getListIdAgentWithTitreRepasByMonth(Date dateDebutMois);
+
 }

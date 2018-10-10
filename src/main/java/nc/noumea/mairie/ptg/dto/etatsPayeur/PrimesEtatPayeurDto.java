@@ -11,6 +11,7 @@ public class PrimesEtatPayeurDto {
 	private String type;
 	private String quantite;
 	private Date date;
+	private Integer norubr;
 
 	public PrimesEtatPayeurDto() {
 
@@ -25,6 +26,7 @@ public class PrimesEtatPayeurDto {
 	public PrimesEtatPayeurDto(VentilPrime vpNew, VentilPrime vpOld, HelperService hS) {
 
 		this.type = vpNew.getRefPrime().getLibelle();
+		this.norubr = vpNew.getRefPrime().getNoRubr();
 		this.date = vpNew.getDatePrime();
 
 		switch (vpNew.getRefPrime().getTypeSaisie()) {
@@ -72,5 +74,13 @@ public class PrimesEtatPayeurDto {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public Integer getNorubr() {
+		return norubr;
+	}
+
+	public void setNorubr(Integer norubr) {
+		this.norubr = norubr;
 	}
 }

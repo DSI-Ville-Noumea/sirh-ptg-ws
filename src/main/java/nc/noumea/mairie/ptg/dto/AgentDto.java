@@ -8,6 +8,7 @@ public class AgentDto {
 	private String prenom;
 	private Integer idAgent;
 	private Integer nomatr;
+	private String idTiarhe;
 
 	public AgentDto() {
 
@@ -19,6 +20,7 @@ public class AgentDto {
 			prenom = agent.getDisplayPrenom();
 			idAgent = agent.getIdAgent();
 			nomatr = agent.getNomatr();
+			idTiarhe = agent.getIdTiarhe();
 		}
 	}
 
@@ -52,6 +54,14 @@ public class AgentDto {
 
 	public void setNomatr(Integer nomatr) {
 		this.nomatr = nomatr;
+	}
+
+	public String getIdTiarhe() {
+		return idTiarhe;
+	}
+
+	public void setIdTiarhe(String idTiarhe) {
+		this.idTiarhe = idTiarhe;
 	}
 
 	@Override

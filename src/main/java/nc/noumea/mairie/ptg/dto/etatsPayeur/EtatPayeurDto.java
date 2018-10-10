@@ -37,6 +37,13 @@ public class EtatPayeurDto {
 		this.dateVentilation = sdfVentil.format(dateVentilation);
 	}
 
+	public EtatPayeurDto(Date dateVentilation) {
+		this();
+		this.agents = new ArrayList<AbstractItemEtatPayeurDto>();
+		SimpleDateFormat sdfVentil = new SimpleDateFormat("yyMM", Locale.FRENCH);
+		this.dateVentilation = sdfVentil.format(dateVentilation);
+	}
+
 	public String getChainePaie() {
 		return chainePaie;
 	}

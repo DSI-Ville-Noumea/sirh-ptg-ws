@@ -9,7 +9,9 @@ public class HeuresSupEtatPayeurVo {
 	private Integer sup50;
 	private Integer nuit;
 	private Integer djf;
-	private Integer h1Mai;
+	private Integer h1Mai;	
+	private Integer simples;
+	private Integer composees;
 
 	public HeuresSupEtatPayeurVo() {
 
@@ -17,6 +19,54 @@ public class HeuresSupEtatPayeurVo {
 
 	public HeuresSupEtatPayeurVo(VentilHsup vh) {
 		this(vh, null);
+	}
+
+	public HeuresSupEtatPayeurVo(VentilHsup vhNew, VentilHsup vhOld, Boolean isForEVP) {
+
+		// #14640 retirer les heures recuperees 
+		int mSup25 = (vhNew.getMSup25() - vhNew.getMSup25Recup());
+		int mSup25Old = (vhOld != null ? vhOld.getMSup25() - vhOld.getMSup25Recup() : 0);
+		if (!isForEVP) {
+			mSup25 += vhNew.getMSimple() - vhNew.getMSimpleRecup();
+			mSup25Old += vhOld != null ? vhOld.getMSimple() - vhOld.getMSimpleRecup() : 0;
+			simples = 0;
+		}
+		sup25 = mSup25 - mSup25Old;
+		
+		int mSup50 = (vhNew.getMSup50() - vhNew.getMSup50Recup());
+		int mSup50Old = (vhOld != null ? vhOld.getMSup50() - vhOld.getMSup50Recup() : 0);
+		if (!isForEVP) {
+			mSup50 += vhNew.getMComposees() - vhNew.getMComposeesRecup();
+			mSup25Old += vhOld != null ? vhOld.getMComposees() - vhOld.getMComposeesRecup() : 0;
+			composees = 0;
+		}
+		sup50 = mSup50 - mSup50Old;
+		
+		int mDjf = vhNew.getMsdjf() - vhNew.getMsdjfRecup();
+		int mDjfOld = vhOld != null ? vhOld.getMsdjf() - vhOld.getMsdjfRecup() : 0;
+		djf = mDjf- mDjfOld;
+		
+		int mH1Mai = vhNew.getMMai() - vhNew.getMMaiRecup();
+		int mH1MaiOld = vhOld != null ? vhOld.getMMai() - vhOld.getMMaiRecup() : 0;
+		h1Mai = mH1Mai - mH1MaiOld;
+		
+		int mNuit = vhNew.getMsNuit() - vhNew.getMsNuitRecup();
+		int mNuitOld = vhOld != null ? vhOld.getMsNuit() - vhOld.getMsNuitRecup() : 0;
+		nuit = mNuit - mNuitOld;
+		
+		int mNormales = vhNew.getMNormales() - vhNew.getMNormalesRecup();
+		int mNormalesOld = vhOld != null ? vhOld.getMNormales() - vhOld.getMNormalesRecup() : 0;
+		normales = mNormales - mNormalesOld;
+		
+		if (isForEVP) {
+			int mSimples = vhNew.getMSimple() - vhNew.getMSimpleRecup();
+			int mSimpleOld = vhOld != null ? vhOld.getMSimple() - vhOld.getMSimpleRecup() : 0;
+			simples = mSimples - mSimpleOld;
+			
+			int mComposees = vhNew.getMComposees() - vhNew.getMComposeesRecup();
+			int mComposeesOld = vhOld != null ? vhOld.getMComposees() - vhOld.getMComposeesRecup() : 0;
+			composees = mComposees - mComposeesOld;
+		}
 	}
 
 	public HeuresSupEtatPayeurVo(VentilHsup vhNew, VentilHsup vhOld) {
@@ -47,6 +97,14 @@ public class HeuresSupEtatPayeurVo {
 		int mNormales = vhNew.getMNormales() - vhNew.getMNormalesRecup();
 		int mNormalesOld = vhOld != null ? vhOld.getMNormales() - vhOld.getMNormalesRecup() : 0;
 		normales = mNormales - mNormalesOld;
+		
+		int mSimples = vhNew.getMSimple() - vhNew.getMSimpleRecup();
+		int mSimpleOld = vhOld != null ? vhOld.getMSimple() - vhOld.getMSimpleRecup() : 0;
+		simples = mSimples - mSimpleOld;
+		
+		int mComposees = vhNew.getMComposees() - vhNew.getMComposeesRecup();
+		int mComposeesOld = vhOld != null ? vhOld.getMComposees() - vhOld.getMComposeesRecup() : 0;
+		composees = mComposees - mComposeesOld;
 	}
 
 	public Integer getNormales() {
@@ -95,6 +153,22 @@ public class HeuresSupEtatPayeurVo {
 
 	public void setH1Mai(Integer h1Mai) {
 		this.h1Mai = h1Mai;
+	}
+
+	public Integer getSimples() {
+		return simples;
+	}
+
+	public void setSimples(Integer simples) {
+		this.simples = simples;
+	}
+
+	public Integer getComposees() {
+		return composees;
+	}
+
+	public void setComposees(Integer composees) {
+		this.composees = composees;
 	}
 	
 }

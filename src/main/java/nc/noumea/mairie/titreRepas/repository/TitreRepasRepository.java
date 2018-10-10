@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -106,6 +107,29 @@ public class TitreRepasRepository implements ITitreRepasRepository {
 		if (null != dateMonth) {
 			query.setParameter("dateMonth", dateMonth);
 		}
+
+		return query.getResultList();
+	}
+	
+	@Override
+	public List<Integer> getListIdAgentWithTitreRepasByMonth(Date dateDebutMois) {
+		if (dateDebutMois == null) {
+			logger.error("Aucune date n'a été définie.");
+		}
+		
+		logger.debug("in getListIdAgentWithTitreRepasByMonth()");
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append("select distinct(c.idAgent) from TitreRepasDemande c ");
+		sb.append("JOIN c.etats et0 ");
+		sb.append("where c.commande is true ");
+		sb.append("and et0 in ( select max(et) from TitreRepasEtatDemande et group by et.titreRepasDemande ) ");
+		sb.append("and et0.etat = 9 ");
+		sb.append("and c.dateMonth = :dateMonth ");
+
+		TypedQuery<Integer> query = ptgEntityManager.createQuery(sb.toString(), Integer.class);
+
+		query.setParameter("dateMonth", new DateTime(dateDebutMois).withDayOfMonth(1).toDate());
 
 		return query.getResultList();
 	}

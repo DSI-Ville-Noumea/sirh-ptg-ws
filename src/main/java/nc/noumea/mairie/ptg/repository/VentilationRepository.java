@@ -475,6 +475,22 @@ public class VentilationRepository implements IVentilationRepository {
 	}
 
 	@Override
+	public VentilDate get2ndLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid) {
+
+		TypedQuery<VentilDate> q = ptgEntityManager
+				.createQuery("SELECT d FROM VentilDate d where d.typeChainePaie = :chainePaie and d.paye = :paid ORDER BY d.dateVentilation desc",
+						VentilDate.class);
+
+		q.setParameter("chainePaie", chainePaie);
+		q.setParameter("paid", isPaid);
+		q.setMaxResults(2);
+
+		List<VentilDate> list = q.getResultList();
+
+		return list.size() == 0 ? null : list.get(1);
+	}
+
+	@Override
 	public void removeVentilationsForDateAgentAndType(VentilDate ventilDate, Integer idAgent,
 			RefTypePointageEnum typePointage) {
 

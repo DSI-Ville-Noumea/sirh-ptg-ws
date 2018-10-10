@@ -33,6 +33,8 @@ public interface IVentilationRepository {
 	List<Integer> getListIdAgentsForExportPaie(Integer idVentilDate);
 
 	VentilDate getLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid);
+	
+	VentilDate get2ndLatestVentilDate(TypeChainePaieEnum chainePaie, boolean isPaid);
 
 	void removeVentilationsForDateAgentAndType(VentilDate ventilDate, Integer idAgent, RefTypePointageEnum typePointage);
 
