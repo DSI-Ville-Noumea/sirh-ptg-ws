@@ -39,14 +39,14 @@ public class PrimesEtatPayeurDto {
 				if (vpNew.getRefPrime().getMairiePrimeTableEnum() == MairiePrimeTableEnum.SPPRIM) {
 					Double qte = vpNew.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0);
 					double quantiteArrondie = hS.convertMinutesToMairieNbHeuresFormat(qte.intValue());
-					this.quantite = hS.formatMinutesToString(((int) Math.ceil(quantiteArrondie))*60);
+					this.quantite = hS.formatMinutesToStringForEVP(((int) Math.ceil(quantiteArrondie))*60);
 				} else {
-					this.quantite = hS.formatMinutesToString(vpNew.getQuantite().intValue()
+					this.quantite = hS.formatMinutesToStringForEVP(vpNew.getQuantite().intValue()
 							- (vpOld != null ? vpOld.getQuantite().intValue() : 0));
 				}
 				break;
 			case PERIODE_HEURES:
-				this.quantite = hS.formatMinutesToString(vpNew.getQuantite().intValue()
+				this.quantite = hS.formatMinutesToStringForEVP(vpNew.getQuantite().intValue()
 						- (vpOld != null ? vpOld.getQuantite().intValue() : 0));
 				break;
 		}

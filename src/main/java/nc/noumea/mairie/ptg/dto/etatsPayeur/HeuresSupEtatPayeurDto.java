@@ -19,7 +19,7 @@ public class HeuresSupEtatPayeurDto {
 
 	}
 
-	public HeuresSupEtatPayeurDto(List<HeuresSupEtatPayeurVo> listHSupEtatPayeur, HelperService hS) {
+	public HeuresSupEtatPayeurDto(List<HeuresSupEtatPayeurVo> listHSupEtatPayeur, HelperService hS, boolean isForEVP) {
 
 		int mSup25 = 0;
 		int mSup50 = 0;
@@ -43,14 +43,25 @@ public class HeuresSupEtatPayeurDto {
 			}
 		}
 		
-		sup25 = hS.formatMinutesToString(mSup25);
-		sup50 = hS.formatMinutesToString(mSup50);
-		djf = hS.formatMinutesToString(mDjf);
-		h1Mai = hS.formatMinutesToString(mH1Mai);
-		nuit = hS.formatMinutesToString(mNuit);
-		normales = hS.formatMinutesToString(mNormales);
-		simples = hS.formatMinutesToString(mSimples);
-		composees = hS.formatMinutesToString(mComposees);
+		if (!isForEVP) {
+			sup25 = hS.formatMinutesToString(mSup25);
+			sup50 = hS.formatMinutesToString(mSup50);
+			djf = hS.formatMinutesToString(mDjf);
+			h1Mai = hS.formatMinutesToString(mH1Mai);
+			nuit = hS.formatMinutesToString(mNuit);
+			normales = hS.formatMinutesToString(mNormales);
+			simples = hS.formatMinutesToString(mSimples);
+			composees = hS.formatMinutesToString(mComposees);
+		} else {
+			sup25 = hS.formatMinutesToStringForEVP(mSup25);
+			sup50 = hS.formatMinutesToStringForEVP(mSup50);
+			djf = hS.formatMinutesToStringForEVP(mDjf);
+			h1Mai = hS.formatMinutesToStringForEVP(mH1Mai);
+			nuit = hS.formatMinutesToStringForEVP(mNuit);
+			normales = hS.formatMinutesToStringForEVP(mNormales);
+			simples = hS.formatMinutesToStringForEVP(mSimples);
+			composees = hS.formatMinutesToStringForEVP(mComposees);
+		}
 	}
 
 	public String getSup25() {

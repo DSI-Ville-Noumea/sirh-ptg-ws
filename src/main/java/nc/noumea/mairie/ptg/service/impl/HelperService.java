@@ -142,6 +142,26 @@ public class HelperService {
 		return sb.toString();
 	}
 
+	public String formatMinutesToStringForEVP(Integer minutes) {
+		if (minutes == null || minutes == 0)
+			return null;
+		double absMinutes = Math.abs(minutes);
+		double nbHours = absMinutes / 60d;
+
+		double roundedValue = Math.round(nbHours * 100.0) / 100.0;
+		String stringValue = String.valueOf(roundedValue);
+		
+		stringValue = stringValue.replace('.', ',');
+	
+		if (stringValue.indexOf(',') == -1) {
+			stringValue += ",00";
+		} else if (stringValue.indexOf(',') == stringValue.length()-2) {
+			stringValue += "0";
+		}
+	
+		return stringValue;
+	}
+
 	private static PeriodFormatter formatter = new PeriodFormatterBuilder().appendDays().appendSuffix("j")
 			.appendHours().appendSuffix("h").appendMinutes().appendSuffix("m").toFormatter();
 

@@ -166,7 +166,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		if (listHSupEtatPayeur == null || listHSupEtatPayeur.size() == 0) {
 			return null;
 		} else {
-			result.setHeuresSup(new HeuresSupEtatPayeurDto(listHSupEtatPayeur, helperService));
+			result.setHeuresSup(new HeuresSupEtatPayeurDto(listHSupEtatPayeur, helperService, isForEVP));
 		}
 
 		return result;
@@ -732,7 +732,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 				continue;
 			
 			elementEVP = new EVPElementDto();
-			elementEVP.setQuantite("15");
+			elementEVP.setQuantite("15,00");
 			elementEVP.setRubrique("OTR");
 			elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
 

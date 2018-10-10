@@ -22,7 +22,7 @@ public class HeuresSupEtatPayeurDtoTest {
 
 		// When
 		Mockito.when(hS.formatMinutesToString(0)).thenReturn("");
-		HeuresSupEtatPayeurDto result = new HeuresSupEtatPayeurDto(listHSupEtatPayeur, hS);
+		HeuresSupEtatPayeurDto result = new HeuresSupEtatPayeurDto(listHSupEtatPayeur, hS, false);
 
 		// Then
 		assertEquals("", result.getH1Mai());
@@ -71,7 +71,7 @@ public class HeuresSupEtatPayeurDtoTest {
 		Mockito.when(hS.formatMinutesToString(66)).thenReturn("1h6m");
 
 		// When
-		HeuresSupEtatPayeurDto result = new HeuresSupEtatPayeurDto(listHSupEtatPayeur, hS);
+		HeuresSupEtatPayeurDto result = new HeuresSupEtatPayeurDto(listHSupEtatPayeur, hS, false);
 
 		// Then
 		assertEquals("11m", result.getNormales());
