@@ -66,8 +66,8 @@
 		<!-- Pour créer un fichier xlsx. -->
 		<dependency>
 		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi</artifactId>
-		    <version>4.0.0</version>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>3.9</version>
 		</dependency>
 	
 		<!-- Pour generer des PDF -->

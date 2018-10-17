@@ -167,7 +167,7 @@ public class EtatsPayeurController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/xml/getEVP", produces = "application/xml", method = RequestMethod.GET)
+	@RequestMapping(value = "/xml/getEVP", method = RequestMethod.GET)
 	@Transactional(readOnly = true)
 	public ResponseEntity<byte[]> getXmlPreviousEtatsPayeur(@RequestParam("chainePaie") String chainePaie, HttpServletRequest request, HttpServletResponse response) throws ParseException, IOException {
 
@@ -184,7 +184,7 @@ public class EtatsPayeurController {
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Content-Type", "application/pdf");
-		headers.add("Content-Disposition", String.format("attachment; filename=\"VDN_EVP_"+chainePaie+"_"+sdf.format(new Date())+".xls\""));
+		headers.add("Content-Disposition", String.format("attachment; filename=\"evp.xls\""));
 
 		return new ResponseEntity<byte[]>(byteArray, headers, HttpStatus.OK);
 	}

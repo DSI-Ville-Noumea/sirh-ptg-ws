@@ -1,5 +1,6 @@
 package nc.noumea.mairie.ptg.service.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -13,6 +14,7 @@ import java.util.Set;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.h2.util.StringUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -841,9 +843,10 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	@Override
 	public byte[] exportEVP(EVPDto evpDto, String sheetName) throws FileNotFoundException, IOException {
 		
-	    HSSFWorkbook wb = new HSSFWorkbook();
+		XSSFWorkbook wb = new XSSFWorkbook();
 	    SimpleDateFormat sdf = new SimpleDateFormat("MMyy");
 	    Sheet sheet1 = wb.createSheet(sheetName);
+	    ByteArrayOutputStream bos = new ByteArrayOutputStream();
 	    
 	    // En-têtes
 	    Row row = sheet1.createRow(0);
@@ -855,7 +858,6 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		row.createCell(5).setCellValue("Montant/Taux sal.");
 		row.createCell(6).setCellValue("Période d'origine");
 		row.createCell(7).setCellValue("Période de paie");
-	    row.createCell(8).setCellValue("IdAgent");
 	    // Fin des en-têtes
 	    
 	    Integer i = 1;
@@ -873,12 +875,17 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 				row.createCell(5).setCellValue("");
 				row.createCell(6).setCellValue(sdf.format(elt.getPeriodeEV()));
 				row.createCell(7).setCellValue(sdf.format(evpDto.getDatePeriodePaie()));
-				row.createCell(8).setCellValue(entry.getKey().getIdAgent());
 			    ++i;
 			}
 		}
+	    
+	    try {
+	        wb.write(bos);
+	    } finally {
+	        bos.close();
+	    }
 
 	    // Write the output to a file
-	    return wb.getBytes();
+	    return bos.toByteArray();
 	}
 }
