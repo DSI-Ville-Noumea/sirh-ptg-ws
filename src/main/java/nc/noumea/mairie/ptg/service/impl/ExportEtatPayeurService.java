@@ -615,7 +615,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			// #15314 si tout est vide, on supprime la ligne
 			if (dto.getHeuresSup().getDjf() == null && dto.getHeuresSup().getH1Mai() == null
 					&& dto.getHeuresSup().getNormales() == null && dto.getHeuresSup().getNuit() == null
-					&& dto.getHeuresSup().getSup25() == null && dto.getHeuresSup().getSup50() == null) {
+					&& dto.getHeuresSup().getSup25() == null && dto.getHeuresSup().getSup50() == null 
+					&& dto.getHeuresSup().getSimples() == null && dto.getHeuresSup().getComposees() == null) {
 				if (dto.getPrimes() == null || dto.getPrimes().size() == 0) {
 					result.getAgents().remove(dto);
 				}
@@ -633,7 +634,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		evp.setChainePaie(etatPayeur.getChainePaie());
 		SimpleDateFormat sdfVentil = new SimpleDateFormat("yyMM", Locale.FRENCH);
 		try {
-			evp.setDatePeriodePaie(sdfVentil.parse(etatPayeur.getDateVentilation()));
+//			evp.setDatePeriodePaie(sdfVentil.parse(etatPayeur.getDateVentilation()));
+			evp.setDatePeriodePaie(sdfVentil.parse("1810"));
 		} catch (Exception e) {
 			
 		}
