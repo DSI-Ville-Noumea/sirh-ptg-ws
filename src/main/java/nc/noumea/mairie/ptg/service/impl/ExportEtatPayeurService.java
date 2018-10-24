@@ -777,14 +777,14 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 					elementEVP = new EVPElementDto();
 					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
 					elementEVP.setQuantite(a.getHeuresSup().getDjf());
-					elementEVP.setRubrique(statusAgent.equals("4") ? "HCM" : statusAgent.equals("7") ? "HDF" : "HBA");
+					elementEVP.setRubrique(statusAgent.equals("4") ? "HCM" : statusAgent.equals("7") ? "HDR" : "HBA");
 					listEVP.add(elementEVP);
 				}
 				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getH1Mai())) {
 					elementEVP = new EVPElementDto();
 					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
 					elementEVP.setQuantite(a.getHeuresSup().getH1Mai());
-					elementEVP.setRubrique(statusAgent.equals("4") ? "HCM" : statusAgent.equals("7") ? "HDF" : "HBF");
+					elementEVP.setRubrique(statusAgent.equals("4") ? "HCM" : statusAgent.equals("7") ? "HDR" : "HBF");
 					listEVP.add(elementEVP);
 				}
 				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getNormales())) {
