@@ -11,6 +11,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.httpclient.HeaderElement;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import nc.noumea.mairie.domain.AgentStatutEnum;
 import nc.noumea.mairie.domain.Spcarr;
@@ -147,9 +149,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		for (VentilHsup vh : ventilationRepository.getListOfVentilHeuresSupWithDateForEtatPayeur(
 				toVentilDate.getIdVentilDate(), idAgent)) {
 
-			// 2. If the period concerns a date prior to ventilation, fetch the
-			// second last ventilated item to
-			// output the difference
+			// 2. If the period concerns a date prior to ventilation, fetch the second last ventilated item to output the difference
 			VentilHsup vhOld = null;
 			if (vh.getDateLundi().before(fromVentilDate.getDateVentilation())) {
 				vhOld = ventilationRepository.getPriorVentilHSupAgentAndDate(vh.getIdAgent(), vh.getDateLundi(), vh);
@@ -158,40 +158,88 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			// 3. Then create the DTOs for HSups : #14640 on n affiche pas les heures sup recuperees
 			if (vh.getMHorsContrat() - vh.getMRecuperees() != 0 || (null != vhOld && vhOld.getMHorsContrat() - vhOld.getMRecuperees() != 0)) {
 				HeuresSupEtatPayeurVo dtoHsup = new HeuresSupEtatPayeurVo(vh, vhOld, isForEVP);
-				listHSupEtatPayeur.add(dtoHsup);
+				if (isNotVoid(dtoHsup))
+					listHSupEtatPayeur.add(dtoHsup);
 			}
 		}
 
-		// #14640 on additionne les 3 ventils d heures sup pour avoir qu une
-		// seule ligne pour l etat payeur
+		// #14640 on additionne les 3 ventils d heures sup pour avoir qu une seule ligne pour l etat payeur
 		// #15314 si vide alors on ajoute pas la ligne
 		if (listHSupEtatPayeur == null || listHSupEtatPayeur.size() == 0) {
 			return null;
 		} else {
-			result.setHeuresSup(new HeuresSupEtatPayeurDto(listHSupEtatPayeur, helperService, isForEVP));
+//			result.setHeuresSup(new HeuresSupEtatPayeurDto(listHSupEtatPayeur, helperService, isForEVP));
+			result.setMapHeuresSup(getMapHSFromList(listHSupEtatPayeur));
 		}
 
 		return result;
+	}
+	
+	private boolean isNotVoid(HeuresSupEtatPayeurVo vo) {
+		if ((vo.getSup25() == null || vo.getSup25() == 0)
+				&& (vo.getSup50() == null || vo.getSup50() == 0)
+				&& (vo.getDjf() == null || vo.getDjf() == 0)
+				&& (vo.getH1Mai() == null || vo.getH1Mai() == 0)
+				&& (vo.getNuit() == null || vo.getNuit() == 0)
+				&& (vo.getNormales() == null || vo.getNormales() == 0)
+				&& (vo.getSimples() == null || vo.getSimples() == 0)
+				&& (vo.getComposees() == null || vo.getComposees() == 0))
+			return false;
+		else return true;
+	}
+	
+	private Map<Date, HeuresSupEtatPayeurDto> getMapHSFromList(List<HeuresSupEtatPayeurVo> listVO) {
+		Map<Date, HeuresSupEtatPayeurVo> halfMap = Maps.newHashMap();
+		HeuresSupEtatPayeurVo hsDto;
+		
+		for (HeuresSupEtatPayeurVo hs : listVO) {
+			if (halfMap.containsKey(hs.getDateVentilation())) {
+				hsDto = halfMap.get(hs.getDateVentilation());
+				hsDto.setSup25(hsDto.getSup25() + hs.getSup25());
+				hsDto.setSup50(hsDto.getSup50() + hs.getSup50());
+				hsDto.setDjf(hsDto.getDjf() + hs.getDjf());
+				hsDto.setH1Mai(hsDto.getH1Mai() + hs.getH1Mai());
+				hsDto.setNuit(hsDto.getNuit() + hs.getNuit());
+				hsDto.setNormales(hsDto.getNormales() + hs.getNormales());
+				hsDto.setSimples(hsDto.getSimples() + hs.getSimples());
+				hsDto.setComposees(hsDto.getComposees() + hs.getComposees());
+			} else {
+				hsDto = new HeuresSupEtatPayeurVo();
+				hsDto.setSup25(hs.getSup25());
+				hsDto.setSup50(hs.getSup50());
+				hsDto.setDjf(hs.getDjf());
+				hsDto.setH1Mai(hs.getH1Mai());
+				hsDto.setNuit(hs.getNuit());
+				hsDto.setNormales(hs.getNormales());
+				hsDto.setSimples(hs.getSimples());
+				hsDto.setComposees(hs.getComposees());
+				
+				halfMap.put(hs.getDateVentilation(), hsDto);
+			}
+		}
+
+		Map<Date, HeuresSupEtatPayeurDto> returnMap = Maps.newHashMap();
+		for (Map.Entry<Date, HeuresSupEtatPayeurVo> entry : halfMap.entrySet())
+		{
+			returnMap.put(entry.getKey(), new HeuresSupEtatPayeurDto(entry.getValue(), helperService));
+		}
+		
+		return returnMap;
 	}
 
 	public AbstractItemEtatPayeurDto getPrimesEtatPayeurDataForStatut(Integer idAgent,
 			AbstractItemEtatPayeurDto result, VentilDate toVentilDate, VentilDate fromVentilDate) {
 
 		// For all VentilAbsences of this ventilation ordered by dateLundi asc
-		for (VentilPrime vp : ventilationRepository.getListOfVentilPrimeWithDateForEtatPayeur(
-				toVentilDate.getIdVentilDate(), idAgent)) {
+		for (VentilPrime vp : ventilationRepository.getListOfVentilPrimeWithDateForEtatPayeur(toVentilDate.getIdVentilDate(), idAgent)) {
 
-			// 2. If the period concerns a date prior to ventilation, fetch the
-			// second last ventilated item to
-			// output the difference
+			// 2. If the period concerns a date prior to ventilation, fetch the second last ventilated item to output the difference
 			VentilPrime vpOld = null;
 			if (vp.getDateDebutMois().before(fromVentilDate.getDateVentilation())) {
-				vpOld = ventilationRepository.getPriorVentilPrimeForAgentAndDate(vp.getIdAgent(),
-						vp.getDateDebutMois(), vp);
+				vpOld = ventilationRepository.getPriorVentilPrimeForAgentAndDate(vp.getIdAgent(), vp.getDateDebutMois(), vp);
 			}
 
-			// 3. Then create the DTOs for Primes
-			// #18592 supprimer les lignes a 0
+			// 3. Then create the DTOs for Primes #18592 supprimer les lignes a 0
 			if(null != vp && null != vp.getQuantite()) {
 				double qte = vp.getQuantite() - (vpOld != null ? vpOld.getQuantite() : 0);
 			
@@ -611,34 +659,22 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			// on rempli les informations
 			getHeuresSupEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate, true);
 			getPrimesEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate);
-			
-			// #15314 si tout est vide, on supprime la ligne
-			if (dto.getHeuresSup().getDjf() == null && dto.getHeuresSup().getH1Mai() == null
-					&& dto.getHeuresSup().getNormales() == null && dto.getHeuresSup().getNuit() == null
-					&& dto.getHeuresSup().getSup25() == null && dto.getHeuresSup().getSup50() == null 
-					&& dto.getHeuresSup().getSimples() == null && dto.getHeuresSup().getComposees() == null) {
-				if (dto.getPrimes() == null || dto.getPrimes().size() == 0) {
-					result.getAgents().remove(dto);
-				}
+
+			if ((dto.getPrimes() == null || dto.getPrimes().size() == 0) && dto.getMapHeuresSup() == null || dto.getMapHeuresSup().isEmpty()) {
+				result.getAgents().remove(dto);
 			}
 		}
 
 		result.setChainePaie(chainePaieString);
 		logger.info("Mapping the result");
-		return mapEVP(result);
+		return mapEVP(result, toVentilDate.getDateVentilation());
 	}
 	
-	private EVPDto mapEVP(EtatPayeurDto etatPayeur) {
+	private EVPDto mapEVP(EtatPayeurDto etatPayeur, Date dateVentilation) {
 		EVPDto evp = new EVPDto();
 		
 		evp.setChainePaie(etatPayeur.getChainePaie());
-		SimpleDateFormat sdfVentil = new SimpleDateFormat("yyMM", Locale.FRENCH);
-		try {
-//			evp.setDatePeriodePaie(sdfVentil.parse(etatPayeur.getDateVentilation()));
-			evp.setDatePeriodePaie(sdfVentil.parse("1810"));
-		} catch (Exception e) {
-			
-		}
+		evp.setDatePeriodePaie(helperService.getMonthOfVentilation(dateVentilation));
 		
 		logger.info("Mapping primes");
 		mapPrimes(evp, etatPayeur);
@@ -766,66 +802,66 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		EVPElementDto elementEVP;
 		
 		for (AbstractItemEtatPayeurDto a : etatPayeur.getAgents()) {
-			if (a.getHeuresSup() != null) {
+			for (Map.Entry<Date, HeuresSupEtatPayeurDto> entry : a.getMapHeuresSup().entrySet()) {
 				listEVP = Lists.newArrayList();
 				newAgent = new AgentWithServiceDto();
 				String statusAgent = a.getAgent().getStatut();
 				newAgent.setIdAgent(a.getAgent().getIdAgent());
 				newAgent.setIdTiarhe(a.getAgent().getIdTiarhe());
 				
-				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getDjf())) {
+				if (!StringUtils.isNullOrEmpty(entry.getValue().getDjf())) {
 					elementEVP = new EVPElementDto();
-					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
-					elementEVP.setQuantite(a.getHeuresSup().getDjf());
+					elementEVP.setPeriodeEV(entry.getKey());
+					elementEVP.setQuantite(entry.getValue().getDjf());
 					elementEVP.setRubrique(statusAgent.equals("4") ? "HCM" : statusAgent.equals("7") ? "HDR" : "HBA");
 					listEVP.add(elementEVP);
 				}
-				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getH1Mai())) {
+				if (!StringUtils.isNullOrEmpty(entry.getValue().getH1Mai())) {
 					elementEVP = new EVPElementDto();
-					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
-					elementEVP.setQuantite(a.getHeuresSup().getH1Mai());
+					elementEVP.setPeriodeEV(entry.getKey());
+					elementEVP.setQuantite(entry.getValue().getH1Mai());
 					elementEVP.setRubrique(statusAgent.equals("4") ? "HCM" : statusAgent.equals("7") ? "HDR" : "HBF");
 					listEVP.add(elementEVP);
 				}
-				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getNormales())) {
+				if (!StringUtils.isNullOrEmpty(entry.getValue().getNormales())) {
 					elementEVP = new EVPElementDto();
-					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
-					elementEVP.setQuantite(a.getHeuresSup().getNormales());
+					elementEVP.setPeriodeEV(entry.getKey());
+					elementEVP.setQuantite(entry.getValue().getNormales());
 					elementEVP.setRubrique(statusAgent.equals("4") ? "HCJ" : statusAgent.equals("7") ? "" : "HBE");
 					listEVP.add(elementEVP);
 				}
-				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getNuit())) {
+				if (!StringUtils.isNullOrEmpty(entry.getValue().getNuit())) {
 					elementEVP = new EVPElementDto();
-					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
-					elementEVP.setQuantite(a.getHeuresSup().getNuit());
+					elementEVP.setPeriodeEV(entry.getKey());
+					elementEVP.setQuantite(entry.getValue().getNuit());
 					elementEVP.setRubrique(statusAgent.equals("4") ? "HCN" : statusAgent.equals("7") ? "HDS" : "HBN");
 					listEVP.add(elementEVP);
 				}
-				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getSup25())) {
+				if (!StringUtils.isNullOrEmpty(entry.getValue().getSup25())) {
 					elementEVP = new EVPElementDto();
-					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
-					elementEVP.setQuantite(a.getHeuresSup().getSup25());
+					elementEVP.setPeriodeEV(entry.getKey());
+					elementEVP.setQuantite(entry.getValue().getSup25());
 					elementEVP.setRubrique(statusAgent.equals("4") ? "HCK" : statusAgent.equals("7") ? "HDP" : "");
 					listEVP.add(elementEVP);
 				}
-				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getSup50())) {
+				if (!StringUtils.isNullOrEmpty(entry.getValue().getSup50())) {
 					elementEVP = new EVPElementDto();
-					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
-					elementEVP.setQuantite(a.getHeuresSup().getSup50());
+					elementEVP.setPeriodeEV(entry.getKey());
+					elementEVP.setQuantite(entry.getValue().getSup50());
 					elementEVP.setRubrique(statusAgent.equals("4") ? "HCL" : statusAgent.equals("7") ? "HDQ" : "");
 					listEVP.add(elementEVP);
 				}
-				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getSimples())) {
+				if (!StringUtils.isNullOrEmpty(entry.getValue().getSimples())) {
 					elementEVP = new EVPElementDto();
-					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
-					elementEVP.setQuantite(a.getHeuresSup().getSimples());
+					elementEVP.setPeriodeEV(entry.getKey());
+					elementEVP.setQuantite(entry.getValue().getSimples());
 					elementEVP.setRubrique(statusAgent.equals("4") ? "" : statusAgent.equals("7") ? "" : "HBK");
 					listEVP.add(elementEVP);
 				}
-				if (!StringUtils.isNullOrEmpty(a.getHeuresSup().getComposees())) {
+				if (!StringUtils.isNullOrEmpty(entry.getValue().getComposees())) {
 					elementEVP = new EVPElementDto();
-					elementEVP.setPeriodeEV(evp.getDatePeriodePaie());
-					elementEVP.setQuantite(a.getHeuresSup().getComposees());
+					elementEVP.setPeriodeEV(entry.getKey());
+					elementEVP.setQuantite(entry.getValue().getComposees());
 					elementEVP.setRubrique(statusAgent.equals("4") ? "" : statusAgent.equals("7") ? "" : "HBL");
 					listEVP.add(elementEVP);
 				}

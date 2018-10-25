@@ -1,6 +1,9 @@
 package nc.noumea.mairie.ptg.dto.etatsPayeur;
 
+import java.util.Date;
+
 import nc.noumea.mairie.ptg.domain.VentilHsup;
+import nc.noumea.mairie.ptg.service.impl.HelperService;
 
 public class HeuresSupEtatPayeurVo {
 
@@ -12,6 +15,7 @@ public class HeuresSupEtatPayeurVo {
 	private Integer h1Mai;	
 	private Integer simples;
 	private Integer composees;
+	private Date dateVentilation;
 
 	public HeuresSupEtatPayeurVo() {
 
@@ -23,6 +27,8 @@ public class HeuresSupEtatPayeurVo {
 
 	public HeuresSupEtatPayeurVo(VentilHsup vhNew, VentilHsup vhOld, Boolean isForEVP) {
 
+		HelperService hs = new HelperService();
+		
 		// #14640 retirer les heures recuperees 
 		int mSup25 = (vhNew.getMSup25() - vhNew.getMSup25Recup());
 		int mSup25Old = (vhOld != null ? vhOld.getMSup25() - vhOld.getMSup25Recup() : 0);
@@ -67,6 +73,8 @@ public class HeuresSupEtatPayeurVo {
 			int mComposeesOld = vhOld != null ? vhOld.getMComposees() - vhOld.getMComposeesRecup() : 0;
 			composees = mComposees - mComposeesOld;
 		}
+		
+		dateVentilation = hs.getDatePremierJourOfMonth(vhOld == null ? vhNew.getDateLundi() : vhOld.getDateLundi());
 	}
 
 	public HeuresSupEtatPayeurVo(VentilHsup vhNew, VentilHsup vhOld) {
@@ -169,6 +177,14 @@ public class HeuresSupEtatPayeurVo {
 
 	public void setComposees(Integer composees) {
 		this.composees = composees;
+	}
+
+	public Date getDateVentilation() {
+		return dateVentilation;
+	}
+
+	public void setDateVentilation(Date dateVentilation) {
+		this.dateVentilation = dateVentilation;
 	}
 	
 }

@@ -234,6 +234,17 @@ public class HelperService {
 		return date.toDate();
 	}
 	
+	public Date getMonthOfVentilation(Date dateVentil) {
+		Date previous = getDatePremierJourOfMonth(dateVentil);
+		Date next = getDatePremierJourOfMonthSuivant(dateVentil);
+	
+		if ((dateVentil.getTime() - previous.getTime()) > (next.getTime() - dateVentil.getTime())) {
+			return next;
+		} else {
+			return previous;
+		}
+	}
+	
 	public Date getDatePremierJourOfMonthPrecedent(Date dateMonth) {
 		
 		DateTime date = new DateTime(dateMonth)

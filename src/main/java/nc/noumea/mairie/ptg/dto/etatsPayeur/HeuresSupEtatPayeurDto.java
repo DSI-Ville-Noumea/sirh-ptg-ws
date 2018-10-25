@@ -63,6 +63,17 @@ public class HeuresSupEtatPayeurDto {
 			composees = hS.formatMinutesToStringForEVP(mComposees);
 		}
 	}
+	
+	public HeuresSupEtatPayeurDto(HeuresSupEtatPayeurVo finalDto, HelperService hS) {
+		sup25 = hS.formatMinutesToStringForEVP(finalDto.getSup25());
+		sup50 = hS.formatMinutesToStringForEVP(finalDto.getSup50());
+		djf = hS.formatMinutesToStringForEVP(finalDto.getDjf());
+		h1Mai = hS.formatMinutesToStringForEVP(finalDto.getH1Mai());
+		nuit = hS.formatMinutesToStringForEVP(finalDto.getNuit());
+		normales = hS.formatMinutesToStringForEVP(finalDto.getNormales());
+		simples = hS.formatMinutesToStringForEVP(finalDto.getSimples());
+		composees = hS.formatMinutesToStringForEVP(finalDto.getComposees());
+	}
 
 	public String getSup25() {
 		return sup25;
