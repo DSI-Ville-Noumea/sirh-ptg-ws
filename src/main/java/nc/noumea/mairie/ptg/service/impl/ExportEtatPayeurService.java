@@ -660,7 +660,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			getHeuresSupEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate, true);
 			getPrimesEtatPayeurDataForStatut(idAgent, dto, toVentilDate, fromVentilDate);
 
-			if ((dto.getPrimes() == null || dto.getPrimes().size() == 0) && dto.getMapHeuresSup() == null || dto.getMapHeuresSup().isEmpty()) {
+			if ((dto.getPrimes() == null || dto.getPrimes().size() == 0) && (dto.getMapHeuresSup() == null || dto.getMapHeuresSup().isEmpty())) {
 				result.getAgents().remove(dto);
 			}
 		}
