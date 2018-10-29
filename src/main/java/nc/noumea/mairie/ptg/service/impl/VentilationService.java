@@ -637,6 +637,12 @@ public class VentilationService implements IVentilationService {
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
 				dateLundi);
 		
+		if (carr == null) {
+			logger.warn("Aucune carrière active à la date du {} pour l'agent matricule {}.", dateLundi, idAgent);
+			carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent),
+				new DateTime(dateLundi).plusDays(7).toDate());
+		}
+		
 		result.addAll(pointageCalculeService.calculatePointagesForAgentAndWeek(idAgent, carr.getStatutCarriere(),
 				dateLundi, filteredListePointages));
 
