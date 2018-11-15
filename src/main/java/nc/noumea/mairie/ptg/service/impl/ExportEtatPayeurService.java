@@ -17,6 +17,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.h2.util.StringUtils;
+import org.hibernate.id.IdentifierGeneratorAggregator;
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -277,6 +279,11 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		AgentGeneriqueDto ag = sirhWsConsumer.getAgent(idAgent);
 		
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(idAgent), fromVentilDate);
+		if (carr == null) {
+			logger.warn("Pas de carrière active au début de la ventilation pour l'agent ID {}. Récupération de la carrière suivante.", idAgent);
+			carr = mairieRepository.getAgentNextCarriere(helperService.getMairieMatrFromIdAgent(idAgent), fromVentilDate);
+		}
+		
 		Integer cdCate = carr.getCdcate();
 		
 		item.getAgent().setStatut(cdCate.toString());

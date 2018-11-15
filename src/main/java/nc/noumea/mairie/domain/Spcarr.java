@@ -15,7 +15,8 @@ import javax.validation.constraints.NotNull;
 @Entity
 @Table(name = "SPCARR")
 //bug #19943 si 2 carrieres le meme jour 
-@NamedQueries({ @NamedQuery(name = "getCurrentCarriere", query = "select carr from Spcarr carr where carr.id.nomatr = :nomatr and carr.id.datdeb <= :todayFormatMairie and (carr.dateFin = 0 or carr.dateFin >= :todayFormatMairie) order by carr.id.datdeb desc") })
+@NamedQueries({ @NamedQuery(name = "getCurrentCarriere", query = "select carr from Spcarr carr where carr.id.nomatr = :nomatr and carr.id.datdeb <= :todayFormatMairie and (carr.dateFin = 0 or carr.dateFin >= :todayFormatMairie) order by carr.id.datdeb desc"),
+	@NamedQuery(name = "getNextCarriere", query = "select carr from Spcarr carr where carr.id.nomatr = :nomatr and carr.id.datdeb >= :todayFormatMairie and (carr.dateFin = 0 or carr.dateFin >= :todayFormatMairie) order by carr.id.datdeb ")})
 public class Spcarr {
 
 	@EmbeddedId

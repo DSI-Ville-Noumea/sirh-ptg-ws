@@ -71,6 +71,21 @@ public class MairieRepository implements IMairieRepository {
 	}
 
 	@Override
+	public Spcarr getAgentNextCarriere(Integer nomatr, Date asOfDate) {
+
+		TypedQuery<Spcarr> qCarr = entityManager.createNamedQuery("getNextCarriere", Spcarr.class);
+		qCarr.setParameter("nomatr", nomatr);
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		int dateFormatMairie = Integer.valueOf(sdf.format(asOfDate));
+		qCarr.setParameter("todayFormatMairie", dateFormatMairie);
+
+		List<Spcarr> result = qCarr.getResultList();
+
+		return (null != result && !result.isEmpty()) ? result.get(0) : null;
+	}
+
+	@Override
 	public Spperm getTREtatPayeurRates(Date dateMoisSuivant) {
 
 		TypedQuery<Spperm> qPerm = entityManager.createNamedQuery("getSppermForTREtatPayeurOnPeriod", Spperm.class);
