@@ -65,7 +65,7 @@ public class PrimesEtatPayeurDtoTest {
 		vp.getRefPrime().setLibelle("prime");
 		vp.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.formatMinutesToString(60)).thenReturn("1h");
+		Mockito.when(hS.formatMinutesToStringForEVP(60)).thenReturn("1h");
 
 		// When
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vp, hS);
@@ -87,7 +87,7 @@ public class PrimesEtatPayeurDtoTest {
 		vp.getRefPrime().setLibelle("prime");
 		vp.getRefPrime().setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.formatMinutesToString(75)).thenReturn("1h15");
+		Mockito.when(hS.formatMinutesToStringForEVP(75)).thenReturn("1h15");
 
 		// When
 		PrimesEtatPayeurDto result = new PrimesEtatPayeurDto(vp, hS);
@@ -155,7 +155,7 @@ public class PrimesEtatPayeurDtoTest {
 		vpNew.getRefPrime().setLibelle("prime");
 		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.formatMinutesToString(15)).thenReturn("15m");
+		Mockito.when(hS.formatMinutesToStringForEVP(15)).thenReturn("15m");
 
 		VentilPrime vpOld = new VentilPrime();
 		vpOld.setQuantite(45.0);
@@ -183,7 +183,7 @@ public class PrimesEtatPayeurDtoTest {
 		vpNew.getRefPrime().setMairiePrimeTableEnum(MairiePrimeTableEnum.SPPRIM);
 		HelperService hS = Mockito.mock(HelperService.class);		
 		Mockito.when(hS.convertMinutesToMairieNbHeuresFormat(172)).thenReturn(2.52);
-		Mockito.when(hS.formatMinutesToString(180)).thenReturn("3H");
+		Mockito.when(hS.formatMinutesToStringForEVP(180)).thenReturn("3H");
 
 		VentilPrime vpOld = new VentilPrime();
 		vpOld.setQuantite(0.0);
@@ -208,7 +208,7 @@ public class PrimesEtatPayeurDtoTest {
 		vpNew.getRefPrime().setLibelle("prime");
 		vpNew.getRefPrime().setTypeSaisie(TypeSaisieEnum.NB_HEURES);
 		HelperService hS = Mockito.mock(HelperService.class);
-		Mockito.when(hS.formatMinutesToString(-15)).thenReturn("- 15m");
+		Mockito.when(hS.formatMinutesToStringForEVP(-15)).thenReturn("- 15m");
 
 		VentilPrime vpOld = new VentilPrime();
 		vpOld.setQuantite(75.0);

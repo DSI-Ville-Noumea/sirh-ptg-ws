@@ -154,6 +154,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			// 2. If the period concerns a date prior to ventilation, fetch the second last ventilated item to output the difference
 			VentilHsup vhOld = null;
 			if (vh.getDateLundi().before(fromVentilDate.getDateVentilation())) {
+				// Décommenter cette ligne si les rappels ne doivent plus être pris en comtpe.
+//				continue;
 				vhOld = ventilationRepository.getPriorVentilHSupAgentAndDate(vh.getIdAgent(), vh.getDateLundi(), vh);
 			}
 
@@ -238,6 +240,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 			// 2. If the period concerns a date prior to ventilation, fetch the second last ventilated item to output the difference
 			VentilPrime vpOld = null;
 			if (vp.getDateDebutMois().before(fromVentilDate.getDateVentilation())) {
+				// Décommenter cette ligne si les rappels ne doivent plus être pris en comtpe.
+//				continue;
 				vpOld = ventilationRepository.getPriorVentilPrimeForAgentAndDate(vp.getIdAgent(), vp.getDateDebutMois(), vp);
 			}
 
