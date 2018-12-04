@@ -392,18 +392,6 @@ public class VentilationService implements IVentilationService {
 		////////////////////////////////////////////////
 		VentilAbsence vAbs = ventilationAbsenceService.processAbsenceAgent(idAgent, listAllAgentsPointageForPeriod,
 				dateLundi, listPointageRejetesVentilesOrderedByDateAsc, filteredListPointageRejetesOrderedByDateAsc);
-
-		// ce code ne sert plus voir #13816
-		// on ne supprime pas pour autant le code, car ils sont de nouveau en renegociation avec les syndicats
-		
-		// on gere les primes d epandage qui comptabiliseront des heures supp.
-//		List<Pointage> agentsPointagePrimeForPeriod = ventilationRepository.getListPointagesPrimeByWeekForVentilation(idAgent,
-//				fromVentilDate, ventilDate.getDateVentilation(), dateLundi);
-//		
-//		List<Pointage> filteredAgentsPointagePrimeForPeriod = pointageService.filterOldPointagesAndEtatFromList(
-//				agentsPointagePrimeForPeriod, null, null);
-//		hSupsVentilees = ventilationHSupService.processHeuresSupEpandageForSIPRES(
-//				hSupsVentilees, idAgent, dateLundi, filteredAgentsPointagePrimeForPeriod, carr.getStatutCarriere());
 		
 		////////////////////////////////////////////////
 		// 4. calcul les HSup a partir des pointages calcules

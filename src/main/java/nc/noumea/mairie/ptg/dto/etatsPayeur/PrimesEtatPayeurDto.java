@@ -5,6 +5,7 @@ import java.util.Date;
 import nc.noumea.mairie.domain.MairiePrimeTableEnum;
 import nc.noumea.mairie.ptg.domain.VentilPrime;
 import nc.noumea.mairie.ptg.service.impl.HelperService;
+import nc.noumea.mairie.ptg.service.impl.VentilationPrimeService;
 
 public class PrimesEtatPayeurDto {
 
@@ -46,8 +47,15 @@ public class PrimesEtatPayeurDto {
 				}
 				break;
 			case PERIODE_HEURES:
-				this.quantite = hS.formatMinutesToStringForEVP(vpNew.getQuantite().intValue()
-						- (vpOld != null ? vpOld.getQuantite().intValue() : 0));
+				// #46679 : Nouvelle prime, les quantités doivent être transformées pour arrondir chaque saisie et avoir la valeur en heures
+				if (vpNew.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_NUIT)
+						|| vpNew.getRefPrime().getNoRubr().equals(VentilationPrimeService.INDEMNITE_TRAVAIL_DJF)) {
+					this.quantite = hS.formatMinutesToStringForEVP((vpNew.getQuantite().intValue()*60)
+							- (vpOld != null ? vpOld.getQuantite().intValue()*60 : 0));
+				}
+				else
+					this.quantite = hS.formatMinutesToStringForEVP(vpNew.getQuantite().intValue()
+							- (vpOld != null ? vpOld.getQuantite().intValue() : 0));
 				break;
 		}
 	}
