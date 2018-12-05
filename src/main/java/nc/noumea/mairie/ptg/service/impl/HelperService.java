@@ -145,8 +145,8 @@ public class HelperService {
 	public String formatMinutesToStringForEVP(Integer minutes) {
 		if (minutes == null || minutes == 0)
 			return null;
-		double absMinutes = Math.abs(minutes);
-		double nbHours = absMinutes / 60d;
+//		double absMinutes = Math.abs(minutes);
+		double nbHours = minutes / 60d;
 
 		double roundedValue = Math.round(nbHours * 100.0) / 100.0;
 		String stringValue = String.valueOf(roundedValue);
