@@ -173,11 +173,19 @@ public class EtatsPayeurController {
 
 		logger.debug("entered GET [etatsPayeur/xml/getEVP] => getEVP with parameter statut = {}.", chainePaie);
 
-		if (!chainePaie.equals(TypeChainePaieEnum.SCV.toString()) && !chainePaie.equals(TypeChainePaieEnum.SHC.toString())) {
+		if (!chainePaie.equals(TypeChainePaieEnum.SCV.toString()) && !chainePaie.equals(TypeChainePaieEnum.SHC.toString()) && !chainePaie.equals(TypeChainePaieEnum.ALL.toString())) {
 			logger.error("Aucun statut ne correspond à cet argument.");
 		}
-
-		EVPDto result = exportEtatPayeurService.getDataForEVP(chainePaie);
+		
+		EVPDto result = null;
+		
+		if (!chainePaie.equals(TypeChainePaieEnum.ALL.toString()))
+			result = exportEtatPayeurService.getDataForEVP(chainePaie);
+		else {
+			result = exportEtatPayeurService.getDataForEVP(TypeChainePaieEnum.SCV.toString());
+			result.addEVP(exportEtatPayeurService.getDataForEVP(TypeChainePaieEnum.SHC.toString()));
+		}
+		
 		byte[] byteArray = exportEtatPayeurService.exportEVP(result, chainePaie);
 		
 		logger.debug("Export done");

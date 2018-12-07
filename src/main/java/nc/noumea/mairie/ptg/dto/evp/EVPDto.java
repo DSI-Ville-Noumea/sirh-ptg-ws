@@ -41,5 +41,10 @@ public class EVPDto {
 		this.chainePaie = chainePaie;
 	}
 	
+	public void addEVP(EVPDto EVP) {
+		this.chainePaie = "TOUS";
+		this.elements.putAll(EVP.getElements());
+	}
+	
 	
 }

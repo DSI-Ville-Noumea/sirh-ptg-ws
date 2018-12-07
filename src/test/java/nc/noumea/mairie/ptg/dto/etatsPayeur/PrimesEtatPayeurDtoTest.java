@@ -85,6 +85,7 @@ public class PrimesEtatPayeurDtoTest {
 		vp.setQuantite(75.0);
 		vp.setRefPrime(new RefPrime());
 		vp.getRefPrime().setLibelle("prime");
+		vp.getRefPrime().setNoRubr(4747);
 		vp.getRefPrime().setTypeSaisie(TypeSaisieEnum.PERIODE_HEURES);
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.formatMinutesToStringForEVP(75)).thenReturn("1h15");

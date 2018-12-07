@@ -3,7 +3,8 @@ package nc.noumea.mairie.domain;
 public enum TypeChainePaieEnum {
 
 	SHC("SHC"), // Hors Conventions Collectives (Fonctionnaires & Contractuels)
-	SCV("SCV"); // Conventions Collectives
+	SCV("SCV"), // Conventions Collectives
+	ALL("ALL"); // Conventions Collectives
 
 	private String typeChainePaie;
 
