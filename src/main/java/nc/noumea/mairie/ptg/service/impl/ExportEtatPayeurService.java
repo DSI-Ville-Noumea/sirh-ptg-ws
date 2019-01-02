@@ -99,6 +99,9 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 	private IAbsWsConsumer absWsConsumer;
 
 	private static SimpleDateFormat sfd = new SimpleDateFormat("YYYY-MM");
+	
+	private final String STATUT_CONTRACTUEL = "4";
+	private final String STATUT_CONVENTION_COLLECTIVE = "7";
 
 	@Override
 	public CanStartWorkflowPaieActionDto canStartExportEtatPayeurAction(TypeChainePaieEnum chainePaie) {
@@ -291,7 +294,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		Integer cdCate = carr.getCdcate();
 		
 		item.getAgent().setStatut(cdCate.toString());
-		item.getAgent().setIdTiarhe(ag.getIdTiarhe());
+		if (ag != null)
+			item.getAgent().setIdTiarhe(ag.getIdTiarhe());
 		item.getAgent().setIdAgent(idAgent);
 	}
 
@@ -795,7 +799,8 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 				evp.getElements().get(newAgent).add(elementEVP);
 			} else {
 				AgentGeneriqueDto age = sirhWsConsumer.getAgent(ida);
-				newAgent.setIdTiarhe(age.getIdTiarhe());
+				if (age != null)
+					newAgent.setIdTiarhe(age.getIdTiarhe());
 				
 				listEVP = Lists.newArrayList();
 				listEVP.add(elementEVP);
@@ -824,56 +829,56 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 					elementEVP = new EVPElementDto();
 					elementEVP.setPeriodeEV(entry.getKey());
 					elementEVP.setQuantite(entry.getValue().getDjf());
-					elementEVP.setRubrique(statusAgent.equals("4") ? "HCM" : statusAgent.equals("7") ? "HDR" : "HBA");
+					elementEVP.setRubrique(statusAgent.equals(STATUT_CONTRACTUEL) ? "HCM" : statusAgent.equals(STATUT_CONVENTION_COLLECTIVE) ? "HMD" : "HBF");
 					listEVP.add(elementEVP);
 				}
 				if (!StringUtils.isNullOrEmpty(entry.getValue().getH1Mai())) {
 					elementEVP = new EVPElementDto();
 					elementEVP.setPeriodeEV(entry.getKey());
 					elementEVP.setQuantite(entry.getValue().getH1Mai());
-					elementEVP.setRubrique(statusAgent.equals("4") ? "HCM" : statusAgent.equals("7") ? "HDR" : "HBF");
+					elementEVP.setRubrique(statusAgent.equals(STATUT_CONTRACTUEL) ? "HCM" : statusAgent.equals(STATUT_CONVENTION_COLLECTIVE) ? "HMD" : "HBF");
 					listEVP.add(elementEVP);
 				}
 				if (!StringUtils.isNullOrEmpty(entry.getValue().getNormales())) {
 					elementEVP = new EVPElementDto();
 					elementEVP.setPeriodeEV(entry.getKey());
 					elementEVP.setQuantite(entry.getValue().getNormales());
-					elementEVP.setRubrique(statusAgent.equals("4") ? "HCJ" : statusAgent.equals("7") ? "" : "HBE");
+					elementEVP.setRubrique(statusAgent.equals(STATUT_CONTRACTUEL) ? "HCJ" : statusAgent.equals(STATUT_CONVENTION_COLLECTIVE) ? "" : "HBC");
 					listEVP.add(elementEVP);
 				}
 				if (!StringUtils.isNullOrEmpty(entry.getValue().getNuit())) {
 					elementEVP = new EVPElementDto();
 					elementEVP.setPeriodeEV(entry.getKey());
 					elementEVP.setQuantite(entry.getValue().getNuit());
-					elementEVP.setRubrique(statusAgent.equals("4") ? "HCN" : statusAgent.equals("7") ? "HDS" : "HBN");
+					elementEVP.setRubrique(statusAgent.equals(STATUT_CONTRACTUEL) ? "HCN" : statusAgent.equals(STATUT_CONVENTION_COLLECTIVE) ? "HMN" : "HBA");
 					listEVP.add(elementEVP);
 				}
 				if (!StringUtils.isNullOrEmpty(entry.getValue().getSup25())) {
 					elementEVP = new EVPElementDto();
 					elementEVP.setPeriodeEV(entry.getKey());
 					elementEVP.setQuantite(entry.getValue().getSup25());
-					elementEVP.setRubrique(statusAgent.equals("4") ? "HCK" : statusAgent.equals("7") ? "HDP" : "");
+					elementEVP.setRubrique(statusAgent.equals(STATUT_CONTRACTUEL) ? "HCK" : statusAgent.equals(STATUT_CONVENTION_COLLECTIVE) ? "HCK" : "");
 					listEVP.add(elementEVP);
 				}
 				if (!StringUtils.isNullOrEmpty(entry.getValue().getSup50())) {
 					elementEVP = new EVPElementDto();
 					elementEVP.setPeriodeEV(entry.getKey());
 					elementEVP.setQuantite(entry.getValue().getSup50());
-					elementEVP.setRubrique(statusAgent.equals("4") ? "HCL" : statusAgent.equals("7") ? "HDQ" : "");
+					elementEVP.setRubrique(statusAgent.equals(STATUT_CONTRACTUEL) ? "HCL" : statusAgent.equals(STATUT_CONVENTION_COLLECTIVE) ? "HCL" : "");
 					listEVP.add(elementEVP);
 				}
 				if (!StringUtils.isNullOrEmpty(entry.getValue().getSimples())) {
 					elementEVP = new EVPElementDto();
 					elementEVP.setPeriodeEV(entry.getKey());
 					elementEVP.setQuantite(entry.getValue().getSimples());
-					elementEVP.setRubrique(statusAgent.equals("4") ? "" : statusAgent.equals("7") ? "" : "HBK");
+					elementEVP.setRubrique(statusAgent.equals(STATUT_CONTRACTUEL) ? "" : statusAgent.equals(STATUT_CONVENTION_COLLECTIVE) ? "" : "HBK");
 					listEVP.add(elementEVP);
 				}
 				if (!StringUtils.isNullOrEmpty(entry.getValue().getComposees())) {
 					elementEVP = new EVPElementDto();
 					elementEVP.setPeriodeEV(entry.getKey());
 					elementEVP.setQuantite(entry.getValue().getComposees());
-					elementEVP.setRubrique(statusAgent.equals("4") ? "" : statusAgent.equals("7") ? "" : "HBL");
+					elementEVP.setRubrique(statusAgent.equals(STATUT_CONTRACTUEL) ? "" : statusAgent.equals(STATUT_CONVENTION_COLLECTIVE) ? "" : "HBL");
 					listEVP.add(elementEVP);
 				}
 				

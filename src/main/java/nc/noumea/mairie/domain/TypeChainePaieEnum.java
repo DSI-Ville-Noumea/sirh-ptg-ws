@@ -4,7 +4,7 @@ public enum TypeChainePaieEnum {
 
 	SHC("SHC"), // Hors Conventions Collectives (Fonctionnaires & Contractuels)
 	SCV("SCV"), // Conventions Collectives
-	ALL("ALL"); // Conventions Collectives
+	ALL("ALL");
 
 	private String typeChainePaie;
 
