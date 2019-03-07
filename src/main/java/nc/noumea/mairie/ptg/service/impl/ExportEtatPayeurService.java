@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -478,6 +479,12 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 		Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(vh.getIdAgent()),
 				vh.getDateLundi());
+		
+		if (carr == null) {
+			logger.warn("Aucune carrière active à la date du {} pour l'agent matricule {}.", vh.getDateLundi(), vh.getIdAgent());
+			carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(vh.getIdAgent()), new DateTime(vh.getDateLundi()).plusWeeks(1).toDate());
+		}
+		
 		// dans le cas des fonctionnaires et contractuels : pas de majoration
 		// et avec la nouvelle evol #17538, on alimente le compteur lors de l approbation
 		// et non plus ici

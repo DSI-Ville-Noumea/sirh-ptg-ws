@@ -84,6 +84,11 @@ public class ReposCompService implements IReposCompService {
 			logger.info("Processing week {}", vhs.getDateLundi());
 
 			Spcarr carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(task.getIdAgent()), vhs.getDateLundi());
+			
+			if (carr == null) {
+				logger.warn("Aucune carrière active à la date du {} pour l'agent matricule {}.", vhs.getDateLundi(), task.getIdAgent());
+				carr = mairieRepository.getAgentCurrentCarriere(helperService.getMairieMatrFromIdAgent(task.getIdAgent()), new DateTime(vhs.getDateLundi()).plusWeeks(1).toDate());
+			}
 
 			// Check on Agent status (this process will stop if the user is of
 			// status fonctionnaire)
