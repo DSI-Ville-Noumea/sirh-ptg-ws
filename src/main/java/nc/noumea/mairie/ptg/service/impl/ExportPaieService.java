@@ -131,13 +131,14 @@ public class ExportPaieService implements IExportPaieService {
 		logger.info("Added exportPaie tasks for {} agents after filtering.", result.getInfos().size());
 		
 		// #52313 : Ventilation bloquée si aucun pointage n'est ventilé (pas de rappel de paye)
-		// => On passe au statut suivant.
-		try {
-			paieWorkflowService.changeStateToExportPaieDone(helperService.getTypeChainePaieFromStatut(statut));
-		} catch (WorkflowInvalidStateException e) {
-			logger.error("Could not start exportPaie process: {}", e.getMessage());
-			result.getErrors().add(e.getMessage());
-			return result;
+		if (result.getInfos().size() == 0) {
+			try {
+				paieWorkflowService.changeStateToExportPaieDone(helperService.getTypeChainePaieFromStatut(statut));
+			} catch (WorkflowInvalidStateException e) {
+				logger.error("Could not write exportPaie done : {}", e.getMessage());
+				result.getErrors().add(e.getMessage());
+				return result;
+			}
 		}
 
 		return result;
