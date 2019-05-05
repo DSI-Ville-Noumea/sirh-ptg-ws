@@ -36,7 +36,6 @@ import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.HeuresSupEtatPayeurVo;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.PrimesEtatPayeurDto;
-import nc.noumea.mairie.ptg.reporting.EtatPayeurReporting;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.service.ExportEtatsPayeurServiceException;
@@ -70,9 +69,6 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 
 	@Autowired
 	private ISirhWSConsumer sirhWsConsumer;
-
-	@Autowired
-	private EtatPayeurReporting etatPayeurReport;
 
 	@Autowired
 	private IAbsWsConsumer absWsConsumer;
@@ -393,16 +389,7 @@ public class ExportEtatPayeurService implements IExportEtatPayeurService {
 		ep.setIdAgent(idAgent);
 		ep.setDateEdition(helperService.getCurrentDate());
 
-		logger.info("Downloading report named [{}]...", ep.getFichier());
-		// #15138 timeout lors de la generation du BIRT, on genere maintenant avec IText
-		try {
-			etatPayeurReport.downloadEtatPayeurByStatut(statut, ep);
-		} catch (Exception e) {
-			logger.error("Une erreur est survenue dans la generation du rapport des etats du payeur pour le statut "
-					+ statut.toString());
-			throw e;
-		}
-		logger.info("Downloading report [{}] done.", ep.getFichier());
+		logger.info("EtatPayeur named [{}] persisted in database, but file is not generated !! See #52726 for more explanations ", ep.getFichier());
 
 		return ep;
 	}
