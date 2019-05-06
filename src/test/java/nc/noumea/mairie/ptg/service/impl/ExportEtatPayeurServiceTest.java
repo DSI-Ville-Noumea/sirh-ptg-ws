@@ -34,7 +34,6 @@ import nc.noumea.mairie.ptg.dto.CanStartWorkflowPaieActionDto;
 import nc.noumea.mairie.ptg.dto.ReturnMessageDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.AbstractItemEtatPayeurDto;
 import nc.noumea.mairie.ptg.dto.etatsPayeur.EtatPayeurDto;
-import nc.noumea.mairie.ptg.reporting.EtatPayeurReporting;
 import nc.noumea.mairie.ptg.repository.IPointageRepository;
 import nc.noumea.mairie.ptg.repository.IVentilationRepository;
 import nc.noumea.mairie.ptg.workflow.IPaieWorkflowService;
@@ -816,12 +815,9 @@ public class ExportEtatPayeurServiceTest {
 		HelperService hS = Mockito.mock(HelperService.class);
 		Mockito.when(hS.getCurrentDate()).thenReturn(new DateTime(2013, 9, 2, 8, 7, 45).toDate());
 
-		EtatPayeurReporting etatPayeurReport = Mockito.mock(EtatPayeurReporting.class);
-
 		ExportEtatPayeurService service = new ExportEtatPayeurService();
 		ReflectionTestUtils.setField(service, "pointageRepository", pR);
 		ReflectionTestUtils.setField(service, "helperService", hS);
-		ReflectionTestUtils.setField(service, "etatPayeurReport", etatPayeurReport);
 
 		// When
 		EtatPayeur result = service.exportEtatPayeur(idAgent, statut, date);
@@ -834,10 +830,6 @@ public class ExportEtatPayeurServiceTest {
 		assertEquals(new LocalDate(2013, 2, 1).toDate(), result.getDateEtatPayeur());
 		assertEquals(idAgent, result.getIdAgent());
 		assertEquals(new DateTime(2013, 9, 2, 8, 7, 45).toDate(), result.getDateEdition());
-
-		// Mockito.verify(wsC,
-		// Mockito.times(1)).downloadEtatPayeurByStatut(statut.toString(),
-		// "2013-02-F.pdf");
 	}
 
 	@Test
