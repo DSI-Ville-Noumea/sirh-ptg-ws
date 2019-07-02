@@ -133,7 +133,9 @@ public class ExportPaieService implements IExportPaieService {
 		// #52313 : Ventilation bloquée si aucun pointage n'est ventilé (pas de rappel de paye)
 		if (result.getInfos().size() == 0) {
 			try {
+				logger.warn("Aucune ventilation existante ce mois-ci !");
 				paieWorkflowService.changeStateToExportPaieDone(helperService.getTypeChainePaieFromStatut(statut));
+				result.getErrors().add("Aucune ventilation existante ce mois-ci. La paie peut se poursuivre dans l'AS400 !");
 			} catch (WorkflowInvalidStateException e) {
 				logger.error("Could not write exportPaie done : {}", e.getMessage());
 				result.getErrors().add(e.getMessage());

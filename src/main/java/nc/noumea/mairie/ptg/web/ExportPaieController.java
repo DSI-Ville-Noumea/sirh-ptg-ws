@@ -52,9 +52,6 @@ public class ExportPaieController {
 
 		String resultJson = new JSONSerializer().exclude("*.class").deepSerialize(result);
 
-		if (result.getErrors().size() != 0)
-			return new ResponseEntity<String>(resultJson, HttpStatus.CONFLICT);
-
 		return new ResponseEntity<String>(resultJson, HttpStatus.OK);
 	}
 
